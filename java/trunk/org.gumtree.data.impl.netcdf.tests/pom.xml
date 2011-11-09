@@ -12,18 +12,6 @@
 		<version>2.1.0-SNAPSHOT</version>
 		<relativePath>../org.gumtree.data.parent</relativePath>
 	</parent>
-	<properties>
-		<enableEmmaReport>true</enableEmmaReport>
-	</properties>
 
 	<name>GumTree Data NetCDF Implementation Tests Fragment</name>
-
-	<profiles>
-		<profile>
-			<id>coverage</id>
-			<properties>
-				<eclemma.instrument.bundles>org.gumtree.data.core,org.gumtree.data.impl.netcdf</eclemma.instrument.bundles>
-			</properties>
-		</profile>
-	</profiles>
 </project>

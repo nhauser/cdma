@@ -1,13 +1,13 @@
 package org.gumtree.data;
 
-import static org.junit.Assert.*;
-import static org.gumtree.data.core.tests.DataTestConstants.*;
+import static org.gumtree.data.core.tests.DataTestConstants.PLUGIN_ID;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.eclipse.core.filesystem.IFileStore;
-import org.gumtree.core.util.eclipse.EclipseUtils;
 import org.gumtree.data.core.tests.DataTestObject;
+import org.gumtree.data.core.tests.DataTestUtils;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataset;
@@ -21,14 +21,14 @@ public class FactoryTest extends DataTestObject {
 	
 	@Test
 	public void testOpenDataset() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, DATA_PATH);
 		IDataset dataset = getFactory().openDataset(file.toURI());
 		assertEquals(getFactory().getName(), dataset.getFactoryName());
 	}
 	
 	@Test
 	public void testCreateDatasetInstance() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, DATA_PATH);
 		IDataset dataset = getFactory().createDatasetInstance(file.toURI());
 		assertEquals(getFactory().getName(), dataset.getFactoryName());
 	}

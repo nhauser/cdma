@@ -1,11 +1,11 @@
 package org.gumtree.data;
 
 import static org.gumtree.data.core.tests.DataTestConstants.PLUGIN_ID;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.filesystem.IFileStore;
-import org.gumtree.core.util.eclipse.EclipseUtils;
 import org.gumtree.data.core.tests.DataTestObject;
+import org.gumtree.data.core.tests.DataTestUtils;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
@@ -20,7 +20,7 @@ public class LoadSoleilFileTest extends DataTestObject {
 	
 	@Test
 	public void testReadSimpleStructure() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, SIMPLE_DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, SIMPLE_DATA_PATH);
 		IDataset dataset = getFactory().createDatasetInstance(file.toURI());
 		if (!dataset.isOpen()) {
 			dataset.open();
@@ -50,7 +50,7 @@ public class LoadSoleilFileTest extends DataTestObject {
 	
 	@Test
 	public void testReadSwingStructure() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, SWING_DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, SWING_DATA_PATH);
 		IDataset dataset = getFactory().createDatasetInstance(file.toURI());
 		if (!dataset.isOpen()) {
 			dataset.open();

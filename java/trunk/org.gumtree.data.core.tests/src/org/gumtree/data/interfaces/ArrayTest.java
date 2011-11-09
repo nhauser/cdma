@@ -1,12 +1,11 @@
 package org.gumtree.data.interfaces;
 
 import static org.gumtree.data.core.tests.DataTestConstants.PLUGIN_ID;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.filesystem.IFileStore;
-import org.gumtree.core.util.eclipse.EclipseUtils;
 import org.gumtree.data.core.tests.DataTestObject;
-import org.gumtree.data.core.tests.DataTestUtilities;
+import org.gumtree.data.core.tests.DataTestUtils;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.utils.IArrayUtils;
@@ -98,7 +97,7 @@ public class ArrayTest extends DataTestObject {
 	// Created by SOLEIL
 	@Test
 	public void testCopyMethods() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, DATA_PATH);
 		IDataset dataset = getFactory().createDatasetInstance(file.toURI());
 		if (!dataset.isOpen()) {
 			dataset.open();
@@ -110,15 +109,15 @@ public class ArrayTest extends DataTestObject {
 
 		// IArray.copy(false) <=> no storage copy
 		IArray copyStructure = array.copy(false);
-		DataTestUtilities.compareArrays(array, copyStructure);
+		DataTestUtils.compareArrays(array, copyStructure);
 
 		// IArray.copy(true) <=> storage copy
 		IArray copyData1 = array.copy(true);
-		DataTestUtilities.compareArrays(array, copyData1);
+		DataTestUtils.compareArrays(array, copyData1);
 
 		// IArray.copy() <=> storage copy
 		IArray copyData2 = array.copy();
-		DataTestUtilities.compareArrays(array, copyData2);
+		DataTestUtils.compareArrays(array, copyData2);
 
 		dataset.close();
 	}

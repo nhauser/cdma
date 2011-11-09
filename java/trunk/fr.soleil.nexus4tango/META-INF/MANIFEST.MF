@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Nexus4tango
 Bundle-SymbolicName: fr.soleil.nexus4tango
 Bundle-Version: 2.2.4.qualifier
-Bundle-ClassPath: Nexus4Tango.jar
 Export-Package: fr.soleil.nexus4tango
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Eclipse-BundleShape: dir
+Eclipse-BundleShape: jar
 Require-Bundle: org.nexusformat;bundle-version="1.0.0";visibility:=reexport

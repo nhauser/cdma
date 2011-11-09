@@ -92,9 +92,9 @@ Export-Package: net.jcip.annotations,
  ucar.unidata.io.http,
  ucar.unidata.util,
  ucar.units
-Require-Bundle: com.springsource.org.jdom,
- org.apache.commons.httpclient;visibility:=reexport,
- com.springsource.slf4j.api;visibility:=reexport
+Require-Bundle: com.springsource.org.jdom;bundle-version="1.1.0",
+ org.apache.commons.httpclient;bundle-version="3.1.0";visibility:=reexport,
+ com.springsource.slf4j.api;bundle-version="1.6.1";visibility:=reexport
 Bundle-ClassPath: .,
  classes/
 Eclipse-BundleShape: jar

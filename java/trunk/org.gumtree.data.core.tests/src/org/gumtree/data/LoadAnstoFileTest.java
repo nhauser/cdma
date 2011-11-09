@@ -4,8 +4,8 @@ import static org.gumtree.data.core.tests.DataTestConstants.PLUGIN_ID;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.filesystem.IFileStore;
-import org.gumtree.core.util.eclipse.EclipseUtils;
 import org.gumtree.data.core.tests.DataTestObject;
+import org.gumtree.data.core.tests.DataTestUtils;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
@@ -17,7 +17,7 @@ public class LoadAnstoFileTest extends DataTestObject {
 	
 	@Test
 	public void testReadStructure() throws Exception {
-		IFileStore file = EclipseUtils.find(PLUGIN_ID, DATA_PATH);
+		IFileStore file = DataTestUtils.find(PLUGIN_ID, DATA_PATH);
 		IDataset dataset = getFactory().createDatasetInstance(file.toURI());
 		if (!dataset.isOpen()) {
 			dataset.open();
