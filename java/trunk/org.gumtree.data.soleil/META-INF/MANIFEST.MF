@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SOLEIL Data Model
+Bundle-SymbolicName: org.gumtree.data.soleil
+Bundle-Version: 2.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: org.gumtree.data.utils,
+ org.jdom,
+ org.jdom.filter,
+ org.jdom.input
+Service-Component: OSGI-INF/factory.xml
+Export-Package: org.gumtree.data.soleil,
+ org.gumtree.data.soleil.external,
+ org.gumtree.data.soleil.internal
+Eclipse-BundleShape: jar
+Require-Bundle: org.gumtree.data.core;visibility:=reexport,
+ fr.soleil.nexus4tango;visibility:=reexport
