@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.5"?>
+
+<product name="org.gumtree.data.rcp.product" id="org.gumtree.data.rcp.product" application="org.gumtree.data.rcp.application" useFeatures="false" includeLaunchers="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <programArgs>-consoleLog</programArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <plugins>
+      <plugin id="javax.servlet"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.gumtree.data.rcp"/>
+   </plugins>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
+      <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+   </configurations>
+
+</product>
