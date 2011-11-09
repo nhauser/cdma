@@ -57,13 +57,6 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<skip>${skipTests}</skip>
-					<frameworkExtensions>
-						<frameworkExtension>
-							<groupId>org.codehaus.gumtree</groupId>
-							<artifactId>org.gumtree.runtime.hook</artifactId>
-							<version>${gumtree.version}</version>
-						</frameworkExtension>
-					</frameworkExtensions>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -148,25 +141,20 @@
 	</issueManagement>
 	<mailingLists>
 		<mailingList>
-			<name>GumTree Decision</name>
-			<archive>https://groups.google.com/forum/#!forum/gumtree</archive>
+			<name>Common Data Model API Decision</name>
+			<archive>http://groups.google.com/group/common-data-model</archive>
 		</mailingList>
 	</mailingLists>
 	<repositories>
 		<repository>
-			<id>eclipse_helios</id>
+			<id>eclipse_indigo</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/helios</url>
+			<url>http://download.eclipse.org/releases/indigo</url>
 		</repository>
 		<repository>
 			<id>gumtree_bundles</id>
 			<layout>p2</layout>
 			<url>http://dist.codehaus.org/gumtree/sites/bundles</url>
-		</repository>
-		<repository>
-			<id>gumtree_platform</id>
-			<layout>p2</layout>
-			<url>http://dist.codehaus.org/gumtree/sites/platform</url>
 		</repository>
 		<repository>
 			<id>codehaus.snapshots</id>
@@ -189,28 +177,6 @@
 		</profile>
 		<profile>
 			<id>soleil-build</id>
-		</profile>
-		<profile>
-			<id>findbugs</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>findbugs-maven-plugin</artifactId>
-						<version>2.3.2</version>
-						<configuration>
-							<failOnError>false</failOnError>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>check</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 		<profile>
 			<id>win32</id>
@@ -265,118 +231,6 @@
 				<osgi.ws>cocoa</osgi.ws>
 				<osgi.arch>x86</osgi.arch>
 			</properties>
-		</profile>
-		<profile>
-			<id>coverage</id>
-			<activation>
-				<property>
-					<name>coverage</name>
-				</property>
-			</activation>
-			<properties>
-				<emma.session.out.file>${project.build.directory}/emma/${project.artifactId}.es</emma.session.out.file>
-				<emma.filter>org.gumtree.*,au.gov.ansto.*</emma.filter>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>${tycho.groupId}</groupId>
-						<artifactId>tycho-surefire-plugin</artifactId>
-						<version>${tycho.version}</version>
-						<configuration>
-							<skip>${skipTests}</skip>
-							<systemProperties combine.children="append">
-								<eclemma.help>true</eclemma.help>
-								<emma.session.out.file>${emma.session.out.file}</emma.session.out.file>
-								<emma.filter>${emma.filter}</emma.filter>
-								<eclemma.instrument.bundles>${eclemma.instrument.bundles}</eclemma.instrument.bundles>
-							</systemProperties>
-							<frameworkExtensions>
-								<frameworkExtension>
-									<groupId>org.codehaus.gumtree</groupId>
-									<artifactId>org.eclemma.runtime.equinox</artifactId>
-									<version>1.1.0-SNAPSHOT</version>
-								</frameworkExtension>
-								<frameworkExtension>
-									<groupId>org.codehaus.gumtree</groupId>
-									<artifactId>org.gumtree.runtime.hook</artifactId>
-									<version>${gumtree.version}</version>
-								</frameworkExtension>
-							</frameworkExtensions>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<dependencies>
-							<dependency>
-								<groupId>emma</groupId>
-								<artifactId>emma_ant</artifactId>
-								<version>2.0.5312</version>
-							</dependency>
-							<dependency>
-								<groupId>emma</groupId>
-								<artifactId>emma</artifactId>
-								<version>2.0.5312</version>
-							</dependency>
-						</dependencies>
-						<executions>
-							<execution>
-								<id>emma-report</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<taskdef resource="emma_ant.properties" />
-										<echo>Process emma report...</echo>
-										<emma enabled="${enableEmmaReport}">
-											<report>
-												<infileset dir="${project.build.directory}/emma"
-													includes="*.es" />
-												<txt
-													outfile="${project.build.directory}/emma/${project.artifactId}-coverage.txt" />
-												<xml
-													outfile="${project.build.directory}/emma/${project.artifactId}-coverage.xml" />
-												<html
-													outfile="${project.build.directory}/emma/${project.artifactId}-coverage.html" />
-												<!-- Could also generate an HTML report, if you want... -->
-											</report>
-										</emma>
-										<loadfile property="emma.txt"
-											srcFile="${project.build.directory}/emma/${project.artifactId}-coverage.txt"
-											failonerror="false" />
-										<echo>${emma.txt}</echo>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<id>attach-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>attach-artifact</goal>
-								</goals>
-								<configuration>
-									<artifacts>
-										<artifact>
-											<file>${emma.session.out.file}</file>
-											<type>es</type>
-										</artifact>
-									</artifacts>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 
