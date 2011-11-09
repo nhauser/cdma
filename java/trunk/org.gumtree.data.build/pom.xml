@@ -29,7 +29,7 @@
 		<module>../org.gumtree.data.impl.netcdf</module>
 		<module>../org.gumtree.data.impl.netcdf.tests</module>
 		<module>../org.gumtree.data.ansto.feature</module>
-		
+
 		<module>../org.nexusformat</module>
 		<module>../fr.soleil.nexus4tango</module>
 		<module>../org.gumtree.data.soleil</module>
