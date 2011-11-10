@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.gumtree.data.ansto.feature"
-      label="Feature"
+      label="CDMA NetCDF Implementaion"
       version="2.1.0.qualifier">
 
    <description url="http://www.example.com/description">
