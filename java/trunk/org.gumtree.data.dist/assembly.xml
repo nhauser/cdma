@@ -1,5 +1,5 @@
 <assembly>
-	<id>dist</id>
+	<id>java</id>
 	<formats>
 		<format>zip</format>
 	</formats>
@@ -34,6 +34,14 @@
     			<include>org.nexusformat_*.jar</include>
     			<include>ucar.netcdf_*.jar</include>
     		</includes>
+    	</fileSet>
+    	<fileSet>
+    		<directory>../org.gumtree.data.core/target/site/apidocs</directory>
+    		<outputDirectory>javadoc</outputDirectory>
+    	</fileSet>
+    	<fileSet>
+    		<directory>files</directory>
+    		<outputDirectory></outputDirectory>
     	</fileSet>
     </fileSets>
 </assembly>

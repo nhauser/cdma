@@ -35,6 +35,7 @@
 		<module>../org.gumtree.data.soleil</module>
 		<module>../org.gumtree.data.soleil.tests</module>
 		<module>../org.gumtree.data.soleil.feature</module>
+
 	</modules>
 
 	<name>CDMA Build POM</name>
