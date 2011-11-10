@@ -14,4 +14,33 @@
 	</parent>
 	
 	<name>SOLEIL Data Model Tests Fragment</name>
+	
+	<profiles>
+		<!-- Skip test for Windows 64-bit environment -->
+		<profile>
+			<id>win64</id>
+			<activation>
+				<os>
+					<family>windows</family>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+		<!-- Skip test for Mac OS X 64-bit environment -->
+		<profile>
+			<id>macosx64</id>
+			<activation>
+				<os>
+					<family>mac</family>
+					<arch>x86_64</arch>
+				</os>
+			</activation>
+			<properties>
+				<skipTests>true</skipTests>
+			</properties>
+		</profile>
+	</profiles>
 </project>

@@ -34,13 +34,6 @@
 				<configuration>
 					<resolver>p2</resolver>
 					<environments>
-						<!--
-						<environment>
-							<os>${osgi.os}</os>
-							<ws>${osgi.ws}</ws>
-							<arch>${osgi.arch}</arch>
-						</environment>
-						-->
 						<environment>
 							<os>linux</os>
 							<ws>gtk</ws>
@@ -102,8 +95,6 @@
 					<maxmemory>512m</maxmemory>
 					<links>
 						<link>http://dist.codehaus.org/gumtree/files/javadoc/eclipse/3.6/</link>
-						<link>http://dist.codehaus.org/gumtree/files/javadoc/xstream/1.3.0/javadoc/</link>
-						<link>http://www.jfree.org/jfreechart/api/javadoc/</link>
 						<link>http://junit.sourceforge.net/javadoc/</link>
 						<link>http://www.slf4j.org/api/</link>
 					</links>
@@ -209,60 +200,6 @@
 		</profile>
 		<profile>
 			<id>soleil-build</id>
-		</profile>
-		<profile>
-			<id>win32</id>
-			<activation>
-				<os>
-					<family>windows</family>
-					<arch>x86</arch>
-				</os>
-			</activation>
-			<properties>
-				<osgi.os>win32</osgi.os>
-				<osgi.ws>win32</osgi.ws>
-				<osgi.arch>x86</osgi.arch>
-			</properties>
-		</profile>
-		<profile>
-			<id>win64</id>
-			<activation>
-				<os>
-					<family>windows</family>
-					<arch>amd64</arch>
-				</os>
-			</activation>
-			<properties>
-				<osgi.os>win32</osgi.os>
-				<osgi.ws>win32</osgi.ws>
-				<osgi.arch>x86_64</osgi.arch>
-			</properties>
-		</profile>
-		<profile>
-			<id>gtk32</id>
-			<activation>
-				<os>
-					<family>linux</family>
-				</os>
-			</activation>
-			<properties>
-				<osgi.os>linux</osgi.os>
-				<osgi.ws>gtk</osgi.ws>
-				<osgi.arch>x86</osgi.arch>
-			</properties>
-		</profile>
-		<profile>
-			<id>cocoa32</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<properties>
-				<osgi.os>macosx</osgi.os>
-				<osgi.ws>cocoa</osgi.ws>
-				<osgi.arch>x86</osgi.arch>
-			</properties>
 		</profile>
 	</profiles>
 
