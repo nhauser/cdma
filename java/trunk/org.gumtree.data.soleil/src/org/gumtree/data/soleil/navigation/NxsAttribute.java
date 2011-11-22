@@ -1,7 +1,9 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.navigation;
 
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
+import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.array.NxsArray;
 
 public class NxsAttribute implements IAttribute {
 

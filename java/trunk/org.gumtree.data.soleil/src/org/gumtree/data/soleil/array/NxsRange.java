@@ -1,7 +1,8 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IRange;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsRange implements IRange {
     public static final NxsRange EMPTY = new NxsRange();

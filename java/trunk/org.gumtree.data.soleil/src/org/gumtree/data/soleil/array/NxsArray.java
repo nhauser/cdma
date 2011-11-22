@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidRangeException;
@@ -8,9 +8,12 @@ import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
+import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.utils.NxsArrayMath;
+import org.gumtree.data.soleil.utils.NxsArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 
-import fr.soleil.nexus4tango.DataSet;
+import fr.soleil.nexus4tango.DataItem;
 
 
 public class NxsArray implements NxsArrayInterface {
@@ -18,7 +21,7 @@ public class NxsArray implements NxsArrayInterface {
 	private Object	  m_oData;        // It's an array of values
 	private boolean	  m_bRawArray;    // True if the stored array has a rank of 1 (independently of its shape)
     private boolean   m_isDirty;      // Is the array synchronized with the handled file
-    private DataSet   m_n4tdataset;   // Array of datasets that are used to store the storage backing
+    private DataItem  m_n4tdataitem;  // Array of datasets that are used to store the storage backing
     private int[]     m_shape;        // Shape of the array (dimension sizes of the storage backing) 
     
 	// Constructors
@@ -35,7 +38,7 @@ public class NxsArray implements NxsArrayInterface {
                             !(java.lang.reflect.Array.get(oArray, 0).getClass().isArray()) 
                           );
         }
-        m_n4tdataset = null;
+        m_n4tdataitem = null;
 	}
 
     public NxsArray(NxsArray array) {
@@ -53,19 +56,19 @@ public class NxsArray implements NxsArrayInterface {
         m_bRawArray  = array.m_bRawArray;
         m_isDirty    = array.m_isDirty;
         try {
-			m_n4tdataset = array.m_n4tdataset.clone();
+			m_n4tdataitem = array.m_n4tdataitem.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
     }
     
-    protected NxsArray(DataSet ds) {
+    public NxsArray(DataItem ds) {
         m_index      = new NxsIndex(ds);
 		m_oData      = null;
 		m_shape      = ds.getSize();
 		m_bRawArray  = ds.isSingleRawArray();
         m_isDirty    = false;
-        m_n4tdataset = ds;
+        m_n4tdataitem = ds;
 	}
     
 	// ---------------------------------------------------------
@@ -91,16 +94,12 @@ public class NxsArray implements NxsArrayInterface {
 	    StringBuilder sbuff = new StringBuilder();
 	    IArrayIterator ii = getIterator();
 	    int i = 1;
-        Object data = ii.getObjectCurrent();
-        sbuff.append(data);
+        Object data = null;
 	    while (ii.hasNext())
 	    {
-	    	if( i % m_shape[m_shape.length - 1] == 0 )
-	    		sbuff.append("\n");
-            else
-                sbuff.append(" ");
-            data = ii.getObjectNext();
+            data = ii.next();
             sbuff.append(data);
+            sbuff.append(" ");
 			i++;
 	    }
 	    return sbuff.toString().substring(0, sbuff.length() < 10000 ? sbuff.length() : 10000);
@@ -120,8 +119,8 @@ public class NxsArray implements NxsArrayInterface {
 	@Override
 	public Class<?> getElementType() {
 		Class<?> result = null;
-		if( m_n4tdataset != null ) {
-			result = m_n4tdataset.getDataClass();
+		if( m_n4tdataitem != null ) {
+			result = m_n4tdataitem.getDataClass();
 		}
 		else {
 			Object oData = getData();
@@ -234,10 +233,6 @@ public class NxsArray implements NxsArrayInterface {
         return (( Character ) get(ima)).charValue();
     }
 
-	// updated by nxi@ANSTO on 27/10/10: casting the object to a 
-	// Number can prevent unmatching type exception. For example 
-	// if the object is an Integer, it can not be cast into Double.
-	// The same reason is for updating the next 4 methods.
     @Override
     public double getDouble(IIndex ima) {
         return (( Number ) get(ima)).doubleValue();
@@ -433,9 +428,7 @@ public class NxsArray implements NxsArrayInterface {
         else if( m_bRawArray )
         {
         	int lPos;
-        	// [ANSTO][Tony][2011-08-30] m_n4tdataset can be null if NxsArray is created from a raw array
-        	if( m_n4tdataset != null &&
-        			java.util.Arrays.equals(m_n4tdataset.getStart(), idx.getProjectionOrigin() ) ) {
+        	if( java.util.Arrays.equals(m_n4tdataitem.getStart(), idx.getProjectionOrigin() ) ) {
         		lPos = idx.currentProjectionElement();
         	}
         	else {
@@ -458,8 +451,8 @@ public class NxsArray implements NxsArrayInterface {
     
     private Object getData() {
     	Object result = m_oData;
-    	if( result == null && m_n4tdataset != null ) {
-    		result = m_n4tdataset.getData(((NxsIndex) m_index).getProjectionOrigin(), ((NxsIndex) m_index).getProjectionShape());
+    	if( result == null && m_n4tdataitem != null ) {
+    		result = m_n4tdataitem.getData(((NxsIndex) m_index).getProjectionOrigin(), ((NxsIndex) m_index).getProjectionShape());
     	}
     	return result;
     }

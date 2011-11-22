@@ -1,7 +1,7 @@
 package org.gumtree.data.soleil.internal;
 
 import org.gumtree.data.exception.FileAccessException;
-import org.gumtree.data.soleil.NxsDataSet;
+import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.nexusformat.NexusException;
 
 import fr.soleil.nexus4tango.NexusFileWriter;
@@ -12,11 +12,11 @@ import fr.soleil.nexus4tango.PathNexus;
 public class DictionaryDetector {
 	final static String SEPARATOR = "_";
 	final static String EXTENSION = ".xml";
-	private NxsDataSet m_dataset;
+	private NxsDataset m_dataset;
 	private Beamline   m_beamline;
 	private DataModel  m_model;
 	
-	public DictionaryDetector(NxsDataSet dataset) {
+	public DictionaryDetector(NxsDataset dataset) {
 		m_dataset = dataset;
 	}
 
@@ -29,13 +29,7 @@ public class DictionaryDetector {
 			detectDataModel();
 		}
 		
-		//if( m_beamline != Beamline.UNKNOWN && m_model != DataModel.UNKNOWN ) {
-			fileName = m_beamline.getName() + SEPARATOR + m_model.getName() + EXTENSION;
-		//}
-/*		else {
-			throw new FileAccessException("Unable to detect a convenient mapping dictionary!\nSee: " + fileName);
-		}
-*/		
+		fileName = m_beamline.getName() + SEPARATOR + m_model.getName() + EXTENSION;
 		return fileName;
 	}
 	
@@ -43,7 +37,7 @@ public class DictionaryDetector {
 		m_beamline = null;
 		PathNexus path = new PathGroup(new String[] {"<NXentry>", "<NXinstrument>"});
 		NexusFileWriter handler = m_dataset.getHandler();
-		
+	
 		try {
 			handler.openPath(path);
 			m_beamline = Beamline.valueOf(handler.getCurrentPath().getCurrentNode().getNodeName().toUpperCase());

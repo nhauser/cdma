@@ -8,9 +8,9 @@ public class PathData extends PathNexus {
 	 * PathData
 	 * Create an object PathData
 	 *
-	 * @param sAcquiName name of the acquisition which the dataset will belong to
-	 * @param sInstName name of the instrument which the dataset will belong to
-	 * @param sDataName name of the dataset
+	 * @param sAcquiName name of the acquisition which the DataItem will belong to
+	 * @param sInstName name of the instrument which the DataItem will belong to
+	 * @param sDataName name of the DataItem
 	 * @note group's class can be specified by adding "<" and ">" to a class name: i.e. "my_entry<NXentry>"
 	 * @note BE AWARE that it's better not to force the group's class. By default they are mapped by the API to apply Nexus format DTD
 	 */
@@ -41,9 +41,9 @@ public class PathData extends PathNexus {
 
 	static public PathData Convert(PathNexus pnPath)
 	{
-		if( pnPath.getDataSetName() != null )
+		if( pnPath.getDataItemName() != null )
 		{
-			return new PathData( pnPath.getParentPath(), pnPath.getDataSetName());
+			return new PathData( pnPath.getParentPath(), pnPath.getDataItemName());
 		}
 		else
 		{

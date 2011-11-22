@@ -13,9 +13,9 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 public class NexusFileWriter extends NexusFileReader {
-	public final static String NULL_VALUE = "null";	// Value used to mean null when reading/writing a dataset
+	public final static String NULL_VALUE = "null";	// Value used to mean null when reading/writing a DataItem
 	
-	protected static final String	DATASET_LINK	= "link_node";		// Generic name of a node wearing a link
+	protected static final String	DataItem_LINK	= "link_node";		// Generic name of a node wearing a link
 	
 	private boolean m_bCompressed;
 	
@@ -92,37 +92,37 @@ public class NexusFileWriter extends NexusFileReader {
 	}
 
 	/**
-	 * createDataSet
-	 * Create all groups defined into the path, then create a dataset matching type, dimensions sizes of the given DataSet
+	 * createDataItem
+	 * Create all groups defined into the path, then create a DataItem matching type, dimensions sizes of the given DataItem
 	 * item. When the creation process is done it close if asked all node to rturn bacxk to document's root.
 	 *
-	 * @param dsData DataSet item which created dataset will match
-	 * @param paPath Path into which the given dataset will be created
+	 * @param dsData DataItem item which created DataItem will match
+	 * @param paPath Path into which the given DataItem will be created
 	 * @param bKeepOpen boolean telling if the path should be keep opened after work
 	 * @return true if the node was existing yet , false if the process created a node. The purpose of this return is
 	 * to tell whether data compatibility should be checked before writing it
 	 */
-	protected boolean createDataSet(DataSet dsData, PathNexus pnPath, boolean bKeepOpen) throws NexusException
+	protected boolean createDataItem(DataItem dsData, PathNexus pnPath, boolean bKeepOpen) throws NexusException
 	{
-		// Checking path contains a dataset name
-		String sDataSetName = pnPath.getDataSetName();
-		if( sDataSetName == null )
-			throw new NexusException("Path is invalid: no dataset name specified to store data!");
+		// Checking path contains a DataItem name
+		String sDataItemName = pnPath.getDataItemName();
+		if( sDataItemName == null )
+			throw new NexusException("Path is invalid: no DataItem name specified to store data!");
 
 		// Open path (or create it if needed)
 		createPath(pnPath, true);
 
-		// Open dataset (or create it if needed)
+		// Open DataItem (or create it if needed)
 		boolean bCheckData;
 		try
 		{
-			openData(sDataSetName);
+			openData(sDataItemName);
 			bCheckData = true;
 		}
 		catch(NexusException ne)
 		{
-			makeData(sDataSetName, dsData);
-			openData(sDataSetName);
+			makeData(sDataItemName, dsData);
+			openData(sDataItemName);
 			bCheckData = false;
 		}
 
@@ -134,12 +134,12 @@ public class NexusFileWriter extends NexusFileReader {
 
 	/**
 	 * makeData
-	 * Create a dataset named sDataName that fit dsData in the currently opened group: detecting type, size and dim
+	 * Create a DataItem named sDataName that fit dsData in the currently opened group: detecting type, size and dim
 	 *
-	 * @param sDataName name of the dataset to create
-	 * @param oData shape of data that the dataset will have to contain
+	 * @param sDataName name of the DataItem to create
+	 * @param oData shape of data that the DataItem will have to contain
 	 */
-	protected void makeData(String sDataName, DataSet dsData) throws NexusException
+	protected void makeData(String sDataName, DataItem dsData) throws NexusException
 	{
 		/* ******** Warning: jnexus API doesn't support NX_INT64 for writing
 		 *  those lines convert NX_INT64 into NX_FLOAT64, so long to double
@@ -160,7 +160,7 @@ public class NexusFileWriter extends NexusFileReader {
 			iLength *= iDimSize[i];
 		}
 		
-		// Create the dataset
+		// Create the DataItem
 		if( m_bCompressed && iLength > 1000 && iType != NexusFile.NX_CHAR )
 		{
 			getNexusFile().compmakedata(sDataName, iType, iRank, iDimSize, NexusFile.NX_COMP_LZW, iDimSize);
@@ -173,7 +173,7 @@ public class NexusFileWriter extends NexusFileReader {
 		// Update the buffer node list
 		pushNodeInPath(sDataName, "SDS");
 
-		// Init dataset of type NX_CHAR
+		// Init DataItem of type NX_CHAR
 		if( iType == NexusFile.NX_CHAR )
 		{
         		openData(sDataName);
@@ -220,37 +220,48 @@ public class NexusFileWriter extends NexusFileReader {
 
 	/**
 	 * writeData
-	 * Write a dataset on the node pointed by path.
+	 * Write a DataItem on the node pointed by path.
 	 *
-	 * @param dsData DataSet item to be written
+	 * @param dsData DataItem item to be written
 	 * @param paPath path to set datas in current file (can be absolute or local)
 	 * @note if path don't exists it will be automatically created
 	 */
-	public void writeData(DataSet dsData, PathData paPath) throws NexusException
+	public void writeData(DataItem dsData, PathData paPath) throws NexusException
 	{
-		// Create or open dataset
-		boolean bNeedDataCheck = createDataSet(dsData, paPath, true);
-
-		
-		// Check data compatiblity if needed
-		if( bNeedDataCheck )
+		if( dsData.getData() instanceof PathNexus ) 
 		{
-			checkDataMatch(dsData);
+			// Write link
+			writeLink((PathNexus) dsData.getData(), paPath);
+			
+			// Return to document root
+			closeAll();
 		}
+		else 
+		{
+			// Create or open DataItem
+			boolean bNeedDataCheck = createDataItem(dsData, paPath, true);
 
-		// Write data
-		putData(dsData);
+			
+			// Check data compatiblity if needed
+			if( bNeedDataCheck )
+			{
+				checkDataMatch(dsData);
+			}
 
-		// Write attributes
-		putAttr(dsData);
+			// Write data
+			putData(dsData);
 
-		// Return to document root
-		closeAll();
+			// Write attributes
+			putAttr(dsData);
+
+			// Return to document root
+			closeAll();
+		}
 	}
 
 	/**
 	 * putAttr
-	 * Write the attribute in the currently opened dataset
+	 * Write the attribute in the currently opened DataItem
 	 *
 	 * @param sAttrName name of the attribute
 	 * @param tData array of values for the attribute
@@ -267,9 +278,9 @@ public class NexusFileWriter extends NexusFileReader {
 		else
 			tArrayData = tData;
 
-		// Changing the array into a DataSet object to apply conversion methods if needed
+		// Changing the array into a DataItem object to apply conversion methods if needed
 		Object iData;
-		DataSet dsData = new DataSet(tArrayData);
+		DataItem dsData = new DataItem(tArrayData);
 
 		// Converting from string to byte[]
 		if( dsData.getType() == NexusFile.NX_CHAR )
@@ -302,9 +313,9 @@ public class NexusFileWriter extends NexusFileReader {
 
 	/**
 	 * putAttr
-	 * Write all dataset's attribute in the currently opened dataset
+	 * Write all DataItem's attribute in the currently opened DataItem
 	 */
-	protected void putAttr(DataSet dsData) throws NexusException
+	protected void putAttr(DataItem dsData) throws NexusException
 	{
 		HashMap<String, ?> mAttrMap = dsData.getAttributes();
 		String sAttrName;
@@ -322,16 +333,16 @@ public class NexusFileWriter extends NexusFileReader {
 
 	/**
 	 * putData
-	 * Put the item value in the currently opened dataset
+	 * Put the item value in the currently opened DataItem
 	 *
-	 * @param dsData is a DataSet item (properly initiated), having dimensions, type and size corresponding to opened dataset
+	 * @param dsData is a DataItem item (properly initiated), having dimensions, type and size corresponding to opened DataItem
 	 */
-	protected void putData(DataSet dsData) throws NexusException
+	protected void putData(DataItem dsData) throws NexusException
 	{
-		// Ensures the DataSet has an array value
+		// Ensures the DataItem has an array value
 		dsData.arrayify();
 
-		// Getting data from DataSet
+		// Getting data from DataItem
 		Object iData = dsData.getData();
 
 		// Converting from string to byte[]
@@ -352,7 +363,7 @@ public class NexusFileWriter extends NexusFileReader {
 		}
 		*/
 
-		// Putting data into opened dataset
+		// Putting data into opened DataItem
 		getNexusFile().putdata(iData);
 	}
 
@@ -395,9 +406,9 @@ public class NexusFileWriter extends NexusFileReader {
 		}
 		else
 		{
-			// Copy the current dataset
+			// Copy the current DataItem
 			PathData pdDstPath = new PathData(pnTgtPath.getNodes(), nnCurNode.getNodeName());
-			DataSet dsData = nfrSource.getDataSet();
+			DataItem dsData = nfrSource.getDataItem();
 			writeData(dsData, pdDstPath);
 		}
 
@@ -448,42 +459,42 @@ public class NexusFileWriter extends NexusFileReader {
 	 * writeLink
 	 * Write both data link or group link depending on the given path.
 	 *
-	 * @param pgDataPath path of node targeted by the link
-	 * @param pgPath path of source node wearing the link
+	 * @param pnSrcPath path of node targeted by the link
+	 * @param prRelPath path of node wearing the link
 	 * @throws NexusException
 	 */
 	protected void writeLink(PathNexus pnSrcPath, PathNexus prRelPath) throws NexusException
 	{
-		PathData pdSrcNode;
+		PathData pdDestNode;
 
 		// Check the source node is well designed
 		if( pnSrcPath.isRelative() )
-			throw new NexusException("Path is invalid: the node wearing a relative link must be targeted by an absolute path!");
+			throw new NexusException("Path is invalid: the targeted path must be absolute!");
 
-		// Ensure the sibling node is a dataset
-		if( pnSrcPath.getDataSetName() == null )
+		// Ensure the wearing node is a DataItem
+		if( prRelPath.getDataItemName() == null )
 		{
-			PathGroup pgSrc = new PathGroup(pnSrcPath.clone());
-			pdSrcNode = new PathData(pgSrc, generateDataName((PathGroup) pgSrc, DATASET_LINK));
+			PathGroup pgDest = new PathGroup(prRelPath.clone());
+			pdDestNode = new PathData(pgDest, generateDataName((PathGroup) pgDest, DataItem_LINK));
 		}
 		else
-			pdSrcNode = (PathData) pnSrcPath;
+			pdDestNode = (PathData) prRelPath;
 
 		// Check the link is valid
-		PathNexus pnTgtPath = checkRelativeLinkTarget(prRelPath, pdSrcNode);
+		//PathNexus pnTgtPath = checkRelativeLinkTarget(prRelPath, pdDestNode);
 
 		// Open path to get the corresponding NXlink
-		openPath(pnTgtPath);
+		openPath(pnSrcPath);
 		NXlink nlLink = getNXlink();
 
 		// Create the source path if needed and open it
-		createPath(pdSrcNode, true);
+		createPath(pdDestNode, true);
 
 		// Write the link
-		getNexusFile().makenamedlink(pdSrcNode.getDataSetName(), nlLink);
+		getNexusFile().makenamedlink(pdDestNode.getDataItemName(), nlLink);
 
 	    // Update node list buffer
-	    NexusNode nnNode = pdSrcNode.getCurrentNode();
+	    NexusNode nnNode = pdDestNode.getCurrentNode();
 	    pushNodeInPath(nnNode.getNodeName(), nnNode.getClassName());
 	}
 }

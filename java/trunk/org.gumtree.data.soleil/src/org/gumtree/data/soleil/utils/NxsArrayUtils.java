@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.utils;
 
 import java.util.List;
 
@@ -7,6 +7,11 @@ import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
+import org.gumtree.data.soleil.array.NxsArrayInterface;
+import org.gumtree.data.soleil.array.NxsArrayMatrix;
+import org.gumtree.data.soleil.array.NxsIndex;
+import org.gumtree.data.soleil.array.NxsIndexMatrix;
+import org.gumtree.data.soleil.array.NxsSliceIterator;
 import org.gumtree.data.utils.ArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 

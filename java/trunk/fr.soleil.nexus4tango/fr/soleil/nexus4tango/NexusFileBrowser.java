@@ -245,7 +245,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 // / Navigation through nodes
 	 // ---------------------------------------------------------
 	 /**
-	  * openPath opens groups and datasets according to the path (PathNexus) in
+	  * openPath opens groups and DataItems according to the path (PathNexus) in
 	  * the opened file given. All objects of the path must exist.
 	  * 
 	  * @param paPath
@@ -325,7 +325,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 }
 
 	 /**
-	  * openData opens the dataset name with class SDS. The dataset must exist,
+	  * openData opens the DataItem name with class SDS. The DataItem must exist,
 	  * otherwise an exception is thrown. opendata is similar to a 'cd' command
 	  * in a file system.
 	  * 
@@ -335,7 +335,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	  *            true if node name corresponds exactly to the requested node
 	  *            (optional)
 	  * @param bJumpNodes
-	  *            true if the NXtechnical_data are not considered as dataset but
+	  *            true if the NXtechnical_data are not considered as DataItem but
 	  *            as group (optional)
 	  * @note the pattern ".." means close current node
 	  */
@@ -404,7 +404,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 			 } else
 				 openSubItem(0, sNodeClass);
 		 }
-		 // Open the dataset
+		 // Open the DataItem
 		 else {
 			 openData(sNodeName);
 		 }
@@ -488,7 +488,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 }
 
 	 /**
-	  * openSignalDataNode Open the dataset containing the signal data. This node
+	  * openSignalDataNode Open the DataItem containing the signal data. This node
 	  * must be direct descendant of current group
 	  * 
 	  * @throws NexusException
@@ -505,9 +505,9 @@ public class NexusFileBrowser extends NexusFileInstance {
 			 sNodeName = entry.getKey();
 			 sNodeClass = entry.getValue();
 
-			 // Seek dataset nodes (class name = SDS)
+			 // Seek DataItem nodes (class name = SDS)
 			 if (sNodeClass.equals("SDS")) {
-				 // open dataset
+				 // open DataItem
 				 openData(sNodeName);
 				 int[] iAttrVal = new int[1];
 				 int[] iAttrProp = { 1, NexusFile.NX_INT32 };
@@ -521,11 +521,11 @@ public class NexusFileBrowser extends NexusFileInstance {
 				 catch (NexusException ne) {
 				 }
 
-				 // Signal dataset not found, so we continue parsing children
+				 // Signal DataItem not found, so we continue parsing children
 				 closeData();
 			 }
 		 }
-		 throw new NexusException("No dataset found in current group: "
+		 throw new NexusException("No DataItem found in current group: "
 				 + m_pVirtualPath.getValue());
 	 }
 
@@ -570,7 +570,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 }
 
 	 /**
-	  * closeData Close currently opened dataset, and return to parent node
+	  * closeData Close currently opened DataItem, and return to parent node
 	  * 
 	  * @throws NexusException
 	  */
@@ -589,7 +589,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 }
 
 	 /**
-	  * closeAll Close every opened dataset and/or groups to step back until the
+	  * closeAll Close every opened DataItem and/or groups to step back until the
 	  * Nexus file root is reached
 	  * 
 	  * @note the NeXus file is kept opened
@@ -598,11 +598,11 @@ public class NexusFileBrowser extends NexusFileInstance {
 		 // Check the file is opened else throws Exception
 		 try {
 			 if (getNexusFile() != null) {
-				 // Try to close dataset
+				 // Try to close DataItem
 				 try {
 					 closeData();
 				 } catch (NexusException ne) {
-					/* Nothing to do: no dataset were opened */
+					/* Nothing to do: no DataItem were opened */
 				 }
 
 				 // Closes groups until the path is empty, i.e. reaching NeXus
@@ -684,13 +684,13 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 }
 
 	 /**
-	  * isOpenedDataSet Return true if the opened item is a dataset
+	  * isOpenedDataItem Return true if the opened item is a DataItem
 	  * 
 	  * @param sNodeName
 	  *            name of the node from which we want to know the class name
 	  */
-	 public boolean isOpenedDataSet() {
-		 return m_pRealPath.getDataSetName() != null;
+	 public boolean isOpenedDataItem() {
+		 return m_pRealPath.getDataItemName() != null;
 	 }
 
 	 /**
@@ -737,7 +737,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 	 protected NXlink getNXlink() throws NexusException {
 		NXlink nlLink = null;
 		
-		if (isOpenedDataSet())
+		if (isOpenedDataItem())
 		    nlLink = getNexusFile().getdataID();
 		else
 		    nlLink = getNexusFile().getgroupID();
@@ -935,7 +935,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 		 if (!isListGroupChildUpToDate()) {
 			 TreeMap<String, String> hmNodeList;
 
-			 // Case we are in a dataset
+			 // Case we are in a DataItem
 			 if (m_pRealPath.getGroupsName() == null)
 				 m_tNodeTab.clear();
 			 // Case we are in a group

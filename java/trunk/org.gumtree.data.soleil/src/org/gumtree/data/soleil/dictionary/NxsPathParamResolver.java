@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.dictionary;
 
 import java.util.regex.Pattern;
 
@@ -9,6 +9,7 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.dictionary.impl.Path;
 import org.gumtree.data.dictionary.impl.PathParameter;
 import org.gumtree.data.interfaces.IContainer;
+import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 public class NxsPathParamResolver implements IPathParamResolver {

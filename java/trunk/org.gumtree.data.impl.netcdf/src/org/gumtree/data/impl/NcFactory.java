@@ -56,6 +56,8 @@ public class NcFactory implements IFactory {
 
 	public static final String NAME = "ncFactory";
 	
+	public static final String LABEL = "NetCDF implemenetation of CDMA";
+	
 	/**
 	 * Hide default constructor.
 	 */
@@ -419,6 +421,11 @@ public class NcFactory implements IFactory {
 
 	public String getName() {
 		return NAME;
+	}
+
+	@Override
+	public String getPluginLabel() {
+		return LABEL;
 	}
 
 	/**

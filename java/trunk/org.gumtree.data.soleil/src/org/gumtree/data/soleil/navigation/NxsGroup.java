@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.navigation;
 
 // Standard import
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.util.Map;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
 import org.gumtree.data.exception.FileAccessException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IContainer;
@@ -20,11 +21,13 @@ import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
+import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.dictionary.NxsDictionary;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 
-import fr.soleil.nexus4tango.DataSet;
+import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.NexusFileWriter;
 import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathData;
@@ -34,7 +37,7 @@ import fr.soleil.nexus4tango.PathNexus;
 public class NxsGroup implements IGroup {
     /// Members
     // API CDM tree need
-    NxsDataSet          m_dataset;        // File handler
+    NxsDatasetFile      m_dataset;        // File handler
     IGroup              m_parent = null;  // Parent group
     List<IContainer>    m_child;          // Children nodes (group, dataitem...)
 
@@ -47,7 +50,7 @@ public class NxsGroup implements IGroup {
     
 
     /// Constructors
-    public NxsGroup(IGroup parent, PathNexus from, NxsDataSet dataset)
+    public NxsGroup(IGroup parent, PathNexus from, NxsDatasetFile dataset)
     {
         m_dictionary    = null;
         m_n4tCurPath     = from;
@@ -58,7 +61,7 @@ public class NxsGroup implements IGroup {
         setParent(parent);
     }
 
-    public NxsGroup(PathNexus from, NxsDataSet dataset)
+    public NxsGroup(PathNexus from, NxsDatasetFile dataset)
     {
         m_dictionary    = null;
         m_n4tCurPath     = from;
@@ -146,55 +149,31 @@ public class NxsGroup implements IGroup {
 
 
     @Override
-    public IDataItem findDataItem(String shortName) {
-        IDataItem resItem = null;
-
-    	List<IDataItem> groups = getDataItemList();
-    	for( Iterator<?> iter = groups.iterator(); iter.hasNext(); )
-    	{
-    		resItem = (IDataItem) iter.next();
-    		if( resItem.getShortName().equals(shortName) )
-    		{
-    			groups.clear();
-    			return resItem;
-    		}
-    	}
-
-    	return null;
+    public IDataItem findDataItem(String keyName) {
+    	IKey key = NxsFactory.getInstance().createKey(keyName);
+        
+		return findDataItem(key);
     }
 
     
     @Override
     public IDimension getDimension(String name) {
+    	IDimension result = null;
         for( IDimension dim : m_dimensions ) {
-            if( dim.getName().equals(name) )
-                return dim;
-        }
-
-        return null;
-    }
-
-    @Override
-    public IGroup findGroup(String shortName) {
-        NxsGroup resGroup = null;
-        NxsGroup tmpGroup = null;
-
-        if( shortName != null && shortName.trim().equals("") )
-            return this;
-
-        List<IGroup> groups = getGroupList();
-        for( Iterator<?> iter = groups.iterator(); iter.hasNext(); )
-        {
-            tmpGroup = (NxsGroup) iter.next();
-            if( tmpGroup.m_n4tCurPath.getCurrentNode().toString().equals(shortName) )
-            {
-                resGroup = tmpGroup;
-                groups.clear();
-                return resGroup;
+            if( dim.getName().equals(name) ) {
+                result = dim;
+                break;
             }
         }
 
-        return resGroup;
+        return result;
+    }
+
+    @Override
+    public IGroup findGroup(String keyName) {
+    	IKey key = NxsFactory.getInstance().createKey(keyName);
+        
+		return findGroup(key);
     }
 
     @Override
@@ -212,7 +191,13 @@ public class NxsGroup implements IGroup {
 
     @Override
     public IGroup findGroupWithAttribute(IKey key, String name, String value) {
-    	List<IContainer> found = findAllOccurrences(key);
+    	
+    	List<IContainer> found = new ArrayList<IContainer>();
+    	
+    	try {
+			found = findAllOccurrences(key);
+		} catch (NoResultException e) {	}
+    	
     	IGroup result = null;
     	for( IContainer item : found ) {
     		if( 
@@ -222,7 +207,6 @@ public class NxsGroup implements IGroup {
     			result = (IGroup) item;
     			break;
     		}
-    		
     	}
         return result;
     }
@@ -318,7 +302,9 @@ public class NxsGroup implements IGroup {
     public IDataItem findDataItem(IKey key) {
         IDataItem item = null;
         List<IContainer> list = new ArrayList<IContainer>();
-        list = findAllOccurrences(key);
+        try {
+			list = findAllOccurrences(key);
+		} catch (NoResultException e) {	}
         
         for( IContainer object : list ) {
         	if( object.getModelType().equals(ModelType.DataItem) ) {
@@ -364,7 +350,12 @@ public class NxsGroup implements IGroup {
     public IGroup findGroup(IKey key) {
         IGroup group = null;
         List<IContainer> list = new ArrayList<IContainer>();
-        list = findAllOccurrences(key);
+        try {
+			list = findAllOccurrences(key);
+		} catch (NoResultException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
         for( IContainer object : list ) {
         	if( object.getModelType().equals(ModelType.Group) ) {
@@ -440,7 +431,7 @@ public class NxsGroup implements IGroup {
     }
 
     @Override
-    public IContainer findContainerByPath(String path) {
+    public IContainer findContainerByPath(String path) throws NoResultException {
     	IContainer foundItem = null;
     	NexusNode nnNode;
     	String[] sNodes;
@@ -462,7 +453,7 @@ public class NxsGroup implements IGroup {
     		}
     		else
     		{
-    			DataSet dataInfo;
+    			DataItem dataInfo;
 
     			if( nfwFile.getCurrentPath().getCurrentNode().getClassName().equals("NXtechnical_data") )
     			{
@@ -476,7 +467,9 @@ public class NxsGroup implements IGroup {
     			((IDataItem) foundItem).setDimensions("*");
     		}
     	}
-    	catch(NexusException ne) {}
+    	catch(NexusException ne) {
+    		throw new NoResultException("Requested path doesn't exist!\nPath: " + path);
+    	}
     	return foundItem;
     }
 
@@ -627,52 +620,17 @@ public class NxsGroup implements IGroup {
     }
 
     @Override
-	public List<IContainer> findAllContainers(IKey key) {
+	public List<IContainer> findAllContainers(IKey key) throws NoResultException {
         return findAllOccurrences(new Key(key));
 	}
 
     @Override
-	public List<IContainer> findAllOccurrences(IKey key) {
+	public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
     	String path = m_dictionary.getPath(key).toString();
 		return findAllContainerByPath(path);
 	}
     
-    @Override
-    public IContainer findObjectByPath(IPath path) {
-    	List<IContainer> containers = findAllContainerByPath(path.toString());
-    	if (containers != null && containers.size() > 0) {
-    		return containers.get(0);
-    	}
-    	return null;
-    }
-    
-    @Override
-/*    public List<IContainer> findAllObjectByPath(String path) {
-        List<IContainer> list = new ArrayList<IContainer>();
-        
-        // Try to list all nodes matching the path
-        try
-        {
-        	// Transform path into a NexusNode array
-            NexusNode[] nodes = PathNexus.splitStringToNode(path);
-            
-            // Open path from root
-            m_dataset.getHandler().closeAll();
-            
-            list = listAllNodes(m_dataset.getHandler(), nodes, 0 );
-        }
-        catch(NexusException ne)
-        {
-            try
-            {
-            	list.clear();
-        	    m_dataset.getHandler().closeAll();
-            } catch(NexusException e) {}
-        }
-        return list;
-    }
-    */
-    public List<IContainer> findAllContainerByPath(String path) {
+    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
         List<IContainer> list = new ArrayList<IContainer>();
         
         // Try to list all nodes matching the path
@@ -717,6 +675,7 @@ public class NxsGroup implements IGroup {
             	list.clear();
         	    m_dataset.getHandler().closeAll();
             } catch(NexusException e) {}
+            throw new NoResultException("Requested path doesn't exist!");
         }
         return list;
     }
@@ -739,8 +698,22 @@ public class NxsGroup implements IGroup {
 
     @Override
 	public IContainer findContainer(String shortName) {
-		// TODO Auto-generated method stub
-		return null;
+    	IKey key = NxsFactory.getInstance().createKey(shortName);
+    	IContainer result;
+    	try {
+			List<IContainer> list = findAllOccurrences(key);
+			if( list.size() > 0) {
+				result = list.get(0);
+			}
+			else {
+				result = null;
+			}
+		} catch (NoResultException e) {
+			result = null;
+		}
+    	
+    	
+		return result;
 	}
     
     @Override
@@ -815,7 +788,7 @@ public class NxsGroup implements IGroup {
         }
 
         IContainer item;
-        DataSet dataInfo;
+        DataItem dataInfo;
         PathNexus path;
         for( int i = 0; i < nexusNodes.length; i++ )
         {
@@ -861,8 +834,8 @@ public class NxsGroup implements IGroup {
         
         NexusNode[] nodes = m_n4tCurPath.getParentPath().getNodes();
         NxsGroup ancestor = (NxsGroup) m_dataset.getRootGroup();
-        PathNexus origin = m_dataset.getHandler().getCurrentPath().clone();
-        PathNexus path = PathNexus.ROOT_PATH.clone();
+        PathNexus origin  = m_dataset.getHandler().getCurrentPath().clone();
+        PathNexus path    = PathNexus.ROOT_PATH.clone();
         NxsGroup group;
         
         for( NexusNode node : nodes ) {
@@ -891,57 +864,10 @@ public class NxsGroup implements IGroup {
 	public String getFactoryName() {
 		return NxsFactory.NAME;
 	}
-	
-	/*
-    private List<IContainer> listAllNodes(NexusFileWriter handler, NexusNode[] nodes, int iDepthLvl) throws NexusException {
-    	List<IContainer> result  = new ArrayList<IContainer>();
-    	List<NexusNode> child;
-    	
-    	if( iDepthLvl < nodes.length && nodes[iDepthLvl] != null ) {
-    		
-    		// Get current referent node
-    		NexusNode node = nodes[iDepthLvl];
-    		++iDepthLvl;
-    		
-    		// List current level node
-    		child = handler.listChildren();
-    		
-    		// If not the last depth level recursive call will be made
-	    	if( iDepthLvl < nodes.length ) {
-	    		
 
-    			// Do nodes matches
-	    		for( NexusNode current : child ) {
-	    			if( current.matchesNode(node) ) {
-	    				// Recursive call
-	    				handler.openNode(current);
-	    				result.addAll( listAllNodes(handler, nodes, iDepthLvl) );
-	    				handler.closeData();
-	    			}
-	    		}
-	    	}
-	    	// If last depth level directly add matching node
-	    	else {
-	    		IContainer item;
-	    		// Do nodes matches
-	    		for( NexusNode current : child ) {
-	    			if( current.matchesNode(node) ) {
-	    				// Create IContainer
-						handler.openNode(current);
-						
-						if( handler.getCurrentPath().getCurrentNode().isGroup() ) {
-							item = new NxsGroup(handler.getCurrentPath().clone(), m_dataset);
-						}
-						else {
-							item = new NxsDataItem(handler.readDataInfo(), m_dataset);
-						}
-						handler.closeData();
-	    				result.add( item );
-	    			}
-	    		}
-	    	}
-    	}
-    	return result;
-    }
-    */
+	@Override
+	public IContainer findObjectByPath(IPath path) {
+		throw new UnsupportedOperationException();
+	}
+
 }

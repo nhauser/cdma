@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.interfaces.IIndex;
 
@@ -125,12 +125,9 @@ public class NxsIndexMatrix extends NxsIndex {
 			);
 		
 		// Get the number of cells in storage arrays
-		int current = 1;
 		long[] iStride = m_indexStorage.getStride();
-		for( int dim = 0; dim < iStride.length; dim++ ) {
-			current *= iStride[dim];
-		}
-		current *= m_indexStorage.getShape()[0];
+		long current = iStride[ 0 ] * m_indexStorage.getShape()[0];
+		
 		
 		// Divide the stride by number of cells contained in storage arrays
 		iStride = new long[iRank];
@@ -348,11 +345,11 @@ public class NxsIndexMatrix extends NxsIndex {
     // ---------------------------------------------------------
     /// Protected methods
     // ---------------------------------------------------------
-	protected NxsIndex getIndexMatrix() {
+	public NxsIndex getIndexMatrix() {
 		return m_indexArrayData;
 	}
 	
-	protected NxsIndex getIndexStorage() {
+	public NxsIndex getIndexStorage() {
 		return m_indexStorage;
 	}
 	

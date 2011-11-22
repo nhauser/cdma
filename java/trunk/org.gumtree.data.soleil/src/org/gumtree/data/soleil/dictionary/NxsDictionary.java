@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.dictionary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,6 +16,7 @@ import org.gumtree.data.dictionary.impl.Path;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IKey;
+import org.gumtree.data.soleil.NxsFactory;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;

@@ -1,6 +1,7 @@
 package fr.soleil.nexus4tango;
 
 // Tools lib
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -47,14 +48,14 @@ public class NexusFileReader extends NexusFileBrowser {
 	 * @param sPath
 	 *            path to set datas in current file
 	 */
-	public DataSet readData(PathData pdPath) throws NexusException {
-		DataSet oOutput;
+	public DataItem readData(PathData pdPath) throws NexusException {
+		DataItem oOutput;
 
-		// Open target dataset
+		// Open target DataItem
 		openPath(pdPath);
 
-		// Read data from dataset
-		oOutput = getDataSet();
+		// Read data from DataItem
+		oOutput = getDataItem();
 
 		// Return to document root
 		closeAll();
@@ -62,14 +63,14 @@ public class NexusFileReader extends NexusFileBrowser {
 		return oOutput;
 	}
 	
-	public DataSet readDataSlab(PathData pPath, int[] iStart, int[] iShape) throws NexusException {
-		DataSet oOutput;
+	public DataItem readDataSlab(PathData pPath, int[] iStart, int[] iShape) throws NexusException {
+		DataItem oOutput;
 		
-		// Open target dataset
+		// Open target DataItem
 		openPath(pPath);
 
-		// Read data from dataset
-		oOutput = getDataSet(iStart, iShape);
+		// Read data from DataItem
+		oOutput = getDataItem(iStart, iShape);
 
 		// Return to document root
 		closeAll();
@@ -78,23 +79,23 @@ public class NexusFileReader extends NexusFileBrowser {
 	}
 
 	/**
-	 * readAttr Read dataset's named attribute to the given path
+	 * readAttr Read DataItem's named attribute to the given path
 	 * 
 	 * @param sName
-	 *            attribut's name of the dataset to be read
+	 *            attribut's name of the DataItem to be read
 	 * @param sPath
-	 *            path to dataset in current file
+	 *            path to DataItem in current file
 	 */
 	public Object readAttr(String sName, PathNexus pnPath)
 			throws NexusException {
 		Object oOutput = null;
 
-		// Open target dataset
+		// Open target DataItem
 		if (pnPath != null) {
 			openPath(pnPath);
 		}
 
-		// Read data from dataset
+		// Read data from DataItem
 		oOutput = getAttributeValue(sName);
 
 		// Get back to document root
@@ -110,20 +111,20 @@ public class NexusFileReader extends NexusFileBrowser {
 	// / Node reading value
 	// ---------------------------------------------------------
 	/**
-	 * readDataInfo Return the DataSet fitting the opened dataset, without main
-	 * data. The DataSet is initialized with dimsize, type... but the dataset
+	 * readDataInfo Return the DataItem fitting the opened DataItem, without main
+	 * data. The DataItem is initialized with dimsize, type... but the DataItem
 	 * isn't read.
 	 * 
 	 */
-	public DataSet readDataInfo() throws NexusException {
+	public DataItem readDataInfo() throws NexusException {
 		NexusNode nnNode = getCurrentRealPath().getCurrentNode();
 		if (!nnNode.isGroup() && nnNode.getClassName().equals("NXtechnical_data")) {
-			return getDataSet();
+			return getDataItem();
 		}
 		
-		// Get infos on dataset (data type, rank, dimsize)
-		int[] iDataInf = new int[2]; // iDataInf[0] = dataset rank ; iDataInf[1]= data type
-		int[] iNodeSize = new int[RANK_MAX]; // whole dataset dimension's sizes
+		// Get infos on DataItem (data type, rank, dimsize)
+		int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ; iDataInf[1]= data type
+		int[] iNodeSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
 		int[] iDimSize; // signal dimension's sizes
 
 		getNexusFile().getinfo(iNodeSize, iDataInf);
@@ -132,17 +133,17 @@ public class NexusFileReader extends NexusFileBrowser {
 		iDimSize = new int[iDataInf[0]];
 		System.arraycopy(iNodeSize, 0, iDimSize, 0, iDataInf[0]);
 
-		// Check if dataset is linked to an external dataset
-		DataSet dsData = new DataSet();
+		// Check if DataItem is linked to an external DataItem
+		DataItem dsData = new DataItem();
 		dsData.setType(iDataInf[1]);
 		dsData.setSize(iDimSize);
 		dsData.setSlabSize(iDimSize);
-		dsData.setNodeName(getCurrentRealPath().getDataSetName());
+		dsData.setNodeName(getCurrentRealPath().getDataItemName());
 		dsData.setPath(getCurrentRealPath().clone());
 		dsData.isSingleRawArray(m_bResultAsSingleRaw);
 
-		// Initialize DataSet's attributes
-		getDataSetAttribute(dsData);
+		// Initialize DataItem's attributes
+		getDataItemAttribute(dsData);
 
 		return dsData;
 	}
@@ -151,7 +152,7 @@ public class NexusFileReader extends NexusFileBrowser {
 			throws NexusException {
 		
 		// We want a iNbDim dimension array of data, so dimensions are the
-		// iNbDim last ones of the opened dataset
+		// iNbDim last ones of the opened DataItem
 		int[] length = { 1 };
 		int[] iStart;
 
@@ -159,8 +160,8 @@ public class NexusFileReader extends NexusFileBrowser {
 			iRank = iDataInf[0];
 		if (iRank > iDataInf[0])
 			throw new NexusException(
-					"Requested dataset rank is too high: requested rank "
-							+ iRank + " available of the dataset is "
+					"Requested DataItem rank is too high: requested rank "
+							+ iRank + " available of the DataItem is "
 							+ iDataInf[0]);
 
 		iStart = new int[iRank];
@@ -190,31 +191,33 @@ public class NexusFileReader extends NexusFileBrowser {
 		   oOutput = new String((byte[]) oOutput);
 		}
 
-		// Setting dataset's data
+		// Setting DataItem's data
 		if (iDataInf[1] == NexusFile.NX_BOOLEAN) {
-			oOutput = convertArray(new DataSet(oOutput));
+			oOutput = convertArray(new DataItem(oOutput));
 		}
 
 		return oOutput;
 	}
 
 	/**
-	 * readDataSet Return all datas and attributes of the currently opened
-	 * dataset
+	 * readDataItem Return all datas and attributes of the currently opened
+	 * DataItem
 	 * 
 	 * @param iDataRank
 	 *            rank of the required data (1 spectrum, 2 images...) (optional)
-	 * @note if no rank is given, value of the dataset will be return
+	 * @note if no rank is given, value of the DataItem will be return
 	 *       integrally: all slabs will be taken as one entire data
 	 */
-	private DataSet readDataSet(int iDataRank) throws NexusException {
-		DataSet dsData = readDataInfo();
+	private DataItem readDataItem(int iDataRank) throws NexusException {
+		DataItem dsData = readDataInfo();
 		
-		dsData.setData(
-						readNodeValue(
-							new int[] { dsData.getSize().length, dsData.getType() }, 
-							dsData.getSize(), 
-							iDataRank
+		dsData.setData( 
+						new SoftReference<Object >(
+							readNodeValue(
+								new int[] { dsData.getSize().length, dsData.getType() }, 
+								dsData.getSize(), 
+								iDataRank
+								)
 							)
 					  );
 
@@ -230,7 +233,7 @@ public class NexusFileReader extends NexusFileBrowser {
 	 * @param iStart
 	 *            starting position of the slab to project into oOutput
 	 * @param iDimSize
-	 *            dimensions' size of the dataset
+	 *            dimensions' size of the DataItem
 	 * @param oInput
 	 *            input array (as a single row) containing data to reshape
 	 * @param oOutput
@@ -251,7 +254,7 @@ public class NexusFileReader extends NexusFileBrowser {
 	 * @param iStart
 	 *            starting position of the slab to project into oOutput
 	 * @param iDimSize
-	 *            dimensions' size of the dataset
+	 *            dimensions' size of the DataItem
 	 * @param oInput
 	 *            input array (as a single row) containing data to reshape
 	 * @param oOutput
@@ -288,90 +291,94 @@ public class NexusFileReader extends NexusFileBrowser {
 		}
 	}
 
-	protected DataSet getDataSet() throws NexusException {
-		return getDataSet(-1);
+	protected DataItem getDataItem() throws NexusException {
+		return getDataItem(-1);
 	}
 	
-	protected DataSet getDataSet(int iRank) throws NexusException {
-		DataSet dataset;
+	protected DataItem getDataItem(int iRank) throws NexusException {
+		DataItem dataItem;
 		NexusNode nnNode = getCurrentRealPath().getCurrentNode();
 
 		String sNodeName = nnNode.getNodeName();
 		String sNodeClass = nnNode.getClassName();
 
-		// If encountered a dataset get its datas
+		// If encountered a DataItem get its datas
 		if (!nnNode.isGroup() && !sNodeClass.equals("NXtechnical_data")) {
-			dataset = readDataSet(iRank);
-			dataset.setNodeName(sNodeName);
+			dataItem = readDataItem(iRank);
+			dataItem.setNodeName(sNodeName);
 
-			return dataset;
+			return dataItem;
 		}
 		// else if we encountered a NXtechnical_data group: we get its "data"
 		// and "description"
 		else if (!nnNode.isGroup() && sNodeClass.equals("NXtechnical_data")) {
 			// Get the "data" node
 			openData("data");
-			dataset = readDataSet(iRank);
-			dataset.setNodeName(sNodeName);
+			dataItem = readDataItem(iRank);
+			dataItem.setNodeName(sNodeName);
 			closeData();
 			// Try to get a description for the technical data
 			try {
 				// Set to "data" as description attribute the "description" node
 				// beside
 				openData("description");
-				dataset.setDesc(readDataSet(iRank).getData().toString());
+				dataItem.setDesc(readDataItem(iRank).getData().toString());
 				closeData();
 			} catch (NexusException ne) {
 			}
-			dataset.setPath(getCurrentRealPath().clone());
+			dataItem.setPath(getCurrentRealPath().clone());
 
-			return dataset;
+			return dataItem;
 		} else
 			return null;
 	}
 	
-	protected DataSet getDataSet(int[] iStartPos, int[] iShape) throws NexusException {
-		DataSet dsData = readDataInfo();
-		dsData.setStart(iStartPos);
-		dsData.setSlabSize(iShape);
+	protected DataItem getDataItem(int[] iStartPos, int[] iShape) throws NexusException {
+		DataItem dsData = readDataInfo();
 		
-		int[] iDataInf = new int[] { dsData.getSize().length, dsData.getType() };
+		NexusNode nnNode = getCurrentRealPath().getCurrentNode();
+		String sNodeClass = nnNode.getClassName();
+		if( ! sNodeClass.equals("NXtechnical_data") ) {
+			dsData.setStart(iStartPos);
+			dsData.setSlabSize(iShape);
 		
-		// We want a iNbDim dimension array of data, so dimensions are the
-		// iNbDim last ones of the opened dataset
-		int[] length = { 1 };
-
-		for (int iDim : iShape) {
-			length[0] *= iDim;
+			int[] iDataInf = new int[] { dsData.getSize().length, dsData.getType() };
+			
+			// We want a iNbDim dimension array of data, so dimensions are the
+			// iNbDim last ones of the opened DataItem
+			int[] length = { 1 };
+	
+			for (int iDim : iShape) {
+				length[0] *= iDim;
+			}
+	
+			// Prepare an array data
+			Object oOutput;
+			Object oInput = defineArrayObject(iDataInf[1], length);
+	
+			// Set data into temporary array having a single raw shape
+			getNexusFile().getslab(iStartPos, iShape, oInput);
+			
+			if (m_bResultAsSingleRaw) {
+				oOutput = oInput;
+			} else {
+				// Changing the array into matrix (having iDimSize dimensions'
+				// sizes) instead of single row
+				oOutput = defineArrayObject(iDataInf[1], iShape);
+			}
+	
+			// Converting byte[] to string in case of NX_CHAR data
+			if (iDataInf[1] == NexusFile.NX_CHAR) {
+			   oOutput = new String((byte[]) oOutput);
+			}
+	
+			// Setting DataItem's data
+			if (iDataInf[1] == NexusFile.NX_BOOLEAN) {
+				oOutput = convertArray(new DataItem(oOutput));
+			}
+	
+			dsData.setData( new SoftReference<Object >(oOutput) );
 		}
-
-		// Prepare an array data
-		Object oOutput;
-		Object oInput = defineArrayObject(iDataInf[1], length);
-
-		// Set data into temporary array having a single raw shape
-		getNexusFile().getslab(iStartPos, iShape, oInput);
-		
-		if (m_bResultAsSingleRaw) {
-			oOutput = oInput;
-		} else {
-			// Changing the array into matrix (having iDimSize dimensions'
-			// sizes) instead of single row
-			oOutput = defineArrayObject(iDataInf[1], iShape);
-		}
-
-		// Converting byte[] to string in case of NX_CHAR data
-		if (iDataInf[1] == NexusFile.NX_CHAR) {
-		   oOutput = new String((byte[]) oOutput);
-		}
-
-		// Setting dataset's data
-		if (iDataInf[1] == NexusFile.NX_BOOLEAN) {
-			oOutput = convertArray(new DataSet(oOutput));
-		}
-
-		dsData.setData(oOutput);
-
 		dsData.isSingleRawArray(m_bResultAsSingleRaw);
 		
 		return dsData;
@@ -379,17 +386,17 @@ public class NexusFileReader extends NexusFileBrowser {
 
 	/**
 	 * getChildrenDatas Scan currently opened group, to get all direct
-	 * descendants' dataset and instrument informations (such as
-	 * NXtechnical_data). Then return a list of DataSet.
+	 * descendants' DataItem and instrument informations (such as
+	 * NXtechnical_data). Then return a list of DataItem.
 	 * 
 	 * @throws NexusException
 	 */
 	@SuppressWarnings("unchecked")
-	protected Stack<DataSet> getChildrenDatas() throws NexusException {
+	protected Stack<DataItem> getChildrenDatas() throws NexusException {
 		// Defining variables
 		NexusNode nnCurNode;
 		ArrayList<NexusNode> alNodeList;
-		Stack<DataSet> alDataSet = new Stack<DataSet>();
+		Stack<DataItem> alDataItem = new Stack<DataItem>();
 
 		// Parse children
 		alNodeList = (ArrayList<NexusNode>) listChildren().clone();
@@ -397,22 +404,22 @@ public class NexusFileReader extends NexusFileBrowser {
 			nnCurNode = alNodeList.get(iIndex);
 			if (!nnCurNode.isGroup()) {
 				openData(nnCurNode.getNodeName());
-				alDataSet.push(getDataSet());
+				alDataItem.push(getDataItem());
 				closeData();
 			}
 		}
-		alDataSet.trimToSize();
-		return alDataSet;
+		alDataItem.trimToSize();
+		return alDataItem;
 	}
 
 	/**
-	 * getDescendantsDatas Read all datasets that are descendants of the
+	 * getDescendantsDatas Read all DataItems that are descendants of the
 	 * currently opened group
 	 */
-	protected Stack<DataSet> getDescendantsDatas() throws NexusException {
+	protected Stack<DataItem> getDescendantsDatas() throws NexusException {
 		NexusNode nnCurNode;
 		ArrayList<NexusNode> lNodes;
-		Stack<DataSet> sDatas = new Stack<DataSet>();
+		Stack<DataItem> sDatas = new Stack<DataItem>();
 
 		// Get all direct descendants' datas
 		sDatas.addAll(getChildrenDatas());
@@ -438,7 +445,7 @@ public class NexusFileReader extends NexusFileBrowser {
 	// ---------------------------------------------------------
 	/**
 	 * getAttributeValue Return the value of the named attribute from the
-	 * currently opened dataset
+	 * currently opened DataItem
 	 * 
 	 * @param sAttrName
 	 *            attribute's name from which value is requested
@@ -475,14 +482,14 @@ public class NexusFileReader extends NexusFileBrowser {
 	}
 
 	/**
-	 * getDataSetAttribute Get attributs from a dataset. Those can be: name,
+	 * getDataItemAttribute Get attributs from a DataItem. Those can be: name,
 	 * description, unit and timestamp
 	 * 
 	 * @param dsData
 	 * @throws NexusException
 	 */
-	protected void getDataSetAttribute(DataSet dsData) throws NexusException {
-		// Get a map of dataset's attributs
+	protected void getDataItemAttribute(DataItem dsData) throws NexusException {
+		// Get a map of DataItem's attributs
 		Hashtable<String, AttributeEntry> hAttrList = listAttribute();
 		Object oAttrVal;
 		String sAttrName;
@@ -500,34 +507,19 @@ public class NexusFileReader extends NexusFileBrowser {
 	// / Checking methods
 	// ---------------------------------------------------------
 	/**
-	 * checkData Check if given data fits the currently opened dataset
-	 * 
-	 * @param oData
-	 *            array of data to compare with current node
-	 * @throws NexusException
-	 *             if node and data aren't compatible
-	 */
-	protected void checkDataMatch(Object oData) throws NexusException {
-		DataSet dsData = new DataSet();
-		dsData.initFromData(oData);
-
-		checkDataMatch(dsData);
-	}
-
-	/**
-	 * checkData Check if given data fits the currently opened dataset
+	 * checkData Check if given data fits the currently opened DataItem
 	 * 
 	 * @param dsData
-	 *            DataSet properly initiated containing data to compare with
+	 *            DataItem properly initiated containing data to compare with
 	 *            current node
 	 * @throws NexusException
 	 *             if node and data aren't compatible
 	 */
-	protected void checkDataMatch(DataSet dsData) throws NexusException {
-		// Get infos on dataset (data type, rank, dimsize)
-		int[] iDataInf = new int[2]; // iDataInf[0] = dataset rank ; iDataInf[1] = data type
-		int[] iNodSize = new int[RANK_MAX]; // whole dataset dimension's sizes
-		int[] iDimSize = dsData.getSize();  // DataSet dimension's sizes
+	protected void checkDataMatch(DataItem dsData) throws NexusException {
+		// Get infos on DataItem (data type, rank, dimsize)
+		int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ; iDataInf[1] = data type
+		int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
+		int[] iDimSize = dsData.getSize();  // DataItem dimension's sizes
 
 		getNexusFile().getinfo(iNodSize, iDataInf);
 
@@ -543,7 +535,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
 		// Checking dimensions sizes compatibility
 		{
-			// The dimensions to check of the opened dataset are iDimSize.length
+			// The dimensions to check of the opened DataItem are iDimSize.length
 			// last ones
 			int iDim = (iDataInf[0] - iDimSize.length);
 			for (; iDim < iDataInf[0]; iDim++) {
@@ -778,7 +770,7 @@ public class NexusFileReader extends NexusFileBrowser {
 	 * 
 	 * @note: conversions are the following: bool => byte, byte => bool
 	 */
-	protected Object convertArray(DataSet dsData) throws NexusException {
+	protected Object convertArray(DataItem dsData) throws NexusException {
 		String sClassName = dsData.getData().getClass().getName();
 		sClassName = sClassName.substring(sClassName.lastIndexOf('[') + 1);
 		Object oOutput;
@@ -845,8 +837,8 @@ public class NexusFileReader extends NexusFileBrowser {
 	
     /**
      * checkLinkTarget open the target file and check if pointed data is a
-     * dataset. Returns a string array of two elements. The first is the
-     * attribute to distinguish if a dataset or nxgroup is pointed, the seconds
+     * DataItem. Returns a string array of two elements. The first is the
+     * attribute to distinguish if a DataItem or nxgroup is pointed, the seconds
      * is the full sibling path (completed by missing class or names).
      * 
      * @param prTgtPath
@@ -855,8 +847,7 @@ public class NexusFileReader extends NexusFileBrowser {
      *            path of the starting node for the relative link
      * @return the corresponding absolute path if found, else return null
      */
-    protected PathNexus checkRelativeLinkTarget(PathNexus prTgtPath,
-            PathData paSrcPath) {
+    protected PathNexus checkRelativeLinkTarget(PathNexus prTgtPath, PathData paSrcPath) {
         PathNexus pnTarget = null;
         if (paSrcPath.isRelative())
             return null;

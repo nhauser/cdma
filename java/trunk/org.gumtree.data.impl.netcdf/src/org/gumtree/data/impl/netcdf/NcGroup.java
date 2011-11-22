@@ -1357,7 +1357,10 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 		List<IContainer> objectList = new ArrayList<IContainer>();
 		List<IGroup> entryList = getEntries();
 		for (IGroup entry : entryList) {
-			objectList.add(entry.findContainerByPath(path));
+			try {
+				objectList.add(entry.findContainerByPath(path));
+			} catch (Exception e) {
+			}
 		}
 		return objectList;
 	}

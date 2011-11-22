@@ -90,7 +90,7 @@ public class PathNexus implements Cloneable {
 
 	/**
 	 * getDepth
-	 * returns the path's depth (i.e number of group or dataset described inside)
+	 * returns the path's depth (i.e number of group or DataItem described inside)
 	 */
 	public int getDepth()
 	{
@@ -181,11 +181,11 @@ public class PathNexus implements Cloneable {
 	}
 
 	/**
-	 * getDataSetName
-	 * returns the name of the dataset in path (node having isGroup == false)
-	 * @note if no dataset provided returns null (i.e. the path targets a group)
+	 * getDataItemName
+	 * returns the name of the DataItem in path (node having isGroup == false)
+	 * @note if no DataItem provided returns null (i.e. the path targets a group)
 	 */
-	public String getDataSetName()
+	public String getDataItemName()
 	{
 		for(int i = m_nnNode.size() - 1; i >= 0; i--)
 		{

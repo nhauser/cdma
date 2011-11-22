@@ -1,6 +1,7 @@
 package fr.soleil.nexus4tango;
 
 // Tools lib
+import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -356,11 +357,11 @@ public class AcquisitionData {
 		// Open the required Acquisition (i.e. NXentry)
 		m_nfwFile.openGroup(sAcquiName, "NXentry");
 
-		// Open the required dataset
+		// Open the required DataItem
 		m_nfwFile.openSubItem( iImageIndex, "NXdata", "image#.*" );
 		m_nfwFile.openSignalDataNode();
 
-		pPath = new PathData( m_nfwFile.getCurrentRealPath().getGroupsName(), m_nfwFile.getCurrentRealPath().getDataSetName() );
+		pPath = new PathData( m_nfwFile.getCurrentRealPath().getGroupsName(), m_nfwFile.getCurrentRealPath().getDataItemName() );
 
 		// Close file
 		m_nfwFile.closeFile();
@@ -372,34 +373,34 @@ public class AcquisitionData {
 	/// Public reading methods
 	// ---------------------------------------------------------
 	/**
-	 * Return a specified DataSet belonging to an instrument in an acquisition. It corresponds to the following parameters:
+	 * Return a specified DataItem belonging to an instrument in an acquisition. It corresponds to the following parameters:
 	 *
 	 * @param sAcquiName
 	 * @param instName
-	 * @param dataSetName
+	 * @param DataItemName
 	 * @param bCaseSensitive : true / false
-	 * @return DataSet
+	 * @return DataItem
 	 * @throws NexusException
 	 */
-	public DataSet getDataSet(String sAcquiName, String sInstrName, String dataSetName, boolean bCaseSensitive) throws NexusException
+	public DataItem getDataItem(String sAcquiName, String sInstrName, String DataItemName, boolean bCaseSensitive) throws NexusException
 	{
-		// Get a DataSet array belonging to an instrument
-		DataSet[] dataset_array = getInstrumentData(sAcquiName, sInstrName);
-		if(dataset_array != null)
+		// Get a DataItem array belonging to an instrument
+		DataItem[] DataItem_array = getInstrumentData(sAcquiName, sInstrName);
+		if(DataItem_array != null)
 		{
-			// Scan the array to find the proper DataSet
-			for (int j = 0 ; j < dataset_array.length; j++)
+			// Scan the array to find the proper DataItem
+			for (int j = 0 ; j < DataItem_array.length; j++)
 			{
-				DataSet dataset = dataset_array[j];
+				DataItem DataItem = DataItem_array[j];
 				if(bCaseSensitive)
 				{
-					if(dataset.getNodeName().equals(dataSetName))
-						return dataset;
+					if(DataItem.getNodeName().equals(DataItemName))
+						return DataItem;
 				}
 				else //ignore case
 				{
-					if(dataset.getNodeName().equalsIgnoreCase(dataSetName))
-						return dataset;
+					if(DataItem.getNodeName().equalsIgnoreCase(DataItemName))
+						return DataItem;
 				}
 			}
 		}
@@ -413,17 +414,17 @@ public class AcquisitionData {
 	 * @param iImageIndex position of the 2D data to seek in the acquisition
 	 * @param sAcquiName name of the acquisition to seek in the current file
 	 */
-	public DataSet getData2D(int iImageIndex, String sAcquiName) throws NexusException
+	public DataItem getData2D(int iImageIndex, String sAcquiName) throws NexusException
 	{
-		// Open path to dataset
+		// Open path to DataItem
 		m_nfwFile.openFile();
 		m_nfwFile.closeAll();
 		m_nfwFile.openGroup(sAcquiName, "NXentry");
 		m_nfwFile.openSubItem(iImageIndex, "NXdata", "image#.*");
 		m_nfwFile.openSignalDataNode();
 
-		// Get 2D data from opened dataset
-		DataSet dsData = m_nfwFile.getDataSet(2);
+		// Get 2D data from opened DataItem
+		DataItem dsData = m_nfwFile.getDataItem(2);
 
 		// Close all
 		m_nfwFile.closeFile();
@@ -438,8 +439,8 @@ public class AcquisitionData {
 	 * @param iAcquiIndex number of the acquisition to seek in the current file (optional)
 	 * @note if no iAcqui number is given, then the first encountered one will be opened
 	 */
-	public DataSet getData2D(int iImageIndex ) 					throws NexusException	{ return getData2D(iImageIndex, 0); }
-	public DataSet getData2D(int iImageIndex, int iAcquiIndex)  throws NexusException
+	public DataItem getData2D(int iImageIndex ) 					throws NexusException	{ return getData2D(iImageIndex, 0); }
+	public DataItem getData2D(int iImageIndex, int iAcquiIndex)  throws NexusException
 	{
 		String[] sNodesList = getAcquiList();
 
@@ -451,14 +452,14 @@ public class AcquisitionData {
 
 	/**
 	 * GetInstrumentData
-	 * Return an array of DataSet filled by all data stored in the targeted instrument
+	 * Return an array of DataItem filled by all data stored in the targeted instrument
 	 *
 	 * @param sAcquiName parent Acquisition of the requested instrument
 	 * @param sInstrName instrument's name from which data are requested
 	 */
-	public DataSet[] getInstrumentData(String sAcquiName, String sInstrName) throws NexusException
+	public DataItem[] getInstrumentData(String sAcquiName, String sInstrName) throws NexusException
 	{
-		DataSet[] dsDatas = new DataSet[0];
+		DataItem[] dsDatas = new DataItem[0];
 
 		// Open the file and go to the NeXus file root
 		m_nfwFile.openFile();
@@ -471,7 +472,7 @@ public class AcquisitionData {
 			m_nfwFile.openSubItem(0, "NXinstrument");
 
 			// Defining variables
-			Stack<DataSet> hsDataSet;
+			Stack<DataItem> hsDataItem;
 			String[]  sNode;
 			String    sNodeName;
 			String    sNodeClass;
@@ -487,8 +488,8 @@ public class AcquisitionData {
 	    		m_nfwFile.openGroup(sNodeName, sNodeClass);
 
 	    		// Append its children data
-				hsDataSet = m_nfwFile.getChildrenDatas();
-				dsDatas = hsDataSet.toArray(dsDatas);
+				hsDataItem = m_nfwFile.getChildrenDatas();
+				dsDatas = hsDataItem.toArray(dsDatas);
 
 				// Close group
 				m_nfwFile.closeGroup();
@@ -523,20 +524,20 @@ public class AcquisitionData {
 	 *
 	 * @param pdPath path to set data in current file
 	 */
-	public DataSet readData(PathData pdPath) throws NexusException
+	public DataItem readData(PathData pdPath) throws NexusException
 	{
-		DataSet oOutput;
+		DataItem oOutput;
 
 		// Open the file if exists
 		m_nfwFile.openFile();
 
 		try
 		{
-			// Read data from dataset
+			// Read data from DataItem
 			oOutput = m_nfwFile.readData(pdPath);
 
 			// Prepare data for reading
-			oOutput = prepareReadDataSet(oOutput);
+			oOutput = prepareReadDataItem(oOutput);
 		}
 		catch(NexusException ne)
 		{
@@ -555,11 +556,11 @@ public class AcquisitionData {
 
 	/**
 	 * readData
-	 * Read all datasets that are descendants (direct and indirect children) of the given group
+	 * Read all DataItems that are descendants (direct and indirect children) of the given group
 	 *
-	 * @param pgPath Path aiming a group from which the descendants datasets are wanted
+	 * @param pgPath Path aiming a group from which the descendants DataItems are wanted
 	 */
-	public DataSet[] readData(PathGroup pgPath) throws NexusException
+	public DataItem[] readData(PathGroup pgPath) throws NexusException
 	{
 		// Open the file
 		m_nfwFile.openFile();
@@ -568,12 +569,12 @@ public class AcquisitionData {
 		m_nfwFile.openPath(pgPath);
 
 		// Get all descendants datas
-		Stack<DataSet> lDatas = m_nfwFile.getDescendantsDatas();
+		Stack<DataItem> lDatas = m_nfwFile.getDescendantsDatas();
 
 		// Close the file
 		m_nfwFile.closeFile();
 
-		return lDatas.toArray(new DataSet[lDatas.size()]);
+		return lDatas.toArray(new DataItem[lDatas.size()]);
 	}
 
 	public Object readAttr(String sName, PathNexus pnPath) throws NexusException
@@ -622,11 +623,11 @@ public class AcquisitionData {
 	 * WriteData
 	 * Write data to the given path
 	 *
-	 * @param dsData a dataset object with values to be stored
+	 * @param dsData a DataItem object with values to be stored
 	 * @param pdPath path to set data in current file (can be absolute or local)
 	 * @note if path don't exists it will be automatically created
 	 */
-	public void writeData(DataSet dsData, PathData pdPath) throws NexusException
+	public void writeData(DataItem dsData, PathData pdPath) throws NexusException
 	{
 		// Open the file if exists else create it
 		m_nfwFile.openFile(NexusFile.NXACC_RDWR);
@@ -634,7 +635,7 @@ public class AcquisitionData {
 		try
 		{
 			// Prepare data to be put
-			dsData = prepareWriteDataSet(dsData);
+			dsData = prepareWriteDataItem(dsData);
 
 			// Put data
 			pdPath.applyClassPattern(FREE_PATTERN);
@@ -677,7 +678,7 @@ public class AcquisitionData {
 		else
 			oData = tData;
 
-		DataSet dsData = new DataSet(oData);
+		DataItem dsData = new DataItem(oData);
 
 		// Put data
 		writeData(dsData, pdPath);
@@ -688,33 +689,33 @@ public class AcquisitionData {
 	 * Write each data contained in the array into its own path. The targeted
 	 * file is the current one of AcquisitionData.
 	 *
-	 * @param datas an array of DataSet fully defined
-	 * @note each DataSet must have been initialized with a PathData
+	 * @param datas an array of DataItem fully defined
+	 * @note each DataItem must have been initialized with a PathData
 	 */
-	public void writeData(DataSet[] datas) throws NexusException
+	public void writeData(DataItem... datas) throws NexusException
 	{
 		// Open the file
 		m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
-		// For each DataSet in the given array
-		DataSet currentDataSet = null;
+		// For each DataItem in the given array
+		DataItem currentDataItem = null;
 		for(int i = 0; i < datas.length; i++)
 		{
-			// Check the DataSet has a path
-			currentDataSet = datas[i];
-			if(currentDataSet.getPath() == null )
+			// Check the DataItem has a path
+			currentDataItem = datas[i];
+			if(currentDataItem.getPath() == null )
 			{
-				throw new NexusException("DataSet (" + datas[i].getName() + ") doesn't have a defined path!");
+				throw new NexusException("DataItem (" + datas[i].getName() + ") doesn't have a defined path!");
 			}
 
 			try
 			{
 				// Prepare data to be put
-				currentDataSet = prepareWriteDataSet(currentDataSet);
+				currentDataItem = prepareWriteDataItem(currentDataItem);
 
 				// Put data
-				currentDataSet.getPath().applyClassPattern(FREE_PATTERN);
-				m_nfwFile.writeData(currentDataSet, currentDataSet.getPath());
+				currentDataItem.getPath().applyClassPattern(FREE_PATTERN);
+				m_nfwFile.writeData(currentDataItem, currentDataItem.getPath());
 				fireGroupSubDataWrited(i, datas.length);
 			}
 			catch(NexusException ne)
@@ -810,12 +811,19 @@ public class AcquisitionData {
 	 *
 	 * @param pgTargPath path of the target
 	 * @param pgDestPath path designing where to store the link
-	 * @note Links having the same file for the source and destination can't target the acquisition (NXentry),
-	 * it's due to the jnexus API
+	 * @note Links can't target the acquisition (NXentry), it's due to the jnexus API
+	 * @note both path must be of same type: PathData or PathGroup
 	 */
-	public void writeLink(PathGroup pgTargPath, PathGroup pgDestPath) throws NexusException
+	public void writeLink(PathNexus pgTargPath, PathNexus pgDestPath) throws NexusException
 	{
+		// Open the file if exists else create it
+		m_nfwFile.openFile(NexusFile.NXACC_RDWR);
+		
+		// Write the link
 		m_nfwFile.writeLink(pgTargPath, pgDestPath);
+		
+		// Close the file
+		m_nfwFile.closeFile();
 	}
 	
 	// ---------------------------------------------------------
@@ -863,33 +871,33 @@ public class AcquisitionData {
 	/// Private methods
 	// ---------------------------------------------------------
 	/**
-	 * prepareWriteDataSet
-	 * Fill the end of a NX_CHAR DataSet with END_STRING_CHAR to ensure it have a length MAX_LEN_CHAR of characters.
+	 * prepareWriteDataItem
+	 * Fill the end of a NX_CHAR DataItem with END_STRING_CHAR to ensure it have a length MAX_LEN_CHAR of characters.
 	 * If this length is not forced, data could not be update after its creation (due to compatibility check).
-	 * Indeed for NX_CHAR DataSet, the dimension size returned is the exactly the string's length, not MAX_LEN_CHAR
-	 * dataset's Initialization.
+	 * Indeed for NX_CHAR DataItem, the dimension size returned is the exactly the string's length, not MAX_LEN_CHAR
+	 * DataItem's Initialization.
 	 *
-	 * @param dsData DataSet to be stored
-	 * @return the same DataSet ready for writing
+	 * @param dsData DataItem to be stored
+	 * @return the same DataItem ready for writing
 	 */
-	private DataSet prepareWriteDataSet(DataSet dsData) throws NexusException
+	private DataItem prepareWriteDataItem(DataItem dsData) throws NexusException
 	{
 		// Checking if data is null
 		if( null == dsData || null == dsData.getData() )
-			dsData = new DataSet(NexusFileWriter.NULL_VALUE);
+			dsData = new DataItem(NexusFileWriter.NULL_VALUE);
 
 		return dsData;
 	}
 
 	/**
-	 * prepareReadDataSet
-	 * Clean the end of a NX_CHAR DataSet's value, by deleting undesired chars. Indeed END_STRING_CHAR have been
+	 * prepareReadDataItem
+	 * Clean the end of a NX_CHAR DataItem's value, by deleting undesired chars. Indeed END_STRING_CHAR have been
 	 * added till the string reach the MAX_LEN_CHAR size. If the type isn't NX_CHAR is returned as it was.
 	 *
-	 * @param dsData a DataSet to be clean
-	 * @return a cleaned DataSet ready to be used after.
+	 * @param dsData a DataItem to be clean
+	 * @return a cleaned DataItem ready to be used after.
 	 */
-	private DataSet prepareReadDataSet(DataSet dsData) throws NexusException
+	private DataItem prepareReadDataItem(DataItem dsData) throws NexusException
 	{
 		if( dsData.getType() == NexusFile.NX_CHAR )
 		{
@@ -904,7 +912,7 @@ public class AcquisitionData {
 			}
 
 			// Update data and its dimension
-			dsData.setData(sTmpStr);
+			dsData.setData( new SoftReference<Object >(sTmpStr) );
 			dsData.getSize()[dsData.getSize().length-1] = iSize;
 			dsData.getSlabSize()[dsData.getSize().length-1] = iSize;
 		}

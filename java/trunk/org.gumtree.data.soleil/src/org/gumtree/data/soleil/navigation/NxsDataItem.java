@@ -1,6 +1,5 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.navigation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.List;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataItem;
@@ -17,12 +17,16 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IRange;
+import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.array.NxsArray;
+import org.gumtree.data.soleil.array.NxsArrayMatrix;
+import org.gumtree.data.soleil.array.NxsIndex;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
-import fr.soleil.nexus4tango.DataSet;
+import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus4tango.DataItem.Data;
 import fr.soleil.nexus4tango.PathGroup;
-import fr.soleil.nexus4tango.DataSet.Data;
 
 public class NxsDataItem implements IDataItem {
 
@@ -41,9 +45,9 @@ public class NxsDataItem implements IDataItem {
     
     
 	/// Members
-    private NxsDataSet           m_cdmDataset;       // CDM IDataset i.e. file handler
+    private NxsDataset           m_cdmDataset;       // CDM IDataset i.e. file handler
     private IGroup               m_parent = null;    // parent group
-    private DataSet[]            m_n4tDataSets;      // NeXus dataset support of the data
+    private DataItem[]           m_n4tDataItems;     // NeXus dataitem support of the data
     private IArray               m_array = null;     // CDM IArray supporting a view of the data
     private ArrayList<DimOrder>  m_dimension;        // list of dimensions
 
@@ -52,12 +56,12 @@ public class NxsDataItem implements IDataItem {
 	public NxsDataItem(final NxsDataItem dataItem)
 	{
         m_cdmDataset  = dataItem.m_cdmDataset;
-		m_n4tDataSets = dataItem.getN4TDataSet();
+		m_n4tDataItems = dataItem.getN4TDataItem();
         m_dimension   = new ArrayList<DimOrder> (dataItem.m_dimension);
         m_parent      = dataItem.getParentGroup();
         m_array       = null;
         try {
-        	if( m_n4tDataSets.length == 1 ) {
+        	if( m_n4tDataItems.length == 1 ) {
         		m_array = new NxsArray((NxsArray) dataItem.getData());
         	}
         	else {
@@ -68,19 +72,27 @@ public class NxsDataItem implements IDataItem {
 		}
 	}
 	
-	public NxsDataItem(fr.soleil.nexus4tango.DataSet[] data, NxsDataSet handler) {
+	public NxsDataItem(DataItem[] data, NxsDataset handler) {
         m_cdmDataset  = handler;
-        m_n4tDataSets = data;
+        m_n4tDataItems = data;
         m_dimension   = new ArrayList<DimOrder>();
         m_parent      = getParentGroup();
         m_array       = null;
 	}
+	
+	public NxsDataItem(DataItem[] data, IGroup parent, NxsDataset handler) {
+        m_cdmDataset  = handler;
+        m_n4tDataItems = data;
+        m_dimension   = new ArrayList<DimOrder>();
+        m_parent      = parent;
+        m_array       = null;
+	}
 
-    public NxsDataItem(fr.soleil.nexus4tango.DataSet data, NxsDataSet handler) {
-    	this(new DataSet[] {data}, handler);
+	public NxsDataItem(DataItem item, NxsDataset dataset) {
+    	this(new DataItem[] {item}, dataset);
     }
-    
-    /// Methods
+
+	/// Methods
 	@Override
 	public ModelType getModelType() {
 		return ModelType.DataItem;
@@ -89,12 +101,12 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public List<IAttribute> getAttributeList()
 	{
-		HashMap<String, DataSet.Data<?>> inList;
+		HashMap<String, DataItem.Data<?>> inList;
 		List<IAttribute> outList = new ArrayList<IAttribute>();
 		NxsAttribute tmpAttr;
 		String sAttrName;
 
-		inList = m_n4tDataSets[0].getAttributes();
+		inList = m_n4tDataItems[0].getAttributes();
 
 		Iterator<String> iter = inList.keySet().iterator();
         while( iter.hasNext() )
@@ -111,13 +123,13 @@ public class NxsDataItem implements IDataItem {
 	public IArray getData() throws IOException
 	{
         if( m_array == null ) {
-        	if( m_n4tDataSets.length == 1 ) {
-        		m_array = new NxsArray(m_n4tDataSets[0]);
+        	if( m_n4tDataItems.length == 1 ) {
+        		m_array = new NxsArray(m_n4tDataItems[0]);
         	}
         	else {
-        		IArray[] arrays = new IArray[m_n4tDataSets.length];
-        		for( int i = 0; i < m_n4tDataSets.length; i++ ) {
-        			arrays[i] = new NxsArray( m_n4tDataSets[i] );
+        		IArray[] arrays = new IArray[m_n4tDataItems.length];
+        		for( int i = 0; i < m_n4tDataItems.length; i++ ) {
+        			arrays[i] = new NxsArray( m_n4tDataItems[i] );
         		}
         		m_array = new NxsArrayMatrix(arrays);
         	}
@@ -142,12 +154,12 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void addOneAttribute(IAttribute att) {
-        m_n4tDataSets[0].setAttribute(att.getName(), att.getValue().getStorage());
+        m_n4tDataItems[0].setAttribute(att.getName(), att.getValue().getStorage());
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-	    m_n4tDataSets[0].setAttribute(name, value);
+	    m_n4tDataItems[0].setAttribute(name, value);
     }
 
 	@Override
@@ -155,7 +167,7 @@ public class NxsDataItem implements IDataItem {
 		HashMap<String, Data<?> > inList;
 		String sAttrName;
 
-		inList = m_n4tDataSets[0].getAttributes();
+		inList = m_n4tDataItems[0].getAttributes();
 		Iterator<String> iter = inList.keySet().iterator();
         while( iter.hasNext() )
         {
@@ -172,7 +184,7 @@ public class NxsDataItem implements IDataItem {
 		HashMap<String, ?> inList;
 		String sAttrName;
 
-		inList = m_n4tDataSets[0].getAttributes();
+		inList = m_n4tDataItems[0].getAttributes();
 		Iterator<String> iter = inList.keySet().iterator();
         while( iter.hasNext() )
         {
@@ -198,15 +210,15 @@ public class NxsDataItem implements IDataItem {
 	public String getDescription() {
 		String sDesc = null;
 
-		sDesc = m_n4tDataSets[0].getAttribute("long_name");
+		sDesc = m_n4tDataItems[0].getAttribute("long_name");
 		if( sDesc == null )
-			sDesc = m_n4tDataSets[0].getAttribute("description");
+			sDesc = m_n4tDataItems[0].getAttribute("description");
 		if( sDesc == null )
-			sDesc = m_n4tDataSets[0].getAttribute("title");
+			sDesc = m_n4tDataItems[0].getAttribute("title");
 		if( sDesc == null )
-			sDesc = m_n4tDataSets[0].getAttribute("standard_name");
+			sDesc = m_n4tDataItems[0].getAttribute("standard_name");
         if( sDesc == null )
-            sDesc = m_n4tDataSets[0].getAttribute("name");
+            sDesc = m_n4tDataItems[0].getAttribute("name");
 
 		return sDesc;
 	}
@@ -255,7 +267,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public int getElementSize() {
-        switch( m_n4tDataSets[0].getType() ) {
+        switch( m_n4tDataItems[0].getType() ) {
             case NexusFile.NX_BINARY:
             case NexusFile.NX_BOOLEAN:
             case NexusFile.NX_CHAR:
@@ -283,7 +295,7 @@ public class NxsDataItem implements IDataItem {
         	name = m_n4tDataSet.getNodeName();
 		return name;
 		*/
-		return m_n4tDataSets[0].getPath().toString(false);
+		return m_n4tDataItems[0].getPath().toString(false);
 	}
 
 	@Override
@@ -331,15 +343,13 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public IGroup getParentGroup()
 	{
-        if( m_cdmDataset == null )
-        {
-            m_cdmDataset = new NxsDataSet(new File(m_n4tDataSets[0].getPath().getFilePath()));
-        }
-        
         if( m_parent == null )
         {
-            PathGroup path = m_n4tDataSets[0].getPath().getParentPath();
-            m_parent = new NxsGroup(path, m_cdmDataset);
+            PathGroup path = m_n4tDataItems[0].getPath().getParentPath();
+            try {
+				m_parent = (IGroup) m_cdmDataset.getRootGroup().findContainerByPath(path.getValue());
+			} catch (NoResultException e) {}
+            //m_parent = new NxsGroup(path, m_cdmDataset);
             ((NxsGroup) m_parent).setChild(this);
         }
 		return m_parent;
@@ -370,7 +380,7 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public int getRank() {
 		int[] shape = getShape();
-		if( m_n4tDataSets[0].getType() == NexusFile.NX_CHAR )
+		if( m_n4tDataItems[0].getType() == NexusFile.NX_CHAR )
 			return 0;
 		else if( shape.length == 1 && shape[0] == 1 )
 			return 0;
@@ -406,12 +416,12 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public String getShortName() {
-		return m_n4tDataSets[0].getNodeName();
+		return m_n4tDataItems[0].getNodeName();
 	}
 
 	@Override
 	public long getSize() {
-        int[] shape = m_n4tDataSets[0].getSize();
+        int[] shape = m_n4tDataItems[0].getSize();
         int size    = shape[0];
         for( int i = 1; i < shape.length; i++ ) {
             size *= shape[i];
@@ -446,7 +456,7 @@ public class NxsDataItem implements IDataItem {
     
 	@Override
 	public Class<?> getType() {
-		return m_n4tDataSets[0].getDataClass();
+		return m_n4tDataItems[0].getDataClass();
 	}
 
     @Override
@@ -521,7 +531,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public boolean isUnsigned() {
-        int type = m_n4tDataSets[0].getType(); 
+        int type = m_n4tDataItems[0].getType(); 
 		if(
 		     type == NexusFile.NX_UINT16 ||
              type == NexusFile.NX_UINT32 ||
@@ -537,42 +547,42 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public byte readScalarByte() throws IOException {
-		return ((byte[]) m_n4tDataSets[0].getData())[0];
+		return ((byte[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public double readScalarDouble() throws IOException {
-		return ((byte[]) m_n4tDataSets[0].getData())[0];
+		return ((byte[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public float readScalarFloat() throws IOException {
-		return ((float[]) m_n4tDataSets[0].getData())[0];
+		return ((float[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public int readScalarInt() throws IOException {
-		return ((int[]) m_n4tDataSets[0].getData())[0];
+		return ((int[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public long readScalarLong() throws IOException {
-		return ((long[]) m_n4tDataSets[0].getData())[0];
+		return ((long[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public short readScalarShort() throws IOException {
-		return ((short[]) m_n4tDataSets[0].getData())[0];
+		return ((short[]) m_n4tDataItems[0].getData())[0];
 	}
 
 	@Override
 	public String readScalarString() throws IOException {
-		return (String) m_n4tDataSets[0].getData();
+		return (String) m_n4tDataItems[0].getData();
 	}
 
 	@Override
 	public boolean removeAttribute(IAttribute a) {
-        m_n4tDataSets[0].setAttribute(a.getName(), null);
+        m_n4tDataItems[0].setAttribute(a.getName(), null);
 		return false;
 	}
 
@@ -635,7 +645,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void setName(String name) {
-        m_n4tDataSets[0].setAttribute("name", name);
+        m_n4tDataItems[0].setAttribute("name", name);
 	}
 
 	@Override
@@ -674,7 +684,7 @@ public class NxsDataItem implements IDataItem {
         	strDebug += "\nAttributes:\n";
         }
         for( IAttribute a : list ) {
-            strDebug += a.toString();
+            strDebug += "- " + a.toString() + "\n";
         }
         
 		return strDebug;
@@ -710,7 +720,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void setShortName(String name) {
-		m_n4tDataSets[0].setNodeName(name);
+		m_n4tDataItems[0].setNodeName(name);
 		
 	}
     
@@ -721,8 +731,8 @@ public class NxsDataItem implements IDataItem {
     // ------------------------------------------------------------------------
     /// Protected methods
     // ------------------------------------------------------------------------
-    protected DataSet[] getN4TDataSet()
+    protected DataItem[] getN4TDataItem()
     {
-        return m_n4tDataSets;
+        return m_n4tDataItems;
     }
 }
