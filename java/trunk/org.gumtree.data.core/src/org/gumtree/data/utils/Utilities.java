@@ -215,7 +215,11 @@ public final class Utilities {
 				throw new FileAccessException(e2);
 			}
 			rootGroup = dataset.getRootGroup();
-			container = rootGroup.findContainerByPath(path);
+			
+			try {
+				container = rootGroup.findContainerByPath(path);
+			}
+			catch (Exception e) {}
 			if (rootGroup == null || !(container instanceof IGroup) ) {
 				return null;
 			}

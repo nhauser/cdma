@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidRangeException;
@@ -8,6 +8,9 @@ import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
+import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.utils.NxsArrayMath;
+import org.gumtree.data.soleil.utils.NxsArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 
 public class NxsArrayMatrix implements NxsArrayInterface {

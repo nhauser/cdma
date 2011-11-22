@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.gumtree.data.dictionary.IPath;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 
 /**
@@ -261,7 +262,7 @@ public interface IGroup extends IContainer {
 	 *            full path of the object in String type
 	 * @return GDM object Created on 13/10/2008
 	 */
-	IContainer findContainerByPath(String path);
+	IContainer findContainerByPath(String path) throws NoResultException;
 
 	/**
 	 * Get all Object by searching the path from the root group. Targeted
@@ -272,7 +273,7 @@ public interface IGroup extends IContainer {
 	 *            full path of objects in String type
 	 * @return GDM object Created on 29/03/2011
 	 */
-	List<IContainer> findAllContainerByPath(String path);
+	List<IContainer> findAllContainerByPath(String path) throws NoResultException;
 
 	/**
 	 * Remove a DataItem from the DataItem list.
@@ -385,7 +386,7 @@ public interface IGroup extends IContainer {
 	 *            Key object
 	 * @return a list of GDM objects
 	 */
-	List<IContainer> findAllContainers(IKey key);
+	List<IContainer> findAllContainers(IKey key) throws NoResultException;
 
 	/**
 	 * Find all the occurrences of objects referenced by the first path for the
@@ -395,8 +396,9 @@ public interface IGroup extends IContainer {
 	 * @param key
 	 *            Key object
 	 * @return a list of GDM objects
+	 * @throws NoResultException 
 	 */
-	List<IContainer> findAllOccurrences(IKey key);
+	List<IContainer> findAllOccurrences(IKey key) throws NoResultException;
 
 	/**
 	 * Find the first occurrences of objects referenced by the given path. Those

@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.navigation;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDimension;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsDimension implements IDimension {
 

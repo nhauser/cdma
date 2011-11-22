@@ -22,16 +22,25 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
+import org.gumtree.data.soleil.array.NxsArray;
+import org.gumtree.data.soleil.array.NxsArrayMatrix;
+import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
+import org.gumtree.data.soleil.dictionary.NxsPathParamResolver;
+import org.gumtree.data.soleil.navigation.NxsAttribute;
+import org.gumtree.data.soleil.navigation.NxsDataset;
+import org.gumtree.data.soleil.navigation.NxsDatasetFile;
+import org.gumtree.data.soleil.navigation.NxsGroup;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
-import fr.soleil.nexus4tango.DataSet;
+import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
 public class NxsFactory implements IFactory {
     private static NxsFactory factory;
     public final static String NAME = "org.gumtree.data.soleil.NxsFactory";
-    
+    public final static String LABEL = "SOLEIL's NeXus plug-in";
+    public final static String DEBUG_INF = "CDMA_DEBUG_NXS";
     public NxsFactory() {
     }
     
@@ -58,8 +67,8 @@ public class NxsFactory implements IFactory {
     	if( storage instanceof IArray[] ) {
     		result = new NxsArrayMatrix( (IArray[]) storage );
     	}
-    	else if( DataSet.class.equals(storage.getClass()) ) {
-    		result = new NxsArray( (DataSet) storage );
+    	else if( DataItem.class.equals(storage.getClass()) ) {
+    		result = new NxsArray( (DataItem) storage );
     	}
     	else {
     		result = new NxsArray( storage, shape);
@@ -85,13 +94,13 @@ public class NxsFactory implements IFactory {
     	if( array instanceof IArray[] ) {
     		result = new NxsArrayMatrix( (IArray[]) array);
     	}
-    	else if( array instanceof DataSet ) {
-    		result = new NxsArray( (DataSet) array);
+    	else if( array instanceof DataItem ) {
+    		result = new NxsArray( (DataItem) array);
     	}
     	else {
-    		DataSet dataset = null;
+    		DataItem dataset = null;
     		try {
-        		dataset = new DataSet(array);
+        		dataset = new DataItem(array);
         	} catch( Exception e ) {}
         	result = new NxsArray(dataset);
     	}
@@ -111,14 +120,14 @@ public class NxsFactory implements IFactory {
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-		return new NxsDataSet(new File(uri));
+		return NxsDataset.instanciate(new File(uri).getAbsolutePath());
 	}
 
     @Override
     public IArray createDoubleArray(double[] javaArray) {
-    	DataSet dataset;
+    	DataItem dataset;
     	try {
-    		dataset = new DataSet(javaArray);
+    		dataset = new DataItem(javaArray);
     	} catch( Exception e ) {
     		dataset = null;
     	}
@@ -127,9 +136,9 @@ public class NxsFactory implements IFactory {
 
     @Override
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
-    	DataSet dataset;
+    	DataItem dataset;
     	try {
-    		dataset = new DataSet(javaArray);
+    		dataset = new DataItem(javaArray);
     	} catch( Exception e ) {
     		dataset = null;
     	}
@@ -146,7 +155,7 @@ public class NxsFactory implements IFactory {
     public IGroup createGroup(IGroup parent, String shortName, boolean updateParent) {
     	String path_val = parent.getLocation();
     	PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
-		NxsGroup group = new NxsGroup( (NxsGroup) parent, (PathNexus) path, (NxsDataSet) parent.getDataset());
+		NxsGroup group = new NxsGroup( (NxsGroup) parent, (PathNexus) path, (NxsDatasetFile) parent.getDataset());
 		
 		return group;
     }
@@ -166,6 +175,11 @@ public class NxsFactory implements IFactory {
     @Override
     public String getName() {
 		return NAME;
+	}
+    
+	@Override
+	public String getPluginLabel() {
+		return LABEL;
 	}
 
     @Override

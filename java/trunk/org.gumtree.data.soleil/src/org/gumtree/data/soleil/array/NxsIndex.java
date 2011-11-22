@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsIndex implements IIndex {
 	private int         m_rank;
@@ -18,7 +19,7 @@ public class NxsIndex implements IIndex {
     private int[]       m_projOrigin;
 
     /// Constructors
-	public NxsIndex(fr.soleil.nexus4tango.DataSet ds) {
+	public NxsIndex(fr.soleil.nexus4tango.DataItem ds) {
         this(ds.getSize(), new int[ds.getSize().length], ds.getSize());
     }
 
@@ -460,7 +461,7 @@ public class NxsIndex implements IIndex {
 	        	if( i != 0 )
 	        		shp.append(", ");
 	        	shp.append(r.length());
-	            str.append( "- n°"+ i + " " + (NxsRange) r );
+	            str.append( "- nÂ°"+ i + " " + (NxsRange) r );
 	            if( i < m_ranges.length ) {
 	                str.append("\n");
 	            }
@@ -528,7 +529,7 @@ public class NxsIndex implements IIndex {
     // ---------------------------------------------------------
     /// Protected methods
     // ---------------------------------------------------------
-    protected List<IRange> getRangeList() {
+    public List<IRange> getRangeList() {
         ArrayList<IRange> list = new ArrayList<IRange>();
         
         for( NxsRange range : m_ranges ) {
@@ -551,7 +552,7 @@ public class NxsIndex implements IIndex {
 		return m_projOrigin;
 	}
 	
-	protected int currentProjectionElement() {
+	public int currentProjectionElement() {
         int value = 0;
  
         for( int i = 0; i < m_iCurPos.length; i++ ) {
@@ -565,7 +566,7 @@ public class NxsIndex implements IIndex {
 		m_projStride = new long[realRank];
 		m_projShape  = new int[realRank];
         m_projOrigin = new int[realRank];
-		int stride = 1;
+		long stride = 1;
 		for( int i = realRank - 1; i >= 0; i-- ) {
 			NxsRange range = m_ranges[i];
 			m_projStride[i] = stride;
@@ -573,7 +574,5 @@ public class NxsIndex implements IIndex {
 			m_projShape[i]  = range.length();
 			stride *= range.reduced() ? 1 : range.length();
 		}
-		
-        
 	}
 }

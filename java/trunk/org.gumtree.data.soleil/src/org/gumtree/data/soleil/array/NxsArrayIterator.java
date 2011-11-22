@@ -1,8 +1,9 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IIndex;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsArrayIterator implements IArrayIterator {
 	/// Members
@@ -74,10 +75,6 @@ public class NxsArrayIterator implements IArrayIterator {
         return m_index.getCurrentCounter();
 	}
 
-	// updated by nxi@ANSTO on 27/10/10: casting the object to a 
-	// Number can prevent unmatching type exception. For example 
-	// if the object is an Integer, it can not be cast into Double.
-	// The same reason is for updating the next 8 methods.
 	@Override
 	public double getDoubleCurrent() {
 		return ((Number) m_current).doubleValue();

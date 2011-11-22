@@ -228,5 +228,13 @@ public interface IFactory {
 	 */
 	public String getName();
 
+	/**
+	 * The plug-in has a label, which describe the institute it comes from
+	 * and / or the data source it is supposed to read / write: a human friendly
+	 * information of which plug-in is working.
+	 * @return the plug-in's label
+	 */
+	public String getPluginLabel();
+
 	public IDictionary createDictionary();
 }

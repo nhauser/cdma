@@ -26,6 +26,7 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.FileAccessException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
@@ -48,33 +49,34 @@ public class LogicalGroup implements ILogicalGroup {
     IExtendedDictionary	  m_dictionary;   // Dictionary that belongs to this current LogicalGroup
     ILogicalGroup         m_parent;       // Parent logical group if root then, it's null
     IFactory              m_factory;
+    boolean               m_throw;        // Display debug info trace when dictionary isn't valid 
 
     public LogicalGroup(IKey key, IDataset dataset) {
-    	if( key != null ) {
-    		m_key = key.clone();
-    	}
-    	else {
-    		m_key = null;
-    	}
-        m_parent = null;
-        m_dataset = dataset;
-        m_factory = Factory.getFactory( dataset.getFactoryName() );
+    	this(key, dataset, false);
     }
-    
-    public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset) {
+
+    public LogicalGroup(IKey key, IDataset dataset, boolean exception) {
+    	this( null, key, dataset, false);
+    }
+    public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset ) {
+    	this( parent, key, dataset, false);
+    }
+
+    public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset, boolean exception ) {
     	if( key != null ) {
     		m_key = key.clone();
     	}
     	else {
     		m_key = null;
     	}
-        m_parent = parent;
+        m_parent  = parent;
         m_dataset = dataset;
         m_factory = Factory.getFactory( dataset.getFactoryName() );
+        m_throw   = exception;
     }
     
     public ILogicalGroup clone() {
-        LogicalGroup group = new LogicalGroup(m_parent, m_key, m_dataset);
+        LogicalGroup group = new LogicalGroup(m_parent, m_key, m_dataset, m_throw);
         group.m_dictionary = m_dictionary;
 
         return group;
@@ -246,7 +248,7 @@ public class LogicalGroup implements ILogicalGroup {
         
         // Construct the corresponding ILogicalGroup
         if( part != null ) {
-        	item = new LogicalGroup(this, key, m_dataset); 
+        	item = new LogicalGroup(this, key, m_dataset, m_throw); 
         	item.setDictionary(part);
         }
 		return item;
@@ -285,7 +287,11 @@ public class LogicalGroup implements ILogicalGroup {
 	
 			// Try to resolve parameter values
 			IGroup root = m_dataset.getRootGroup();
-			List<IContainer> list = root.findAllContainerByPath(strPath.toString());
+			List<IContainer> list = new ArrayList<IContainer>();
+			try {
+				list.addAll( root.findAllContainerByPath(strPath.toString()) );
+			} catch (NoResultException e) {}
+			
 			IPathParamResolver resolver = m_factory.createPathParamResolver(path);
 			for( IContainer node : list ) {
 				param = resolver.resolvePathParameter(node);
@@ -400,6 +406,7 @@ public class LogicalGroup implements ILogicalGroup {
 	 * @param key can contain some parameters
 	 * @param path in string to be open
 	 * @return list of IObject corresponding to path and key
+	 * @throws NoResultException 
 	 */
 	protected List<IContainer> resolvePath(IKey key, IPath path) {
 		List<IContainer> result = new ArrayList<IContainer>();
@@ -419,7 +426,19 @@ public class LogicalGroup implements ILogicalGroup {
 				result = input;
 			}
 			else {
-				result.addAll(m_dataset.getRootGroup().findAllContainerByPath(path.toString()));
+				try {
+					result.addAll(m_dataset.getRootGroup().findAllContainerByPath(path.toString()));
+				} catch (NoResultException e) {
+					String message = e.getMessage() + "\nKey: " + key.getName();
+					message += "\nPath: " + path.getValue();
+					message += "\nData source: " + m_dataset.getLocation();
+					message += "\nView: " + m_dictionary.getKeyFilePath();
+					message += "\nMapping: " + m_dictionary.getMappingFilePath();
+					if( m_throw ) {
+						NoResultException ex = new NoResultException( message );
+						ex.printStackTrace();
+					}
+				}
 			}
 			// Remove set parameters on path
 			path.resetParameters();
@@ -464,7 +483,7 @@ public class LogicalGroup implements ILogicalGroup {
 			    	methodRes = methodToCall.invoke( current, method.getParam() );
 				}
  				
-				if( methodRes == null ||  !(methodRes instanceof IContainer) ) {
+				if( methodRes == null ) {
 					methodRes = current;
 				}
 				

@@ -1,9 +1,10 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.utils;
 
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.math.ArrayMath;
 import org.gumtree.data.math.IArrayMath;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsArrayMath extends ArrayMath {
 

@@ -1,9 +1,10 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.soleil.array;
 
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
+import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsSliceIterator implements ISliceIterator {
 
