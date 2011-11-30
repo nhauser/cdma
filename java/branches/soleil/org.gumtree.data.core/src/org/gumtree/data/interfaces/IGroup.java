@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 
@@ -399,6 +400,16 @@ public interface IGroup extends IContainer {
 	 */
 	List<IContainer> findAllOccurrences(IKey key) throws NoResultException;
 
+	/**
+	 * Find the first occurrences of objects referenced by the given path. Those
+	 * occurrences are from the available entries of the root group.
+	 * 
+	 * @param path
+	 *            Path object
+	 * @return a list of GDM objects
+	 */
+	IContainer findObjectByPath(IPath path);
+	
 	/**
 	 * Return a clone of this Group object. The tree structure is new. However
 	 * the data items are shallow copies that share the same storages with the

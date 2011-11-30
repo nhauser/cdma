@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.gumtree.data.DataType;
+import org.gumtree.data.Factory;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.io.IWriter;
-import org.gumtree.data.Factory;
-import org.gumtree.data.DataType;
 
 /**
  * A register class for GDM Arrays. This class has the logic to control memory

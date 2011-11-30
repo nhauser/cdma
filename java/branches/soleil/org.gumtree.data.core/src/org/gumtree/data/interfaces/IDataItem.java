@@ -23,7 +23,7 @@ import org.gumtree.data.exception.InvalidRangeException;
  * @author nxi
  * 
  */
-public interface IDataItem extends IContainer {
+public interface IDataItem extends IContainer, Cloneable {
 
 	/**
 	 * Find an Attribute by name, ignoring the case.
@@ -533,6 +533,6 @@ public interface IDataItem extends IContainer {
 	 * @return new DataItem instance
 	 */
 	@Override
-    IDataItem clone();
+    IDataItem clone() throws CloneNotSupportedException;
     
 }

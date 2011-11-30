@@ -39,7 +39,8 @@ public abstract class ArrayUtils implements IArrayUtils {
 		IArrayIterator iterator = getArray().getIterator();
 		IArrayIterator newIterator = newArray.getIterator();
 		while (iterator.hasNext()) {
-			newIterator.setObjectNext(iterator.getObjectNext());
+			newIterator.next();
+			newIterator.setObject(iterator.getObjectNext());
 		}
 	}
 
@@ -51,8 +52,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 							((Long) getArray().getSize()).intValue() );
 		int index = 0;
 		while( iter.hasNext() ) {
-			java.lang.reflect.Array.set(result, index++, iter.getObjectCurrent());
-			iter.next();
+			java.lang.reflect.Array.set(result, index++, iter.getObjectNext());
 		}
 		
 		return result;
@@ -76,7 +76,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 			int dim = rank - 2;
 			
 			while( slice.hasNext() ) {
-				slab    = slice.getArrayCurrent();
+				slab    = slice.getArrayNext();
 				subPart = result;
 				
 				// Get the right array slab
@@ -87,8 +87,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 				// Copy values into the right offset
 				iter = slab.getIterator();
 				for( int index = 0; index < shape[rank - 1]; index++ ) {
-					java.lang.reflect.Array.set(subPart, index, iter.getObjectCurrent());
-					iter.next();
+					java.lang.reflect.Array.set(subPart, index, iter.getObjectNext());
 				}
 				
 				while( dim > -1 ) {
@@ -102,7 +101,6 @@ public abstract class ArrayUtils implements IArrayUtils {
 					}
 				}
 				dim = rank - 2;
-				slice.next();
 			}
 		} catch (ShapeNotMatchException e) {
 			result = null;
@@ -208,10 +206,12 @@ public abstract class ArrayUtils implements IArrayUtils {
 					IArrayIterator slice2 = sliceIterator2.getArrayNext()
 							.getIterator();
 					while (slice1.hasNext()) {
-						newSlice.setObjectNext(slice1.getObjectNext());
+						newSlice.next();
+						newSlice.setObject(slice1.getObjectNext());
 					}
 					while (slice2.hasNext()) {
-						newSlice.setObjectNext(slice2.getObjectNext());
+						newSlice.next();
+						newSlice.setObject(slice2.getObjectNext());
 					}
 				}
 			} catch (Exception e) {
@@ -522,10 +522,12 @@ public abstract class ArrayUtils implements IArrayUtils {
                     while (arrayIterator.hasNext() && resultIterator.hasNext()
                             && mapIterator.hasNext()) {
                         if (mapIterator.getBooleanNext()) {
-                            resultIterator.setDoubleNext(arrayIterator
+                        	resultIterator.next();
+                            resultIterator.setDouble(arrayIterator
                                     .getDoubleNext());
                         } else {
-                            resultIterator.setDoubleNext(Double.NaN);
+                        	resultIterator.next();
+                            resultIterator.setDouble(Double.NaN);
                             arrayIterator.next();
                         }
                     }
@@ -540,9 +542,11 @@ public abstract class ArrayUtils implements IArrayUtils {
             while (arrayIterator.hasNext() && resultIterator.hasNext()
                     && mapIterator.hasNext()) {
                 if (mapIterator.getBooleanNext()) {
-                    resultIterator.setDoubleNext(arrayIterator.getDoubleNext());
+                	resultIterator.next();
+                    resultIterator.setDouble(arrayIterator.getDoubleNext());
                 } else {
-                    resultIterator.setDoubleNext(Double.NaN);
+                	resultIterator.next();
+                    resultIterator.setDouble(Double.NaN);
                     arrayIterator.next();
                 }
             }
@@ -588,7 +592,7 @@ public abstract class ArrayUtils implements IArrayUtils {
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();
-            int[] counter = newIterator.getCurrentCounter();
+            int[] counter = newIterator.getCounter();
             for (int j = 0; j < newShape.length; j++) {
                 if (j < dimension) {
                     origin[j] = counter[j];
@@ -598,11 +602,8 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
             try {
                 IArray vector = section(origin, section).getArray();
-                if (!isVariance) {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().sum());
-                } else {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().sum());
-                }
+                newIterator.next();
+                newIterator.setDouble(vector.getArrayMath().sum());
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException(e);
             }
@@ -646,7 +647,7 @@ public abstract class ArrayUtils implements IArrayUtils {
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();
-            int[] counter = newIterator.getCurrentCounter();
+            int[] counter = newIterator.getCounter();
             for (int j = 0; j < newShape.length; j++) {
                 if (j < dimension) {
                     origin[j] = counter[j];
@@ -656,10 +657,11 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
             try {
                 IArray vector = section(origin, section).getArray();
+                newIterator.next();
                 if (!isVariance) {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().sumNormalise());
+                    newIterator.setDouble(vector.getArrayMath().sumNormalise());
                 } else {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().varianceSumNormalise());
+                    newIterator.setDouble(vector.getArrayMath().varianceSumNormalise());
                 }
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException(e);

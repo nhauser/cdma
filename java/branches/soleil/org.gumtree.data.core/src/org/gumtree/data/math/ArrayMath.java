@@ -58,7 +58,8 @@ public abstract class ArrayMath implements IArrayMath {
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() + value);
+        	newIterator.next();
+            newIterator.setDouble(oldIterator.getDoubleNext() + value);
         }
         return result.getArrayMath();
     }
@@ -73,7 +74,8 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath add(double val) {
 		IArrayIterator iter = getArray().getIterator();
 		while (iter.hasNext()) {
-			iter.setDoubleCurrent(iter.getDoubleNext() + val);
+			iter.next();
+			iter.setDouble(iter.getDoubleNext() + val);
 		}
 		getArray().setDirty(true);
 		return this;
@@ -234,7 +236,8 @@ public abstract class ArrayMath implements IArrayMath {
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() * value);
+        	newIterator.next();
+            newIterator.setDouble(oldIterator.getDoubleNext() * value);
         }
         return result.getArrayMath();
     }
@@ -251,7 +254,8 @@ public abstract class ArrayMath implements IArrayMath {
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() % value);
+        	newIterator.next();
+            newIterator.setDouble(oldIterator.getDoubleNext() % value);
         }
         return result.getArrayMath();
     }
@@ -266,7 +270,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath scale(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(oldIterator.getDoubleNext() * value);
+			oldIterator.setDouble(oldIterator.getDoubleNext() * value);
 		}
 		getArray().setDirty(true);
 		return this;
@@ -282,7 +286,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath mod(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(oldIterator.getDoubleNext() % value);
+			oldIterator.setDouble(oldIterator.getDoubleNext() % value);
 		}
 		getArray().setDirty(true);
 		return this;
@@ -304,7 +308,7 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.sqrt(oldIterator.getDoubleNext()));
+			newIterator.setDouble(Math.sqrt(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -317,8 +321,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath sqrt() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator
-					.setDoubleCurrent(Math.sqrt(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.sqrt(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -336,7 +339,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.exp(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.exp(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -349,7 +353,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath exp() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.exp(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.exp(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -367,10 +371,11 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
+			newIterator.next();
 			if (value == 0) {
-				newIterator.setDoubleNext(Double.NaN);
+				newIterator.setDouble(Double.NaN);
 			} else {
-				newIterator.setDoubleNext(Math.log(value));
+				newIterator.setDouble(Math.log(value));
 			}
 		}
 		return result.getArrayMath();
@@ -386,9 +391,9 @@ public abstract class ArrayMath implements IArrayMath {
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				oldIterator.setDoubleCurrent(Double.NaN);
+				oldIterator.setDouble(Double.NaN);
 			} else {
-				oldIterator.setDoubleCurrent(Math.log(value));
+				oldIterator.setDouble(Math.log(value));
 			}
 		}
 		getArray().setDirty(true);
@@ -407,10 +412,11 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
+			newIterator.next();
 			if (value == 0) {
-				newIterator.setDoubleNext(Double.NaN);
+				newIterator.setDouble(Double.NaN);
 			} else {
-				newIterator.setDoubleNext(Math.log10(value));
+				newIterator.setDouble(Math.log10(value));
 			}
 		}
 		return result.getArrayMath();
@@ -426,9 +432,9 @@ public abstract class ArrayMath implements IArrayMath {
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				oldIterator.setDoubleCurrent(Double.NaN);
+				oldIterator.setDouble(Double.NaN);
 			} else {
-				oldIterator.setDoubleCurrent(Math.log10(value));
+				oldIterator.setDouble(Math.log10(value));
 			}
 		}
 		getArray().setDirty(true);
@@ -446,7 +452,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.sin(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.sin(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -459,7 +466,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath sin() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.sin(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.sin(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -476,7 +483,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.asin(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.asin(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -489,8 +497,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath asin() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator
-					.setDoubleCurrent(Math.asin(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.asin(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -507,7 +514,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.cos(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.cos(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -525,7 +533,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.acos(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.acos(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -540,7 +549,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath cos() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.cos(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.cos(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -554,7 +563,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath acos() {
 		IArrayIterator iterator = getArray().getIterator();
 		while (iterator.hasNext()) {
-			iterator.setDoubleCurrent(Math.acos(iterator.getDoubleNext()));
+			iterator.setDouble(Math.acos(iterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -571,7 +580,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.tan(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.tan(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -584,7 +594,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath tan() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.tan(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.tan(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -601,7 +611,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.atan(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.atan(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -614,8 +625,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath atan() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator
-					.setDoubleCurrent(Math.atan(oldIterator.getDoubleNext()));
+			oldIterator.setDouble(Math.atan(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -634,8 +644,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.pow(oldIterator.getDoubleNext(),
-					value));
+			newIterator.next();
+			newIterator.setDouble(Math.pow(oldIterator.getDoubleNext(),	value));
 		}
 		return result.getArrayMath();
 	}
@@ -650,8 +660,7 @@ public abstract class ArrayMath implements IArrayMath {
 	public IArrayMath power(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.pow(oldIterator.getDoubleNext(),
-					value));
+			oldIterator.setDouble(Math.pow(oldIterator.getDoubleNext(),value));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -776,7 +785,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			try {
-				newIterator.setDoubleNext(1 / oldIterator.getDoubleNext());
+				newIterator.next();
+				newIterator.setDouble(1 / oldIterator.getDoubleNext());
 			} catch (Exception e) {
 				throw new DivideByZeroException(e);
 			}
@@ -795,7 +805,7 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
 			try {
-				oldIterator.setDoubleCurrent(1 / oldIterator.getDoubleNext());
+				oldIterator.setDouble(1 / oldIterator.getDoubleNext());
 			} catch (Exception e) {
 				throw new DivideByZeroException(e);
 			}
@@ -817,7 +827,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			double det = oldIterator.getDoubleNext();
-			newIterator.setDoubleNext(det == 0 ? 0 : 1 / det);
+			newIterator.next();
+			newIterator.setDouble(det == 0 ? 0 : 1 / det);
 		}
 		return result.getArrayMath();
 	}
@@ -832,7 +843,7 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
 			double det = oldIterator.getDoubleNext();
-			oldIterator.setDoubleCurrent(det == 0 ? 0 : 1 / det);
+			oldIterator.setDouble(det == 0 ? 0 : 1 / det);
 		}
 		getArray().setDirty(true);
 		return this;
@@ -861,7 +872,7 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Treat the array as a variance. Normalise the sum against the number of
+	 * Treat the array as a variance. Normalize the sum against the number of
 	 * elements in the array.
 	 * 
 	 * @return double value
@@ -914,7 +925,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator iterator2 = newArray.getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (iterator1.hasNext()) {
-			newIterator.setDoubleNext(iterator1.getDoubleNext()
+			newIterator.next();
+			newIterator.setDouble(iterator1.getDoubleNext()
 					* iterator2.getDoubleNext());
 		}
 		getArray().setDirty(true);
@@ -939,7 +951,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator iterator2 = newArray.getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (iterator1.hasNext()) {
-			newIterator.setDoubleNext(iterator1.getDoubleNext()
+			newIterator.next();
+			newIterator.setDouble(iterator1.getDoubleNext()
 					% iterator2.getDoubleNext());
 		}
 		getArray().setDirty(true);
@@ -966,10 +979,11 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (iterator1.hasNext()) {
 			double newValue = iterator2.getDoubleNext();
+			newIterator.next();
 			if (newValue != 0) {
-				newIterator.setDoubleNext(iterator1.getDoubleNext() / newValue);
+				newIterator.setDouble(iterator1.getDoubleNext() / newValue);
 			} else {
-				newIterator.setDoubleNext(iterator1.getDoubleNext());
+				newIterator.setDouble(iterator1.getDoubleNext());
 			}
 		}
 		getArray().setDirty(true);

@@ -70,11 +70,11 @@ public interface IArray extends IModelObject {
 	IArray copy();
 
 	/**
-	 * Create a copy of this Array, whether copying the data so that physical order is
-	 * the same as logical order or sharing it so both IArray reference the same backing storage.
+	 * Create a copy of this Array. Whether to copy the data so that physical order is
+	 * the same as logical order, it will share it. So both arrays reference the same backing storage.
 	 * 
 	 * @param data
-	 *             if true the backing storage will be copied too else it will be shared 
+	 *             if true the backing storage will be copied too, else it will be shared 
 	 * @return the new Array
 	 */
 	IArray copy(boolean data);
