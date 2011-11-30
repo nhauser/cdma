@@ -3,6 +3,7 @@ package org.gumtree.data.soleil.navigation;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
@@ -11,15 +12,21 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
+import org.nexusformat.NexusException;
 
+import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus4tango.NexusFileReader;
 import fr.soleil.nexus4tango.NexusFileWriter;
+import fr.soleil.nexus4tango.NexusNode;
+import fr.soleil.nexus4tango.PathGroup;
+import fr.soleil.nexus4tango.PathNexus;
 
 public class NxsDatasetFolder extends  NxsDataset {
 	private String                 m_path;         // folder containing all datasets
 	private Vector<NxsDatasetFile> m_datasets;     // all found datasets in the folder
 	private boolean                m_open;         // is the dataset open
 
-	class NeXusFilter implements FilenameFilter {
+	static class NeXusFilter implements FilenameFilter {
 	    public boolean accept(File dir, String name) {
 	        return (name.endsWith(".nxs"));
 	    }
@@ -133,13 +140,52 @@ public class NxsDatasetFolder extends  NxsDataset {
 
 	@Override
 	public void save() throws GDMWriterException {
-		// TODO Auto-generated method stub
-		
+		for( IDataset dataset : m_datasets ) {
+			dataset.save();
+		}		
 	}
 	
 	public NexusFileWriter getHandler()
     {
         return m_datasets.firstElement().getHandler();
     }
+
+	public static boolean isDataset(File file) {
+		boolean result = false;
+		if( file.isDirectory() ) {
+			NeXusFilter filter = new NeXusFilter();
+			for( File nxFile : file.listFiles(filter) ) {
+				NexusFileReader reader = new NexusFileReader(nxFile.getAbsolutePath());
+				PathNexus path = new PathGroup(new String[] {"<NXentry>", "<NXdata>"} );
+				try {
+					reader.openFile();
+					reader.openPath(path);
+					ArrayList<NexusNode> list = reader.listChildren();
+					for( NexusNode node : list ) {
+						reader.openNode(node);
+						DataItem data = reader.readDataInfo();
+						if( data.getAttribute("dataset_part") != null ) {
+							result = true;
+							reader.closeFile();
+							break;
+						}
+						reader.closeData();
+						
+					}
+					reader.closeFile();
+				} catch (NexusException e1) {
+					try {
+						reader.closeFile();
+					}
+					catch (NexusException e2) {}
+					result = false;
+				}
+				if( result ) {
+					break;
+				}
+			}
+		}
+		return result;
+	}
 
 }

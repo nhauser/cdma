@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.net.URI;
 
 import org.gumtree.data.IFactory;
+import org.gumtree.data.IDatasource;
 import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.IPathParamResolver;
@@ -38,6 +39,7 @@ import fr.soleil.nexus4tango.PathNexus;
 
 public class NxsFactory implements IFactory {
     private static NxsFactory factory;
+    private static NxsDatasource detector;
     public final static String NAME = "org.gumtree.data.soleil.NxsFactory";
     public final static String LABEL = "SOLEIL's NeXus plug-in";
     public final static String DEBUG_INF = "CDMA_DEBUG_NXS";
@@ -48,7 +50,8 @@ public class NxsFactory implements IFactory {
         if( factory == null ) {
             synchronized (NxsFactory.class ) {
                 if( factory == null ) {
-                    factory = new NxsFactory();
+                    factory  = new NxsFactory();
+                    detector = new NxsDatasource();
                 }
             }
         }
@@ -182,6 +185,14 @@ public class NxsFactory implements IFactory {
 		return LABEL;
 	}
 
+	@Override
+	public IDatasource getPluginURIDetector() {
+		if( detector == null ) {
+			detector = new NxsDatasource();
+		}
+		return detector;
+	}
+	
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
 		// TODO Auto-generated method stub

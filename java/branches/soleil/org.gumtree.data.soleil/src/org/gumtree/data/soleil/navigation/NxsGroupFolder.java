@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
 import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
@@ -554,6 +555,19 @@ public class NxsGroupFolder implements IGroup {
 	}
     
 	@Override
+	public IContainer findObjectByPath(IPath path) {
+		IContainer result = null;
+		
+		try {
+			result = findContainerByPath(path.getValue());
+		} catch (NoResultException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+    
+	@Override
 	public void addOneAttribute(IAttribute attribute) {
 		// TODO Auto-generated method stub
 
@@ -686,5 +700,4 @@ public class NxsGroupFolder implements IGroup {
 		}
 		return m_children;	
 	}
-
 }

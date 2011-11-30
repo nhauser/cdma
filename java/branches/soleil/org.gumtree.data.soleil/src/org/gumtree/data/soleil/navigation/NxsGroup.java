@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.NoResultException;
@@ -352,7 +353,6 @@ public class NxsGroup implements IGroup {
         try {
 			list = findAllOccurrences(key);
 		} catch (NoResultException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
@@ -529,8 +529,9 @@ public class NxsGroup implements IGroup {
         while( iter.hasNext() )
         {
         	attr = iter.next();
-        	if( attr.getStringValue().equals(value) )
+        	if( attr.getStringValue().equals(value) ) {
         		return true;
+        	}
 		}
         return false;
     }
@@ -850,7 +851,6 @@ public class NxsGroup implements IGroup {
         try {
 			m_dataset.getHandler().openPath(origin);
 		} catch (NexusException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -862,5 +862,18 @@ public class NxsGroup implements IGroup {
 	@Override
 	public String getFactoryName() {
 		return NxsFactory.NAME;
+	}
+
+	@Override
+	public IContainer findObjectByPath(IPath path) {
+		IContainer result = null;
+		
+		try {
+			result = findContainerByPath(path.getValue());
+		} catch (NoResultException e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 }

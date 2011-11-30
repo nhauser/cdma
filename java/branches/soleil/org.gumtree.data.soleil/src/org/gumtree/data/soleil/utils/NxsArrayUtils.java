@@ -7,6 +7,7 @@ import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
+import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.soleil.array.NxsArrayInterface;
 import org.gumtree.data.soleil.array.NxsArrayMatrix;
 import org.gumtree.data.soleil.array.NxsIndex;
@@ -145,15 +146,15 @@ public class NxsArrayUtils extends ArrayUtils {
 		Object slab;
 		Object dataset;
 		
-		NxsSliceIterator iter;
+		ISliceIterator iter;
 		try {
-			iter = (NxsSliceIterator) array.getSliceIterator(1);
+			iter = array.getSliceIterator(1);
 			NxsIndexMatrix startIdx = (NxsIndexMatrix) array.getIndex().clone();
 			NxsIndex storage = startIdx.getIndexStorage();
 			NxsIndex items   = startIdx.getIndexMatrix();
 			startIdx.setOrigin(new int[startIdx.getRank()]);
-			length = ((Long) iter.getArrayCurrent().getSize()).intValue();
 			while( iter.hasNext() ) {
+				length = ((Long) iter.getArrayNext().getSize()).intValue();
 				slab = result;
 				
 				// Getting the right slab in the multidim result array
@@ -166,8 +167,6 @@ public class NxsArrayUtils extends ArrayUtils {
 				
 				startCell = storage.currentProjectionElement();
 				System.arraycopy(dataset, startCell, slab, 0, length);
-				
-				iter.next();
 			}
 		} catch (ShapeNotMatchException e) {
 			// TODO Auto-generated catch block
@@ -195,10 +194,10 @@ public class NxsArrayUtils extends ArrayUtils {
 		Object result = java.lang.reflect.Array.newInstance(array.getElementType(), shape);
 		Object slab;
 		
-		NxsSliceIterator iter;
+		ISliceIterator iter;
 		try {
-			iter = (NxsSliceIterator) array.getSliceIterator(1);
-			length = ((Long) iter.getArrayCurrent().getSize()).intValue();
+			iter = array.getSliceIterator(1);
+			length = ((Long) iter.getArrayNext().getSize()).intValue();
 			NxsIndex startIdx = (NxsIndex) array.getIndex().clone();
 			startIdx.setOrigin(new int[startIdx.getRank()]);
 			while( iter.hasNext() ) {
@@ -279,10 +278,10 @@ public class NxsArrayUtils extends ArrayUtils {
 	}
 
 	@Override
-	public IArray permute(int[] dims) {
-		NxsArrayInterface array = (NxsArrayInterface) getArray().copy(false);
-		IIndex index   = array.getIndex();
-		int   rank     = array.getRank();       
+	public IArrayUtils permute(int[] dims) {
+		IArrayUtils array = ((NxsArrayInterface) getArray().copy(false)).getArrayUtils();
+		IIndex index   = array.getArray().getIndex();
+		int   rank     = array.getArray().getRank();       
 		int[] shape    = index.getShape();
 		int[] origin   = index.getOrigin();
 		int[] position = index.getCurrentCounter();
@@ -353,5 +352,11 @@ public class NxsArrayUtils extends ArrayUtils {
 			result = array.getArrayUtils();
 		}
 		return result;
+	}
+
+	@Override
+	public Object get1DJavaArray(Class<?> wantType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
