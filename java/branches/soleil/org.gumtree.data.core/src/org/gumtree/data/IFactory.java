@@ -235,6 +235,12 @@ public interface IFactory {
 	 * @return the plug-in's label
 	 */
 	public String getPluginLabel();
+	
+	/**
+	 * Returns the URI detector of the instantiated plug-in. 
+	 * @return IPluginURIDetector
+	 */
+	public IDatasource getPluginURIDetector();
 
 	public IDictionary createDictionary();
 }

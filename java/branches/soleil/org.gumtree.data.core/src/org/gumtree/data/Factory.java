@@ -12,6 +12,10 @@ package org.gumtree.data;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.dictionary.IPath;
@@ -435,6 +439,40 @@ public final class Factory {
 	
 	public static IFactory getFactory(String name) {
 		return getManager().getFactory(name);
+	}
+	
+	public static IFactory getFactory(URI uri) {
+		return detectPlugin(uri);
+	}
+	
+	public static IFactory detectPlugin(URI uri) {
+		ArrayList<IFactory> reader = new ArrayList<IFactory>();
+		IFactory result = null;
+		IFactory plugin;
+		IDatasource detector;
+		IFactoryManager mngr = getManager();
+		
+		
+		Map<String, IFactory> registry = mngr.getFactoryRegistry();
+		
+		for( Entry<String, IFactory> entry : registry.entrySet() ) {
+			plugin   = entry.getValue();
+			detector = plugin.getPluginURIDetector();
+			
+			if( detector.isReadable(uri) ) {
+				reader.add( plugin );
+				if( detector.isProducer(uri) ) {
+					result = plugin;
+					break;
+				}
+			}
+		}
+		
+		if( result == null && reader.size() > 0 ) {
+			result = reader.get(0);
+		}
+		
+		return result;
 	}
 	
 	/**

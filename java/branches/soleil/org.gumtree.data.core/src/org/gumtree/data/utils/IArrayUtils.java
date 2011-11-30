@@ -30,6 +30,13 @@ public interface IArrayUtils {
     */
 	Object copyTo1DJavaArray();
 
+	/**
+	 * @param wantType
+	 *            a Class instance
+	 * @return generic Object instance
+	 */
+	Object get1DJavaArray(final Class<?> wantType);
+	
    /**
     * Copy this array to a n-Dimensional Java primitive array of type
     * getElementType() and rank getRank(). Makes a copy of the data.
@@ -272,7 +279,7 @@ public interface IArrayUtils {
 	 *            the old index dims[k] becomes the new kth index.
 	 * @return the new Array
 	 */
-	IArray permute(int[] dims);
+	IArrayUtils permute(int[] dims);
 
 
     

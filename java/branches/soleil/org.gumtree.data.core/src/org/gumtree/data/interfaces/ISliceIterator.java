@@ -54,7 +54,9 @@ public interface ISliceIterator extends IModelObject {
 	 * @return GDM Array
 	 * @throws InvalidRangeException
 	 *             Created on 10/11/2008
+	 * @deprecated use instead IArray.getArrayNext
 	 */
+	//[SOLEIL][clement][11/29/2011] fitting the java.util.Iterator behavior: no current 
 	IArray getArrayCurrent() throws InvalidRangeException;
 
 	/**

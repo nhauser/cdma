@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.gumtree.data.Factory;
+import org.gumtree.data.IFactory;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.exception.DimensionNotSupportedException;
 import org.gumtree.data.exception.FileAccessException;
@@ -21,12 +22,12 @@ import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IAttribute;
+import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
-import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IKey;
 
 /**
@@ -116,37 +117,40 @@ public final class Utilities {
 	 * @throws FileAccessException
 	 *             file access error
 	 */
-	public static Object findObject(final URI uri, final String dictionaryPath)
+	public static Object findObject(URI uri, String dictionaryPath)
 			throws FileAccessException {
+		return findObject(uri, dictionaryPath, Factory.getFactory());
+	}
+	
+	/**
+	 * Retrieve the object that referenced by the URI.
+	 * 
+	 * @param uri
+	 *            URI object
+	 * @param dictionaryPath
+	 *            in String type
+	 * @param factory
+	 * 	          data model factory
+	 * @return Object type
+	 * @throws FileAccessException
+	 *             file access error
+	 */
+	public static Object findObject(URI uri, String dictionaryPath,
+			IFactory factory) throws FileAccessException {
 		if (uri.getScheme().equals("file")) {
-			String path = uri.getPath();
-			if (path == null) {
-				return null;
-			}
 			IGroup rootGroup = null;
 			IDataset dataset = null;
-			IContainer container  = null;
 			try {
-				dataset = Factory.createDatasetInstance(uri);
-				dataset.open();
+				dataset = factory.createDatasetInstance(uri);
+//				dataset.open();
 			} catch (IOException e1) {
 				throw new FileAccessException(e1);
 			} catch (Exception e2) {
 				throw new FileAccessException(e2);
 			}
 			rootGroup = dataset.getRootGroup();
-			try {
-				container = rootGroup.findContainerByPath(path);
-			}
-			catch (Exception e) {}
-			if (rootGroup == null || !(container instanceof IGroup) ) {
-				return null;
-			}
-			else {
-				rootGroup = (IGroup) container;
-			}
 			if (dictionaryPath != null) {
-				IDictionary dictionary = Factory.createDictionary();
+				IDictionary dictionary = factory.createDictionary();
 				dictionary.readEntries(dictionaryPath);
 				rootGroup.setDictionary(dictionary);
 			}
@@ -299,7 +303,8 @@ public final class Utilities {
 		IArrayIterator oldIterator = array.getIterator();
 		IArrayIterator newIterator = doubleArray.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(oldIterator.getDoubleNext());
+			newIterator.next();
+			newIterator.setDouble(oldIterator.getDoubleNext());
 		}
 		return doubleArray;
 	}
@@ -316,7 +321,8 @@ public final class Utilities {
 		IArrayIterator oldIterator = array.getIterator();
 		IArrayIterator newIterator = doubleArray.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.abs(oldIterator.getDoubleNext()));
+			newIterator.next();
+			newIterator.setDouble(Math.abs(oldIterator.getDoubleNext()));
 		}
 		return doubleArray;
 	}
@@ -336,14 +342,18 @@ public final class Utilities {
 		IArrayIterator iterator2 = array2.getIterator();
 		if (length < 0) {
 			while (iterator1.hasNext() && iterator2.hasNext()) {
-				iterator2.setObjectNext(iterator1.getObjectNext());
+				iterator2.next();
+				iterator2.setObject(iterator1.getObjectNext());
 			}
 		} else {
 			int id = 0;
 			while (iterator1.hasNext() && iterator2.hasNext()) {
 				if (id < length) {
-					iterator2.setObjectNext(iterator1.getObjectNext());
+					iterator2.next();
+					iterator2.setObject(iterator1.getObjectNext());
 					id ++;
+				} else {
+					break;
 				}
 			}
 		}
