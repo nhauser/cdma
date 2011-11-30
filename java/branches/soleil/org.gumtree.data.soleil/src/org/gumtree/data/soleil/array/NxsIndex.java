@@ -9,14 +9,14 @@ import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 
 public class NxsIndex implements IIndex {
-	private int         m_rank;
-    private int[]       m_iCurPos;          // Current position pointed by this index
-    private NxsRange[]  m_ranges;           // Ranges that constitute the index global view in each dimension
-    private boolean     m_upToDate = false; // Does the overall shape has changed
-    private int         m_lastIndex;
-    private long[]      m_projStride;
-    private int[]       m_projShape;
-    private int[]       m_projOrigin;
+	private int        m_rank;
+    private int[]      m_iCurPos;          // Current position pointed by this index
+    private NxsRange[] m_ranges;           // Ranges that constitute the index global view in each dimension
+    private boolean    m_upToDate = false; // Does the overall shape has changed
+    private int        m_lastIndex;
+    private long[]     m_projStride;
+    private int[]      m_projShape;
+    private int[]      m_projOrigin;
 
     /// Constructors
 	public NxsIndex(fr.soleil.nexus4tango.DataItem ds) {
@@ -41,7 +41,7 @@ public class NxsIndex implements IIndex {
     }
 
     public NxsIndex(int[] shape, int[] start, int[] length) {
-        long stride   = 1;
+        long stride  = 1;
         m_rank       = shape.length;
         m_iCurPos    = new int[m_rank];
         m_ranges     = new NxsRange[m_rank];
@@ -359,10 +359,30 @@ public class NxsIndex implements IIndex {
 
 	@Override
 	public void setDim(int dim, int value) {
+        /*
         if( dim >= m_iCurPos.length || dim < 0 )
             throw new IllegalArgumentException();
 
 		m_iCurPos[dim] = value;
+		*/
+		
+	    if( dim >= m_rank )
+            throw new IllegalArgumentException();
+	    
+        NxsRange range;
+        int i = 0;
+        int j = 0;
+        while(  j < m_ranges.length ) {
+            range = m_ranges[j];
+            if( ! range.reduced() ) {
+            	if( i == dim ) {
+            		m_iCurPos[j] = value;
+            		return;
+            	}
+            	i++;
+            }
+            j++;
+        }
 	}
 
 	@Override

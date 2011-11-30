@@ -66,8 +66,9 @@ public class NxsSliceIterator implements ISliceIterator {
 
     @Override
     public IArray getArrayNext() throws InvalidRangeException {
-        next();
-        return createSlice();
+    	next();
+    	IArray result = createSlice();
+        return result;
     }
 
 	@Override
@@ -76,7 +77,7 @@ public class NxsSliceIterator implements ISliceIterator {
 	}
 	
 	public int[] getSlicePosition() {
-		return m_iterator.getCurrentCounter();
+		return m_iterator.getCounter();
 	}
 
 	@Override
@@ -98,7 +99,7 @@ public class NxsSliceIterator implements ISliceIterator {
     	int i = 0;
     	int[] iShape  = m_array.getShape();
     	int[] iOrigin = m_array.getIndex().getOrigin();
-    	int[] iCurPos = m_iterator.getCurrentCounter();
+    	int[] iCurPos = m_iterator.getCounter();
     	for( int pos : iCurPos ) {
     		if( pos >= iShape[i] ) {
     			return null;

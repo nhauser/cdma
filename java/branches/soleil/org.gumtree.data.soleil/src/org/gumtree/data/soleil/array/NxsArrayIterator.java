@@ -10,18 +10,20 @@ public class NxsArrayIterator implements IArrayIterator {
 	private IArray  m_array;
     private IIndex  m_index;
     private Object  m_current;
-    private boolean m_access;
+    private boolean m_access; // Indicates that this can access the storage memory or not
 
 	public NxsArrayIterator(NxsArrayInterface array)
 	{
 		m_array	= array;
 		// [ANSTO][Tony][2011-08-31] Should m_access set to true for NxsArrayInterface??
-		// If m_access is set to false, next() does not work. 
+		// If m_access is set to false, next() does not work.
+		// [SOLEIL][Clement][2011-11-22] Yes it should. It indicates that the iterator shouldn't access memory. In case of hudge matrix the next() will update m_current (i.e. value), but the underlying NeXus engine will automatically load the part corresponding to the view defined by this iterator, which can lead to java heap space memory exception (see NxsArray : private Object getData() ) 
 		m_access = true;
 		try {
 			m_index = array.getIndex().clone();
 			m_index.set( new int[m_index.getRank()] );
-			m_current = m_array.getObject(m_index);
+			m_index.setDim( m_index.getRank() - 1, -1);
+			//m_current = m_array.getObject(m_index);
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
@@ -32,27 +34,22 @@ public class NxsArrayIterator implements IArrayIterator {
     }
     
     public NxsArrayIterator(IArray array, IIndex index, boolean accessData) {
-        m_array   = array;
-        m_index   = index;
-        m_access  = accessData;
-        if( m_access ) {
+    	int[] count = index.getCurrentCounter();
+        m_array     = array;
+        m_index     = index;
+        m_access    = accessData;
+        count[m_index.getRank() - 1]--;
+        m_index.set( count );
+        /*
+         if( m_access ) {
         	m_current = m_array.getObject(m_index);
         }
+        */
     }
-
-	@Override
-	public boolean getBooleanCurrent() {
-		return ((Boolean) m_current).booleanValue();
-	}
 
 	@Override
 	public boolean getBooleanNext() {
 		return ((Boolean) next());
-	}
-
-	@Override
-	public byte getByteCurrent() {
-		return ((Byte) m_current).byteValue();
 	}
 
 	@Override
@@ -61,23 +58,13 @@ public class NxsArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public char getCharCurrent() {
-		return ((Character) m_current).charValue();
-	}
-
-	@Override
 	public char getCharNext() {
 		return ((Character) next()).charValue();
 	}
 
 	@Override
-	public int[] getCurrentCounter() {
+	public int[] getCounter() {
         return m_index.getCurrentCounter();
-	}
-
-	@Override
-	public double getDoubleCurrent() {
-		return ((Number) m_current).doubleValue();
 	}
 
 	@Override
@@ -86,18 +73,8 @@ public class NxsArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public float getFloatCurrent() {
-		return ((Number) m_current).floatValue();
-	}
-
-	@Override
 	public float getFloatNext()	{
 		return ((Number) next()).floatValue();
-	}
-
-	@Override
-	public int getIntCurrent() {
-		return ((Number) m_current).intValue();
 	}
 
 	@Override
@@ -106,28 +83,13 @@ public class NxsArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public long getLongCurrent() {
-		return ((Number) m_current).longValue();
-	}
-
-	@Override
 	public long getLongNext() {
 		return ((Number) next()).longValue();
 	}
 
 	@Override
-	public Object getObjectCurrent() {
-        return m_current;
-	}
-
-	@Override
 	public Object getObjectNext() {
 		return next();
-	}
-
-	@Override
-	public short getShortCurrent() {
-		return ((Number) m_current).shortValue();
 	}
 
 	@Override
@@ -140,19 +102,15 @@ public class NxsArrayIterator implements IArrayIterator {
 	{
         long index = m_index.currentElement();
         long last  = m_index.lastElement();
-        return ( index <= last && index >= 0);
+        return ( index < last && index >= -1);
 	}
 	
 	@Override
-	public boolean hasCurrent() {
-		return ( this.getObjectCurrent() != null );
-	}
-
-	@Override
 	public Object next()
 	{
-		long currentPos = m_index.currentElement();
+		incrementIndex(m_index);
 		if( m_access ) {
+			long currentPos = m_index.currentElement();
 	    	if( currentPos <= m_index.lastElement() && currentPos != -1 ) {
 	    		m_current = m_array.getObject(m_index);
 	    	}
@@ -160,102 +118,54 @@ public class NxsArrayIterator implements IArrayIterator {
 	    		m_current = null;
 	    	}
 		}
-    	incrementIndex(m_index);
 		return m_current;
 	}
 
 	@Override
-	public void setBooleanCurrent(boolean val) {
-    	setObjectCurrent(val);
+	public void setBoolean(boolean val) {
+    	setObject(val);
 	}
 
 	@Override
-	public void setBooleanNext(boolean val) {
-        setObjectNext(val);
+	public void setByte(byte val) {
+        setObject(val);
 	}
 
 	@Override
-	public void setByteCurrent(byte val) {
-        setObjectCurrent(val);
-	}
-
-	@Override
-	public void setByteNext(byte val) {
-        setObjectNext(val);
-	}
-
-	@Override
-	public void setCharCurrent(char val) {
-        setObjectCurrent(val);
+	public void setChar(char val) {
+        setObject(val);
     }
 
 	@Override
-	public void setCharNext(char val) {
-        setObjectNext(val);
+	public void setDouble(double val) {
+        setObject(val);
 	}
 
 	@Override
-	public void setDoubleCurrent(double val) {
-        setObjectCurrent(val);
+	public void setFloat(float val) {
+        setObject(val);
 	}
 
 	@Override
-	public void setDoubleNext(double val) {
-        setObjectNext(val);
-    }
-
-	@Override
-	public void setFloatCurrent(float val) {
-        setObjectCurrent(val);
+	public void setInt(int val) {
+        setObject(val);
 	}
 
 	@Override
-	public void setFloatNext(float val) {
-        setObjectNext(val);
+	public void setLong(long val) {
+        setObject(val);
 	}
 
 	@Override
-	public void setIntCurrent(int val) {
-        setObjectCurrent(val);
-	}
-
-	@Override
-	public void setIntNext(int val) {
-        setObjectNext(val);
-	}
-
-	@Override
-	public void setLongCurrent(long val) {
-        setObjectCurrent(val);
-	}
-
-	@Override
-	public void setLongNext(long val) {
-        setObjectNext(val);
-	}
-
-	@Override
-	public void setObjectCurrent(Object val) {
+	public void setObject(Object val) {
 		m_current = val;
         m_array.setObject(m_index, val);
 	}
 
 	@Override
-	public void setObjectNext(Object val) {
-		// [ANSTO][Tony][2011-08-31] Index should be incremented after object is set
-        setObjectCurrent(val);
-	    incrementIndex(m_index);
+	public void setShort(short val) {
+        setObject(val);
 	}
-
-	@Override
-	public void setShortCurrent(short val) {
-        setObjectCurrent(val);
-	}
-
-	@Override
-	public void setShortNext(short val) {
-        setObjectNext(val);
-    }
 
 	static public void incrementIndex(IIndex index)
 	{
@@ -284,5 +194,274 @@ public class NxsArrayIterator implements IArrayIterator {
 	/// protected method
 	protected void incrementIndex() {
 		NxsArrayIterator.incrementIndex(m_index);
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public boolean hasCurrent() {
+		return false;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setDoubleNext(double val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public double getDoubleCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setDoubleCurrent(double val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setFloatNext(float val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public float getFloatCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setFloatCurrent(float val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setLongNext(long val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public long getLongCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setLongCurrent(long val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setIntNext(int val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public int getIntCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setIntCurrent(int val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setShortNext(short val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public short getShortCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public short getShort() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setShortCurrent(short val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setByteNext(byte val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public byte getByteCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setByteCurrent(byte val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setCharNext(char val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public char getCharCurrent() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setCharCurrent(char val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setBooleanNext(boolean val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public boolean getBooleanCurrent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setBooleanCurrent(boolean val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setObjectNext(Object val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public Object getObjectCurrent() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public void setObjectCurrent(Object val) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/**
+	 * @deprecated
+	 */
+	@Override
+	public int[] getCurrentCounter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
