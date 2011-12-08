@@ -24,13 +24,9 @@ public class NexusArrayUtils extends ArrayUtils {
 		int length   = ((Long) getArray().getSize()).intValue();
 		Class<?> type = getArray().getElementType();
 		Object array = java.lang.reflect.Array.newInstance(type, length);
-		
-		long[] stride = getArray().getIndex().getStride();
-		int[] origin = ((NexusIndex) getArray().getIndex()).getOrigin();
+
 		int start = 0;
-		for( int i = getArray().getRank() - 1; i >= 0; i-- ) {
-			start += origin[i] * stride[i];
-		}
+
 		start = ((NexusIndex) getArray().getIndex()).currentProjectionElement();
 		System.arraycopy(getArray().getStorage(), start, array, 0, length);
 		
@@ -77,84 +73,6 @@ public class NexusArrayUtils extends ArrayUtils {
 		} catch (CloneNotSupportedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		return result;
-	}
-	
-	static public Object copyJavaArray(Object array) {
-		Object result = array;
-		if( result == null )
-			return null;
-		
-		// Determine rank of array (by parsing data array class name)
-		String sClassName = array.getClass().getName();
-		int iRank  = 0;
-		int iIndex = 0;
-		char cChar;
-		while (iIndex < sClassName.length()) {
-			cChar = sClassName.charAt(iIndex);
-			iIndex++;
-			if (cChar == '[') {
-				iRank++;
-			}
-		}
-
-		// Set dimension rank
-		int[] shape    = new int[iRank];
-
-		// Fill dimension size array
-		for ( int i = 0; i < iRank; i++) {
-			shape[i] = java.lang.reflect.Array.getLength(result);
-			result = java.lang.reflect.Array.get(result,0);
-		}
-		
-		// Define a convenient array (shape and type)
-		result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), shape);
-		
-		return copyJavaArray(array, result);
-	}
-	
-	static public Object copyJavaArray(Object source, Object target) {
-		Object item = java.lang.reflect.Array.get(source, 0);
-		int length = java.lang.reflect.Array.getLength(source);
-
-		if( item.getClass().isArray() ) {
-			Object tmpSrc;
-			Object tmpTar;
-			for( int i = 0; i < length; i++ ) {
-				tmpSrc = java.lang.reflect.Array.get(source, i);
-				tmpTar = java.lang.reflect.Array.get(target, i);
-				copyJavaArray( tmpSrc, tmpTar);
-			}
-		}
-		else {
-			System.arraycopy(source, 0, target, 0, length);
-		}
-		
-		return target;
-	}
-	
-	
-	// --------------------------------------------------
-	// private methods
-	// --------------------------------------------------
-	@Override
-	public boolean isConformable(IArray array) {
-		boolean result = false;
-		if( array.getRank() == getArray().getRank() ) {
-			IArray copy1 = this.reduce().getArray();
-			IArray copy2 = array.getArrayUtils().reduce().getArray();
-		
-			int[] shape1 = copy1.getShape();
-			int[] shape2 = copy2.getShape();
-		
-			for( int i = 0; i < shape1.length; i++ ) {
-				if( shape1[i] != shape2[i] ) {
-					result = false;
-					break;
-				}
-			}
-			
 		}
 		return result;
 	}
@@ -267,5 +185,87 @@ public class NexusArrayUtils extends ArrayUtils {
 	public Object get1DJavaArray(Class<?> wantType) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	
+	// --------------------------------------------------
+	// tool methods
+	// --------------------------------------------------
+	static public Object copyJavaArray(Object array) {
+		Object result = array;
+		if( result == null )
+			return null;
+		
+		// Determine rank of array (by parsing data array class name)
+		String sClassName = array.getClass().getName();
+		int iRank  = 0;
+		int iIndex = 0;
+		char cChar;
+		while (iIndex < sClassName.length()) {
+			cChar = sClassName.charAt(iIndex);
+			iIndex++;
+			if (cChar == '[') {
+				iRank++;
+			}
+		}
+
+		// Set dimension rank
+		int[] shape    = new int[iRank];
+
+		// Fill dimension size array
+		for ( int i = 0; i < iRank; i++) {
+			shape[i] = java.lang.reflect.Array.getLength(result);
+			result = java.lang.reflect.Array.get(result,0);
+		}
+		
+		// Define a convenient array (shape and type)
+		result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), shape);
+		
+		return copyJavaArray(array, result);
+	}
+	
+	static public Object copyJavaArray(Object source, Object target) {
+		Object item = java.lang.reflect.Array.get(source, 0);
+		int length = java.lang.reflect.Array.getLength(source);
+
+		if( item.getClass().isArray() ) {
+			Object tmpSrc;
+			Object tmpTar;
+			for( int i = 0; i < length; i++ ) {
+				tmpSrc = java.lang.reflect.Array.get(source, i);
+				tmpTar = java.lang.reflect.Array.get(target, i);
+				copyJavaArray( tmpSrc, tmpTar);
+			}
+		}
+		else {
+			System.arraycopy(source, 0, target, 0, length);
+		}
+		
+		return target;
+	}
+	
+	
+	// --------------------------------------------------
+	// private methods
+	// --------------------------------------------------
+	@Override
+	public boolean isConformable(IArray array) {
+		boolean result = false;
+		if( array.getRank() == getArray().getRank() ) {
+			IArray copy1 = this.reduce().getArray();
+			IArray copy2 = array.getArrayUtils().reduce().getArray();
+		
+			int[] shape1 = copy1.getShape();
+			int[] shape2 = copy2.getShape();
+		
+			for( int i = 0; i < shape1.length; i++ ) {
+				if( shape1[i] != shape2[i] ) {
+					result = false;
+					break;
+				}
+			}
+			
+		}
+		return result;
 	}
 }

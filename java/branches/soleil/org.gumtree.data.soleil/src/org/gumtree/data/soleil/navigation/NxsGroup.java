@@ -24,6 +24,7 @@ import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.utils.Utilities.ModelType;
 
+import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathNexus;
 
 public class NxsGroup implements IGroup {
@@ -331,11 +332,25 @@ public class NxsGroup implements IGroup {
 	public IGroup getGroup(String shortName) {
 		List<IGroup> list = getGroupList();
 		IGroup result = null;
-		
-		for( IGroup group : list ) {
-			if( group.getShortName() == shortName ) {
-				result = group;
-				break;
+		if( shortName.contains("<") || shortName.contains("{") ) {
+			NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
+			NexusNode groupName;
+			NexusNode[] nodes;
+			for( IGroup group : list ) {
+				nodes = PathNexus.splitStringToNode(group.getName());
+				groupName = nodes[nodes.length - 1];
+				if( groupName.matchesNode(nodeName) ) {
+					result = group;
+					break;
+				}
+			}
+		}
+		else {
+			for( IGroup group : list ) {
+				if( group.getShortName() == shortName ) {
+					result = group;
+					break;
+				}
 			}
 		}
 		
@@ -751,7 +766,7 @@ public class NxsGroup implements IGroup {
 			
 			// Store in a list all different containers from all m_groups 
 			for( IDataItem item : m_groups[0].getDataItemList() ) {
-				m_children.add( new NxsDataItem( (NexusDataItem) item, m_dataset ) );
+				m_children.add( new NxsDataItem( (NexusDataItem) item, this, m_dataset ) );
 			}
 			
 			for( IGroup group : m_groups[0].getGroupList() ) {

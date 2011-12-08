@@ -287,6 +287,7 @@ public final class Utilities {
 		if (newLength != array.getSize()) {
 			throw new InvalidArrayTypeException("the shape is invalid");
 		}
+		//[SOLEIL][clement][12/08/2011] TODO potential bug here: should be Factory.getFactory(array.getFactoryName()).createArray...
 		return Factory.createArray(array.getElementType(), shape, array
 				.getStorage());
 	}

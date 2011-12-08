@@ -12,6 +12,7 @@ import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.engine.jnexus.NexusDatasource.NeXusFilter;
 import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.engine.jnexus.navigation.NexusDataset;
+import org.gumtree.data.engine.jnexus.navigation.NexusGroup;
 import org.gumtree.data.exception.GDMWriterException;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IContainer;
@@ -85,10 +86,10 @@ public class NxsDataset implements IDataset {
     public IGroup getRootGroup() {
 		if( m_rootPhysical == null ) {
 			if( m_datasets.size() > 0 ) {
-				IGroup[] groups = new IGroup[m_datasets.size()];
+				NexusGroup[] groups = new NexusGroup[m_datasets.size()];
 				int i = 0;
 				for( IDataset dataset : m_datasets ) {
-					groups[i++] = dataset.getRootGroup();
+					groups[i++] = (NexusGroup) dataset.getRootGroup();
 				}
 				m_rootPhysical = new NxsGroup(groups, null, this);
 			}
