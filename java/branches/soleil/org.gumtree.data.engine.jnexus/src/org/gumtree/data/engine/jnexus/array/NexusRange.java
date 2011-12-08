@@ -1,12 +1,12 @@
-package org.gumtree.data.soleil.array;
+package org.gumtree.data.engine.jnexus.array;
 
+import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IRange;
-import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsRange implements IRange {
-    public static final NxsRange EMPTY = new NxsRange();
-    public static final NxsRange VLEN  = new NxsRange(-1);
+public class NexusRange implements IRange {
+    public static final NexusRange EMPTY = new NexusRange();
+    public static final NexusRange VLEN  = new NexusRange(-1);
 
     /// Members
     private long      m_last;     // number of elements
@@ -19,7 +19,7 @@ public class NxsRange implements IRange {
     /**
      * Used for EMPTY
      */
-    private NxsRange() {
+    private NexusRange() {
       this.m_last    = 0;
       this.m_first   = 0;
       this.m_stride  = 1;
@@ -31,7 +31,7 @@ public class NxsRange implements IRange {
      * Create a range starting at zero, with an unit stride of length "length".
      * @param length number of elements in the NxsRange
      */
-    public NxsRange(int length) {
+    public NexusRange(int length) {
       this.m_name    = null;
       this.m_first   = 0;
       this.m_stride  = 1;
@@ -48,7 +48,7 @@ public class NxsRange implements IRange {
      * @param stride stride between consecutive elements, must be > 0
      * @throws InvalidRangeException elements must be nonnegative: 0 <= first <= last, stride > 0
      */
-    public NxsRange(String name, long first, long last, long stride) throws InvalidRangeException {
+    public NexusRange(String name, long first, long last, long stride) throws InvalidRangeException {
         this.m_last    = last;
         this.m_first   = first;
         this.m_stride  = stride;
@@ -56,12 +56,12 @@ public class NxsRange implements IRange {
         this.m_reduced = false;
     }
     
-    public NxsRange(String name, long first, long last, long stride, boolean reduced) throws InvalidRangeException {
+    public NexusRange(String name, long first, long last, long stride, boolean reduced) throws InvalidRangeException {
     	this(name, first, last, stride);
     	m_reduced = reduced;
     }
     
-    public NxsRange( IRange range ) {
+    public NexusRange( IRange range ) {
         this.m_last    = range.last();
         this.m_first   = range.first();
         this.m_stride  = range.stride();
@@ -95,24 +95,24 @@ public class NxsRange implements IRange {
         return m_stride;
     }
     
-    protected void stride(long value) {
+    public void stride(long value) {
     	m_stride = value;
     }
     
-    protected void last(long value) {
+    public void last(long value) {
     	m_last = value;
     }
     
-    protected void first(long value) {
+    public void first(long value) {
     	m_first = value;
     }
     
     /// Methods
     @Override
     public IRange clone() {
-        NxsRange range = NxsRange.EMPTY;
+        NexusRange range = NexusRange.EMPTY;
         try {
-            range = new NxsRange(m_name, m_first, m_last, m_stride);
+            range = new NexusRange(m_name, m_first, m_last, m_stride);
             range.m_reduced = m_reduced;
         } catch( InvalidRangeException e ) {
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class NxsRange implements IRange {
         last   = m_last / m_stride;
         name   = m_name; 
         
-        return new NxsRange(name, first, last, stride);
+        return new NexusRange(name, first, last, stride);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class NxsRange implements IRange {
         long first  = element(r.first());
         long stride = stride() * r.stride();
         long last   = element(r.last());
-        return new NxsRange(m_name, first, last, stride);
+        return new NexusRange(m_name, first, last, stride);
 	}
 
 	@Override
@@ -247,7 +247,7 @@ public class NxsRange implements IRange {
         if (useFirst > last) {
             return EMPTY;
         }
-        return new NxsRange(m_name, useFirst, last, stride);
+        return new NexusRange(m_name, useFirst, last, stride);
 	}
 
 	@Override
@@ -296,7 +296,7 @@ public class NxsRange implements IRange {
     
 	@Override
 	public IRange shiftOrigin(int origin) throws InvalidRangeException {
-        return new NxsRange( m_name, m_first + origin, m_last + origin, m_stride, m_reduced );
+        return new NexusRange( m_name, m_first + origin, m_last + origin, m_stride, m_reduced );
 	}
 
 	@Override
@@ -322,7 +322,7 @@ public class NxsRange implements IRange {
         first = Math.min( m_first, r.first() );
         last  = Math.max( m_last , r.last()  );
         
-        return new NxsRange(name, first, last, m_stride);
+        return new NexusRange(name, first, last, m_stride);
 	}
 
     @Override
@@ -339,14 +339,14 @@ public class NxsRange implements IRange {
     
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
 	
-	protected boolean reduced() {
+	public boolean reduced() {
 		return m_reduced;
 	}
 	
-	protected void reduced(boolean reduce) {
+	public void reduced(boolean reduce) {
 		m_reduced = reduce;
 	}
 }

@@ -1,24 +1,24 @@
-package org.gumtree.data.soleil.navigation;
+package org.gumtree.data.engine.jnexus.navigation;
 
+import org.gumtree.data.engine.jnexus.NexusFactory;
+import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
-import org.gumtree.data.soleil.NxsFactory;
-import org.gumtree.data.soleil.array.NxsArray;
 
-public class NxsAttribute implements IAttribute {
+public class NexusAttribute implements IAttribute {
 
 	/// Members
 	private String	m_sName;		// Attribute's name
 	private IArray	m_aValue;		// Attribute's value
 
 	/// Constructors
-	public NxsAttribute(String sName, Object aValue) {
+	public NexusAttribute(String sName, Object aValue) {
 		int i = 1;
 		if( aValue.getClass().isArray() )
 			i = java.lang.reflect.Array.getLength(aValue);
 
 		m_sName  = sName;
-		m_aValue = new NxsArray(aValue, new int[] {i} );
+		m_aValue = new NexusArray(aValue, new int[] {i} );
 	}
 
 
@@ -116,7 +116,7 @@ public class NxsAttribute implements IAttribute {
 
 	@Override
 	public void setStringValue(String val) {
-		m_aValue = new NxsArray(val, new int[] {1});
+		m_aValue = new NexusArray(val, new int[] {1});
 	}
 
 	@Override
@@ -130,6 +130,6 @@ public class NxsAttribute implements IAttribute {
 
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
 }

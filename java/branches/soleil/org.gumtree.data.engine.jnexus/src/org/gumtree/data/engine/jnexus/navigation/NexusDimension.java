@@ -1,14 +1,14 @@
-package org.gumtree.data.soleil.navigation;
+package org.gumtree.data.engine.jnexus.navigation;
 
 import java.io.IOException;
 
+import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDimension;
-import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsDimension implements IDimension {
+public class NexusDimension implements IDimension {
 
     private IArray    m_array;
     private String    m_longName;
@@ -16,7 +16,7 @@ public class NxsDimension implements IDimension {
     private boolean   m_unlimited;
     private boolean   m_shared;
     
-    public NxsDimension(IDataItem item) {
+    public NexusDimension(IDataItem item) {
         m_longName  = item.getName();
         m_unlimited = item.isUnlimited();
         try {
@@ -26,7 +26,7 @@ public class NxsDimension implements IDimension {
         }
     }
     
-    public NxsDimension(NxsDimension dim) {
+    public NexusDimension(NexusDimension dim) {
         m_longName       = dim.m_longName;
         m_array          = dim.m_array;
         m_variableLength = dim.m_variableLength;
@@ -113,6 +113,6 @@ public class NxsDimension implements IDimension {
 	
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
 }

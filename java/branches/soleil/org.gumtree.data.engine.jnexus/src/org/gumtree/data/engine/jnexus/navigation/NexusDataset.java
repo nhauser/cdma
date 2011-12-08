@@ -1,12 +1,18 @@
-package org.gumtree.data.soleil.navigation;
+package org.gumtree.data.engine.jnexus.navigation;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gumtree.data.dictionary.ILogicalGroup;
+import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.exception.GDMWriterException;
+import org.gumtree.data.interfaces.IAttribute;
+import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
+import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
@@ -18,16 +24,15 @@ import fr.soleil.nexus4tango.PathData;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NxsDatasetFile extends NxsDataset {
-
+public class NexusDataset implements IDataset {
+	protected IGroup        m_rootPhysical; // Physical root of the document 
 	private NexusFileWriter m_n4tWriter; 	// Instance manipulating the NeXus file
 	private String			m_sTitle;
 	protected PathNexus		m_n4tCurPath;	// Instance of the current path
 
-	public NxsDatasetFile( File nexusFile )
+	public NexusDataset( File nexusFile )
 	{
 		m_n4tWriter    = null;
-		m_rootLogical  = null;
 		m_rootPhysical = null;
 		m_n4tWriter    = new NexusFileWriter(nexusFile.getAbsolutePath());
 		m_n4tCurPath   = PathNexus.ROOT_PATH.clone();
@@ -38,9 +43,8 @@ public class NxsDatasetFile extends NxsDataset {
 		m_n4tWriter.setCompressedData(true);
 	}
 
-	public NxsDatasetFile( NxsDatasetFile dataset )
+	public NexusDataset( NexusDataset dataset )
 	{
-		m_rootLogical  = dataset.m_rootLogical;
 		m_rootPhysical = dataset.m_rootPhysical;
 		m_n4tWriter    = dataset.m_n4tWriter;
 		m_n4tCurPath   = dataset.m_n4tCurPath.clone();
@@ -49,9 +53,9 @@ public class NxsDatasetFile extends NxsDataset {
 	}
 
 	@Override
-	public NxsDatasetFile clone()
+	public NexusDataset clone()
 	{
-		return new NxsDatasetFile(this);
+		return new NexusDataset(this);
 	}
 
 	@Override
@@ -94,14 +98,6 @@ public class NxsDatasetFile extends NxsDataset {
 	}
 	
 	@Override
-    public IGroup getPhyRoot() {
-		if( m_rootPhysical == null ) {
-            m_rootPhysical = new NxsGroup(null, PathNexus.ROOT_PATH.clone(), this);
-        }
-        return m_rootPhysical;
-    }
-
-	@Override
 	public String getTitle() {
 		return m_sTitle;
 	}
@@ -109,16 +105,17 @@ public class NxsDatasetFile extends NxsDataset {
 	@Override
 	public void save() throws GDMWriterException {
         List<IDataItem> items = new ArrayList<IDataItem>(); 
-        NxsGroup.getDescendentDataItem(items, m_rootPhysical);
+        NexusGroup.getDescendentDataItem(items, m_rootPhysical);
         try {
             // Open the destination file
             m_n4tWriter.openFile(m_n4tWriter.getFilePath(), NexusFile.NXACC_RDWR);
             
             // Save each IDataItem
+            DataItem data;
             for( IDataItem item : items ) {
-            	for( DataItem data : ((NxsDataItem) item).getN4TDataItem() ) {
-            		m_n4tWriter.writeData(data, data.getPath());
-            	}
+            	data = ((NexusDataItem) item).getN4TDataItem();
+            	m_n4tWriter.writeData(data, data.getPath());
+            	
             }
             
             // Close the file
@@ -181,7 +178,7 @@ public class NxsDatasetFile extends NxsDataset {
 
 	protected PathNexus getRootPath()
 	{
-		return ((NxsGroup) m_rootPhysical).getPath();
+		return ((NexusGroup) m_rootPhysical).getPathNexus();
 	}
 
 	// Methods
@@ -197,7 +194,56 @@ public class NxsDatasetFile extends NxsDataset {
 
 	protected void setRootGroup(PathNexus rootPath)
 	{
-		m_rootPhysical = new NxsGroup(rootPath, this);
+		m_rootPhysical = new NexusGroup(rootPath, this);
+	}
+
+	@Override
+	public String getFactoryName() {
+		return NexusFactory.NAME;
+	}
+
+	@Override
+	public IGroup getRootGroup() {
+		if( m_rootPhysical == null ) {
+            m_rootPhysical = new NexusGroup(null, PathNexus.ROOT_PATH.clone(), this);
+        }
+        return m_rootPhysical;
+	}
+
+	@Override
+	public ILogicalGroup getLogicalRoot() {
+		return null;
+	}
+
+	@Override
+	public boolean sync() throws IOException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void saveTo(String location) throws GDMWriterException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void save(IContainer container) throws GDMWriterException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void save(String parentPath, IAttribute attribute)
+			throws GDMWriterException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void writeNcML(OutputStream os, String uri) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -1,4 +1,4 @@
-package org.gumtree.data.soleil;
+package org.gumtree.data.engine.jnexus;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,10 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.dictionary.impl.Key;
 import org.gumtree.data.dictionary.impl.Path;
 import org.gumtree.data.dictionary.impl.PathParameter;
+import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.engine.jnexus.navigation.NexusAttribute;
+import org.gumtree.data.engine.jnexus.navigation.NexusDataset;
+import org.gumtree.data.engine.jnexus.navigation.NexusGroup;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.interfaces.IArray;
@@ -24,31 +27,27 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
-import org.gumtree.data.soleil.array.NxsArray;
-import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
-import org.gumtree.data.soleil.dictionary.NxsPathParamResolver;
-import org.gumtree.data.soleil.navigation.NxsDataset;
-import org.gumtree.data.soleil.navigation.NxsGroup;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NxsFactory implements IFactory {
-    private static NxsFactory factory;
-    private static NxsDatasource detector;
-    public static final String NAME = "org.gumtree.data.soleil.NxsFactory";
-    public static final String LABEL = "SOLEIL's NeXus plug-in";
+public class NexusFactory implements IFactory {
+    private static NexusFactory factory;
+    private static NexusDatasource detector;
+    public static final String NAME = "org.gumtree.data.engine.nexus";
+    public static final String LABEL = "NeXus engine plug-in";
     public static final String DEBUG_INF = "CDMA_DEBUG_NXS";
-    public NxsFactory() {
+    
+    public NexusFactory() {
     }
     
-    public static NxsFactory getInstance() {
-        synchronized (NxsFactory.class ) {
+    public static NexusFactory getInstance() {
+        synchronized (NexusFactory.class ) {
             if( factory == null ) {
-                factory  = new NxsFactory();
-                detector = new NxsDatasource();
+                factory  = new NexusFactory();
+                detector = new NexusDatasource();
             }
         }
         return factory;
@@ -57,20 +56,17 @@ public class NxsFactory implements IFactory {
     @Override
 	public IArray createArray(Class<?> clazz, int[] shape) {
     	Object o = java.lang.reflect.Array.newInstance(clazz, shape);
-		return new NxsArray( o, shape);
+		return new NexusArray( o, shape);
 	}
 
     @Override
 	public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
     	IArray result = null;
-    	if( storage instanceof IArray[] ) {
-    		result = new NxsArray( (IArray[]) storage );
-    	}
-    	else if( storage instanceof DataItem ) {
-    		result = new NxsArray( (DataItem) storage );
+    	if( DataItem.class.equals(storage.getClass()) ) {
+    		result = new NexusArray( (DataItem) storage );
     	}
     	else {
-    		result = new NxsArray( storage, shape);
+    		result = new NexusArray( storage, shape);
     	}
 		return result;
 	}
@@ -82,7 +78,7 @@ public class NxsFactory implements IFactory {
     	// http://stackoverflow.com/questions/219881/java-array-reflection-isarray-vs-instanceof
     	if (javaArray != null && javaArray.getClass().isArray()) {
     		int size = Array.getLength(javaArray);
-    		result = new NxsArray(javaArray, new int[] { size });
+    		result = new NexusArray(javaArray, new int[] { size });
     	}
 		return result;
 	}
@@ -90,18 +86,15 @@ public class NxsFactory implements IFactory {
     @Override
 	public IArray createArrayNoCopy(Object array) {
     	IArray result = null;
-    	if( array instanceof IArray[] ) {
-    		result = new NxsArray( (IArray[]) array);
-    	}
-    	else if( array instanceof DataItem ) {
-    		result = new NxsArray( (DataItem) array);
+    	if( array instanceof DataItem ) {
+    		result = new NexusArray( (DataItem) array);
     	}
     	else {
     		DataItem dataset = null;
     		try {
         		dataset = new DataItem(array);
         	} catch( Exception e ) {}
-        	result = new NxsArray(dataset);
+        	result = new NexusArray(dataset);
     	}
 		return result;
 	}
@@ -119,7 +112,7 @@ public class NxsFactory implements IFactory {
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-		return new NxsDataset(new File(uri));
+		return new NexusDataset(new File(uri));
 	}
 
     @Override
@@ -130,7 +123,7 @@ public class NxsFactory implements IFactory {
     	} catch( Exception e ) {
     		dataset = null;
     	}
-		return new NxsArray(dataset);
+		return new NexusArray(dataset);
 	}
 
     @Override
@@ -141,7 +134,7 @@ public class NxsFactory implements IFactory {
     	} catch( Exception e ) {
     		dataset = null;
     	}
-		return new NxsArray(dataset);
+		return new NexusArray(dataset);
 	}
 
     @Override
@@ -154,7 +147,7 @@ public class NxsFactory implements IFactory {
     public IGroup createGroup(IGroup parent, String shortName, boolean updateParent) {
     	String path_val = parent.getLocation();
     	PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
-		NxsGroup group = new NxsGroup( parent, (PathNexus) path, (NxsDataset) parent.getDataset());
+		NexusGroup group = new NexusGroup( (NexusGroup) parent, (PathNexus) path, (NexusDataset) parent.getDataset());
 		
 		return group;
     }
@@ -184,7 +177,7 @@ public class NxsFactory implements IFactory {
 	@Override
 	public IDatasource getPluginURIDetector() {
 		if( detector == null ) {
-			detector = new NxsDatasource();
+			detector = new NexusDatasource();
 		}
 		return detector;
 	}
@@ -207,7 +200,7 @@ public class NxsFactory implements IFactory {
 
 	@Override
 	public ILogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
-		return new NxsLogicalGroup(dataset, key);
+		return null;
 	}
 
 	@Override
@@ -222,15 +215,7 @@ public class NxsFactory implements IFactory {
 
 	@Override
 	public IPathParamResolver createPathParamResolver(IPath path) {
-		IPathParamResolver result;
-		if( path instanceof Path ) {
-			result = new NxsPathParamResolver(this, (Path) path);
-		}
-		else {
-			result = new NxsPathParamResolver( this, new Path(this, path.getValue() ) );
-		}
-		
-		return result;
+		return null;
 	}
 
 	@Override
