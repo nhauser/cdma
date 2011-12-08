@@ -1,15 +1,15 @@
-package org.gumtree.data.soleil.navigation;
+package org.gumtree.data.engine.jnexus.navigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gumtree.data.engine.jnexus.navigation.NexusDataItem;
-import org.gumtree.data.engine.jnexus.navigation.NexusDimension;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataItem;
@@ -17,16 +17,17 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IRange;
-import org.gumtree.data.soleil.NxsFactory;
-import org.gumtree.data.soleil.array.NxsArray;
-import org.gumtree.data.soleil.array.NxsArray;
-import org.gumtree.data.soleil.array.NxsIndex;
+import org.gumtree.data.engine.jnexus.NexusFactory;
+import org.gumtree.data.engine.jnexus.array.NexusArray;
+import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus4tango.DataItem.Data;
+import fr.soleil.nexus4tango.PathGroup;
 
-public class NxsDataItem implements IDataItem {
+public class NexusDataItem implements IDataItem {
 
     // Inner class
     // Associate a IDimension to an order of the array 
@@ -43,66 +44,42 @@ public class NxsDataItem implements IDataItem {
     
     
 	/// Members
-    private NxsDataset           m_dataset;       // CDM IDataset i.e. file handler
+    private NexusDataset         m_cdmDataset;       // CDM IDataset i.e. file handler
     private IGroup               m_parent = null;    // parent group
-    private NexusDataItem[]      m_dataItems;     // NeXus dataitem support of the data
+    private DataItem             m_n4tDataItem;     // NeXus dataitem support of the data
     private IArray               m_array = null;     // CDM IArray supporting a view of the data
     private ArrayList<DimOrder>  m_dimension;        // list of dimensions
 
     
 	/// Constructors
-	public NxsDataItem(final NxsDataItem dataItem)
+	public NexusDataItem(final NexusDataItem dataItem)
 	{
-        m_dataset   = dataItem.m_dataset;
-		m_dataItems = dataItem.m_dataItems.clone();
-        m_dimension = new ArrayList<DimOrder> (dataItem.m_dimension);
-        m_parent    = dataItem.getParentGroup();
-        m_array     = null;
+        m_cdmDataset   = dataItem.m_cdmDataset;
+		m_n4tDataItem = dataItem.getN4TDataItem();
+        m_dimension    = new ArrayList<DimOrder> (dataItem.m_dimension);
+        m_parent       = dataItem.getParentGroup();
+        m_array        = null;
         try {
-        	if( m_dataItems.length == 1 ) {
-        		m_array = new NxsArray((NxsArray) dataItem.getData());
-        	}
-        	else {
-        		m_array = new NxsArray((NxsArray) dataItem.getData());
-        	}
+    		m_array = new NexusArray((NexusArray) dataItem.getData());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public NxsDataItem(NexusDataItem[] data, NxsDataset handler) {
-        m_dataset   = handler;
-        m_dataItems = data;
-        m_dimension = new ArrayList<DimOrder>();
-        m_parent    = getParentGroup();
-        m_array     = null;
+	public NexusDataItem(DataItem data, NexusDataset handler) {
+        m_cdmDataset  = handler;
+        m_n4tDataItem = data;
+        m_dimension   = new ArrayList<DimOrder>();
+        m_parent      = null;
+        m_array       = null;
 	}
 	
-	public NxsDataItem(NexusDataItem[] data, IGroup parent, NxsDataset handler) {
-        m_dataset   = handler;
-        m_dataItems = data;
-        m_dimension = new ArrayList<DimOrder>();
-        m_parent    = parent;
-        m_array     = null;
-	}
-
-	public NxsDataItem(NexusDataItem item, NxsDataset dataset) {
-    	this(new NexusDataItem[] {item}, dataset);
-    }
-
-	public NxsDataItem(NxsDataItem[] items, NxsDataset dataset) {
-        ArrayList<NexusDataItem> list = new ArrayList<NexusDataItem>();
-		for( NxsDataItem cur : items ) {
-			for( NexusDataItem item : cur.m_dataItems ) {
-				list.add(item);
-			}
-        }
-        m_dataItems = list.toArray( new NexusDataItem[list.size()] );
-        
-		m_dataset   = dataset;
-        m_dimension = new ArrayList<DimOrder>();
-        m_parent    = getParentGroup();
-        m_array     = null;
+	public NexusDataItem(DataItem data, IGroup parent, NexusDataset handler) {
+        m_cdmDataset  = handler;
+        m_n4tDataItem = data;
+        m_dimension   = new ArrayList<DimOrder>();
+        m_parent      = parent;
+        m_array       = null;
 	}
 
 	/// Methods
@@ -114,9 +91,21 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public List<IAttribute> getAttributeList()
 	{
-		//[soleil][clement][12/02/2011] TODO ensure method is correct: shall not we take all attributes of al nodes ?
+		HashMap<String, DataItem.Data<?>> inList;
 		List<IAttribute> outList = new ArrayList<IAttribute>();
-		outList = m_dataItems[0].getAttributeList();
+		NexusAttribute tmpAttr;
+		String sAttrName;
+
+		inList = m_n4tDataItem.getAttributes();
+
+		Iterator<String> iter = inList.keySet().iterator();
+        while( iter.hasNext() )
+        {
+        	sAttrName = iter.next();
+			tmpAttr   = new NexusAttribute(sAttrName, inList.get(sAttrName).getValue());
+			outList.add(tmpAttr);
+		}
+
 		return outList;
 	}
 
@@ -124,13 +113,7 @@ public class NxsDataItem implements IDataItem {
 	public IArray getData() throws IOException
 	{
         if( m_array == null ) {
-        	if( m_dataItems.length > 0 ) {
-        		IArray[] arrays = new IArray[m_dataItems.length];
-        		for( int i = 0; i < m_dataItems.length; i++ ) {
-        			arrays[i] = m_dataItems[i].getData();
-        		}
-        		m_array = new NxsArray(arrays);
-        	}
+    		m_array = new NexusArray(m_n4tDataItem);
         }
 		return m_array;
 	}
@@ -147,45 +130,51 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public IDataItem clone()
 	{
-		return new NxsDataItem(this);
+		return new NexusDataItem(this);
 	}
 
 	@Override
 	public void addOneAttribute(IAttribute att) {
-        m_dataItems[0].addOneAttribute(att);
+        m_n4tDataItem.setAttribute(att.getName(), att.getValue().getStorage());
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-	    m_dataItems[0].addStringAttribute(name, value);
+	    m_n4tDataItem.setAttribute(name, value);
     }
 
 	@Override
 	public IAttribute getAttribute(String name) {
-		IAttribute result = null;
+		HashMap<String, Data<?> > inList;
+		String sAttrName;
 
-		for( IDataItem item : m_dataItems ) {
-			result = item.getAttribute(name);
-			if( result != null ) {
-				break;
-			}
+		inList = m_n4tDataItem.getAttributes();
+		Iterator<String> iter = inList.keySet().iterator();
+        while( iter.hasNext() )
+        {
+        	sAttrName = iter.next();
+        	if( sAttrName.equals(name) )
+        		return new NexusAttribute(sAttrName, inList.get(sAttrName).getValue());
 		}
-		
-		return result;
+
+		return null;
 	}
 
 	@Override
 	public IAttribute findAttributeIgnoreCase(String name) {
-		IAttribute result = null;
+		HashMap<String, ?> inList;
+		String sAttrName;
 
-		for( IDataItem item : m_dataItems ) {
-			result = item.findAttributeIgnoreCase(name);
-			if( result != null ) {
-				break;
-			}
+		inList = m_n4tDataItem.getAttributes();
+		Iterator<String> iter = inList.keySet().iterator();
+        while( iter.hasNext() )
+        {
+        	sAttrName = iter.next();
+        	if( sAttrName.toUpperCase().equals(name.toUpperCase()) )
+        		return new NexusAttribute(sAttrName, inList.get(sAttrName));
 		}
-		
-		return result;
+
+		return null;
 	}
 
 	@Override
@@ -200,16 +189,19 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public String getDescription() {
-		String result = null;
+		String sDesc = null;
 
-		for( IDataItem item : m_dataItems ) {
-			result = item.getDescription();
-			if( result != null ) {
-				break;
-			}
-		}
-		
-		return result;
+		sDesc = m_n4tDataItem.getAttribute("long_name");
+		if( sDesc == null )
+			sDesc = m_n4tDataItem.getAttribute("description");
+		if( sDesc == null )
+			sDesc = m_n4tDataItem.getAttribute("title");
+		if( sDesc == null )
+			sDesc = m_n4tDataItem.getAttribute("standard_name");
+        if( sDesc == null )
+            sDesc = m_n4tDataItem.getAttribute("name");
+
+		return sDesc;
 	}
 
 	@Override
@@ -256,7 +248,22 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public int getElementSize() {
-        return m_dataItems[0].getElementSize();
+        switch( m_n4tDataItem.getType() ) {
+            case NexusFile.NX_BINARY:
+            case NexusFile.NX_BOOLEAN:
+            case NexusFile.NX_CHAR:
+                return 1;
+            case NexusFile.NX_INT16:
+                return 2;
+            case NexusFile.NX_FLOAT32:
+            case NexusFile.NX_INT32:
+                return 4;
+            case NexusFile.NX_FLOAT64:
+            case NexusFile.NX_INT64:
+                return 8;
+            default:
+                return 1;
+        }
 	}
 
 	@Override
@@ -269,7 +276,7 @@ public class NxsDataItem implements IDataItem {
         	name = m_n4tDataSet.getNodeName();
 		return name;
 		*/
-		return m_dataItems[0].getName();
+		return m_n4tDataItem.getPath().toString(false);
 	}
 
 	@Override
@@ -319,16 +326,12 @@ public class NxsDataItem implements IDataItem {
 	{
         if( m_parent == null )
         {
-        	// TODO do not reconstruct the physical hierarchy: keep what has been done in construct
-//        	IGroup[] groups = new IGroup[m_dataItems.length];
-//        	int i = 0;
-//        	for( IDataItem item : m_dataItems ) {
-//        		groups[i++] = item.getParentGroup();
-//        	}
-//        	
-//        	m_parent = new NxsGroup(groups, null, m_dataset);
-//        	((NxsGroup) m_parent).setChild(this);
-        	
+            PathGroup path = m_n4tDataItem.getPath().getParentPath();
+            try {
+				m_parent = (IGroup) m_cdmDataset.getRootGroup().findContainerByPath(path.getValue());
+			} catch (NoResultException e) {}
+            //m_parent = new NxsGroup(path, m_cdmDataset);
+            ((NexusGroup) m_parent).setChild(this);
         }
 		return m_parent;
 	}
@@ -337,7 +340,7 @@ public class NxsDataItem implements IDataItem {
 	public List<IRange> getRangeList() {
         List<IRange> list = null;
         try {
-            list = new NxsIndex(getData().getShape()).getRangeList();
+            list = new NexusIndex(getData().getShape()).getRangeList();
         } catch( IOException e ) {
             e.printStackTrace();
         }
@@ -348,7 +351,7 @@ public class NxsDataItem implements IDataItem {
     public List<IRange> getSectionRanges() {
         List<IRange> list = null;
         try {
-            list = ((NxsIndex) getData().getIndex()).getRangeList(); 
+            list = ((NexusIndex) getData().getIndex()).getRangeList(); 
         } catch( IOException e ) {
             e.printStackTrace();
         }
@@ -358,7 +361,7 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public int getRank() {
 		int[] shape = getShape();
-		if( m_dataItems[0].getN4TDataItem().getType() == NexusFile.NX_CHAR )
+		if( m_n4tDataItem.getType() == NexusFile.NX_CHAR )
 			return 0;
 		else if( shape.length == 1 && shape[0] == 1 )
 			return 0;
@@ -369,10 +372,10 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public IDataItem getSection(List<IRange> section)
 			throws InvalidRangeException {
-        NxsDataItem item = null;
+        NexusDataItem item = null;
         try {
-            item = new NxsDataItem(this);
-            m_array = (NxsArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
+            item = new NexusDataItem(this);
+            m_array = (NexusArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
         } catch( IOException e ) {
             e.printStackTrace();
         }
@@ -386,6 +389,7 @@ public class NxsDataItem implements IDataItem {
 		try {
 			return getData().getShape();
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new int[] {-1};
 		}
@@ -393,18 +397,18 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public String getShortName() {
-		return m_dataItems[0].getShortName();
+		return m_n4tDataItem.getNodeName();
 	}
 
 	@Override
 	public long getSize() {
-        int[] shape = getShape();
-        long  total = 1;
-        for( int size : shape ) {
-        	total *= size;
+        int[] shape = m_n4tDataItem.getSize();
+        int size    = shape[0];
+        for( int i = 1; i < shape.length; i++ ) {
+            size *= shape[i];
         }
         
-		return total;
+		return size;
 	}
 
 	@Override
@@ -416,7 +420,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
-	    NxsDataItem item = new NxsDataItem(this);
+	    NexusDataItem item = new NexusDataItem(this);
         try {
             item.m_array = item.getData().getArrayUtils().slice(dim, value).getArray();
         }
@@ -433,7 +437,7 @@ public class NxsDataItem implements IDataItem {
     
 	@Override
 	public Class<?> getType() {
-		return m_dataItems[0].getType();
+		return m_n4tDataItem.getDataClass();
 	}
 
     @Override
@@ -462,22 +466,29 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public boolean hasCachedData() {
-		return m_dataItems[0].hasCachedData();
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+		return false;
 	}
 
 	@Override
 	public void invalidateCache() {
-		m_dataItems[0].invalidateCache();
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
 	}
 
 	@Override
 	public boolean isCaching() {
-		return m_dataItems[0].isCaching();
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+		return false;
 	}
 
 	@Override
 	public boolean isMemberOfStructure() {
-		return m_dataItems[0].isMemberOfStructure();
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+		return false;
 	}
 
 	@Override
@@ -501,74 +512,82 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public boolean isUnsigned() {
-        return m_dataItems[0].isUnsigned(); 
+        int type = m_n4tDataItem.getType(); 
+		if(
+		     type == NexusFile.NX_UINT16 ||
+             type == NexusFile.NX_UINT32 ||
+             type == NexusFile.NX_UINT64 ||
+             type == NexusFile.NX_UINT8
+           ) {
+		    return true;
+        }
+        else {
+            return false;
+        }
 	}
 
 	@Override
 	public byte readScalarByte() throws IOException {
-		return ((byte[]) m_dataItems[0].getData().getStorage())[0];
+		return ((byte[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public double readScalarDouble() throws IOException {
-		return ((double[]) m_dataItems[0].getData().getStorage())[0];
+		return ((byte[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public float readScalarFloat() throws IOException {
-		return ((float[]) m_dataItems[0].getData().getStorage())[0];
+		return ((float[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public int readScalarInt() throws IOException {
-		return ((int[]) m_dataItems[0].getData().getStorage())[0];
+		return ((int[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public long readScalarLong() throws IOException {
-		return ((long[]) m_dataItems[0].getData().getStorage())[0];
+		return ((long[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public short readScalarShort() throws IOException {
-		return ((short[]) m_dataItems[0].getData().getStorage())[0];
+		return ((short[]) m_n4tDataItem.getData())[0];
 	}
 
 	@Override
 	public String readScalarString() throws IOException {
-		return (String) m_dataItems[0].readScalarString();
+		return (String) m_n4tDataItem.getData();
 	}
 
 	@Override
-	public boolean removeAttribute(IAttribute attr) {
-		boolean result = false;
-		for( IDataItem item : m_dataItems ) {
-			item.removeAttribute(attr);
-		}
-		result = true;
-		return result;
+	public boolean removeAttribute(IAttribute a) {
+        m_n4tDataItem.setAttribute(a.getName(), null);
+		return false;
 	}
 
 	@Override
 	public void setCachedData(IArray cacheData, boolean isMetadata)
 			throws InvalidArrayTypeException {
-		for( IDataItem item : m_dataItems ) {
-			item.setCachedData(cacheData, isMetadata);
-		}
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+
 	}
 
 	@Override
 	public void setCaching(boolean caching) {
-		for( IDataItem item : m_dataItems ) {
-			item.setCaching(caching);
-		}
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
 	}
 
 	@Override
 	public void setDataType(Class<?> dataType) {
-		for( IDataItem item : m_dataItems ) {
-			item.setDataType(dataType);
-		}
+	    try {
+            throw new BackupException("Method not support in plug-in: setDataType(Class<?> dataType)!");
+        } catch(BackupException e) {
+            e.printStackTrace();
+        }
 	}
 
 	@Override
@@ -598,16 +617,16 @@ public class NxsDataItem implements IDataItem {
     
 	@Override
 	public void setElementSize(int elementSize) {
-		for( IDataItem item : m_dataItems ) {
-			item.setElementSize(elementSize);
-		}
+        try {
+            throw new BackupException("Method not support in plug-in: setElementSize(int elementSize)!");
+        } catch(BackupException e) {
+            e.printStackTrace();
+        }
     }
 
 	@Override
 	public void setName(String name) {
-		for( IDataItem item : m_dataItems ) {
-			item.setName(name);
-		}
+        m_n4tDataItem.setAttribute("name", name);
 	}
 
 	@Override
@@ -621,9 +640,9 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void setSizeToCache(int sizeToCache) {
-		for( IDataItem item : m_dataItems ) {
-			item.setSizeToCache(sizeToCache);
-		}
+		// TODO Auto-generated method stub
+        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+
 	}
 
     @Override
@@ -682,24 +701,20 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void setShortName(String name) {
-		for( IDataItem item : m_dataItems ) {
-			item.setShortName(name);
-		}
+		m_n4tDataItem.setNodeName(name);
+		
 	}
     
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
-	
-	// specific methods
-	public DataItem[] getNexusItems() {
-		DataItem[] result = new DataItem[ m_dataItems.length ];
-		int i = 0;
-		for( NexusDataItem item : m_dataItems ) {
-			result[i] = item.getN4TDataItem();
-			i++;
-		}
-		return result;
-	}
+
+    public DataItem getN4TDataItem()
+    {
+        return m_n4tDataItem;
+    }
+    // ------------------------------------------------------------------------
+    /// Protected methods
+    // ------------------------------------------------------------------------
 }

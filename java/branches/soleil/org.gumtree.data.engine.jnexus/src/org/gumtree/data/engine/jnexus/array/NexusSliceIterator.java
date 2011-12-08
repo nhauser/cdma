@@ -1,17 +1,17 @@
-package org.gumtree.data.soleil.array;
+package org.gumtree.data.engine.jnexus.array;
 
+import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
-import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsSliceIterator implements ISliceIterator {
+public class NexusSliceIterator implements ISliceIterator {
 
     /// Members
-    private NxsArrayIterator  m_iterator;      // iterator of the whole_array
-    private NxsArrayInterface m_array;         // array of the original shape containing all slices
-    private int[]             m_dimension;     // shape of the slice
+    private NexusArrayIterator  m_iterator;      // iterator of the whole_array
+    private IArray              m_array;         // array of the original shape containing all slices
+    private int[]               m_dimension;     // shape of the slice
     
     /// Constructor
     /**
@@ -21,7 +21,7 @@ public class NxsSliceIterator implements ISliceIterator {
      * @param array source of the slice
      * @param dim returned dimensions
      */
-    public NxsSliceIterator(final NxsArrayInterface array, final int dim) throws InvalidRangeException {
+    public NexusSliceIterator(final IArray array, final int dim) throws InvalidRangeException {
         // If ranks are equal, make sure at least one iteration is performed.
         // We cannot use 'reshape' (which would be ideal) as that creates a
         // new copy of the array storage and so is unusable
@@ -51,7 +51,7 @@ public class NxsSliceIterator implements ISliceIterator {
 	        index.setStride(stride);
 	        index.setShape(rangeList);
 	        
-	        m_iterator = new NxsArrayIterator(m_array, index, false);
+	        m_iterator = new NexusArrayIterator(m_array, index, false);
 			
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -92,7 +92,7 @@ public class NxsSliceIterator implements ISliceIterator {
 
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
 	
     private IArray createSlice() throws InvalidRangeException {

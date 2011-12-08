@@ -3,12 +3,20 @@ package org.gumtree.data.soleil;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.gumtree.data.IDatasource;
+import org.gumtree.data.engine.jnexus.NexusDatasource.NeXusFilter;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.navigation.NxsDataset;
-import org.gumtree.data.soleil.navigation.NxsDatasetFolder;
+import org.nexusformat.NexusException;
+
+import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus4tango.NexusFileReader;
+import fr.soleil.nexus4tango.NexusNode;
+import fr.soleil.nexus4tango.PathGroup;
+import fr.soleil.nexus4tango.PathNexus;
 
 public class NxsDatasource implements IDatasource {
 	
@@ -29,7 +37,7 @@ public class NxsDatasource implements IDatasource {
 		
 		if( file.isDirectory() ) {
 			// Check if the folder is an aggregated dataset  
-			if( NxsDatasetFolder.isDataset(file) ) {
+			if( isDatasetFolder(file) ) {
 				result = true;
 			}
 		}
@@ -103,7 +111,7 @@ public class NxsDatasource implements IDatasource {
 		
 		if( file.isDirectory() ) {
 			// Check if the folder is an aggregated dataset  
-			if( NxsDatasetFolder.isDataset(file) ) {
+			if( isDatasetFolder(file) ) {
 				result = true;
 			}
 		}
@@ -118,5 +126,46 @@ public class NxsDatasource implements IDatasource {
 	@Override
 	public boolean isBrowsable(URI target) {
 		return isReadable(target);
+	}
+
+    // ---------------------------------------------------------
+    /// private methods
+    // ---------------------------------------------------------
+	private static boolean isDatasetFolder(File file) {
+		boolean result = false;
+		if( file.isDirectory() ) {
+			NeXusFilter filter = new NeXusFilter();
+			for( File nxFile : file.listFiles(filter) ) {
+				NexusFileReader reader = new NexusFileReader(nxFile.getAbsolutePath());
+				PathNexus path = new PathGroup(new String[] {"<NXentry>", "<NXdata>"} );
+				try {
+					reader.openFile();
+					reader.openPath(path);
+					ArrayList<NexusNode> list = reader.listChildren();
+					for( NexusNode node : list ) {
+						reader.openNode(node);
+						DataItem data = reader.readDataInfo();
+						if( data.getAttribute("dataset_part") != null ) {
+							result = true;
+							reader.closeFile();
+							break;
+						}
+						reader.closeData();
+						
+					}
+					reader.closeFile();
+				} catch (NexusException e1) {
+					try {
+						reader.closeFile();
+					}
+					catch (NexusException e2) {}
+					result = false;
+				}
+				if( result ) {
+					break;
+				}
+			}
+		}
+		return result;
 	}
 }

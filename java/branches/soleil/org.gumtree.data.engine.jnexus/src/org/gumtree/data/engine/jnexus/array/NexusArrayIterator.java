@@ -1,18 +1,18 @@
-package org.gumtree.data.soleil.array;
+package org.gumtree.data.engine.jnexus.array;
 
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IIndex;
-import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.engine.jnexus.NexusFactory;
 
-public class NxsArrayIterator implements IArrayIterator {
+public class NexusArrayIterator implements IArrayIterator {
 	/// Members
 	private IArray  m_array;
     private IIndex  m_index;
     private Object  m_current;
     private boolean m_access; // Indicates that this can access the storage memory or not
 
-	public NxsArrayIterator(NxsArrayInterface array)
+	public NexusArrayIterator(NexusArray array)
 	{
 		m_array	= array;
 		// [ANSTO][Tony][2011-08-31] Should m_access set to true for NxsArrayInterface??
@@ -29,11 +29,11 @@ public class NxsArrayIterator implements IArrayIterator {
 		}
 	}
     
-    public NxsArrayIterator(IArray array, IIndex index) {
+    public NexusArrayIterator(IArray array, IIndex index) {
         this(array, index, true);
     }
     
-    public NxsArrayIterator(IArray array, IIndex index, boolean accessData) {
+    public NexusArrayIterator(IArray array, IIndex index, boolean accessData) {
     	int[] count = index.getCurrentCounter();
         m_array     = array;
         m_index     = index;
@@ -188,12 +188,12 @@ public class NxsArrayIterator implements IArrayIterator {
 
 	@Override
 	public String getFactoryName() {
-		return NxsFactory.NAME;
+		return NexusFactory.NAME;
 	}
 	
 	/// protected method
 	protected void incrementIndex() {
-		NxsArrayIterator.incrementIndex(m_index);
+		NexusArrayIterator.incrementIndex(m_index);
 	}
 
 	/**

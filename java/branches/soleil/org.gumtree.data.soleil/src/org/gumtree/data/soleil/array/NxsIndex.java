@@ -1,598 +1,372 @@
 package org.gumtree.data.soleil.array;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.gumtree.data.exception.InvalidRangeException;
+import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.interfaces.IIndex;
-import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsIndex implements IIndex {
-	private int        m_rank;
-    private int[]      m_iCurPos;          // Current position pointed by this index
-    private NxsRange[] m_ranges;           // Ranges that constitute the index global view in each dimension
-    private boolean    m_upToDate = false; // Does the overall shape has changed
-    private int        m_lastIndex;
-    private long[]     m_projStride;
-    private int[]      m_projShape;
-    private int[]      m_projOrigin;
-
-    /// Constructors
-	public NxsIndex(fr.soleil.nexus4tango.DataItem ds) {
-        this(ds.getSize(), new int[ds.getSize().length], ds.getSize());
+public class NxsIndex extends NexusIndex {
+	private NexusIndex m_indexArrayData;
+	private NexusIndex m_indexStorage;
+	
+	
+	/// Constructors
+	/**
+	 * Construct a matrix of index. The matrix is defined by shape, start and length
+	 * that also carries underlying data storage dimensions. The matrixRank defines
+	 * which values of those arrays concern the matrix of index and which concern
+	 * the index.
+	 * The first matrixRank values concern the matrix of index.
+	 */
+	public NxsIndex(int matrixRank, int[] shape, int[] start, int[] length) {
+		super(shape, start, length);
+		m_indexArrayData = new NexusIndex(
+				java.util.Arrays.copyOfRange(shape, 0, matrixRank),
+				java.util.Arrays.copyOfRange(start, 0, matrixRank),
+				java.util.Arrays.copyOfRange(length, 0, matrixRank)
+		   );
+		
+		m_indexStorage = new NexusIndex(
+				java.util.Arrays.copyOfRange(shape, matrixRank, shape.length),
+				java.util.Arrays.copyOfRange(start, matrixRank, start.length),
+				java.util.Arrays.copyOfRange(length, matrixRank, length.length)
+		   );
     }
-
-	public NxsIndex(int[] shape) {
-        this(shape, new int[shape.length], shape);
+	
+	public NxsIndex(int[] shape, int[] start, int[] length) {
+		this(0, shape, start, length);
 	}
-    
-    public NxsIndex(NxsIndex index) {
-    	m_rank    = index.m_rank;
-        m_ranges  = new NxsRange[index.m_ranges.length];
-        m_iCurPos = index.m_iCurPos.clone();
-        m_projStride = index.m_projStride.clone();
-        m_projShape  = index.m_projShape.clone();
-        m_projOrigin = index.m_projOrigin.clone();
-        for( int i = 0; i < index.m_ranges.length; i++ ) {
-            m_ranges[i] = (NxsRange) index.m_ranges[i].clone();
-        }
-        m_lastIndex = index.m_lastIndex;
+	
+	public NxsIndex(NxsIndex index) {
+		super(index);
+		
+		m_indexArrayData = (NexusIndex) index.m_indexArrayData.clone();
+		m_indexStorage = (NexusIndex) index.m_indexStorage.clone();
     }
-
-    public NxsIndex(int[] shape, int[] start, int[] length) {
-        long stride  = 1;
-        m_rank       = shape.length;
-        m_iCurPos    = new int[m_rank];
-        m_ranges     = new NxsRange[m_rank];
-        for( int i = m_rank - 1; i >= 0 ; i-- ) {
-            try {
-                m_ranges[i] = new NxsRange("", start[i] * stride, (start[i] + length[i] - 1) * stride, stride);
-                stride *= shape[i];
-            } catch( InvalidRangeException e ) {
-                e.printStackTrace();
-                m_ranges[i] = NxsRange.EMPTY;
-            }
-        }
-        updateProjection();
-    }
-    
-    public NxsIndex(List<IRange> ranges) {
-    	m_rank       = ranges.size();
-        m_iCurPos    = new int[m_rank];
-        m_ranges     = new NxsRange[m_rank];
-        int i = 0;
-        for( IRange range : ranges ) {
-        	m_ranges[i] = new NxsRange(range);
-        	i++;
-        }
-        updateProjection();
-    }
-    
-    // ---------------------------------------------------------
-    /// Public methods
-    // ---------------------------------------------------------
-	@Override
-	public long currentElement() {
-        int value = 0;
-        try {
-            for( int i = 0; i < m_iCurPos.length; i++ ) {
-                value += (m_ranges[i]).element( m_iCurPos[i] );
-            }
-        } catch (InvalidRangeException e) {
-            value = -1;
-        }        
-        return value;
+	
+	public NxsIndex(int[] storage) {
+		super(storage);
+		m_indexArrayData = new NexusIndex( new int[] {});
+		m_indexStorage   = new NexusIndex(storage);
 	}
+	
+	public NxsIndex(int[] matrix, int[] storage) {
+		super(
+				concat(matrix, storage)
+		);
+		
+		m_indexArrayData = new NexusIndex(matrix);
+		m_indexStorage   = new NexusIndex(storage);
+	}
+	
+	public NxsIndex(int matrixRank, IIndex index) {
+		this(matrixRank, index.getShape(), index.getOrigin(), index.getShape());
 
-	@Override
-	public int[] getCurrentCounter() {
-		int[] curPos = new int[m_rank];
-        int i = 0;
-        int j = 0;
-        for(NxsRange range : m_ranges) {
-        	if( ! range.reduced() ) {
-        		curPos[i] = m_iCurPos[j];
-        		i++;
-        	}
-        	j++;
-        }
-		return curPos;
+		m_indexArrayData = new NexusIndex(
+				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank),
+				java.util.Arrays.copyOfRange(index.getOrigin(), 0, matrixRank),
+				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank)
+		   );
+		
+		m_indexStorage = new NexusIndex(
+				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length),
+				java.util.Arrays.copyOfRange(index.getOrigin(), matrixRank, index.getOrigin().length),
+				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length)
+		   );
+		this.set(index.getCurrentCounter());
+	}
+	
+	public long currentElementMatrix() {
+		return m_indexArrayData.currentElement();
+	}
+	
+	public long currentElementStorage() {
+		return m_indexStorage.currentElement();
+	}
+	
+	public int[] getCurrentCounterMatrix() {
+		return m_indexArrayData.getCurrentCounter();
+	}
+	
+	public int[] getCurrentCounterStorage() {
+		return m_indexStorage.getCurrentCounter();
 	}
 
 	@Override
-	public String getIndexName(int dim) {
-		return (m_ranges[dim]).getName();
-	}
-
-	@Override
-	public int getRank() {
-		return m_rank;
-	}
-
-	@Override
-	public int[] getShape() {
-        int[] shape = new int[m_rank];
-        int i = 0;
-        for(NxsRange range : m_ranges) {
-        	if( ! range.reduced() ) {
-        		shape[i] = range.length();
-        		i++;
-        	}
-        }
-		return shape;
-	}
-
-    @Override
-    public long[] getStride() {
-        long[] stride = new long[m_rank];
-        int i = 0;
-        for(NxsRange range : m_ranges) {
-        	if( ! range.reduced() ) {
-        		stride[i] = range.stride();
-        		i++;
-        	}
-        }
-        return stride;
-    }
-    
-    @Override
-    public int[] getOrigin() {
-        int[] origin = new int[m_rank];
-        int i = 0;
-        for(NxsRange range : m_ranges) {
-        	if( ! range.reduced() ) {
-	        	origin[i] = (int) (range.first() / range.stride());
-	            i++;
-        	}
-        }
-        return origin;
-    }
-    
-	@Override
-	public long getSize() {
-		if( m_ranges.length == 0 )
-		{
-			return 0;
+	public void setOrigin(int[] origin) {
+		if( origin.length != getRank() ) {
+            throw new IllegalArgumentException();
 		}
-
-		long size = 1;
-        for(NxsRange range : m_ranges) {
-			size *= range.length();
-		}
-
-		return size;
+		super.setOrigin(origin);
+		m_indexArrayData.setOrigin(
+					java.util.Arrays.copyOfRange(origin, 0, m_indexArrayData.getRank())
+				);
+		
+		m_indexStorage.setOrigin(
+				java.util.Arrays.copyOfRange(origin, m_indexArrayData.getRank(), origin.length)
+			);
 	}
-    
-    @Override
-    public void setOrigin(int[] origins) {
-    	NxsRange range;
-        int i = 0;
-        int j = 0;
-        while(  i < origins.length ) {
-            range = m_ranges[j];
-            if( ! range.reduced() ) {
-            	range.last( origins[i] * range.stride() + (range.length() - 1) * range.stride() );
-            	range.first( origins[i] * range.stride() );
-        		i++;
-        	}
-        	j++;
-        }
-        updateProjection();
-    }
+
 
 	@Override
-    public void setShape(int[] value) {
-        NxsRange range;
-        m_upToDate = false;
-        int i = 0;
-        int j = 0;
-        while(  i < value.length ) {
-            range = m_ranges[j];
-            if( ! range.reduced() ) {
-            	range.last( range.first() + (value[i] - 1) * range.stride() );
-            	i++;
-            }
-            j++;
-        }
-        updateProjection();
-    }
-    
-    @Override
-    public void setStride(long[] stride) {
-        NxsRange range;
-        if( stride == null ) {
-            return;
-        }
-        m_upToDate = false;
-        int i = 0;
-        int j = 0;
-        while(  i < stride.length ) {
-            range = m_ranges[j];
-            if( ! range.reduced() ) {
-            	range.stride( stride[i] );
-            	i++;
-            }
-            j++;
-        }
-        updateProjection();
-    }
-    
+	public void setShape(int[] shape) {
+		if( shape.length != getRank() ) {
+            throw new IllegalArgumentException();
+		}
+		super.setShape(shape);
+		m_indexArrayData.setShape(
+					java.util.Arrays.copyOfRange(shape, 0, m_indexArrayData.getRank())
+				);
+		
+		m_indexStorage.setShape(
+				java.util.Arrays.copyOfRange(shape, m_indexArrayData.getRank(), shape.length)
+			);
+	}
+
+
+	@Override
+	public void setStride(long[] stride) {
+		if( stride.length != getRank() ) {
+            throw new IllegalArgumentException();
+		}
+		super.setStride(stride);
+		int iRank = m_indexArrayData.getRank();
+		
+		// Set the stride for the storage arrays
+		m_indexStorage.setStride(
+				java.util.Arrays.copyOfRange(stride, iRank, stride.length)
+			);
+		
+		// Get the number of cells in storage arrays
+		long[] iStride = m_indexStorage.getStride();
+		long current = iStride[ 0 ] * m_indexStorage.getShape()[0];
+		
+		
+		// Divide the stride by number of cells contained in storage arrays
+		iStride = new long[iRank];
+		for( int i = iRank; i > 0; i-- ) {
+			iStride[i - 1] = stride[i - 1] / current;
+		}
+		
+		m_indexArrayData.setStride(iStride);
+	}
+
 	@Override
 	public IIndex set(int[] index) {
-	    if( index.length != m_rank )
+		if( index.length != getRank() ) {
             throw new IllegalArgumentException();
-	    
-        NxsRange range;
-        int i = 0;
-        int j = 0;
-        while(  i < index.length ) {
-            range = m_ranges[j];
-            if( ! range.reduced() ) {
-            	m_iCurPos[j] = index[i];
-            	i++;
-            }
-            j++;
-        }
-	    
-        return this;
-	}
-
-	@Override
-	public IIndex set(int v0) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1, int v2) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1, int v2, int v3) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1, int v2, int v3, int v4) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
-        iCurPos[5] = v5;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
-        iCurPos[5] = v5;
-        iCurPos[6] = v6;
-        this.set(iCurPos);
-		return this;
-	}
-
-	@Override
-	public IIndex set0(int v) {
-        m_iCurPos[0] = v;
-		return this;
-	}
-
-	@Override
-	public IIndex set1(int v) {
-        m_iCurPos[1] = v;
-        return this;
-	}
-
-	@Override
-	public IIndex set2(int v) {
-        m_iCurPos[2] = v;
-        return this;
-	}
-
-	@Override
-	public IIndex set3(int v) {
-        m_iCurPos[3] = v;
-        return this;
-	}
-
-	@Override
-	public IIndex set4(int v) {
-        m_iCurPos[4] = v;
-        return this;
-	}
-
-	@Override
-	public IIndex set5(int v) {
-        m_iCurPos[5] = v;
-        return this;
-	}
-
-	@Override
-	public IIndex set6(int v) {
-        m_iCurPos[6] = v;
+		}
+		super.set(index);
+		m_indexArrayData.set(
+					java.util.Arrays.copyOfRange(index, 0, m_indexArrayData.getRank())
+				);
+		
+		m_indexStorage.set(
+				java.util.Arrays.copyOfRange(index, m_indexArrayData.getRank(), index.length)
+			);
+		
         return this;
 	}
 
 	@Override
 	public void setDim(int dim, int value) {
-        /*
-        if( dim >= m_iCurPos.length || dim < 0 )
-            throw new IllegalArgumentException();
+		super.setDim(dim, value);
+		int[] curPos = this.getCurrentCounter();
+		curPos[dim] = value;
+		this.set(curPos);
+	}
 
-		m_iCurPos[dim] = value;
-		*/
-		
-	    if( dim >= m_rank )
-            throw new IllegalArgumentException();
-	    
-        NxsRange range;
-        int i = 0;
-        int j = 0;
-        while(  j < m_ranges.length ) {
-            range = m_ranges[j];
-            if( ! range.reduced() ) {
-            	if( i == dim ) {
-            		m_iCurPos[j] = value;
-            		return;
-            	}
-            	i++;
-            }
-            j++;
-        }
+
+	@Override
+	public IIndex set0(int v) {
+		setDim(0, v);
+		return this;
+	}
+
+
+	@Override
+	public IIndex set1(int v) {
+		setDim(1, v);
+		return this;
+	}
+
+
+	@Override
+	public IIndex set2(int v) {
+		setDim(2, v);
+		return this;
+	}
+
+
+	@Override
+	public IIndex set3(int v) {
+		setDim(3, v);
+		return this;
+	}
+
+
+	@Override
+	public IIndex set4(int v) {
+		setDim(4, v);
+		return this;
+	}
+
+	@Override
+	public IIndex set5(int v) {
+		setDim(5, v);
+		return this;
+	}
+
+	@Override
+	public IIndex set6(int v) {
+		setDim(6, v);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1, int v2) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		curPos[2] = v2;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1, int v2, int v3) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		curPos[2] = v2;
+		curPos[3] = v3;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1, int v2, int v3, int v4) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		curPos[2] = v2;
+		curPos[3] = v3;
+		curPos[4] = v4;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		curPos[2] = v2;
+		curPos[3] = v3;
+		curPos[4] = v4;
+		curPos[5] = v5;
+		this.set(curPos);
+		return this;
+	}
+
+	@Override
+	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6) {
+		int[] curPos = this.getCurrentCounter();
+		curPos[0] = v0;
+		curPos[1] = v1;
+		curPos[2] = v2;
+		curPos[3] = v3;
+		curPos[4] = v4;
+		curPos[5] = v5;
+		curPos[6] = v6;
+		this.set(curPos);
+		return this;
 	}
 
 	@Override
 	public void setIndexName(int dim, String indexName) {
-        try {
-            m_upToDate = false;
-            int i = 0;
-            int j = 0;
-            NxsRange range = null;
-            while( i <= dim ) {
-           		range = m_ranges[j];
-            	if( ! range.reduced() ) {
-            		i++;
-            	}
-            	j++;
-            }
-            m_ranges[i - 1] = new NxsRange( indexName, range.first(), range.last(), range.stride() );
-        } catch( InvalidRangeException e ) {
-            e.printStackTrace();
-        }
+		super.setIndexName(dim, indexName);
+		if( dim >= m_indexArrayData.getRank() ) {
+			m_indexStorage.setIndexName(dim, indexName);
+		}
+		else {
+			m_indexArrayData.setIndexName(dim, indexName);
+		}
 	}
 
-    @Override
-    public IIndex reduce() {
-        for (int ii = 0; ii < m_iCurPos.length; ii++) {
-        	// is there a dimension with length = 1 
-        	if ( (m_ranges[ii]).length() == 1 && ! m_ranges[ii].reduced()) {
-        		// remove it
-        		this.reduce(0);
-            
-        		// ensure there is not any more to do
-        		return this.reduce();
-        	}
-        }
-        m_upToDate = false;
-        return this;
-    }
-
-
-    /**
-     * Create a new Index based on current one by
-     * eliminating the specified dimension;
-     *
-     * @param dim: dimension to eliminate: must be of length one, else IllegalArgumentException
-     * @return the new Index
-     */
-    @Override
-    public IIndex reduce(int dim) {
-    	// search the correct range
-        int i = 0;
-        NxsRange range = null;
-        for(NxsRange rng : m_ranges) {
-        	if( ! rng.reduced() ) {
-        		if( i == dim ) {
-        			range = rng;
-        			break;
-        		}
-        		i++;
-        	}
-        }
-
-        if( (dim < 0) || (dim >= m_rank) )
-            throw new IllegalArgumentException("illegal reduce dim " + dim);
-        if( range.length() != 1 )
-            throw new IllegalArgumentException("illegal reduce dim " + dim + " : reduced dimension must be have length=1");
-    
-        // Reduce proper range
-        range.reduced(true);
-        m_rank--;
-        updateProjection();
-        return this;
-    }
 
 	@Override
-	public String getFactoryName() {
-		return NxsFactory.NAME;
+	public String getIndexName(int dim) {
+		return super.getIndexName(dim);
 	}
 
-    @Override
-    public String toString() {
-        StringBuffer str = new StringBuffer();
-        StringBuffer shp = new StringBuffer();
-        str.append("Position: [");
-        int i = 0;
-        for( int pos : m_iCurPos ) {
-            if( i++ != 0 ) {
-                str.append(", ");
-            }
-            str.append(pos);
-        }
-        i = 0;
-        str.append("]  <=> Index: " + currentElement() + "\nRanges:\n");
-        shp.append("Shape [");
-        for( NxsRange r : m_ranges ) {
-        	if( !r.reduced() ) {
-	        	if( i != 0 )
-	        		shp.append(", ");
-	        	shp.append(r.length());
-	            str.append( "- nÂ°"+ i + " " + (NxsRange) r );
-	            if( i < m_ranges.length ) {
-	                str.append("\n");
-	            }
-        	}
-        	i++;
-        }
-        shp.append("]\n");
-        shp.append(str);
-        return shp.toString();
-    }
-    
 	@Override
-	public String toStringDebug() {
-        StringBuilder sbuff = new StringBuilder(100);
-        sbuff.setLength(0);
-        int rank = m_ranges.length;
-        
-        sbuff.append(" shape= ");
-        for (int ii = 0; ii < rank; ii++) {
-          sbuff.append( (m_ranges[ii]).length() );
-          sbuff.append(" ");
-        }
+	public IIndex reduce() {
+		super.reduce();
+		m_indexArrayData.reduce();
+		m_indexStorage.reduce();
+		return this;
+	}
 
-        sbuff.append(" stride= ");
-        for (int ii = 0; ii < rank; ii++) {
-          sbuff.append( (m_ranges[ii]).stride() );
-          sbuff.append(" ");
-        }
-
-        long size   = 1;
-        for (int ii = 0; ii < rank; ii++) {
-            size  *= (m_ranges[ii]).length();
-        }
-        sbuff.append(" size= ").append(size);
-        sbuff.append(" rank= ").append(rank);
-
-        sbuff.append(" current= ");
-        for (int ii = 0; ii < rank; ii++) {
-          sbuff.append(m_iCurPos[ii]);
-          sbuff.append(" ");
-        }
-
-        return sbuff.toString();	
-    }
+	@Override
+	public IIndex reduce(int dim) throws IllegalArgumentException {
+		super.reduce(dim);
+		if( dim < m_indexArrayData.getRank() ) {
+			m_indexArrayData.reduce(dim);
+		}
+		else {
+			m_indexStorage.reduce(dim - m_indexArrayData.getRank());
+		}
+		return this;
+	}
 	
-    @Override
-	public long lastElement() {
-        if( ! m_upToDate ) {
-        	int last = 0;
-            for( IRange range : m_ranges ) {
-                last += range.last();
-            }
-            m_lastIndex = last;
-            m_upToDate = true;
-        }
-        return m_lastIndex;
-    }
-    
+	@Override
+	public String toString() {
+		return super.toString()+ "\n" +m_indexArrayData.toString() + "\n" + m_indexStorage;
+	}
+	
     @Override
     public IIndex clone() {
     	NxsIndex index = new NxsIndex(this); 
     	return index;
     }
 	
+	static public int[] concat(int[] array1, int[] array2) {
+		int[] result = new int[array1.length + array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, 0, array2.length);
+		return result;
+	}
+	
+	@Override
+	public String getFactoryName() {
+		return NxsFactory.NAME;
+	}
+	
     // ---------------------------------------------------------
     /// Protected methods
     // ---------------------------------------------------------
-    public List<IRange> getRangeList() {
-        ArrayList<IRange> list = new ArrayList<IRange>();
-        
-        for( NxsRange range : m_ranges ) {
-        	if( ! range.reduced() ) {
-        		list.add(range);
-        	}
-        }
-        return list;
-    }
-    
-	protected int[] getCurrentPos() {
-		return m_iCurPos;
+	public NexusIndex getIndexMatrix() {
+		return m_indexArrayData;
 	}
 	
-	protected int[] getProjectionShape() {
-		return m_projShape;
-	}
-	
-	protected int[] getProjectionOrigin() {
-		return m_projOrigin;
-	}
-	
-	public int currentProjectionElement() {
-        int value = 0;
- 
-        for( int i = 0; i < m_iCurPos.length; i++ ) {
-            value += m_iCurPos[i] * m_projStride[i];
-        }
-        return value;
-	}
-	
-	private void updateProjection() {
-		int realRank = m_ranges.length;
-		m_projStride = new long[realRank];
-		m_projShape  = new int[realRank];
-        m_projOrigin = new int[realRank];
-		long stride = 1;
-		for( int i = realRank - 1; i >= 0; i-- ) {
-			NxsRange range = m_ranges[i];
-			m_projStride[i] = stride;
-			m_projOrigin[i] = (int) (range.first() / range.stride());
-			m_projShape[i]  = range.length();
-			stride *= range.reduced() ? 1 : range.length();
-		}
+	public NexusIndex getIndexStorage() {
+		return m_indexStorage;
 	}
 }

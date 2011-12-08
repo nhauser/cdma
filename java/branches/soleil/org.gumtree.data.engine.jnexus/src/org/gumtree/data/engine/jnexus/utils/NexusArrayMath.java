@@ -1,15 +1,15 @@
-package org.gumtree.data.soleil.utils;
+package org.gumtree.data.engine.jnexus.utils;
 
+import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.math.ArrayMath;
 import org.gumtree.data.math.IArrayMath;
-import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsArrayMath extends ArrayMath {
+public class NexusArrayMath extends ArrayMath {
 
-	public NxsArrayMath(IArray array) {
-		super(array, NxsFactory.getInstance());
+	public NexusArrayMath(IArray array) {
+		super(array, NexusFactory.getInstance());
 	}
 
 	@Override
