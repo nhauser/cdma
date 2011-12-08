@@ -65,21 +65,21 @@ public class AttributeFilter {
 		if( depth < nodes.length ) {
 			NexusNode node = nodes[depth];
 			if( depth < nodes.length - 1 ) {
-				List<IDataItem> items = entryPoint.getDataItemList();
-				for( IDataItem current : items ) {
-					NexusNode leaf = ((NxsDataItem) current).getNexusItems()[0].getPath().getCurrentNode(); 
-					if( leaf.matchesPartNode(node) ) {
-						result.add( (NxsDataItem) current );
-					}
-				}
-			}
-			else {
 				List<IGroup> groups = entryPoint.getGroupList();
 				
 				for( IGroup current : groups ) {
 					NexusNode leaf = ((NxsGroup) current).getPathNexus().getCurrentNode();
 					if( leaf.matchesPartNode(node) ) {
 						result.addAll( getAllDataItems( (NxsGroup) current, nodes, depth + 1) );
+					}
+				}
+			}
+			else {
+				List<IDataItem> items = entryPoint.getDataItemList();
+				for( IDataItem current : items ) {
+					NexusNode leaf = ((NxsDataItem) current).getNexusItems()[0].getPath().getCurrentNode(); 
+					if( leaf.matchesPartNode(node) ) {
+						result.add( (NxsDataItem) current );
 					}
 				}
 			}

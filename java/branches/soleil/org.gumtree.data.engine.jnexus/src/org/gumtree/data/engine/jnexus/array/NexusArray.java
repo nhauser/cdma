@@ -17,58 +17,58 @@ import fr.soleil.nexus4tango.DataItem;
 
 
 public class NexusArray implements IArray {
-    private IIndex    m_index;        // IIndex corresponding to this Array (dimension sizes defining the viewable part of the array)
-	private Object	  m_oData;        // It's an array of values
-	private boolean	  m_bRawArray;    // True if the stored array has a rank of 1 (independently of its shape)
-    private boolean   m_isDirty;      // Is the array synchronized with the handled file
-    private DataItem  m_n4tdataitem;  // Array of datasets that are used to store the storage backing
-    private int[]     m_shape;        // Shape of the array (dimension sizes of the storage backing) 
+    private IIndex    mIndex;        // IIndex corresponding to this Array (dimension sizes defining the viewable part of the array)
+	private Object	  mData;        // It's an array of values
+	private boolean	  mIsRawArray;    // True if the stored array has a rank of 1 (independently of its shape)
+    private boolean   mIsDirty;      // Is the array synchronized with the handled file
+    private DataItem  mN4TDataItem;  // Array of datasets that are used to store the storage backing
+    private int[]     mShape;        // Shape of the array (dimension sizes of the storage backing) 
     
 	// Constructors
 	public NexusArray(Object oArray, int[] iShape) {
-        m_index = new NexusIndex(iShape);
-		m_oData	= oArray;
-		m_shape	= iShape;
+        mIndex = new NexusIndex(iShape);
+		mData  = oArray;
+		mShape = iShape;
         if( iShape.length == 1 ) {
-            m_bRawArray	= true;
+            mIsRawArray	= true;
         }
         else {
-            m_bRawArray = (
+            mIsRawArray = (
                             oArray.getClass().isArray() && 
                             !(java.lang.reflect.Array.get(oArray, 0).getClass().isArray()) 
                           );
         }
-        m_n4tdataitem = null;
+        mN4TDataItem = null;
 	}
 
     public NexusArray(NexusArray array) {
         try {
-			m_index = array.m_index.clone();
+			mIndex = array.mIndex.clone();
 		} catch (CloneNotSupportedException e) {
-			m_index = null;
+			mIndex = null;
 		}
-        m_oData = array.m_oData;
-        m_shape = new int[array.m_shape.length];
-        int i   = 0;
-        for( int size : array.m_shape ) {
-            m_shape[i++]  = size;
+        mData  = array.mData;
+        mShape = new int[array.mShape.length];
+        int i  = 0;
+        for( int size : array.mShape ) {
+            mShape[i++]  = size;
         }
-        m_bRawArray  = array.m_bRawArray;
-        m_isDirty    = array.m_isDirty;
+        mIsRawArray = array.mIsRawArray;
+        mIsDirty    = array.mIsDirty;
         try {
-			m_n4tdataitem = array.m_n4tdataitem.clone();
+			mN4TDataItem = array.mN4TDataItem.clone();
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
     }
     
     public NexusArray(DataItem ds) {
-        m_index      = new NexusIndex(ds);
-		m_oData      = null;
-		m_shape      = ds.getSize();
-		m_bRawArray  = ds.isSingleRawArray();
-        m_isDirty    = false;
-        m_n4tdataitem = ds;
+        mIndex       = new NexusIndex(ds);
+		mData        = null;
+		mShape       = ds.getSize();
+		mIsRawArray  = ds.isSingleRawArray();
+        mIsDirty     = false;
+        mN4TDataItem = ds;
 	}
     
 	// ---------------------------------------------------------
@@ -111,14 +111,14 @@ public class NexusArray implements IArray {
 
 	@Override
 	public int[] getShape() {
-		return m_index.getShape();
+		return mIndex.getShape();
 	}
 
 	@Override
 	public Class<?> getElementType() {
 		Class<?> result = null;
-		if( m_n4tdataitem != null ) {
-			result = m_n4tdataitem.getDataClass();
+		if( mN4TDataItem != null ) {
+			result = mN4TDataItem.getDataClass();
 		}
 		else {
 			Object oData = getData();
@@ -144,7 +144,7 @@ public class NexusArray implements IArray {
 
 	@Override
 	public boolean isDirty() {
-		return m_isDirty;
+		return mIsDirty;
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class NexusArray implements IArray {
 	/// IArray data manipulation
 	@Override
 	public IIndex getIndex() {
-		return m_index;
+		return mIndex;
 	}
 
 	@Override
@@ -187,13 +187,13 @@ public class NexusArray implements IArray {
 
 	@Override
 	public int getRank() {
-		return m_index.getRank();
+		return mIndex.getRank();
 	}
 
 	@Override
 	public IArrayIterator getRegionIterator(int[] reference, int[] range)
 			throws InvalidRangeException {
-	    NexusIndex index = new NexusIndex( m_shape, reference, range );
+	    NexusIndex index = new NexusIndex( mShape, reference, range );
         return new NexusArrayIterator(this, index);
 	}
 
@@ -205,7 +205,7 @@ public class NexusArray implements IArray {
 
 	@Override
 	public long getSize() {
-		long size = m_index.getSize();
+		long size = mIndex.getSize();
 		return size;
 	}
 
@@ -309,7 +309,7 @@ public class NexusArray implements IArray {
 	@Override
 	public IArray setDouble(double value) {
 		Object oData = getData();
-        if( m_bRawArray ) {
+        if( mIsRawArray ) {
             java.util.Arrays.fill((double[])oData, value);
         }
         else {
@@ -328,7 +328,7 @@ public class NexusArray implements IArray {
 		NexusArray result = new NexusArray(this);
 		
 		if( data ) {
-			result.m_oData = NexusArrayUtils.copyJavaArray(m_oData);
+			result.mData = NexusArrayUtils.copyJavaArray(mData);
 		}
 		
 		return result;
@@ -336,7 +336,7 @@ public class NexusArray implements IArray {
 
     @Override
     public void setIndex(IIndex index) {
-        m_index = index;
+        mIndex = index;
     }
     
     @Override
@@ -348,20 +348,20 @@ public class NexusArray implements IArray {
 	/// Protected methods
 	// ---------------------------------------------------------
 	protected boolean isSingleRawArray() {
-		return m_bRawArray;
+		return mIsRawArray;
 	}
 
     protected IArray sectionNoReduce(int[] origin, int[] shape, long[] stride) throws ShapeNotMatchException {
     	Object oData = getData();
-        NexusArray array = new NexusArray(oData, m_shape);
-        array.m_index.setShape(shape);
-        array.m_index.setStride(stride);
-        ((NexusIndex) array.m_index).setOrigin(origin);
+        NexusArray array = new NexusArray(oData, mShape);
+        array.mIndex.setShape(shape);
+        array.mIndex.setStride(stride);
+        ((NexusIndex) array.mIndex).setOrigin(origin);
         return array;
     }
     
     protected void setShape(int[] shape) {
-    	m_shape = shape;
+    	mShape = shape;
     }
     
     // ---------------------------------------------------------
@@ -379,12 +379,12 @@ public class NexusArray implements IArray {
         int[] indexes = index.getCurrentCounter();
 
         int lPos = 0, lStartRaw;
-        for( int k = 1; k < m_shape.length; k++ ) {
+        for( int k = 1; k < mShape.length; k++ ) {
 
             lStartRaw = 1;
             for( int j = 0; j < k; j++ )
             {
-                lStartRaw *= m_shape[j];
+                lStartRaw *= mShape[j];
             }
             lStartRaw *= indexes[k - 1];
             lPos += lStartRaw;
@@ -423,10 +423,10 @@ public class NexusArray implements IArray {
             return oData;
         }
         // If it's a single raw array, then we compute indexes to have the corresponding cell number 
-        else if( m_bRawArray )
+        else if( mIsRawArray )
         {
         	int lPos;
-        	if( java.util.Arrays.equals(m_n4tdataitem.getStart(), idx.getProjectionOrigin() ) ) {
+        	if( java.util.Arrays.equals(mN4TDataItem.getStart(), idx.getProjectionOrigin() ) ) {
         		lPos = idx.currentProjectionElement();
         	}
         	else {
@@ -448,9 +448,9 @@ public class NexusArray implements IArray {
     }
     
     private Object getData() {
-    	Object result = m_oData;
-    	if( result == null && m_n4tdataitem != null ) {
-    		result = m_n4tdataitem.getData(((NexusIndex) m_index).getProjectionOrigin(), ((NexusIndex) m_index).getProjectionShape());
+    	Object result = mData;
+    	if( result == null && mN4TDataItem != null ) {
+    		result = mN4TDataItem.getData(((NexusIndex) mIndex).getProjectionOrigin(), ((NexusIndex) mIndex).getProjectionShape());
     	}
     	return result;
     }
@@ -476,7 +476,7 @@ public class NexusArray implements IArray {
         	oData = value;
         }
         // If it's a single raw array, then we compute indexes to have the corresponding cell number
-        else if( m_bRawArray )
+        else if( mIsRawArray )
         {
             int lPos = translateIndex(index);
             java.lang.reflect.Array.set(oData, lPos, value);

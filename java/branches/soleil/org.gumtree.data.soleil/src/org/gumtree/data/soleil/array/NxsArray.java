@@ -4,7 +4,6 @@ import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.engine.jnexus.array.NexusArrayIterator;
 import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.engine.jnexus.array.NexusSliceIterator;
-import org.gumtree.data.engine.jnexus.utils.NexusArrayMath;
 import org.gumtree.data.engine.jnexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidRangeException;
@@ -15,6 +14,8 @@ import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.utils.NxsArrayMath;
+import org.gumtree.data.soleil.utils.NxsArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 
 import fr.soleil.nexus4tango.DataItem;
@@ -83,12 +84,12 @@ public class NxsArray implements IArray {
 
     @Override
     public IArrayMath getArrayMath() {
-        return new NexusArrayMath(this);
+        return new NxsArrayMath(this);
     }
 
     @Override
     public IArrayUtils getArrayUtils() {
-        return new NexusArrayUtils(this);
+        return new NxsArrayUtils(this);
     }
     
     @Override
@@ -183,18 +184,13 @@ public class NxsArray implements IArray {
     		Long nbMatrixCells  = matrixIndex.getSize();
     		Long nbStorageCells = m_index.getIndexStorage().getSize();
     		
-    		if( nbMatrixCells > 0 ) {
-    			int[] shape = { nbMatrixCells.intValue(), nbStorageCells.intValue() };
-    			result = java.lang.reflect.Array.newInstance(getElementType(), shape);
+			int[] shape = { nbMatrixCells == 0 ? 1 : nbMatrixCells.intValue(), nbStorageCells.intValue() };
+			result = java.lang.reflect.Array.newInstance(getElementType(), shape);
 
-    			for( int i = 0; i < nbMatrixCells; i++ ) {
-    				java.lang.reflect.Array.set(result, i, m_arrays[(int) matrixIndex.currentElement()].getStorage());
-    				NexusArrayIterator.incrementIndex(matrixIndex);
-    			}
-    		}
-    		else {
-    			result = m_arrays[0].getStorage();
-    		}
+			for( int i = 0; i < nbMatrixCells; i++ ) {
+				java.lang.reflect.Array.set(result, i, m_arrays[(int) matrixIndex.currentElement()].getStorage());
+				NexusArrayIterator.incrementIndex(matrixIndex);
+			}
     	}
     	
 		return result;

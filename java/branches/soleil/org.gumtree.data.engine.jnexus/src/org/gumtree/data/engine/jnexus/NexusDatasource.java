@@ -24,7 +24,7 @@ public class NexusDatasource implements IDatasource {
 		File file      = new File(target);
 		String name    = file.getName();
 		int length     = name.length();
-		boolean result = name.substring(length - 4).equals(".nxs");
+		boolean result = length > 4 && name.substring(length - 4).equals(".nxs");
 		
 		return result;
 	}
