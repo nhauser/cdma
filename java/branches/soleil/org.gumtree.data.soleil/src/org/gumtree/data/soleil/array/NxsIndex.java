@@ -1,12 +1,16 @@
 package org.gumtree.data.soleil.array;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.interfaces.IIndex;
+import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsIndex extends NexusIndex {
-	private NexusIndex m_indexArrayData;
-	private NexusIndex m_indexStorage;
+public final class NxsIndex implements IIndex, Cloneable {
+	private NexusIndex mIndexArrayData;
+	private NexusIndex mIndexStorage;
 	
 	
 	/// Constructors
@@ -18,14 +22,13 @@ public class NxsIndex extends NexusIndex {
 	 * The first matrixRank values concern the matrix of index.
 	 */
 	public NxsIndex(int matrixRank, int[] shape, int[] start, int[] length) {
-		super(shape, start, length);
-		m_indexArrayData = new NexusIndex(
+		mIndexArrayData = new NexusIndex(
 				java.util.Arrays.copyOfRange(shape, 0, matrixRank),
 				java.util.Arrays.copyOfRange(start, 0, matrixRank),
 				java.util.Arrays.copyOfRange(length, 0, matrixRank)
 		   );
 		
-		m_indexStorage = new NexusIndex(
+		mIndexStorage = new NexusIndex(
 				java.util.Arrays.copyOfRange(shape, matrixRank, shape.length),
 				java.util.Arrays.copyOfRange(start, matrixRank, start.length),
 				java.util.Arrays.copyOfRange(length, matrixRank, length.length)
@@ -37,37 +40,30 @@ public class NxsIndex extends NexusIndex {
 	}
 	
 	public NxsIndex(NxsIndex index) {
-		super(index);
-		
-		m_indexArrayData = (NexusIndex) index.m_indexArrayData.clone();
-		m_indexStorage = (NexusIndex) index.m_indexStorage.clone();
+		mIndexArrayData = (NexusIndex) index.mIndexArrayData.clone();
+		mIndexStorage = (NexusIndex) index.mIndexStorage.clone();
     }
 	
 	public NxsIndex(int[] storage) {
-		super(storage);
-		m_indexArrayData = new NexusIndex( new int[] {});
-		m_indexStorage   = new NexusIndex(storage);
+		mIndexArrayData = new NexusIndex( new int[] {});
+		mIndexStorage   = new NexusIndex(storage.clone());
 	}
 	
 	public NxsIndex(int[] matrix, int[] storage) {
-		super(
-				concat(matrix, storage)
-		);
-		
-		m_indexArrayData = new NexusIndex(matrix);
-		m_indexStorage   = new NexusIndex(storage);
+		mIndexArrayData = new NexusIndex(matrix.clone());
+		mIndexStorage   = new NexusIndex(storage.clone());
 	}
 	
 	public NxsIndex(int matrixRank, IIndex index) {
 		this(matrixRank, index.getShape(), index.getOrigin(), index.getShape());
 
-		m_indexArrayData = new NexusIndex(
+		mIndexArrayData = new NexusIndex(
 				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank),
 				java.util.Arrays.copyOfRange(index.getOrigin(), 0, matrixRank),
 				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank)
 		   );
 		
-		m_indexStorage = new NexusIndex(
+		mIndexStorage = new NexusIndex(
 				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length),
 				java.util.Arrays.copyOfRange(index.getOrigin(), matrixRank, index.getOrigin().length),
 				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length)
@@ -76,19 +72,19 @@ public class NxsIndex extends NexusIndex {
 	}
 	
 	public long currentElementMatrix() {
-		return m_indexArrayData.currentElement();
+		return mIndexArrayData.currentElement();
 	}
 	
 	public long currentElementStorage() {
-		return m_indexStorage.currentElement();
+		return mIndexStorage.currentElement();
 	}
 	
 	public int[] getCurrentCounterMatrix() {
-		return m_indexArrayData.getCurrentCounter();
+		return mIndexArrayData.getCurrentCounter();
 	}
 	
 	public int[] getCurrentCounterStorage() {
-		return m_indexStorage.getCurrentCounter();
+		return mIndexStorage.getCurrentCounter();
 	}
 
 	@Override
@@ -96,13 +92,12 @@ public class NxsIndex extends NexusIndex {
 		if( origin.length != getRank() ) {
             throw new IllegalArgumentException();
 		}
-		super.setOrigin(origin);
-		m_indexArrayData.setOrigin(
-					java.util.Arrays.copyOfRange(origin, 0, m_indexArrayData.getRank())
+		mIndexArrayData.setOrigin(
+					java.util.Arrays.copyOfRange(origin, 0, mIndexArrayData.getRank())
 				);
 		
-		m_indexStorage.setOrigin(
-				java.util.Arrays.copyOfRange(origin, m_indexArrayData.getRank(), origin.length)
+		mIndexStorage.setOrigin(
+				java.util.Arrays.copyOfRange(origin, mIndexArrayData.getRank(), origin.length)
 			);
 	}
 
@@ -112,13 +107,12 @@ public class NxsIndex extends NexusIndex {
 		if( shape.length != getRank() ) {
             throw new IllegalArgumentException();
 		}
-		super.setShape(shape);
-		m_indexArrayData.setShape(
-					java.util.Arrays.copyOfRange(shape, 0, m_indexArrayData.getRank())
+		mIndexArrayData.setShape(
+					java.util.Arrays.copyOfRange(shape, 0, mIndexArrayData.getRank())
 				);
 		
-		m_indexStorage.setShape(
-				java.util.Arrays.copyOfRange(shape, m_indexArrayData.getRank(), shape.length)
+		mIndexStorage.setShape(
+				java.util.Arrays.copyOfRange(shape, mIndexArrayData.getRank(), shape.length)
 			);
 	}
 
@@ -128,26 +122,28 @@ public class NxsIndex extends NexusIndex {
 		if( stride.length != getRank() ) {
             throw new IllegalArgumentException();
 		}
-		super.setStride(stride);
-		int iRank = m_indexArrayData.getRank();
+		int iRank = mIndexArrayData.getRank();
 		
 		// Set the stride for the storage arrays
-		m_indexStorage.setStride(
+		mIndexStorage.setStride(
 				java.util.Arrays.copyOfRange(stride, iRank, stride.length)
 			);
 		
 		// Get the number of cells in storage arrays
-		long[] iStride = m_indexStorage.getStride();
-		long current = iStride[ 0 ] * m_indexStorage.getShape()[0];
+		long[] iStride = mIndexStorage.getStride();
+		long current = iStride[ 0 ] * mIndexStorage.getShape()[0];
 		
 		
 		// Divide the stride by number of cells contained in storage arrays
 		iStride = new long[iRank];
 		for( int i = iRank; i > 0; i-- ) {
 			iStride[i - 1] = stride[i - 1] / current;
+			if( iStride[i - 1] == 0 ) {
+				iStride[i - 1] = 1;
+			}
 		}
 		
-		m_indexArrayData.setStride(iStride);
+		mIndexArrayData.setStride(iStride);
 	}
 
 	@Override
@@ -155,13 +151,12 @@ public class NxsIndex extends NexusIndex {
 		if( index.length != getRank() ) {
             throw new IllegalArgumentException();
 		}
-		super.set(index);
-		m_indexArrayData.set(
-					java.util.Arrays.copyOfRange(index, 0, m_indexArrayData.getRank())
+		mIndexArrayData.set(
+					java.util.Arrays.copyOfRange(index, 0, mIndexArrayData.getRank())
 				);
 		
-		m_indexStorage.set(
-				java.util.Arrays.copyOfRange(index, m_indexArrayData.getRank(), index.length)
+		mIndexStorage.set(
+				java.util.Arrays.copyOfRange(index, mIndexArrayData.getRank(), index.length)
 			);
 		
         return this;
@@ -169,7 +164,6 @@ public class NxsIndex extends NexusIndex {
 
 	@Override
 	public void setDim(int dim, int value) {
-		super.setDim(dim, value);
 		int[] curPos = this.getCurrentCounter();
 		curPos[dim] = value;
 		this.set(curPos);
@@ -178,54 +172,54 @@ public class NxsIndex extends NexusIndex {
 
 	@Override
 	public IIndex set0(int v) {
-		setDim(0, v);
+		setDim(DIM0, v);
 		return this;
 	}
 
 
 	@Override
 	public IIndex set1(int v) {
-		setDim(1, v);
+		setDim(DIM1, v);
 		return this;
 	}
 
 
 	@Override
 	public IIndex set2(int v) {
-		setDim(2, v);
+		setDim(DIM2, v);
 		return this;
 	}
 
 
 	@Override
 	public IIndex set3(int v) {
-		setDim(3, v);
+		setDim(DIM3, v);
 		return this;
 	}
 
 
 	@Override
 	public IIndex set4(int v) {
-		setDim(4, v);
+		setDim(DIM4, v);
 		return this;
 	}
 
 	@Override
 	public IIndex set5(int v) {
-		setDim(5, v);
+		setDim(DIM5, v);
 		return this;
 	}
 
 	@Override
 	public IIndex set6(int v) {
-		setDim(6, v);
+		setDim(DIM6, v);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
+		curPos[DIM0] = v0;
 		this.set(curPos);
 		return this;
 	}
@@ -233,8 +227,8 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
 		this.set(curPos);
 		return this;
 	}
@@ -242,9 +236,9 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1, int v2) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
-		curPos[2] = v2;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
+		curPos[DIM2] = v2;
 		this.set(curPos);
 		return this;
 	}
@@ -252,10 +246,10 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
-		curPos[2] = v2;
-		curPos[3] = v3;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
+		curPos[DIM2] = v2;
+		curPos[DIM3] = v3;
 		this.set(curPos);
 		return this;
 	}
@@ -263,11 +257,11 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
-		curPos[2] = v2;
-		curPos[3] = v3;
-		curPos[4] = v4;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
+		curPos[DIM2] = v2;
+		curPos[DIM3] = v3;
+		curPos[DIM4] = v4;
 		this.set(curPos);
 		return this;
 	}
@@ -275,12 +269,12 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
-		curPos[2] = v2;
-		curPos[3] = v3;
-		curPos[4] = v4;
-		curPos[5] = v5;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
+		curPos[DIM2] = v2;
+		curPos[DIM3] = v3;
+		curPos[DIM4] = v4;
+		curPos[DIM5] = v5;
 		this.set(curPos);
 		return this;
 	}
@@ -288,85 +282,167 @@ public class NxsIndex extends NexusIndex {
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6) {
 		int[] curPos = this.getCurrentCounter();
-		curPos[0] = v0;
-		curPos[1] = v1;
-		curPos[2] = v2;
-		curPos[3] = v3;
-		curPos[4] = v4;
-		curPos[5] = v5;
-		curPos[6] = v6;
+		curPos[DIM0] = v0;
+		curPos[DIM1] = v1;
+		curPos[DIM2] = v2;
+		curPos[DIM3] = v3;
+		curPos[DIM4] = v4;
+		curPos[DIM5] = v5;
+		curPos[DIM6] = v6;
 		this.set(curPos);
 		return this;
 	}
 
 	@Override
 	public void setIndexName(int dim, String indexName) {
-		super.setIndexName(dim, indexName);
-		if( dim >= m_indexArrayData.getRank() ) {
-			m_indexStorage.setIndexName(dim, indexName);
+		if( dim >= mIndexArrayData.getRank() ) {
+			mIndexStorage.setIndexName(dim, indexName);
 		}
 		else {
-			m_indexArrayData.setIndexName(dim, indexName);
+			mIndexArrayData.setIndexName(dim, indexName);
 		}
-	}
-
-
-	@Override
-	public String getIndexName(int dim) {
-		return super.getIndexName(dim);
 	}
 
 	@Override
 	public IIndex reduce() {
-		super.reduce();
-		m_indexArrayData.reduce();
-		m_indexStorage.reduce();
+		mIndexArrayData.reduce();
+		mIndexStorage.reduce();
 		return this;
 	}
 
 	@Override
-	public IIndex reduce(int dim) throws IllegalArgumentException {
-		super.reduce(dim);
-		if( dim < m_indexArrayData.getRank() ) {
-			m_indexArrayData.reduce(dim);
+	public IIndex reduce(int dim) {
+		if( dim < mIndexArrayData.getRank() ) {
+			mIndexArrayData.reduce(dim);
 		}
 		else {
-			m_indexStorage.reduce(dim - m_indexArrayData.getRank());
+			mIndexStorage.reduce(dim - mIndexArrayData.getRank());
 		}
 		return this;
 	}
 	
 	@Override
 	public String toString() {
-		return super.toString()+ "\n" +m_indexArrayData.toString() + "\n" + m_indexStorage;
+		return mIndexArrayData.toString() + "\n" + mIndexStorage;
 	}
 	
     @Override
     public IIndex clone() {
-    	NxsIndex index = new NxsIndex(this); 
-    	return index;
+    	return new NxsIndex(this);
     }
-	
-	static public int[] concat(int[] array1, int[] array2) {
-		int[] result = new int[array1.length + array2.length];
-		System.arraycopy(array1, 0, result, 0, array1.length);
-		System.arraycopy(array2, 0, result, 0, array2.length);
-		return result;
-	}
 	
 	@Override
 	public String getFactoryName() {
 		return NxsFactory.NAME;
 	}
 	
+	@Override
+	public int getRank() {
+		return mIndexArrayData.getRank() + mIndexStorage.getRank();
+	}
+
+	@Override
+	public int[] getShape() {
+		return concat(mIndexArrayData.getShape(), mIndexStorage.getShape());
+	}
+
+	@Override
+	public int[] getOrigin() {
+		return concat(mIndexArrayData.getOrigin(), mIndexStorage.getOrigin());
+	}
+
+	@Override
+	public long getSize() {
+		long sizeArrayData = mIndexArrayData.getSize();
+		return ( sizeArrayData == 0 ? 1 : sizeArrayData ) * mIndexStorage.getSize();
+	}
+
+	@Override
+	public long[] getStride() {
+		return concat(mIndexArrayData.getStride(), mIndexStorage.getStride());
+	}
+
+	@Override
+	public long currentElement() {
+		return mIndexArrayData.currentElement() * mIndexStorage.getSize() + mIndexStorage.currentElement();
+	}
+
+	@Override
+	public long lastElement() {
+		return mIndexArrayData.lastElement() * mIndexStorage.getSize() + mIndexStorage.lastElement();
+	}
+
+	@Override
+	public String toStringDebug() {
+		return (mIndexArrayData.toStringDebug() + mIndexStorage.toStringDebug());
+	}
+
+	@Override
+	public int[] getCurrentCounter() {
+		return concat(mIndexArrayData.getCurrentCounter(), mIndexStorage.getCurrentCounter());
+	}
+
+	@Override
+	public String getIndexName(int dim) {
+		String name;
+		if( dim >= mIndexArrayData.getRank() ) {
+			name = mIndexStorage.getIndexName(dim);
+		}
+		else {
+			name = mIndexArrayData.getIndexName(dim);
+		}
+		return name;
+	}
+	
+    public List<IRange> getRangeList() {
+        ArrayList<IRange> list = new ArrayList<IRange>();
+        list.addAll(mIndexArrayData.getRangeList());
+        list.addAll(mIndexStorage.getRangeList());
+        return list;
+    }
+    
+    // ---------------------------------------------------------
+    /// Public tool methods
+    // ---------------------------------------------------------
+	@SuppressWarnings("unchecked")
+	public static <T> T[] concat(T[] array1, T[] array2) {
+		T[] result = (T[]) java.lang.reflect.Array.newInstance( array1.getClass() , array1.length + array2.length);
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
+	
+	public static int[] concat(int[] array1, int[] array2) {
+		int[] result = new int[array1.length + array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
+	
+	public static long[] concat(long[] array1, long[] array2) {
+		long[] result = new long[array1.length + array2.length];
+		System.arraycopy(array1, 0, result, 0, array1.length);
+		System.arraycopy(array2, 0, result, array1.length, array2.length);
+		return result;
+	}
+	
     // ---------------------------------------------------------
     /// Protected methods
     // ---------------------------------------------------------
 	public NexusIndex getIndexMatrix() {
-		return m_indexArrayData;
+		return mIndexArrayData;
 	}
 	
 	public NexusIndex getIndexStorage() {
-		return m_indexStorage;
+		return mIndexStorage;
 	}
+	
+	private static final int DIM0 = 0;
+	private static final int DIM1 = 1;
+	private static final int DIM2 = 2;
+	private static final int DIM3 = 3;
+	private static final int DIM4 = 4;
+	private static final int DIM5 = 5;
+	private static final int DIM6 = 6;
+
 }

@@ -18,8 +18,8 @@ import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NxsDatasource implements IDatasource {
-	
+public final class NxsDatasource implements IDatasource {
+	private static final int EXTENSION  = 4;
 	private static final String CREATOR = "Synchrotron SOLEIL";
 	private static final String[] BEAMLINES = new String[] {"contacq", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
 	 
@@ -42,7 +42,7 @@ public class NxsDatasource implements IDatasource {
 			}
 		}
 		// Check if the URI is a NeXus file
-		else if( name.substring(length - 4).equals(".nxs") ) {
+		else if( length > EXTENSION && name.substring(length - EXTENSION).equals(".nxs") ) {
 			result = true;
 		}
 		return result;
@@ -116,7 +116,7 @@ public class NxsDatasource implements IDatasource {
 			}
 		}
 		// Check if the URI is a NeXus file
-		else if( name.substring(length - 4).equals(".nxs") ) {
+		else if( name.substring(length - EXTENSION).equals(".nxs") ) {
 			result = true;
 		}
 		
@@ -158,8 +158,10 @@ public class NxsDatasource implements IDatasource {
 					try {
 						reader.closeFile();
 					}
-					catch (NexusException e2) {}
-					result = false;
+					catch (NexusException e2) {} 
+					finally {
+						result = false;
+					}
 				}
 				if( result ) {
 					break;

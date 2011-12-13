@@ -24,17 +24,17 @@ import org.gumtree.data.Factory;
 import org.gumtree.data.dictionary.IClassLoader;
 import org.gumtree.data.dictionary.IContext;
 
-public class ExternalClassLoader extends URLClassLoader implements IClassLoader {
-	String m_version;
-	String m_factory;
+public final class ExternalClassLoader extends URLClassLoader implements IClassLoader {
+	private String mVersion; // plugin implementation version
+	private String mFactory; // plugin implementation factory
 	
-	Map<String, Class<?> > m_loaded;
+	private Map<String, Class<?> > mLoaded; // Class name / Class already loaded
 	
 	public ExternalClassLoader(String factoryName, String version) {
 		super(new URL[] {} );
-		m_factory = factoryName;
-		m_version = version;
-		m_loaded  = new HashMap<String, Class<?> >();
+		mFactory = factoryName;
+		mVersion = version;
+		mLoaded  = new HashMap<String, Class<?> >();
 	} 
 	
     /**
@@ -78,8 +78,8 @@ public class ExternalClassLoader extends URLClassLoader implements IClassLoader 
         Class<?> result = null;
         
         // Has this class been already loaded
-        if( m_loaded.containsKey(name)) {
-        	result = m_loaded.get(name);
+        if( mLoaded.containsKey(name)) {
+        	result = mLoaded.get(name);
         }
         else {
 			try {
@@ -87,21 +87,19 @@ public class ExternalClassLoader extends URLClassLoader implements IClassLoader 
 				String namespace = name.replaceAll("((.*[^\\.])+\\.)?([^\\.]+$)+", "$2");
 		   
 				// Get folder containing the package
-		    	File path = new File(Factory.getMappingDictionaryFolder( Factory.getFactory(m_factory) ));
+		    	File path = new File(Factory.getMappingDictionaryFolder( Factory.getFactory(mFactory) ));
 				
 				// Construct an URL
 		    	try {
-		    		URL url = new URL("file", "", path.getAbsolutePath() + '/' + m_version + '/' + namespace + ".jar" );
+		    		URL url = new URL("file", "", path.getAbsolutePath() + '/' + mVersion + '/' + namespace + ".jar" );
 					this.addURL(url);
 				} catch (MalformedURLException e) {
-					e.printStackTrace();
 				}
 				
 				// Ask the class loader to load the class
 				result = super.findClass(name);
-				m_loaded.put(name, result);
+				mLoaded.put(name, result);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
 			}
         }
         return result;
@@ -109,6 +107,6 @@ public class ExternalClassLoader extends URLClassLoader implements IClassLoader 
 
 	@Override
 	public String getFactoryName() {
-		return m_factory;
+		return mFactory;
 	}
 }

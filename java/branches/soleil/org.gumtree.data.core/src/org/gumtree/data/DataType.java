@@ -143,9 +143,18 @@ public enum DataType {
 	 * @return true if numeric
 	 */
 	public boolean isNumeric() {
-		return (this == DataType.BYTE) || (this == DataType.FLOAT)
-				|| (this == DataType.DOUBLE) || (this == DataType.INT)
-				|| (this == DataType.SHORT) || (this == DataType.LONG);
+		boolean result = false;
+		// Below test is weird but is done as it is to prevent having a boolean test complexity higher than 3
+		if( (this == DataType.BYTE) || (this == DataType.FLOAT) ) {
+			result = true;
+		}
+		else if( (this == DataType.DOUBLE) || (this == DataType.INT) ) {
+			result = true;
+		}
+		else if ( (this == DataType.SHORT) || (this == DataType.LONG) ) {
+			result = true;	
+		}
+		return result;
 	}
 
 	/**
@@ -180,7 +189,7 @@ public enum DataType {
 			return null;
 		}
 		try {
-			return valueOf(name.toUpperCase());
+			return valueOf(name);
 		} catch (IllegalArgumentException e) { // lame!
 			return null;
 		}

@@ -7,8 +7,8 @@ public enum DataModel {
 	UNKNOWN      ("unknown");
     
 
-    private String m_name;
+    private String mName;
 
-    private DataModel(String type)  { m_name = type; }
-    public String getName()        { return m_name; }
+    private DataModel(String type)  { mName = type; }
+    public String getName()        { return mName; }
 }

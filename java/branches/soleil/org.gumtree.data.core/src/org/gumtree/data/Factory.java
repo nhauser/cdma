@@ -15,7 +15,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.dictionary.IPath;
@@ -400,8 +399,7 @@ public final class Factory {
 	 *             I/O error Created on 18/06/2008
 	 */
 	public static IDataset createEmptyDatasetInstance() throws IOException {
-		IDataset dataset = getFactory().createEmptyDatasetInstance();
-		return dataset;
+		return getFactory().createEmptyDatasetInstance();
 	}
 	
 	public static IKey createKey(String keyName) {

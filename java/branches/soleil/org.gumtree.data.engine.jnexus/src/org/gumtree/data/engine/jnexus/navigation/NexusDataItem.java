@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
@@ -27,59 +28,65 @@ import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.DataItem.Data;
 import fr.soleil.nexus4tango.PathGroup;
 
-public class NexusDataItem implements IDataItem {
+public final class NexusDataItem implements IDataItem, Cloneable {
 
     // Inner class
     // Associate a IDimension to an order of the array 
-    private class DimOrder {
+    private static class DimOrder {
         // Members
-        public int          m_order;        // order of the corresponding dimension in the NxsDataItem
-        public IDimension   m_dimension;    // dimension object
+        private int          mOrder;        // order of the corresponding dimension in the NxsDataItem
+        private IDimension   mDimension;    // dimension object
 
         public DimOrder(int order, IDimension dim) { 
-            m_order     = order;
-            m_dimension = dim;
+            mOrder     = order;
+            mDimension = dim;
         }
-    }
-    
+        
+        public int order() { 
+        	return mOrder;
+        }
+        
+        public IDimension dimension() {
+        	return mDimension;
+        }
+    }    
     
 	/// Members
-    private NexusDataset         m_cdmDataset;       // CDM IDataset i.e. file handler
-    private IGroup               m_parent = null;    // parent group
-    private DataItem             m_n4tDataItem;     // NeXus dataitem support of the data
-    private IArray               m_array = null;     // CDM IArray supporting a view of the data
-    private ArrayList<DimOrder>  m_dimension;        // list of dimensions
+    private NexusDataset   mCDMDataset;    // CDM IDataset i.e. file handler
+    private IGroup         mParent = null; // parent group
+    private DataItem       mn4tDataItem;   // NeXus dataitem support of the data
+    private IArray         mArray = null;  // CDM IArray supporting a view of the data
+    private List<DimOrder> mDimensions;    // list of dimensions
 
     
 	/// Constructors
 	public NexusDataItem(final NexusDataItem dataItem)
 	{
-        m_cdmDataset   = dataItem.m_cdmDataset;
-		m_n4tDataItem = dataItem.getN4TDataItem();
-        m_dimension    = new ArrayList<DimOrder> (dataItem.m_dimension);
-        m_parent       = dataItem.getParentGroup();
-        m_array        = null;
+        mCDMDataset   = dataItem.mCDMDataset;
+		mn4tDataItem = dataItem.getN4TDataItem();
+        mDimensions    = new ArrayList<DimOrder> (dataItem.mDimensions);
+        mParent       = dataItem.getParentGroup();
+        mArray        = null;
         try {
-    		m_array = new NexusArray((NexusArray) dataItem.getData());
+    		mArray = new NexusArray((NexusArray) dataItem.getData());
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 	
 	public NexusDataItem(DataItem data, NexusDataset handler) {
-        m_cdmDataset  = handler;
-        m_n4tDataItem = data;
-        m_dimension   = new ArrayList<DimOrder>();
-        m_parent      = null;
-        m_array       = null;
+        mCDMDataset  = handler;
+        mn4tDataItem = data;
+        mDimensions   = new ArrayList<DimOrder>();
+        mParent      = null;
+        mArray       = null;
 	}
 	
 	public NexusDataItem(DataItem data, IGroup parent, NexusDataset handler) {
-        m_cdmDataset  = handler;
-        m_n4tDataItem = data;
-        m_dimension   = new ArrayList<DimOrder>();
-        m_parent      = parent;
-        m_array       = null;
+        mCDMDataset  = handler;
+        mn4tDataItem = data;
+        mDimensions   = new ArrayList<DimOrder>();
+        mParent      = parent;
+        mArray       = null;
 	}
 
 	/// Methods
@@ -94,15 +101,15 @@ public class NexusDataItem implements IDataItem {
 		HashMap<String, DataItem.Data<?>> inList;
 		List<IAttribute> outList = new ArrayList<IAttribute>();
 		NexusAttribute tmpAttr;
-		String sAttrName;
 
-		inList = m_n4tDataItem.getAttributes();
-
-		Iterator<String> iter = inList.keySet().iterator();
+		inList = mn4tDataItem.getAttributes();
+		
+		Entry<String, Data<?>> sAttr;
+		Iterator<Entry<String, Data<?>>> iter = inList.entrySet().iterator();
         while( iter.hasNext() )
         {
-        	sAttrName = iter.next();
-			tmpAttr   = new NexusAttribute(sAttrName, inList.get(sAttrName).getValue());
+        	sAttr = iter.next();
+			tmpAttr   = new NexusAttribute(sAttr.getKey(), sAttr.getValue());
 			outList.add(tmpAttr);
 		}
 
@@ -112,10 +119,10 @@ public class NexusDataItem implements IDataItem {
 	@Override
 	public IArray getData() throws IOException
 	{
-        if( m_array == null ) {
-    		m_array = new NexusArray(m_n4tDataItem);
+        if( mArray == null ) {
+    		mArray = new NexusArray(mn4tDataItem);
         }
-		return m_array;
+		return mArray;
 	}
 
 	@Override
@@ -135,26 +142,28 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public void addOneAttribute(IAttribute att) {
-        m_n4tDataItem.setAttribute(att.getName(), att.getValue().getStorage());
+        mn4tDataItem.setAttribute(att.getName(), att.getValue().getStorage());
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-	    m_n4tDataItem.setAttribute(name, value);
+	    mn4tDataItem.setAttribute(name, value);
     }
 
 	@Override
 	public IAttribute getAttribute(String name) {
 		HashMap<String, Data<?> > inList;
-		String sAttrName;
 
-		inList = m_n4tDataItem.getAttributes();
-		Iterator<String> iter = inList.keySet().iterator();
+		inList = mn4tDataItem.getAttributes();
+		
+		Entry<String, Data<?>> sAttr;
+		Iterator<Entry<String, Data<?>>> iter = inList.entrySet().iterator();
         while( iter.hasNext() )
         {
-        	sAttrName = iter.next();
-        	if( sAttrName.equals(name) )
-        		return new NexusAttribute(sAttrName, inList.get(sAttrName).getValue());
+        	sAttr = iter.next();
+        	if( sAttr.getKey().equals(name) ) {
+        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue());
+        	}
 		}
 
 		return null;
@@ -162,16 +171,16 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public IAttribute findAttributeIgnoreCase(String name) {
-		HashMap<String, ?> inList;
-		String sAttrName;
+		HashMap<String, Data<?>> inList = mn4tDataItem.getAttributes();
 
-		inList = m_n4tDataItem.getAttributes();
-		Iterator<String> iter = inList.keySet().iterator();
+		Entry<String, Data<?>> sAttr;
+		Iterator<Entry<String, Data<?>>> iter = inList.entrySet().iterator();
         while( iter.hasNext() )
         {
-        	sAttrName = iter.next();
-        	if( sAttrName.toUpperCase().equals(name.toUpperCase()) )
-        		return new NexusAttribute(sAttrName, inList.get(sAttrName));
+        	sAttr = iter.next();
+        	if( sAttr.getKey().equalsIgnoreCase(name) ) {
+        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue());
+        	}
 		}
 
 		return null;
@@ -179,9 +188,10 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public int findDimensionIndex(String name) {
-	    for( DimOrder dimord : m_dimension ) {
-	        if( dimord.m_dimension.getName().equals(name) )
-                return dimord.m_order;
+	    for( DimOrder dimord : mDimensions ) {
+	        if( dimord.dimension().getName().equals(name) ) {
+                return dimord.order();
+	        }
         }
             
         return -1;
@@ -191,15 +201,19 @@ public class NexusDataItem implements IDataItem {
 	public String getDescription() {
 		String sDesc = null;
 
-		sDesc = m_n4tDataItem.getAttribute("long_name");
-		if( sDesc == null )
-			sDesc = m_n4tDataItem.getAttribute("description");
-		if( sDesc == null )
-			sDesc = m_n4tDataItem.getAttribute("title");
-		if( sDesc == null )
-			sDesc = m_n4tDataItem.getAttribute("standard_name");
-        if( sDesc == null )
-            sDesc = m_n4tDataItem.getAttribute("name");
+		sDesc = mn4tDataItem.getAttribute("long_name");
+		if( sDesc == null ) {
+			sDesc = mn4tDataItem.getAttribute("description");
+		}
+		if( sDesc == null ) {
+			sDesc = mn4tDataItem.getAttribute("title");
+		}
+		if( sDesc == null ) {
+			sDesc = mn4tDataItem.getAttribute("standard_name");
+		}
+        if( sDesc == null ) {
+            sDesc = mn4tDataItem.getAttribute("name");
+        }
 
 		return sDesc;
 	}
@@ -208,24 +222,26 @@ public class NexusDataItem implements IDataItem {
 	public List<IDimension> getDimensions(int i) {
         ArrayList<IDimension> list = new ArrayList<IDimension>();
         
-        for( DimOrder dim : m_dimension ) {
-            if( dim.m_order == i ) {
-                list.add( m_dimension.get(i).m_dimension );
+        for( DimOrder dim : mDimensions ) {
+            if( dim.order() == i ) {
+                list.add( mDimensions.get(i).dimension() );
             }
         }
         
-        if( list.size() > 0 )    
+        if( list.size() > 0 ) { 
             return list;
-        else
+        }
+        else {
             return null;
+        }
 	}
 
 	@Override
 	public List<IDimension> getDimensionList() {
         ArrayList<IDimension> list = new ArrayList<IDimension>();
         
-        for( DimOrder dimOrder : m_dimension ) {
-            list.add(dimOrder.m_dimension);
+        for( DimOrder dimOrder : mDimensions ) {
+            list.add(dimOrder.dimension());
         }
         
 		return list;
@@ -233,50 +249,57 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public String getDimensionsString() {
-	    String dimList = "";
+	    StringBuffer dimList = new StringBuffer();
         
         int i = 0;
-        for( DimOrder dim : m_dimension ) {
+        for( DimOrder dim : mDimensions ) {
             if( i++ != 0 ) {
-                dimList += " ";
+                dimList.append(" ");
             }
-            dimList += dim.m_dimension.getName();
+            dimList.append(dim.dimension().getName());
         }
         
-        return dimList;
+        return dimList.toString();
 	}
 
 	@Override
 	public int getElementSize() {
-        switch( m_n4tDataItem.getType() ) {
+		int result;
+        switch( mn4tDataItem.getType() ) {
             case NexusFile.NX_BINARY:
+            	result = 1;
+            	break;
             case NexusFile.NX_BOOLEAN:
+            	result = 1;
+            	break;
             case NexusFile.NX_CHAR:
-                return 1;
+            	result = 1;
+                break;
             case NexusFile.NX_INT16:
-                return 2;
+            	result = 2;
+                break;
             case NexusFile.NX_FLOAT32:
+            	result = 2;
+            	break;
             case NexusFile.NX_INT32:
-                return 4;
+            	result = 4;
+            	break;
             case NexusFile.NX_FLOAT64:
+            	result = 4;
+            	break;
             case NexusFile.NX_INT64:
-                return 8;
+            	result = 8;
+            	break;
             default:
-                return 1;
+                result = 1;
+            	break;
         }
+        return result;
 	}
 
 	@Override
 	public String getName() {
-		/*
-        String name = m_n4tDataSet.getAttribute("name");
-        if( name == null )
-            name = m_n4tDataSet.getAttribute("long_name");
-        if( name == null )
-        	name = m_n4tDataSet.getNodeName();
-		return name;
-		*/
-		return m_n4tDataItem.getPath().toString(false);
+		return mn4tDataItem.getPath().toString(false);
 	}
 
 	@Override
@@ -293,23 +316,30 @@ public class NexusDataItem implements IDataItem {
         String name = useFullName ? getName() : getShortName();
         buf.append(name);
 
-        if (getRank() > 0) buf.append("(");
-        for (int i = 0; i < m_dimension.size(); i++) {
-          DimOrder dim   = m_dimension.get(i);
-          IDimension myd = dim.m_dimension;
+        if (getRank() > 0) {
+        	buf.append("(");
+        }
+        for (int i = 0; i < mDimensions.size(); i++) {
+          DimOrder dim   = mDimensions.get(i);
+          IDimension myd = dim.mDimension;
           String dimName = myd.getName();
-          if ((dimName == null) || !showDimLength)
-            dimName = "";
+          if ((dimName == null) || !showDimLength){
+        	  dimName = "";
+          }
 
-          if (i != 0) buf.append(", ");
+          if (i != 0) {
+        	  buf.append(", ");
+          }
 
           if (myd.isVariableLength()) {
             buf.append("*");
           } else if (myd.isShared()) {
-            if (!showDimLength)
-              buf.append(dimName + "=" + myd.getLength());
-            else
-              buf.append(dimName);
+            if (!showDimLength) {
+            	buf.append(dimName).append( "=" ).append( myd.getLength() );
+            }
+            else { 
+            	buf.append(dimName);
+            }
           } else {
             if (dimName != null) {
               buf.append(dimName);
@@ -318,22 +348,23 @@ public class NexusDataItem implements IDataItem {
           }
         }
 
-        if (getRank() > 0) buf.append(")");
+        if (getRank() > 0) {
+        	buf.append(")");
+        }
 	}
 
 	@Override
 	public IGroup getParentGroup()
 	{
-        if( m_parent == null )
+        if( mParent == null )
         {
-            PathGroup path = m_n4tDataItem.getPath().getParentPath();
+            PathGroup path = mn4tDataItem.getPath().getParentPath();
             try {
-				m_parent = (IGroup) m_cdmDataset.getRootGroup().findContainerByPath(path.getValue());
+				mParent = (IGroup) mCDMDataset.getRootGroup().findContainerByPath(path.getValue());
+				((NexusGroup) mParent).setChild(this);
 			} catch (NoResultException e) {}
-            //m_parent = new NxsGroup(path, m_cdmDataset);
-            ((NexusGroup) m_parent).setChild(this);
         }
-		return m_parent;
+		return mParent;
 	}
 
 	@Override
@@ -342,7 +373,6 @@ public class NexusDataItem implements IDataItem {
         try {
             list = new NexusIndex(getData().getShape()).getRangeList();
         } catch( IOException e ) {
-            e.printStackTrace();
         }
 		return list;
 	}
@@ -353,7 +383,6 @@ public class NexusDataItem implements IDataItem {
         try {
             list = ((NexusIndex) getData().getIndex()).getRangeList(); 
         } catch( IOException e ) {
-            e.printStackTrace();
         }
         return list;
     }
@@ -361,12 +390,17 @@ public class NexusDataItem implements IDataItem {
 	@Override
 	public int getRank() {
 		int[] shape = getShape();
-		if( m_n4tDataItem.getType() == NexusFile.NX_CHAR )
-			return 0;
-		else if( shape.length == 1 && shape[0] == 1 )
-			return 0;
-		else
-			return shape.length;
+		int rank;
+		if( mn4tDataItem.getType() == NexusFile.NX_CHAR ) {
+			rank = 0;
+		}
+		else if( shape.length == 1 && shape[0] == 1 ) {
+			rank = 0;
+		}
+		else {
+			rank = shape.length;
+		}
+		return rank;
 	}
 
 	@Override
@@ -375,9 +409,8 @@ public class NexusDataItem implements IDataItem {
         NexusDataItem item = null;
         try {
             item = new NexusDataItem(this);
-            m_array = (NexusArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
+            mArray = (NexusArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
         } catch( IOException e ) {
-            e.printStackTrace();
         }
 		return item;
 	}
@@ -386,23 +419,23 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public int[] getShape() {
+		int[] shape;
 		try {
-			return getData().getShape();
+			shape = getData().getShape();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new int[] {-1};
+			shape = new int[] {-1};
 		}
+		return shape;
 	}
 
 	@Override
 	public String getShortName() {
-		return m_n4tDataItem.getNodeName();
+		return mn4tDataItem.getNodeName();
 	}
 
 	@Override
 	public long getSize() {
-        int[] shape = m_n4tDataItem.getSize();
+        int[] shape = mn4tDataItem.getSize();
         int size    = shape[0];
         for( int i = 1; i < shape.length; i++ ) {
             size *= shape[i];
@@ -414,7 +447,7 @@ public class NexusDataItem implements IDataItem {
 	@Override
 	public int getSizeToCache() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return 0;
 	}
 
@@ -422,7 +455,7 @@ public class NexusDataItem implements IDataItem {
 	public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
 	    NexusDataItem item = new NexusDataItem(this);
         try {
-            item.m_array = item.getData().getArrayUtils().slice(dim, value).getArray();
+            item.mArray = item.getData().getArrayUtils().slice(dim, value).getArray();
         }
         catch (Exception e) {
         	item = null;
@@ -437,16 +470,17 @@ public class NexusDataItem implements IDataItem {
     
 	@Override
 	public Class<?> getType() {
-		return m_n4tDataItem.getDataClass();
+		return mn4tDataItem.getDataClass();
 	}
 
     @Override
 	public String getUnitsString() {
         IAttribute attr = getAttribute("unit");
-        if( attr != null )
-            return attr.getStringValue();
-        else
-            return null;
+        String value = null;
+        if( attr != null ) {
+        	value = attr.getStringValue();
+        }
+        return value;
 	}
 
 	@Override
@@ -458,8 +492,9 @@ public class NexusDataItem implements IDataItem {
         while( iter.hasNext() )
         {
         	attr = iter.next();
-        	if( attr.getStringValue().equals(value) )
+        	if( attr.getStringValue().equals(value) ) {
         		return true;
+        	}
 		}
         return false;
     }
@@ -467,27 +502,27 @@ public class NexusDataItem implements IDataItem {
 	@Override
 	public boolean hasCachedData() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return false;
 	}
 
 	@Override
 	public void invalidateCache() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 	}
 
 	@Override
 	public boolean isCaching() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return false;
 	}
 
 	@Override
 	public boolean isMemberOfStructure() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return false;
 	}
 
@@ -501,7 +536,8 @@ public class NexusDataItem implements IDataItem {
         int rank = 0;
 		try {
             rank = getData().getRank();
-        } catch(IOException e) {}
+        } catch(IOException e) {
+        }
         return (rank == 0);
 	}
 
@@ -512,7 +548,7 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public boolean isUnsigned() {
-        int type = m_n4tDataItem.getType(); 
+        int type = mn4tDataItem.getType(); 
 		if(
 		     type == NexusFile.NX_UINT16 ||
              type == NexusFile.NX_UINT32 ||
@@ -528,42 +564,42 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public byte readScalarByte() throws IOException {
-		return ((byte[]) m_n4tDataItem.getData())[0];
+		return ((byte[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public double readScalarDouble() throws IOException {
-		return ((byte[]) m_n4tDataItem.getData())[0];
+		return ((byte[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public float readScalarFloat() throws IOException {
-		return ((float[]) m_n4tDataItem.getData())[0];
+		return ((float[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public int readScalarInt() throws IOException {
-		return ((int[]) m_n4tDataItem.getData())[0];
+		return ((int[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public long readScalarLong() throws IOException {
-		return ((long[]) m_n4tDataItem.getData())[0];
+		return ((long[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public short readScalarShort() throws IOException {
-		return ((short[]) m_n4tDataItem.getData())[0];
+		return ((short[]) mn4tDataItem.getData())[0];
 	}
 
 	@Override
 	public String readScalarString() throws IOException {
-		return (String) m_n4tDataItem.getData();
+		return (String) mn4tDataItem.getData();
 	}
 
 	@Override
 	public boolean removeAttribute(IAttribute a) {
-        m_n4tDataItem.setAttribute(a.getName(), null);
+        mn4tDataItem.setAttribute(a.getName(), null);
 		return false;
 	}
 
@@ -571,20 +607,21 @@ public class NexusDataItem implements IDataItem {
 	public void setCachedData(IArray cacheData, boolean isMetadata)
 			throws InvalidArrayTypeException {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 
 	}
 
 	@Override
 	public void setCaching(boolean caching) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 	}
 
 	@Override
 	public void setDataType(Class<?> dataType) {
 	    try {
-            throw new BackupException("Method not support in plug-in: setDataType(Class<?> dataType)!");
+	    	// TODO
+            throw new BackupException(NexusFactory.ERR_NOT_SUPPORTED);
         } catch(BackupException e) {
             e.printStackTrace();
         }
@@ -592,10 +629,10 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public void setDimensions(String dimString) {
-        m_parent = getParentGroup();
+        mParent = getParentGroup();
 
         List<String> dimNames = java.util.Arrays.asList(dimString.split(" "));
-        List<IDataItem> items = m_parent.getDataItemList();
+        List<IDataItem> items = mParent.getDataItemList();
         
         for( IDataItem item : items ) {
             IAttribute attr = item.getAttribute("axis");
@@ -612,12 +649,13 @@ public class NexusDataItem implements IDataItem {
     
     @Override
     public void setDimension(IDimension dim, int ind) {
-        m_dimension.add( new DimOrder(ind, dim) );
+        mDimensions.add( new DimOrder(ind, dim) );
     }
     
 	@Override
 	public void setElementSize(int elementSize) {
         try {
+        	// TODO
             throw new BackupException("Method not support in plug-in: setElementSize(int elementSize)!");
         } catch(BackupException e) {
             e.printStackTrace();
@@ -626,14 +664,14 @@ public class NexusDataItem implements IDataItem {
 
 	@Override
 	public void setName(String name) {
-        m_n4tDataItem.setAttribute("name", name);
+        mn4tDataItem.setAttribute("name", name);
 	}
 
 	@Override
 	public void setParent(IGroup group) {
-        if( m_parent == null || ! m_parent.equals(group) )
+        if( mParent == null || ! mParent.equals(group) )
         {
-            m_parent = group;
+            mParent = group;
             group.addDataItem(this);
         }
 	}
@@ -641,67 +679,68 @@ public class NexusDataItem implements IDataItem {
 	@Override
 	public void setSizeToCache(int sizeToCache) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 
 	}
 
     @Override
 	public String toStringDebug() {
-        String strDebug = "" + getName();
-        if( strDebug != null && !strDebug.isEmpty() )
-            strDebug += "\n";
+        StringBuffer strDebug = new StringBuffer();
+        strDebug.append( getName() );
+        if( strDebug.length() > 0 ) {
+            strDebug.append("\n");
+        }
         try {
-            strDebug += "shape: " + getData().shapeToString() + "\n";
+            strDebug.append("shape: ").append(getData().shapeToString()).append("\n");
+            List<IDimension> dimensions = getDimensionList();
+            for( IDimension dim : dimensions ) {
+                strDebug.append(dim.getCoordinateVariable().toString());
+            }
+            
+            List<IAttribute> list = getAttributeList();
+            if( list.size() > 0 ) {
+            	strDebug.append("\nAttributes:\n");
+            }
+            for( IAttribute a : list ) {
+                strDebug.append("- ").append(a.toString()).append("\n");
+            }
         } catch( IOException e ) {
-            e.printStackTrace();
-        }
-        List<IDimension> dimensions = getDimensionList();
-        for( IDimension dim : dimensions ) {
-            strDebug += dim.getCoordinateVariable().toString();
         }
         
-        List<IAttribute> list = getAttributeList();
-        if( list.size() > 0 ) {
-        	strDebug += "\nAttributes:\n";
-        }
-        for( IAttribute a : list ) {
-            strDebug += "- " + a.toString() + "\n";
-        }
-        
-		return strDebug;
+		return strDebug.toString();
 	}
 
 	@Override
 	public String writeCDL(String indent, boolean useFullName, boolean strict) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return null;
 	}
 
 	@Override
 	public void setUnitsString(String units) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NexusFactory.ERR_NOT_SUPPORTED).printStackTrace();
 	}
 
 	@Override
 	public IDataset getDataset() {
-		return m_parent.getDataset();
+		return mParent.getDataset();
 	}
 
 	@Override
 	public String getLocation() {
-		return m_parent.getLocation();
+		return mParent.getLocation();
 	}
 
 	@Override
 	public IGroup getRootGroup() {
-		return m_parent.getRootGroup();
+		return mParent.getRootGroup();
 	}
 
 	@Override
 	public void setShortName(String name) {
-		m_n4tDataItem.setNodeName(name);
+		mn4tDataItem.setNodeName(name);
 		
 	}
     
@@ -712,7 +751,7 @@ public class NexusDataItem implements IDataItem {
 
     public DataItem getN4TDataItem()
     {
-        return m_n4tDataItem;
+        return mn4tDataItem;
     }
     // ------------------------------------------------------------------------
     /// Protected methods

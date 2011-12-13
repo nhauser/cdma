@@ -11,26 +11,24 @@ import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.navigation.NxsDataItem;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.gumtree.data.soleil.navigation.NxsGroup;
-import org.nexusformat.NexusException;
 
-import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class AttributeFilter {
+public final class AttributeFilter {
 	/**
 	 * Stack all found data items to construct an aggregated NxsDataItem
 	 * @param context
 	 * @return
 	 */
-	static public List<NxsDataItem> FilterOnLongName(IContext context) {
+	public List<NxsDataItem> filterOnLongName(IContext context) {
 		ILogicalGroup group = (ILogicalGroup) context.getCaller();
 		IPath path          = context.getPath();
 		String addr         = path.toString();
 		
 		// Extract the subpart corresponding to attribute and value
-		String[] attr = addr.substring(addr.lastIndexOf("@") + 1 ).split("=");
-		addr = addr.substring(0, addr.lastIndexOf("@"));
+		String[] attr = addr.substring(addr.lastIndexOf('@') + 1 ).split("=");
+		addr = addr.substring(0, addr.lastIndexOf('@'));
 		
 		NexusNode[] nodes   = PathNexus.splitStringToNode(addr);
 
@@ -51,7 +49,7 @@ public class AttributeFilter {
 	/**
 	 * Recursively explore the tree represented by the given array of nodes 
 	 */
-	static protected List<NxsDataItem> getAllDataItems( NxsDataset handler, NexusNode[] nodes ) {
+	protected static List<NxsDataItem> getAllDataItems( NxsDataset handler, NexusNode[] nodes ) {
 		return getAllDataItems( (NxsGroup) handler.getRootGroup(), nodes, 0);
 	}
 	
@@ -59,7 +57,7 @@ public class AttributeFilter {
 	 * Recursively explore the tree represented by the given array of nodes beginning
 	 * the exploration at the depth node
 	 */
-	static private List<NxsDataItem> getAllDataItems( NxsGroup entryPoint, NexusNode[] nodes, int depth ) {
+	private static List<NxsDataItem> getAllDataItems( NxsGroup entryPoint, NexusNode[] nodes, int depth ) {
 		List<NxsDataItem> result = new ArrayList<NxsDataItem>();
 		
 		if( depth < nodes.length ) {

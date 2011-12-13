@@ -6,7 +6,7 @@ import org.gumtree.data.math.ArrayMath;
 import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.NxsFactory;
 
-public class NxsArrayMath extends ArrayMath {
+public final class NxsArrayMath extends ArrayMath {
 
 	public NxsArrayMath(IArray array) {
 		super(array, NxsFactory.getInstance());

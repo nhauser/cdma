@@ -123,7 +123,7 @@ public class Register {
 	}
 
 	public static void clean() {
-		// [SOLEIL][clement] TODO Shall we remove this GC call ? It's seen as a major violation by SONAR: our code analyzer and may cause performance leak 
+		//[SOLEIL][clement] TODO Shall we remove this GC call ? It's seen as a major violation by SONAR: our code analyzer and may cause performance leak 
 		System.gc();
 		for (Entry<Long, WeakReference<IArray>> referenceEntry : ARRAY_REGISTRY
 				.entrySet())

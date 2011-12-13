@@ -13,7 +13,7 @@ import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.utils.ArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 
-public class NexusArrayUtils extends ArrayUtils {
+public final class NexusArrayUtils extends ArrayUtils {
 	public NexusArrayUtils( IArray array) {
 		super(array);
 	}
@@ -65,14 +65,11 @@ public class NexusArrayUtils extends ArrayUtils {
 				iter.next();
 			}
 		} catch (ShapeNotMatchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result = null;
 		} catch (InvalidRangeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result = null;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			result = null;
 		}
 		return result;
 	}
@@ -193,35 +190,37 @@ public class NexusArrayUtils extends ArrayUtils {
 	// --------------------------------------------------
 	static public Object copyJavaArray(Object array) {
 		Object result = array;
-		if( result == null )
+		if( result == null ) {
 			return null;
-		
-		// Determine rank of array (by parsing data array class name)
-		String sClassName = array.getClass().getName();
-		int iRank  = 0;
-		int iIndex = 0;
-		char cChar;
-		while (iIndex < sClassName.length()) {
-			cChar = sClassName.charAt(iIndex);
-			iIndex++;
-			if (cChar == '[') {
-				iRank++;
+		}
+		else {
+			// Determine rank of array (by parsing data array class name)
+			String sClassName = array.getClass().getName();
+			int iRank  = 0;
+			int iIndex = 0;
+			char cChar;
+			while (iIndex < sClassName.length()) {
+				cChar = sClassName.charAt(iIndex);
+				iIndex++;
+				if (cChar == '[') {
+					iRank++;
+				}
 			}
+	
+			// Set dimension rank
+			int[] shape    = new int[iRank];
+	
+			// Fill dimension size array
+			for ( int i = 0; i < iRank; i++) {
+				shape[i] = java.lang.reflect.Array.getLength(result);
+				result = java.lang.reflect.Array.get(result,0);
+			}
+			
+			// Define a convenient array (shape and type)
+			result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), shape);
+			result = copyJavaArray(array, result);
 		}
-
-		// Set dimension rank
-		int[] shape    = new int[iRank];
-
-		// Fill dimension size array
-		for ( int i = 0; i < iRank; i++) {
-			shape[i] = java.lang.reflect.Array.getLength(result);
-			result = java.lang.reflect.Array.get(result,0);
-		}
-		
-		// Define a convenient array (shape and type)
-		result = java.lang.reflect.Array.newInstance(array.getClass().getComponentType(), shape);
-		
-		return copyJavaArray(array, result);
+		return result;
 	}
 	
 	static public Object copyJavaArray(Object source, Object target) {

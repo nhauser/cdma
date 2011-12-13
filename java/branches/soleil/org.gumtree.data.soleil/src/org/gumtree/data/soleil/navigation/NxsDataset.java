@@ -3,14 +3,14 @@ package org.gumtree.data.soleil.navigation;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Vector;
 
 import org.gumtree.data.Factory;
 import org.gumtree.data.dictionary.IExtendedDictionary;
 import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.engine.jnexus.NexusDatasource.NeXusFilter;
-import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.engine.jnexus.navigation.NexusDataset;
 import org.gumtree.data.engine.jnexus.navigation.NexusGroup;
 import org.gumtree.data.exception.GDMWriterException;
@@ -23,12 +23,12 @@ import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
 
 import fr.soleil.nexus4tango.NexusFileWriter;
 
-public class NxsDataset implements IDataset {
-	private Vector<NexusDataset> m_datasets;     // all found datasets in the folder
-	private String               m_path;         // folder containing all datasets
-	private IGroup               m_rootPhysical; // Physical root of the document 
-	private ILogicalGroup        m_rootLogical;  // Logical root of the document
-	private boolean              m_open;         // is the dataset open 
+public final class NxsDataset implements IDataset {
+	private List<NexusDataset> mDatasets;     // all found datasets in the folder
+	private String             mPath;         // folder containing all datasets
+	private IGroup             mRootPhysical; // Physical root of the document 
+	private ILogicalGroup      mRootLogical;  // Logical root of the document
+	private boolean            mOpen;         // is the dataset open 
 	
 	public static NxsDataset instanciate(String location) throws IOException
 	{
@@ -37,24 +37,20 @@ public class NxsDataset implements IDataset {
 	}
 	
 	public NxsDataset(File destination) {
-		m_path = destination.getAbsolutePath();
-		m_datasets = new Vector<NexusDataset>();
+		mPath = destination.getAbsolutePath();
+		mDatasets = new ArrayList<NexusDataset>();
 		if( destination.exists() && destination.isDirectory() ) {
 			IDataset datafile;
 			NeXusFilter filter = new NeXusFilter();
 			for( File file : destination.listFiles(filter) ) {
-				try {
-					datafile = NexusFactory.getInstance().createDatasetInstance( file.toURI() );
-					m_datasets.add( (NexusDataset) datafile );
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				datafile = new NexusDataset(file);
+				mDatasets.add( (NexusDataset) datafile );
 			}
 		}
 		else {
-			m_datasets.add( new NexusDataset( destination ) );
+			mDatasets.add( new NexusDataset( destination ) );
 		}
-		m_open = false;
+		mOpen = false;
 	}
 	
 		@Override
@@ -64,50 +60,48 @@ public class NxsDataset implements IDataset {
 
 	@Override
 	public ILogicalGroup getLogicalRoot() {
-		if( m_rootLogical == null ) {
+		if( mRootLogical == null ) {
 			boolean debug = false;
 			if( null != System.getProperty(NxsFactory.DEBUG_INF, System.getenv(NxsFactory.DEBUG_INF)) )
 			{
 				debug = true;
 			}
-			m_rootLogical = new NxsLogicalGroup(null, null, this, debug);
+			mRootLogical = new NxsLogicalGroup(null, null, this, debug);
 			
         }
 		else {
-			IExtendedDictionary dict = m_rootLogical.getDictionary();
+			IExtendedDictionary dict = mRootLogical.getDictionary();
 			if ( dict != null && ! dict.getView().equals( Factory.getActiveView() ) ) {
-				m_rootLogical.setDictionary(m_rootLogical.findAndReadDictionary());
+				mRootLogical.setDictionary(mRootLogical.findAndReadDictionary());
 			}
 		}
-        return m_rootLogical;
+        return mRootLogical;
 	}
 	
 	@Override
     public IGroup getRootGroup() {
-		if( m_rootPhysical == null ) {
-			if( m_datasets.size() > 0 ) {
-				NexusGroup[] groups = new NexusGroup[m_datasets.size()];
-				int i = 0;
-				for( IDataset dataset : m_datasets ) {
-					groups[i++] = (NexusGroup) dataset.getRootGroup();
-				}
-				m_rootPhysical = new NxsGroup(groups, null, this);
+		if( mRootPhysical == null && mDatasets.size() > 0 ) {
+			NexusGroup[] groups = new NexusGroup[mDatasets.size()];
+			int i = 0;
+			for( IDataset dataset : mDatasets ) {
+				groups[i++] = (NexusGroup) dataset.getRootGroup();
 			}
+			mRootPhysical = new NxsGroup(groups, null, this);
         }
-        return m_rootPhysical;
+        return mRootPhysical;
     }
 	
 	
 	@Override
 	public void saveTo(String location) throws GDMWriterException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.saveTo(location);
 		}
 	}
 
 	@Override
 	public void save(IContainer container) throws GDMWriterException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.save(container);
 		}
 	}
@@ -115,7 +109,7 @@ public class NxsDataset implements IDataset {
 	@Override
 	public void save(String parentPath, IAttribute attribute)
 			throws GDMWriterException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.save(parentPath, attribute);
 		}
 	}
@@ -123,7 +117,7 @@ public class NxsDataset implements IDataset {
 	@Override
 	public boolean sync() throws IOException {
 		boolean result = true;
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			if( ! dataset.sync() ) {
 				result = false;
 			}
@@ -133,22 +127,22 @@ public class NxsDataset implements IDataset {
 
 	@Override
 	public void writeNcML(OutputStream os, String uri) throws IOException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.writeNcML(os, uri);
 		}
 	}
 
 	@Override
 	public void close() throws IOException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.close();
 		}
-		m_open = false;
+		mOpen = false;
 	}
 
 	@Override
 	public String getLocation() {
-		return m_path;
+		return mPath;
 	}
 
 	@Override
@@ -156,7 +150,7 @@ public class NxsDataset implements IDataset {
 		String title = "";
 		try
 		{
-			title = m_datasets.firstElement().getTitle();
+			title = mDatasets.get(0).getTitle();
 		}
 		catch( NoSuchElementException e ) {}
 			
@@ -166,10 +160,10 @@ public class NxsDataset implements IDataset {
 	@Override
 	public void setLocation(String location) {
 		File newLoc = new File( location );
-		File oldLoc = new File( m_path );
+		File oldLoc = new File( mPath );
 		if( ! oldLoc.equals(newLoc) ) {
-			m_path = newLoc.getAbsolutePath();
-			m_datasets.clear();
+			mPath = newLoc.getAbsolutePath();
+			mDatasets.clear();
 		}
 	}
 
@@ -177,33 +171,33 @@ public class NxsDataset implements IDataset {
 	public void setTitle(String title) {
 		try
 		{
-			m_datasets.firstElement().setTitle(title);
+			mDatasets.get(0).setTitle(title);
 		}
 		catch( NoSuchElementException e ) {}
 	}
 
 	@Override
 	public void open() throws IOException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.open();
 		}
-		m_open = true;
+		mOpen = true;
 	}
 
 	@Override
 	public void save() throws GDMWriterException {
-		for( IDataset dataset : m_datasets ) {
+		for( IDataset dataset : mDatasets ) {
 			dataset.save();
 		}
 	}
 
 	@Override
 	public boolean isOpen() {
-		return m_open;
+		return mOpen;
 	}
 	
 	public NexusFileWriter getHandler()
     {
-       return m_datasets.firstElement().getHandler();
+       return mDatasets.get(0).getHandler();
     }
 }

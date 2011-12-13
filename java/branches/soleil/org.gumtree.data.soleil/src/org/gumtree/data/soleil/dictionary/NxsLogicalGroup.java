@@ -14,22 +14,23 @@ import org.gumtree.data.soleil.internal.DictionaryDetector;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 
 public class NxsLogicalGroup extends LogicalGroup {
+	
 	public NxsLogicalGroup(IDataset dataset, IKey key) {
-		this(dataset, key, false);
+		super(key, dataset);
 	}
 	
 	public NxsLogicalGroup(IDataset dataset, IKey key, boolean debug) {
-    	super(key, dataset, debug);
+		super(key, dataset, debug);
     }
     
 	public NxsLogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset) {
-		this( parent, key, dataset, false);
+		super(parent, key, dataset, false);
 	}
 
     public NxsLogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset, boolean debug) {
     	super(parent, key, dataset, debug);
     }
-	
+    
 	public IExtendedDictionary findAndReadDictionary() {
 		IFactory factory = NxsFactory.getInstance();
 		IExtendedDictionary dictionary;
@@ -62,5 +63,4 @@ public class NxsLogicalGroup extends LogicalGroup {
 		return mapFile;
 	}
 	
-
 }
