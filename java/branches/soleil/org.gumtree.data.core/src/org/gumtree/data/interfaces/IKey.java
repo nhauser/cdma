@@ -23,7 +23,7 @@ public interface IKey extends IModelObject, Cloneable, Comparable<Object> {
      * 
      * @return the name of this key
      */
-    public String getName();
+    String getName();
     
     /**
      * Set the entry name in the dictionary that will be 
@@ -31,7 +31,7 @@ public interface IKey extends IModelObject, Cloneable, Comparable<Object> {
      * 
      * @param name of this key
      */
-    public void setName(String name);
+    void setName(String name);
     
     /**
      * Return true if both key have similar names.
@@ -39,14 +39,14 @@ public interface IKey extends IModelObject, Cloneable, Comparable<Object> {
      * @param key to compare
      * @return true if both keys have same name
      */
-    public boolean equals(IKey key);
+    boolean equals(Object key);
     
     /**
      * Get the list of parameters that will be applied when using this key.
      * 
      * @return list of IPathParameter 
      */
-    public List<IPathParameter> getParameterList();
+    List<IPathParameter> getParameterList();
     
     /**
      * Add a IPathParameter to this IKey that will be used when 
@@ -55,7 +55,7 @@ public interface IKey extends IModelObject, Cloneable, Comparable<Object> {
      * @param parameter to be applied
      * @note work as a FILO
      */
-    public void pushParameter(IPathParameter filter);
+    void pushParameter(IPathParameter filter);
     
     /**
      * Remove a IPathParameter to this IKey that will be used when 
@@ -64,13 +64,13 @@ public interface IKey extends IModelObject, Cloneable, Comparable<Object> {
      * @return parameter that won't be applied anymore
      * @note work as a FILO
      */
-    public IPathParameter popParameter();
+    IPathParameter popParameter();
     
-    public String toString();
+    String toString();
     
     /**
      * Copy entirely the key : name and filters are cloned
      * @return a copy of this key
      */
-    public IKey clone();
+    IKey clone();
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
@@ -27,58 +28,66 @@ import org.gumtree.data.utils.Utilities.ModelType;
 import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NxsGroup implements IGroup {
+public final class NxsGroup implements IGroup, Cloneable {
 	// ****************************************************
 	// Members
 	// ****************************************************
-	private NxsDataset       m_dataset;     // Dataset to which this group belongs to
-	private IGroup[]         m_groups;      // Groups having a similar path from different files
-	private IGroup           m_parent;      // Parent group folder (mandatory)
-	private List<IContainer> m_children;    // All containers that are below (physically) this one
-	private boolean          m_childUpdate; // is the children list up to date
-	private boolean          m_multigroup;  // is this group managing aggregation of group
+	private NxsDataset       mDataset;       // Dataset to which this group belongs to
+	private IGroup[]         mGroups;        // Groups having a similar path from different files
+	private IGroup           mParent;        // Parent group folder (mandatory)
+	private List<IContainer> mChildren;      // All containers that are below (physically) this one
+	private boolean          mIsChildUpdate; // is the children list up to date
+	private boolean          mIsMultigroup;  // is this group managing aggregation of group
 	
 	// ****************************************************
 	// Constructors
 	// ****************************************************
 	private NxsGroup() {
-		m_groups   = null; 
-		m_parent   = null;
-		m_dataset  = null;
-		m_children = null;
-		m_childUpdate = false;
+		mGroups   = null; 
+		mParent   = null;
+		mDataset  = null;
+		mChildren = null;
+		mIsChildUpdate = false;
 	}
 	
 	public NxsGroup(IGroup[] groups, IGroup parent, NxsDataset dataset) {
-		m_groups   = groups; 
-		m_parent   = parent;
-		m_dataset  = dataset;
-		m_children = null;
-		m_childUpdate = false;
+		mGroups   = groups.clone(); 
+		mParent   = parent;
+		mDataset  = dataset;
+		mChildren = null;
+		mIsChildUpdate = false;
 	}
 	
 	public NxsGroup( NxsGroup original ) {
-		m_groups = new IGroup[original.m_groups.length];
+		mGroups = new IGroup[original.mGroups.length];
 		int i = 0;
-		for( IGroup group : original.m_groups ) {
-			m_groups[i++] = group;
+		for( IGroup group : original.mGroups ) {
+			mGroups[i++] = group;
 		}
-		m_parent      = original.m_parent;
-		m_dataset     = original.m_dataset;
-		m_children    = null;
-		m_childUpdate = false;
-		m_multigroup  = m_groups.length > 1;
+		mParent      = original.mParent;
+		mDataset     = original.mDataset;
+		mChildren    = null;
+		mIsChildUpdate = false;
+		mIsMultigroup  = mGroups.length > 1;
 	}
 	
 	public NxsGroup(IGroup parent, PathNexus path, NxsDataset dataset) {
 		try {
-			m_groups  = dataset.getRootGroup().findAllContainerByPath(path.getValue()).toArray(new IGroup[0]);
+			List<IContainer> list = dataset.getRootGroup().findAllContainerByPath(path.getValue());
+			List<IGroup> groups = new ArrayList<IGroup>();
+			for( IContainer container : list ) {
+				if( container.getModelType() == ModelType.Group ) {
+					groups.add( (IGroup) container );
+				}
+			}
+			IGroup[] array = new IGroup[groups.size()];
+			mGroups  = groups.toArray( array );
 		} catch (NoResultException e) {
 		}
-		m_parent      = parent;
-		m_dataset     = dataset;
-		m_children    = null;
-		m_childUpdate = false;
+		mParent      = parent;
+		mDataset     = dataset;
+		mChildren    = null;
+		mIsChildUpdate = false;
 	}
 
 	// ****************************************************
@@ -93,14 +102,14 @@ public class NxsGroup implements IGroup {
     public NxsGroup clone()
     {
     	NxsGroup clone = new NxsGroup();
-		clone.m_groups = new IGroup[m_groups.length];
+		clone.mGroups = new IGroup[mGroups.length];
 		int i = 0;
-		for( IGroup group : m_groups ) {
-			m_groups[i++] = group.clone();
+		for( IGroup group : mGroups ) {
+			mGroups[i++] = group.clone();
 		}
-		clone.m_parent = m_parent.clone();
-		clone.m_dataset = m_dataset;
-		clone.m_childUpdate = false;
+		clone.mParent = mParent.clone();
+		clone.mDataset = mDataset;
+		clone.mIsChildUpdate = false;
         return clone;
     }
 	
@@ -112,7 +121,7 @@ public class NxsGroup implements IGroup {
 	@Override
 	public IAttribute getAttribute(String name) {
 		IAttribute attr = null;
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			attr = group.getAttribute(name);
 			if( attr != null ) {
 				break;
@@ -124,7 +133,7 @@ public class NxsGroup implements IGroup {
 	@Override
 	public List<IAttribute> getAttributeList() {
 		List<IAttribute> result = new ArrayList<IAttribute>();
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			result.addAll( group.getAttributeList() );
 		}
 		return result;
@@ -132,14 +141,14 @@ public class NxsGroup implements IGroup {
 
 	@Override
 	public String getLocation() {
-		return m_parent.getLocation() + "/" + getShortName();
+		return mParent.getLocation() + "/" + getShortName();
 	}
 
 	@Override
 	public String getName() {
     	String name = "";
-    	if( m_groups.length > 0 ) {
-   			name = m_groups[0].getName();
+    	if( mGroups.length > 0 ) {
+   			name = mGroups[0].getName();
     	}
     	return name;
 	}
@@ -148,15 +157,15 @@ public class NxsGroup implements IGroup {
     public String getShortName()
     {
     	String name = "";
-    	if( m_groups.length > 0 ) {
-    		name = m_groups[0].getShortName();
+    	if( mGroups.length > 0 ) {
+    		name = mGroups[0].getShortName();
     	}
     	return name;
     }
 
 	@Override
 	public boolean hasAttribute(String name, String value) {
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			if( group.hasAttribute(name, value) ) {
 				return true;
 			}
@@ -166,21 +175,21 @@ public class NxsGroup implements IGroup {
 
 	@Override
 	public void setName(String name) {
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			group.setName(name);
 		}
 	}
 
 	@Override
 	public void setShortName(String name) {
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			group.setShortName(name);
 		}
 	}
 
 	@Override
 	public void setParent(IGroup group) {
-		m_parent = group;
+		mParent = group;
 	}
 
 	@Override
@@ -196,42 +205,42 @@ public class NxsGroup implements IGroup {
 
 	@Override
 	public IGroup getParentGroup() {
-        if( m_parent == null )
+/*        if( mParent == null )
         {
         	// TODO do not reconstruct the physical hierarchy: keep what has been done in construct
-        	IGroup[] groups = new IGroup[m_groups.length];
+        	IGroup[] groups = new IGroup[mGroups.length];
         	int i = 0;
-        	for( IGroup item : m_groups ) {
+        	for( IGroup item : mGroups ) {
         		groups[i++] = item.getParentGroup();
         	}
         	
-        	m_parent = new NxsGroup(groups, null, m_dataset);
-        	((NxsGroup) m_parent).setChild(this);
+        	mParent = new NxsGroup(groups, null, mDataset);
+        	((NxsGroup) mParent).setChild(this);
         	
         }
-		return m_parent;
-		
-		
-		//return m_parent;
+*/		return mParent;
 	}
 
 	@Override
 	public IGroup getRootGroup() {
-		return m_dataset.getRootGroup();
+		return mDataset.getRootGroup();
 	}
 
 	@Override
 	public IDataItem getDataItem(String shortName) {
 		List<IDataItem> list = getDataItemList();
 		IDataItem result = null;
-		
+		NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
+		NexusNode groupName;
+		NexusNode[] nodes;
 		for( IDataItem item : list ) {
-			if( item.getShortName() == shortName ) {
+			nodes = PathNexus.splitStringToNode(item.getName());
+			groupName = nodes[nodes.length - 1];
+			if( groupName.matchesNode(nodeName) ) {
 				result = item;
 				break;
 			}
 		}
-		
 		return result;
 	}
 
@@ -280,11 +289,9 @@ public class NxsGroup implements IGroup {
 		List<IContainer> list = findAllContainers(key);
 		IDataItem result = null;
 		for( IContainer item : list ) {
-			if( item.getModelType() == ModelType.DataItem ) {
-				if( item.hasAttribute(name, attribute) ) {
-					result = (IDataItem) item;
-					break;
-				}
+			if( item.getModelType() == ModelType.DataItem && item.hasAttribute(name, attribute) ) {
+				result = (IDataItem) item;
+				break;
 			}
 		}
 		
@@ -302,11 +309,9 @@ public class NxsGroup implements IGroup {
 		}
 		IGroup result = null;
 		for( IContainer item : list ) {
-			if( item.getModelType() == ModelType.Group ) {
-				if( item.hasAttribute(name, value) ) {
-					result = (IGroup) item;
-					break;
-				}
+			if( item.getModelType() == ModelType.Group && item.hasAttribute(name, value) ) {
+				result = (IGroup) item;
+				break;
 			}
 		}
 		
@@ -319,7 +324,7 @@ public class NxsGroup implements IGroup {
 		IContainer result = null;
 		
 		for( IContainer container : list ) {
-			if( container.getShortName() == shortName ) {
+			if( container.getShortName().equals( shortName ) ) {
 				result = container;
 				break;
 			}
@@ -332,28 +337,17 @@ public class NxsGroup implements IGroup {
 	public IGroup getGroup(String shortName) {
 		List<IGroup> list = getGroupList();
 		IGroup result = null;
-		if( shortName.contains("<") || shortName.contains("{") ) {
-			NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
-			NexusNode groupName;
-			NexusNode[] nodes;
-			for( IGroup group : list ) {
-				nodes = PathNexus.splitStringToNode(group.getName());
-				groupName = nodes[nodes.length - 1];
-				if( groupName.matchesNode(nodeName) ) {
-					result = group;
-					break;
-				}
+		NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
+		NexusNode groupName;
+		NexusNode[] nodes;
+		for( IGroup group : list ) {
+			nodes = PathNexus.splitStringToNode(group.getName());
+			groupName = nodes[nodes.length - 1];
+			if( groupName.matchesNode(nodeName) ) {
+				result = group;
+				break;
 			}
 		}
-		else {
-			for( IGroup group : list ) {
-				if( group.getShortName() == shortName ) {
-					result = group;
-					break;
-				}
-			}
-		}
-		
 		return result;
 	}
 
@@ -376,7 +370,7 @@ public class NxsGroup implements IGroup {
 		listChildren();
 		
 		ArrayList<IDataItem> list = new ArrayList<IDataItem>();
-		for( IContainer container : m_children ) {
+		for( IContainer container : mChildren ) {
 			if( container.getModelType() == ModelType.DataItem ) {
 				list.add( (IDataItem) container);
 			}
@@ -387,7 +381,7 @@ public class NxsGroup implements IGroup {
 
 	@Override
 	public IDataset getDataset() {
-		return m_dataset;
+		return mDataset;
 	}
 
 	@Override
@@ -420,7 +414,7 @@ public class NxsGroup implements IGroup {
 		listChildren();
 		
 		ArrayList<IGroup> list = new ArrayList<IGroup>();
-		for( IContainer container : m_children ) {
+		for( IContainer container : mChildren ) {
 			if( container.getModelType() == ModelType.Group ) {
 				list.add( (IGroup) container);
 			}
@@ -469,7 +463,7 @@ public class NxsGroup implements IGroup {
 
 		// Store in a map all different containers from all m_groups 
 		Map< String, ArrayList<IContainer> > items = new HashMap<String, ArrayList<IContainer> >();
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			try {
 				tmp = group.findAllContainerByPath(path);
 				for( IContainer item : tmp ) {
@@ -490,15 +484,15 @@ public class NxsGroup implements IGroup {
 		}
 		
 		// Construct that were found
-		for( String entry : items.keySet() ) {
-			tmp = items.get(entry);
+		for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
+			tmp = entry.getValue();
 			// If a Group list then construct a new Group folder
 			if( tmp.get(0).getModelType() == ModelType.Group ) {
 				list.add(
 					new NxsGroup(
-						tmp.toArray( new IGroup[0] ),
+						tmp.toArray( new IGroup[tmp.size()] ),
 						this,
-						m_dataset
+						mDataset
 					)
 				);
 			}
@@ -516,7 +510,7 @@ public class NxsGroup implements IGroup {
 					new NxsDataItem(
 						array,
 						this,
-						m_dataset
+						mDataset
 					)
 				);
 			}
@@ -533,7 +527,7 @@ public class NxsGroup implements IGroup {
 	@Override
 	public boolean removeDataItem(String varName) {
 		boolean succeed = false;
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			if( group.removeDataItem( varName ) ) {
 				succeed = true;
 			}
@@ -549,7 +543,7 @@ public class NxsGroup implements IGroup {
 	@Override
 	public boolean removeGroup(String shortName) {
 		boolean succeed = false;
-		for( IGroup group : m_groups ) {
+		for( IGroup group : mGroups ) {
 			if( group.removeGroup( shortName ) ) {
 				succeed = true;
 			}
@@ -559,28 +553,28 @@ public class NxsGroup implements IGroup {
 
 	@Override
 	public void setDictionary(IDictionary dictionary) {
-		if( m_groups.length > 0 ) {
-			m_groups[0].setDictionary( dictionary );
+		if( mGroups.length > 0 ) {
+			mGroups[0].setDictionary( dictionary );
 		}
 	}
 
 	@Override
 	public IDictionary findDictionary() {
 		IDictionary dictionary = null;
-		if( m_groups.length > 0 ) {
-			dictionary = m_groups[0].findDictionary();
+		if( mGroups.length > 0 ) {
+			dictionary = mGroups[0].findDictionary();
 		}
 		return dictionary;
 	}
 
 	@Override
 	public boolean isRoot() {
-		return (m_groups.length > 0 && m_groups[0].isRoot());
+		return (mGroups.length > 0 && mGroups[0].isRoot());
 	}
 
 	@Override
 	public boolean isEntry() {
-		return ( m_parent.getParentGroup().getParentGroup() == null );
+		return ( mParent.getParentGroup().getParentGroup() == null );
 	}
 
     @Override
@@ -601,7 +595,6 @@ public class NxsGroup implements IGroup {
 		try {
 			result = findContainerByPath(path.getValue());
 		} catch (NoResultException e) {
-			e.printStackTrace();
 		}
 		
 		return result;
@@ -678,8 +671,8 @@ public class NxsGroup implements IGroup {
     /// Protected methods
     // ------------------------------------------------------------------------
 	protected void setChild(IContainer node) {
-		if( ! m_children.contains(node) ) {
-			m_children.add(node);
+		if( ! mChildren.contains(node) ) {
+			mChildren.add(node);
 		}
 	}
 	// ****************************************************
@@ -687,7 +680,7 @@ public class NxsGroup implements IGroup {
 	// ****************************************************
 	private List<IContainer> listChildren() {
 		List<IContainer> result;
-		if( m_multigroup ) {
+		if( mIsMultigroup ) {
 			result = listChildrenMultiGroup();
 		}
 		else {
@@ -697,15 +690,15 @@ public class NxsGroup implements IGroup {
 	}
 	
 	private List<IContainer> listChildrenMultiGroup() {
-		if( ! m_childUpdate ) 
+		if( ! mIsChildUpdate ) 
 		{
 			List<IContainer> tmp = null;
-			m_children = new ArrayList<IContainer>();
+			mChildren = new ArrayList<IContainer>();
 			String tmpName;
 	
 			// Store in a map all different containers from all m_groups 
 			Map< String, ArrayList<IContainer> > items = new HashMap<String, ArrayList<IContainer> >();
-			for( IGroup group : m_groups ) {
+			for( IGroup group : mGroups ) {
 				tmp = new ArrayList<IContainer>();
 				tmp.addAll( group.getDataItemList() );
 				tmp.addAll( group.getGroupList() );
@@ -723,15 +716,15 @@ public class NxsGroup implements IGroup {
 			}
 			
 			// Construct what were found
-			for( String entry : items.keySet() ) {
-				tmp = items.get(entry);
+			for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
+				tmp = entry.getValue();
 				// If a Group list then construct a new Group folder
 				if( tmp.get(0).getModelType() == ModelType.Group ) {
-					m_children.add(
+					mChildren.add(
 						new NxsGroup(
-							tmp.toArray( new IGroup[0] ),
+							tmp.toArray( new IGroup[tmp.size()] ),
 							this, 
-							m_dataset
+							mDataset
 						)
 					);
 				}
@@ -745,43 +738,42 @@ public class NxsGroup implements IGroup {
 					}
 					NexusDataItem[] array = new NexusDataItem[nxsDataItems.size()];
 					nxsDataItems.toArray(array);
-					m_children.add(
+					mChildren.add(
 						new NxsDataItem(
 							array,
 							this,
-							m_dataset
+							mDataset
 						)
 					);
 				}
 			}
-			m_childUpdate = true;
+			mIsChildUpdate = true;
 		}
-		return m_children;	
+		return mChildren;	
 	}
 	
 	private List<IContainer> listChildrenMonoGroup() {
-		if( ! m_childUpdate )
+		if( ! mIsChildUpdate )
 		{
-			m_children = new ArrayList<IContainer>();
+			mChildren = new ArrayList<IContainer>();
 			
 			// Store in a list all different containers from all m_groups 
-			for( IDataItem item : m_groups[0].getDataItemList() ) {
-				m_children.add( new NxsDataItem( (NexusDataItem) item, this, m_dataset ) );
+			for( IDataItem item : mGroups[0].getDataItemList() ) {
+				mChildren.add( new NxsDataItem( (NexusDataItem) item, this, mDataset ) );
 			}
 			
-			for( IGroup group : m_groups[0].getGroupList() ) {
-				m_children.add( new NxsGroup( new IGroup[] {group}, this, m_dataset) );
+			for( IGroup group : mGroups[0].getGroupList() ) {
+				mChildren.add( new NxsGroup( new IGroup[] {group}, this, mDataset) );
 			}
-			m_childUpdate = true;
+			mIsChildUpdate = true;
 		}
-		return m_children;
+		return mChildren;
 	}
 
 	// ****************************************************
  	// Specific methods
 	// ****************************************************
 	public PathNexus getPathNexus() {
-		PathNexus path = ((NexusGroup) m_groups[0]).getPathNexus();
-		return path;
+		return ((NexusGroup) mGroups[0]).getPathNexus();
 	}
 }

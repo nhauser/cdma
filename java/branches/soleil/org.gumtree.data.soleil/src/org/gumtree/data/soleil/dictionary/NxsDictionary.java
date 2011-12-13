@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.gumtree.data.IFactory;
 import org.gumtree.data.dictionary.IPath;
@@ -29,42 +30,45 @@ import org.jdom.input.SAXBuilder;
  * @author rodriguez
  *
  */
-public class NxsDictionary implements IDictionary
-{
-    private String m_path;      // Path of the XML file carrying the dictionary 
-	private HashMap<IKey, IPath> m_itemMap = new HashMap<IKey, IPath>();
+public final class NxsDictionary implements IDictionary, Cloneable {
+    private String mPath;              // Path of the XML file carrying the dictionary 
+	private Map<IKey, IPath> mItemMap; // Map associating keys from view file to path from mapping file
+	
+	public NxsDictionary() {
+		mItemMap = new HashMap<IKey, IPath>();
+	}
 	
     @Override
 	public void addEntry(String keyName, String path)
 	{
     	IFactory factory = NxsFactory.getInstance();
-		m_itemMap.put(new Key(factory, keyName), new Path(factory, path));
+		mItemMap.put(new Key(factory, keyName), new Path(factory, path));
 	}
 
     @Override
 	public boolean containsKey(String keyName)
 	{
-		return m_itemMap.containsKey(keyName);
+		return mItemMap.containsKey(keyName);
 	}
 
 	@Override
 	public List<IKey> getAllKeys()
 	{
-		return new ArrayList<IKey>(m_itemMap.keySet());
+		return new ArrayList<IKey>(mItemMap.keySet());
 	}
 
 	@Override
 	public List<IPath> getAllPaths(IKey keyName)
 	{
-		return new ArrayList<IPath>(m_itemMap.values());
+		return new ArrayList<IPath>(mItemMap.values());
 	}
 
 	@Override
 	public IPath getPath(IKey keyName)
 	{
-		if( m_itemMap.containsKey(keyName) )
+		if( mItemMap.containsKey(keyName) )
 		{
-			return m_itemMap.get(keyName);
+			return mItemMap.get(keyName);
 		}
 		else
 		{
@@ -85,17 +89,20 @@ public class NxsDictionary implements IDictionary
 			BufferedReader br = new BufferedReader(new FileReader(dicFile));
 			while (br.ready())
 			{
-				String[] temp = br.readLine().split("=");
-				if (0 < (temp[0].length())) 
-				{
-					addEntry(temp[0], temp[1]);
+				String line = br.readLine();
+				if( line != null ) {
+					String[] temp = line.split("=");
+					if (0 < (temp[0].length())) 
+					{
+						addEntry(temp[0], temp[1]);
+					}
 				}
 			}
+			br.close();
 		} 
-		catch (Exception ex) 
+		catch (IOException ex) 
 		{
-			throw new FileAccessException("failed to open the dictionary file",
-					ex);
+			throw new FileAccessException("failed to open the dictionary file\n", ex);
 		}
 	}
 
@@ -117,13 +124,13 @@ public class NxsDictionary implements IDictionary
             dictionary = xmlFile.build(dicFile);
         }
         catch (JDOMException e1) {
-            throw new FileAccessException("error while to parsing the dictionary!\n" + e1.getMessage());
+            throw new FileAccessException("error while to parsing the dictionary!\n", e1);
         }
         catch (IOException e1) {
-            throw new FileAccessException("an I/O error prevent parsing dictionary!\n" + e1.getMessage());
+            throw new FileAccessException("an I/O error prevent parsing dictionary!\n", e1);
         }
         
-        m_path = dicFile.getAbsolutePath();
+        mPath = dicFile.getAbsolutePath();
         root = dictionary.getRootElement();
         
         List<?> nodes = root.getChildren("entry"), tmpList;
@@ -172,21 +179,21 @@ public class NxsDictionary implements IDictionary
     
 	@Override
 	public void removeEntry(String keyName, String path) {
-		m_itemMap.remove(keyName);
+		mItemMap.remove(keyName);
 	}
 
 	@Override
 	public void removeEntry(String keyName) {
-		m_itemMap.remove(keyName);
+		mItemMap.remove(keyName);
 	}
 	
     
-	@SuppressWarnings("unchecked")
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	public IDictionary clone() throws CloneNotSupportedException
 	{
 		NxsDictionary dict = new NxsDictionary();
-		dict.m_itemMap = (HashMap<IKey, IPath>) m_itemMap.clone();
+		dict.mItemMap = (HashMap<IKey, IPath>) ((HashMap<IKey, IPath>) mItemMap).clone();
 		return dict;
 	}
 
@@ -194,7 +201,7 @@ public class NxsDictionary implements IDictionary
 	 * @return path of the dictionary file
 	 */
 	public String getPath() {
-		return m_path;
+		return mPath;
 	}
 	
 	@Override

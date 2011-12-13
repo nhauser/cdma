@@ -9,76 +9,77 @@ import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class DictionaryDetector {
-	final static String SEPARATOR = "_";
-	final static String EXTENSION = ".xml";
-	private NxsDataset m_dataset;
-	private Beamline   m_beamline;
-	private DataModel  m_model;
+public final class DictionaryDetector {
+	static final String SEPARATOR = "_";
+	static final String EXTENSION = ".xml";
+	private NxsDataset mDataset;
+	private Beamline   mBeamline;
+	private DataModel  mModel;
 	
 	public DictionaryDetector(NxsDataset dataset) {
-		m_dataset = dataset;
+		mDataset = dataset;
 	}
 
 	public String getDictionaryName() throws FileAccessException {
 		String fileName = null;
-		if( m_beamline == null ) {
+		if( mBeamline == null ) {
 			detectBeamline();
 		}
-		if( m_model == null ) {
+		if( mModel == null ) {
 			detectDataModel();
 		}
 		
-		fileName = m_beamline.getName() + SEPARATOR + m_model.getName() + EXTENSION;
+		fileName = mBeamline.getName() + SEPARATOR + mModel.getName() + EXTENSION;
 		return fileName;
 	}
 	
 	public Beamline detectBeamline() {
-		m_beamline = null;
+		mBeamline = null;
 		PathNexus path = new PathGroup(new String[] {"<NXentry>", "<NXinstrument>"});
-		NexusFileWriter handler = m_dataset.getHandler();
+		NexusFileWriter handler = mDataset.getHandler();
 	
 		try {
 			handler.openPath(path);
-			m_beamline = Beamline.valueOf(handler.getCurrentPath().getCurrentNode().getNodeName().toUpperCase());
+			String name = handler.getCurrentPath().getCurrentNode().getNodeName();
+			mBeamline = Beamline.valueOf(name);
 		} catch (Exception e) {
-			m_beamline = Beamline.UNKNOWN;
+			mBeamline = Beamline.UNKNOWN;
 		}
 		
 		try {
 			handler.closeAll();
 		} catch (NexusException e) {}
 		
-		return m_beamline;
+		return mBeamline;
 	}
 	
 	public DataModel detectDataModel() {
-		if( m_beamline == null ) {
+		if( mBeamline == null ) {
 			detectBeamline();
 		}
 		
-		switch( m_beamline ) {
+		switch( mBeamline ) {
 			case ANTARES:
-				m_model = detectDataModelAntares();
+				mModel = detectDataModelAntares();
 				break;
 			case SWING:
-				m_model = detectDataModelSwing();
+				mModel = detectDataModelSwing();
 				break;
 			case CONTACQ:
-				m_model = detectDataModelICA();
+				mModel = detectDataModelICA();
 				break;
 			case METROLOGIE:
-				m_model = detectDataModelMetrologie();
+				mModel = detectDataModelMetrologie();
 				break;
 			case DISCO:
-				m_model = detectDataModelDisco();
+				mModel = detectDataModelDisco();
 				break;
 			case UNKNOWN:
 			default:
-				m_model = DataModel.UNKNOWN;
+				mModel = DataModel.UNKNOWN;
 				break;
 		}
-		return m_model;
+		return mModel;
 	}
 	
 	
@@ -114,7 +115,7 @@ public class DictionaryDetector {
     // ------------------------------------------------------------------------------------------------------------------
 	protected boolean isScanServer() {
 		boolean result = false;
-		NexusFileWriter handler = m_dataset.getHandler();
+		NexusFileWriter handler = mDataset.getHandler();
 		try {
 			PathNexus path = new PathGroup(new String[] {"<NXentry>", "scan_data<NXdata>"});
 			handler.openPath(path);
@@ -133,7 +134,7 @@ public class DictionaryDetector {
 	
 	protected boolean isFlyScan() {
 		boolean result = false;
-		NexusFileWriter handler = m_dataset.getHandler();
+		NexusFileWriter handler = mDataset.getHandler();
 		try {
 			PathNexus path = new PathGroup(new String[] {"<NXentry>", "scan_data<NXdata>"});
 			handler.openPath(path);

@@ -6,11 +6,14 @@ import java.net.URI;
 
 import org.gumtree.data.IDatasource;
 
-public class NexusDatasource implements IDatasource {
+public final class NexusDatasource implements IDatasource {
 	
-	static public class NeXusFilter implements FilenameFilter {
+	public static final class NeXusFilter implements FilenameFilter {
+		public static final int    EXTENSION_LENGTH = 4;
+		public static final String EXTENSION = ".nxs";
+		
 	    public boolean accept(File dir, String name) {
-	        return (name.endsWith(".nxs"));
+	        return (name.endsWith(NeXusFilter.EXTENSION));
 	    }
 	}
 	
@@ -24,7 +27,7 @@ public class NexusDatasource implements IDatasource {
 		File file      = new File(target);
 		String name    = file.getName();
 		int length     = name.length();
-		boolean result = length > 4 && name.substring(length - 4).equals(".nxs");
+		boolean result = length > NeXusFilter.EXTENSION_LENGTH && name.substring(length - NeXusFilter.EXTENSION_LENGTH).equals(NeXusFilter.EXTENSION);
 		
 		return result;
 	}

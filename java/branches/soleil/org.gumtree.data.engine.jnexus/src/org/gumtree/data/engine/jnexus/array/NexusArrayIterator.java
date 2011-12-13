@@ -5,27 +5,25 @@ import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.engine.jnexus.NexusFactory;
 
-public class NexusArrayIterator implements IArrayIterator {
+public final class NexusArrayIterator implements IArrayIterator {
 	/// Members
-	private IArray  m_array;
-    private IIndex  m_index;
-    private Object  m_current;
-    private boolean m_access; // Indicates that this can access the storage memory or not
+	private IArray  mArray;
+    private IIndex  mIndex;
+    private Object  mCurrent;
+    private boolean mAccess; // Indicates that this can access the storage memory or not
 
 	public NexusArrayIterator(NexusArray array)
 	{
-		m_array	= array;
-		// [ANSTO][Tony][2011-08-31] Should m_access set to true for NxsArrayInterface??
+		mArray	= array;
+		// [ANSTO][Tony][2011-08-31] Should mAccess set to true for NxsArrayInterface??
 		// If m_access is set to false, next() does not work.
 		// [SOLEIL][Clement][2011-11-22] Yes it should. It indicates that the iterator shouldn't access memory. In case of hudge matrix the next() will update m_current (i.e. value), but the underlying NeXus engine will automatically load the part corresponding to the view defined by this iterator, which can lead to java heap space memory exception (see NxsArray : private Object getData() ) 
-		m_access = true;
+		mAccess = true;
 		try {
-			m_index = array.getIndex().clone();
-			m_index.set( new int[m_index.getRank()] );
-			m_index.setDim( m_index.getRank() - 1, -1);
-			//m_current = m_array.getObject(m_index);
+			mIndex = array.getIndex().clone();
+			mIndex.set( new int[mIndex.getRank()] );
+			mIndex.setDim( mIndex.getRank() - 1, -1);
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
 		}
 	}
     
@@ -35,16 +33,11 @@ public class NexusArrayIterator implements IArrayIterator {
     
     public NexusArrayIterator(IArray array, IIndex index, boolean accessData) {
     	int[] count = index.getCurrentCounter();
-        m_array     = array;
-        m_index     = index;
-        m_access    = accessData;
-        count[m_index.getRank() - 1]--;
-        m_index.set( count );
-        /*
-         if( m_access ) {
-        	m_current = m_array.getObject(m_index);
-        }
-        */
+        mArray     = array;
+        mIndex     = index;
+        mAccess    = accessData;
+        count[mIndex.getRank() - 1]--;
+        mIndex.set( count );
     }
 
 	@Override
@@ -64,7 +57,7 @@ public class NexusArrayIterator implements IArrayIterator {
 
 	@Override
 	public int[] getCounter() {
-        return m_index.getCurrentCounter();
+        return mIndex.getCurrentCounter();
 	}
 
 	@Override
@@ -100,25 +93,25 @@ public class NexusArrayIterator implements IArrayIterator {
 	@Override
 	public boolean hasNext()
 	{
-        long index = m_index.currentElement();
-        long last  = m_index.lastElement();
+        long index = mIndex.currentElement();
+        long last  = mIndex.lastElement();
         return ( index < last && index >= -1);
 	}
 	
 	@Override
 	public Object next()
 	{
-		incrementIndex(m_index);
-		if( m_access ) {
-			long currentPos = m_index.currentElement();
-	    	if( currentPos <= m_index.lastElement() && currentPos != -1 ) {
-	    		m_current = m_array.getObject(m_index);
+		incrementIndex(mIndex);
+		if( mAccess ) {
+			long currentPos = mIndex.currentElement();
+	    	if( currentPos <= mIndex.lastElement() && currentPos != -1 ) {
+	    		mCurrent = mArray.getObject(mIndex);
 	    	}
 	    	else {
-	    		m_current = null;
+	    		mCurrent = null;
 	    	}
 		}
-		return m_current;
+		return mCurrent;
 	}
 
 	@Override
@@ -158,8 +151,8 @@ public class NexusArrayIterator implements IArrayIterator {
 
 	@Override
 	public void setObject(Object val) {
-		m_current = val;
-        m_array.setObject(m_index, val);
+		mCurrent = val;
+        mArray.setObject(mIndex, val);
 	}
 
 	@Override
@@ -167,7 +160,7 @@ public class NexusArrayIterator implements IArrayIterator {
         setObject(val);
 	}
 
-	static public void incrementIndex(IIndex index)
+	public static void incrementIndex(IIndex index)
 	{
         int[] current = index.getCurrentCounter();
         int[] shape = index.getShape();
@@ -193,7 +186,7 @@ public class NexusArrayIterator implements IArrayIterator {
 	
 	/// protected method
 	protected void incrementIndex() {
-		NexusArrayIterator.incrementIndex(m_index);
+		NexusArrayIterator.incrementIndex(mIndex);
 	}
 
 	/**
@@ -462,6 +455,6 @@ public class NexusArrayIterator implements IArrayIterator {
 	@Override
 	public int[] getCurrentCounter() {
 		// TODO Auto-generated method stub
-		return null;
+		return new int[0];
 	}
 }

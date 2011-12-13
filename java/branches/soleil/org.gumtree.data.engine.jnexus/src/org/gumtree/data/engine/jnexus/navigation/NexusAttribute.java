@@ -5,32 +5,33 @@ import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 
-public class NexusAttribute implements IAttribute {
+public final class NexusAttribute implements IAttribute {
 
 	/// Members
-	private String	m_sName;		// Attribute's name
-	private IArray	m_aValue;		// Attribute's value
+	private String	mName;		// Attribute's name
+	private IArray	mValue;		// Attribute's value
 
 	/// Constructors
 	public NexusAttribute(String sName, Object aValue) {
 		int i = 1;
-		if( aValue.getClass().isArray() )
+		if( aValue.getClass().isArray() ) {
 			i = java.lang.reflect.Array.getLength(aValue);
+		}
 
-		m_sName  = sName;
-		m_aValue = new NexusArray(aValue, new int[] {i} );
+		mName  = sName;
+		mValue = new NexusArray(aValue, new int[] {i} );
 	}
 
 
 	@Override
 	public int getLength() {
-		Long length = m_aValue.getSize();
+		Long length = mValue.getSize();
 		return length.intValue();
 	}
 
 	@Override
 	public String getName() {
-		return m_sName;
+		return mName;
 	}
 
 	@Override
@@ -46,7 +47,7 @@ public class NexusAttribute implements IAttribute {
 		}
 		else
 		{
-			return (Number) m_aValue.getStorage();
+			return (Number) mValue.getStorage();
 
 		}
 	}
@@ -56,15 +57,16 @@ public class NexusAttribute implements IAttribute {
 		Object value;
 		if( isArray() )
 		{
-			value = java.lang.reflect.Array.get(m_aValue.getStorage(), index);
+			value = java.lang.reflect.Array.get(mValue.getStorage(), index);
 		}
 		else
 		{
-			value = m_aValue.getStorage();
+			value = mValue.getStorage();
 		}
 
-		if( isString() )
+		if( isString() ) {
 			return (Double) value;
+		}
 
 		return (Number) value;
 	}
@@ -73,7 +75,7 @@ public class NexusAttribute implements IAttribute {
 	public String getStringValue() {
 		if( isString() )
 		{
-			return (String) m_aValue.getStorage();
+			return (String) mValue.getStorage();
 		}
 		else
 		{
@@ -85,7 +87,7 @@ public class NexusAttribute implements IAttribute {
 	public String getStringValue(int index) {
 		if( isString() )
 		{
-			return ((String) java.lang.reflect.Array.get(m_aValue.getStorage(), index));
+			return ((String) java.lang.reflect.Array.get(mValue.getStorage(), index));
 		}
 		else
 		{
@@ -95,37 +97,37 @@ public class NexusAttribute implements IAttribute {
 
 	@Override
 	public Class<?> getType() {
-		return m_aValue.getElementType();
+		return mValue.getElementType();
 	}
 
 	@Override
 	public IArray getValue() {
-		return m_aValue;
+		return mValue;
 	}
 
 	@Override
 	public boolean isArray() {
-		return m_aValue.getStorage().getClass().isArray();
+		return mValue.getStorage().getClass().isArray();
 	}
 
 	@Override
 	public boolean isString() {
 		Class<?> tmpClass = "".getClass();
-		return ( m_aValue.getElementType().equals(tmpClass) );
+		return ( mValue.getElementType().equals(tmpClass) );
 	}
 
 	@Override
 	public void setStringValue(String val) {
-		m_aValue = new NexusArray(val, new int[] {1});
+		mValue = new NexusArray(val, new int[] {1});
 	}
 
 	@Override
 	public void setValue(IArray value) {
-		m_aValue = value;
+		mValue = value;
 	}
     
     public String toString() {
-        return m_sName + "=" + m_aValue;
+        return mName + "=" + mValue;
     }
 
 	@Override

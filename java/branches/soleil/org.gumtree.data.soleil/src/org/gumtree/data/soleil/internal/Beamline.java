@@ -9,8 +9,8 @@ public enum Beamline {
 	UNKNOWN    ("unknown");
     
 
-    private String m_name;
+    private String mName;
 
-    private Beamline(String type)  { m_name = type; }
-    public String getName()        { return m_name; }
+    private Beamline(String type)  { mName = type; }
+    public String getName()        { return mName; }
 }

@@ -8,101 +8,123 @@ import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDimension;
 
-public class NexusDimension implements IDimension {
+public final class NexusDimension implements IDimension {
 
-    private IArray    m_array;
-    private String    m_longName;
-    private boolean   m_variableLength;
-    private boolean   m_unlimited;
-    private boolean   m_shared;
+    private IArray    mArray;
+    private String    mLongName;
+    private boolean   mIsVariableLength;
+    private boolean   mIsUnlimited;
+    private boolean   mIsShared;
     
     public NexusDimension(IDataItem item) {
-        m_longName  = item.getName();
-        m_unlimited = item.isUnlimited();
+        mLongName  = item.getName();
+        mIsUnlimited = item.isUnlimited();
         try {
-            m_array = item.getData();
+            mArray = item.getData();
         } catch( IOException e ) {
-            m_array = null;
+            mArray = null;
         }
     }
     
     public NexusDimension(NexusDimension dim) {
-        m_longName       = dim.m_longName;
-        m_array          = dim.m_array;
-        m_variableLength = dim.m_variableLength;
-        m_unlimited      = dim.m_unlimited;
+        mLongName         = dim.mLongName;
+        mArray            = dim.mArray;
+        mIsVariableLength = dim.mIsVariableLength;
+        mIsUnlimited      = dim.mIsUnlimited;
     }
     
 	@Override
 	public int compareTo(Object o) {
-		IDimension dim = (IDimension) o;
-		return m_longName.compareTo( dim.getName() );
+		if( this.equals(o) ) {
+			return 0;
+		}
+		else {
+			IDimension dim = (IDimension) o;
+			return mLongName.compareTo( dim.getName() );
+		}
+	}
+	
+	@Override
+	public boolean equals(Object dim) {
+		boolean result;
+		if( dim instanceof IDimension ) {
+			result = mLongName.equals(((IDimension) dim).getName());
+		}
+		else {
+			result = false;
+		}
+		return result;
+	}
+	
+	@Override
+	public int hashCode() {
+		return mLongName.hashCode();
 	}
 
 	@Override
 	public IArray getCoordinateVariable() {
-		return m_array;
+		return mArray;
 	}
 
 	@Override
 	public int getLength() {
-        return new Long(m_array.getSize()).intValue();
+        return Long.valueOf(mArray.getSize()).intValue();
 	}
 
 	@Override
 	public String getName() {
-		return m_longName;
+		return mLongName;
 	}
 
 	@Override
 	public boolean isShared() {
-		return m_shared;
+		return mIsShared;
 	}
 
 	@Override
 	public boolean isUnlimited() {
-		return m_unlimited;
+		return mIsUnlimited;
 	}
 
 	@Override
 	public boolean isVariableLength() {
-		return m_variableLength;
+		return mIsVariableLength;
 	}
 
 	@Override
 	public void setLength(int n) {
 	    try {
-	        m_array.getArrayUtils().reshape( new int[] {n} );
+	        mArray.getArrayUtils().reshape( new int[] {n} );
         } catch ( ShapeNotMatchException e) {
-            e.printStackTrace();
         }
     }
 
 	@Override
 	public void setName(String name) {
-        m_longName = name;
+        mLongName = name;
 	}
 
 	@Override
 	public void setShared(boolean b) {
-        m_shared = b;
+        mIsShared = b;
 	}
 
 	@Override
 	public void setUnlimited(boolean b) {
-	    m_unlimited = b;
+	    mIsUnlimited = b;
 	}
 
 	@Override
 	public void setVariableLength(boolean b) {
-	    m_variableLength = b;
+	    mIsVariableLength = b;
 	}
     
     @Override
     public void setCoordinateVariable(IArray array) throws ShapeNotMatchException {
-        if( java.util.Arrays.equals(m_array.getShape(), array.getShape()) )
+        if( java.util.Arrays.equals(mArray.getShape(), array.getShape()) ) {
             throw new ShapeNotMatchException("Arrays must have same shape!");
-        m_array = array;
+        }
+        mArray = array;
     }
 
 	@Override

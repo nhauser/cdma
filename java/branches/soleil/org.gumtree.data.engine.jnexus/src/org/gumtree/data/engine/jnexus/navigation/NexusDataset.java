@@ -24,32 +24,33 @@ import fr.soleil.nexus4tango.PathData;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NexusDataset implements IDataset {
-	protected IGroup        m_rootPhysical; // Physical root of the document 
-	private NexusFileWriter m_n4tWriter; 	// Instance manipulating the NeXus file
-	private String			m_sTitle;
-	protected PathNexus		m_n4tCurPath;	// Instance of the current path
+public final class NexusDataset implements IDataset, Cloneable {
+	private IGroup           mRootPhysical;       // Physical root of the document 
+	private NexusFileWriter  mN4TWriter; 	      // Instance manipulating the NeXus file
+	private String			 mTitle;
+	private PathNexus		 mN4TCurPath;	      // Instance of the current path
+	private static final int N4T_BUFF_SIZE = 300; // Size of the buffer managed by NeXus4Tango 
 
 	public NexusDataset( File nexusFile )
 	{
-		m_n4tWriter    = null;
-		m_rootPhysical = null;
-		m_n4tWriter    = new NexusFileWriter(nexusFile.getAbsolutePath());
-		m_n4tCurPath   = PathNexus.ROOT_PATH.clone();
-		m_sTitle	   = nexusFile.getName();
-		m_n4tCurPath.setFile(nexusFile.getAbsolutePath());
-		m_n4tWriter.setBufferSize(300);
-		m_n4tWriter.isSingleRawResult(true);
-		m_n4tWriter.setCompressedData(true);
+		mN4TWriter    = null;
+		mRootPhysical = null;
+		mN4TWriter    = new NexusFileWriter(nexusFile.getAbsolutePath());
+		mN4TCurPath   = PathNexus.ROOT_PATH.clone();
+		mTitle	      = nexusFile.getName();
+		mN4TCurPath.setFile(nexusFile.getAbsolutePath());
+		mN4TWriter.setBufferSize(N4T_BUFF_SIZE);
+		mN4TWriter.isSingleRawResult(true);
+		mN4TWriter.setCompressedData(true);
 	}
 
 	public NexusDataset( NexusDataset dataset )
 	{
-		m_rootPhysical = dataset.m_rootPhysical;
-		m_n4tWriter    = dataset.m_n4tWriter;
-		m_n4tCurPath   = dataset.m_n4tCurPath.clone();
-		m_sTitle	   = dataset.m_sTitle;
-		m_n4tWriter.isSingleRawResult(true);
+		mRootPhysical = dataset.mRootPhysical;
+		mN4TWriter    = dataset.mN4TWriter;
+		mN4TCurPath   = dataset.mN4TCurPath.clone();
+		mTitle	      = dataset.mTitle;
+		mN4TWriter.isSingleRawResult(true);
 	}
 
 	@Override
@@ -63,9 +64,9 @@ public class NexusDataset implements IDataset {
 	{
 		try
 		{
-			m_n4tWriter.closeFile();
-			m_n4tWriter.openFile(m_n4tCurPath.getFilePath(), NexusFile.NXACC_READ);
-			m_n4tWriter.openPath(m_n4tCurPath);
+			mN4TWriter.closeFile();
+			mN4TWriter.openFile(mN4TCurPath.getFilePath(), NexusFile.NXACC_READ);
+			mN4TWriter.openPath(mN4TCurPath);
 		}
 		catch(NexusException ne)
 		{
@@ -79,7 +80,7 @@ public class NexusDataset implements IDataset {
 	{
 		try
 		{
-			m_n4tWriter.closeFile();
+			mN4TWriter.closeFile();
 		}
 		catch(NexusException ne)
 		{
@@ -90,36 +91,36 @@ public class NexusDataset implements IDataset {
 	
 	@Override
 	public String getLocation() {
-		if( m_n4tCurPath != null )
+		if( mN4TCurPath != null )
 		{
-			return m_n4tCurPath.getFilePath();
+			return mN4TCurPath.getFilePath();
 		}
 		return null;
 	}
 	
 	@Override
 	public String getTitle() {
-		return m_sTitle;
+		return mTitle;
 	}
 
 	@Override
 	public void save() throws GDMWriterException {
         List<IDataItem> items = new ArrayList<IDataItem>(); 
-        NexusGroup.getDescendentDataItem(items, m_rootPhysical);
+        NexusGroup.getDescendentDataItem(items, mRootPhysical);
         try {
             // Open the destination file
-            m_n4tWriter.openFile(m_n4tWriter.getFilePath(), NexusFile.NXACC_RDWR);
+            mN4TWriter.openFile(mN4TWriter.getFilePath(), NexusFile.NXACC_RDWR);
             
             // Save each IDataItem
             DataItem data;
             for( IDataItem item : items ) {
             	data = ((NexusDataItem) item).getN4TDataItem();
-            	m_n4tWriter.writeData(data, data.getPath());
+            	mN4TWriter.writeData(data, data.getPath());
             	
             }
             
             // Close the file
-            m_n4tWriter.closeFile();
+            mN4TWriter.closeFile();
         } catch(NexusException e) {
             throw new GDMWriterException(e.getMessage(), e);
         }
@@ -131,13 +132,13 @@ public class NexusDataset implements IDataset {
 		String sCurFile = "";
 		PathNexus path = new PathGroup(location.split("/"));
 
-		if( ! m_rootPhysical.equals(PathNexus.ROOT_PATH) ) {
-			sCurFile = m_rootPhysical.getLocation();
+		if( ! mRootPhysical.equals(PathNexus.ROOT_PATH) ) {
+			sCurFile = mRootPhysical.getLocation();
 		}
 
 		try
 		{
-			m_n4tWriter.openPath(path);
+			mN4TWriter.openPath(path);
 		}
 		catch(NexusException e1)
 		{
@@ -145,26 +146,26 @@ public class NexusDataset implements IDataset {
 			path = new PathData((PathGroup) path, topNode.getNodeName());
 			try
 			{
-				m_n4tWriter.openPath(path);
+				mN4TWriter.openPath(path);
 			} catch(NexusException e2) {}
 		}
-		m_n4tCurPath = path;
-		m_n4tCurPath.setFile(sCurFile);
+		mN4TCurPath = path;
+		mN4TCurPath.setFile(sCurFile);
 	}
 
 	@Override
 	public void setTitle(String title) {
-		m_sTitle = title;
+		mTitle = title;
 	}
 
 	@Override
 	public boolean isOpen() {
-		return m_n4tWriter.isFileOpened();
+		return mN4TWriter.isFileOpened();
 	}
     
 	public NexusFileWriter getHandler()
     {
-        return m_n4tWriter;
+        return mN4TWriter;
     }
 
 	// -----------------------------------------------------------
@@ -173,28 +174,28 @@ public class NexusDataset implements IDataset {
 	// Accessors
 	protected PathNexus getCurrentPath()
 	{
-		return m_n4tCurPath;
+		return mN4TCurPath;
 	}
 
 	protected PathNexus getRootPath()
 	{
-		return ((NexusGroup) m_rootPhysical).getPathNexus();
+		return ((NexusGroup) mRootPhysical).getPathNexus();
 	}
 
-	// Methods
 	protected void setLocation(PathNexus location)
 	{
 		try
 		{
-			m_n4tWriter.openPath(location);
+			mN4TWriter.openPath(location);
+		} catch(NexusException e) {
 		}
-		catch(NexusException e) {}
-		m_n4tCurPath = location.clone();
+		mN4TCurPath = location.clone();
 	}
 
+	// Methods
 	protected void setRootGroup(PathNexus rootPath)
 	{
-		m_rootPhysical = new NexusGroup(rootPath, this);
+		mRootPhysical = new NexusGroup(rootPath, this);
 	}
 
 	@Override
@@ -204,10 +205,10 @@ public class NexusDataset implements IDataset {
 
 	@Override
 	public IGroup getRootGroup() {
-		if( m_rootPhysical == null ) {
-            m_rootPhysical = new NexusGroup(null, PathNexus.ROOT_PATH.clone(), this);
+		if( mRootPhysical == null ) {
+            mRootPhysical = new NexusGroup(null, PathNexus.ROOT_PATH.clone(), this);
         }
-        return m_rootPhysical;
+        return mRootPhysical;
 	}
 
 	@Override

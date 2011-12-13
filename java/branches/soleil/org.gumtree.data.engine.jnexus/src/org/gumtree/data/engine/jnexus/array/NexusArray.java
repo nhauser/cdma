@@ -16,19 +16,20 @@ import org.gumtree.data.utils.IArrayUtils;
 import fr.soleil.nexus4tango.DataItem;
 
 
-public class NexusArray implements IArray {
+public final class NexusArray implements IArray {
     private IIndex    mIndex;        // IIndex corresponding to this Array (dimension sizes defining the viewable part of the array)
 	private Object	  mData;        // It's an array of values
 	private boolean	  mIsRawArray;    // True if the stored array has a rank of 1 (independently of its shape)
     private boolean   mIsDirty;      // Is the array synchronized with the handled file
     private DataItem  mN4TDataItem;  // Array of datasets that are used to store the storage backing
     private int[]     mShape;        // Shape of the array (dimension sizes of the storage backing) 
+    private static final int TO_STRING_LENGTH = 1000;
     
 	// Constructors
 	public NexusArray(Object oArray, int[] iShape) {
-        mIndex = new NexusIndex(iShape);
+        mIndex = new NexusIndex(iShape.clone());
 		mData  = oArray;
-		mShape = iShape;
+		mShape = iShape.clone();
         if( iShape.length == 1 ) {
             mIsRawArray	= true;
         }
@@ -58,7 +59,7 @@ public class NexusArray implements IArray {
         try {
 			mN4TDataItem = array.mN4TDataItem.clone();
 		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
+			mN4TDataItem = null;
 		}
     }
     
@@ -89,8 +90,9 @@ public class NexusArray implements IArray {
 	public String toString()
 	{
 		Object oData = getData();
-		if( oData instanceof String )
+		if( oData instanceof String ) {
 			return (String) oData;
+		}
 	    StringBuilder sbuff = new StringBuilder();
 	    IArrayIterator ii = getIterator();
         Object data = null;
@@ -100,7 +102,7 @@ public class NexusArray implements IArray {
             sbuff.append(data);
             sbuff.append(" ");
 	    }
-	    return sbuff.toString().substring(0, sbuff.length() < 10000 ? sbuff.length() : 10000);
+	    return sbuff.toString().substring(0, sbuff.length() < TO_STRING_LENGTH ? sbuff.length() : TO_STRING_LENGTH);
 	}
 
 	/// IArray underlying data access
@@ -130,8 +132,9 @@ public class NexusArray implements IArray {
 						result = result.getComponentType();
 					}
 				}
-				else
+				else {
 					result = oData.getClass();
+				}
 			}
 		}
 		return result;
@@ -155,15 +158,18 @@ public class NexusArray implements IArray {
 	@Override
 	public String shapeToString() {
         int[] shape = getShape();
-        if (shape.length == 0) return "";
         StringBuilder sb = new StringBuilder();
-        sb.append('(');
-        for (int i = 0; i < shape.length; i++) {
-          int s = shape[i];
-          if (i > 0) sb.append(",");
-          sb.append(s);
+        if (shape.length != 0) {
+	        sb.append('(');
+	        for (int i = 0; i < shape.length; i++) {
+	          int s = shape[i];
+	          if (i > 0) {
+	        	  sb.append(",");
+	          }
+	          sb.append(s);
+	        }
+	        sb.append(')');
         }
-        sb.append(')');
         return sb.toString();
 	}
 
@@ -205,8 +211,7 @@ public class NexusArray implements IArray {
 
 	@Override
 	public long getSize() {
-		long size = mIndex.getSize();
-		return size;
+		return mIndex.getSize();
 	}
 
 	@Override
@@ -361,7 +366,7 @@ public class NexusArray implements IArray {
     }
     
     protected void setShape(int[] shape) {
-    	mShape = shape;
+    	mShape = shape.clone();
     }
     
     // ---------------------------------------------------------
@@ -468,12 +473,12 @@ public class NexusArray implements IArray {
     	Object oData = getData();
         if( oData.getClass().equals( String.class ) )
         {
-        	oData = (String) value;
+        	mData = (String) value;
         }
         // If array isn't an array we set the scalar value
         else if( ! oData.getClass().isArray() )
         {
-        	oData = value;
+        	mData = value;
         }
         // If it's a single raw array, then we compute indexes to have the corresponding cell number
         else if( mIsRawArray )
@@ -521,8 +526,9 @@ public class NexusArray implements IArray {
                     return array;
                 }
             }
-        } else
+        } else {
             java.lang.reflect.Array.set(array, 0, value);
+        }
         
         return array;
     }

@@ -32,41 +32,41 @@ import fr.soleil.nexus4tango.PathData;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NexusGroup implements IGroup {
+public final class NexusGroup implements IGroup, Cloneable {
     /// Members
     // API CDM tree need
-    NexusDataset        m_dataset;        // File handler
-    IGroup              m_parent = null;  // Parent group
-    List<IContainer>    m_child;          // Children nodes (group, dataitem...)
+    private NexusDataset     mDataset;        // File handler
+    private IGroup           mParent = null;  // Parent group
+    private List<IContainer> mChild;          // Children nodes (group, dataitem...)
 
     // Internal members
-    PathNexus       	m_n4tCurPath;	  // Current path
-    IDictionary         m_dictionary;     // Group dictionary
-    List<IAttribute>    m_attributes;     // Attributes belonging to this
-    List<IDimension>    m_dimensions;     // Dimensions direct child of this
+    private PathNexus        mN4TCurPath;     // Current path
+    private IDictionary      mDictionary;     // Group dictionary
+    private List<IAttribute> mAttributes;     // Attributes belonging to this
+    private List<IDimension> mDimensions;     // Dimensions direct child of this
 
     
 
     /// Constructors
     public NexusGroup(IGroup parent, PathNexus from, NexusDataset dataset)
     {
-        m_dictionary    = null;
-        m_n4tCurPath     = from;
-        m_dataset        = dataset;
-        m_child          = new ArrayList<IContainer>();
-        m_attributes     = new ArrayList<IAttribute>();
-        m_dimensions     = new ArrayList<IDimension>();
+        mDictionary = null;
+        mN4TCurPath = from;
+        mDataset    = dataset;
+        mChild      = new ArrayList<IContainer>();
+        mAttributes = new ArrayList<IAttribute>();
+        mDimensions = new ArrayList<IDimension>();
         setParent(parent);
     }
 
     public NexusGroup(PathNexus from, NexusDataset dataset)
     {
-        m_dictionary    = null;
-        m_n4tCurPath     = from;
-        m_dataset        = dataset;
-        m_child          = new ArrayList<IContainer>();
-        m_attributes     = new ArrayList<IAttribute>();
-        m_dimensions     = new ArrayList<IDimension>();
+        mDictionary = null;
+        mN4TCurPath = from;
+        mDataset    = dataset;
+        mChild      = new ArrayList<IContainer>();
+        mAttributes = new ArrayList<IAttribute>();
+        mDimensions = new ArrayList<IDimension>();
         if( from != null && dataset != null ) {
             createFamilyTree();
         }
@@ -74,16 +74,16 @@ public class NexusGroup implements IGroup {
 
     public NexusGroup(NexusGroup group)
     {
-        m_n4tCurPath	 = group.m_n4tCurPath.clone();
-        m_dataset	     = group.m_dataset.clone();
-        m_parent         = group.m_parent;
-        m_child          = new ArrayList<IContainer>(group.m_child);
-        m_attributes     = new ArrayList<IAttribute>(group.m_attributes);
-        m_dimensions     = new ArrayList<IDimension>(group.m_dimensions);
+        mN4TCurPath	= group.mN4TCurPath.clone();
+        mDataset	= group.mDataset.clone();
+        mParent     = group.mParent;
+        mChild      = new ArrayList<IContainer>(group.mChild);
+        mAttributes = new ArrayList<IAttribute>(group.mAttributes);
+        mDimensions = new ArrayList<IDimension>(group.mDimensions);
         try {
-            m_dictionary   = (IDictionary) group.m_dictionary.clone();
+            mDictionary = (IDictionary) group.mDictionary.clone();
         } catch( CloneNotSupportedException e ) {
-            m_dictionary = null;
+            mDictionary = null;
         }
     }
 
@@ -105,7 +105,7 @@ public class NexusGroup implements IGroup {
     
     @Override
     public boolean isEntry() {
-        return ( m_parent.getParentGroup().getParentGroup() == null );
+        return ( mParent.getParentGroup().getParentGroup() == null );
     }
     
     @Override
@@ -116,18 +116,18 @@ public class NexusGroup implements IGroup {
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        m_attributes.add(attribute);
+        mAttributes.add(attribute);
     }
 
     @Override
     public void addOneDimension(IDimension dimension) {
-        m_dimensions.add(dimension);
+        mDimensions.add(dimension);
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
         IAttribute attr = new NexusAttribute(name, value);
-        m_attributes.add(attr);
+        mAttributes.add(attr);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class NexusGroup implements IGroup {
 
     @Override
     public IAttribute getAttribute(String name) {
-        for( IAttribute attr : m_attributes ) {
+        for( IAttribute attr : mAttributes ) {
             if( attr.getName().equals(name) )
                 return attr;
         }
@@ -157,7 +157,7 @@ public class NexusGroup implements IGroup {
     @Override
     public IDimension getDimension(String name) {
     	IDimension result = null;
-        for( IDimension dim : m_dimensions ) {
+        for( IDimension dim : mDimensions ) {
             if( dim.getName().equals(name) ) {
                 result = dim;
                 break;
@@ -219,8 +219,8 @@ public class NexusGroup implements IGroup {
 
         try
         {
-            m_dataset.getHandler().openPath(m_n4tCurPath);
-            inList = m_dataset.getHandler().listAttribute();
+            mDataset.getHandler().openPath(mN4TCurPath);
+            inList = mDataset.getHandler().listAttribute();
 
             Iterator<String> iter = inList.keySet().iterator();
             while( iter.hasNext() )
@@ -228,7 +228,7 @@ public class NexusGroup implements IGroup {
                 sAttrName = iter.next();
                 try
                 {
-                    tmpAttr = new NexusAttribute(sAttrName, m_dataset.getHandler().readAttr(sAttrName, null));
+                    tmpAttr = new NexusAttribute(sAttrName, mDataset.getHandler().readAttr(sAttrName, null));
                     outList.add(tmpAttr);
                 }
                 catch (NexusException e)
@@ -241,7 +241,7 @@ public class NexusGroup implements IGroup {
         {
             try
             {
-                m_dataset.getHandler().closeAll();
+                mDataset.getHandler().closeAll();
             }
             catch (NexusException e) {}
             return outList;
@@ -326,7 +326,7 @@ public class NexusGroup implements IGroup {
 			dataItemList.add((IDataItem) variable);
 		}
         
-        for (IContainer variable : m_child) {
+        for (IContainer variable : mChild) {
         	if( variable.getModelType().equals(ModelType.DataItem) ) {
         		dataItemList.add((IDataItem) variable);
         	}
@@ -336,12 +336,12 @@ public class NexusGroup implements IGroup {
 
     @Override
     public IDataset getDataset() {
-        return (IDataset) m_dataset;
+        return (IDataset) mDataset;
     }
 
     @Override
     public List<IDimension> getDimensionList() {
-        return m_dimensions;
+        return mDimensions;
     }
   
     @Override
@@ -391,8 +391,8 @@ public class NexusGroup implements IGroup {
 
         List<IGroup> dataItemList = new ArrayList<IGroup>();
 		for (IContainer variable : listItem) {
-            if( ! m_child.contains(variable) ) {
-                m_child.add((IGroup) variable);
+            if( ! mChild.contains(variable) ) {
+                mChild.add((IGroup) variable);
             }
             dataItemList.add((IGroup) variable);
 		}
@@ -401,13 +401,13 @@ public class NexusGroup implements IGroup {
 
     @Override
     public String getLocation() {
-        return m_dataset.getCurrentPath().getValue();
+        return mDataset.getCurrentPath().getValue();
     }
 
 
     @Override
     public String getName() {
-        return m_n4tCurPath.getValue();
+        return mN4TCurPath.getValue();
     }
 
     @Override
@@ -432,7 +432,7 @@ public class NexusGroup implements IGroup {
     	IContainer foundItem = null;
     	NexusNode nnNode;
     	String[] sNodes;
-    	NexusFileWriter nfwFile = m_dataset.getHandler();
+    	NexusFileWriter nfwFile = mDataset.getHandler();
     	try
     	{
     		sNodes = PathNexus.splitStringPath(path);
@@ -446,7 +446,7 @@ public class NexusGroup implements IGroup {
 
     		if( nfwFile.getCurrentPath().getCurrentNode().isGroup() )
     		{
-    			return new NexusGroup(nfwFile.getCurrentPath(), m_dataset);
+    			return new NexusGroup(nfwFile.getCurrentPath(), mDataset);
     		}
     		else
     		{
@@ -460,7 +460,7 @@ public class NexusGroup implements IGroup {
     			{
     				dataInfo = nfwFile.readDataInfo();
     			}
-    			foundItem = new NexusDataItem( dataInfo, m_dataset );
+    			foundItem = new NexusDataItem( dataInfo, mDataset );
     			((IDataItem) foundItem).setDimensions("*");
     		}
     	}
@@ -472,30 +472,30 @@ public class NexusGroup implements IGroup {
 
     @Override
     public IGroup getParentGroup() {
-        if( m_parent == null )
+        if( mParent == null )
         {
-        	PathNexus parentPath = m_n4tCurPath.getParentPath();
+        	PathNexus parentPath = mN4TCurPath.getParentPath();
         	if( parentPath != null )
             {
-                m_parent = new NexusGroup(parentPath, m_dataset); 
-        		return m_parent;
+                mParent = new NexusGroup(parentPath, mDataset); 
+        		return mParent;
             }
         	else
         		return null;
         }
         else
-            return m_parent;
+            return mParent;
     }
 
     @Override
     public IGroup getRootGroup() {
-        return m_dataset.getRootGroup();
+        return mDataset.getRootGroup();
     }
 
     @Override
     public String getShortName()
     {
-    	NexusNode nnNode = m_n4tCurPath.getCurrentNode();
+    	NexusNode nnNode = mN4TCurPath.getCurrentNode();
     	if( nnNode != null )
     		return nnNode.getNodeName();
     	else
@@ -504,7 +504,7 @@ public class NexusGroup implements IGroup {
     
     private String getClassName()
     {
-    	NexusNode nnNode = m_n4tCurPath.getCurrentNode();
+    	NexusNode nnNode = mN4TCurPath.getCurrentNode();
     	if( nnNode != null )
     		return nnNode.getClassName();
     	else
@@ -536,17 +536,17 @@ public class NexusGroup implements IGroup {
 
     @Override
     public boolean isRoot() {
-        return (m_n4tCurPath.toString().equals(PathNexus.ROOT_PATH.toString()));
+        return (mN4TCurPath.toString().equals(PathNexus.ROOT_PATH.toString()));
     }
 
     @Override
     public boolean removeAttribute(IAttribute attribute) {
-        return m_attributes.remove(attribute);
+        return mAttributes.remove(attribute);
     }
 
     @Override
     public boolean removeDataItem(IDataItem item) {
-        return m_child.remove(item);
+        return mChild.remove(item);
     }
 
     @Override
@@ -556,7 +556,7 @@ public class NexusGroup implements IGroup {
             return false;
         }
         
-        return m_child.remove(item);
+        return mChild.remove(item);
     }
 
     @Override
@@ -566,17 +566,17 @@ public class NexusGroup implements IGroup {
             return false;
         }
         
-        return m_child.remove(dimension);
+        return mChild.remove(dimension);
     }
     
     @Override
     public boolean removeDimension(IDimension dimension) {
-        return m_child.remove(dimension);
+        return mChild.remove(dimension);
     }
 
     @Override
     public boolean removeGroup(IGroup group) {
-        return m_child.remove(group);
+        return mChild.remove(group);
     }
 
     @Override
@@ -586,7 +586,7 @@ public class NexusGroup implements IGroup {
             return false;
         }
         
-        return m_child.remove(group);
+        return mChild.remove(group);
     }
 
     @Override
@@ -596,22 +596,22 @@ public class NexusGroup implements IGroup {
 
     @Override
     public void setShortName(String name) {
-        NexusNode nnNode = m_n4tCurPath.popNode();
+        NexusNode nnNode = mN4TCurPath.popNode();
         if( nnNode != null )
         {
         	nnNode.setNodeName(name);
-        	m_n4tCurPath.pushNode(nnNode);
+        	mN4TCurPath.pushNode(nnNode);
         }
     }
     
     @Override
     public void setDictionary(IDictionary dictionary) {
-        m_dictionary = dictionary;
+        mDictionary = dictionary;
     }
 
     @Override
     public void setParent(IGroup group) {
-        m_parent = group;
+        mParent = group;
         if( group != null ) {
             ((NexusGroup) group).setChild(this);
         }
@@ -624,7 +624,7 @@ public class NexusGroup implements IGroup {
 
     @Override
 	public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
-    	String path = m_dictionary.getPath(key).toString();
+    	String path = mDictionary.getPath(key).toString();
 		return findAllContainerByPath(path);
 	}
     
@@ -638,7 +638,7 @@ public class NexusGroup implements IGroup {
             NexusNode[] nodes = PathNexus.splitStringToNode(path);
             
             // Open path from root
-            NexusFileWriter handler = m_dataset.getHandler();
+            NexusFileWriter handler = mDataset.getHandler();
             handler.closeAll();
             
             for( int i = 0; i < nodes.length - 1; i++ ) {
@@ -656,10 +656,10 @@ public class NexusGroup implements IGroup {
 					handler.openNode(node);
 					
 					if( handler.getCurrentPath().getCurrentNode().isGroup() ) {
-						item = new NexusGroup(this, handler.getCurrentPath().clone(), m_dataset);
+						item = new NexusGroup(this, handler.getCurrentPath().clone(), mDataset);
 					}
 					else {
-						item = new NexusDataItem(handler.readDataInfo(), m_dataset);
+						item = new NexusDataItem(handler.readDataInfo(), mDataset);
 					}
 					handler.closeData();
     				list.add( item );
@@ -671,7 +671,7 @@ public class NexusGroup implements IGroup {
             try
             {
             	list.clear();
-        	    m_dataset.getHandler().closeAll();
+        	    mDataset.getHandler().closeAll();
             } catch(NexusException e) {}
             throw new NoResultException("Requested path doesn't exist!");
         }
@@ -716,7 +716,7 @@ public class NexusGroup implements IGroup {
      * Return the internal PathNexus of the group
      */
     public PathNexus getPathNexus() {
-        return m_n4tCurPath;
+        return mN4TCurPath;
     }
    
     // ---------------------------------------------------------
@@ -726,13 +726,13 @@ public class NexusGroup implements IGroup {
      * Set the internal PathNexus of the group
      */
     protected void setPath(PathNexus path) {
-        m_n4tCurPath = path;
+        mN4TCurPath = path;
     }
     
     protected void setChild(IContainer node) {
-        if( ! m_child.contains(node) )
+        if( ! mChild.contains(node) )
         {
-            m_child.add(node);
+            mChild.add(node);
         }
     }
     
@@ -761,11 +761,11 @@ public class NexusGroup implements IGroup {
     {
         List<IContainer> listItem = new ArrayList<IContainer>();
         NexusNode[] nexusNodes;
-        NexusFileWriter handler = m_dataset.getHandler();
+        NexusFileWriter handler = mDataset.getHandler();
 
         try
         {
-            nexusNodes = handler.listChildren(m_n4tCurPath);
+            nexusNodes = handler.listChildren(mN4TCurPath);
         }
         catch(NexusException ne)
         {
@@ -785,11 +785,11 @@ public class NexusGroup implements IGroup {
             {
                 try
                 {
-                    path = m_n4tCurPath.clone();
+                    path = mN4TCurPath.clone();
                     path.pushNode(nexusNodes[i]);
                     if( bGroup )
                     {
-                        item = new NexusGroup(PathGroup.Convert(path), m_dataset);
+                        item = new NexusGroup(PathGroup.Convert(path), mDataset);
                     }
                     else
                     {
@@ -802,7 +802,7 @@ public class NexusGroup implements IGroup {
                             handler.openPath(path);
                             dataInfo = handler.readDataInfo();
                         }
-                        item = new NexusDataItem(dataInfo, m_dataset);
+                        item = new NexusDataItem(dataInfo, mDataset);
                     }
                     listItem.add(item);
                 } catch(NexusException e) {}
@@ -817,13 +817,13 @@ public class NexusGroup implements IGroup {
     }
 
     private void createFamilyTree() throws NullPointerException {
-        if( m_dataset == null || m_n4tCurPath == null ) {
+        if( mDataset == null || mN4TCurPath == null ) {
             throw new NullPointerException("Defined file handler and path are required!");
         }
         
-        NexusNode[] nodes = m_n4tCurPath.getParentPath().getNodes();
-        NexusGroup ancestor = (NexusGroup) m_dataset.getRootGroup();
-        PathNexus origin  = m_dataset.getHandler().getCurrentPath().clone();
+        NexusNode[] nodes = mN4TCurPath.getParentPath().getNodes();
+        NexusGroup ancestor = (NexusGroup) mDataset.getRootGroup();
+        PathNexus origin  = mDataset.getHandler().getCurrentPath().clone();
         PathNexus path    = PathNexus.ROOT_PATH.clone();
         NexusGroup group;
         
@@ -831,21 +831,21 @@ public class NexusGroup implements IGroup {
             group = (NexusGroup) ancestor.getGroup(node.getNodeName());
             if( group == null ) {
                 path.pushNode(node);
-                group = new NexusGroup(ancestor, path.clone(), m_dataset);
+                group = new NexusGroup(ancestor, path.clone(), mDataset);
             }
             ancestor = group;
         }
 
         setParent(ancestor);
         try {
-			m_dataset.getHandler().openPath(origin);
+			mDataset.getHandler().openPath(origin);
 		} catch (NexusException e) {
 			e.printStackTrace();
 		}
     }
     
     public String toString() {
-    	return m_n4tCurPath.toString();
+    	return mN4TCurPath.toString();
     }
     
 	@Override

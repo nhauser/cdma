@@ -19,40 +19,46 @@ import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.soleil.array.NxsArray;
-import org.gumtree.data.soleil.array.NxsArray;
 import org.gumtree.data.soleil.array.NxsIndex;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus4tango.DataItem;
 
-public class NxsDataItem implements IDataItem {
+public final class NxsDataItem implements IDataItem, Cloneable {
 
     // Inner class
     // Associate a IDimension to an order of the array 
-    private class DimOrder {
+    private static class DimOrder {
         // Members
-        public int          mOrder;        // order of the corresponding dimension in the NxsDataItem
-        public IDimension   mDimension;    // dimension object
+        private int          mOrder;        // order of the corresponding dimension in the NxsDataItem
+        private IDimension   mDimension;    // dimension object
 
         public DimOrder(int order, IDimension dim) { 
             mOrder     = order;
             mDimension = dim;
         }
+        
+        public int order() { 
+        	return mOrder;
+        }
+        
+        public IDimension dimension() {
+        	return mDimension;
+        }
     }
     
     
 	/// Members
-    private NxsDataset           mDataset;       // CDM IDataset i.e. file handler
-    private IGroup               mParent = null;    // parent group
-    private NexusDataItem[]      mDataItems;     // NeXus dataitem support of the data
-    private IArray               mArray = null;     // CDM IArray supporting a view of the data
-    private ArrayList<DimOrder>  mDimension;        // list of dimensions
+    private NxsDataset      mDataset;   // CDM IDataset i.e. file handler
+    private IGroup          mParent;    // parent group
+    private NexusDataItem[] mDataItems; // NeXus dataitem support of the data
+    private IArray          mArray;     // CDM IArray supporting a view of the data
+    private List<DimOrder>  mDimension; // list of dimensions
 
     
 	/// Constructors
-	public NxsDataItem(final NxsDataItem dataItem)
-	{
+	public NxsDataItem(final NxsDataItem dataItem) {
         mDataset   = dataItem.mDataset;
 		mDataItems = dataItem.mDataItems.clone();
         mDimension = new ArrayList<DimOrder> (dataItem.mDimension);
@@ -66,21 +72,12 @@ public class NxsDataItem implements IDataItem {
         		mArray = new NxsArray((NxsArray) dataItem.getData());
         	}
 		} catch (IOException e) {
-			e.printStackTrace();
 		}
-	}
-	
-	public NxsDataItem(NexusDataItem[] data, NxsDataset handler) {
-        mDataset   = handler;
-        mDataItems = data;
-        mDimension = new ArrayList<DimOrder>();
-        mParent    = getParentGroup();
-        mArray     = null;
 	}
 	
 	public NxsDataItem(NexusDataItem[] data, IGroup parent, NxsDataset handler) {
         mDataset   = handler;
-        mDataItems = data;
+        mDataItems = data.clone();
         mDimension = new ArrayList<DimOrder>();
         mParent    = parent;
         mArray     = null;
@@ -90,7 +87,7 @@ public class NxsDataItem implements IDataItem {
     	this(new NexusDataItem[] {item}, parent, dataset);
     }
 
-	public NxsDataItem(NxsDataItem[] items, NxsDataset dataset) {
+	public NxsDataItem(NxsDataItem[] items, IGroup parent, NxsDataset dataset) {
         ArrayList<NexusDataItem> list = new ArrayList<NexusDataItem>();
 		for( NxsDataItem cur : items ) {
 			for( NexusDataItem item : cur.mDataItems ) {
@@ -101,7 +98,7 @@ public class NxsDataItem implements IDataItem {
         
 		mDataset   = dataset;
         mDimension = new ArrayList<DimOrder>();
-        mParent    = getParentGroup();
+        mParent    = parent;
         mArray     = null;
 	}
 
@@ -112,32 +109,25 @@ public class NxsDataItem implements IDataItem {
 	}
 	
 	@Override
-	public List<IAttribute> getAttributeList()
-	{
-		//[soleil][clement][12/02/2011] TODO ensure method is correct: shall not we take all attributes of al nodes ?
-		List<IAttribute> outList = new ArrayList<IAttribute>();
-		outList = mDataItems[0].getAttributeList();
-		return outList;
+	public List<IAttribute> getAttributeList() {
+		//[soleil][clement][12/02/2011] TODO ensure method is correct: shall not we take all attributes of all nodes ?
+		return mDataItems[0].getAttributeList();
 	}
 
 	@Override
-	public IArray getData() throws IOException
-	{
-        if( mArray == null ) {
-        	if( mDataItems.length > 0 ) {
-        		IArray[] arrays = new IArray[mDataItems.length];
-        		for( int i = 0; i < mDataItems.length; i++ ) {
-        			arrays[i] = mDataItems[i].getData();
-        		}
-        		mArray = new NxsArray(arrays);
-        	}
+	public IArray getData() throws IOException {
+        if( mArray == null && mDataItems.length > 0 ) {
+    		IArray[] arrays = new IArray[mDataItems.length];
+    		for( int i = 0; i < mDataItems.length; i++ ) {
+    			arrays[i] = mDataItems[i].getData();
+    		}
+    		mArray = new NxsArray(arrays);
         }
 		return mArray;
 	}
 
 	@Override
-	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException
-	{
+	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
         IArray array = getData().copy(false);
         array.getIndex().setShape(shape);
         array.getIndex().setOrigin(origin);
@@ -145,8 +135,7 @@ public class NxsDataItem implements IDataItem {
 	}
 
 	@Override
-	public IDataItem clone()
-	{
+	public IDataItem clone() {
 		return new NxsDataItem(this);
 	}
 
@@ -190,12 +179,15 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public int findDimensionIndex(String name) {
+		int result = -1;
 	    for( DimOrder dimord : mDimension ) {
-	        if( dimord.mDimension.getName().equals(name) )
-                return dimord.mOrder;
+	        if( dimord.mDimension.getName().equals(name) ) {
+                result = dimord.order();
+                break;
+	        }
         }
             
-        return -1;
+        return result;
 	}
 
 	@Override
@@ -214,18 +206,18 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public List<IDimension> getDimensions(int i) {
-        ArrayList<IDimension> list = new ArrayList<IDimension>();
-        
-        for( DimOrder dim : mDimension ) {
-            if( dim.mOrder == i ) {
-                list.add( mDimension.get(i).mDimension );
-            }
+        ArrayList<IDimension> list = null;
+
+        if( i <= getRank() ) {
+        	list = new ArrayList<IDimension>();
+	        for( DimOrder dim : mDimension ) {
+	            if( dim.order() == i ) {
+	                list.add( dim.dimension() );
+	            }
+	        }
         }
-        
-        if( list.size() > 0 )    
-            return list;
-        else
-            return null;
+
+        return list;
 	}
 
 	@Override
@@ -233,7 +225,7 @@ public class NxsDataItem implements IDataItem {
         ArrayList<IDimension> list = new ArrayList<IDimension>();
         
         for( DimOrder dimOrder : mDimension ) {
-            list.add(dimOrder.mDimension);
+            list.add( dimOrder.dimension() );
         }
         
 		return list;
@@ -241,17 +233,17 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public String getDimensionsString() {
-	    String dimList = "";
+	    StringBuffer dimList = new StringBuffer();
         
         int i = 0;
         for( DimOrder dim : mDimension ) {
             if( i++ != 0 ) {
-                dimList += " ";
+                dimList.append(" ");
             }
-            dimList += dim.mDimension.getName();
+            dimList.append( dim.dimension().getName() );
         }
         
-        return dimList;
+        return dimList.toString();
 	}
 
 	@Override
@@ -261,14 +253,6 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public String getName() {
-		/*
-        String name = m_n4tDataSet.getAttribute("name");
-        if( name == null )
-            name = m_n4tDataSet.getAttribute("long_name");
-        if( name == null )
-        	name = m_n4tDataSet.getNodeName();
-		return name;
-		*/
 		return mDataItems[0].getName();
 	}
 
@@ -282,54 +266,53 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public void getNameAndDimensions(StringBuffer buf, boolean useFullName,
 			boolean showDimLength) {
-        useFullName = useFullName && !showDimLength;
-        String name = useFullName ? getName() : getShortName();
-        buf.append(name);
-
-        if (getRank() > 0) buf.append("(");
-        for (int i = 0; i < mDimension.size(); i++) {
-          DimOrder dim   = mDimension.get(i);
-          IDimension myd = dim.mDimension;
-          String dimName = myd.getName();
-          if ((dimName == null) || !showDimLength)
-            dimName = "";
-
-          if (i != 0) buf.append(", ");
-
-          if (myd.isVariableLength()) {
-            buf.append("*");
-          } else if (myd.isShared()) {
-            if (!showDimLength)
-              buf.append(dimName + "=" + myd.getLength());
-            else
-              buf.append(dimName);
-          } else {
-            if (dimName != null) {
-              buf.append(dimName);
-            }
-            buf.append(myd.getLength());
-          }
-        }
-
-        if (getRank() > 0) buf.append(")");
+		useFullName = useFullName && !showDimLength;
+		String name = useFullName ? getName() : getShortName();
+		buf.append(name);
+		
+		if (getRank() > 0) {
+			buf.append("(");
+		}
+		for (int i = 0; i < mDimension.size(); i++) {
+			DimOrder dim   = mDimension.get(i);
+			IDimension myd = dim.dimension();
+			String dimName = myd.getName();
+			if ((dimName == null) || !showDimLength) {
+				dimName = "";
+			}
+		
+			if (i != 0) {
+				buf.append(", ");
+			}
+		
+			if (myd.isVariableLength()) {
+				buf.append("*");
+			}
+			else if (myd.isShared()) {
+				if (!showDimLength) {
+					buf.append(dimName);
+					buf.append("=");
+					buf.append( myd.getLength() );
+				}
+				else {
+					buf.append(dimName);
+				}
+			}
+			else {
+				if (dimName != null) {
+					buf.append(dimName);
+				}
+				buf.append(myd.getLength());
+			}
+		}
+		if (getRank() > 0) {
+			buf.append(")");
+		}
 	}
 
 	@Override
 	public IGroup getParentGroup()
 	{
-        if( mParent == null )
-        {
-        	// TODO do not reconstruct the physical hierarchy: keep what has been done in construct
-//        	IGroup[] groups = new IGroup[m_dataItems.length];
-//        	int i = 0;
-//        	for( IDataItem item : m_dataItems ) {
-//        		groups[i++] = item.getParentGroup();
-//        	}
-//        	
-//        	m_parent = new NxsGroup(groups, null, m_dataset);
-//        	((NxsGroup) m_parent).setChild(this);
-        	
-        }
 		return mParent;
 	}
 
@@ -339,7 +322,6 @@ public class NxsDataItem implements IDataItem {
         try {
             list = new NxsIndex(getData().getShape()).getRangeList();
         } catch( IOException e ) {
-            e.printStackTrace();
         }
 		return list;
 	}
@@ -350,20 +332,24 @@ public class NxsDataItem implements IDataItem {
         try {
             list = ((NxsIndex) getData().getIndex()).getRangeList(); 
         } catch( IOException e ) {
-            e.printStackTrace();
         }
         return list;
     }
 
 	@Override
 	public int getRank() {
+		int result;
 		int[] shape = getShape();
-		if( mDataItems[0].getN4TDataItem().getType() == NexusFile.NX_CHAR )
-			return 0;
-		else if( shape.length == 1 && shape[0] == 1 )
-			return 0;
-		else
-			return shape.length;
+		if( mDataItems[0].getN4TDataItem().getType() == NexusFile.NX_CHAR ) {
+			result = 0;
+		}
+		else if( shape.length == 1 && shape[0] == 1 ) {
+			result = 0;
+		}			
+		else {
+			result = shape.length;
+		}
+		return result;
 	}
 
 	@Override
@@ -374,7 +360,6 @@ public class NxsDataItem implements IDataItem {
             item = new NxsDataItem(this);
             mArray = (NxsArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
         } catch( IOException e ) {
-            e.printStackTrace();
         }
 		return item;
 	}
@@ -383,12 +368,13 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public int[] getShape() {
+		int[] shape;
 		try {
-			return getData().getShape();
+			shape = getData().getShape();
 		} catch (IOException e) {
-			e.printStackTrace();
-			return new int[] {-1};
+			shape = new int[] {};
 		}
+		return shape;
 	}
 
 	@Override
@@ -410,7 +396,7 @@ public class NxsDataItem implements IDataItem {
 	@Override
 	public int getSizeToCache() {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return 0;
 	}
 
@@ -438,26 +424,30 @@ public class NxsDataItem implements IDataItem {
 
     @Override
 	public String getUnitsString() {
+    	String value = null;
         IAttribute attr = getAttribute("unit");
-        if( attr != null )
-            return attr.getStringValue();
-        else
-            return null;
+        if( attr != null ) {
+            value = attr.getStringValue();
+        }
+        return value;
 	}
 
 	@Override
     public boolean hasAttribute(String name, String value) {
-    	IAttribute attr;
+    	boolean result = false;
+		IAttribute attr;
     	List<IAttribute> listAttr = getAttributeList();
 
         Iterator<IAttribute> iter = listAttr.iterator();
         while( iter.hasNext() )
         {
         	attr = iter.next();
-        	if( attr.getStringValue().equals(value) )
-        		return true;
+        	if( attr.getStringValue().equals(value) ) {
+        		result = true;
+        		break;
+        	}
 		}
-        return false;
+        return result;
     }
 
 	@Override
@@ -490,7 +480,8 @@ public class NxsDataItem implements IDataItem {
         int rank = 0;
 		try {
             rank = getData().getRank();
-        } catch(IOException e) {}
+        } catch(IOException e) {
+        }
         return (rank == 0);
 	}
 
@@ -612,8 +603,7 @@ public class NxsDataItem implements IDataItem {
 
 	@Override
 	public void setParent(IGroup group) {
-        if( mParent == null || ! mParent.equals(group) )
-        {
+        if( mParent == null || ! mParent.equals(group) ) {
             mParent = group;
             group.addDataItem(this);
         }
@@ -628,41 +618,42 @@ public class NxsDataItem implements IDataItem {
 
     @Override
 	public String toStringDebug() {
-        String strDebug = "" + getName();
-        if( strDebug != null && !strDebug.isEmpty() )
-            strDebug += "\n";
+        StringBuffer strDebug = new StringBuffer();
+        strDebug.append( getName() );
+        if( strDebug.length() > 0) {
+            strDebug.append("\n");
+        }
         try {
-            strDebug += "shape: " + getData().shapeToString() + "\n";
+            strDebug.append( "shape: " + getData().shapeToString() + "\n" );
         } catch( IOException e ) {
-            e.printStackTrace();
         }
         List<IDimension> dimensions = getDimensionList();
         for( IDimension dim : dimensions ) {
-            strDebug += dim.getCoordinateVariable().toString();
+            strDebug.append( dim.getCoordinateVariable().toString() );
         }
         
         List<IAttribute> list = getAttributeList();
         if( list.size() > 0 ) {
-        	strDebug += "\nAttributes:\n";
+        	strDebug.append( "\nAttributes:\n" );
         }
         for( IAttribute a : list ) {
-            strDebug += "- " + a.toString() + "\n";
+            strDebug.append( "- " + a.toString() + "\n" );
         }
         
-		return strDebug;
+		return strDebug.toString();
 	}
 
 	@Override
 	public String writeCDL(String indent, boolean useFullName, boolean strict) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
 		return null;
 	}
 
 	@Override
 	public void setUnitsString(String units) {
 		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
 	}
 
 	@Override

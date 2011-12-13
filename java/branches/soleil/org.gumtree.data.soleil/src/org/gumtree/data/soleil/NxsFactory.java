@@ -35,12 +35,15 @@ import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NxsFactory implements IFactory {
+public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
     public static final String NAME = "org.gumtree.data.soleil.NxsFactory";
     public static final String LABEL = "SOLEIL's NeXus plug-in";
     public static final String DEBUG_INF = "CDMA_DEBUG_NXS";
+    
+    public static final String ERR_NOT_SUPPORTED = "not supported yet in plug-in!";
+    
     public NxsFactory() {
     }
     
@@ -100,8 +103,11 @@ public class NxsFactory implements IFactory {
     		DataItem dataset = null;
     		try {
         		dataset = new DataItem(array);
-        	} catch( Exception e ) {}
-        	result = new NxsArray(dataset);
+        		result = new NxsArray(dataset);
+        	} catch( Exception e ) {
+        		result = null;
+        	}
+        	
     	}
 		return result;
 	}
@@ -113,8 +119,7 @@ public class NxsFactory implements IFactory {
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-		// TODO Auto-generated method stub
-    	throw new InvalidArrayTypeException("not supported yet in plug-in!");
+    	throw new InvalidArrayTypeException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -147,7 +152,7 @@ public class NxsFactory implements IFactory {
     @Override
 	public IDataset createEmptyDatasetInstance() throws IOException {
 		// TODO Auto-generated method stub
-    	throw new IOException("not supported yet in plug-in!");
+    	throw new IOException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -162,7 +167,7 @@ public class NxsFactory implements IFactory {
     @Override
     public IGroup createGroup(String shortName) throws IOException {
 		// TODO Auto-generated method stub
-    	throw new IOException("not supported yet in plug-in!");
+    	throw new IOException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -183,8 +188,10 @@ public class NxsFactory implements IFactory {
 
 	@Override
 	public IDatasource getPluginURIDetector() {
-		if( detector == null ) {
-			detector = new NxsDatasource();
+		synchronized (NxsDatasource.class ) {
+			if( detector == null ) {
+				detector = new NxsDatasource();
+			}
 		}
 		return detector;
 	}
@@ -192,7 +199,7 @@ public class NxsFactory implements IFactory {
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
 		// TODO Auto-generated method stub
-    	throw new FileAccessException("not supported yet in plug-in!");
+    	throw new FileAccessException(ERR_NOT_SUPPORTED);
 	}
 
 	@Override

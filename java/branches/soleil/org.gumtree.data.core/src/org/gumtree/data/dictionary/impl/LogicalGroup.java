@@ -20,13 +20,13 @@ import org.gumtree.data.IFactory;
 import org.gumtree.data.dictionary.IContext;
 import org.gumtree.data.dictionary.IExtendedDictionary;
 import org.gumtree.data.dictionary.ILogicalGroup;
+import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.IPathMethod;
 import org.gumtree.data.dictionary.IPathParamResolver;
 import org.gumtree.data.dictionary.IPathParameter;
-import org.gumtree.data.dictionary.IPath;
-import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.NoResultException;
+import org.gumtree.data.exception.NotImplementedException;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
@@ -37,48 +37,60 @@ import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.interfaces.IModelObject;
 import org.gumtree.data.utils.Utilities.ModelType;
 
-public class LogicalGroup implements ILogicalGroup {
+public class LogicalGroup implements ILogicalGroup, Cloneable {
 
 	public static final String KEY_PATH_SEPARATOR = ":";
 
 	// Physical structure
-	IDataset              m_dataset;      // File handler
+	private IDataset             mDataset;      // File handler
 	
 	// Logical structure
-	IKey    	          m_key;          // IKey that populated this items (with filters eventually used)
-    IExtendedDictionary	  m_dictionary;   // Dictionary that belongs to this current LogicalGroup
-    ILogicalGroup         m_parent;       // Parent logical group if root then, it's null
-    IFactory              m_factory;
-    boolean               m_throw;        // Display debug info trace when dictionary isn't valid 
+	private IKey    	         mKey;          // IKey that populated this items (with filters eventually used)
+	private IExtendedDictionary	 mDictionary;   // Dictionary that belongs to this current LogicalGroup
+	private ILogicalGroup        mParent;       // Parent logical group if root then, it's null
+	private IFactory             mFactory;
+	private boolean              mThrow;        // Display debug info trace when dictionary isn't valid 
 
     public LogicalGroup(IKey key, IDataset dataset) {
     	this(key, dataset, false);
     }
 
+    
     public LogicalGroup(IKey key, IDataset dataset, boolean exception) {
-    	this( null, key, dataset, false);
+    	this( null, key, dataset, exception);
     }
     public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset ) {
     	this( parent, key, dataset, false);
     }
 
-    public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset, boolean exception ) {
+    public LogicalGroup(ILogicalGroup parent, IKey key, IDataset dataset,  boolean exception ) {
     	if( key != null ) {
-    		m_key = key.clone();
+    		mKey = key.clone();
     	}
     	else {
-    		m_key = null;
+    		mKey = null;
     	}
-        m_parent  = parent;
-        m_dataset = dataset;
-        m_factory = Factory.getFactory( dataset.getFactoryName() );
-        m_throw   = exception;
+        mParent     = parent;
+        mDataset    = dataset;
+        mFactory    = Factory.getFactory( dataset.getFactoryName() );
+        mThrow      = exception;
+        mDictionary = null;
     }
     
+    @Override
     public ILogicalGroup clone() {
-        LogicalGroup group = new LogicalGroup(m_parent, m_key, m_dataset, m_throw);
-        group.m_dictionary = m_dictionary;
-
+        LogicalGroup group = new LogicalGroup(
+        		mParent, 
+        		mKey.clone(), 
+        		mDataset, 
+        		mThrow
+        		);
+    	IExtendedDictionary dictionary = null;
+    	try {
+			dictionary = (IExtendedDictionary) mDictionary.clone();
+		} catch (CloneNotSupportedException e) {
+		}
+    	group.setDictionary(dictionary);
         return group;
     }
 
@@ -89,7 +101,7 @@ public class LogicalGroup implements ILogicalGroup {
 
     @Override
     public ILogicalGroup getParentGroup() {
-        return m_parent;
+        return mParent;
     }
 
     @Override
@@ -98,23 +110,23 @@ public class LogicalGroup implements ILogicalGroup {
     		return this;
     	}
     	else {
-    		return (ILogicalGroup) m_parent.getRootGroup();
+    		return (ILogicalGroup) mParent.getRootGroup();
     	}
     }
 
     @Override
     public String getShortName() {
-       	return m_key.getName();
+       	return mKey.getName();
     }
 
 	@Override
 	public String getLocation() {
 		String location;
-		if( m_parent == null ) {
+		if( mParent == null ) {
 			location = "/";
 		}
 		else {
-			location = m_parent.getLocation();
+			location = mParent.getLocation();
 			if ( !location.endsWith("/") ) {
 				location+="/";
 			}
@@ -126,11 +138,11 @@ public class LogicalGroup implements ILogicalGroup {
 
     @Override
     public String getName() {
-    	if( m_parent == null || m_key == null ) {
+    	if( mParent == null || mKey == null ) {
     		return "";
     	}
     	else {
-    		return m_key.getName();
+    		return mKey.getName();
     	}
     }
     
@@ -142,10 +154,10 @@ public class LogicalGroup implements ILogicalGroup {
 	 */
 	@Override
 	public IExtendedDictionary getDictionary() {
-		if( m_dictionary == null ) {
-			m_dictionary = findAndReadDictionary();
+		if( mDictionary == null ) {
+			mDictionary = findAndReadDictionary();
 		}
-		return m_dictionary;
+		return mDictionary;
 	}
 	
 	/**
@@ -156,7 +168,7 @@ public class LogicalGroup implements ILogicalGroup {
 	 */
 	@Override
 	public void setDictionary(IDictionary dictionary) {
-		m_dictionary = (IExtendedDictionary) dictionary;
+		mDictionary = (IExtendedDictionary) dictionary;
 	}
 	
 	/**
@@ -165,14 +177,13 @@ public class LogicalGroup implements ILogicalGroup {
 	 * @return true or false
 	 */
 	boolean isRoot() {
-		return (m_parent == null && m_key == null);
+		return (mParent == null && mKey == null);
 	}
 	
 	@Override
 	public IDataItem getDataItem(IKey key) {
         IDataItem item = null;
-        List<IContainer> list = new ArrayList<IContainer>();
-        list = getItemByKey(key);
+        List<IContainer> list = getItemByKey(key);
         
         for( IContainer object : list ) {
         	if( object.getModelType().equals(ModelType.DataItem) ) {
@@ -196,10 +207,10 @@ public class LogicalGroup implements ILogicalGroup {
 			while( i < (keys.length - 1) ) {
 				key = keys[i++];
 				if( key != null && !key.isEmpty() ) {
-					grp = grp.getGroup( m_factory.createKey(key) );
+					grp = grp.getGroup( mFactory.createKey(key) );
 				}
 			}
-			result = grp.getDataItem( m_factory.createKey(keys[i]) );
+			result = grp.getDataItem( mFactory.createKey(keys[i]) );
 		}
 		
 		return result;
@@ -207,9 +218,8 @@ public class LogicalGroup implements ILogicalGroup {
 
 	@Override
 	public List<IDataItem> getDataItemList(IKey key) {
-        List<IContainer> list = new ArrayList<IContainer>();
         List<IDataItem> result = new ArrayList<IDataItem>();
-        list = getItemByKey(key);
+        List<IContainer> list = getItemByKey(key);
         
         for( IContainer object : list ) {
         	if( object.getModelType().equals(ModelType.DataItem) ) {
@@ -229,10 +239,10 @@ public class LogicalGroup implements ILogicalGroup {
 		List<IDataItem> result = null;
 		if( keys.length >= 1 ) {
 			while( i < (keys.length - 1) && grp != null) {
-				grp = grp.getGroup( m_factory.createKey(keys[i++]) );
+				grp = grp.getGroup( mFactory.createKey(keys[i++]) );
 			}
 			if( grp != null ) {
-				result = grp.getDataItemList( m_factory.createKey(keys[i]) );
+				result = grp.getDataItemList( mFactory.createKey(keys[i]) );
 			}
 		}
 		
@@ -248,7 +258,7 @@ public class LogicalGroup implements ILogicalGroup {
         
         // Construct the corresponding ILogicalGroup
         if( part != null ) {
-        	item = new LogicalGroup(this, key, m_dataset, m_throw); 
+        	item = new LogicalGroup(this, key, mDataset, mThrow);
         	item.setDictionary(part);
         }
 		return item;
@@ -263,7 +273,7 @@ public class LogicalGroup implements ILogicalGroup {
 		ILogicalGroup result = null;
 		if( keys.length >= 1 ) {
 			while( i < keys.length && grp != null) {
-				grp = grp.getGroup( m_factory.createKey(keys[i++]) );
+				grp = grp.getGroup( mFactory.createKey(keys[i++]) );
 			}
 			result = grp;
 		}
@@ -281,18 +291,18 @@ public class LogicalGroup implements ILogicalGroup {
 			path.applyParameters( key.getParameterList() );
 			
 			// Extract first parameter (name and type)
-			IPathParameter param = null;
 			StringBuffer strPath = new StringBuffer();
-			param = path.getFirstPathParameter(strPath);
+			IPathParameter param;
+			path.getFirstPathParameter(strPath);
 	
 			// Try to resolve parameter values
-			IGroup root = m_dataset.getRootGroup();
+			IGroup root = mDataset.getRootGroup();
 			List<IContainer> list = new ArrayList<IContainer>();
 			try {
 				list.addAll( root.findAllContainerByPath(strPath.toString()) );
 			} catch (NoResultException e) {}
 			
-			IPathParamResolver resolver = m_factory.createPathParamResolver(path);
+			IPathParamResolver resolver = mFactory.createPathParamResolver(path);
 			for( IContainer node : list ) {
 				param = resolver.resolvePathParameter(node);
 				if( param != null ) {
@@ -306,7 +316,7 @@ public class LogicalGroup implements ILogicalGroup {
 
 	@Override
 	public IDataset getDataset() {
-		return m_dataset;
+		return mDataset;
 	}
 
 	@Override
@@ -323,77 +333,77 @@ public class LogicalGroup implements ILogicalGroup {
 	
 	@Override
 	public void setParent(ILogicalGroup group) {
-		m_parent = group;
+		mParent = group;
 	}
 
 	@Override
 	public String getFactoryName() {
-		return m_factory.getName();
+		return mFactory.getName();
 	}
 	
 	@Override
     public boolean hasAttribute(String name, String value) {
-        new BackupException("Object does not support this method!").printStackTrace();
+        new NotImplementedException().printStackTrace();
         return false;
     }
 
     @Override
     public boolean removeAttribute(IAttribute attribute) {
-        new BackupException("Object does not support this method!").printStackTrace();
+        new NotImplementedException().printStackTrace();
         return false;
     }
 
     @Override
     public void setName(String name) {
-        new BackupException("Object does not support this method!").printStackTrace();
+        new NotImplementedException().printStackTrace();
     }
 
     @Override
     public void setParent(IGroup group) {
-        new BackupException("Object does not support this method!").printStackTrace();
+        new NotImplementedException().printStackTrace();
     }
 
     @Override
     public void setShortName(String name) {
-        new BackupException("Object does not support this method!").printStackTrace();
+        new NotImplementedException().printStackTrace();
     }
 
 	@Override
 	public void addOneAttribute(IAttribute attribute) {
-		new BackupException("Object does not support this method!").printStackTrace();
+		new NotImplementedException().printStackTrace();
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-		new BackupException("Object does not support this method!").printStackTrace();
+		new NotImplementedException().printStackTrace();
 	}
 
 	@Override
 	public IAttribute getAttribute(String name) {
-		new BackupException("Object does not support this method!").printStackTrace();
+		new NotImplementedException().printStackTrace();
 		return null;
 	}
 
 	@Override
 	public List<IAttribute> getAttributeList() {
-		new BackupException("Object does not support this method!").printStackTrace();
+		new NotImplementedException().printStackTrace();
 		return null;
 	}
 	
 	@Override
 	public IExtendedDictionary findAndReadDictionary() {
-    	if( m_dictionary == null ) {
+    	if( mDictionary == null ) {
     		// Detect the key dictionary file and mapping dictionary file
     		String keyFile = Factory.getKeyDictionaryPath();
-    		String mapFile = Factory.getMappingDictionaryFolder( m_factory ) + m_factory.getName().toLowerCase() + "_dictionary.xml";
-   			m_dictionary = new ExtendedDictionary( m_factory, keyFile, mapFile );
+    		String mapFile = Factory.getMappingDictionaryFolder( mFactory ) + mFactory.getName() + "_dictionary.xml";
+   			mDictionary = new ExtendedDictionary( mFactory, keyFile, mapFile );
             try {
-                m_dictionary.readEntries();
+                mDictionary.readEntries();
             } catch (FileAccessException e) {
                 e.printStackTrace();
             }
     	}
-    	return m_dictionary;
+    	return mDictionary;
     }
 	
 	// ------------------------------------------------------------------------------------------------------------------
@@ -427,14 +437,14 @@ public class LogicalGroup implements ILogicalGroup {
 			}
 			else {
 				try {
-					result.addAll(m_dataset.getRootGroup().findAllContainerByPath(path.toString()));
+					result.addAll(mDataset.getRootGroup().findAllContainerByPath(path.toString()));
 				} catch (NoResultException e) {
 					String message = e.getMessage() + "\nKey: " + key.getName();
 					message += "\nPath: " + path.getValue();
-					message += "\nData source: " + m_dataset.getLocation();
-					message += "\nView: " + m_dictionary.getKeyFilePath();
-					message += "\nMapping: " + m_dictionary.getMappingFilePath();
-					if( m_throw ) {
+					message += "\nData source: " + mDataset.getLocation();
+					message += "\nView: " + mDictionary.getKeyFilePath();
+					message += "\nMapping: " + mDictionary.getMappingFilePath();
+					if( mThrow ) {
 						NoResultException ex = new NoResultException( message );
 						ex.printStackTrace();
 					}
@@ -453,7 +463,7 @@ public class LogicalGroup implements ILogicalGroup {
 		Object methodRes;
 
 		int nbParam = method.getParam().length;
-		IContext context = new Context(m_dataset, this, key, path);
+		IContext context = new Context(mDataset, this, key, path);
 		if( nbParam > 0 ) {
 			context.setParams( method.getParam() );
 		}
@@ -461,7 +471,7 @@ public class LogicalGroup implements ILogicalGroup {
 		for( IContainer current : input ) {
 			try {
 				if( method.isExternalCall() ) {
-					methodRes = m_dictionary.getClassLoader().invoke(method.getName(), context);
+					methodRes = mDictionary.getClassLoader().invoke(method.getName(), context);
 				}
 				else {
 			    	// Extract class and method names
@@ -496,16 +506,10 @@ public class LogicalGroup implements ILogicalGroup {
 				
 				 
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 		

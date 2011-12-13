@@ -14,9 +14,12 @@ package org.gumtree.data.dictionary.impl;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.gumtree.data.Factory;
@@ -39,70 +42,70 @@ import org.jdom.input.SAXBuilder;
  * @author rodriguez
  *
  */
-public class ExtendedDictionary implements IExtendedDictionary
-{
-	private IFactory            m_factory;     // Name of the plug-in's factory that created this object 
-    private String              m_experiment;  // Experiment matching that dictionary
-    private String              m_version;     // Version of the read dictionary
-    private ExternalClassLoader m_classLoader; // Object that loads external classes
+public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
+	private IFactory            mFactory;     // Name of the plug-in's factory that created this object 
+    private String              mExperiment;  // Experiment matching that dictionary
+    private String              mVersion;     // Version of the read dictionary
+    private ExternalClassLoader mClassLoader; // Object that loads external classes
     
-    private String m_keyFile;
-    private String m_mapFile;
+    private String mKeyFile; // Path to reach the key file (containing the view)
+    private String mMapFile; // Path to reach the mapping file
     
-	private HashMap<IKey, String>  m_keyMap = new HashMap<IKey, String>();
-	private HashMap<String, IPath> m_pathMap = new HashMap<String, IPath>();
-	private HashMap<String, ExtendedDictionary> m_subDict = new HashMap<String, ExtendedDictionary>();
+	private Map<IKey, String>  mKeyMap = new HashMap<IKey, String>();   // Key / ID association
+	private Map<String, IPath> mPathMap = new HashMap<String, IPath>(); // ID / Path association
+	private Map<String, ExtendedDictionary> mSubDict = new HashMap<String, ExtendedDictionary>(); // ID / sub-dictionaries
 	
 	public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) { 
-		m_factory    = factory; 
-		m_experiment = Factory.getActiveView();
-		m_keyFile    = keyFile;
-		m_mapFile    = mapFile;
+		mFactory    = factory; 
+		mExperiment = Factory.getActiveView();
+		mKeyFile    = keyFile;
+		mMapFile    = mapFile;
 	}
 	
 	protected ExtendedDictionary(IFactory factory, String keyFile, String mapFile, String experiment) {
-		m_experiment = experiment;
-		m_factory    = factory;
-		m_keyFile    = keyFile;
-		m_mapFile    = mapFile;
+		mExperiment = experiment;
+		mFactory    = factory;
+		mKeyFile    = keyFile;
+		mMapFile    = mapFile;
 	}
 	
 	@Override
 	public void addEntry(String keyName, String entryPath)
 	{
-    	IPath path = null;
-    	IKey key = m_factory.createKey(keyName);
-		m_keyMap.put(key, keyName);
-		m_pathMap.put(keyName, path);
+    	IPath path = mFactory.createPath(entryPath);
+    	IKey key = mFactory.createKey(keyName);
+		mKeyMap.put(key, keyName);
+		mPathMap.put(keyName, path);
 	}
     
 	@Override
 	public void addEntry(String keyName, IPath path) {
-    	IKey key = m_factory.createKey(keyName);
-		m_keyMap.put(key, keyName);
-		m_pathMap.put(keyName, path);
+    	IKey key = mFactory.createKey(keyName);
+		mKeyMap.put(key, keyName);
+		mPathMap.put(keyName, path);
 	}
 
     @Override
 	public boolean containsKey(String keyName)
 	{
-		return m_keyMap.containsKey(keyName);
+    	IKey key = mFactory.createKey(keyName);
+		return mKeyMap.containsKey(key);
 	}
 
 	@Override
 	public List<IKey> getAllKeys()
 	{
-		return new ArrayList<IKey>(m_keyMap.keySet());
+		return new ArrayList<IKey>(mKeyMap.keySet());
 	}
 
 	@Override
 	public List<IPath> getAllPaths(IKey key)
 	{
-		String keyId = m_keyMap.get(key);
+		String keyId = mKeyMap.get(key);
 		List<IPath> result = null;
 		if( keyId != null ) {
 			 result = new ArrayList<IPath>();
-			 result.add(m_pathMap.get(keyId));
+			 result.add(mPathMap.get(keyId));
 		}
 		
 		return result;
@@ -112,10 +115,10 @@ public class ExtendedDictionary implements IExtendedDictionary
 	public IPath getPath(IKey key)
 	{
 		IPath path = null;
-		if( m_keyMap.containsKey(key) )
+		if( mKeyMap.containsKey(key) )
 		{
-			String keyName = m_keyMap.get(key);
-			path = m_pathMap.get(keyName);
+			String keyName = mKeyMap.get(key);
+			path = mPathMap.get(keyName);
 		}
 		return path;
 	}
@@ -142,7 +145,7 @@ public class ExtendedDictionary implements IExtendedDictionary
 	@Override
     public void readEntries(String filePath) throws FileAccessException {
 		if( filePath != null ) {
-			m_keyFile = filePath;
+			mKeyFile = filePath;
 		}
 
         // Read corresponding dictionaries
@@ -158,17 +161,17 @@ public class ExtendedDictionary implements IExtendedDictionary
 	@Override
 	public void removeEntry(String keyName, String path) {
 		IKey key = Factory.getFactory().createKey(keyName);
-		String keyID = m_keyMap.get(key);
-		m_keyMap.remove(key);
-		m_pathMap.remove(keyID);
+		String keyID = mKeyMap.get(key);
+		mKeyMap.remove(key);
+		mPathMap.remove(keyID);
 	}
 
 	@Override
 	public void removeEntry(String keyName) {
 		IKey key = Factory.getFactory().createKey(keyName); 
-		String keyID = m_keyMap.get(key);
-		m_keyMap.remove(key);
-		m_pathMap.remove(keyID);
+		String keyID = mKeyMap.get(key);
+		mKeyMap.remove(key);
+		mPathMap.remove(keyID);
 	}
 	
     
@@ -176,22 +179,22 @@ public class ExtendedDictionary implements IExtendedDictionary
 	@Override
 	public IDictionary clone() throws CloneNotSupportedException
 	{
-		ExtendedDictionary dict = new ExtendedDictionary(m_factory, m_keyFile, m_mapFile, m_experiment);
-		dict.m_classLoader = m_classLoader;
-		dict.m_version = m_version;
-		dict.m_keyMap  = (HashMap<IKey, String>) m_keyMap.clone();
-		dict.m_pathMap = (HashMap<String, IPath>) m_pathMap.clone();
-		dict.m_subDict = (HashMap<String, ExtendedDictionary>) m_subDict.clone();
+		ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile, mExperiment);
+		dict.mClassLoader = mClassLoader;
+		dict.mVersion = mVersion;
+		dict.mKeyMap  = (HashMap<IKey, String>)((HashMap<IKey, String>) mKeyMap).clone();
+		dict.mPathMap = (HashMap<String, IPath>)((HashMap<String, IPath>) mPathMap).clone();
+		dict.mSubDict = (HashMap<String, ExtendedDictionary>)((HashMap<String, ExtendedDictionary>) mSubDict).clone();
 		return dict;
 	}
     
     @Override
     public ExtendedDictionary getDictionary(IKey key) {
-    	String keyID = m_keyMap.get(key);
+    	String keyID = mKeyMap.get(key);
     	ExtendedDictionary subDict = null;
     	
     	if( keyID != null ) {
-    		subDict = m_subDict.get(keyID);
+    		subDict = mSubDict.get(keyID);
     	}
     	
     	return subDict;
@@ -199,53 +202,57 @@ public class ExtendedDictionary implements IExtendedDictionary
     
     @Override
 	public String getVersionNum() {
-		return m_version;
+		return mVersion;
 	}
 	
 	@Override
 	public String getView() {
-		return m_experiment;
+		return mExperiment;
 	}
     
 	@Override
 	public ExternalClassLoader getClassLoader() {
-		if( m_classLoader == null ) {
-			m_classLoader = new ExternalClassLoader(m_factory.getName(), m_version);
+		if( mClassLoader == null ) {
+			mClassLoader = AccessController.doPrivileged(new PrivilegedAction<ExternalClassLoader>() {
+		           public ExternalClassLoader run() {
+		               return new ExternalClassLoader(mFactory.getName(), mVersion);
+		           }
+		       });
 		}
 		
-		return m_classLoader;
+		return mClassLoader;
 	}
 	
 	@Override
 	public String getFactoryName() {
-		return m_factory.getName();
+		return mFactory.getName();
 	}
 	
 	@Override
 	public String getKeyFilePath() {
-		return m_keyFile;
+		return mKeyFile;
 	}
 
 	@Override
 	public String getMappingFilePath() {
-		return m_mapFile;
+		return mMapFile;
 	}
 
 	
 	// ---------------------------------------------------------------
 	// PRIVATE : Reading methods
 	// ---------------------------------------------------------------
-	private HashMap<IKey, String> readKeyDictionary() throws FileAccessException {
-		Element root = saxBuildFile(m_keyFile);
+	private Map<IKey, String> readKeyDictionary() throws FileAccessException {
+		Element root = saxBuildFile(mKeyFile);
         
         String exp = root.getAttributeValue("name");
-        if( ! exp.equalsIgnoreCase(m_experiment) ) {
+        if( ! exp.equalsIgnoreCase(mExperiment) ) {
         	throw new FileAccessException("an I/O error prevent parsing dictionary!\nThe dictionary doesn't match the experiment!");
         }
         return readKeyDictionary(root);
 	}
 	
-	private HashMap<IKey, String> readKeyDictionary(Element xmlNode) throws FileAccessException {
+	private Map<IKey, String> readKeyDictionary(Element xmlNode) throws FileAccessException {
 
 		List<?> nodes = xmlNode.getChildren();
 		Element elem;
@@ -256,33 +263,33 @@ public class ExtendedDictionary implements IExtendedDictionary
 			elem = (Element) current;
 			keyName = elem.getAttributeValue("key");
 			if( keyName != null && !keyName.isEmpty() ) {
-				key = m_factory.createKey(keyName);
+				key = mFactory.createKey(keyName);
 				
 				// If the element is an entry
 				if( elem.getName().equals("item") ) {
-					m_keyMap.put(key, keyName);
+					mKeyMap.put(key, keyName);
 				}
 				// If the element is a group of keys
 				else if( elem.getName().equals("group") ){
 			        // Read corresponding dictionaries
-					ExtendedDictionary dict = new ExtendedDictionary(m_factory, m_keyFile, m_mapFile, m_experiment);
+					ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile, mExperiment);
 			        dict.readKeyDictionary(elem);
 			        dict.readMappingDictionary();
-					m_subDict.put(keyName, dict);
-					m_keyMap.put(key, keyName);
+					mSubDict.put(keyName, dict);
+					mKeyMap.put(key, keyName);
 				}
 			}
 		}
 
-		return m_keyMap;
+		return mKeyMap;
 	}
 	
 	@SuppressWarnings("unchecked")
-	private HashMap<String, String> readMappingDictionary() throws FileAccessException {
+	private Map<String, String> readMappingDictionary() throws FileAccessException {
 		HashMap<String, String> mappingMap = new HashMap<String, String>();
 		
-		Element root = saxBuildFile(m_mapFile);
-        m_version = root.getAttributeValue("version");
+		Element root = saxBuildFile(mMapFile);
+        mVersion = root.getAttributeValue("version");
         
         List<?> nodes = root.getChildren();
 
@@ -291,29 +298,29 @@ public class ExtendedDictionary implements IExtendedDictionary
 		String keyID;
 		IKey key;
 
-        for( Entry<IKey, String> fullKey : m_keyMap.entrySet() ) {
+        for( Entry<IKey, String> fullKey : mKeyMap.entrySet() ) {
         	key   = fullKey.getKey();
         	keyID = fullKey.getValue();
         	
         	// Check if a corresponding logical group exists
-        	if( m_subDict.containsKey(keyID) ) {
+        	if( mSubDict.containsKey(keyID) ) {
         		// Create the corresponding path for a logical group
 				meth = new PathMethod( "org.gumtree.data.Factory.createLogicalGroup" );
-				path = m_factory.createPath(keyID);
+				path = mFactory.createPath(keyID);
 				meth.pushParam(key);
 				meth.isExternal(false);
-				m_keyMap.put(key, keyID);
-				m_pathMap.put(keyID, path);
+				mKeyMap.put(key, keyID);
+				mPathMap.put(keyID, path);
         	}
         	// No corresponding path where found so doing key/path association
-        	else if( !m_pathMap.containsKey(keyID) ) {
+        	else if( !mPathMap.containsKey(keyID) ) {
         		for( Element elem : (List<Element>) nodes ) {
         			if( elem.getAttributeValue("key").equals(keyID) ) {
         				path = loadPath(elem);
         				if( path == null ) {
         					throw new FileAccessException("error while associating IKey to IPath from dictionary!");
         				}
-        				m_pathMap.put(keyID, path);
+        				mPathMap.put(keyID, path);
         				break;
         			}
         		}
@@ -329,7 +336,7 @@ public class ExtendedDictionary implements IExtendedDictionary
 		List<?> nodes = elem.getChildren();
 		List<IPathMethod> methods = new ArrayList<IPathMethod>();
 		PathMethod method;
-		path = m_factory.createPath("");
+		path = mFactory.createPath("");
 		for( Element node : (List<Element>) nodes ) {
 			if( node.getName().equals("path") )	{
 				path.setValue(node.getText());
@@ -356,10 +363,6 @@ public class ExtendedDictionary implements IExtendedDictionary
 	        if (!dicFile.exists()) {
 	            throw new FileAccessException("the target dictionary file does not exist:\n" + filePath);
 	        }
-
-	        // Try to detect the corresponding experiment
-	        String file = dicFile.getName();
-	        String view = file.substring( 0, file.lastIndexOf("_") );
         }
         if( dicFile == null ) {
     		dicFile = new File( Factory.getKeyDictionaryPath() );
@@ -377,10 +380,10 @@ public class ExtendedDictionary implements IExtendedDictionary
             dictionary = xmlFile.build(dicFile);
         }
         catch (JDOMException e1) {
-            throw new FileAccessException("error while to parsing the dictionary!\n" + e1.getMessage());
+            throw new FileAccessException("error while to parsing the dictionary!\n", e1);
         }
         catch (IOException e1) {
-            throw new FileAccessException("an I/O error prevent parsing dictionary!\n" + e1.getMessage());
+            throw new FileAccessException("an I/O error prevent parsing dictionary!\n", e1);
         }
         root = dictionary.getRootElement();
         

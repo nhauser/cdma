@@ -6,7 +6,7 @@ import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.math.ArrayMath;
 import org.gumtree.data.math.IArrayMath;
 
-public class NexusArrayMath extends ArrayMath {
+public final class NexusArrayMath extends ArrayMath {
 
 	public NexusArrayMath(IArray array) {
 		super(array, NexusFactory.getInstance());

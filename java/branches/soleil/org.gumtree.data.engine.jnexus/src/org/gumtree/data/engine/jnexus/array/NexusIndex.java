@@ -8,15 +8,15 @@ import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
 
-public class NexusIndex implements IIndex {
-	private int        m_rank;
-    private int[]      m_iCurPos;          // Current position pointed by this index
-    private NexusRange[] m_ranges;         // Ranges that constitute the index global view in each dimension
-    private boolean    m_upToDate = false; // Does the overall shape has changed
-    private int        m_lastIndex;
-    private int[]      m_projShape;        // shape without considering reduced range
-    private int[]      m_projOrigin;       // origin without considering reduced range
-    private long[]     m_projStride;       // stride without considering reduced range
+public final class NexusIndex implements IIndex, Cloneable {
+	private int          mRank;
+    private int[]        mICurPos;            // Current position pointed by this index
+    private NexusRange[] mRanges;             // Ranges that constitute the index global view in each dimension
+    private boolean      mIsUpToDate = false; // Does the overall shape has changed
+    private int          mLastIndex;
+    private int[]        mProjShape;          // shape without considering reduced range
+    private int[]        mProjOrigin;         // origin without considering reduced range
+    private long[]       mProjStride;         // stride without considering reduced range
 
     /// Constructors
 	public NexusIndex(fr.soleil.nexus4tango.DataItem ds) {
@@ -24,46 +24,45 @@ public class NexusIndex implements IIndex {
     }
 
 	public NexusIndex(int[] shape) {
-        this(shape, new int[shape.length], shape);
+        this(shape.clone(), new int[shape.length], shape.clone());
 	}
     
     public NexusIndex(NexusIndex index) {
-    	m_rank    = index.m_rank;
-        m_ranges  = new NexusRange[index.m_ranges.length];
-        m_iCurPos = index.m_iCurPos.clone();
-        m_projStride = index.m_projStride.clone();
-        m_projShape  = index.m_projShape.clone();
-        m_projOrigin = index.m_projOrigin.clone();
-        for( int i = 0; i < index.m_ranges.length; i++ ) {
-            m_ranges[i] = (NexusRange) index.m_ranges[i].clone();
+    	mRank    = index.mRank;
+        mRanges  = new NexusRange[index.mRanges.length];
+        mICurPos = index.mICurPos.clone();
+        mProjStride = index.mProjStride.clone();
+        mProjShape  = index.mProjShape.clone();
+        mProjOrigin = index.mProjOrigin.clone();
+        for( int i = 0; i < index.mRanges.length; i++ ) {
+            mRanges[i] = (NexusRange) index.mRanges[i].clone();
         }
-        m_lastIndex = index.m_lastIndex;
+        mLastIndex = index.mLastIndex;
     }
 
     public NexusIndex(int[] shape, int[] start, int[] length) {
         long stride  = 1;
-        m_rank       = shape.length;
-        m_iCurPos    = new int[m_rank];
-        m_ranges     = new NexusRange[m_rank];
-        for( int i = m_rank - 1; i >= 0 ; i-- ) {
+        mRank       = shape.length;
+        mICurPos    = new int[mRank];
+        mRanges     = new NexusRange[mRank];
+        for( int i = mRank - 1; i >= 0 ; i-- ) {
             try {
-                m_ranges[i] = new NexusRange("", start[i] * stride, (start[i] + length[i] - 1) * stride, stride);
+                mRanges[i] = new NexusRange("", start[i] * stride, (start[i] + length[i] - 1) * stride, stride);
                 stride *= shape[i];
             } catch( InvalidRangeException e ) {
-                e.printStackTrace();
-                m_ranges[i] = NexusRange.EMPTY;
+                mRanges[i] = NexusRange.EMPTY;
             }
         }
         updateProjection();
     }
     
     public NexusIndex(List<IRange> ranges) {
-    	m_rank       = ranges.size();
-        m_iCurPos    = new int[m_rank];
-        m_ranges     = new NexusRange[m_rank];
+    	mRank       = ranges.size();
+        mICurPos    = new int[mRank];
+        mRanges     = new NexusRange[mRank];
         int i = 0;
         for( IRange range : ranges ) {
-        	m_ranges[i] = new NexusRange(range);
+        	mRanges[i] = new NexusRange(range);
         	i++;
         }
         updateProjection();
@@ -76,8 +75,8 @@ public class NexusIndex implements IIndex {
 	public long currentElement() {
         long value = 0;
         try {
-            for( int i = 0; i < m_iCurPos.length; i++ ) {
-                value += (m_ranges[i]).element( m_iCurPos[i] );
+            for( int i = 0; i < mICurPos.length; i++ ) {
+                value += (mRanges[i]).element( mICurPos[i] );
             }
         } catch (InvalidRangeException e) {
             value = -1;
@@ -87,12 +86,12 @@ public class NexusIndex implements IIndex {
 
 	@Override
 	public int[] getCurrentCounter() {
-		int[] curPos = new int[m_rank];
+		int[] curPos = new int[mRank];
         int i = 0;
         int j = 0;
-        for(NexusRange range : m_ranges) {
+        for(NexusRange range : mRanges) {
         	if( ! range.reduced() ) {
-        		curPos[i] = m_iCurPos[j];
+        		curPos[i] = mICurPos[j];
         		i++;
         	}
         	j++;
@@ -102,19 +101,19 @@ public class NexusIndex implements IIndex {
 
 	@Override
 	public String getIndexName(int dim) {
-		return (m_ranges[dim]).getName();
+		return (mRanges[dim]).getName();
 	}
 
 	@Override
 	public int getRank() {
-		return m_rank;
+		return mRank;
 	}
 
 	@Override
 	public int[] getShape() {
-        int[] shape = new int[m_rank];
+        int[] shape = new int[mRank];
         int i = 0;
-        for(NexusRange range : m_ranges) {
+        for(NexusRange range : mRanges) {
         	if( ! range.reduced() ) {
         		shape[i] = range.length();
         		i++;
@@ -125,9 +124,9 @@ public class NexusIndex implements IIndex {
 
     @Override
     public long[] getStride() {
-        long[] stride = new long[m_rank];
+        long[] stride = new long[mRank];
         int i = 0;
-        for(NexusRange range : m_ranges) {
+        for(NexusRange range : mRanges) {
         	if( ! range.reduced() ) {
         		stride[i] = range.stride();
         		i++;
@@ -138,9 +137,9 @@ public class NexusIndex implements IIndex {
     
     @Override
     public int[] getOrigin() {
-        int[] origin = new int[m_rank];
+        int[] origin = new int[mRank];
         int i = 0;
-        for(NexusRange range : m_ranges) {
+        for(NexusRange range : mRanges) {
         	if( ! range.reduced() ) {
 	        	origin[i] = (int) (range.first() / range.stride());
 	            i++;
@@ -151,13 +150,13 @@ public class NexusIndex implements IIndex {
     
 	@Override
 	public long getSize() {
-		if( m_ranges.length == 0 )
+		if( mRanges.length == 0 )
 		{
 			return 0;
 		}
 
 		long size = 1;
-        for(NexusRange range : m_ranges) {
+        for(NexusRange range : mRanges) {
 			size *= range.length();
 		}
 
@@ -170,7 +169,7 @@ public class NexusIndex implements IIndex {
         int i = 0;
         int j = 0;
         while(  i < origins.length ) {
-            range = m_ranges[j];
+            range = mRanges[j];
             if( ! range.reduced() ) {
             	range.last( origins[i] * range.stride() + (range.length() - 1) * range.stride() );
             	range.first( origins[i] * range.stride() );
@@ -184,11 +183,11 @@ public class NexusIndex implements IIndex {
 	@Override
     public void setShape(int[] value) {
         NexusRange range;
-        m_upToDate = false;
+        mIsUpToDate = false;
         int i = 0;
         int j = 0;
         while(  i < value.length ) {
-            range = m_ranges[j];
+            range = mRanges[j];
             if( ! range.reduced() ) {
             	range.last( range.first() + (value[i] - 1) * range.stride() );
             	i++;
@@ -204,11 +203,11 @@ public class NexusIndex implements IIndex {
         if( stride == null ) {
             return;
         }
-        m_upToDate = false;
+        mIsUpToDate = false;
         int i = 0;
         int j = 0;
         while(  i < stride.length ) {
-            range = m_ranges[j];
+            range = mRanges[j];
             if( ! range.reduced() ) {
             	range.stride( stride[i] );
             	i++;
@@ -220,16 +219,17 @@ public class NexusIndex implements IIndex {
     
 	@Override
 	public IIndex set(int[] index) {
-	    if( index.length != m_rank )
+	    if( index.length != mRank ) {
             throw new IllegalArgumentException();
+	    }
 	    
         NexusRange range;
         int i = 0;
         int j = 0;
         while(  i < index.length ) {
-            range = m_ranges[j];
+            range = mRanges[j];
             if( ! range.reduced() ) {
-            	m_iCurPos[j] = index[i];
+            	mICurPos[j] = index[i];
             	i++;
             }
             j++;
@@ -240,143 +240,137 @@ public class NexusIndex implements IIndex {
 
 	@Override
 	public IIndex set(int v0) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1, int v2) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
+        iCurPos[DIM2] = v2;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
+        iCurPos[DIM2] = v2;
+        iCurPos[DIM3] = v3;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
+        iCurPos[DIM2] = v2;
+        iCurPos[DIM3] = v3;
+        iCurPos[DIM4] = v4;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
-        iCurPos[5] = v5;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
+        iCurPos[DIM2] = v2;
+        iCurPos[DIM3] = v3;
+        iCurPos[DIM4] = v4;
+        iCurPos[DIM5] = v5;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6) {
-		int[] iCurPos = new int[m_rank];
-        iCurPos[0] = v0;
-        iCurPos[1] = v1;
-        iCurPos[2] = v2;
-        iCurPos[3] = v3;
-        iCurPos[4] = v4;
-        iCurPos[5] = v5;
-        iCurPos[6] = v6;
+		int[] iCurPos = new int[mRank];
+        iCurPos[DIM0] = v0;
+        iCurPos[DIM1] = v1;
+        iCurPos[DIM2] = v2;
+        iCurPos[DIM3] = v3;
+        iCurPos[DIM4] = v4;
+        iCurPos[DIM5] = v5;
+        iCurPos[DIM6] = v6;
         this.set(iCurPos);
 		return this;
 	}
 
 	@Override
 	public IIndex set0(int v) {
-        m_iCurPos[0] = v;
+        mICurPos[DIM0] = v;
 		return this;
 	}
 
 	@Override
 	public IIndex set1(int v) {
-        m_iCurPos[1] = v;
+        mICurPos[DIM1] = v;
         return this;
 	}
 
 	@Override
 	public IIndex set2(int v) {
-        m_iCurPos[2] = v;
+        mICurPos[DIM2] = v;
         return this;
 	}
 
 	@Override
 	public IIndex set3(int v) {
-        m_iCurPos[3] = v;
+        mICurPos[DIM3] = v;
         return this;
 	}
 
 	@Override
 	public IIndex set4(int v) {
-        m_iCurPos[4] = v;
+        mICurPos[DIM4] = v;
         return this;
 	}
 
 	@Override
 	public IIndex set5(int v) {
-        m_iCurPos[5] = v;
+        mICurPos[DIM5] = v;
         return this;
 	}
 
 	@Override
 	public IIndex set6(int v) {
-        m_iCurPos[6] = v;
+        mICurPos[DIM6] = v;
         return this;
 	}
 
 	@Override
 	public void setDim(int dim, int value) {
-        /*
-        if( dim >= m_iCurPos.length || dim < 0 )
+	    if( dim >= mRank ) {
             throw new IllegalArgumentException();
-
-		m_iCurPos[dim] = value;
-		*/
-		
-	    if( dim >= m_rank )
-            throw new IllegalArgumentException();
+	    }
 	    
         NexusRange range;
         int i = 0;
         int j = 0;
-        while(  j < m_ranges.length ) {
-            range = m_ranges[j];
+        while(  j < mRanges.length ) {
+            range = mRanges[j];
             if( ! range.reduced() ) {
             	if( i == dim ) {
-            		m_iCurPos[j] = value;
+            		mICurPos[j] = value;
             		return;
             	}
             	i++;
@@ -388,28 +382,27 @@ public class NexusIndex implements IIndex {
 	@Override
 	public void setIndexName(int dim, String indexName) {
         try {
-            m_upToDate = false;
+            mIsUpToDate = false;
             int i = 0;
             int j = 0;
             NexusRange range = null;
             while( i <= dim ) {
-           		range = m_ranges[j];
+           		range = mRanges[j];
             	if( ! range.reduced() ) {
             		i++;
             	}
             	j++;
             }
-            m_ranges[i - 1] = new NexusRange( indexName, range.first(), range.last(), range.stride() );
+            mRanges[i - 1] = new NexusRange( indexName, range.first(), range.last(), range.stride() );
         } catch( InvalidRangeException e ) {
-            e.printStackTrace();
         }
 	}
 
     @Override
     public IIndex reduce() {
-        for (int ii = 0; ii < m_iCurPos.length; ii++) {
+        for (int ii = 0; ii < mICurPos.length; ii++) {
         	// is there a dimension with length = 1 
-        	if ( (m_ranges[ii]).length() == 1 && ! m_ranges[ii].reduced()) {
+        	if ( (mRanges[ii]).length() == 1 && ! mRanges[ii].reduced()) {
         		// remove it
         		this.reduce(0);
             
@@ -417,7 +410,7 @@ public class NexusIndex implements IIndex {
         		return this.reduce();
         	}
         }
-        m_upToDate = false;
+        mIsUpToDate = false;
         return this;
     }
 
@@ -434,7 +427,7 @@ public class NexusIndex implements IIndex {
     	// search the correct range
         int i = 0;
         NexusRange range = null;
-        for(NexusRange rng : m_ranges) {
+        for(NexusRange rng : mRanges) {
         	if( ! rng.reduced() ) {
         		if( i == dim ) {
         			range = rng;
@@ -444,14 +437,16 @@ public class NexusIndex implements IIndex {
         	}
         }
 
-        if( (dim < 0) || (dim >= m_rank) )
+        if( (dim < 0) || (dim >= mRank) ) {
             throw new IllegalArgumentException("illegal reduce dim " + dim);
-        if( range.length() != 1 )
+        }
+        if( range.length() != 1 ) {
             throw new IllegalArgumentException("illegal reduce dim " + dim + " : reduced dimension must be have length=1");
+        }
     
         // Reduce proper range
         range.reduced(true);
-        m_rank--;
+        mRank--;
         updateProjection();
         return this;
     }
@@ -467,7 +462,7 @@ public class NexusIndex implements IIndex {
         StringBuffer shp = new StringBuffer();
         str.append("Position: [");
         int i = 0;
-        for( int pos : m_iCurPos ) {
+        for( int pos : mICurPos ) {
             if( i++ != 0 ) {
                 str.append(", ");
             }
@@ -476,13 +471,14 @@ public class NexusIndex implements IIndex {
         i = 0;
         str.append("]  <=> Index: " + currentElement() + "\nRanges:\n");
         shp.append("Shape [");
-        for( NexusRange r : m_ranges ) {
+        for( NexusRange r : mRanges ) {
         	if( !r.reduced() ) {
-	        	if( i != 0 )
+	        	if( i != 0 ) {
 	        		shp.append(", ");
+	        	}
 	        	shp.append(r.length());
 	            str.append( "- nÂ°"+ i + " " + (NexusRange) r );
-	            if( i < m_ranges.length ) {
+	            if( i < mRanges.length ) {
 	                str.append("\n");
 	            }
         	}
@@ -495,32 +491,32 @@ public class NexusIndex implements IIndex {
     
 	@Override
 	public String toStringDebug() {
-        StringBuilder sbuff = new StringBuilder(100);
+        StringBuilder sbuff = new StringBuilder();
         sbuff.setLength(0);
-        int rank = m_ranges.length;
+        int rank = mRanges.length;
         
         sbuff.append(" shape= ");
         for (int ii = 0; ii < rank; ii++) {
-          sbuff.append( (m_ranges[ii]).length() );
+          sbuff.append( (mRanges[ii]).length() );
           sbuff.append(" ");
         }
 
         sbuff.append(" stride= ");
         for (int ii = 0; ii < rank; ii++) {
-          sbuff.append( (m_ranges[ii]).stride() );
+          sbuff.append( (mRanges[ii]).stride() );
           sbuff.append(" ");
         }
 
         long size   = 1;
         for (int ii = 0; ii < rank; ii++) {
-            size  *= (m_ranges[ii]).length();
+            size  *= (mRanges[ii]).length();
         }
         sbuff.append(" size= ").append(size);
         sbuff.append(" rank= ").append(rank);
 
         sbuff.append(" current= ");
         for (int ii = 0; ii < rank; ii++) {
-          sbuff.append(m_iCurPos[ii]);
+          sbuff.append(mICurPos[ii]);
           sbuff.append(" ");
         }
 
@@ -529,30 +525,26 @@ public class NexusIndex implements IIndex {
 	
     @Override
 	public long lastElement() {
-        if( ! m_upToDate ) {
+        if( ! mIsUpToDate ) {
         	int last = 0;
-            for( IRange range : m_ranges ) {
+            for( IRange range : mRanges ) {
                 last += range.last();
             }
-            m_lastIndex = last;
-            m_upToDate = true;
+            mLastIndex = last;
+            mIsUpToDate = true;
         }
-        return m_lastIndex;
+        return mLastIndex;
     }
     
     @Override
     public IIndex clone() {
-    	NexusIndex index = new NexusIndex(this); 
-    	return index;
+    	return new NexusIndex(this); 
     }
 	
-    // ---------------------------------------------------------
-    /// Protected methods
-    // ---------------------------------------------------------
     public List<IRange> getRangeList() {
         ArrayList<IRange> list = new ArrayList<IRange>();
         
-        for( NexusRange range : m_ranges ) {
+        for( NexusRange range : mRanges ) {
         	if( ! range.reduced() ) {
         		list.add(range);
         	}
@@ -560,39 +552,50 @@ public class NexusIndex implements IIndex {
         return list;
     }
     
-	protected int[] getCurrentPos() {
-		return m_iCurPos;
+    public int[] getCurrentPos() {
+		return mICurPos.clone();
 	}
 	
-	protected int[] getProjectionShape() {
-		return m_projShape;
+	public int[] getProjectionShape() {
+		return mProjShape.clone();
 	}
 	
-	protected int[] getProjectionOrigin() {
-		return m_projOrigin;
+	public int[] getProjectionOrigin() {
+		return mProjOrigin.clone();
 	}
 	
 	public int currentProjectionElement() {
         int value = 0;
  
-        for( int i = 0; i < m_iCurPos.length; i++ ) {
-            value += m_iCurPos[i] * m_projStride[i];
+        for( int i = 0; i < mICurPos.length; i++ ) {
+            value += mICurPos[i] * mProjStride[i];
         }
         return value;
 	}
 	
+    // ---------------------------------------------------------
+    /// Private methods
+    // ---------------------------------------------------------
 	private void updateProjection() {
-		int realRank = m_ranges.length;
-		m_projStride = new long[realRank];
-		m_projShape  = new int[realRank];
-        m_projOrigin = new int[realRank];
+		int realRank = mRanges.length;
+		mProjStride = new long[realRank];
+		mProjShape  = new int[realRank];
+        mProjOrigin = new int[realRank];
 		long stride = 1;
 		for( int i = realRank - 1; i >= 0; i-- ) {
-			NexusRange range = m_ranges[i];
-			m_projStride[i] = stride;
-			m_projOrigin[i] = (int) (range.first() / range.stride());
-			m_projShape[i]  = range.length();
+			NexusRange range = mRanges[i];
+			mProjStride[i] = stride;
+			mProjOrigin[i] = (int) (range.first() / range.stride());
+			mProjShape[i]  = range.length();
 			stride *= range.reduced() ? 1 : range.length();
 		}
 	}
+	
+	private static final int DIM0 = 0;
+	private static final int DIM1 = 1;
+	private static final int DIM2 = 2;
+	private static final int DIM3 = 3;
+	private static final int DIM4 = 4;
+	private static final int DIM5 = 5;
+	private static final int DIM6 = 6;
 }

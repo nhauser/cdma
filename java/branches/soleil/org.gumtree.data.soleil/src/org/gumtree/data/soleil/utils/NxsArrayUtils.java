@@ -1,17 +1,24 @@
 package org.gumtree.data.soleil.utils;
 
+import java.util.List;
+
 import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.engine.jnexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
+import org.gumtree.data.interfaces.IArray;
+import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.soleil.array.NxsArray;
 import org.gumtree.data.soleil.array.NxsIndex;
+import org.gumtree.data.utils.IArrayUtils;
 
-public class NxsArrayUtils extends NexusArrayUtils {
+public final class NxsArrayUtils implements IArrayUtils {
+	private IArrayUtils mUtils;
+	
 	
 	public NxsArrayUtils( NxsArray array) {
-		super(array);
+		mUtils = new NexusArrayUtils(array);
 	}
 
 	@Override
@@ -43,10 +50,11 @@ public class NxsArrayUtils extends NexusArrayUtils {
 	// --------------------------------------------------
 	// tools methods
 	// --------------------------------------------------
-	static public Object copyJavaArray(Object array) {
+	public static Object copyJavaArray(Object array) {
 		Object result = array;
-		if( result == null )
+		if( result == null ) {
 			return null;
+		}
 		
 		// Determine rank of array (by parsing data array class name)
 		String sClassName = array.getClass().getName();
@@ -76,7 +84,7 @@ public class NxsArrayUtils extends NexusArrayUtils {
 		return copyJavaArray(array, result);
 	}
 	
-	static public Object copyJavaArray(Object source, Object target) {
+	public static Object copyJavaArray(Object source, Object target) {
 		Object item = java.lang.reflect.Array.get(source, 0);
 		int length = java.lang.reflect.Array.getLength(source);
 
@@ -96,6 +104,118 @@ public class NxsArrayUtils extends NexusArrayUtils {
 		return target;
 	}
 	
+
+	@Override
+	public IArray getArray() {
+		return mUtils.getArray();
+	}
+
+	@Override
+	public void copyTo(IArray newArray) throws ShapeNotMatchException {
+		mUtils.copyTo(newArray);
+	}
+
+	@Override
+	public Object get1DJavaArray(Class<?> wantType) {
+		return mUtils.get1DJavaArray(wantType);
+	}
+
+	@Override
+	public void checkShape(IArray newArray) throws ShapeNotMatchException {
+		mUtils.checkShape(newArray);
+	}
+
+	@Override
+	public IArrayUtils concatenate(IArray array) throws ShapeNotMatchException {
+		return mUtils.concatenate(array);
+	}
+
+	@Override
+	public IArrayUtils reduce() {
+		return mUtils.reduce();
+	}
+
+	@Override
+	public IArrayUtils reduce(int dim) {
+		return mUtils.reduce(dim);
+	}
+
+	@Override
+	public IArrayUtils reduceTo(int rank) {
+		return mUtils.reduceTo(rank);
+	}
+
+	@Override
+	public IArrayUtils reshape(int[] shape) throws ShapeNotMatchException {
+		return mUtils.reshape(shape);
+	}
+
+	@Override
+	public IArrayUtils section(int[] origin, int[] shape)
+			throws InvalidRangeException {
+		return mUtils.section(origin, shape);
+	}
+
+	@Override
+	public IArrayUtils section(int[] origin, int[] shape, long[] stride)
+			throws InvalidRangeException {
+		return mUtils.section(origin, shape, stride);
+	}
+
+	@Override
+	public IArrayUtils sectionNoReduce(int[] origin, int[] shape, long[] stride)
+			throws InvalidRangeException {
+		return mUtils.sectionNoReduce(origin, shape, stride);
+	}
+
+	@Override
+	public IArrayUtils sectionNoReduce(List<IRange> ranges)
+			throws InvalidRangeException {
+		return mUtils.sectionNoReduce(ranges);
+	}
+
+	@Override
+	public IArrayUtils slice(int dim, int value) {
+		return mUtils.slice(dim, value);
+	}
+
+	@Override
+	public IArrayUtils transpose(int dim1, int dim2) {
+		return mUtils.transpose(dim1, dim2);
+	}
+
+	@Override
+	public boolean isConformable(IArray array) {
+		return mUtils.isConformable(array);
+	}
+
+	@Override
+	public IArrayUtils eltAnd(IArray booleanMap) throws ShapeNotMatchException {
+		return mUtils.eltAnd(booleanMap);
+	}
+
+	@Override
+	public IArrayUtils integrateDimension(int dimension, boolean isVariance)
+			throws ShapeNotMatchException {
+		return mUtils.integrateDimension(dimension, isVariance);
+	}
+
+	@Override
+	public IArrayUtils enclosedIntegrateDimension(int dimension,
+			boolean isVariance) throws ShapeNotMatchException {
+		return mUtils.enclosedIntegrateDimension(dimension, isVariance);
+	}
+
+	@Override
+	public IArrayUtils flip(int dim) {
+		return mUtils.flip(dim);
+	}
+
+	@Override
+	public IArrayUtils permute(int[] dims) {
+		return mUtils.permute(dims);
+	}
+
 	
 	// --------------------------------------------------
 	// private methods
@@ -121,7 +241,6 @@ public class NxsArrayUtils extends NexusArrayUtils {
 			NexusIndex storage = startIdx.getIndexStorage();
 			NexusIndex items   = startIdx.getIndexMatrix();
 			startIdx.setOrigin(new int[startIdx.getRank()]);
-			int i = 0;
 			while( iter.hasNext() ) {
 				length = ((Long) iter.getArrayNext().getSize()).intValue();
 				slab = result;
@@ -139,14 +258,8 @@ public class NxsArrayUtils extends NexusArrayUtils {
 				System.arraycopy(dataset, startCell, slab, 0, length);
 			}
 		} catch (ShapeNotMatchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (InvalidRangeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return result;
 	}

@@ -33,12 +33,13 @@ import fr.soleil.nexus4tango.DataItem;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
-public class NexusFactory implements IFactory {
+public final class NexusFactory implements IFactory {
     private static NexusFactory factory;
     private static NexusDatasource detector;
     public static final String NAME = "org.gumtree.data.engine.nexus";
     public static final String LABEL = "NeXus engine plug-in";
     public static final String DEBUG_INF = "CDMA_DEBUG_NXS";
+    public static final String ERR_NOT_SUPPORTED = "Method not supported yet in this plug-in!";
     
     public NexusFactory() {
     }
@@ -93,8 +94,9 @@ public class NexusFactory implements IFactory {
     		DataItem dataset = null;
     		try {
         		dataset = new DataItem(array);
+        		result = new NexusArray(dataset);
         	} catch( Exception e ) {}
-        	result = new NexusArray(dataset);
+        	
     	}
 		return result;
 	}
@@ -107,7 +109,7 @@ public class NexusFactory implements IFactory {
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
 		// TODO Auto-generated method stub
-    	throw new InvalidArrayTypeException("not supported yet in plug-in!");
+    	throw new InvalidArrayTypeException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -117,30 +119,30 @@ public class NexusFactory implements IFactory {
 
     @Override
     public IArray createDoubleArray(double[] javaArray) {
-    	DataItem dataset;
+    	IArray array = null;
     	try {
-    		dataset = new DataItem(javaArray);
+    		DataItem dataset = new DataItem(javaArray);
+    		array = new NexusArray(dataset);
     	} catch( Exception e ) {
-    		dataset = null;
     	}
-		return new NexusArray(dataset);
+		return array;
 	}
 
     @Override
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
-    	DataItem dataset;
+    	IArray array = null;
     	try {
-    		dataset = new DataItem(javaArray);
+    		DataItem dataset = new DataItem(javaArray);
+    		array = new NexusArray(dataset);
     	} catch( Exception e ) {
-    		dataset = null;
     	}
-		return new NexusArray(dataset);
+		return array;
 	}
 
     @Override
 	public IDataset createEmptyDatasetInstance() throws IOException {
 		// TODO Auto-generated method stub
-    	throw new IOException("not supported yet in plug-in!");
+    	throw new IOException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -155,7 +157,7 @@ public class NexusFactory implements IFactory {
     @Override
     public IGroup createGroup(String shortName) throws IOException {
 		// TODO Auto-generated method stub
-    	throw new IOException("not supported yet in plug-in!");
+    	throw new IOException(ERR_NOT_SUPPORTED);
 	}
 
     @Override
@@ -176,8 +178,10 @@ public class NexusFactory implements IFactory {
 
 	@Override
 	public IDatasource getPluginURIDetector() {
-		if( detector == null ) {
-			detector = new NexusDatasource();
+		synchronized (NexusDatasource.class ) {
+			if( detector == null ) {
+				detector = new NexusDatasource();
+			}
 		}
 		return detector;
 	}
@@ -185,7 +189,7 @@ public class NexusFactory implements IFactory {
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
 		// TODO Auto-generated method stub
-    	throw new FileAccessException("not supported yet in plug-in!");
+    	throw new FileAccessException(ERR_NOT_SUPPORTED);
 	}
 
 	@Override
