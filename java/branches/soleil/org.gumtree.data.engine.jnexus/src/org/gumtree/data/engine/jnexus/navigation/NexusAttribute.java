@@ -113,7 +113,8 @@ public final class NexusAttribute implements IAttribute {
 	@Override
 	public boolean isString() {
 		Class<?> tmpClass = "".getClass();
-		return ( mValue.getElementType().equals(tmpClass) );
+		Class<?> container = mValue.getElementType();
+		return ( container.equals(tmpClass) );
 	}
 
 	@Override

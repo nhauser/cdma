@@ -63,8 +63,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 	public NexusDataItem(final NexusDataItem dataItem)
 	{
         mCDMDataset   = dataItem.mCDMDataset;
-		mn4tDataItem = dataItem.getN4TDataItem();
-        mDimensions    = new ArrayList<DimOrder> (dataItem.mDimensions);
+		mn4tDataItem  = dataItem.getN4TDataItem();
+        mDimensions   = new ArrayList<DimOrder> (dataItem.mDimensions);
         mParent       = dataItem.getParentGroup();
         mArray        = null;
         try {
@@ -162,7 +162,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         {
         	sAttr = iter.next();
         	if( sAttr.getKey().equals(name) ) {
-        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue());
+        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue().getValue());
         	}
 		}
 

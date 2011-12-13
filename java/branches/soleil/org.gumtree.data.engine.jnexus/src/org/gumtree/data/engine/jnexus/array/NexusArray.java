@@ -18,10 +18,10 @@ import fr.soleil.nexus4tango.DataItem;
 
 public final class NexusArray implements IArray {
     private IIndex    mIndex;        // IIndex corresponding to this Array (dimension sizes defining the viewable part of the array)
-	private Object	  mData;        // It's an array of values
-	private boolean	  mIsRawArray;    // True if the stored array has a rank of 1 (independently of its shape)
+	private Object	  mData;         // It's an array of values
+	private boolean	  mIsRawArray;   // True if the stored array has a rank of 1 (independently of its shape)
     private boolean   mIsDirty;      // Is the array synchronized with the handled file
-    private DataItem  mN4TDataItem;  // Array of datasets that are used to store the storage backing
+    private DataItem  mN4TDataItem;  // Array of dataitem that are used to store the storage backing
     private int[]     mShape;        // Shape of the array (dimension sizes of the storage backing) 
     private static final int TO_STRING_LENGTH = 1000;
     

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.gumtree.data.Factory;
 import org.gumtree.data.dictionary.IClassLoader;
 import org.gumtree.data.dictionary.IContext;
+import org.gumtree.data.exception.NoResultException;
 
 public final class ExternalClassLoader extends URLClassLoader implements IClassLoader {
 	private String mVersion; // plugin implementation version
@@ -59,8 +60,10 @@ public final class ExternalClassLoader extends URLClassLoader implements IClassL
     	
     	// Load the class
 		Class<?> c = findClass(className);
+		boolean found = false;
 		for( Method meth : c.getMethods() ) {
 			if( meth.getName().equals(methodName) ) {
+				found = true;
 				try {
 					result = meth.invoke( c.newInstance(), context );
 				} catch (InvocationTargetException e) {
@@ -69,6 +72,9 @@ public final class ExternalClassLoader extends URLClassLoader implements IClassL
 				
 				break;
 			}
+		}
+		if( !found ) {
+			throw new NoResultException("Method not found in class path!");
 		}
     	return result;
     }

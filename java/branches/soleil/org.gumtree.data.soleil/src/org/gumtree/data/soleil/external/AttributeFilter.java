@@ -39,7 +39,7 @@ public final class AttributeFilter {
 		String expected = attr[1].replace("*", ".*");
 		for( NxsDataItem item : list ) {
 			String value = item.getAttribute(attr[0]).getStringValue();
-			if( value.matches(expected) ) {
+			if( value != null && value.matches(expected) ) {
 				items.add( item );
 			}
 		}
