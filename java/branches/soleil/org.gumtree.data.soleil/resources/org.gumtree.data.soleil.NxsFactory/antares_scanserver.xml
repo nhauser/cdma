@@ -44,7 +44,7 @@
     </item>
     <item key="spectrums_scienta">
 		<path>/$(scan){NXentry}/{NXdata}/data_*@long_name=*scienta/sumdata</path>
-		<call>org.gumtree.data.soleil.external.AttributeFilter.FilterOnLongName</call>
+		<call>org.gumtree.data.soleil.external.AttributeFilter.filterOnLongName</call>
     </item>
     <item key="spectrums_xia">
         <path>/$(scan){NXentry}/{NXdata}/data_01</path>

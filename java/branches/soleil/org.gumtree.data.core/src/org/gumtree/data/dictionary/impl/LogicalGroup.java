@@ -505,7 +505,11 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
 				}
 				
 				 
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
+			}
+			catch (NoResultException e) {
+				e.printStackTrace();
 			}
 			catch (SecurityException e) {
 			}
