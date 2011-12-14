@@ -18,6 +18,8 @@ import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.engine.jnexus.navigation.NexusAttribute;
 import org.gumtree.data.engine.jnexus.navigation.NexusDataset;
 import org.gumtree.data.engine.jnexus.navigation.NexusGroup;
+import org.gumtree.data.engine.jnexus.utils.NexusArrayMath;
+import org.gumtree.data.engine.jnexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.interfaces.IArray;
@@ -27,6 +29,8 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
+import org.gumtree.data.math.IArrayMath;
+import org.gumtree.data.utils.IArrayUtils;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 import fr.soleil.nexus4tango.DataItem;
@@ -236,5 +240,13 @@ public final class NexusFactory implements IFactory {
 	@Override
 	public IDictionary createDictionary() {
 		throw new UnsupportedOperationException();
+	}
+	
+	public static IArrayUtils createArrayUtils(NexusArray array) {
+		return new NexusArrayUtils(array);
+	}
+	
+	public static IArrayMath createArrayMath(NexusArray array) {
+		return new NexusArrayMath(array);
 	}
 }

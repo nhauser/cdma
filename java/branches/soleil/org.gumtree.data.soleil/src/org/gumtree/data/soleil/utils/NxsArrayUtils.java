@@ -20,7 +20,7 @@ public final class NxsArrayUtils implements IArrayUtils {
 	public NxsArrayUtils( NxsArray array) {
 		mUtils = new NexusArrayUtils(array);
 	}
-
+/*
 	@Override
 	public Object copyTo1DJavaArray() {
 		// Instantiate a new convenient array for storage
@@ -41,6 +41,29 @@ public final class NxsArrayUtils implements IArrayUtils {
 			
 		return array;
 	}
+	*/
+    @Override
+    public Object copyTo1DJavaArray() {
+    	// Instantiate a new convenient array for storage
+    	int length   = ((Long) getArray().getSize()).intValue();
+    	Class<?> type = getArray().getElementType();
+    	Object array = java.lang.reflect.Array.newInstance(type, length);
+
+    	// If the storing array is a stack of DataItem
+    	Long size = ((NxsIndex) getArray().getIndex()).getIndexMatrix().getSize();
+    	Long nbMatrixCells  = size == 0 ? 1 : size;
+    	Long nbStorageCells = ((NxsIndex) getArray().getIndex()).getIndexStorage().getSize();
+
+    	Object fullArray = getArray().getStorage();
+    	Object partArray = null;
+    	for( int i = 0; i < nbMatrixCells; i++ ) {
+    		partArray = java.lang.reflect.Array.get(fullArray, i);
+    		System.arraycopy(partArray, 0, array, i * nbStorageCells.intValue(), nbStorageCells.intValue());
+    	}
+
+    	return array;
+    }
+	
 
 	@Override
 	public Object copyToNDJavaArray() {
@@ -251,8 +274,7 @@ public final class NxsArrayUtils implements IArrayUtils {
 				for( int pos = 0;  pos < current.length - 1; pos++ ) {
 					slab = java.lang.reflect.Array.get(slab, current[pos]);
 				}
-				int tamere = items.currentProjectionElement();
-				dataset = java.lang.reflect.Array.get(array.getStorage(), tamere);
+				dataset = java.lang.reflect.Array.get(array.getStorage(), items.currentProjectionElement());
 				
 				startCell = storage.currentProjectionElement();
 				System.arraycopy(dataset, startCell, slab, 0, length);

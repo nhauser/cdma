@@ -76,7 +76,7 @@ public final class NxsArray implements IArray {
 		NxsArray result = new NxsArray(this);
 		
 		if( data ) {
-			result.mData = NexusArrayUtils.copyJavaArray(mData);
+			result.mData = NexusArray.copyJavaArray(mData);
 		}
 		
 		return result;
@@ -173,7 +173,7 @@ public final class NxsArray implements IArray {
 	public long getSize() {
 		return mIndex.getSize();
 	}
-
+/*
 	@Override
 	public Object getStorage() {
 		Object result = mData;
@@ -195,7 +195,31 @@ public final class NxsArray implements IArray {
     	
 		return result;
 	}
+*/
 
+    @Override
+    public Object getStorage() {
+    	Object result = mData;
+		if( mData == null && mArrays != null ) {
+			NexusIndex matrixIndex = (NexusIndex) mIndex.getIndexMatrix().clone();
+			matrixIndex.set(new int[matrixIndex.getRank()]);
+			
+			Long nbMatrixCells  = matrixIndex.getSize() == 0 ? 1 : matrixIndex.getSize();
+			Long nbStorageCells = mIndex.getIndexStorage().getSize();
+                  
+			int[] shape = { nbMatrixCells.intValue(), nbStorageCells.intValue() };
+			result = java.lang.reflect.Array.newInstance(getElementType(), shape);
+
+			for( int i = 0; i < nbMatrixCells; i++ ) {
+				java.lang.reflect.Array.set(result, i, mArrays[(int) matrixIndex.currentElement()].getStorage());
+				NexusArrayIterator.incrementIndex(matrixIndex);
+			}
+		}
+		return result;
+    }
+	
+	
+	
 	@Override
 	public void setBoolean(IIndex ima, boolean value) {
 		set(ima, value);
@@ -322,6 +346,12 @@ public final class NxsArray implements IArray {
 	public String toString() {
 		return mIndex.toString();
 	}
+
+	@Override
+	public void setDirty(boolean dirty) {
+		// TODO Auto-generated method stub
+		
+	}
 	
     // ---------------------------------------------------------
     /// Private methods
@@ -402,10 +432,4 @@ public final class NxsArray implements IArray {
 			slab.setObject(itemIdx, value);
 		}
     }
-
-	@Override
-	public void setDirty(boolean dirty) {
-		// TODO Auto-generated method stub
-		
-	}
 }
