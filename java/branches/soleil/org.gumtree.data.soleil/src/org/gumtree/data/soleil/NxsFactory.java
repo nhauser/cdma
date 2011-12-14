@@ -24,11 +24,15 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
+import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.array.NxsArray;
 import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
 import org.gumtree.data.soleil.dictionary.NxsPathParamResolver;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.gumtree.data.soleil.navigation.NxsGroup;
+import org.gumtree.data.soleil.utils.NxsArrayMath;
+import org.gumtree.data.soleil.utils.NxsArrayUtils;
+import org.gumtree.data.utils.IArrayUtils;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 import fr.soleil.nexus4tango.DataItem;
@@ -254,5 +258,13 @@ public final class NxsFactory implements IFactory {
 	@Override
 	public IDictionary createDictionary() {
 		throw new UnsupportedOperationException();
+	}
+	
+	public static IArrayUtils createArrayUtils(NxsArray array) {
+		return new NxsArrayUtils(array);
+	}
+	
+	public static IArrayMath createArrayMath(NxsArray array) {
+		return new NxsArrayMath(array);
 	}
 }
