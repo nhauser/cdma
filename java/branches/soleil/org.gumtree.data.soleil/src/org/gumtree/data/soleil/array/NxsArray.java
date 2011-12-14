@@ -4,7 +4,6 @@ import org.gumtree.data.engine.jnexus.array.NexusArray;
 import org.gumtree.data.engine.jnexus.array.NexusArrayIterator;
 import org.gumtree.data.engine.jnexus.array.NexusIndex;
 import org.gumtree.data.engine.jnexus.array.NexusSliceIterator;
-import org.gumtree.data.engine.jnexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
@@ -14,8 +13,6 @@ import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.NxsFactory;
-import org.gumtree.data.soleil.utils.NxsArrayMath;
-import org.gumtree.data.soleil.utils.NxsArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 
 import fr.soleil.nexus4tango.DataItem;
@@ -84,12 +81,12 @@ public final class NxsArray implements IArray {
 
     @Override
     public IArrayMath getArrayMath() {
-        return new NxsArrayMath(this);
+        return NxsFactory.createArrayMath(this);
     }
 
     @Override
     public IArrayUtils getArrayUtils() {
-        return new NxsArrayUtils(this);
+        return NxsFactory.createArrayUtils(this);
     }
     
     @Override
