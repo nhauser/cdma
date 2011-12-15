@@ -16,6 +16,7 @@
 #ifndef __CDMA_NXSDATASET_H__
 #define __CDMA_NXSDATASET_H__
 
+// #include <yat/utils/URI.h>
 #include <internal/common.h>
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
@@ -48,11 +49,18 @@ private:
   DictionaryDetector                    m_detector;     ///< Mapping file name for that is used for the dictionary
 
 public:
-  /// Constructors
+  /// Constructor
   ///  param :
   /// @param : filepath string representing the fie path
   ///
   NxsDataset(const std::string& filepath);
+  
+  /// Constructor
+  ///  param :
+  /// @param : uri identifier to dataset location
+  ///
+  // NxsDataset(const yat::URI& uri);
+  
   virtual ~NxsDataset() { }
 
   //@{ Plug-in methods
@@ -64,11 +72,11 @@ public:
   //@{ IDataset interface
   /// Close the dataset.
   ///
-  void close() throw ( cdma::Exception ) { m_ptrNxFile->Close(); m_open = false; };
+  void close() throw ( cdma::Exception );
 
   /// Open the dataset from a file reference.
   ///
-  void open() throw ( cdma::Exception ) { m_ptrNxFile->OpenRead(PSZ(m_uri)); m_open = true; };
+  void open() throw ( cdma::Exception );
 
   /// Check if the data set is open.
   /// @return true or false

@@ -21,7 +21,7 @@
 namespace cdma
 {
 
-class IArrayUtils 
+class CDMA_DECL IArrayUtils 
 {
 public:
 

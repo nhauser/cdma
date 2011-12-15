@@ -8,6 +8,7 @@
 // See AUTHORS file
 // ******************************************************************************
 
+#include <cdma/Common.h>
 #include <cdma/array/impl/Array.h>
 #include <NxsAttribute.h>
 #include <TypeDetector.h>
@@ -17,11 +18,12 @@
 namespace cdma
 {
 //---------------------------------------------------------------------------
-// NxsAttribute
+// NxsAttribute::NxsAttribute
 //---------------------------------------------------------------------------
 NxsAttribute::NxsAttribute( NexusFilePtr file, NexusAttrInfo* info )
 {
-  CDMA_DBG("[BEGIN] NxsAttribute::NxsAttribute")
+  CDMA_FUNCTION_TRACE("NxsAttribute::NxsAttribute");
+  
   m_info_ptr = info;
 
   // Allocate requested memory
@@ -30,7 +32,6 @@ NxsAttribute::NxsAttribute( NexusFilePtr file, NexusAttrInfo* info )
   // Load corresponding data
   int length = info->Len();
   file->GetAttribute( info->AttrName(), &length, m_value, info->DataType() );
-  CDMA_DBG("[END] NxsAttribute::NxsAttribute")
 }
 
 //---------------------------------------------------------------------------
@@ -81,6 +82,7 @@ cdma::IArrayPtr NxsAttribute::getValue()
 {
 }
 */
+
 //---------------------------------------------------------------------------
 // NxsAttribute::getStringValue
 //---------------------------------------------------------------------------
@@ -100,6 +102,7 @@ std::string NxsAttribute::getStringValue()
 {
 }
 */
+
 //---------------------------------------------------------------------------
 // NxsAttribute::getIntValue
 //---------------------------------------------------------------------------

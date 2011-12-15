@@ -4,13 +4,22 @@
 #include <vector>
 #include <string>
 
+// YAT library
+#include <yat/plugin/PlugInSymbols.h>
+// #include <yat/utils/URI.h>
 #include <yat/plugin/IPlugInInfo.h>
 
+// CDMA core
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/IFactory.h>
+#include <cdma/dictionary/Key.h>
 
-#include <internal/common.h>
+// NeXus engine
+#include <NxsDataset.h>
+
+// Soleil NeXus plug-in
+#include <SoleilNxsFactory.h>
 
 namespace cdma
 {
@@ -18,7 +27,7 @@ namespace cdma
 //==============================================================================
 /// Plugin info class
 //==============================================================================
-class NxsFactoryInfo : public yat::IPlugInInfo
+class SoleilNxsFactoryInfo : public yat::IPlugInInfo
 {
 public:
   virtual std::string get_plugin_id(void) const;
@@ -29,18 +38,19 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class NxsFactory : public IFactory 
+class SoleilNxsFactory : public IFactory 
 {
 public:
-  NxsFactory() {};
-  ~NxsFactory() {};
+  SoleilNxsFactory() {};
+  ~SoleilNxsFactory() {};
 
   /// Retrieve the dataset referenced by the string.
   ///
   /// @param uri string object
   /// @return IDataset
   ///
-  IDatasetPtr openDataset(const std::string& uri) throw ( cdma::Exception );
+  IDatasetPtr openDataset(const std::string& path) throw ( cdma::Exception );
+  // IDatasetPtr openDataset(const yat::URI& uri) throw ( cdma::Exception );
 
   DictionaryPtr openDictionary(const std::string& filepath) throw ( cdma::Exception );
 
@@ -133,14 +143,6 @@ public:
   /// @return IGroup
   ///
   IGroupPtr createGroup(const std::string& shortName) throw ( cdma::Exception );
-
-  /// Create an empty Logical Group with a given key.
-  ///
-  /// @param dataset an IDataset that this group will belong to
-  /// @param key an Key that this group will correspond to
-  /// @return Logical Group
-  ///
-  LogicalGroupPtr createLogicalGroup(cdma::IDataset* dataset, const cdma::KeyPtr& key);
 
   /// Create a IAttribute with given name and value.
   ///

@@ -27,6 +27,7 @@
 #include <yat/utils/String.h>
 
 // CDMA Core
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/array/impl/Array.h>
@@ -39,7 +40,7 @@
 namespace cdma
 {
 
-class NxsDataItem : public IDataItem
+class CDMA_DECL NxsDataItem : public IDataItem
 {
 private:
   std::list<IAttributePtr> m_attr_list;
@@ -56,7 +57,7 @@ public:
   NxsDataItem(NxsDataset* dataset, const char* path, bool init_from_file = true );
   NxsDataItem(NxsDataset* dataset, const IGroupPtr& parent, const char* name );
   NxsDataItem(NxsDataset* dataset, const NexusDataSetInfo& item, const std::string& path);
-  ~NxsDataItem() { CDMA_DBG("[BEGIN] NxsDataItem::~NxsDataItem") CDMA_DBG("[END] NxsDataItem::~NxsDataItem") };
+  ~NxsDataItem() { CDMA_FUNCTION_TRACE("NxsDataItem::~NxsDataItem"); };
 
   //@{ IDataItem interface
   IAttributePtr findAttributeIgnoreCase(const std::string& name);

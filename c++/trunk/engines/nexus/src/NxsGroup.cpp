@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
-#include <exception/Exception.h>
+#include <cdma/exception/Exception.h>
 #include <NxsGroup.h>
 
 namespace cdma

@@ -8,8 +8,10 @@
 ///
 //*****************************************************************************
 
-#ifndef __SAX_PARSOR_H__
-#define __SAX_PARSOR_H__
+#ifndef __CDMA_SAX_PARSOR_H__
+#define __CDMA_SAX_PARSOR_H__
+
+#include <cdma/Common.h>
 
 #include <map>
 #include <stack>
@@ -26,7 +28,7 @@ namespace cdma
 /// Purpose : Reading a XML file using libxml2 library then parsing the document
 /// to construct a configuration
 //=============================================================================
-class SAXParsor
+class CDMA_DECL SAXParsor
 {
 public:
 

@@ -33,7 +33,6 @@ std::string Factory::s_cdma_view = "";
 //----------------------------------------------------------------------------
 Factory& Factory::instance()
 {
-  CDMA_SCOPE_DBG("Factory::instance");
   static Factory the_instance;
   return the_instance;
 }
@@ -57,7 +56,7 @@ void Factory::init(const std::string &plugin_path)
       //- we found a shared lib
       Plugin plugin_objects;
 
-      std::cout << "Factory::init found lib " << fe.name_ext() << std::endl;
+      std::cout << "Factory::init found lib " << fe.full_name() << std::endl;
       try
       {
         PluginInfoPair plugin_pair = instance().m_plugin_manager.load( fe.full_name() );
@@ -65,8 +64,9 @@ void Factory::init(const std::string &plugin_path)
         plugin_objects.factory = plugin_pair.second;
       std::cout << "Factory::init lib loaded" << std::endl;
       }
-      catch( yat::Exception& )
+      catch( yat::Exception& e)
       {
+        e.dump();
         continue;
       }
       std::cout << "Factory::init plugin_objects.info->get_interface_name: " << plugin_objects.info->get_interface_name() << std::endl;
@@ -152,7 +152,6 @@ const std::string& Factory::getActiveView()
 //----------------------------------------------------------------------------
 std::string Factory::getKeyDictionaryPath()
 {
-  CDMA_SCOPE_DBG( "Factory::getKeyDictionaryPath" );
   yat::FileName file( getDictionariesFolder(), ( getActiveView() + "_view.xml" ) );
   return file.full_name();
 }
@@ -258,14 +257,6 @@ IGroupPtr Factory::createGroup(const IGroupPtr& parent, const std::string& short
 IGroupPtr Factory::createGroup(const std::string& shortName) throw ( Exception )
 {
   THROW_NOT_IMPLEMENTED("Factory::createGroup");
-}
-
-//----------------------------------------------------------------------------
-// Factory::createLogicalGroup
-//----------------------------------------------------------------------------
-LogicalGroupPtr Factory::createLogicalGroup(IDataset* dataset, const KeyPtr& key)
-{
-  THROW_NOT_IMPLEMENTED("Factory::createLogicalGroup");
 }
 
 //----------------------------------------------------------------------------

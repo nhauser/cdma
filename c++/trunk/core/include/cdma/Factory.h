@@ -32,7 +32,7 @@ typedef IDataItemPtr (*ExternalFunction_t) ( void );
 /// class IFactory
 /// Entry point for cdma client
 //==============================================================================
-class Factory 
+class CDMA_DECL Factory 
 {
 private:
   struct Plugin
@@ -102,6 +102,11 @@ public:
   ///
   static std::string getDictionariesFolder();
 
+  /// Return the logical root group for dictionary mechanism
+  /// @return the logical root group
+  ///
+//  static LogicalGroupPtr getLogicalRootGroup(IDatasetPtr &dataset);
+  
   /// Retrieve the dataset referenced by the string.
   ///
   /// @param uri  string object
@@ -205,15 +210,6 @@ public:
   /// @throw               Exception
   ///
   static IGroupPtr createGroup(const std::string& shortName) throw ( Exception );
-
-  /// Create an empty cdma Logical Group with a given key.
-  ///
-  /// @param dataset       an IDataset that this group will belong to
-  /// @param key           an IKey that this group will correspond to
-  /// @return              cdma Logical Group
-  /// @throw               Exception
-  ///
-  static LogicalGroupPtr createLogicalGroup(IDataset* dataset, const KeyPtr& key);
 
   /// Create a cdma Attribute with given name and value.
   ///

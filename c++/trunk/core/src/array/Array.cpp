@@ -16,6 +16,7 @@
 
 #include <typeinfo>
 
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/array/impl/Array.h>
 
@@ -27,7 +28,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 Array::~Array()
 {
-  CDMA_DBG("[INLINE] Array::~Array")
+  CDMA_FUNCTION_TRACE("[Array::~Array");
 }
 
 //---------------------------------------------------------------------------
@@ -35,7 +36,7 @@ Array::~Array()
 //---------------------------------------------------------------------------
 Array::Array( const yat::String& factory, const std::type_info& type, std::vector<int> shape, void* pData )
 {
-  CDMA_DBG("[BEGIN] Array::Array")
+  CDMA_FUNCTION_TRACE("Array::Array");
   int rank = shape.size();
   m_factory = factory;
   unsigned int size = 1;
@@ -129,7 +130,6 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     start_ptr[i] = 0;
   }
   m_index = new Index( factory, rank, shape_ptr, start_ptr);
-  CDMA_DBG("[END] Array::Array")
 }
 
 //---------------------------------------------------------------------------
@@ -137,11 +137,10 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
 //---------------------------------------------------------------------------
 Array::Array( const Array& array, IIndexPtr index) : m_index (index)
 {
-  CDMA_DBG("[BEGIN] Array::Array")
+  CDMA_FUNCTION_TRACE("Array::Array");
   m_data = array.m_data;
   m_shape = index->getShape();
   m_factory = array.m_factory;
-  CDMA_DBG("[END] Array::Array")
 }
 
 //---------------------------------------------------------------------------

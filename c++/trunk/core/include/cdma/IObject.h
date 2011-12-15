@@ -7,51 +7,18 @@
 // Contributors :
 // See AUTHORS file 
 //******************************************************************************
-#ifndef __IMODEL_OBJECT_H__
-#define __IMODEL_OBJECT_H__
+#ifndef __IOBJECT_H__
+#define __IOBJECT_H__
 
-#include <yat/threading/Utilities.h>
+#include <cdma/Common.h>
 #include <yat/memory/SharedPtr.h>
 #include <yat/threading/Mutex.h>
-
-#include <string>
 #include <list>
-#include <stdio.h>
-#include <iostream>
-
-#define CDMA_DBG(s) \
-    std::cout << std::hex << "[" << yat::ThreadingUtilities::self() << "][" << (void*)(this) << "] - " << s << std::endl;
 
 namespace cdma
 {
 
-#ifdef CDMA_DEBUG
-  class ScopeDebug
-  {
-  private:
-    std::string m_scope_name;
-  public:
-    ScopeDebug(const std::string &scope_name) : m_scope_name(scope_name)
-    {
-      std::cout << std::hex << "[" << yat::ThreadingUtilities::self() << "][" << (void*)(this) << "] - Entering " << scope_name << std::endl;
-    }
-    ~ScopeDebug()
-    {
-      std::cout << std::hex << "[" << yat::ThreadingUtilities::self() << "][" << (void*)(this) << "] - Leaving " << m_scope_name << std::endl;
-    }
-  };
-  #define CDMA_SCOPE_DBG(s) cdma::ScopeDebug __scope_dbg(s)
-#else
-  class ScopeDebug
-  {
-  public:
-    ScopeDebug(const std::string &) {}
-  };
-  #define CDMA_SCOPE_DBG(s)
-#endif
-
-
-class CDMAType
+class CDMA_DECL CDMAType
 {
   public:
   //==============================================================================
@@ -79,23 +46,6 @@ class CDMAType
   {
     Substitution = 1
   };
-};
-
-
-//==============================================================================
-/// IObject
-/// Base interface of all CDMA classes
-//==============================================================================
-class IObject
-{
- public:
-   virtual ~IObject() {}
-  
-  /// Get the name of the factory that can create this item
-  virtual std::string getFactoryName() const = 0;
-
-  /// Get the ModelType implemented by this object.
-  virtual CDMAType::ModelType getModelType() const = 0; 
 };
 
 // Forward declaration
@@ -155,6 +105,23 @@ typedef yat::SharedPtr<Dictionary, yat::Mutex> DictionaryPtr;
 typedef std::list<std::string> StringList;
 typedef yat::SharedPtr<StringList, yat::Mutex> StringListPtr;
 
+//==============================================================================
+/// IObject
+/// Base interface of all CDMA classes
+//==============================================================================
+class CDMA_DECL IObject
+{
+ public:
+   virtual ~IObject() {}
+  
+  /// Get the name of the factory that can create this item
+  virtual std::string getFactoryName() const = 0;
+//  virtual IFactoryPtr getFactory() const = 0;
+
+  /// Get the ModelType implemented by this object.
+  virtual CDMAType::ModelType getModelType() const = 0; 
+};
+
 } // namespace
 
-#endif // __IMODELOBJECT_H__
+#endif // __IOBJECT_H__
