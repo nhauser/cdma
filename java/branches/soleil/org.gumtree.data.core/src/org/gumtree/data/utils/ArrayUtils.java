@@ -260,9 +260,10 @@ public abstract class ArrayUtils implements IArrayUtils {
 	
 	@Override
 	public IArrayUtils slice(int dim, int value) {
-		int[] shape = getArray().getIndex().getShape().clone();
-		int[] origin = getArray().getIndex().getOrigin().clone();
-		long[] stride = getArray().getIndex().getStride().clone();
+		IIndex index  = getArray().getIndex();
+		int[] shape   = index.getShape();
+		int[] origin  = index.getOrigin();
+		long[] stride = index.getStride();
 
 		if (dim >= getArray().getRank()) {
 			throw new IllegalArgumentException(
@@ -310,11 +311,8 @@ public abstract class ArrayUtils implements IArrayUtils {
 					shape[dim]);
 		}
 		if (shape.length == 1) {
-			// [SOLEIL][clement] here is a copy of the backing storage so it doesn't respect API specification
-			//return getArray().copy().getArrayUtils();
 			return getArray().copy(false).getArrayUtils();
 		}
-		//[SOLEIL][clement] TODO temporary bug fix
 		IArray array = getArray().copy(false);
 		IIndex index = array.getIndex().reduce(dim);
 		array.setIndex(index);
@@ -466,7 +464,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 		}
 		try {
 			IArray newArray = getArray().copy(false);
-			IIndex newIndex = newArray.getIndex().clone();
+			IIndex newIndex = newArray.getIndex();
 			newIndex.setShape(shape);
 
 			if (stride != null) {

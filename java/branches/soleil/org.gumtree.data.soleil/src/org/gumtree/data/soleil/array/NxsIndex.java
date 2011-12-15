@@ -56,18 +56,7 @@ public final class NxsIndex implements IIndex, Cloneable {
 	
 	public NxsIndex(int matrixRank, IIndex index) {
 		this(matrixRank, index.getShape(), index.getOrigin(), index.getShape());
-
-		mIndexArrayData = new NexusIndex(
-				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank),
-				java.util.Arrays.copyOfRange(index.getOrigin(), 0, matrixRank),
-				java.util.Arrays.copyOfRange(index.getShape(), 0, matrixRank)
-		   );
-		
-		mIndexStorage = new NexusIndex(
-				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length),
-				java.util.Arrays.copyOfRange(index.getOrigin(), matrixRank, index.getOrigin().length),
-				java.util.Arrays.copyOfRange(index.getShape(), matrixRank, index.getShape().length)
-		   );
+		this.setStride(index.getStride());
 		this.set(index.getCurrentCounter());
 	}
 	

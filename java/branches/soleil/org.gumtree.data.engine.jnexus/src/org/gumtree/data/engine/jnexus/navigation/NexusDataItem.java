@@ -17,6 +17,7 @@ import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.engine.jnexus.array.NexusArray;
@@ -109,7 +110,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         while( iter.hasNext() )
         {
         	sAttr = iter.next();
-			tmpAttr   = new NexusAttribute(sAttr.getKey(), sAttr.getValue());
+			tmpAttr   = new NexusAttribute(sAttr.getKey(), sAttr.getValue().getValue());
 			outList.add(tmpAttr);
 		}
 
@@ -129,8 +130,10 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException
 	{
         IArray array = getData().copy(false);
-        array.getIndex().setShape(shape);
-        array.getIndex().setOrigin(origin);
+        IIndex index = array.getIndex(); 
+        index.setShape(shape);
+        index.setOrigin(origin);
+        array.setIndex(index);
 		return array;
 	}
 
@@ -179,7 +182,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         {
         	sAttr = iter.next();
         	if( sAttr.getKey().equalsIgnoreCase(name) ) {
-        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue());
+        		return new NexusAttribute(sAttr.getKey(), sAttr.getValue().getValue());
         	}
 		}
 

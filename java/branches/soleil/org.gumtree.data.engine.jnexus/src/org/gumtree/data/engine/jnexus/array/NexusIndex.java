@@ -12,7 +12,7 @@ public final class NexusIndex implements IIndex, Cloneable {
 	private int          mRank;
     private int[]        mICurPos;            // Current position pointed by this index
     private NexusRange[] mRanges;             // Ranges that constitute the index global view in each dimension
-    private boolean      mIsUpToDate = false; // Does the overall shape has changed
+    private boolean      mIsUpToDate;         // Does the overall shape has changed
     private int          mLastIndex;
     private int[]        mProjShape;          // shape without considering reduced range
     private int[]        mProjOrigin;         // origin without considering reduced range
@@ -38,6 +38,7 @@ public final class NexusIndex implements IIndex, Cloneable {
             mRanges[i] = (NexusRange) index.mRanges[i].clone();
         }
         mLastIndex = index.mLastIndex;
+        mIsUpToDate = index.mIsUpToDate;
     }
 
     public NexusIndex(int[] shape, int[] start, int[] length) {
@@ -53,6 +54,7 @@ public final class NexusIndex implements IIndex, Cloneable {
                 mRanges[i] = NexusRange.EMPTY;
             }
         }
+        mIsUpToDate = false;
         updateProjection();
     }
     

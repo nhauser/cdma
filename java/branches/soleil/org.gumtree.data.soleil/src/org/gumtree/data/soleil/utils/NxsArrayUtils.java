@@ -20,28 +20,7 @@ public final class NxsArrayUtils implements IArrayUtils {
 	public NxsArrayUtils( NxsArray array) {
 		mUtils = new NexusArrayUtils(array);
 	}
-/*
-	@Override
-	public Object copyTo1DJavaArray() {
-		// Instantiate a new convenient array for storage
-		int length   = ((Long) getArray().getSize()).intValue();
-		Class<?> type = getArray().getElementType();
-		Object array = java.lang.reflect.Array.newInstance(type, length);
-		
-		// If the storing array is a stack of DataItem
-		Long nbMatrixCells  = ((NxsIndex) getArray().getIndex()).getIndexMatrix().getSize();
-		Long nbStorageCells = ((NxsIndex) getArray().getIndex()).getIndexStorage().getSize();
 
-		Object fullArray = getArray().getStorage();
-		Object partArray = null;
-		for( int i = 0; i < nbMatrixCells; i++ ) {
-			partArray = java.lang.reflect.Array.get(fullArray, i);
-			System.arraycopy(partArray, 0, array, i * nbStorageCells.intValue(), nbStorageCells.intValue());
-		}
-			
-		return array;
-	}
-	*/
     @Override
     public Object copyTo1DJavaArray() {
     	// Instantiate a new convenient array for storage
@@ -260,7 +239,7 @@ public final class NxsArrayUtils implements IArrayUtils {
 		ISliceIterator iter;
 		try {
 			iter = array.getSliceIterator(1);
-			NxsIndex startIdx = (NxsIndex) array.getIndex().clone();
+			NxsIndex startIdx = (NxsIndex) array.getIndex();
 			NexusIndex storage = startIdx.getIndexStorage();
 			NexusIndex items   = startIdx.getIndexMatrix();
 			startIdx.setOrigin(new int[startIdx.getRank()]);
@@ -281,7 +260,6 @@ public final class NxsArrayUtils implements IArrayUtils {
 			}
 		} catch (ShapeNotMatchException e) {
 		} catch (InvalidRangeException e) {
-		} catch (CloneNotSupportedException e) {
 		}
 		return result;
 	}

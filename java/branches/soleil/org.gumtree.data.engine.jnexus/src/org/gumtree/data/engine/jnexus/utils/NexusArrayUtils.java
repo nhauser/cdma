@@ -99,14 +99,15 @@ public final class NexusArrayUtils extends ArrayUtils {
 		index = new NexusIndex( newShape, newOrigin, newShape );
 		index.setStride(newStride);
 		index.set(newPosition);
+		array.setIndex(index);
 		return array.getArrayUtils();
 	}
 
 	@Override
 	public IArrayUtils permute(int[] dims) {
-		IArrayUtils array = getArray().copy(false).getArrayUtils();
-		IIndex index      = array.getArray().getIndex();
-		int   rank        = array.getArray().getRank();       
+		IArray array      = getArray().copy(false);
+		IIndex index      = array.getIndex();
+		int   rank        = array.getRank();       
 		int[] shape       = index.getShape();
 		int[] origin      = index.getOrigin();
 		int[] position    = index.getCurrentCounter();
@@ -125,7 +126,8 @@ public final class NexusArrayUtils extends ArrayUtils {
 		index = new NexusIndex( newShape, newOrigin, newShape );
 		index.setStride(newStride);
 		index.set(newPosition);
-		return array;
+		array.setIndex(index);
+		return array.getArrayUtils();
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public final class NexusArrayUtils extends ArrayUtils {
 		index = new NexusIndex( shape, origin, shape );
 		index.setStride(stride);
 		index.set(position);
-		
+		array.setIndex(index);
 		return array.getArrayUtils();
 	}
 
