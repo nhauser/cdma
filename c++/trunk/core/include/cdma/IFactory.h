@@ -15,6 +15,7 @@
 #include <typeinfo>
 
 #include <yat/memory/SharedPtr.h>
+// #include <yat/utils/URI.h>
 #include <yat/plugin/IPlugInObject.h>
 
 #include <cdma/IObject.h>
@@ -26,7 +27,7 @@ namespace cdma
 //==============================================================================
 /// Interface IFactory
 //==============================================================================
-class IFactory : public yat::IPlugInObject
+class CDMA_DECL IFactory : public yat::IPlugInObject
 {
 public:
 /*
@@ -35,16 +36,38 @@ public:
   {
   }
 */
-  /// Retrieve the dataset referenced by the string.
+  /// Retrieve the dataset referenced by the path.
+  /// 
+  /// @param path can be either the string representation of an uri (see RFC 3986) or a file path
+  /// @return CDMA Dataset
+  /// @throw  Exception
+  ///
+  virtual IDatasetPtr openDataset(const std::string& path) throw ( Exception ) = 0;
+
+  /// Retrieve the dataset referenced by an uri object.
   /// 
   /// @param uri string object
   /// @return CDMA Dataset
   /// @throw  Exception
   ///
-  virtual IDatasetPtr openDataset(const std::string& uri) throw ( Exception ) = 0;
-
+  //virtual IDatasetPtr openDataset(const yat::URI& uri) throw ( Exception ) = 0;
+  
+  /// Open a dictionary
+  /// 
+  /// @param uri string object
+  /// @return CDMA Dataset
+  /// @throw  Exception
+  ///
   virtual DictionaryPtr openDictionary(const std::string& filepath) throw ( Exception ) = 0;
-
+  
+  /// Returns the path of the mapping document for dictionary mechanism
+  /// 
+  /// @param dataset object
+  /// @return path
+  /// @throw  Exception
+  ///
+// virtual const std::string& getMappingFilePath(IDatasetPtr &dataset) throw ( Exception ) = 0;
+  
   /// Create an empty Array with a certain data type and certain shape.
   ///
   /// @param clazz Class type
@@ -138,18 +161,6 @@ public:
   /// @throw  Exception
   ///
   virtual IGroupPtr createGroup(const std::string& shortName) throw ( Exception ) = 0;
-
-  /// Create an empty CDMA Logical Group with a given key.
-  ///
-  /// @param dataset
-  ///            an IDataset that this group will belong to
-  /// @param key
-  ///            an IKey that this group will correspond to
-  /// @return CDMA Logical Group
-  /// @throw  Exception)
-  ///             Created on 18/06/2008
-  ///
-  virtual LogicalGroupPtr createLogicalGroup(IDataset* ptrDataset, const KeyPtr& ptrKey) = 0;
 
   /// Create a CDMA Attribute with given name and value.
   ///

@@ -39,7 +39,7 @@ namespace cdma
 /// images value but not stack of hundred or thousands images. For the laters cases
 /// consider developping a specific implementation.
 //==============================================================================
-class SimpleDataItem : public IDataItem
+class CDMA_DECL SimpleDataItem : public IDataItem
 {
 private:
   std::list<IAttributePtr> m_attr_list;
@@ -52,7 +52,7 @@ public:
   SimpleDataItem(IDataset* dataset, IArrayPtr ptrArray, const std::string &name);
   
   /// d-tor
-  ~SimpleDataItem() { CDMA_DBG("[BEGIN] SimpleDataItem::~SimpleDataItem"); };
+  ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
 
   //@{ IDataItem interface
   IAttributePtr findAttributeIgnoreCase(const std::string& name);

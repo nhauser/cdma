@@ -17,6 +17,7 @@
 #ifndef __CDMA_NXSDIMENSION_H__
 #define __CDMA_NXSDIMENSION_H__
 
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDimension.h>
 

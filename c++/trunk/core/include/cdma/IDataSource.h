@@ -32,7 +32,7 @@ namespace cdma
 /// A DataItem is a logical container for data. It has a DataType, a set of
 /// Dimensions that define its array shape, and optionally a set of Attributes.
 //==============================================================================
-class IDataSource : public IObject
+class CDMA_DECL IDataSource : public IObject
 {
 public:
 
@@ -44,7 +44,7 @@ public:
   ///
   /// @return true of false
   ///
-  bool isReadable(/*URI*/)=0;
+  bool isReadable(/*yat::URI*/)=0;
   
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -54,7 +54,7 @@ public:
   ///
   /// @return true of false
   ///
-  bool isBrowsable(/*URI*/)=0;
+  bool isBrowsable(/*yat::URI*/)=0;
 
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -64,7 +64,7 @@ public:
   ///
   /// @return true of false
   ///
-  bool isProducer(/*URI*/)=0;
+  bool isProducer(/*yat::URI*/)=0;
   
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -74,7 +74,7 @@ public:
   ///
   /// @return true of false
   ///
-  bool isExperiment(/*URI*/)=0;
+  bool isExperiment(/*yat::URI*/)=0;
 
  };
  

@@ -17,11 +17,12 @@
 #ifndef __CDMA_DICTIONARYDETECTOR_H__
 #define __CDMA_DICTIONARYDETECTOR_H__
 
-#include <exception/Exception.h>
 #include <yat/utils/String.h>
-#include <internal/common.h>
 #include "nxfile.h"
-#include <IObject.h>
+#include <cdma/Common.h>
+#include <cdma/IObject.h>
+#include <cdma/exception/Exception.h>
+#include <internal/common.h>
 
 /**
 * DictionaryDetector aims to detect the correct dictionary mapping file name

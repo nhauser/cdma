@@ -13,6 +13,7 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 // ****************************************************************************
+#include <cdma/Common.h>
 #include <NxsDataItem.h>
 #include <TypeDetector.h>
 #define TEMP_EXCEPTION(a,b) throw cdma::Exception("TARTAMPION", a, b)
@@ -21,36 +22,31 @@
 /// Dimensions that define its array shape, and optionally a set of Attributes.
 namespace cdma
 {
+
 //=============================================================================
 //
 // NxsDataItem
 //
 //=============================================================================
 //---------------------------------------------------------------------------
-// C-structor
+// NxsDataItem::NxsDataItem
 //---------------------------------------------------------------------------
 NxsDataItem::NxsDataItem(NxsDataset* dataset, const char* path, bool init_from_file )
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::NxsDataItem")
+  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
   init(dataset, path);
-  CDMA_DBG("[END] NxsDataItem::NxsDataItem")
 }
-
 NxsDataItem::NxsDataItem(NxsDataset* dataset, const IGroupPtr& parent, const char* name )
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::NxsDataItem")
+  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
   init( dataset, parent->getLocation() + "/" + yat::String(name) );
-  CDMA_DBG("[END] NxsDataItem::NxsDataItem")
 }
-
 NxsDataItem::NxsDataItem(NxsDataset* dataset, const NexusDataSetInfo& item, const std::string& path)
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::NxsDataItem")
+  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
   init( dataset, yat::String(path), false );
   m_item = item;
-  CDMA_DBG("[END] NxsDataItem::NxsDataItem")
 }
-
 
 //---------------------------------------------------------------------------
 // NxsDataItem::init
@@ -140,7 +136,7 @@ cdma::IGroupPtr NxsDataItem::getRoot()
 //---------------------------------------------------------------------------
 cdma::IArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::getData(vector<int> position)")
+  CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> position)");
   int node_rank = m_item.Rank();
   int slab_rank = node_rank - position.size();
   
@@ -161,7 +157,6 @@ cdma::IArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Ex
     }
   }
   cdma::IArrayPtr array = getData(origin, shape);
-  CDMA_DBG("[END] NxsDataItem::getData")
   return array;
 }
 
@@ -170,7 +165,7 @@ cdma::IArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Ex
 //---------------------------------------------------------------------------
 cdma::IArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::getData(vector<int> origin, vector<int> shape)")
+  CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> origin, vector<int> shape)");
   if( m_array.is_null() )
   {
     loadMatrix();
@@ -185,7 +180,6 @@ cdma::IArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> s
   }
   cdma::IIndexPtr index = new cdma::Index( NXS_FACTORY_NAME, rank, iShape, iStart );
   cdma::IArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array.get())), index );
-  CDMA_DBG("[END] NxsDataItem::getData(vector<int> origin, vector<int> shape)");
   return array;
 }
 
@@ -657,7 +651,7 @@ cdma::IDatasetPtr NxsDataItem::getDataset()
 //---------------------------------------------------------------------------
 void NxsDataItem::loadMatrix()
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::loadMatrix")
+  CDMA_FUNCTION_TRACE("NxsDataItem::loadMatrix");
   
   yat::SharedPtr<NexusFile, yat::Mutex> file = m_dataset_ptr->getHandle();
   if( m_dataset_ptr->isOpen() )
@@ -692,7 +686,6 @@ void NxsDataItem::loadMatrix()
   {
     TEMP_EXCEPTION("Unable to read data: file is closed!", "NxsDataItem::loadMatrix");
   }
-  CDMA_DBG("[END] NxsDataItem::loadMatrix")
 }
 
 //---------------------------------------------------------------------------
@@ -741,7 +734,8 @@ void NxsDataItem::initAttr()
 //---------------------------------------------------------------------------
 void NxsDataItem::open( bool openNode )
 {
-  CDMA_DBG("[BEGIN] NxsDataItem::open")
+  CDMA_FUNCTION_TRACE("NxsDataItem::open");
+  
   // Open parent node
   NexusFilePtr file = m_dataset_ptr->getHandle();
   
@@ -764,7 +758,6 @@ void NxsDataItem::open( bool openNode )
       }
     }
   }
-  CDMA_DBG("[END] NxsDataItem::open")
 }
 
 } // namespace

@@ -30,7 +30,7 @@ namespace cdma
 SimpleDataItem::SimpleDataItem(IDataset* dataset, IArrayPtr ptrArray, const std::string &name):
 m_dataset_ptr(dataset), m_name(name), m_array_ptr(ptrArray)
 {
-  CDMA_SCOPE_DBG("SimpleDataItem::SimpleDataItem");
+  CDMA_FUNCTION_TRACE("SimpleDataItem::SimpleDataItem");
 }
 
 //---------------------------------------------------------------------------
@@ -78,7 +78,7 @@ cdma::IGroupPtr SimpleDataItem::getRoot()
 //---------------------------------------------------------------------------
 cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
-  CDMA_SCOPE_DBG("SimpleDataItem::getData(vector<int> position)");
+  CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> position)");
   int node_rank = m_array_ptr->getRank();
   int slab_rank = node_rank - position.size();
   
@@ -107,7 +107,7 @@ cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma:
 //---------------------------------------------------------------------------
 cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
-  CDMA_SCOPE_DBG("SimpleDataItem::getData(vector<int> origin, vector<int> shape)");
+  CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> origin, vector<int> shape)");
 
   int rank = m_array_ptr->getRank();
   int* iShape = new int[rank];

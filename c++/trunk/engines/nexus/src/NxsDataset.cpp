@@ -14,6 +14,7 @@
 //
 //*****************************************************************************
 #include <yat/file/FileName.h>
+#include <cdma/Common.h>
 #include <cdma/Factory.h>
 #include <cdma/dictionary/Dictionary.h>
 #include <cdma/dictionary/LogicalGroup.h>
@@ -41,6 +42,28 @@ NxsDataset::NxsDataset( const std::string& filename )
   m_phy_root.reset( new NxsGroup( this ) );
   m_detector = DictionaryDetector(m_ptrNxFile);
   //##m_log_root.reset( new NxsLogicalGroup() );
+}
+
+//---------------------------------------------------------------------------
+// NxsDataset::open
+//---------------------------------------------------------------------------
+void NxsDataset::open() throw ( cdma::Exception )
+{ 
+  CDMA_FUNCTION_TRACE("NxsDataset::open");
+  
+  m_ptrNxFile->OpenRead(PSZ(m_uri));
+  m_open = true;
+}
+
+//---------------------------------------------------------------------------
+// NxsDataset::close
+//---------------------------------------------------------------------------
+void NxsDataset::close() throw ( cdma::Exception )
+{ 
+  CDMA_FUNCTION_TRACE("NxsDataset::close");
+  
+  m_ptrNxFile->Close();
+  m_open = false;
 }
 
 //---------------------------------------------------------------------------
@@ -128,31 +151,32 @@ cdma::IGroupPtr NxsDataset::getRootGroup()
 //---------------------------------------------------------------------------
 cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
 {
-  CDMA_DBG("[BEGIN] NxsDataset::getLogicalRoot");
+  CDMA_FUNCTION_TRACE("NxsDataset::getLogicalRoot");
   if( m_log_root.is_null() )
   {
-    CDMA_DBG("Getting key file");
+    CDMA_TRACE("Getting key file");
     yat::String keyFile = Factory::getKeyDictionaryPath();
 
-    CDMA_DBG("Creating Dictionary detector");
+    CDMA_TRACE("Creating Dictionary detector");
     DictionaryDetector detector ( m_ptrNxFile );
-    CDMA_DBG("Getting mapping file");
-    yat::String file = Factory::getMappingDictionaryFolder( new NxsFactory() ) + detector.getDictionaryName();
+    CDMA_TRACE("Getting mapping file");
+//    yat::String file = Factory::getMappingDictionaryFolder( new NxsFactory() ) + detector.getDictionaryName();
+    yat::FileName file( Factory::getDictionariesFolder() + "/" + "NxsFactory" + "/" + detector.getDictionaryName());
+
     yat::FileName mapFile ( file );
 
-    CDMA_DBG("Creating dictionary");
+    CDMA_TRACE("Creating dictionary");
     DictionaryPtr dictionary ( new Dictionary( ) );
     dictionary->setKeyFilePath( keyFile );
     dictionary->setMappingFilePath( mapFile.full_name() );
 
-    CDMA_DBG("Read the dictionary");
+    CDMA_TRACE("Read the dictionary");
     dictionary->readEntries();
 
-    CDMA_DBG("Creating logical root");
+    CDMA_TRACE("Creating logical root");
     LogicalGroup* ptrRoot = new LogicalGroup( this, NULL, KeyPtr(NULL), dictionary );
     m_log_root.reset( ptrRoot );
   }
-  CDMA_DBG("[END] NxsDataset::getLogicalRoot");
   return m_log_root;
 }
 

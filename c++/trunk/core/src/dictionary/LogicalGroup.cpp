@@ -20,6 +20,7 @@
 
 #include <yat/utils/String.h>
 
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/LogicalGroup.h>
 #include <cdma/dictionary/Dictionary.h>
@@ -100,7 +101,7 @@ namespace cdma
   //-----------------------------------------------------------------------------
   LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key)
   {
-    CDMA_DBG("[BEGIN] LogicalGroup::getGroup");
+    CDMA_FUNCTION_TRACE("LogicalGroup::getGroup");
     // Check key isn't empty
     LogicalGroupPtr child;
     if( ! key.is_null() )
@@ -135,7 +136,6 @@ namespace cdma
         }
       }
     }
-    CDMA_DBG("[END] LogicalGroup::getGroup");
     return child;
   }
 
@@ -160,7 +160,7 @@ namespace cdma
   //-----------------------------------------------------------------------------
   std::list<KeyPtr> LogicalGroup::getKeys()
   {
-    CDMA_DBG("[BEGIN] LogicalGroup::getKeys");
+    CDMA_FUNCTION_TRACE("LogicalGroup::getKeys");
     std::list< KeyPtr > result;
 
     // Get children keys' names
@@ -173,8 +173,6 @@ namespace cdma
     {
       result.push_back( KeyPtr(new Key( *itChildren, m_dictionaryPtr->getKeyType(*itChildren)) ) );
     }
-
-    CDMA_DBG("[BEGIN] LogicalGroup::getKeys");
     return result;
   }
 

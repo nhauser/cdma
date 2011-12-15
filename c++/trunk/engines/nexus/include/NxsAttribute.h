@@ -28,7 +28,7 @@
 namespace cdma
 {
 
-class NxsAttribute : public IAttribute
+class CDMA_DECL NxsAttribute : public IAttribute
 {
 private:
   NexusAttrInfo* m_info_ptr;
@@ -38,7 +38,7 @@ public:
   NxsAttribute() { m_info_ptr = NULL; m_value = NULL; };
   NxsAttribute( NexusFilePtr file, NexusAttrInfo* info );
   //NxsAttribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
-  ~NxsAttribute() { CDMA_DBG("[BEGIN] NxsAttribute::~NxsAttribute") if( m_value != NULL ) delete m_value; CDMA_DBG("[END] NxsAttribute::~NxsAttribute")};
+  ~NxsAttribute() { if( m_value != NULL ) delete m_value; };
 
   /// Get the name of this Attribute. Attribute names are unique within a
   /// global set, and within a Variable's set.
