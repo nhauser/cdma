@@ -107,7 +107,7 @@ public final class NexusAttribute implements IAttribute {
 
 	@Override
 	public boolean isArray() {
-		return mValue.getStorage().getClass().isArray();
+		return mValue.getSize() > 1;
 	}
 
 	@Override

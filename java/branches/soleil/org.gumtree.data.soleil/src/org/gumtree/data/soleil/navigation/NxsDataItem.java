@@ -16,6 +16,7 @@ import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.soleil.array.NxsArray;
@@ -129,8 +130,10 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 	@Override
 	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
         IArray array = getData().copy(false);
-        array.getIndex().setShape(shape);
-        array.getIndex().setOrigin(origin);
+        IIndex index = array.getIndex();
+        index.setShape(shape);
+        index.setOrigin(origin);
+        array.setIndex(index);
 		return array;
 	}
 

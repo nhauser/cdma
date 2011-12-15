@@ -348,7 +348,7 @@ public final class NexusArray implements IArray {
     }
     
 	// --------------------------------------------------
-	// tool methods
+	// Tool methods
 	// --------------------------------------------------
     static public Object copyJavaArray(Object array) {
 		Object result = array;

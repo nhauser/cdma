@@ -42,19 +42,15 @@ public final class NexusSliceIterator implements ISliceIterator {
         // final dimensions so that we can use the getCurrentCounter method
         // to create an origin.
         
-        IIndex index;
-		try {
-			index = mArray.getIndex().clone();
+        IIndex index = mArray.getIndex();
 			
-	        // As we get a reference on array's IIndex we directly modify it
-	        index.setOrigin(origin);
-	        index.setStride(stride);
-	        index.setShape(rangeList);
-	        
-	        mIterator = new NexusArrayIterator(mArray, index, false);
+        // As we get a reference on array's IIndex we directly modify it
+        index.setOrigin(origin);
+        index.setStride(stride);
+        index.setShape(rangeList);
+        
+        mIterator = new NexusArrayIterator(mArray, index, false);
 			
-		} catch (CloneNotSupportedException e) {
-		}
     }
     
     /// Public methods
@@ -115,6 +111,7 @@ public final class NexusSliceIterator implements ISliceIterator {
         index.setShape(iShape);
         index.setOrigin(iOrigin);
         index.reduce();
+        slice.setIndex(index);
         return slice;
     }
 
