@@ -428,7 +428,7 @@ public class NxsArray implements NxsArrayInterface {
         else if( m_bRawArray )
         {
         	int lPos;
-        	if( java.util.Arrays.equals(m_n4tdataitem.getStart(), idx.getProjectionOrigin() ) ) {
+        	if( m_n4tdataitem!= null && java.util.Arrays.equals(m_n4tdataitem.getStart(), idx.getProjectionOrigin() ) ) {
         		lPos = idx.currentProjectionElement();
         	}
         	else {
