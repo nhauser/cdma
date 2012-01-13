@@ -49,10 +49,14 @@ class CDMA_DECL CDMAType
 };
 
 // Forward declaration
-class IArray;
-class IArrayIterator;
-class IArrayUtils;
-class IArrayMath;
+class Array;
+class ArrayIterator;
+class View;
+class Range;
+class SliceIterator;
+class ArrayUtils;
+class ArrayMath;
+class IArrayStorage;
 class IAttribute;
 class IClassLoader;
 class IContainer;
@@ -64,11 +68,8 @@ class IFactory;
 class IFactoryManager;
 class IFactoryResolver;
 class IGroup;
-class IIndex;
 class IPathMethod;
 class IPathParamResolver;
-class IRange;
-class ISliceIterator;
 class LogicalGroup;
 class Key;
 class Path;
@@ -76,10 +77,14 @@ class PathParameter;
 class Dictionary;
 
 /// Shared pointers declaration
-typedef yat::SharedPtr<IArray, yat::Mutex> IArrayPtr;
-typedef yat::SharedPtr<IArrayIterator, yat::Mutex> IArrayIteratorPtr;
-typedef yat::SharedPtr<IArrayUtils, yat::Mutex> IArrayUtilsPtr;
-typedef yat::SharedPtr<IArrayMath, yat::Mutex> IArrayMathPtr;
+typedef yat::SharedPtr<Array, yat::Mutex> ArrayPtr;
+typedef yat::SharedPtr<View, yat::Mutex> ViewPtr;
+typedef yat::SharedPtr<Range, yat::Mutex> RangePtr;
+typedef yat::SharedPtr<ArrayIterator, yat::Mutex> ArrayIteratorPtr;
+typedef yat::SharedPtr<SliceIterator, yat::Mutex> SliceIteratorPtr;
+typedef yat::SharedPtr<ArrayUtils, yat::Mutex> ArrayUtilsPtr;
+typedef yat::SharedPtr<ArrayMath, yat::Mutex> ArrayMathPtr;
+typedef yat::SharedPtr<IArrayStorage, yat::Mutex> IArrayStoragePtr;
 typedef yat::SharedPtr<IAttribute, yat::Mutex> IAttributePtr;
 typedef yat::SharedPtr<IClassLoader, yat::Mutex> IClassLoaderPtr;
 typedef yat::SharedPtr<IContext, yat::Mutex> IContextPtr;
@@ -90,11 +95,8 @@ typedef yat::SharedPtr<IFactory, yat::Mutex> IFactoryPtr;
 typedef yat::SharedPtr<IFactoryManager, yat::Mutex> IFactoryManagerPtr;
 typedef yat::SharedPtr<IFactoryResolver, yat::Mutex> IFactoryResolverPtr;
 typedef yat::SharedPtr<IGroup, yat::Mutex> IGroupPtr;
-typedef yat::SharedPtr<IIndex, yat::Mutex> IIndexPtr;
 typedef yat::SharedPtr<IPathMethod, yat::Mutex> IPathMethodPtr;
 typedef yat::SharedPtr<IPathParamResolver, yat::Mutex> IPathParamResolverPtr;
-typedef yat::SharedPtr<IRange, yat::Mutex> IRangePtr;
-typedef yat::SharedPtr<ISliceIterator, yat::Mutex> ISliceIteratorPtr;
 typedef yat::SharedPtr<LogicalGroup, yat::Mutex> LogicalGroupPtr;
 typedef yat::SharedPtr<Key, yat::Mutex> KeyPtr;
 typedef yat::SharedPtr<Path, yat::Mutex> PathPtr;
@@ -112,11 +114,10 @@ typedef yat::SharedPtr<StringList, yat::Mutex> StringListPtr;
 class CDMA_DECL IObject
 {
  public:
-   virtual ~IObject() {}
+  virtual ~IObject() {}
   
   /// Get the name of the factory that can create this item
   virtual std::string getFactoryName() const = 0;
-//  virtual IFactoryPtr getFactory() const = 0;
 
   /// Get the ModelType implemented by this object.
   virtual CDMAType::ModelType getModelType() const = 0; 

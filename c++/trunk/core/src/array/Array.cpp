@@ -16,25 +16,58 @@
 
 #include <typeinfo>
 
-#include <cdma/Common.h>
+#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/array/impl/Array.h>
+#include <cdma/array/Array.h>
+#include <cdma/array/ArrayIterator.h>
+#include <cdma/array/SliceIterator.h>
 
 namespace cdma
 {
-
 //---------------------------------------------------------------------------
 // Array::~Array
 //---------------------------------------------------------------------------
 Array::~Array()
 {
-  CDMA_FUNCTION_TRACE("[Array::~Array");
+  CDMA_FUNCTION_TRACE("Array::~Array");
 }
 
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const yat::String& factory, const std::type_info& type, std::vector<int> shape, void* pData )
+Array::Array( const Array& array ) : m_view ( array.m_view )
+{
+  m_data_impl = array.m_data_impl;
+  m_shape = array.m_view->getShape();
+  m_factory = array.m_factory;
+}
+
+//---------------------------------------------------------------------------
+// Array::Array
+//---------------------------------------------------------------------------
+Array::Array( const Array& array, ViewPtr view ) : m_view (view)
+{
+  CDMA_FUNCTION_TRACE("Array::Array");
+  m_data_impl = array.m_data_impl;
+  m_shape = view->getShape();
+  m_factory = array.m_factory;
+}
+
+//---------------------------------------------------------------------------
+// Array::Array
+//---------------------------------------------------------------------------
+Array::Array( const ArrayPtr& array, ViewPtr view ) : m_view (view)
+{
+  CDMA_FUNCTION_TRACE("Array::Array");
+  m_data_impl = array->getStorage();
+  m_shape = view->getShape();
+  m_factory = array->getFactoryName();
+}
+
+//---------------------------------------------------------------------------
+// Array::Array
+//---------------------------------------------------------------------------
+Array::Array( const std::string& factory, const std::type_info& type, std::vector<int> shape, void* pData )
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   int rank = shape.size();
@@ -54,7 +87,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new short[size];
     }
-    m_data = new TypedData<short>((short*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<short>((short*) pData, shape);
   }
   else if( type == typeid( unsigned short ) )
   {
@@ -62,7 +95,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new unsigned short[size];
     }
-    m_data = new TypedData<unsigned short>((unsigned short*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<unsigned short>((unsigned short*) pData, shape);
   }
   else if( type == typeid( long ) )
   {
@@ -70,7 +103,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new long[size];
     }
-    m_data = new TypedData<long>((long*)pData, shape);
+    m_data_impl = new DefaultArrayStorage<long>((long*)pData, shape);
   }
   else if( type == typeid( unsigned long ) )
   {
@@ -78,7 +111,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new unsigned long[size];
     }
-    m_data = new TypedData<unsigned long>((unsigned long*)pData, shape);
+    m_data_impl = new DefaultArrayStorage<unsigned long>((unsigned long*)pData, shape);
   }
   else if( type == typeid( float ) )
   {
@@ -86,7 +119,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new float[size];
     }
-    m_data = new TypedData<float>((float*)pData, shape);
+    m_data_impl = new DefaultArrayStorage<float>((float*)pData, shape);
   }
   else if( type == typeid( yat::uint64 ) )
   {
@@ -94,7 +127,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new yat::uint64[size];
     }
-    m_data = new TypedData<yat::uint64>((yat::uint64*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<yat::uint64>((yat::uint64*) pData, shape);
   }
   else if( type == typeid( yat::int64 ) )
   {
@@ -102,7 +135,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new yat::int64[size];
     }
-    m_data = new TypedData<yat::int64>((yat::int64*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<yat::int64>((yat::int64*) pData, shape);
   }
   else if( type == typeid( double ) )
   {
@@ -110,7 +143,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new double[size];
     }
-    m_data = new TypedData<double>((double*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<double>((double*) pData, shape);
   }
   else
   {
@@ -118,7 +151,7 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     {
       pData = new char[size];
     }
-    m_data = new TypedData<char>((char*) pData, shape);
+    m_data_impl = new DefaultArrayStorage<char>((char*) pData, shape);
   }
   
   m_shape = shape;
@@ -129,40 +162,29 @@ Array::Array( const yat::String& factory, const std::type_info& type, std::vecto
     shape_ptr[i] = shape[i];
     start_ptr[i] = 0;
   }
-  m_index = new Index( factory, rank, shape_ptr, start_ptr);
-}
-
-//---------------------------------------------------------------------------
-// Array::Array
-//---------------------------------------------------------------------------
-Array::Array( const Array& array, IIndexPtr index) : m_index (index)
-{
-  CDMA_FUNCTION_TRACE("Array::Array");
-  m_data = array.m_data;
-  m_shape = index->getShape();
-  m_factory = array.m_factory;
+  m_view = new View( rank, shape_ptr, start_ptr );
 }
 
 //---------------------------------------------------------------------------
 // Array::copy
 //---------------------------------------------------------------------------
-cdma::IArrayPtr Array::copy()
+ArrayPtr Array::copy(bool data)
 {
-  THROW_NOT_IMPLEMENTED("Array::copy");
-}
-
-//---------------------------------------------------------------------------
-// Array::copy
-//---------------------------------------------------------------------------
-cdma::IArrayPtr Array::copy(bool data)
-{
-  THROW_NOT_IMPLEMENTED("Array::copy");
+  if( data == false )
+  {
+    return new Array( *this, new View(m_view) );
+  }
+  else
+  {
+    return new Array( *this, new View(m_view) );
+  }
+  
 }
 
 //---------------------------------------------------------------------------
 // Array::getArrayUtils
 //---------------------------------------------------------------------------
-cdma::IArrayUtilsPtr Array::getArrayUtils()
+ArrayUtilsPtr Array::getArrayUtils()
 {
   THROW_NOT_IMPLEMENTED("Array::getArrayUtils");
 }
@@ -170,7 +192,7 @@ cdma::IArrayUtilsPtr Array::getArrayUtils()
 //---------------------------------------------------------------------------
 // Array::getArrayMath
 //---------------------------------------------------------------------------
-cdma::IArrayMathPtr Array::getArrayMath()
+ArrayMathPtr Array::getArrayMath()
 {
   THROW_NOT_IMPLEMENTED("Array::getArrayMath");
 }
@@ -180,23 +202,62 @@ cdma::IArrayMathPtr Array::getArrayMath()
 //---------------------------------------------------------------------------
 const std::type_info& Array::getElementType()
 {
-  return m_data->getType();
+  return m_data_impl->getType();
 }
 
 //---------------------------------------------------------------------------
-// Array::getIndex
+// Array::getView
 //---------------------------------------------------------------------------
-cdma::IIndexPtr Array::getIndex()
+ViewPtr Array::getView()
 {
-  return cdma::IIndexPtr(m_index);
+  CDMA_FUNCTION_TRACE("Array::getView");
+  return cdma::ViewPtr(m_view);
 }
 
 //---------------------------------------------------------------------------
-// Array::getIterator
+// Array::begin
 //---------------------------------------------------------------------------
-cdma::IArrayIteratorPtr Array::getIterator()
+ArrayIterator Array::begin()
 {
-  THROW_NOT_IMPLEMENTED("Array::getIterator");
+  CDMA_FUNCTION_TRACE("Array::begin");
+  ViewPtr view = new View(m_view);
+  std::vector<int> position;
+  for( int i = 0; i < view->getRank(); i++ )
+  {
+    position.push_back(0);
+  }
+  
+
+  // We use "*this" to copy the array so the SharePtr on memory storage is incremented
+  // that permits to not destroy memory storage when the iterator is released
+  // There is no memory copy doing so only references are shared
+  ArrayIterator iterator ( new Array(*this), view, position );
+  return iterator;
+}
+
+//---------------------------------------------------------------------------
+// Array::end
+//---------------------------------------------------------------------------
+ArrayIterator Array::end()
+{
+  CDMA_FUNCTION_TRACE("Array::end");
+  // Copy view
+  ViewPtr view = new View(m_view);
+  
+  // Construct a vector of position having 0 in each low dimension
+  // the first is having shape[0]. Means positioned at the cell that just
+  // follows the last one.
+  std::vector<int> position = view->getShape();
+  for( int i = 1; i < view->getRank(); i++ )
+  {
+    position[i] = 0;
+  }
+  
+  // We use "*this" to copy the array so the SharePtr on memory storage is incremented
+  // that permits to not destroy memory storage when the iterator is released
+  // There is no memory copy doing so only references are shared
+  ArrayIterator iterator ( new Array(*this), view, position );
+  return iterator;
 }
 
 //---------------------------------------------------------------------------
@@ -204,15 +265,19 @@ cdma::IArrayIteratorPtr Array::getIterator()
 //---------------------------------------------------------------------------
 int Array::getRank()
 {
-  return m_index->getRank();
+  return m_view->getRank();
 }
 
 //---------------------------------------------------------------------------
-// Array::getRegionIterator
+// Array::getRegion
 //---------------------------------------------------------------------------
-cdma::IArrayIteratorPtr Array::getRegionIterator(std::vector<int> reference, std::vector<int> range) throw ( cdma::Exception )
+ArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("Array::getRegionIterator");
+  CDMA_FUNCTION_TRACE("Array::getRegion");
+  ViewPtr view = new View(m_view);
+  view->setOrigin(start);
+  view->setShape(shape);
+  return new Array(*this, view);
 }
 
 //---------------------------------------------------------------------------
@@ -220,7 +285,7 @@ cdma::IArrayIteratorPtr Array::getRegionIterator(std::vector<int> reference, std
 //---------------------------------------------------------------------------
 std::vector<int> Array::getShape()
 {
-  return m_index->getShape();
+  return m_view->getShape();
 }
 
 //---------------------------------------------------------------------------
@@ -228,172 +293,58 @@ std::vector<int> Array::getShape()
 //---------------------------------------------------------------------------
 long Array::getSize()
 {
-  return m_index->getSize();
-}
-
-
-//---------------------------------------------------------------------------
-// Array::shapeToString
-//---------------------------------------------------------------------------
-std::string Array::shapeToString()
-{
-  THROW_NOT_IMPLEMENTED("Array::shapeToString");
+  return m_view->getSize();
 }
 
 //---------------------------------------------------------------------------
-// Array::setIndex
+// Array::setView
 //---------------------------------------------------------------------------
-void Array::setIndex(const cdma::IIndexPtr& index)
+void Array::setView(const cdma::ViewPtr& view)
 {
-
+  m_view = view;
 }
 
 //---------------------------------------------------------------------------
 // Array::getSliceIterator
 //---------------------------------------------------------------------------
-cdma::ISliceIteratorPtr Array::getSliceIterator(int rank) throw ( cdma::Exception )
+cdma::SliceIteratorPtr Array::getSliceIterator(int rank) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("Array::getSliceIterator");
-}
-
-//---------------------------------------------------------------------------
-// Array::releaseStorage
-//---------------------------------------------------------------------------
-void Array::releaseStorage() throw ( cdma::Exception )
-{
-
-}
-
-//---------------------------------------------------------------------------
-// Array::getRegisterId
-//---------------------------------------------------------------------------
-long Array::getRegisterId()
-{
-  THROW_NOT_IMPLEMENTED("Array::getRegisterId");
-}
-
-//---------------------------------------------------------------------------
-// Array::lock
-//---------------------------------------------------------------------------
-void Array::lock()
-{
-
-}
-
-//---------------------------------------------------------------------------
-// Array::unlock
-//---------------------------------------------------------------------------
-void Array::unlock()
-{
-
+  return new SliceIterator(new Array(*this, m_view), rank);
 }
 
 //---------------------------------------------------------------------------
 // Array::isDirty
 //---------------------------------------------------------------------------
-bool Array::isDirty()
+bool Array::dirty()
 {
-  THROW_NOT_IMPLEMENTED("Array::isDirty");
+  return m_data_impl->dirty();
 }
 
 //---------------------------------------------------------------------------
 // Array::get
 //---------------------------------------------------------------------------
-yat::Any Array::get(cdma::IIndexPtr& ind)
+yat::Any& Array::get(const cdma::ViewPtr& ind, std::vector<int> position)
 {
-  int index = ind->currentElement();
-  return m_data->get(index);
+  return m_data_impl->get(ind, position);
 }
 
 //---------------------------------------------------------------------------
 // Array::get
 //---------------------------------------------------------------------------
-yat::Any Array::get()
+/*
+yat::Any& Array::get()
 {
-  return m_data->get(0);
+  return m_data_impl->get(0);
 }
+*/
 
 //---------------------------------------------------------------------------
 // Array::set
 //---------------------------------------------------------------------------
-void Array::set(const cdma::IIndexPtr& ima, const yat::Any& value)
+void Array::set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value)
 {
-  m_data->set(ima, value);
+  m_data_impl->set(ima, position, value);
 }
 
-//---------------------------------------------------------------------------
-// Array::detectType
-//---------------------------------------------------------------------------
-/*
-const type_info& Array::detectType(NexusDataType type)
-{
-  switch( type )
-  {
-    case NX_INT16:
-      return typeid(short);
-      break;
-    case NX_UINT16:
-      return typeid(unsigned short);
-      break;
-    case NX_UINT32:
-      return typeid(unsigned long);
-      break;
-    case NX_INT32:
-      return typeid(long);
-      break;
-    case NX_FLOAT32:
-      return typeid(float);
-      break;
-    case NX_INT64:
-      return typeid(yat::int64);
-      break;
-    case NX_UINT64:
-      return typeid(unsigned long);
-      break;
-    case NX_FLOAT64:
-      return typeid(double);
-      break;
-    default:  // CHAR, NX_INT8, NX_UINT8
-      return typeid(char);
-  }
 }
 
-//---------------------------------------------------------------------------
-// Array::allocate
-//---------------------------------------------------------------------------
-void* Array::allocate(NexusDataType type, unsigned int length)
-{
-  void* data;
-  switch( type )
-  {
-    case NX_INT16:
-      data = new short[length];
-      break;
-    case NX_UINT16:
-      data = new unsigned short[length];
-      break;
-    case NX_UINT32:
-      data = new unsigned long[length];
-      break;
-    case NX_INT32:
-      data = new long[length];
-      break;
-    case NX_FLOAT32:
-      data = new float[length];
-      break;
-    case NX_INT64:
-      data = new yat::int64[length];
-      break;
-    case NX_UINT64:
-      data = new yat::uint64[length];
-      break;
-    case NX_FLOAT64:
-      data = new double[length];
-      break;
-    default:  // CHAR, NX_INT8, NX_UINT8
-      data = new char[length];
-  }
-  return data;
-}
-*/
-}

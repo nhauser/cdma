@@ -24,11 +24,11 @@ namespace cdma
 //----------------------------------------------------------------------------
 // Array::Array
 //----------------------------------------------------------------------------
-template<typename T> Array::Array(const yat::String& factory, T* values, std::vector<int> shape)
+template<typename T> Array::Array(const std::string& factory, T* values, std::vector<int> shape)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_factory = factory;
-  m_data = new TypedData<T>(values, shape);
+  m_data_impl = new DefaultArrayStorage<T>(values, shape);
   m_shape = shape;
   int rank = shape.size();
   int *shape_ptr = new int[rank];
@@ -38,7 +38,7 @@ template<typename T> Array::Array(const yat::String& factory, T* values, std::ve
     shape_ptr[i] = shape[i];
     start_ptr[i] = 0;
   }
-  m_index = new Index( factory, rank, shape_ptr, start_ptr);
+  m_view = new View( rank, shape_ptr, start_ptr );
 }
 
 }

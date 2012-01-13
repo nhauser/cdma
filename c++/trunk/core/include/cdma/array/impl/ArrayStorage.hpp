@@ -13,8 +13,8 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 //*****************************************************************************
-#ifndef __CDMA_ARRAYDATA_HPP__
-#define __CDMA_ARRAYDATA_HPP__
+#ifndef __CDMA_DEFAULTARRAYSTORAGE_HPP__
+#define __CDMA_DEFAULTARRAYSTORAGE_HPP__
 
 #include <stdio.h>
 #include <iostream>
@@ -23,17 +23,18 @@ namespace cdma
 {
 
 //----------------------------------------------------------------------------
-// TypedData<T>::~TypedData
+// DefaultArrayStorage<T>::~DefaultArrayStorage
 //----------------------------------------------------------------------------
-template<typename T> TypedData<T>::~TypedData()
+template<typename T> DefaultArrayStorage<T>::~DefaultArrayStorage()
 {
+    std::cout<<"DefaultArrayStorage::~DefaultArrayStorage"<<std::endl;
     delete m_data;
 }
 
 //----------------------------------------------------------------------------
-// TypedData<T>::TypedData
+// DefaultArrayStorage<T>::DefaultArrayStorage
 //----------------------------------------------------------------------------
-template<typename T> TypedData<T>::TypedData( T* data, std::vector<int> shape )
+template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, std::vector<int> shape )
 {
   m_data = data;
   m_elem_size = sizeof(T);
@@ -42,17 +43,29 @@ template<typename T> TypedData<T>::TypedData( T* data, std::vector<int> shape )
   {
     m_array_length *= shape[i];
   }
+  m_dirty = false;
 }
 
 //----------------------------------------------------------------------------
-// TypedData<T>::set
+// DefaultArrayStorage<T>::set
 //----------------------------------------------------------------------------
-template<typename T> void TypedData<T>::set(const cdma::IIndexPtr& ima, const yat::Any& value)
+template<typename T> yat::Any& DefaultArrayStorage<T>::get( const cdma::ViewPtr view, std::vector<int> position )
 {
-  m_data[ima->currentElement()] = yat::any_cast<T>(value);
-};
+  long idx = view->getElementOffset(position);
+  m_current = m_data[idx];
+  return m_current;
+}
+
+//----------------------------------------------------------------------------
+// DefaultArrayStorage<T>::set
+//----------------------------------------------------------------------------
+template<typename T> void DefaultArrayStorage<T>::set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value)
+{
+  m_data[ima->getElementOffset(position)] = yat::any_cast<T>(value);
+  m_dirty = true;
+}
 
 }
 
 
-#endif // __CDMA_ARRAYDATA_HPP__
+#endif // __CDMA_DEFAULTARRAYSTORAGE_HPP__

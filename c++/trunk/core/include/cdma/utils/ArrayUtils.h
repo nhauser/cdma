@@ -7,25 +7,26 @@
 // Contributors :
 // See AUTHORS file
 //******************************************************************************
-#ifndef __CDMA_IARRAYUTILS_H__
-#define __CDMA_IARRAYUTILS_H__
+#ifndef __CDMA_ARRAYUTILS_H__
+#define __CDMA_ARRAYUTILS_H__
 
 #include <list>
+#include <vector>
 
 #include "cdma/exception/Exception.h"
-#include "cdma/array/IArray.h"
-#include "cdma/navigation/IRange.h"
+#include "cdma/array/Array.h"
+#include "cdma/array/Range.h"
 
 namespace cdma
 {
 
-class CDMA_DECL IArrayUtils 
+class CDMA_DECL ArrayUtils 
 {
 public:
   /// destructor
-  virtual ~IArrayUtils() {};
+  ~ArrayUtils() {};
   
-  virtual IArray& getArray() = 0;
+  Array& getArray();
     
   /// Copy the contents of this array to another array. The two arrays must
   /// have the same size.
@@ -35,7 +36,7 @@ public:
   /// @throw  Exception
   ///             wrong shape
   ///
-  virtual void copyTo(const IArray& newArray) throw ( Exception ) = 0;
+  void copyTo(const Array& newArray) throw ( Exception );
 
   /// Check if the shape matches with another Array object.
   /// 
@@ -44,25 +45,25 @@ public:
   /// @throw  Exception
   ///             shape not match
   ///
-  virtual void checkShape(const IArray& newArray) throw ( Exception ) = 0;
+  void checkShape(const Array& newArray) throw ( Exception );
     
   /// Concatenate with another array. The array need to be equal of less in
   /// rank.
   /// 
   /// @param array
-  ///            IArray object
-  /// @return new IArray
+  ///            Array object
+  /// @return new Array
   /// @throw  Exception
   ///             mismatching shape
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> concatenate(const IArray& array) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> concatenate(const Array& array) throw ( Exception );
 
   /// Create a new Array using same backing store as this Array, by eliminating
   /// any dimensions with length one.
   /// 
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> reduce() = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> reduce();
 
   /// Create a new Array using same backing store as this Array, by eliminating
   /// the specified dimension.
@@ -72,7 +73,7 @@ public:
   ///            Exception
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> reduce(int dim) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> reduce(int dim);
     
   /// Reduce the array to at least certain rank. The dimension with only 1 bin
   /// will be reduced.
@@ -81,7 +82,7 @@ public:
   ///            in int type
   /// @return GDM Array with the same storage Created on 10/11/2008
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> reduceTo(int rank) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> reduceTo(int rank);
     
   /// Create a new Array, with the given shape, that references the same backing store as this Array.
   /// 
@@ -89,7 +90,7 @@ public:
   ///            the new shape
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> reshape(vector<int> shape) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> reshape(std::vector<int> shape) throw ( Exception );
 
     
   /// Create a new Array as a subsection of this Array, with rank reduction. No
@@ -105,11 +106,11 @@ public:
   ///            becomes the shape of the returned Array. Must be same rank as
   ///            original Array. If shape[dim] == 1, then the rank of the
   ///            resulting Array is reduced at that dimension.
-  /// @return IArray object
+  /// @return Array object
   /// @throw  Exception
   ///             invalid range
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> section(const vector<int> origin, const vector<int> shape) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> section(const std::vector<int> origin, const std::vector<int> shape) throw ( Exception );
     
   /// Create a new Array as a subsection of this Array, with rank reduction. No
   /// data is moved, so the new Array references the same backing store as the
@@ -130,7 +131,7 @@ public:
   /// @throw  Exception
   ///             invalid range
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> section(vector<int> origin, vector<int> shape, vector<int> stride) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> section(std::vector<int> origin, std::vector<int> shape, std::vector<int> stride) throw ( Exception );
 
   /// Create a new ArrayUtils as a subsection of this Array, without rank reduction.
   /// No data is moved, so the new Array references the same backing store as
@@ -150,7 +151,7 @@ public:
   /// @throw  Exception
   ///             invalid range
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> sectionNoReduce(vector<int> origin, vector<int> shape, vector<int> stride) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> sectionNoReduce(std::vector<int> origin, std::vector<int> shape, std::vector<int> stride) throw ( Exception );
 
   /// Create a new ArrayUtils as a subsection of this Array, without rank reduction.
   /// No data is moved, so the new Array references the same backing store as
@@ -162,7 +163,7 @@ public:
   ///            subset, or 2) may be null, meaning use entire Range.
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> sectionNoReduce(list<IRange> ranges) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> sectionNoReduce(std::list<Range> ranges) throw ( Exception );
 
   /// Create a new Array using same backing store as this Array, by fixing the
   /// specified dimension at the specified index value. This reduces rank by 1.
@@ -173,7 +174,7 @@ public:
   ///            at what index value
   /// @return a new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> slice(int dim, int value) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> slice(int dim, int value);
 
   /// Create a new Array using same backing store as this Array, by transposing
   /// two of the indices.
@@ -184,7 +185,7 @@ public:
   ///            transpose these two indices
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> transpose(int dim1, int dim2) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> transpose(int dim1, int dim2);
             
   /// Check if the two arrays are conformable. They must have exactly the same
   /// shape (excluding dimensions of length 1)
@@ -193,7 +194,7 @@ public:
   ///            in Array type
   /// @return Array with new storage Created on 14/07/2008
   ///
-  virtual bool isConformable(IArray& array) = 0;
+  bool isConformable(Array& array);
 
   /// Element-wise apply a bool map to the array. The values of the Array
   /// will get updated. The map's rank must be smaller or equal to the rank of
@@ -207,7 +208,7 @@ public:
   /// @throw  Exception
   ///             Created on 04/08/2008
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> eltAnd(IArray& boolMap) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> eltAnd(Array& boolMap) throw ( Exception );
 
   /// Integrate on given dimension. The result array will be one dimensional
   /// reduced from the given array.
@@ -219,7 +220,7 @@ public:
   /// @return new Array object
   /// @throw  Exception
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> integrateDimension(int dimension, bool isVariance) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> integrateDimension(int dimension, bool isVariance) throw ( Exception );
     
   /// Integrate on given dimension. The result array will be one dimensional
   /// reduced from the given array.
@@ -229,7 +230,7 @@ public:
   /// @return new Array object
   /// @throw  Exception
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> enclosedIntegrateDimension(int dimension, bool isVariance) throw ( Exception ) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> enclosedIntegrateDimension(int dimension, bool isVariance) throw ( Exception );
 
   /// Create a new Array using same backing store as this Array, by flipping
   /// the index so that it runs from shape[index]-1 to 0.
@@ -237,7 +238,7 @@ public:
   /// @param dim dimension to flip
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> flip(int dim) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> flip(int dim);
 
   /// Create a new Array using same backing store as this Array, by permuting
   /// the indices.
@@ -246,8 +247,8 @@ public:
   ///            the old index dims[k] becomes the new kth index.
   /// @return the new Array
   ///
-  virtual yat::SharedPtr<IArrayUtils, yat::Mutex> permute(vector<int> dims) = 0;
+  yat::SharedPtr<ArrayUtils, yat::Mutex> permute(std::vector<int> dims);
 };
 
 } //namespace CDMACore
-#endif //__CDMA_IARRAYUTILS_H__
+#endif //__CDMA_ARRAYUTILS_H__

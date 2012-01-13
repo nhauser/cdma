@@ -86,7 +86,7 @@ DictionaryPtr SoleilNxsFactory::openDictionary(const std::string& filepath) thro
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::vector<int> shape)
+ArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::vector<int> shape)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
 }
@@ -94,7 +94,7 @@ IArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::v
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage)
+ArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
 }
@@ -102,7 +102,7 @@ IArrayPtr SoleilNxsFactory::createArray(const std::type_info clazz, const std::v
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createArray(const void * array)
+ArrayPtr SoleilNxsFactory::createArray(const void * array)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
 }
@@ -110,7 +110,7 @@ IArrayPtr SoleilNxsFactory::createArray(const void * array)
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createStringArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createStringArray(const std::string& value)
+ArrayPtr SoleilNxsFactory::createStringArray(const std::string& value)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createStringArray");
 }
@@ -118,7 +118,7 @@ IArrayPtr SoleilNxsFactory::createStringArray(const std::string& value)
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createDoubleArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createDoubleArray(double array[])
+ArrayPtr SoleilNxsFactory::createDoubleArray(double array[])
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDoubleArray");
 }
@@ -126,7 +126,7 @@ IArrayPtr SoleilNxsFactory::createDoubleArray(double array[])
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createDoubleArray
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createDoubleArray(double array[], const std::vector<int> shape)
+ArrayPtr SoleilNxsFactory::createDoubleArray(double array[], const std::vector<int> shape)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDoubleArray");
 }
@@ -134,7 +134,7 @@ IArrayPtr SoleilNxsFactory::createDoubleArray(double array[], const std::vector<
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createArrayNoCopy
 //----------------------------------------------------------------------------
-IArrayPtr SoleilNxsFactory::createArrayNoCopy(const void * array)
+ArrayPtr SoleilNxsFactory::createArrayNoCopy(const void * array)
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArrayNoCopy");
 }
@@ -142,7 +142,7 @@ IArrayPtr SoleilNxsFactory::createArrayNoCopy(const void * array)
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createDataItem
 //----------------------------------------------------------------------------
-IDataItemPtr SoleilNxsFactory::createDataItem(const cdma::IGroupPtr& parent, const std::string& shortName, const cdma::IArrayPtr& array) throw ( cdma::Exception )
+IDataItemPtr SoleilNxsFactory::createDataItem(const cdma::IGroupPtr& parent, const std::string& shortName, const cdma::ArrayPtr& array) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDataItem");
 }

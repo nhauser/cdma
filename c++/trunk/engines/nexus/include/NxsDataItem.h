@@ -30,7 +30,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
-#include <cdma/array/impl/Array.h>
+#include <cdma/array/Array.h>
 
 // Plug-in
 #include <internal/common.h>
@@ -49,7 +49,7 @@ private:
   yat::String              m_shortName;
   yat::String              m_path;        // Path of the item through the dataset file structure (excluding item node name)
   NexusDataSetInfo         m_item;        // Info on the belonged data
-  IArrayPtr                m_array;       // IArray object
+  ArrayPtr                 m_array;       // Array object
   std::vector<int>         m_shape;       // Shape defined by the NexusDatasetInfo
 
 public:
@@ -61,12 +61,12 @@ public:
 
   //@{ IDataItem interface
   IAttributePtr findAttributeIgnoreCase(const std::string& name);
-  int findDimensionIndex(const std::string& name);
+  int findDimensionView(const std::string& name);
   IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
   IGroupPtr getParent();
   IGroupPtr getRoot();
-  IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
-  IArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
+  ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
+  ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
   std::string getDescription();
   std::list<IDimensionPtr> getDimensions(int i);
   std::list<IDimensionPtr> getDimensionList();
@@ -74,10 +74,10 @@ public:
   int getElementSize();
   std::string getNameAndDimensions();
   std::string getNameAndDimensions(bool useFullName, bool showDimLength);
-  std::list<IRangePtr> getRangeList();
+  std::list<RangePtr> getRangeList();
   int getRank();
-  IDataItemPtr getSection(std::list<IRangePtr> section) throw ( cdma::Exception );
-  std::list<IRangePtr> getSectionRanges();
+  IDataItemPtr getSection(std::list<RangePtr> section) throw ( cdma::Exception );
+  std::list<RangePtr> getSectionRanges();
   std::vector<int> getShape();
   long getSize();
   int getSizeToCache();

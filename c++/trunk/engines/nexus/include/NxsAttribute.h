@@ -75,7 +75,7 @@ public:
   ///
   /// @return Array of values.
   ///
-  //IArrayPtr getValue();
+  //ArrayPtr getValue();
 
   /// Retrieve string value; only call if isString() is true.
   ///
@@ -119,9 +119,9 @@ public:
 
   /// set the values from an Array.
   ///
-  /// @param value IArray object
+  /// @param value Array object
   ///
-  void setValue(IArray& value);
+  void setValue(Array& value);
 
   /// Retrieve entire value.
   ///

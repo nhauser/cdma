@@ -14,297 +14,391 @@
 //
 //*****************************************************************************
 
-#include <cdma/array/impl/Range.h>
+#include <cdma/array/Range.h>
 
 namespace cdma
 {
-  #define TEMP_EXCEPTION(a,b) throw Exception("TARTAMPION", a, b)
-  Range::Range()
+//---------------------------------------------------------------------------
+// Range::Range
+//---------------------------------------------------------------------------
+#define TEMP_EXCEPTION(a,b) throw Exception("TARTAMPION", a, b)
+Range::Range()
+{
+  m_last    = 0;
+  m_first   = 0;
+  m_stride  = 1;
+  m_name    = "";
+  m_reduced = false;
+}
+
+//---------------------------------------------------------------------------
+// Range::Range
+//---------------------------------------------------------------------------
+Range::Range(int length)
+{
+  set( length);
+}
+
+//---------------------------------------------------------------------------
+// Range::Range
+//---------------------------------------------------------------------------
+
+Range::Range(std::string name, long first, long last, long stride, bool reduced)
+{
+  set(name, first, last, stride, reduced);
+}
+
+//---------------------------------------------------------------------------
+// Range::Range
+//---------------------------------------------------------------------------
+Range::Range( const Range& range )
+{
+  set(range);
+}
+
+//---------------------------------------------------------------------------
+// Range::set
+//---------------------------------------------------------------------------
+void Range::set(int length)
+{
+  //CDMA_FUNCTION_TRACE("Range::set( length)");
+  m_name    = "";
+  m_first   = 0;
+  m_stride  = 1;
+  m_last    = length - 1;
+  m_reduced = false;
+}
+
+//---------------------------------------------------------------------------
+// Range::set
+//---------------------------------------------------------------------------
+void Range::set(std::string name, long first, long last, long stride, bool reduced)
+{
+  m_last    = last;
+  m_first   = first;
+  m_stride  = stride;
+  m_name    = name;
+  m_reduced = reduced;
+  //CDMA_FUNCTION_TRACE("Range::set(std::string name, long first, long last, long stride, bool reduced)");
+}
+
+//---------------------------------------------------------------------------
+// Range::set
+//---------------------------------------------------------------------------
+void Range::set( const Range& range )
+{
+  m_last    = range.last();
+  m_first   = range.first();
+  m_stride  = range.stride();
+  m_name    = range.getName();
+  m_reduced = range.reduce();
+  //CDMA_FUNCTION_TRACE("Range::set(std::string name, long first, long last, long stride, bool reduced)");
+}
+
+//---------------------------------------------------------------------------
+// Range::compose
+//---------------------------------------------------------------------------
+RangePtr Range::compose(const Range& range) throw ( Exception )
+{
+  Range* res = NULL;
+  if ((length() == 0) || (range.length() == 0))
   {
-    m_last    = 0;
-    m_first   = 0;
-    m_stride  = 1;
-    m_name    = "";
-    m_reduced = false;
+    res = new Range();
+  }
+  else
+  {
+    long first = element(range.first());
+    long strid = stride() * range.stride();
+    long last  = element(range.last());
+    res = new Range( m_name, first, last, strid);
+  }
+  return res;
+}
+
+//---------------------------------------------------------------------------
+// Range::compact
+//---------------------------------------------------------------------------
+RangePtr Range::compact() throw ( Exception )
+{
+  long first, last, stride;
+  std::string name;
+
+  stride = 1;
+  first  = m_first / m_stride;
+  last   = m_last  / m_stride;
+  name   = m_name;
+
+  return  new Range(name, first, last, stride);
+}
+
+//---------------------------------------------------------------------------
+// Range::shiftOrigin
+//---------------------------------------------------------------------------
+RangePtr Range::shiftOrigin(int origin) throw ( Exception )
+{
+  return new Range(m_name, m_first + origin, m_last + origin, m_stride, m_reduced );
+}
+
+//---------------------------------------------------------------------------
+// Range::intersect
+//---------------------------------------------------------------------------
+RangePtr Range::intersect(const Range& r) throw ( Exception )
+{
+  if ((length() == 0) || (r.length() == 0))
+  {
+    return  RangePtr ( new Range());
   }
 
-  Range::Range(const std::string& factory, int length)
+  long last = this->last() > r.last() ? r.last() : this->last();
+  long stride = this->stride() * r.stride();
+  long useFirst;
+  if (stride == 1)
   {
-    set( factory, length);
+    useFirst = this->first() > r.first() ? this->first() : r.first();
   }
-
-  Range::Range(const std::string& factory, std::string name, long first, long last, long stride, bool reduced)
-  {
-    set(factory, name, first, last, stride, reduced);
-  }
-
-  Range::Range( const IRange& range )
-  {
-    set(range);
-  }
-
-  void Range::set(const std::string& factory, int length)
-  {
-    m_name    = "";
-    m_first   = 0;
-    m_stride  = 1;
-    m_last    = length - 1;
-    m_reduced = false;
-    m_factory = factory;
-  }
-
-  void Range::set(const std::string& factory, std::string name, long first, long last, long stride, bool reduced)
-  {
-    m_last    = last;
-    m_first   = first;
-    m_stride  = stride;
-    m_name    = name;
-    m_reduced = reduced;
-    m_factory = factory;
-  }
-
-  void Range::set( const IRange& range )
-  {
-    m_last    = range.last();
-    m_first   = range.first();
-    m_stride  = range.stride();
-    m_name    = range.getName();
-    m_reduced = false;
-    m_factory = range.getFactoryName();
-  }
-
-  IRangePtr Range::compose(const IRange& range) throw ( Exception )
-  {
-    IRange* res = NULL;
-    if ((length() == 0) || (range.length() == 0))
+  else if (this->stride() == 1)
+  { // then r has a stride
+    if (r.first() >= first())
     {
-      res = new Range();
+      useFirst = r.first();
     }
     else
     {
-      long first = element(range.first());
-      long strid = stride() * range.stride();
-      long last  = element(range.last());
-      res = new Range(range.getFactoryName(), m_name, first, last, strid);
+      long incr = (first() - r.first()) / stride;
+      useFirst = r.first() + incr * stride;
+      if (useFirst < first())
+        useFirst += stride;
     }
-    return res;
   }
-
-  IRangePtr Range::compact() throw ( Exception )
-  {
-    long first, last, stride;
-    std::string name;
-
-    stride = 1;
-    first  = m_first / m_stride;
-    last   = m_last  / m_stride;
-    name   = m_name;
-
-    return  IRangePtr ( (IRange*) new Range(m_factory, name, first, last, stride) );
-  }
-
-  IRangePtr Range::shiftOrigin(int origin) throw ( Exception )
-  {
-    return  IRangePtr ( (IRange*) new Range(m_factory,  m_name, m_first + origin, m_last + origin, m_stride, m_reduced ) );
-  }
-
-  IRangePtr Range::intersect(const IRange& r) throw ( Exception )
-  {
-    if ((length() == 0) || (r.length() == 0))
+  else if (r.stride() == 1)
+  { // then this has a stride
+    if (first() >= r.first())
     {
-      return  IRangePtr ( (IRange*) new Range());
-    }
-
-    long last = this->last() > r.last() ? r.last() : this->last();
-    long stride = this->stride() * r.stride();
-    long useFirst;
-    if (stride == 1)
-    {
-      useFirst = this->first() > r.first() ? this->first() : r.first();
-    }
-    else if (this->stride() == 1)
-    { // then r has a stride
-      if (r.first() >= first())
-      {
-        useFirst = r.first();
-      }
-      else
-      {
-        long incr = (first() - r.first()) / stride;
-        useFirst = r.first() + incr * stride;
-        if (useFirst < first())
-          useFirst += stride;
-      }
-    }
-    else if (r.stride() == 1)
-    { // then this has a stride
-      if (first() >= r.first())
-      {
-        useFirst = first();
-      }
-      else
-      {
-        long incr = (r.first() - first()) / stride;
-        useFirst = first() + incr * stride;
-        if (useFirst < r.first())
-          useFirst += stride;
-      }
+      useFirst = first();
     }
     else
     {
-      TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersect");
+      long incr = (r.first() - first()) / stride;
+      useFirst = first() + incr * stride;
+      if (useFirst < r.first())
+        useFirst += stride;
     }
-    if (useFirst > last)
+  }
+  else
+  {
+    TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersect");
+  }
+  if (useFirst > last)
+  {
+    return  new Range();
+  }
+  else 
+  {
+    return  new Range(m_name, useFirst, last, stride);
+  }
+}
+
+//---------------------------------------------------------------------------
+// Range::intersects
+//---------------------------------------------------------------------------
+bool Range::intersects(const Range& r)
+{
+  if ((length() == 0) || (r.length() == 0))
+  {
+    return  RangePtr ( new Range());
+  }
+
+  long last = this->last() > r.last() ? r.last() : this->last();
+  long stride = this->stride() * r.stride();
+  long useFirst;
+  if (stride == 1) 
+  {
+    useFirst = this->first() > r.first() ? this->first() : r.first();
+  }
+  else if (this->stride() == 1) // then r has a stride
+  { 
+    if (r.first() >= first()) 
     {
-      return  IRangePtr ( (IRange*) new Range());
+      useFirst = r.first();
     }
-    else {
-      return  IRangePtr ( (IRange*) new Range(m_factory, m_name, useFirst, last, stride) );
-    }
-  }
-
-  bool Range::intersects(const IRange& r)
-  {
-    if ((length() == 0) || (r.length() == 0))
+    else 
     {
-      return  IRangePtr ( (IRange*) new Range());
+      long incr = (first() - r.first()) / stride;
+      useFirst = r.first() + incr * stride;
+      if (useFirst < first())
+        useFirst += stride;
     }
-
-    long last = this->last() > r.last() ? r.last() : this->last();
-    long stride = this->stride() * r.stride();
-    long useFirst;
-    if (stride == 1) {
-      useFirst = this->first() > r.first() ? this->first() : r.first();
-    }
-    else if (this->stride() == 1) { // then r has a stride
-      if (r.first() >= first()) {
-        useFirst = r.first();
-      }
-      else {
-        long incr = (first() - r.first()) / stride;
-        useFirst = r.first() + incr * stride;
-        if (useFirst < first())
-          useFirst += stride;
-      }
-    }
-    else if (r.stride() == 1) { // then this has a stride
-      if (first() >= r.first()) {
-        useFirst = first();
-      }
-      else {
-        long incr = (r.first() - first()) / stride;
-        useFirst = first() + incr * stride;
-        if (useFirst < r.first())
-          useFirst += stride;
-      }
-    }
-    else {
-      TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersects");
-    }
-    return (useFirst <= last);
   }
-
-  IRangePtr Range::unionRanges(const IRange& r) throw ( Exception )
+  else if (r.stride() == 1) // then this has a stride
+  { 
+    if (first() >= r.first()) 
+    {
+      useFirst = first();
+    }
+    else 
+    {
+      long incr = (r.first() - first()) / stride;
+      useFirst = first() + incr * stride;
+      if (useFirst < r.first())
+        useFirst += stride;
+    }
+  }
+  else 
   {
-    if( r.stride() != m_stride ) {
-      TEMP_EXCEPTION("Stride must identical to make a IRange union!", "Range::unionRanges");
-    }
-
-    if (this->length() == 0) {
-      return IRangePtr ( (IRange*) new Range(r) );
-    }
-
-    if (r.length() == 0) {
-      return IRangePtr ( (IRange*) new Range(* this) );
-    }
-
-    long first, last;
-    std::string name = m_name;
-
-    // Seek the smallest value
-    first = m_first < r.first() ? m_first : r.first();
-    last  = m_last > r.last() ? m_last : r.last();
-
-    return IRangePtr ( (IRange*) new Range(m_factory, name, first, last, m_stride) );
+    TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersects");
   }
+  return (useFirst <= last);
+}
 
-  int Range::length() const
+//---------------------------------------------------------------------------
+// Range::unionRanges
+//---------------------------------------------------------------------------
+RangePtr Range::unionRanges(const Range& r) throw ( Exception )
+{
+  if( r.stride() != m_stride ) 
   {
-    return (int) ((m_last - m_first) / m_stride) + 1;
+    TEMP_EXCEPTION("Stride must identical to make a Range union!", "Range::unionRanges");
   }
 
-  int Range::element(int i) throw ( Exception )
+  if (this->length() == 0) 
   {
-    if (i < 0) {
-      TEMP_EXCEPTION("index must be >= 0", "Range::element");
-    }
-    if (i > m_last) {
-      TEMP_EXCEPTION("index must be < length", "Range::element");
-    }
-
-    return (int) (m_first + i * m_stride);
+    return new Range(r);
   }
 
-  int Range::index(int elem) throw ( Exception )
+  if (r.length() == 0) 
   {
-    if (elem < m_first) {
-      TEMP_EXCEPTION("elem must be >= first", "Range::element");
-    }
-    long result = (elem - m_first) / m_stride;
-    if (result > m_last) {
-      TEMP_EXCEPTION("elem must be <= last = n * stride", "Range::element");
-    }
-    return (int) result;
+    return new Range(* this);
   }
 
-  bool Range::contains(int i) const
-  {
-    if( i < first() ) {
-      return false;
-    }
-    if( i > last()) {
-      return false;
-    }
-    if( m_stride == 1) {
-      return true;
-    }
-    return (i - m_first) % m_stride == 0;
-  }
+  long first, last;
+  std::string name = m_name;
 
-  int Range::first() const
-  {
-    return m_first;
-  }
+  // Seek the smallest value
+  first = m_first < r.first() ? m_first : r.first();
+  last  = m_last > r.last() ? m_last : r.last();
 
-  int Range::last() const
-  {
-    return m_last;
-  }
+  return new Range(name, first, last, m_stride);
+}
 
-  int Range::stride() const
-  {
-    return m_stride;
-  }
+//---------------------------------------------------------------------------
+// Range::length
+//---------------------------------------------------------------------------
+int Range::length() const
+{
+  //CDMA_FUNCTION_TRACE("Range::length");
+  return (int) ((m_last - m_first) / m_stride) + 1;
+}
 
-  std::string Range::getName() const
+//---------------------------------------------------------------------------
+// Range::element
+//---------------------------------------------------------------------------
+int Range::element(int i) throw ( Exception )
+{
+  //CDMA_FUNCTION_TRACE("Range::element(int)");
+  if (i < 0)
   {
-    return m_name;
+    TEMP_EXCEPTION("index must be >= 0", "Range::element");
   }
+  if (i > m_last)
+  {
+    TEMP_EXCEPTION("index must be < length", "Range::element");
+  }
+  return (int) (m_first + i * m_stride);
+}
 
-  int Range::getFirstInInterval(int start)
+//---------------------------------------------------------------------------
+// Range::index
+//---------------------------------------------------------------------------
+int Range::index(int elem) throw ( Exception )
+{
+  //CDMA_FUNCTION_TRACE("Range::index(int)");
+  if (elem < m_first) 
   {
-    if (start > last()) {
-      return -1;
-    }
-    if (start <= m_first) {
-      return (int) m_first;
-    }
-    if (m_stride == 1) {
-      return start;
-    }
-    long offset = start - m_first;
-    long incr = offset % m_stride;
-    long result = start + incr;
-    return (int) ((result > last()) ? -1 : result);
+    TEMP_EXCEPTION("elem must be >= first", "Range::index");
   }
+  long result = (elem - m_first) / m_stride;
+  if (result > m_last) 
+  {
+    TEMP_EXCEPTION("elem must be <= last = n * stride", "Range::index");
+  }
+  return (int) result;
+}
+
+//---------------------------------------------------------------------------
+// Range::contains
+//---------------------------------------------------------------------------
+bool Range::contains(int i) const
+{
+  if( i < first() )
+  {
+    return false;
+  }
+  if( i > last()) 
+  {
+    return false;
+  }
+  if( m_stride == 1) 
+  {
+    return true;
+  }
+  return (i - m_first) % m_stride == 0;
+}
+
+//---------------------------------------------------------------------------
+// Range::first
+//---------------------------------------------------------------------------
+int Range::first() const
+{
+  //CDMA_FUNCTION_TRACE("Range::first");
+  return m_first;
+}
+
+//---------------------------------------------------------------------------
+// Range::last
+//---------------------------------------------------------------------------
+int Range::last() const
+{
+//CDMA_FUNCTION_TRACE("Range::last");
+  return m_last;
+}
+
+//---------------------------------------------------------------------------
+// Range::stride
+//---------------------------------------------------------------------------
+int Range::stride() const
+{
+  //CDMA_FUNCTION_TRACE("Range::stride");
+  return m_stride;
+}
+
+//---------------------------------------------------------------------------
+// Range::getName
+//---------------------------------------------------------------------------
+std::string Range::getName() const
+{
+  return m_name;
+}
+
+//---------------------------------------------------------------------------
+// Range::getFirstInterval
+//---------------------------------------------------------------------------
+int Range::getFirstInInterval(int start)
+{
+  if (start > last()) 
+  {
+    return -1;
+  }
+  if (start <= m_first) 
+  {
+    return (int) m_first;
+  }
+  if (m_stride == 1) 
+  {
+    return start;
+  }
+  long offset = start - m_first;
+  long incr = offset % m_stride;
+  long result = start + incr;
+  return (int) ((result > last()) ? -1 : result);
+}
 }

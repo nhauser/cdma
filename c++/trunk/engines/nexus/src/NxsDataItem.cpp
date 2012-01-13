@@ -100,11 +100,11 @@ cdma::IAttributePtr NxsDataItem::findAttributeIgnoreCase(const std::string& name
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::findDimensionIndex
+// NxsDataItem::findDimensionView
 //---------------------------------------------------------------------------
-int NxsDataItem::findDimensionIndex(const std::string& name)
+int NxsDataItem::findDimensionView(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::findDimensionIndex");
+  THROW_NOT_IMPLEMENTED("NxsDataItem::findDimensionView");
 }
 
 //---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ cdma::IGroupPtr NxsDataItem::getRoot()
 //---------------------------------------------------------------------------
 // NxsDataItem::getData
 //---------------------------------------------------------------------------
-cdma::IArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
+cdma::ArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> position)");
   int node_rank = m_item.Rank();
@@ -156,14 +156,14 @@ cdma::IArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Ex
       shape.push_back( m_item.DimArray()[dim] );
     }
   }
-  cdma::IArrayPtr array = getData(origin, shape);
+  cdma::ArrayPtr array = getData(origin, shape);
   return array;
 }
 
 //---------------------------------------------------------------------------
 // NxsDataItem::getData
 //---------------------------------------------------------------------------
-cdma::IArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
+cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> origin, vector<int> shape)");
   if( m_array.is_null() )
@@ -178,8 +178,8 @@ cdma::IArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> s
     iStart[i] = origin[i];
     iShape[i]  = shape[i];
   }
-  cdma::IIndexPtr index = new cdma::Index( NXS_FACTORY_NAME, rank, iShape, iStart );
-  cdma::IArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array.get())), index );
+  cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
+  cdma::ArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array.get())), view );
   return array;
 }
 
@@ -242,7 +242,7 @@ std::string NxsDataItem::getNameAndDimensions(bool useFullName, bool showDimLeng
 //---------------------------------------------------------------------------
 // NxsDataItem::getRangeList
 //---------------------------------------------------------------------------
-std::list<cdma::IRangePtr> NxsDataItem::getRangeList()
+std::list<cdma::RangePtr> NxsDataItem::getRangeList()
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::getRangeList");
 }
@@ -258,7 +258,7 @@ int NxsDataItem::getRank()
 //---------------------------------------------------------------------------
 // NxsDataItem::getSection
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr NxsDataItem::getSection(std::list<cdma::IRangePtr> section) throw ( cdma::Exception )
+cdma::IDataItemPtr NxsDataItem::getSection(std::list<cdma::RangePtr> section) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::getSection");
 }
@@ -266,7 +266,7 @@ cdma::IDataItemPtr NxsDataItem::getSection(std::list<cdma::IRangePtr> section) t
 //---------------------------------------------------------------------------
 // NxsDataItem::getSectionRanges
 //---------------------------------------------------------------------------
-std::list<cdma::IRangePtr> NxsDataItem::getSectionRanges()
+std::list<cdma::RangePtr> NxsDataItem::getSectionRanges()
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::getSectionRanges");
 }
@@ -463,7 +463,7 @@ bool NxsDataItem::removeAttribute(const cdma::IAttributePtr& a)
 //---------------------------------------------------------------------------
 // NxsDataItem::setCachedData
 //---------------------------------------------------------------------------
-//##void NxsDataItem::setCachedData(IArray& cacheData, bool isMetadata) throw ( cdma::Exception )
+//##void NxsDataItem::setCachedData(Array& cacheData, bool isMetadata) throw ( cdma::Exception )
 
 //---------------------------------------------------------------------------
 // NxsDataItem::setCaching
@@ -672,14 +672,14 @@ void NxsDataItem::loadMatrix()
     // Load data
     file->GetData( &data, m_name.data() );
   
-    // Init IArray
+    // Init Array
     //cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, m_item.DataType(), shape, data.Data() );
     cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()), shape, data.Data() );
 
     // remove ownership of the NexusDataSet
     data.SetData(NULL);
 
-    // update IArray
+    // update Array
     m_array.reset(array);
   }
   else

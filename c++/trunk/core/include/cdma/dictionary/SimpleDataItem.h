@@ -23,7 +23,7 @@
 // CDMA Core
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
-#include <cdma/array/impl/Array.h>
+#include <cdma/array/Array.h>
 
 namespace cdma
 {
@@ -45,23 +45,23 @@ private:
   std::list<IAttributePtr> m_attr_list;
   IDataset*                m_dataset_ptr;
   yat::String              m_name;        // Name of the dataitem
-  IArrayPtr                m_array_ptr;       // IArray object
+  ArrayPtr                 m_array_ptr;       // Array object
 
 public:
   /// c-tor
-  SimpleDataItem(IDataset* dataset, IArrayPtr ptrArray, const std::string &name);
+  SimpleDataItem(IDataset* dataset, ArrayPtr ptrArray, const std::string &name);
   
   /// d-tor
   ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
 
   //@{ IDataItem interface
   IAttributePtr findAttributeIgnoreCase(const std::string& name);
-  int findDimensionIndex(const std::string& name);
+  int findDimensionView(const std::string& name);
   IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
   IGroupPtr getParent();
   IGroupPtr getRoot();
-  IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
-  IArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
+  ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
+  ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
   std::string getDescription();
   std::list<IDimensionPtr> getDimensions(int i);
   std::list<IDimensionPtr> getDimensionList();
@@ -69,10 +69,10 @@ public:
   int getElementSize();
   std::string getNameAndDimensions();
   std::string getNameAndDimensions(bool useFullName, bool showDimLength);
-  std::list<IRangePtr> getRangeList();
+  std::list<RangePtr> getRangeList();
   int getRank();
-  IDataItemPtr getSection(std::list<IRangePtr> section) throw ( cdma::Exception );
-  std::list<IRangePtr> getSectionRanges();
+  IDataItemPtr getSection(std::list<RangePtr> section) throw ( cdma::Exception );
+  std::list<RangePtr> getSectionRanges();
   std::vector<int> getShape();
   long getSize();
   int getSizeToCache();

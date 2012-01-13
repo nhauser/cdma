@@ -58,71 +58,71 @@ public:
   ///
   /// @param clazz Class type
   /// @param shape vector of integer describing the shape
-  /// @return IArray
+  /// @return Array
   ///
-  IArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape);
+  ArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape);
 
   /// Create an Array with a given data type, shape and data storage.
   ///
   /// @param clazz in Class type
   /// @param shape array of integer
   /// @param storage a 1D  array in the type reference by clazz
-  /// @return IArray
+  /// @return Array
   ///
-  IArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage);
+  ArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage);
 
-  /// Create an IArray from an array. A new 1D array storage will be
-  /// created. The IArray will be in the same type and same shape as the
+  /// Create an Array from an array. A new 1D array storage will be
+  /// created. The Array will be in the same type and same shape as the
   /// given array. The storage of the new array will be a COPY of the supplied
   /// array.
   ///
   /// @param array one to many dimensional java array
-  /// @return IArray
+  /// @return Array
   ///
-  IArrayPtr createArray(const void * array);
+  ArrayPtr createArray(const void * array);
 
-  /// Create an IArray of string storage. The rank of the new IArray will be 2
+  /// Create an Array of string storage. The rank of the new Array will be 2
   /// because it treat the Array as 2D char array.
   ///
   /// @param string string value
-  /// @return new IArray object
+  /// @return new Array object
   ///
-  IArrayPtr createStringArray(const std::string& value);
+  ArrayPtr createStringArray(const std::string& value);
 
-  /// Create a double type IArray with a given single dimensional double
-  /// storage. The rank of the generated IArray object will be 1.
+  /// Create a double type Array with a given single dimensional double
+  /// storage. The rank of the generated Array object will be 1.
   ///
   /// @param array array of double in one dimension
-  /// @return new IArray object
+  /// @return new Array object
   ///
-  IArrayPtr createDoubleArray(double array[]);
+  ArrayPtr createDoubleArray(double array[]);
 
   /// Create a double type Array with a given java double storage and shape.
   ///
   /// @param array array of double in one dimension
   /// @param shape integer vector
-  /// @return new IArray object
+  /// @return new Array object
   ///
-  IArrayPtr createDoubleArray(double array[], const std::vector<int> shape);
+  ArrayPtr createDoubleArray(double array[], const std::vector<int> shape);
 
-  /// Create an IArray from a array. The new IArray will be in the same type and same shape as the
+  /// Create an Array from a array. The new Array will be in the same type and same shape as the
   /// given array. The storage of the new array will be the supplied array.
   ///
   /// @param array primary array
-  /// @return IArray
+  /// @return Array
   ///
-  IArrayPtr createArrayNoCopy(const void * array);
+  ArrayPtr createArrayNoCopy(const void * array);
 
-  /// Create a DataItem with a given parent Group, name and IArray data.
+  /// Create a DataItem with a given parent Group, name and Array data.
   /// If the parent Group is null, it will generate a temporary Group as the
   /// parent group.
   ///
   /// @param parent IGroup
   /// @param shortName in string type
-  /// @param array IArray
+  /// @param array Array
   /// @return an IDataItem
   ///
-  IDataItemPtr createDataItem(const cdma::IGroupPtr& parent, const std::string& shortName, const cdma::IArrayPtr& array) throw ( cdma::Exception );
+  IDataItemPtr createDataItem(const cdma::IGroupPtr& parent, const std::string& shortName, const cdma::ArrayPtr& array) throw ( cdma::Exception );
 
   /// Create a GDM Group with a given parent GDM Group, name, and a bool
   /// initiate parameter telling the factory if the new group will be put in
