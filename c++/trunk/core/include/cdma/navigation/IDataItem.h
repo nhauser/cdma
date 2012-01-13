@@ -50,7 +50,7 @@ public:
   /// @param namethe name of the dimension
   /// @return the index of the named Dimension, or -1 if not found.
   ///
-  virtual int findDimensionIndex(const std::string& name) = 0;
+  virtual int findDimensionView(const std::string& name) = 0;
 
   /// Create a new DataItem that is a logical slice of this DataItem, by fixing
   /// the specified dimension at the specified index value. This reduces rank
@@ -83,8 +83,8 @@ public:
   ///
   /// @return the requested data in a memory-resident Array.
   ///
-  virtual IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception ) = 0;
-  // Methode initiale:		  virtual IArrayPtr getData() throw ( Exception ) = 0;
+  virtual ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception ) = 0;
+  // Methode initiale:		  virtual ArrayPtr getData() throw ( Exception ) = 0;
 
   /// Read a section of the data for this DataItem and return a memory resident
   /// Array. The Array has the same element type as the DataItem. The size of
@@ -98,7 +98,7 @@ public:
   /// @param shape array of int
   /// @return the requested data in a memory-resident Array.
   ///
-  virtual IArrayPtr getData( std::vector<int> origin, std::vector<int> shape) throw ( Exception ) = 0;
+  virtual ArrayPtr getData( std::vector<int> origin, std::vector<int> shape) throw ( Exception ) = 0;
   ///
   /// Get the description of the DataItem. Default is to use "long_name"
   /// attribute value. If not exist, look for "description", "title", or
@@ -158,7 +158,7 @@ public:
   ///
   /// @return array of Ranges, one for each Dimension.
   ///
-  virtual std::list<IRangePtr > getRangeList() = 0;
+  virtual std::list<RangePtr > getRangeList() = 0;
 
   /// Get the number of dimensions of the DataItem.
   ///
@@ -176,7 +176,7 @@ public:
   ///           means use the entire dimension.
   /// @return a new DataItem which is a logical section of this DataItem.
   ///
-  virtual IDataItemPtr getSection(std::list<IRangePtr > section) throw ( Exception ) = 0;
+  virtual IDataItemPtr getSection(std::list<RangePtr > section) throw ( Exception ) = 0;
 
   /// Get index subsection as an array of Range objects, relative to the
   /// original variable. If this is a section, will reflect the index range
@@ -186,7 +186,7 @@ public:
   ///
   /// @return array of Ranges, one for each Dimension.
   ///
-  virtual std::list<IRangePtr > getSectionRanges() = 0;
+  virtual std::list<RangePtr > getSectionRanges() = 0;
 
   /// Get the shape: length of DataItem in each dimension.
   ///
@@ -350,14 +350,14 @@ public:
   /// Set the data cache.
   ///
   /// @param cacheData
-  ///           IArray object
+  ///           Array object
   /// @param isMetadata
   ///           : synthesised data, set true if must be saved in NcML output
   ///           (i.e. data not actually in the file).
   /// @throw  Exception
   ///            invalid type
   ///
-  //## virtual void setCachedData(IArray& cacheData, bool isMetadata) throw ( Exception ) = 0;
+  //## virtual void setCachedData(Array& cacheData, bool isMetadata) throw ( Exception ) = 0;
 
   /// Set whether to cache or not. Implies that the entire array will be
   /// stored, once read. Normally this is set automatically based on size of

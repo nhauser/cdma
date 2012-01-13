@@ -9,7 +9,7 @@
 // ******************************************************************************
 
 #include <cdma/Common.h>
-#include <cdma/array/impl/Array.h>
+#include <cdma/array/Array.h>
 #include <NxsAttribute.h>
 #include <TypeDetector.h>
 
@@ -78,7 +78,7 @@ int NxsAttribute::getLength()
 // NxsAttribute::getValue
 //---------------------------------------------------------------------------
 /*
-cdma::IArrayPtr NxsAttribute::getValue()
+cdma::ArrayPtr NxsAttribute::getValue()
 {
 }
 */
@@ -157,7 +157,7 @@ void NxsAttribute::setStringValue(std::string val)
 //---------------------------------------------------------------------------
 // NxsAttribute::setValue
 //---------------------------------------------------------------------------
-void NxsAttribute::setValue(cdma::IArray& value)
+void NxsAttribute::setValue(cdma::Array& value)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setValue");
 }

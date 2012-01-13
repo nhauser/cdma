@@ -123,7 +123,7 @@ public:
   /// @param shape   array of integer
   /// @return        cdma Array
   ///
-  static IArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape);
+  static ArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape);
 
   /// Create an Array with a given data type, shape and data storage.
   ///
@@ -132,7 +132,7 @@ public:
   /// @param storage  a 1D array in the type reference by clazz
   /// @return         cdma Array
   ///
-  template<typename T> static IArrayPtr createArray(T type, const std::vector<int> shape);
+  template<typename T> static ArrayPtr createArray(T type, const std::vector<int> shape);
 
   /// Create an Array with a given data type, shape and data storage.
   ///
@@ -141,7 +141,7 @@ public:
   /// @param storage  a 1D array in the type reference by clazz
   /// @return         cdma Array
   ///
-  template<typename T> static IArrayPtr createArray(T* storage, const std::vector<int> shape);
+  template<typename T> static ArrayPtr createArray(T* storage, const std::vector<int> shape);
 
   /// Create an Array from a array. A new 1D array storage will be
   /// created. The new cdma Array will be in the same type and same shape as the
@@ -151,7 +151,7 @@ public:
   /// @param array  one to many dimensional array
   /// @return       cdma Array
   ///
-  static IArrayPtr createArray(const void * array);
+  static ArrayPtr createArray(const void * array);
 
   /// Create an Array of string storage. The rank of the new Array will be 2
   /// because it treat the Array as 2D char array.
@@ -159,7 +159,7 @@ public:
   /// @param std::string   string value
   /// @return new Array object
   ///
-  static IArrayPtr createStringArray(const std::string& value);
+  static ArrayPtr createStringArray(const std::string& value);
 
   /// Create a double type Array with a given single dimensional double
   /// storage. The rank of the generated Array object will be 1.
@@ -167,7 +167,7 @@ public:
   /// @param  array  double array in one dimension
   /// @return        new Array object
   ///
-  static IArrayPtr createDoubleArray(double array[]);
+  static ArrayPtr createDoubleArray(double array[]);
 
   /// Create a double type Array with a given double storage and shape.
   ///
@@ -175,7 +175,7 @@ public:
   /// @param shape   integer array
   /// @return        new Array object
   ///
-  static IArrayPtr createDoubleArray(double array[], const std::vector<int> shape);
+  static ArrayPtr createDoubleArray(double array[], const std::vector<int> shape);
 
 /*
   /// Create a DataItem with a given cdma parent Group, name and cdma Array data.
@@ -188,7 +188,7 @@ public:
   /// @return           cdma IDataItem
   /// @throw            Exception
   ///
-  static IDataItemPtr createDataItem(const IGroupPtr& parent, const std::string& shortName, const IArrayPtr& array) throw ( Exception );
+  static IDataItemPtr createDataItem(const IGroupPtr& parent, const std::string& shortName, const ArrayPtr& array) throw ( Exception );
 
   /// Create a cdma Group with a given parent cdma Group, name, and a bool
   /// initiate parameter telling the factory if the new group will be put in
@@ -245,8 +245,8 @@ public:
 
 };
 
-template<typename T> IArrayPtr Factory::createArray(T type, const std::vector<int> shape) {}
-template<typename T> IArrayPtr Factory::createArray(T* storage, const std::vector<int> shape) {}
+template<typename T> ArrayPtr Factory::createArray(T type, const std::vector<int> shape) {}
+template<typename T> ArrayPtr Factory::createArray(T* storage, const std::vector<int> shape) {}
 
 } //namespace CDMACore
 #endif //__CDMA_FACTORY_H__

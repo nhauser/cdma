@@ -17,7 +17,6 @@
 
 namespace cdma
 {
-
 #ifdef YAT_WIN32
   const std::string SHARED_LIB_EXTENSION( "dll" );
 #else
@@ -198,7 +197,7 @@ DictionaryPtr Factory::openDictionary(const std::string& filepath) throw ( Excep
 //----------------------------------------------------------------------------
 // Factory::createArray
 //----------------------------------------------------------------------------
-IArrayPtr Factory::createArray(const std::type_info clazz, const std::vector<int> shape)
+ArrayPtr Factory::createArray(const std::type_info clazz, const std::vector<int> shape)
 {
   THROW_NOT_IMPLEMENTED("Factory::createArray");
 }
@@ -206,7 +205,7 @@ IArrayPtr Factory::createArray(const std::type_info clazz, const std::vector<int
 //----------------------------------------------------------------------------
 // Factory::createArray
 //----------------------------------------------------------------------------
-IArrayPtr Factory::createArray(const void * array)
+ArrayPtr Factory::createArray(const void * array)
 {
   THROW_NOT_IMPLEMENTED("Factory::createArray");
 }
@@ -214,7 +213,7 @@ IArrayPtr Factory::createArray(const void * array)
 //----------------------------------------------------------------------------
 // Factory::createStringArray
 //----------------------------------------------------------------------------
-IArrayPtr Factory::createStringArray(const std::string& value)
+ArrayPtr Factory::createStringArray(const std::string& value)
 {
   THROW_NOT_IMPLEMENTED("Factory::createStringArray");
 }
@@ -222,7 +221,7 @@ IArrayPtr Factory::createStringArray(const std::string& value)
 //----------------------------------------------------------------------------
 // Factory::createDoubleArray
 //----------------------------------------------------------------------------
-IArrayPtr Factory::createDoubleArray(double array[])
+ArrayPtr Factory::createDoubleArray(double array[])
 {
   THROW_NOT_IMPLEMENTED("Factory::createDoubleArray");
 }
@@ -230,7 +229,7 @@ IArrayPtr Factory::createDoubleArray(double array[])
 //----------------------------------------------------------------------------
 // Factory::createDoubleArray
 //----------------------------------------------------------------------------
-IArrayPtr Factory::createDoubleArray(double array[], const std::vector<int> shape)
+ArrayPtr Factory::createDoubleArray(double array[], const std::vector<int> shape)
 {
   THROW_NOT_IMPLEMENTED("Factory::createDoubleArray");
 }
@@ -238,7 +237,7 @@ IArrayPtr Factory::createDoubleArray(double array[], const std::vector<int> shap
 //----------------------------------------------------------------------------
 // Factory::createDataItem
 //----------------------------------------------------------------------------
-IDataItemPtr Factory::createDataItem(const IGroupPtr& parent, const std::string& shortName, const IArrayPtr& array) throw ( Exception )
+IDataItemPtr Factory::createDataItem(const IGroupPtr& parent, const std::string& shortName, const ArrayPtr& array) throw ( Exception )
 {
   THROW_NOT_IMPLEMENTED("Factory::createDataItem");
 }

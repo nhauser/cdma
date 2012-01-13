@@ -136,7 +136,7 @@ void NxsDimension::setName(const std::string& name)
 //----------------------------------------------------------------------------
 // NxsDimension::setCoordinateVariable
 //----------------------------------------------------------------------------
-void NxsDimension::setCoordinateVariable(const cdma::IArrayPtr& array) throw ( cdma::Exception )
+void NxsDimension::setCoordinateVariable(const cdma::ArrayPtr& array) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setCoordinateVariable");
 }

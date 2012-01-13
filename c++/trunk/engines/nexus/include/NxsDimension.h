@@ -49,7 +49,7 @@ public:
 	void setShared(bool b);
 	void setLength(int n);
 	void setName(const std::string& name);
-	void setCoordinateVariable(const IArrayPtr& array) throw ( cdma::Exception );
+	void setCoordinateVariable(const ArrayPtr& array) throw ( cdma::Exception );
   //@}
 
   //@{ IObject interface

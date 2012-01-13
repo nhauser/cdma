@@ -21,8 +21,9 @@
 //==============================================================================
 
 #include <vector>
-#include <cdma/array/ISliceIterator.h>
 #include <cdma/exception/Exception.h>
+#include <cdma/array/Array.h>
+#include <cdma/array/ArrayIterator.h>
 
 namespace cdma
 {
@@ -30,29 +31,36 @@ namespace cdma
 //==============================================================================
 /// SliceIterator default implementation
 //==============================================================================
-class SliceIterator : public ISliceIterator
+class SliceIterator
 {
 private:
-  std::string m_factory; // Factory name
-  
+  ArrayPtr m_array;
+  ArrayIteratorPtr m_iterator;
+  int m_dimension;
+  ArrayPtr m_slice;
+
 public:
-  /// Check if there is next slice.
-  ///
-  /// @return Boolean type
-  ///
-  bool hasNext();
+  SliceIterator(const SliceIterator& iterator);
+  SliceIterator(const ArrayPtr& array, int dim);
+  ~SliceIterator();
+
+  SliceIterator& operator++(void); // prefix operator
+  SliceIterator& operator++(int);  // suffix operator
+  ArrayPtr& operator*(void);
+  bool operator==(const SliceIteratorPtr& it);
+  bool operator!=(const SliceIteratorPtr& it);
 
   /// Jump to the next slice.
   ///
   void next();
-
+/*
   /// Get the next slice of Array.
   ///
   /// @return IArray
   ///
   /// @throw cdma::Exception, yat::Exception
   ///
-  IArrayPtr getArrayNext() throw ( Exception );
+  ArrayPtr getArrayNext() throw ( Exception );
 
   /// Get the current slice of Array.
   ///
@@ -60,8 +68,8 @@ public:
   ///
   /// @throw cdma::Exception, yat::Exception
   ///
-  IArrayPtr getArrayCurrent() throw ( Exception );
-
+  ArrayPtr getArrayCurrent() throw ( Exception );
+*/
   /// Get the shape of any slice that is returned. This could be used when a
   /// temporary array of the right shape needs to be created.
   ///
@@ -76,12 +84,15 @@ public:
   /// @return <code>int</code> array of the current position of the slice
   /// @note rank of the returned position is the same as the IArray shape we are slicing
   ///
-  std::vector<int> getSlicePosition();
+  std::vector<int> getPosition();
 
   //@{ IObject interface
   CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-  std::string getFactoryName() const { return m_factory; };
+  std::string getFactoryName() const { return m_array->getFactoryName(); };
   //@}
+  
+private:
+  void get();
   
  };
 }

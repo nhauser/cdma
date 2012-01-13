@@ -15,7 +15,6 @@
 #include <typeinfo>
 
 #include <yat/memory/SharedPtr.h>
-// #include <yat/utils/URI.h>
 #include <yat/plugin/IPlugInObject.h>
 
 #include <cdma/IObject.h>
@@ -74,7 +73,7 @@ public:
   /// @param shape array of integer
   /// @return CDMA Array Created on 18/06/2008
   ///
-  virtual IArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape) = 0;
+  virtual ArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape) = 0;
 
   /// Create an Array with a given data type, shape and data storage.
   ///
@@ -83,7 +82,7 @@ public:
   /// @param storage a 1D  array in the type reference by clazz
   /// @return CDMA Array Created on 18/06/2008
   ///
-  virtual IArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage) = 0;
+  virtual ArrayPtr createArray(const std::type_info clazz, const std::vector<int> shape, const void * storage) = 0;
 
   /// Create an Array from a  array. A new 1D  array storage will be
   /// created. The new CDMA Array will be in the same type and same shape as the
@@ -93,7 +92,7 @@ public:
   /// @param array one to many dimensional  array
   /// @return CDMA Array Created on 18/06/2008
   ///
-  virtual IArrayPtr createArray(const void * array) = 0;
+  virtual ArrayPtr createArray(const void * array) = 0;
 
   /// Create an Array of string storage. The rank of the new Array will be 2
   /// because it treat the Array as 2D char array.
@@ -101,7 +100,7 @@ public:
   /// @param string string value
   /// @return new Array object
   ///
-  virtual IArrayPtr createStringArray(const std::string& value) = 0;
+  virtual ArrayPtr createStringArray(const std::string& value) = 0;
 
   /// Create a double type Array with a given single dimensional  double
   /// storage. The rank of the generated Array object will be 1.
@@ -109,7 +108,7 @@ public:
   /// @param array double array in one dimension
   /// @return new Array object Created on 10/11/2008
   ///
-  virtual IArrayPtr createDoubleArray(double array[]) = 0;
+  virtual ArrayPtr createDoubleArray(double array[]) = 0;
 
   /// Create a double type Array with a given  double storage and shape.
   ///
@@ -117,16 +116,16 @@ public:
   /// @param shape integer array
   /// @return new Array object Created on 10/11/2008
   ///
-  virtual IArrayPtr createDoubleArray(double array[], const std::vector<int> shape) = 0;
+  virtual ArrayPtr createDoubleArray(double array[], const std::vector<int> shape) = 0;
 
-  /// Create an IArray from a  array. A new 1D  array storage will be
+  /// Create an Array from a  array. A new 1D  array storage will be
   /// created. The new CDMA Array will be in the same type and same shape as the
   ///  array. The storage of the new array will be the supplied  array.
   ///
   /// @param array primary array
   /// @return CDMA array Created on 28/10/2008
   ///
-  virtual IArrayPtr createArrayNoCopy(const void * array) = 0;
+  virtual ArrayPtr createArrayNoCopy(const void * array) = 0;
 
   /// Create a DataItem with a given CDMA parent Group, name and CDMA Array data.
   /// If the parent Group is null, it will generate a temporary Group as the
@@ -138,7 +137,7 @@ public:
   /// @return CDMA     IDataItem
   /// @throw  Exception
   ///
-  virtual IDataItemPtr createDataItem(const IGroupPtr& parent, const std::string& shortName, const IArrayPtr& array) throw ( Exception ) = 0;
+  virtual IDataItemPtr createDataItem(const IGroupPtr& parent, const std::string& shortName, const ArrayPtr& array) throw ( Exception ) = 0;
 
   /// Create a CDMA Group with a given parent CDMA Group, name, and a bool
   /// initiate parameter telling the factory if the new group will be put in

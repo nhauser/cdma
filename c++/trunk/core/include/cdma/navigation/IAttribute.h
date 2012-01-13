@@ -120,7 +120,7 @@ public:
   ///
   /// @param value IArray object
   ///
-  virtual void setValue(IArray& value) = 0;
+  virtual void setValue(Array& value) = 0;
 };
 
 } //namespace CDMACore

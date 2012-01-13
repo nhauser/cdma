@@ -27,7 +27,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 // c-tor
 //---------------------------------------------------------------------------
-SimpleDataItem::SimpleDataItem(IDataset* dataset, IArrayPtr ptrArray, const std::string &name):
+SimpleDataItem::SimpleDataItem(IDataset* dataset, ArrayPtr ptrArray, const std::string &name):
 m_dataset_ptr(dataset), m_name(name), m_array_ptr(ptrArray)
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::SimpleDataItem");
@@ -42,11 +42,11 @@ cdma::IAttributePtr SimpleDataItem::findAttributeIgnoreCase(const std::string& n
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::findDimensionIndex
+// SimpleDataItem::findDimensionView
 //---------------------------------------------------------------------------
-int SimpleDataItem::findDimensionIndex(const std::string& name)
+int SimpleDataItem::findDimensionView(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::findDimensionIndex");
+  THROW_NOT_IMPLEMENTED("SimpleDataItem::findDimensionView");
 }
 
 //---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ cdma::IGroupPtr SimpleDataItem::getRoot()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getData
 //---------------------------------------------------------------------------
-cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
+cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> position)");
   int node_rank = m_array_ptr->getRank();
@@ -98,14 +98,14 @@ cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma:
       shape.push_back( m_array_ptr->getShape()[dim] );
     }
   }
-  cdma::IArrayPtr array = getData(origin, shape);
+  cdma::ArrayPtr array = getData(origin, shape);
   return array;
 }
 
 //---------------------------------------------------------------------------
 // SimpleDataItem::getData
 //---------------------------------------------------------------------------
-cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
+cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> origin, vector<int> shape)");
 
@@ -117,9 +117,9 @@ cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int
     iStart[i] = origin[i];
     iShape[i]  = shape[i];
   }
-  cdma::IIndexPtr index = new cdma::Index( "### POINTER_TO_THE_PLUGIN_FACTORY", rank, iShape, iStart );
+  cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
   //## Should pass the shared pointer rather than a pointer to the referenced object
-  cdma::IArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array_ptr.get())), index );
+  cdma::ArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array_ptr.get())), view );
   return array;
 }
 
@@ -182,7 +182,7 @@ std::string SimpleDataItem::getNameAndDimensions(bool useFullName, bool showDimL
 //---------------------------------------------------------------------------
 // SimpleDataItem::getRangeList
 //---------------------------------------------------------------------------
-std::list<cdma::IRangePtr> SimpleDataItem::getRangeList()
+std::list<cdma::RangePtr> SimpleDataItem::getRangeList()
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getRangeList");
 }
@@ -198,7 +198,7 @@ int SimpleDataItem::getRank()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getSection
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr SimpleDataItem::getSection(std::list<cdma::IRangePtr> section) throw ( cdma::Exception )
+cdma::IDataItemPtr SimpleDataItem::getSection(std::list<cdma::RangePtr> section) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getSection");
 }
@@ -206,7 +206,7 @@ cdma::IDataItemPtr SimpleDataItem::getSection(std::list<cdma::IRangePtr> section
 //---------------------------------------------------------------------------
 // SimpleDataItem::getSectionRanges
 //---------------------------------------------------------------------------
-std::list<cdma::IRangePtr> SimpleDataItem::getSectionRanges()
+std::list<cdma::RangePtr> SimpleDataItem::getSectionRanges()
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getSectionRanges");
 }
@@ -395,7 +395,7 @@ bool SimpleDataItem::removeAttribute(const cdma::IAttributePtr& a)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setCachedData
 //---------------------------------------------------------------------------
-//##void SimpleDataItem::setCachedData(IArray& cacheData, bool isMetadata) throw ( cdma::Exception )
+//##void SimpleDataItem::setCachedData(Array& cacheData, bool isMetadata) throw ( cdma::Exception )
 
 //---------------------------------------------------------------------------
 // SimpleDataItem::setCaching

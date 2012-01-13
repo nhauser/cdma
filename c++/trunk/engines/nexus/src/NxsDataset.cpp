@@ -21,7 +21,6 @@
 #include <NxsDataset.h>
 #include <NxsGroup.h>
 #include <NxsDataItem.h>
-#include <NxsFactory.h>
 
 namespace cdma
 {
