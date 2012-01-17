@@ -25,7 +25,7 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/math/ArrayMath.h>
 #include <cdma/utils/ArrayUtils.h>
-#include <cdma/array/ArrayStorage.h>
+#include <cdma/array/impl/ArrayStorage.h>
 #include <cdma/array/View.h>
 
 namespace cdma
