@@ -21,18 +21,14 @@
 
 namespace cdma
 {
+
 //==============================================================================
-/// Range default implementation
+/// A range represents a set of integers that are positions on one dimension. 
+/// It is used as a View descriptor for Arrays on a particular dimension.
 //==============================================================================
+
 class Range
 {
- private:
-  int         m_last;     // offset of last element
-  int         m_first;    // offset of first element
-  int         m_stride;   // stride, must be >= 1
-  bool        m_reduced;  // was this ranged reduced or not
-  std::string m_name;     // optional name
- 
 public:
 	/// Constructors
 	Range();
@@ -40,34 +36,136 @@ public:
   Range( std::string name, long first, long last, long stride, bool reduced = false );
   Range( const cdma::Range& range );
   
+  /// D-structor
 	~Range() { };
 
-  //@{ internal commons method
+  /// Get the number of elements in the range.
+  ///
+  /// @return the number of elements in the range.
+  ///
+  int length() const ;
+  
+  /// Get returns the position of the given offset
+  ///
+  /// @param offset of the element
+  /// @return the i-th element of a range.
+  ///
+  int element(int offset) throw ( cdma::Exception );
+  
+  /// Get the offset for this element: inverse of element.
+  ///
+  /// @param elem the element of the range
+  /// @return index
+  ///
+  int index(int elem) throw ( cdma::Exception );
+  
+  /// Is the ith element contained in this Range?
+  ///
+  /// @param i index in the original Range
+  /// @return true if the ith element would be returned by the Range iterator
+  ///
+  bool contains(int i) const;
+  
+  /// @return first element's offset in range
+  ///
+  int first() const;
+  
+  /// @return last element's offset in range, inclusive
+  ///
+	int last() const;
+	
+	/// @return stride, must be >= 1
+  ///
+	int stride() const;
+	
+  /// Get name.
+  ///
+  /// @return name, or empty string
+  ///
+	std::string getName() const;
+	
+  /// Find the smallest element k in the Range, such that
+  /// <ul>
+  /// <li>k >= first
+  /// <li>k >= start
+  /// <li>k <= last
+  /// <li>k = first + i * stride for some integer i.
+  /// </ul>
+  ///
+  /// @param start starting index
+  /// @return first in interval, else -1 if there is no such element.
+  ///
+  int getFirstInInterval(int start);
+
+  /// Returns true if this Range has been reduced
+  /// (i.e not considered in View)
+  ///
+  bool reduce() const      { return m_reduced; };
+  
+  /// Set the reduced status (i.e true to not consider it in View)
+  ///
+  /// @param reduce boolean value
+  ///
+  void setReduce(bool reduce) { m_reduced = reduce; };
+
+  /// Setters to redefine the Range
   void set( int length );
   void set( std::string name, long first, long last, long stride, bool reduced = false );
   void set( const cdma::Range& range );
-  //@} internal commons method
   
-  //@{ IRange interface
-  RangePtr    compose(const cdma::Range& r)     throw ( cdma::Exception );
-  RangePtr    compact()                         throw ( cdma::Exception );
-  RangePtr    shiftOrigin(int origin)           throw ( cdma::Exception );
-  RangePtr    intersect(const cdma::Range& r)   throw ( cdma::Exception );
-  bool        intersects(const cdma::Range& r);
-  RangePtr    unionRanges(const cdma::Range& r) throw ( cdma::Exception );
-  int         length() const ;
-  int         element(int i)                    throw ( cdma::Exception );
-  int         index(int elem)                   throw ( cdma::Exception );
-  bool        contains(int i) const;
-  int         first() const;
-	int         last() const;
-	int         stride() const;
-	std::string getName() const;
-  int         getFirstInInterval(int start);
-  //@} IRange interface
+ /// Create a new Range by composing a Range that is relative to this Range.
+  ///
+  /// @param r range relative to base
+  /// @return combined Range, may be EMPTY
+  ///
+  RangePtr compose(const cdma::Range& r) throw ( cdma::Exception );
   
-  void setReduce(bool reduce) { m_reduced = reduce; };
-  bool reduce() const      { return m_reduced; };
+  /// Create a new Range by compacting this Range by removing the stride. first
+  /// = first/stride, last=last/stride, stride=1.
+  ///
+  /// @return compacted Range
+  ///
+  RangePtr compact() throw ( cdma::Exception );
+  
+  /// Create a new Range shifting this range by a constant factor.
+  ///
+  /// @param origin subtract this from first, last
+  /// @return shift range
+  ///
+  RangePtr shiftOrigin(int origin) throw ( cdma::Exception );
+  
+  /// Create a new Range by intersecting with a Range using same interval as
+  /// this Range. NOTE: intersections when both Ranges have strides are not
+  /// supported.
+  ///
+  /// @param r range to intersect
+  /// @return intersected Range, may be EMPTY
+  ///
+  RangePtr intersect(const cdma::Range& r) throw ( cdma::Exception );
+  
+  /// Determine if a given Range intersects this one. NOTE: we dont yet support
+  /// intersection when both Ranges have strides
+  ///
+  /// @param r range to intersect
+  /// @return true if they intersect
+  ///
+  bool intersects(const cdma::Range& r);
+  
+  /// Create a new Range by making the union with a Range using same interval
+  /// as this Range. NOTE: no strides.
+  ///
+  /// @param r range to add
+  /// @return intersected Range, may be EMPTY
+  ///
+  RangePtr unionRanges(const cdma::Range& r) throw ( cdma::Exception );
+
+
+private:
+  int         m_last;     // offset of last element
+  int         m_first;    // offset of first element
+  int         m_stride;   // stride, must be >= 1
+  bool        m_reduced;  // was this ranged reduced or not
+  std::string m_name;     // optional name
 };
 }
 #endif

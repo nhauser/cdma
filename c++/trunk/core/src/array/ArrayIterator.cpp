@@ -48,26 +48,8 @@ ArrayIterator::ArrayIterator(const ArrayIterator& iter) : m_view ( iter.m_view )
 //---------------------------------------------------------------------------
 ArrayIterator::~ArrayIterator()
 {
-  CDMA_TRACE("ArrayIterator::~ArrayIterator");
+  CDMA_FUNCTION_TRACE("ArrayIterator::~ArrayIterator");
 };
-
-/*
-//-----------------------------------------------------------------------------
-// ArrayIterator::hasNext
-//-----------------------------------------------------------------------------
-bool ArrayIterator::hasNext()
-{
-  return m_view->currentElement() < m_view->lastElement();
-}
-*/
-//-----------------------------------------------------------------------------
-// ArrayIterator::hasNext
-//-----------------------------------------------------------------------------
-yat::Any ArrayIterator::next()
-{
-  incrementPosition(m_view, m_position);
-  return m_array->get(m_view, m_position);
-}
 
 //-----------------------------------------------------------------------------
 // ArrayIterator::getPosition
@@ -86,28 +68,6 @@ long ArrayIterator::currentElement() const
 }
 
 //-----------------------------------------------------------------------------
-// ArrayIterator::incrementPosition
-//-----------------------------------------------------------------------------
-std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vector<int>& position)
-{
-  std::vector<int> shape = view->getShape();
-
-  for( int i = position.size() - 1; i >= 0; i-- )
-	{
-    if( position[i] + 1 >= shape[i] && i > 0)
-		{
-    	position[i] = 0;
-		}
-		else
-		{
-			position[i]++;
-			break;
-		}
-	}
-	return position;
-}
-
-//-----------------------------------------------------------------------------
 // ArrayIterator::operator++ prefix operator
 //-----------------------------------------------------------------------------
 ArrayIterator& ArrayIterator::operator++(void) 
@@ -123,6 +83,25 @@ ArrayIterator& ArrayIterator::operator++(int)
 {
   ArrayIterator iterator (m_array, m_view, m_position);
   operator++();
+	return iterator;
+}
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::operator-- prefix operator
+//-----------------------------------------------------------------------------
+ArrayIterator& ArrayIterator::operator--(void) 
+{
+  this->decrementPosition(m_view, m_position);
+	return *this;
+}
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::operator-- suffix operator
+//-----------------------------------------------------------------------------
+ArrayIterator& ArrayIterator::operator--(int)
+{
+  ArrayIterator iterator (m_array, m_view, m_position);
+  operator--();
 	return iterator;
 }
 
@@ -149,6 +128,113 @@ bool ArrayIterator::operator!=(const ArrayIterator& it)
 {
   return m_view->getElementOffset(m_position) != it.m_view->getElementOffset(it.m_position);
 }
+
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::incrementPosition
+//-----------------------------------------------------------------------------
+std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vector<int>& position)
+{
+  std::vector<int> shape = view->getShape();
+
+  if( position[0] < shape[0] )
+  {
+    for( unsigned int i = position.size() - 1; i >= 0; i-- )
+	  {
+	    if( position[i] + 1 >= shape[i] && i > 0)
+	    {
+      	position[i] = 0;
+      }
+      else
+      {
+		    position[i]++;
+		    break;
+      }
+	  }
+	}
+	return position;
+}
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::decrementPosition
+//-----------------------------------------------------------------------------
+std::vector<int>& ArrayIterator::decrementPosition(const ViewPtr& view, std::vector<int>& position)
+{
+  std::vector<int> shape = view->getShape();
+
+  // Check if this == begin iterator then reset position
+  if( !isBeginPosition( shape, position ) )
+  {
+    // Check the position is not out of range
+    if( position[0] >= 0 )
+    {
+      for( unsigned int i = position.size() - 1; i >= 0; i-- )
+      {
+        if( position[i] - 1 < 0 && i > 0  )
+        {
+	        position[i] = shape[i] - 1;
+        }
+        else
+        {
+        	position[i]--;
+        	break;
+        }
+      }
+    }
+  }
+	return position;
+}
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::isEndPosition
+//-----------------------------------------------------------------------------
+bool ArrayIterator::isEndPosition(std::vector<int> shape, std::vector<int> position)
+{
+  bool result = true;
+
+  if( position[0] == shape[0] )
+  {
+    for( unsigned int i = 1; i < shape.size(); i++ )
+    {
+      if( position[i] != 0 )
+      {
+        result = false;
+        break;
+      }
+    }
+  }
+  else
+  {
+    result = false;  
+  }
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+// ArrayIterator::isBeginPosition
+//-----------------------------------------------------------------------------
+bool ArrayIterator::isBeginPosition(std::vector<int> shape, std::vector<int> position)
+{
+  bool result = true;
+
+  if( position[0] == -1 )
+  {
+    for( unsigned int i = 1; i < shape.size(); i++ )
+    {
+      if( position[i] != shape[i] - 1 )
+      {
+        result = false;
+        break;
+      }
+    }
+  }
+  else
+  {
+    result = false;  
+  }
+  return result;
+}
+
 
 }
 

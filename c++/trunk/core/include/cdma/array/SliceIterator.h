@@ -11,15 +11,6 @@
 #ifndef __CDMA_SLICEITERATOR_H__
 #define __CDMA_SLICEITERATOR_H__
 
-//==============================================================================
-/// Iterator for slicing an Array.
-/// This is a way to iterate over slices of arrays, and should eventually be
-/// incorporated into the Gumtree Data Model rather than lying around here. Each
-/// iteration returns an array of dimension dim, representing the last dim
-/// dimensions of the input array. So for 3D data consisting of a set of 2D
-/// arrays, each of the 2D arrays will be returned.
-//==============================================================================
-
 #include <vector>
 #include <cdma/exception/Exception.h>
 #include <cdma/array/Array.h>
@@ -29,47 +20,57 @@ namespace cdma
 {
 
 //==============================================================================
-/// SliceIterator default implementation
+/// SliceIterator
+/// Iterator for slicing an Array. This is a way to iterate over slices of arrays.
+/// Each iteration returns an array of dimension i-th, representing the last i-th
+/// dimensions of the input array.
 //==============================================================================
+
 class SliceIterator
 {
-private:
-  ArrayPtr m_array;
-  ArrayIteratorPtr m_iterator;
-  int m_dimension;
-  ArrayPtr m_slice;
-
 public:
+  // Consrtuctor
   SliceIterator(const SliceIterator& iterator);
   SliceIterator(const ArrayPtr& array, int dim);
+  
+  // D-structor
   ~SliceIterator();
 
-  SliceIterator& operator++(void); // prefix operator
-  SliceIterator& operator++(int);  // suffix operator
+  /// Prefix operator: increments the ArrayIterator before
+  /// returning the reference of the next indexed element
+  ///
+  SliceIterator& operator++(void);
+  
+  /// Suffix operator: increments the ArrayIterator after having 
+  /// returned the reference of the current indexed element
+  ///
+  SliceIterator& operator++(int);
+  
+  /// Access operator: returns a reference on the currently targeted
+  /// slice.
+  ///
+  /// @return ArrayPtr reference of the current array slice
+  ///
   ArrayPtr& operator*(void);
+  
+  /// Comparison operator: egality
+  ///
+  /// @param iterator to compare this
+  /// @return true if both iterator refers to the same position
+  ///
   bool operator==(const SliceIteratorPtr& it);
+  
+  /// Comparison operator: difference
+  ///
+  /// @param iterator to compare this
+  /// @return true if both iterator refers to different position
+  ///
   bool operator!=(const SliceIteratorPtr& it);
 
   /// Jump to the next slice.
   ///
   void next();
-/*
-  /// Get the next slice of Array.
-  ///
-  /// @return IArray
-  ///
-  /// @throw cdma::Exception, yat::Exception
-  ///
-  ArrayPtr getArrayNext() throw ( Exception );
 
-  /// Get the current slice of Array.
-  ///
-  /// @return IArray
-  ///
-  /// @throw cdma::Exception, yat::Exception
-  ///
-  ArrayPtr getArrayCurrent() throw ( Exception );
-*/
   /// Get the shape of any slice that is returned. This could be used when a
   /// temporary array of the right shape needs to be created.
   ///
@@ -93,7 +94,13 @@ public:
   
 private:
   void get();
-  
+
+private:
+  ArrayPtr         m_array;      // Whole array to slice
+  ArrayIteratorPtr m_iterator;   // Current position of the slice
+  int              m_dimension;  // Dimension of the slice
+  ArrayPtr         m_slice;      // Reference of the last read slice
+
  };
 }
 #endif

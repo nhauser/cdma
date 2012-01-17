@@ -19,7 +19,10 @@
 
 //==============================================================================
 /// Slicer of an Array.
-/// This is a way to have slices of an array.
+/// This item gives a way to have slices of an array. It provides iterators that
+/// permit to iterate over slices of an array that are sub-parts of this array.
+/// Slices are sub-part of the array considering the deepest dimension (moving
+/// fastest dimension).
 //==============================================================================
 
 #include <vector>
@@ -32,16 +35,27 @@ namespace cdma
 
 class Slicer
 {
-private:
-  ArrayPtr m_array; // Array from which slices are desired
-  int      m_rank;  // Desired rank of the slices
-
 public:
+  /// Constructor
+  ///
+  /// @param array: the array we want to slice
+  /// @param dim: rank of the slice
+  ///
   Slicer(const ArrayPtr& array, int dim);
+  
+  // d-structor
   ~Slicer();
 
+  /// Returns the a SliceIterator positionned at the beginning of the array
+  ///
   SliceIterator begin();
+  
+  /// Returns the a SliceIterator positionned at the end of the array
+  ///
   SliceIterator end();
+  
+  /// Returns the whole array
+  ///
   const ArrayPtr& array();
 
   /// Get the shape of any slice that is returned. This could be used when a
@@ -51,6 +65,10 @@ public:
   ///
   std::vector<int> getSliceShape();
 
- };
+private:
+  ArrayPtr m_array; // Array from which slices are desired
+  int      m_rank;  // Desired rank of the slices
+};
+
 }
 #endif // __CDMA_SLICER_H__
