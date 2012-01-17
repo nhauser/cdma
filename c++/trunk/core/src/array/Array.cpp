@@ -21,6 +21,7 @@
 #include <cdma/array/Array.h>
 #include <cdma/array/ArrayIterator.h>
 #include <cdma/array/SliceIterator.h>
+#include <cdma/array/Slicer.h>
 
 namespace cdma
 {
@@ -62,6 +63,17 @@ Array::Array( const ArrayPtr& array, ViewPtr view ) : m_view (view)
   m_data_impl = array->getStorage();
   m_shape = view->getShape();
   m_factory = array->getFactoryName();
+}
+
+//---------------------------------------------------------------------------
+// Array::Array
+//---------------------------------------------------------------------------
+Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr view ) : m_view (view)
+{
+  CDMA_FUNCTION_TRACE("Array::Array");
+  m_data_impl = data_ptr;
+  m_shape = view->getShape();
+  m_factory = factory;
 }
 
 //---------------------------------------------------------------------------
@@ -166,18 +178,12 @@ Array::Array( const std::string& factory, const std::type_info& type, std::vecto
 }
 
 //---------------------------------------------------------------------------
-// Array::copy
+// Array::deepCopy
 //---------------------------------------------------------------------------
-ArrayPtr Array::copy(bool data)
+ArrayPtr Array::deepCopy()
 {
-  if( data == false )
-  {
-    return new Array( *this, new View(m_view) );
-  }
-  else
-  {
-    return new Array( *this, new View(m_view) );
-  }
+  // Copy memory storage
+  return new Array( m_factory, m_data_impl->deepCopy(), new View(m_view) );
   
 }
 
@@ -305,11 +311,11 @@ void Array::setView(const cdma::ViewPtr& view)
 }
 
 //---------------------------------------------------------------------------
-// Array::getSliceIterator
+// Array::getSlicer
 //---------------------------------------------------------------------------
-cdma::SliceIteratorPtr Array::getSliceIterator(int rank) throw ( cdma::Exception )
+cdma::SlicerPtr Array::getSlicer(int rank) throw ( cdma::Exception )
 {
-  return new SliceIterator(new Array(*this, m_view), rank);
+  return new Slicer(new Array(*this, m_view), rank);
 }
 
 //---------------------------------------------------------------------------

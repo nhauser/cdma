@@ -24,25 +24,60 @@ namespace cdma
 {
 
 //==============================================================================
-/// Array iterator default implementation
+/// Array iterator to make transversal parsing of the Array
 //==============================================================================
+
 class ArrayIterator
 {
-private:
-  ArrayPtr         m_array;    // array storing data to iterate over
-  ViewPtr         m_view;    // view of how to iterate over the array
-  std::vector<int> m_position; // position in the current view of the iterator
-  
 public:
-  ~ArrayIterator();
+  // Constructor
   ArrayIterator(const ArrayIterator& iter);
   ArrayIterator(const cdma::ArrayPtr& array, const cdma::ViewPtr& view, std::vector<int> position);
 
-  ArrayIterator& operator++(void); // prefix operator
-  ArrayIterator& operator++(int); // suffix operator
+  // d-structor
+  ~ArrayIterator();
+
+  /// Prefix operator: increments the ArrayIterator before
+  /// returning the reference of the next indexed element
+  ///
+  ArrayIterator& operator++(void);
+  
+  /// Suffix operator: increments the ArrayIterator after having 
+  /// returned the reference of the current indexed element
+  ///
+  ArrayIterator& operator++(int);
+
+  /// Prefix operator: decrements the ArrayIterator before
+  /// returning the reference of the previous indexed element
+  ///
+  ArrayIterator& operator--(void);
+  
+  /// Suffix operator: decrements the ArrayIterator after having 
+  /// returned the reference of the current indexed element
+  ///
+  ArrayIterator& operator--(int);
+
+  /// Access operator: returns a reference on the currently targeted
+  /// cell. It has the form of a yat::Any to be casted into Array's element
+  /// type.
+  ///
+  /// @return yat::Any reference of the current cell
+  ///
   yat::Any& operator*(void) const;
-  bool operator==(const ArrayIterator& it);
-  bool operator!=(const ArrayIterator& it);
+  
+  /// Comparison operator: egality
+  ///
+  /// @param iterator to compare this
+  /// @return true if both iterator refers to the same cell index
+  ///
+  bool operator==(const ArrayIterator& iterator);
+  
+  /// Comparison operator: difference
+  ///
+  /// @param iterator to compare this
+  /// @return true if both iterator refers to different cell index
+  ///
+  bool operator!=(const ArrayIterator& iterator);
   
   /// Get the current position.
   ///
@@ -61,14 +96,35 @@ public:
   std::string getFactoryName() const { return m_array->getFactoryName(); };
   //@}
   
-  protected:
+protected:
+    /// Increments the position vector according the defined view
+    ///
+    /// @param view used to describe how to increments
+    /// @param position to be incremented
+    ///
     std::vector<int>& incrementPosition(const ViewPtr& view, std::vector<int>& position);
+
+    /// Decrements the position vector according the defined view
+    ///
+    /// @param view used to describe how to increments
+    /// @param position to be incremented
+    ///
+    std::vector<int>& decrementPosition(const ViewPtr& view, std::vector<int>& position);
     
-    /// Get next value as an Any.
+    /// Returns true if the position is equivalent to the last position
+    /// that iterator can take
     ///
-    /// @return any Any
-    ///
-    yat::Any next();
+    bool isEndPosition(std::vector<int> shape, std::vector<int> position);
+
+    /// Returns true if the position is equivalent to the first position
+    /// that iterator can take
+    ///    
+    bool isBeginPosition(std::vector<int> shape, std::vector<int> position);
+    
+private:
+  ArrayPtr         m_array;    // array storing data to iterate over
+  ViewPtr          m_view;     // view of how to iterate over the array
+  std::vector<int> m_position; // position in the current view of the iterator
 };
 
 }

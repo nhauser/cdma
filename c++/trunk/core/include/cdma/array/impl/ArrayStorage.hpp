@@ -17,6 +17,7 @@
 #define __CDMA_DEFAULTARRAYSTORAGE_HPP__
 
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
 
 namespace cdma
@@ -27,8 +28,19 @@ namespace cdma
 //----------------------------------------------------------------------------
 template<typename T> DefaultArrayStorage<T>::~DefaultArrayStorage()
 {
-    std::cout<<"DefaultArrayStorage::~DefaultArrayStorage"<<std::endl;
+    CDMA_FUNCTION_TRACE("DefaultArrayStorage::~DefaultArrayStorage");
     delete m_data;
+}
+
+//----------------------------------------------------------------------------
+// DefaultArrayStorage<T>::DefaultArrayStorage
+//----------------------------------------------------------------------------
+template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, size_t length )
+{
+  m_data = data;
+  m_elem_size = sizeof(T);
+  m_array_length = length;
+  m_dirty = false;
 }
 
 //----------------------------------------------------------------------------
@@ -49,7 +61,7 @@ template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, std::
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::set
 //----------------------------------------------------------------------------
-template<typename T> yat::Any& DefaultArrayStorage<T>::get( const cdma::ViewPtr view, std::vector<int> position )
+template<typename T> yat::Any& DefaultArrayStorage<T>::get( const cdma::ViewPtr& view, std::vector<int> position )
 {
   long idx = view->getElementOffset(position);
   m_current = m_data[idx];
@@ -63,6 +75,16 @@ template<typename T> void DefaultArrayStorage<T>::set(const cdma::ViewPtr& ima, 
 {
   m_data[ima->getElementOffset(position)] = yat::any_cast<T>(value);
   m_dirty = true;
+}
+
+//----------------------------------------------------------------------------
+// DefaultArrayStorage<T>::set
+//----------------------------------------------------------------------------
+template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
+{
+  T* data = new T[m_array_length];
+  memcpy( data, m_data, m_array_length );
+  return new DefaultArrayStorage( data, m_array_length );
 }
 
 }
