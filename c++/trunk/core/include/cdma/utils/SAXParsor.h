@@ -64,7 +64,7 @@ public :
 #define FIND_ATTR_VALUE(attrs, name, value_string) \
     cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name); \
     if( cit == attrs.end() ) \
-      throw Exception("NOT_FOUND", yat::String::str_format("Unable to get value for attribute '%s'", name), __func__); \
+      throw Exception("NOT_FOUND", yat::String::str_format("Unable to get value for attribute '%s'", name), "cdma::SAXParsor"); \
     value_string = cit->second
 
 #define FIND_ATTR_VALUE_NO_THROW(attrs, name, value_string) \

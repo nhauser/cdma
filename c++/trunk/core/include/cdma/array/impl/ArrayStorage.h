@@ -58,6 +58,6 @@ public:
 
 }
 
-#include "cdma/array/ArrayStorage.hpp"
+#include "cdma/array/impl/ArrayStorage.hpp"
 
 #endif // __CDMA_DEFAULTARRAYSTORAGE_H__
