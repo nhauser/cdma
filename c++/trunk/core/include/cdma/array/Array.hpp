@@ -17,7 +17,7 @@
 
 #ifndef __CDMA_ARRAY_HPP__
 #define __CDMA_ARRAY_HPP__
-
+#include <cdma/array/ArrayIterator.h>
 namespace cdma
 {
 
@@ -39,6 +39,14 @@ template<typename T> Array::Array(const std::string& factory, T* values, std::ve
     start_ptr[i] = 0;
   }
   m_view = new View( rank, shape_ptr, start_ptr );
+}
+
+//----------------------------------------------------------------------------
+// Array::set
+//----------------------------------------------------------------------------
+template<typename T> void Array::set(const ArrayIterator& target, T value)
+{
+  m_data_impl->set( m_view, target.getPosition(), value );
 }
 
 }

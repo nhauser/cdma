@@ -17,8 +17,10 @@
 #define __CDMA_ARRAYITERATOR_H__
 
 #include <vector>
-#include <cdma/array/Array.h>
-#include <cdma/array/View.h>
+
+#include <yat/any/Any.h>
+
+#include <cdma/IObject.h>
 
 namespace cdma
 {
