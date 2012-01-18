@@ -18,6 +18,8 @@
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
 #include <cdma/exception/Exception.h>
+
+#include <cdma/array/Array.h>
 #include <cdma/array/ArrayIterator.h>
 
 namespace cdma

@@ -103,9 +103,17 @@ public:
   /// Set the array element at the current element given position
   ///
   /// @param view describing the array with current element set
+  /// @param position where to set the value
   /// @param value the new value; cast to underlying data type if necessary.
   ///
   void set(const ViewPtr& view, std::vector<int> position, const yat::Any& value);
+  
+  /// Set the array element at the given iterator position
+  ///
+  /// @param iterator describing the array with current element set
+  /// @param value the new value; cast to underlying data type if necessary.
+  ///
+  template<typename T> void set(const ArrayIterator& target, T value);
   
   /// Get the element type of this Array.
   ///
