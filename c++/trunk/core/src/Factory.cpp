@@ -103,7 +103,7 @@ void Factory::init(const std::string &plugin_path)
 }
 
 //----------------------------------------------------------------------------
-// Factory::setActiveView
+// Factory::getPluginFactory
 //----------------------------------------------------------------------------
 IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
 {
