@@ -19,6 +19,7 @@
 //-----------------------------------------------------------------------------
 #include <cdma/exception/Exception.h>
 #include <NxsGroup.h>
+#include <NxsAttribute.h>
 
 namespace cdma
 {
@@ -28,11 +29,17 @@ namespace cdma
 //-----------------------------------------------------------------------------
 void NxsGroup::PrivEnumChildren()
 {
+  CDMA_FUNCTION_TRACE("NxsGroup::PrivEnumChildren");
   try
   {
+    // Get handle
+    NexusFilePtr ptrNxFile = m_pDataset->getHandle();
+    NexusFileAccess auto_open (ptrNxFile, m_pDataset->getLocation());
+    
+    // Opening path
     std::vector<std::string> datasets, groups, classes;
-    m_pDataset->getHandle()->OpenGroupPath(PSZ(m_strPath), true);
-    m_ptrNxFile->GetGroupChildren(&datasets, &groups, &classes);
+    ptrNxFile->OpenGroupPath(PSZ(m_strPath), true);
+    ptrNxFile->GetGroupChildren(&datasets, &groups, &classes);
     
     for(yat::uint16 ui=0; ui < datasets.size(); ui++)
       cdma::IDataItemPtr ptrDataItem = getDataItem(datasets[ui]);
@@ -41,12 +48,62 @@ void NxsGroup::PrivEnumChildren()
       cdma::IGroupPtr ptrGroup = getGroup(groups[ui]);
 
     m_bChildren = true;
-    m_ptrNxFile->Close();
   }
   catch( NexusException &e )
   {
     throw cdma::Exception(e);
   }
+}
+
+//-----------------------------------------------------------------------------
+// NxsGroup::PrivEnumAttributes
+//-----------------------------------------------------------------------------
+void NxsGroup::PrivEnumAttributes()
+{
+  CDMA_FUNCTION_TRACE("NxsGroup::PrivEnumAttributes");
+  try
+  {
+    // Get handle
+    NexusFilePtr ptrNxFile = m_pDataset->getHandle();
+    NexusFileAccess auto_open (ptrNxFile, m_pDataset->getLocation());
+    
+    // Opening path
+    ptrNxFile->OpenGroupPath(PSZ(m_strPath), true);
+    yat::uint16 nbAttr = ptrNxFile->AttrCount();
+    
+    if( nbAttr > 0 )
+    {
+      IAttributePtr attribute;
+      
+      // First step
+      NexusAttrInfo *pAttrInfo = new NexusAttrInfo();
+      ptrNxFile->GetFirstAttribute(pAttrInfo);
+
+      // Create cdma Attribute
+      yat::String attrName = pAttrInfo->AttrName();
+      attribute = new NxsAttribute( ptrNxFile, pAttrInfo );
+      m_mapAttributes[attrName] = attribute;
+
+      // Iterating on every following attribute
+      for( yat::uint16 ui = 1; ui < nbAttr; ui++ )
+      {
+        // Create a new nexus attribute info
+        pAttrInfo = new NexusAttrInfo();
+        ptrNxFile->GetNextAttribute(pAttrInfo);
+
+        // Create cdma Attribute
+        attrName = pAttrInfo->AttrName();
+        attribute = new NxsAttribute( ptrNxFile, pAttrInfo );
+        m_mapAttributes[attrName] = attribute;
+      }
+    }
+    m_bAttributes = true;
+  }
+  catch( NexusException &e )
+  {
+    throw cdma::Exception(e);
+  }
+
 }
 
 //-----------------------------------------------------------------------------
@@ -56,6 +113,7 @@ NxsGroup::NxsGroup(NxsDataset* pDataset)
 {
   m_pDataset = pDataset;
   m_bChildren = false;
+  m_bAttributes = false;
   m_pRootGroup = NULL;
   m_pParentGroup = NULL;
 }
@@ -65,6 +123,7 @@ NxsGroup::NxsGroup(NxsDataset* pDataset, const yat::String& full_Path): m_strPat
   m_pRootGroup = NULL;
   m_pParentGroup = NULL;
   m_bChildren = false;
+  m_bAttributes = false;
 }
 NxsGroup::NxsGroup(NxsDataset* pDataset, const yat::String& parent_path, const yat::String& name)
 {
@@ -72,6 +131,7 @@ NxsGroup::NxsGroup(NxsDataset* pDataset, const yat::String& parent_path, const y
   m_pRootGroup = NULL;
   m_pParentGroup = NULL;
   m_bChildren = false;
+  m_bAttributes = false;
   m_strPath.printf("%s/%s", PSZ(parent_path), PSZ(name));
   m_strPath.replace("//", "/");
 }
@@ -133,15 +193,15 @@ void NxsGroup::addSubgroup(const cdma::IGroupPtr& group) throw ( cdma::Exception
 //-----------------------------------------------------------------------------
 cdma::IDataItemPtr NxsGroup::getDataItem(const std::string& shortName) throw ( cdma::Exception )
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItem");
-  
   std::map<yat::String, cdma::IDataItemPtr>::iterator it = m_mapDataItems.find(shortName);
   if( it != m_mapDataItems.end() )
     return it->second;
 
-  cdma::IDataItemPtr ptrDataItem = m_pDataset->getItemFromPath(m_strPath, shortName);
-  m_mapDataItems[shortName] = ptrDataItem;
+  cdma::IDataItemPtr ptrDataItem;
+  {
+    ptrDataItem = m_pDataset->getItemFromPath(m_strPath, shortName);
+    m_mapDataItems[shortName] = ptrDataItem;
+  }
   return ptrDataItem;
 }
 
@@ -166,15 +226,15 @@ cdma::IDimensionPtr NxsGroup::getDimension(const std::string& name)
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getGroup(const std::string& shortName)
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemWithAttribute");
-  
   std::map<yat::String, cdma::IGroupPtr>::iterator it = m_mapGroups.find(shortName);
   if( it != m_mapGroups.end() )
     return it->second;
 
-  cdma::IGroupPtr ptrGroup = m_pDataset->getGroupFromPath(NxsDataset::concatPath(m_strPath, shortName));
-  m_mapGroups[shortName] = ptrGroup;
+  cdma::IGroupPtr ptrGroup;
+  {
+    ptrGroup = m_pDataset->getGroupFromPath(NxsDataset::concatPath(m_strPath, shortName));
+    m_mapGroups[ptrGroup->getShortName()] = ptrGroup;
+  }
   return ptrGroup;
 }
 
@@ -191,11 +251,10 @@ cdma::IGroupPtr NxsGroup::getGroupWithAttribute(const std::string& attributeName
 //-----------------------------------------------------------------------------
 std::list<cdma::IDataItemPtr> NxsGroup::getDataItemList()
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemList");
-
   if( !m_bChildren )
+  {
     PrivEnumChildren();
+  }
   
   std::map<yat::String, cdma::IDataItemPtr>::iterator it = m_mapDataItems.begin();
   std::list<cdma::IDataItemPtr> data_items;
@@ -218,11 +277,12 @@ std::list<cdma::IDimensionPtr> NxsGroup::getDimensionList()
 //-----------------------------------------------------------------------------
 std::list<cdma::IGroupPtr> NxsGroup::getGroupList()
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemList");
+  CDMA_FUNCTION_TRACE("NxsGroup::getGroupList");
 
   if( !m_bChildren )
+  {
     PrivEnumChildren();
+  }
   
   std::map<yat::String, cdma::IGroupPtr>::iterator it = m_mapGroups.begin();
   std::list<cdma::IGroupPtr> groups;
@@ -321,11 +381,39 @@ void NxsGroup::addStringAttribute(const std::string&, const std::string&)
 }
 
 //-----------------------------------------------------------------------------
+// NxsGroup::hasAttribute
+//-----------------------------------------------------------------------------
+bool NxsGroup::hasAttribute(const std::string& name, const std::string& value)
+{
+  CDMA_FUNCTION_TRACE("NxsGroup::hasAttribute");
+  bool result = false;
+  
+  // Get the attribute
+  IAttributePtr attribute = getAttribute(name);
+
+  // If exists check its value
+  if( ! attribute.is_null() )
+  {
+    result = ( attribute->getStringValue() == value );
+  }
+  return result;
+}
+
+//-----------------------------------------------------------------------------
 // NxsGroup::getAttribute
 //-----------------------------------------------------------------------------
-cdma::IAttributePtr NxsGroup::getAttribute(const std::string&)
+cdma::IAttributePtr NxsGroup::getAttribute(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getAttribute");
+  CDMA_FUNCTION_TRACE("NxsGroup::getAttribute");
+
+  if( ! m_bAttributes )
+    PrivEnumAttributes();
+
+  std::map<yat::String, cdma::IAttributePtr>::iterator it = m_mapAttributes.find(name);
+  if( it != m_mapAttributes.end() )
+    return it->second;
+
+  return IAttributePtr(NULL);
 }
 
 //-----------------------------------------------------------------------------
@@ -333,7 +421,17 @@ cdma::IAttributePtr NxsGroup::getAttribute(const std::string&)
 //-----------------------------------------------------------------------------
 std::list<cdma::IAttributePtr> NxsGroup::getAttributeList()
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getAttributeList");
+  CDMA_FUNCTION_TRACE("NxsGroup::getAttributeList");
+
+  if( !m_bAttributes )
+    PrivEnumAttributes();
+  
+  std::map<yat::String, cdma::IAttributePtr>::iterator it = m_mapAttributes.begin();
+  std::list<cdma::IAttributePtr> attributes;
+  for( ; it != m_mapAttributes.end(); it++ )
+    attributes.push_back(it->second);
+  
+  return attributes;
 }
 
 //-----------------------------------------------------------------------------
@@ -357,9 +455,7 @@ std::string NxsGroup::getPath()
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getName()
 {
-  yat::String strName, strPath = m_strPath;
-  strPath.extract_token_right('/', &strName);
-  return strName;
+  return m_strPath;
 }
 
 //-----------------------------------------------------------------------------
@@ -367,15 +463,10 @@ std::string NxsGroup::getName()
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getShortName()
 {
-  return getName();
-}
-
-//-----------------------------------------------------------------------------
-// NxsGroup::hasAttribute
-//-----------------------------------------------------------------------------
-bool NxsGroup::hasAttribute(const std::string&, const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("NxsGroup::hasAttribute");
+  yat::String strResult, strName, strPath = m_strPath;
+  strPath.extract_token_right('/', &strName);
+  strName.extract_token('<', &strResult );
+  return strResult;
 }
 
 //-----------------------------------------------------------------------------

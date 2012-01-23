@@ -47,7 +47,7 @@ namespace cdma
   {
     public:
       DictionaryDetector();
-      DictionaryDetector(const NexusFilePtr& handle);
+      DictionaryDetector(const NexusFilePtr& handle, const yat::String& uri);
       ~DictionaryDetector();
       yat::String getDictionaryName() throw ( cdma::Exception );
 
@@ -63,6 +63,7 @@ namespace cdma
       yat::String  m_beamline;     ///< beamline model
       yat::String  m_model;        ///< beamline's structure data model
       NexusFilePtr m_ptrNxFile;    ///< handle on file
+      yat::String  m_uri;          ///< file location
 
     private:
       bool isFlyScan();

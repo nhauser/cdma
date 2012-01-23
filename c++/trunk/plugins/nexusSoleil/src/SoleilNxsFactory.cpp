@@ -14,11 +14,19 @@
 //
 // ****************************************************************************
 
+// Yat
 #include <yat/plugin/PlugInSymbols.h>
 
+// Soleil plugin
 #include <SoleilNxsFactory.h>
+#include <SoleilNxsDataSource.h>
+
+// Engin NeXus
 #include <NxsDataset.h>
+
+// CDMA core
 #include <cdma/dictionary/Key.h>
+
 
 EXPORT_SINGLECLASS_PLUGIN(cdma::SoleilNxsFactory, \
                           cdma::SoleilNxsFactoryInfo);
@@ -228,5 +236,14 @@ std::string SoleilNxsFactory::getPathSeparator()
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::getPathSeparator");
 }
+
+//----------------------------------------------------------------------------
+// SoleilNxsFactory::getPluginURIDetector
+//----------------------------------------------------------------------------
+IDataSourcePtr SoleilNxsFactory::getPluginURIDetector()
+{
+  return new SoleilNxsDataSource();
+}
+
 
 } // namespace cdma
