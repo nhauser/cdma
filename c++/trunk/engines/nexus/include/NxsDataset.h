@@ -18,7 +18,6 @@
 
 // #include <yat/utils/URI.h>
 #include <internal/common.h>
-#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
 #include <DictionaryDetector.h>
@@ -70,19 +69,6 @@ public:
   //@}
   
   //@{ IDataset interface
-  /// Close the dataset.
-  ///
-  void close() throw ( cdma::Exception );
-
-  /// Open the dataset from a file reference.
-  ///
-  void open() throw ( cdma::Exception );
-
-  /// Check if the data set is open.
-  /// @return true or false
-  ///
-  bool isOpen() { return m_open; };
-  
   const NexusFilePtr& getHandle() { return m_ptrNxFile; };
   
   /// Return the root group of the dataset.
@@ -161,6 +147,15 @@ protected:
 };
 
 typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;
+
+class NexusFileAccess
+{
+private:
+  NexusFilePtr m_ptrNxFile;
+public:
+  NexusFileAccess( const NexusFilePtr& ptrFile, const std::string& uri );
+  ~NexusFileAccess();
+};
 
 } // namespace
 #endif

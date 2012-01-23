@@ -96,6 +96,12 @@ public:
   /// @return the factory's name
   ///
   virtual std::string getName() = 0;
+
+  /// Returns the URI detector of the instantiated plug-in. 
+  ///
+	/// @return the plugin's mimplementation of the IDataSource interface
+	///
+	virtual IDataSourcePtr getPluginURIDetector() = 0;
 };
 
 } //namespace CDMACore

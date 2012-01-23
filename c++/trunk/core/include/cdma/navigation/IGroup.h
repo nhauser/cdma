@@ -189,6 +189,23 @@ class IGroup : public IContainer, public IObject
     /// @return the root group
     ///
     virtual IGroupPtr getRoot() = 0;
+
+    /// Get the Attributes contained directly in this group.
+    ///
+    /// @return list of type Attribute; may be empty, not null.
+    //
+	  virtual std::list<IAttributePtr> getAttributeList() = 0;
+
+    /// Returns true if this group contains the Attribute with right name and value
+    ///
+    /// @param name of the attribute to test
+    /// @param value of the attribute to test
+    //
+    virtual bool hasAttribute(const std::string& name, const std::string& value) = 0;
+    
+    virtual std::string getPath() = 0;
+    virtual std::string getName() = 0;
+    virtual std::string getShortName() = 0;
     
 };
   

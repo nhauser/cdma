@@ -654,7 +654,7 @@ void NxsDataItem::loadMatrix()
   CDMA_FUNCTION_TRACE("NxsDataItem::loadMatrix");
   
   yat::SharedPtr<NexusFile, yat::Mutex> file = m_dataset_ptr->getHandle();
-  if( m_dataset_ptr->isOpen() )
+  if( ! m_dataset_ptr )
   {
     // prepare shape
     std::vector<int> shape;

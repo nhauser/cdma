@@ -15,11 +15,14 @@
 #include <map>
 #include <typeinfo>
 
+// yat
 #include <yat/utils/String.h>
 #include <yat/system/SysUtils.h>
 #include <yat/plugin/PlugInManager.h>
 #include <yat/plugin/IPlugInInfo.h>
+#include <yat/utils/URI.h>
 
+// CDMA
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 
@@ -242,6 +245,13 @@ public:
   static PathParameterPtr createPathParameter(CDMAType::ParameterType type, std::string& name, void * value);
 
   static IPathParamResolverPtr createPathParamResolver(const PathPtr& path);
+
+  /// According to the given destination (file or folder or what ever)
+  /// the factory will try to detect which plugin matches to that destination
+  ///
+  /// @return IFactoryPtr implementation of a IFactory that fits the data source
+  ///
+  static IFactoryPtr detectPluginFactory(const yat::URI& destination);
 
 };
 

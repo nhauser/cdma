@@ -7,34 +7,33 @@
 // Contributors :
 // See AUTHORS file
 //******************************************************************************
-#ifndef __CDMA_IDATASOURCE_H__
-#define __CDMA_IDATASOURCE_H__
 
-// Standard includes
-#include <list>
-#include <vector>
-#include <typeinfo>
+#ifndef __CDMA_NXSDATASOURCE_H__
+#define __CDMA_NXSDATASOURCE_H__
 
-#include <yat/utils/String.h>
-#include <yat/threading/Mutex.h>
-#include <yat/memory/SharedPtr.h>
+// STD
+#include <string>
 
-// CDMA includes
-#include <cdma/exception/Exception.h>
-#include <cdma/navigation/IContainer.h>
-#include <cdma/IObject.h>
+// yat
+#include <yat/utils/URI.h>
+
+// CDMA core
+#include <cdma/IDataSource.h>
+
+// Soleil NeXus plugin
+#include <SoleilNxsFactory.h>
+
 
 namespace cdma
 {
-
 //==============================================================================
-/// IDataSource Interface
-/// A DataItem is a logical container for data. It has a DataType, a set of
-/// Dimensions that define its array shape, and optionally a set of Attributes.
+/// IDataSource implementation
 //==============================================================================
-class CDMA_DECL IDataSource : public IObject
+class SoleilNxsDataSource : public IDataSource 
 {
 public:
+  SoleilNxsDataSource() {};
+  ~SoleilNxsDataSource() {};
 
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -44,7 +43,7 @@ public:
   ///
   /// @return true of false
   ///
-  virtual bool isReadable(const yat::URI& destination) const =0;
+  bool isReadable(const yat::URI& destination) const;
   
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -54,7 +53,7 @@ public:
   ///
   /// @return true of false
   ///
-  virtual bool isBrowsable(const yat::URI& destination) const =0;
+  bool isBrowsable(const yat::URI& destination) const;
 
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -64,7 +63,7 @@ public:
   ///
   /// @return true of false
   ///
-  virtual bool isProducer(const yat::URI& destination) const =0;
+  bool isProducer(const yat::URI& destination) const;
   
   /// Ask the plugin if the URI corresponds to a strictly readable dataset
   /// Only the basic navigation is applicable in such a dataset
@@ -74,11 +73,17 @@ public:
   ///
   /// @return true of false
   ///
-  virtual bool isExperiment(const yat::URI& destination) const =0;
+  bool isExperiment(const yat::URI& destination) const;
+  
+  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
+  CDMAType::ModelType getModelType() const { return CDMAType::Other; };
+  
+private: 
+  static std::string  CREATOR;
+	static std::string* BEAMLINES;
+	static int          NB_BEAMLINES;
 
- };
- 
-} //namespace cdma
-
-#endif //__CDMA_IDATASOURCE_H__
+};
+} //namespace CDMACore
+#endif //__CDMA_NXSDATASOURCE_H__
 

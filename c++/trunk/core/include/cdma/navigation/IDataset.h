@@ -34,10 +34,6 @@ public:
   //Virtual destructor
   virtual ~IDataset() {};
 
-  /// Close the dataset.
-  ///
-  virtual void close() throw ( Exception ) = 0;
-
   /// Return the root group of the dataset.
   /// @return CDMA Group type Created on 16/06/2008
   ///
@@ -73,10 +69,6 @@ public:
   ///
   virtual bool sync() throw ( Exception ) = 0;
 
-  /// Open the dataset from a file reference.
-  ///
-  virtual void open() throw ( Exception ) = 0;
-
   /// Save the contents / changes of the dataset to the file.
   ///
   virtual void save() throw ( Exception ) = 0;
@@ -92,10 +84,6 @@ public:
   /// Save the attribute to the specific path of the file.
   ///
   virtual void save(const std::string& parentPath, const IAttributePtr& attribute) throw ( Exception ) = 0;
-
-  /// Check if the data set is open.
-  /// @return true or false
-  virtual bool isOpen() = 0;
 
   /// Open the node defined by the path and returns the IGroup that corresponds
   /// @param path String representation of the IGroup's path

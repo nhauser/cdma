@@ -20,7 +20,6 @@
 #include <map>
 #include <string>
 
-#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IGroup.h>
 
@@ -34,16 +33,19 @@ class NxsGroup : public cdma::IGroup
 {
 private:
   NxsDataset*                    m_pDataset;       // Simple pointer to the parent dataset
-  NexusFilePtr                   m_ptrNxFile;
+//  NexusFilePtr                   m_ptrNxFile;
   IGroup*                        m_pParentGroup;   // Reference to the parent group
   IGroup*                        m_pRootGroup; // TODO appeler celui du Dataset
   yat::String                    m_strPath;        // Group path inside the Nexus File
   std::map<yat::String, cdma::IGroupPtr>     m_mapGroups;
   std::map<yat::String, cdma::IDataItemPtr>  m_mapDataItems;
+  std::map<yat::String, cdma::IAttributePtr> m_mapAttributes;
   bool                           m_bChildren;      // true if childs are enumerated
+  bool                           m_bAttributes;    // true if attributes are enumerated
   
   void PrivEnumChildren();
-  
+  void PrivEnumAttributes();
+
 public:
 	NxsGroup(NxsDataset* pDataset);
 	NxsGroup(NxsDataset* pDataset, const yat::String& parent_path, const yat::String& name);
@@ -52,7 +54,7 @@ public:
 
   //@{ plug-in specific
   
-  void setFile(const NexusFilePtr& ptrFile) { m_ptrNxFile = ptrFile; }
+//  void setFile(const NexusFilePtr& ptrFile) { m_ptrNxFile = ptrFile; }
   void setPath(const yat::String& strPath) { m_strPath = strPath; }
   
   //@}
@@ -73,7 +75,7 @@ public:
 	cdma::IAttributePtr getAttribute(const std::string&);
   cdma::IGroupPtr getGroup(const std::string& shortName);
   cdma::IGroupPtr getGroupWithAttribute(const std::string& attributeName, const std::string& value);
-	bool hasAttribute(const std::string&, const std::string&);
+	bool hasAttribute(const std::string& name, const std::string& value);
 	std::list<cdma::IAttributePtr> getAttributeList();
 	std::list<cdma::IDataItemPtr> getDataItemList();
 	std::list<cdma::IDimensionPtr> getDimensionList();

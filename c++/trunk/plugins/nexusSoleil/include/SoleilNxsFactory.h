@@ -185,6 +185,9 @@ public:
   /// @return the factory's name
   ///
   std::string getName() { return NXS_FACTORY_NAME; };
+  
+  /// Returns the plugin's IDataSource implementation  
+  IDataSourcePtr getPluginURIDetector();
 };
 } //namespace CDMACore
 #endif //__CDMA_IFACTORY_H__
