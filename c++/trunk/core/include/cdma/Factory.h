@@ -48,7 +48,7 @@ public:
   typedef std::map<std::string, Plugin> PluginMap;
   typedef std::map<std::string, IFactoryPtr> PluginFactoryPtrMap;
   typedef std::pair<yat::IPlugInInfo*, yat::IPlugInFactory*> PluginInfoPair;
-  
+
 private:
   static std::string s_cdma_view;
   static std::string s_dico_path_prop;

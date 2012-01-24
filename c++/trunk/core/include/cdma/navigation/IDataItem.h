@@ -20,9 +20,9 @@
 #include <yat/memory/SharedPtr.h>
 
 // CDMA includes
+#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
-#include <cdma/IObject.h>
 
 namespace cdma
 {

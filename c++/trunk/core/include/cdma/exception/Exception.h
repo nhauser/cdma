@@ -54,6 +54,9 @@ typedef yat::Exception Exception;
 #define THROW_NO_SIGNAL(m, o) \
   throw cdma::Exception("NO_SIGNAL", m, o)
   
+#define THROW_INVALID_POINTER(m, o) \
+  throw cdma::Exception("INVALID_POINTER", m, o)
+  
 #define THROW_TOO_MANY_RESULTS(m, o) \
   throw cdma::Exception("TOO_MANY_RESULTS", m, o)
   
