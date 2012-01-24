@@ -18,6 +18,7 @@
 
 // #include <yat/utils/URI.h>
 #include <internal/common.h>
+#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
 #include <DictionaryDetector.h>
@@ -26,14 +27,10 @@
 
 namespace cdma
 {
+
 //==============================================================================
-/// Dataset Interface
-/// A Dataset is a handler on a physical storage of a data
-/// source. A dataset holds a reference of a root group, which is the root of a
-/// tree of Groups.
-/// Dataset is the entry point to have an access to data structure it represents.
-/// In case of a data file, Dataset would be the file handler that manages opening,
-/// close...
+/// IDataset implementation for NeXus engine
+/// See IDataset definition for more explanation
 //==============================================================================
 class NxsDataset : public IDataset
 {
@@ -46,11 +43,12 @@ private:
   std::map<yat::String, IGroupPtr>      m_group_map;    ///< association between groups and paths
   std::map<yat::String, IDataItemPtr>   m_item_map;     ///< association between data items and paths
   DictionaryDetector                    m_detector;     ///< Mapping file name for that is used for the dictionary
+  NxsDatasetWPtr                        m_self_wptr;    ///< weak self reference
 
 public:
   /// Constructor
   ///  param :
-  /// @param : filepath string representing the fie path
+  /// @param : filepath string representing the file path
   ///
   NxsDataset(const std::string& filepath);
   
@@ -61,6 +59,9 @@ public:
   // NxsDataset(const yat::URI& uri);
   
   virtual ~NxsDataset() { }
+
+  /// Set a reference on the object himself
+  void setSelfRef(const NxsDatasetPtr& ptr);
 
   //@{ Plug-in methods
   // Path concatenation
@@ -148,12 +149,15 @@ protected:
 
 typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;
 
+//==============================================================================
+/// Convenient class
+//==============================================================================
 class NexusFileAccess
 {
 private:
   NexusFilePtr m_ptrNxFile;
 public:
-  NexusFileAccess( const NexusFilePtr& ptrFile, const std::string& uri );
+  NexusFileAccess( const NexusFilePtr& ptrFile );
   ~NexusFileAccess();
 };
 

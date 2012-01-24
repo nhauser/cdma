@@ -27,121 +27,126 @@
 namespace cdma
 {
   
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::DictionaryDetector
-  //-----------------------------------------------------------------------------
-  DictionaryDetector::DictionaryDetector() { }
-  DictionaryDetector::DictionaryDetector(const NexusFilePtr& handle, const yat::String& uri)
-  {
-    m_ptrNxFile = handle;
-    m_uri = uri;
+//-----------------------------------------------------------------------------
+// DictionaryDetector::DictionaryDetector
+//-----------------------------------------------------------------------------
+DictionaryDetector::DictionaryDetector()
+{
+}
+
+//-----------------------------------------------------------------------------
+// DictionaryDetector::DictionaryDetector
+//-----------------------------------------------------------------------------
+DictionaryDetector::DictionaryDetector(const NexusFilePtr& handle)
+{
+  m_ptrNxFile = handle;
+}
+
+//-----------------------------------------------------------------------------
+// DictionaryDetector::~DictionaryDetector
+//-----------------------------------------------------------------------------
+DictionaryDetector::~DictionaryDetector() { }
+
+//-----------------------------------------------------------------------------
+// DictionaryDetector::getDictionaryName
+//-----------------------------------------------------------------------------
+yat::String DictionaryDetector::getDictionaryName() throw ( cdma::Exception )
+{
+  if( m_beamline == "" || m_beamline == "UNKNOWN" ) {
+    detectBeamline();
   }
-
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::~DictionaryDetector
-  //-----------------------------------------------------------------------------
-  DictionaryDetector::~DictionaryDetector() { }
-
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::getDictionaryName
-  //-----------------------------------------------------------------------------
-  yat::String DictionaryDetector::getDictionaryName() throw ( cdma::Exception )
-  {
-    if( m_beamline == "" || m_beamline == "UNKNOWN" ) {
-      detectBeamline();
-    }
-    if( m_model == "" || m_model == "UNKNOWN"  ) {
-      detectDataModel();
-    }
-    yat::String file (m_beamline + "_" + m_model + ".xml");
-    file.to_lower();
-    return file;
+  if( m_model == "" || m_model == "UNKNOWN"  ) {
+    detectDataModel();
   }
+  yat::String file (m_beamline + "_" + m_model + ".xml");
+  file.to_lower();
+  return file;
+}
 
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::detectBeamline
-  //-----------------------------------------------------------------------------
-  void DictionaryDetector::detectBeamline()
+//-----------------------------------------------------------------------------
+// DictionaryDetector::detectBeamline
+//-----------------------------------------------------------------------------
+void DictionaryDetector::detectBeamline()
+{
+  yat::String path = "/<NXentry>/<NXinstrument>";
+  NexusFileAccess auto_open( m_ptrNxFile );
+  if( m_ptrNxFile->OpenGroupPath(PSZ(path), false) )
   {
-    yat::String path = "/<NXentry>/<NXinstrument>";
-    NexusFileAccess auto_open ( m_ptrNxFile, m_uri );
-    if( m_ptrNxFile->OpenGroupPath(PSZ(path), false) )
+    CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupName()).c_str());
+    CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupClass()).c_str());
+    m_beamline = std::string(m_ptrNxFile->CurrentGroupName());
+  }
+  else
+  {
+    m_beamline = "UNKNOWN";
+  }
+}
+
+//-----------------------------------------------------------------------------
+// DictionaryDetector::detectDataModel
+//-----------------------------------------------------------------------------
+void DictionaryDetector::detectDataModel()
+{
+  m_model = "UNKNOWN";
+  if( m_beamline != "UNKNOWN" )
+  {
+    if( isScanServer() )
     {
-      CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupName()).c_str());
-      CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupClass()).c_str());
-      m_beamline = std::string(m_ptrNxFile->CurrentGroupName());
+      m_model = "SCANSERVER";
+    }
+    else if( isFlyScan() )
+    {
+      m_model = "FLYSCAN";
     }
     else
     {
-      m_beamline = "UNKNOWN";
+      m_model = "PASSERELLE";
     }
   }
+}
 
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::detectDataModel
-  //-----------------------------------------------------------------------------
-  void DictionaryDetector::detectDataModel()
+//-----------------------------------------------------------------------------
+// DictionaryDetector::isFlyScan
+//-----------------------------------------------------------------------------
+bool DictionaryDetector::isFlyScan()
+{
+  bool result = false;
+  yat::String pathGrp = "/<NXentry>/";
+  yat::String testClass = "NXdata";
+  yat::String testName = "scan_data";
+  std::vector<std::string> res;
+  NexusFileAccess auto_open( m_ptrNxFile );
+  if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
-    m_model = "UNKNOWN";
-    if( m_beamline != "UNKNOWN" )
+    CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
+    if( ! m_ptrNxFile->OpenDataSet( "time_1", false ) )
     {
-      if( isScanServer() )
-      {
-        m_model = "SCANSERVER";
-      }
-      else if( isFlyScan() )
-      {
-        m_model = "FLYSCAN";
-      }
-      else
-      {
-        m_model = "PASSERELLE";
-      }
+      result = true;
     }
   }
+  return result;
+}
 
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::isFlyScan
-  //-----------------------------------------------------------------------------
-  bool DictionaryDetector::isFlyScan()
+//-----------------------------------------------------------------------------
+// DictionaryDetector::detectDataModel
+//-----------------------------------------------------------------------------
+bool DictionaryDetector::isScanServer()
+{
+  bool result = false;
+  yat::String pathGrp = "/<NXentry>/";
+  yat::String testClass = "NXdata";
+  yat::String testName = "scan_data";
+  std::vector<std::string> res;
+  NexusFileAccess auto_open( m_ptrNxFile );
+  if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
-    bool result = false;
-    yat::String pathGrp = "/<NXentry>/";
-    yat::String testClass = "NXdata";
-    yat::String testName = "scan_data";
-    std::vector<std::string> res;
-    NexusFileAccess auto_open ( m_ptrNxFile, m_uri );
-    if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
+    CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
+    if( m_ptrNxFile->OpenDataSet( "time_1", false ) )
     {
-      CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
-      if( ! m_ptrNxFile->OpenDataSet( "time_1", false ) )
-      {
-        result = true;
-      }
+      result = true;
     }
-    return result;
   }
-  
-  //-----------------------------------------------------------------------------
-  // DictionaryDetector::detectDataModel
-  //-----------------------------------------------------------------------------
-  bool DictionaryDetector::isScanServer()
-  {
-    bool result = false;
-    yat::String pathGrp = "/<NXentry>/";
-    yat::String testClass = "NXdata";
-    yat::String testName = "scan_data";
-    std::vector<std::string> res;
-    NexusFileAccess auto_open ( m_ptrNxFile, m_uri );
-    if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
-    {
-      CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
-      if( m_ptrNxFile->OpenDataSet( "time_1", false ) )
-      {
-        result = true;
-      }
-    }
-    return result;
-  }
+  return result;
+}
 
 } // namespace

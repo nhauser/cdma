@@ -25,6 +25,7 @@
 #include <list>
 #include <vector>
 #include <yat/utils/String.h>
+#include <yat/memory/SharedPtr.h>
 
 // CDMA Core
 #include <cdma/Common.h>
@@ -40,24 +41,33 @@
 namespace cdma
 {
 
+//==============================================================================
+/// IDataItem implementation for NeXus engine
+/// See IDataItem definition for more explanation
+//==============================================================================
 class CDMA_DECL NxsDataItem : public IDataItem
 {
 private:
   std::list<IAttributePtr> m_attr_list;
-  NxsDataset*              m_dataset_ptr;
-  yat::String              m_name;        // Name of the dataitem (ie: attribute long_name else node's name)
+  NxsDatasetWPtr           m_dataset_wptr; // use a weakptr in order to solve the circular reference
+  yat::String              m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
   yat::String              m_shortName;
-  yat::String              m_path;        // Path of the item through the dataset file structure (excluding item node name)
-  NexusDataSetInfo         m_item;        // Info on the belonged data
-  ArrayPtr                 m_array;       // Array object
-  std::vector<int>         m_shape;       // Shape defined by the NexusDatasetInfo
+  yat::String              m_path;         // Path of the item through the dataset file structure (excluding item node name)
+  NexusDataSetInfo         m_item;         // Info on the belonged data
+  ArrayPtr                 m_array;        // Array object
+  std::vector<int>         m_shape;        // Shape defined by the NexusDatasetInfo
 
 public:
-  // Constructors
-  NxsDataItem(NxsDataset* dataset, const char* path, bool init_from_file = true );
-  NxsDataItem(NxsDataset* dataset, const IGroupPtr& parent, const char* name );
-  NxsDataItem(NxsDataset* dataset, const NexusDataSetInfo& item, const std::string& path);
-  ~NxsDataItem() { CDMA_FUNCTION_TRACE("NxsDataItem::~NxsDataItem"); };
+  //@{ Constructors
+
+  NxsDataItem(NxsDatasetWPtr dataset_wptr, const char* path, bool init_from_file = true );
+  NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const char* name );
+  NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path);
+
+  //@}
+
+  // d-tor
+  ~NxsDataItem();
 
   //@{ IDataItem interface
   IAttributePtr findAttributeIgnoreCase(const std::string& name);
@@ -107,14 +117,13 @@ public:
   void setSizeToCache(int sizeToCache);
   void setUnitsString(const std::string& units);
   IDataItemPtr clone();
-  void addOneAttribute(const IAttributePtr&);
-  void addStringAttribute(const std::string&, const std::string&);
+  cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
   IAttributePtr getAttribute(const std::string&);
   std::list<IAttributePtr > getAttributeList();
-  std::string getLocation();
-  std::string getName();
-  std::string getShortName();
-  bool hasAttribute(const std::string&, const std::string&);
+  std::string getLocation() const;
+  std::string getName() const;
+  std::string getShortName() const;
+  bool hasAttribute(const std::string&);
   bool removeAttribute(const IAttributePtr&);
   void setName(const std::string&);
   void setShortName(const std::string&);
@@ -122,15 +131,22 @@ public:
   IDatasetPtr getDataset();
   
   //@}
+
   //@{IObject interface
+
   CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
   std::string getFactoryName() const { return NXS_FACTORY_NAME; };
+
   //@}
+
   //@{plugin methods
+
   void setLocation(const std::string& path);
   
+  //@}
+
 protected:
-  void init(NxsDataset* dataset, std::string path, bool init_from_file = true);
+  void init(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file = true);
 private:
   void loadMatrix();
   void initAttr();

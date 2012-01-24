@@ -24,51 +24,39 @@
 #include <cdma/exception/Exception.h>
 #include <internal/common.h>
 
-/**
-* DictionaryDetector aims to detect the correct dictionary mapping file name
-* according to file structure. Each beamline defines its own structure model
-* and there can be several ones for each beamline.
-*
-* @author nxi
-*
-*/
-/*
-class DictionaryMethod
-{
-  operator()
-};
-#define DECLARE_DICT_METHOD(name) 
-class name:: public DictionaryMethod
-*/
-
 namespace cdma
 {
-  class DictionaryDetector
-  {
-    public:
-      DictionaryDetector();
-      DictionaryDetector(const NexusFilePtr& handle, const yat::String& uri);
-      ~DictionaryDetector();
-      yat::String getDictionaryName() throw ( cdma::Exception );
 
-    protected:
-      void detectBeamline();
-      void detectDataModel();
-      const yat::String& getBeamline() { return m_beamline; };
-      void setBeamline(const yat::String& beam){ m_beamline = beam; };
-      const yat::String& getModel() { return m_model; };
-      void setModel(const yat::String& model){ m_model = model; };
+//==============================================================================
+// DictionaryDetector aims to detect the correct dictionary mapping file name
+// according to file structure. Each beamline defines its own structure model
+// and there can be several ones for each beamline.
+//==============================================================================
+class DictionaryDetector
+{
+  public:
+    DictionaryDetector();
+    DictionaryDetector(const NexusFilePtr& handle);
+    ~DictionaryDetector();
+    yat::String getDictionaryName() throw ( cdma::Exception );
 
-    private:
-      yat::String  m_beamline;     ///< beamline model
-      yat::String  m_model;        ///< beamline's structure data model
-      NexusFilePtr m_ptrNxFile;    ///< handle on file
-      yat::String  m_uri;          ///< file location
+  protected:
+    void detectBeamline();
+    void detectDataModel();
+    const yat::String& getBeamline() { return m_beamline; };
+    void setBeamline(const yat::String& beam){ m_beamline = beam; };
+    const yat::String& getModel() { return m_model; };
+    void setModel(const yat::String& model){ m_model = model; };
 
-    private:
-      bool isFlyScan();
-      bool isScanServer();
-  };
+  private:
+    yat::String  m_beamline;     ///< beamline model
+    yat::String  m_model;        ///< beamline's structure data model
+    NexusFilePtr m_ptrNxFile;    ///< handle on file
+
+  private:
+    bool isFlyScan();
+    bool isScanServer();
+};
 
 } // namespace
 

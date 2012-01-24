@@ -28,17 +28,20 @@
 namespace cdma
 {
 
+//==============================================================================
+/// IAttribute implementation for NeXus engine
+/// See IAttribute definition for more explanation
+//==============================================================================
 class CDMA_DECL NxsAttribute : public IAttribute
 {
 private:
   NexusAttrInfo* m_info_ptr;
-  void* m_value;
+  void *m_value;
 
 public:
-  NxsAttribute() { m_info_ptr = NULL; m_value = NULL; };
+  NxsAttribute();
   NxsAttribute( NexusFilePtr file, NexusAttrInfo* info );
   //NxsAttribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
-  ~NxsAttribute() { if( m_value != NULL ) delete m_value; };
 
   /// Get the name of this Attribute. Attribute names are unique within a
   /// global set, and within a Variable's set.
