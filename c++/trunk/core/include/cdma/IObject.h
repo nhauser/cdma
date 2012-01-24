@@ -48,64 +48,58 @@ class CDMA_DECL CDMAType
   };
 };
 
-// Forward declaration
-class Array;
-class ArrayIterator;
-class View;
-class Range;
-class SliceIterator;
-class Slicer;
-class ArrayUtils;
-class ArrayMath;
-class IArrayStorage;
-class IAttribute;
-class IClassLoader;
-class IContainer;
-class IContext;
-class IDataItem;
-class IDataset;
-class IDataSource;
-class IDimension;
-class IFactory;
-class IFactoryManager;
-class IFactoryResolver;
-class IGroup;
-class IPathMethod;
-class IPathParamResolver;
-class LogicalGroup;
-class Key;
-class Path;
-class PathParameter;
-class Dictionary;
+#define DECLARE_SHARED_PTR(x)\
+  typedef yat::SharedPtr<x, yat::Mutex> x##Ptr
 
-/// Shared pointers declaration
-typedef yat::SharedPtr<Array, yat::Mutex> ArrayPtr;
-typedef yat::SharedPtr<View, yat::Mutex> ViewPtr;
-typedef yat::SharedPtr<Range, yat::Mutex> RangePtr;
-typedef yat::SharedPtr<ArrayIterator, yat::Mutex> ArrayIteratorPtr;
-typedef yat::SharedPtr<SliceIterator, yat::Mutex> SliceIteratorPtr;
-typedef yat::SharedPtr<Slicer, yat::Mutex> SlicerPtr;
-typedef yat::SharedPtr<ArrayUtils, yat::Mutex> ArrayUtilsPtr;
-typedef yat::SharedPtr<ArrayMath, yat::Mutex> ArrayMathPtr;
-typedef yat::SharedPtr<IArrayStorage, yat::Mutex> IArrayStoragePtr;
-typedef yat::SharedPtr<IAttribute, yat::Mutex> IAttributePtr;
-typedef yat::SharedPtr<IClassLoader, yat::Mutex> IClassLoaderPtr;
-typedef yat::SharedPtr<IContext, yat::Mutex> IContextPtr;
-typedef yat::SharedPtr<IDataItem, yat::Mutex> IDataItemPtr;
-typedef yat::SharedPtr<IDataset, yat::Mutex> IDatasetPtr;
-typedef yat::SharedPtr<IDataSource, yat::Mutex> IDataSourcePtr;
-typedef yat::SharedPtr<IDimension, yat::Mutex> IDimensionPtr;
-typedef yat::SharedPtr<IFactory, yat::Mutex> IFactoryPtr;
-typedef yat::SharedPtr<IFactoryManager, yat::Mutex> IFactoryManagerPtr;
-typedef yat::SharedPtr<IFactoryResolver, yat::Mutex> IFactoryResolverPtr;
-typedef yat::SharedPtr<IGroup, yat::Mutex> IGroupPtr;
-typedef yat::SharedPtr<IPathMethod, yat::Mutex> IPathMethodPtr;
-typedef yat::SharedPtr<IPathParamResolver, yat::Mutex> IPathParamResolverPtr;
-typedef yat::SharedPtr<LogicalGroup, yat::Mutex> LogicalGroupPtr;
-typedef yat::SharedPtr<Key, yat::Mutex> KeyPtr;
-typedef yat::SharedPtr<Path, yat::Mutex> PathPtr;
-typedef yat::SharedPtr<PathParameter, yat::Mutex> PathParameterPtr;
-typedef yat::SharedPtr<Dictionary, yat::Mutex> DictionaryPtr;
+#define DECLARE_CLASS_SHARED_PTR(x)\
+  class x;\
+  DECLARE_SHARED_PTR(x)
+
+#define DECLARE_WEAK_PTR(x)\
+  typedef yat::WeakPtr<x, yat::Mutex> x##WPtr
+
+#define DECLARE_CLASS_WEAK_PTR(x)\
+  class x;\
+  DECLARE_WEAK_PTR(x)
+
+#define DECLARE_SHARED_WEAK_PTR(x)\
+  DECLARE_SHARED_PTR(x);\
+  DECLARE_WEAK_PTR(x)
+
+#define DECLARE_CLASS_SHARED_WEAK_PTR(x)\
+  class x;\
+  DECLARE_SHARED_PTR(x);\
+  DECLARE_WEAK_PTR(x)
+
+// Forward declarations
+DECLARE_CLASS_SHARED_PTR(Array);
+DECLARE_CLASS_SHARED_PTR(ArrayIterator);
+DECLARE_CLASS_SHARED_PTR(ArrayUtils);
+DECLARE_CLASS_SHARED_PTR(ArrayMath);
+DECLARE_CLASS_SHARED_PTR(Dictionary);
+DECLARE_CLASS_SHARED_PTR(IArrayStorage);
+DECLARE_CLASS_SHARED_PTR(IAttribute);
+DECLARE_CLASS_SHARED_PTR(IClassLoader);
+DECLARE_CLASS_SHARED_PTR(IContainer);
+DECLARE_CLASS_SHARED_PTR(IContext);
+DECLARE_CLASS_SHARED_PTR(IDataItem);
+DECLARE_CLASS_SHARED_PTR(IDataset);
+DECLARE_CLASS_SHARED_PTR(IDataSource);
+DECLARE_CLASS_SHARED_PTR(IDimension);
+DECLARE_CLASS_SHARED_PTR(IFactory);
+DECLARE_CLASS_SHARED_PTR(IFactoryManager);
+DECLARE_CLASS_SHARED_PTR(IFactoryResolver);
+DECLARE_CLASS_SHARED_PTR(IGroup);
+DECLARE_CLASS_SHARED_PTR(IPathMethod);
+DECLARE_CLASS_SHARED_PTR(IPathParamResolver);
+DECLARE_CLASS_SHARED_PTR(Key);
+DECLARE_CLASS_SHARED_PTR(LogicalGroup);
+DECLARE_CLASS_SHARED_PTR(Path);
+DECLARE_CLASS_SHARED_PTR(PathParameter);
+DECLARE_CLASS_SHARED_PTR(SliceIterator);
+DECLARE_CLASS_SHARED_PTR(Slicer);
+DECLARE_CLASS_SHARED_PTR(Range);
+DECLARE_CLASS_SHARED_PTR(View);
 
 /// Generic types
 typedef std::list<std::string> StringList;

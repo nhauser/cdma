@@ -17,6 +17,7 @@
 
 #include <yat/memory/SharedPtr.h>
 #include <yat/threading/Mutex.h>
+#include <yat/any/Any.h>
 
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
@@ -31,26 +32,41 @@ namespace cdma
 //==============================================================================
 class IGroup : public IContainer, public IObject
 {
-  public:
-    virtual ~IGroup() {};
+public:
+  virtual ~IGroup() {};
 
-    /// Add a data item to the group.
-    ///
-    virtual void addDataItem(const IDataItemPtr& v) = 0;
+  /// Check if this is the root group.
+  ///
+  /// @return true or false
+  //
+  virtual bool isRoot() const = 0;
 
-    /// Add a shared Dimension.
-    ///
-    virtual void addOneDimension(const IDimensionPtr& dimension) = 0;
+  /// Check if this is an entry group. Entries are immediate sub-group of the
+  /// root group.
+  ///
+  /// @return true or false
+  //
+  virtual bool isEntry() const = 0;
 
-    /// Add a nested Group.
-    ///
-    virtual void addSubgroup(const IGroupPtr& group) = 0;
+  /// Get its parent Group, or null if its the root group.
+  ///
+  /// @return group object
+  ///
+  virtual IGroupPtr getParent() const = 0;
+  
+  /// Get the root group of the tree that holds the current Group.
+  ///
+  /// @return the root group
+  ///
+  virtual IGroupPtr getRoot() const = 0;
+
+  //@{ Read-oriented methods
 
     /// Find the DataItem with the specified (short) name in this group.
     /// @param shortName Short name of DataItem within this group.
     /// @return a shared valid pointeur on the data item (may be a null pointer)
     ///
-    virtual IDataItemPtr getDataItem(const std::string& shortName) = 0;
+    virtual IDataItemPtr getDataItem(const std::string& shortName) throw ( cdma::Exception ) = 0;
 
     /// Find the DataItem that has the specific attribute, with the name and
     /// value given.
@@ -110,6 +126,22 @@ class IGroup : public IContainer, public IObject
     //
     virtual std::list<IGroupPtr> getGroupList() = 0;
 
+  //@} Read-oriented methods
+
+  //@{ Write-oriented methods
+
+    /// Add a new data item to the group.
+    ///
+    virtual IDataItemPtr addDataItem(const std::string& shortName) = 0;
+
+    /// Add a shared Dimension.
+    ///
+    virtual IDimensionPtr addDimension(const std::string& shortName) = 0;
+
+    /// Add a nested Group.
+    ///
+    virtual IGroupPtr addSubgroup(const std::string& shortName) = 0;
+
     /// Remove a DataItem from the DataItem list.
     ///
     /// @param item
@@ -157,55 +189,7 @@ class IGroup : public IContainer, public IObject
     //
     virtual bool removeDimension(const IDimensionPtr& dimension) = 0;
 
-    /// Check if this is the root group.
-    ///
-    /// @return true or false
-    //
-    virtual bool isRoot() = 0;
-
-    /// Check if this is an entry group. Entries are immediate sub-group of the
-    /// root group.
-    ///
-    /// @return true or false
-    //
-    virtual bool isEntry() = 0;
-
-    /// Return a clone of this Group object. The tree structure is new. However
-    /// the data items are shallow copies that share the same storages with the
-    /// original ones.
-    ///
-    /// @return new Group GDM group object
-    //
-    virtual IGroupPtr clone() = 0;
-
-    /// Get its parent Group, or null if its the root group.
-    ///
-    /// @return group object
-    ///
-    virtual IGroupPtr getParent() = 0;
-    
-    /// Get the root group of the tree that holds the current Group.
-    ///
-    /// @return the root group
-    ///
-    virtual IGroupPtr getRoot() = 0;
-
-    /// Get the Attributes contained directly in this group.
-    ///
-    /// @return list of type Attribute; may be empty, not null.
-    //
-	  virtual std::list<IAttributePtr> getAttributeList() = 0;
-
-    /// Returns true if this group contains the Attribute with right name and value
-    ///
-    /// @param name of the attribute to test
-    /// @param value of the attribute to test
-    //
-    virtual bool hasAttribute(const std::string& name, const std::string& value) = 0;
-    
-    virtual std::string getPath() = 0;
-    virtual std::string getName() = 0;
-    virtual std::string getShortName() = 0;
+ //@} Write-oriented methods
     
 };
   

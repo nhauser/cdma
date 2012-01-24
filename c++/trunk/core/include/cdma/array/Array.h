@@ -98,7 +98,7 @@ public:
   ///
   /// @return value as a yat::Any
   ///
-  yat::Any& get( const ViewPtr& view, std::vector<int> position );
+  yat::Any& get(const ViewPtr& view, std::vector<int> position);
 
   /// Set the array element at the current element given position
   ///

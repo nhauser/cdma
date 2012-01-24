@@ -16,6 +16,7 @@
 
 #include <yat/memory/SharedPtr.h>
 #include <yat/plugin/IPlugInObject.h>
+#include <yat/utils/URI.h>
 
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
@@ -41,7 +42,7 @@ public:
   /// @return CDMA Dataset
   /// @throw  Exception
   ///
-  virtual IDatasetPtr openDataset(const std::string& path) throw ( Exception ) = 0;
+  virtual IDatasetPtr openDataset(const yat::URI& dataset_location) throw ( Exception ) = 0;
 
   /// Retrieve the dataset referenced by an uri object.
   /// 
@@ -99,9 +100,9 @@ public:
 
   /// Returns the URI detector of the instantiated plug-in. 
   ///
-	/// @return the plugin's mimplementation of the IDataSource interface
-	///
-	virtual IDataSourcePtr getPluginURIDetector() = 0;
+  /// @return the plugin's mimplementation of the IDataSource interface
+  ///
+  virtual IDataSourcePtr getPluginURIDetector() = 0;
 };
 
 } //namespace CDMACore

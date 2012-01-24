@@ -12,6 +12,7 @@
 
 #include <list>
 #include <string>
+#include <yat/any/Any.h>
 
 #include <cdma/IObject.h>
 
@@ -29,20 +30,11 @@ public:
   {
   }
   
-  /// Add an Attribute to the Group.
+  /// Add a new attribute to the Group.
   ///
   /// @param attribute  Attribute
   ///
-  virtual void addOneAttribute(const IAttributePtr& attribute) = 0;
-  
-  /// A convenience method of adding a string type attribute.
-  ///
-  /// @param name
-  ///      string type object
-  /// @param value
-  ///      string type object Created on 06/03/2008
-  ///
-  virtual void addStringAttribute(const std::string& name, const std::string& value) = 0;
+  virtual IAttributePtr addAttribute(const std::string& name, yat::Any &value) = 0;
   
   /// Find an Attribute in this Group by its name.
   ///
@@ -62,21 +54,21 @@ public:
   ///
   /// @return string type Created on 18/06/2008
   ///
-  virtual std::string getLocation() = 0;
+  virtual std::string getLocation() const = 0;
   
   /// Get the (long) name of the IObject, which contains the path information.
   ///
   /// @return string type object Created on 18/06/2008
   ///
-  virtual std::string getName() = 0;
+  virtual std::string getName() const = 0;
   
   /// Get the "short" name, unique within its parent Group.
   ///
-  virtual std::string getShortName() = 0;
+  virtual std::string getShortName() const = 0;
   
   /// Check if the Group has an Attribute with certain name and value.
   ///
-  virtual bool hasAttribute(const std::string& name, const std::string& value) = 0;
+  virtual bool hasAttribute(const std::string& name) = 0;
   
   /// Remove an Attribute from the Attribute list.
   ///
