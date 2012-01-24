@@ -27,7 +27,6 @@
 // CDMA core
 #include <cdma/dictionary/Key.h>
 
-
 EXPORT_SINGLECLASS_PLUGIN(cdma::SoleilNxsFactory, \
                           cdma::SoleilNxsFactoryInfo);
 
@@ -68,7 +67,7 @@ std::string SoleilNxsFactoryInfo::get_version_number() const
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::openDataset(const std::string& uri) throw ( cdma::Exception )
+IDatasetPtr SoleilNxsFactory::openDataset(const yat::URI&) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDataset");
 }
@@ -86,7 +85,7 @@ IDatasetPtr SoleilNxsFactory::openDataset(const yat::URI& uri) throw ( cdma::Exc
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr SoleilNxsFactory::openDictionary(const std::string& filepath) throw ( cdma::Exception )
+DictionaryPtr SoleilNxsFactory::openDictionary(const std::string&) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDictionary");
 }
@@ -185,7 +184,9 @@ IAttributePtr SoleilNxsFactory::createAttribute(const std::string& name, const v
 IDatasetPtr SoleilNxsFactory::createDatasetInstance(const std::string& uri) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SoleilNxsFactory::createDatasetInstance");
-  return new NxsDataset(uri /*, this*/);
+  NxsDatasetPtr ptr(new NxsDataset(uri /*, this*/));
+  ptr->setSelfRef(ptr);
+  return ptr;
 }
 
 //----------------------------------------------------------------------------

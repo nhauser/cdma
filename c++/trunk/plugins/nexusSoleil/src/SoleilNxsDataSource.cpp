@@ -22,6 +22,7 @@
 
 // CDMA engine
 #include <NxsDataset.h>
+#include <NxsAttribute.h>
 
 // CDMA plugin
 #include <SoleilNxsDataSource.h>
@@ -30,9 +31,9 @@
 namespace cdma
 {
 
-std::string  SoleilNxsDataSource::CREATOR = "Synchrotron SOLEIL";
-int          SoleilNxsDataSource::NB_BEAMLINES = 26;
-std::string* SoleilNxsDataSource::BEAMLINES = new std::string[26] {"contacq", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
+std::string CREATOR = "Synchrotron SOLEIL";
+int          NB_BEAMLINES = 26;
+std::string BEAMLINES [] = {"contacq", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
 
 
 //----------------------------------------------------------------------------
@@ -76,35 +77,35 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
     NxsDataset dataset ( path );
     
     // seek at root for 'creator' attribute
-		IGroupPtr group = dataset.getRootGroup();
-		if( group->hasAttribute("creator", CREATOR) )
-		{
-			result = true;
-		}
-		// Check the beamline is one used at Soleil
-		else 
-		{
-		  group = group->getGroup("<NXentry>");
-		  if( ! group.is_null() ) 
-		  {
-			  group = group->getGroup("<NXinstrument>");
-		  }
-		
-		  if( ! group.is_null() ) 
-		  {
-		    
-			  std::string node = group->getShortName();
-			
-			  for( int i = 0; i < NB_BEAMLINES; i++ ) 
-			  {
-				  if( node == BEAMLINES[i]  ) 
-				  {
-					  result = true;
-					  break;
-				  }
-			  }
-		  }
-	  }
+    IGroupPtr group = dataset.getRootGroup();
+    if( group->hasAttribute("creator") && group->getAttribute("creator")->toString() == CREATOR )
+    {
+      result = true;
+    }
+    // Check the beamline is one used at Soleil
+    else 
+    {
+      group = group->getGroup("<NXentry>");
+      if( ! group.is_null() ) 
+      {
+        group = group->getGroup("<NXinstrument>");
+      }
+    
+      if( ! group.is_null() ) 
+      {
+        
+        std::string node = group->getShortName();
+      
+        for( int i = 0; i < NB_BEAMLINES; i++ ) 
+        {
+          if( node == BEAMLINES[i]  ) 
+          {
+            result = true;
+            break;
+          }
+        }
+      }
+    }
     
   }
   return result;

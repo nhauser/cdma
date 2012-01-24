@@ -26,6 +26,7 @@
 
 namespace cdma
 {
+
 //==============================================================================
 /// IDataSource implementation
 //==============================================================================
@@ -77,13 +78,8 @@ public:
   
   std::string getFactoryName() const { return NXS_FACTORY_NAME; };
   CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-  
-private: 
-  static std::string  CREATOR;
-	static std::string* BEAMLINES;
-	static int          NB_BEAMLINES;
-
 };
+
 } //namespace CDMACore
 #endif //__CDMA_NXSDATASOURCE_H__
 
