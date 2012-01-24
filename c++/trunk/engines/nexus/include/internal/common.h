@@ -4,8 +4,18 @@
 #define NXS_FACTORY_NAME "NxsFactory"
 #include <nxfile.h>
 #include <yat/memory/SharedPtr.h>
+#include <yat/threading/Mutex.h>
 #include <yat/utils/String.h>
 
-typedef yat::SharedPtr<NexusFile, yat::Mutex> NexusFilePtr;
+// CDMA Core
+#include <cdma/Common.h>
+#include <cdma/IObject.h>
+
+namespace cdma
+{
+DECLARE_CLASS_SHARED_WEAK_PTR(NxsGroup);
+DECLARE_CLASS_SHARED_WEAK_PTR(NxsDataset);
+DECLARE_SHARED_PTR(NexusFile);
+}
 
 #endif

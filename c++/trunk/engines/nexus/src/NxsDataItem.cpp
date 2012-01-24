@@ -31,27 +31,35 @@ namespace cdma
 //---------------------------------------------------------------------------
 // NxsDataItem::NxsDataItem
 //---------------------------------------------------------------------------
-NxsDataItem::NxsDataItem(NxsDataset* dataset, const char* path, bool init_from_file )
+NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const char* path, bool init_from_file )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init(dataset, path);
+  init(dataset_wptr, path);
 }
-NxsDataItem::NxsDataItem(NxsDataset* dataset, const IGroupPtr& parent, const char* name )
+NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const char* name )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset, parent->getLocation() + "/" + yat::String(name) );
+  init( dataset_wptr, parent->getLocation() + "/" + yat::String(name) );
 }
-NxsDataItem::NxsDataItem(NxsDataset* dataset, const NexusDataSetInfo& item, const std::string& path)
+NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path)
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset, yat::String(path), false );
+  init( dataset_wptr, yat::String(path), false );
   m_item = item;
 }
 
 //---------------------------------------------------------------------------
+// NxsDataItem::~NxsDataItem
+//---------------------------------------------------------------------------
+NxsDataItem::~NxsDataItem()
+{
+  CDMA_FUNCTION_TRACE("NxsDataItem::~NxsDataItem");
+};
+
+//---------------------------------------------------------------------------
 // NxsDataItem::init
 //---------------------------------------------------------------------------
-void NxsDataItem::init(NxsDataset* dataset, std::string path, bool init_from_file)
+void NxsDataItem::init(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file)
 {
   // Resolve dataitem name and path
   std::vector<yat::String> nodes;
@@ -72,9 +80,9 @@ void NxsDataItem::init(NxsDataset* dataset, std::string path, bool init_from_fil
   yat::String item = nodes[nodes.size() - 1 ];
   m_name = item;
 
-  m_dataset_ptr = dataset;
+  m_dataset_wptr = dataset_wptr;
 
-  NexusFilePtr file = m_dataset_ptr->getHandle();
+  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
   if( init_from_file )
   {
     // Open path
@@ -120,7 +128,9 @@ cdma::IDataItemPtr NxsDataItem::getASlice(int dimension, int value) throw ( cdma
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataItem::getParent()
 {
-  return m_dataset_ptr->getGroupFromPath( m_path );
+  if( m_dataset_wptr )
+    return m_dataset_wptr.lock()->getGroupFromPath( m_path );
+  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
 }
 
 //---------------------------------------------------------------------------
@@ -128,7 +138,9 @@ cdma::IGroupPtr NxsDataItem::getParent()
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataItem::getRoot()
 {
-  return m_dataset_ptr->getRootGroup();
+  if( m_dataset_wptr )
+    return m_dataset_wptr.lock()->getRootGroup();
+  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
 }
 
 //---------------------------------------------------------------------------
@@ -530,19 +542,11 @@ IDataItemPtr NxsDataItem::clone()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::addOneAttribute
+// NxsDataItem::addAttribute
 //---------------------------------------------------------------------------
-void NxsDataItem::addOneAttribute(const cdma::IAttributePtr&)
+cdma::IAttributePtr NxsDataItem::addAttribute(const std::string&, yat::Any&)
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::addOneAttribute");
-}
-
-//---------------------------------------------------------------------------
-// NxsDataItem::addStringAttribute
-//---------------------------------------------------------------------------
-void NxsDataItem::addStringAttribute(const std::string&, const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("NxsDataItem::addStringAttribute");
 }
 
 //---------------------------------------------------------------------------
@@ -564,7 +568,7 @@ std::list<yat::SharedPtr<cdma::IAttribute, yat::Mutex> > NxsDataItem::getAttribu
 //---------------------------------------------------------------------------
 // NxsDataItem::getLocation
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getLocation()
+std::string NxsDataItem::getLocation() const
 {
   return NxsDataset::concatPath(m_path, m_name);
 }
@@ -593,7 +597,7 @@ void NxsDataItem::setLocation(const std::string& path)
 //---------------------------------------------------------------------------
 // NxsDataItem::getName
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getName()
+std::string NxsDataItem::getName() const
 {
   return m_name;
 }
@@ -601,7 +605,7 @@ std::string NxsDataItem::getName()
 //---------------------------------------------------------------------------
 // NxsDataItem::getShortName
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getShortName()
+std::string NxsDataItem::getShortName() const
 {
   return m_shortName;
 }
@@ -609,7 +613,7 @@ std::string NxsDataItem::getShortName()
 //---------------------------------------------------------------------------
 // NxsDataItem::hasAttribute
 //---------------------------------------------------------------------------
-bool NxsDataItem::hasAttribute(const std::string&, const std::string&)
+bool NxsDataItem::hasAttribute(const std::string&)
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::hasAttribute");
 }
@@ -643,7 +647,7 @@ void NxsDataItem::setParent(const cdma::IGroupPtr&)
 //---------------------------------------------------------------------------
 cdma::IDatasetPtr NxsDataItem::getDataset()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::getDataset");
+  return m_dataset_wptr.lock();
 }
 
 //---------------------------------------------------------------------------
@@ -653,8 +657,10 @@ void NxsDataItem::loadMatrix()
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::loadMatrix");
   
-  yat::SharedPtr<NexusFile, yat::Mutex> file = m_dataset_ptr->getHandle();
-  if( ! m_dataset_ptr )
+  NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
+
+  yat::SharedPtr<NexusFile, yat::Mutex> file = dataset_ptr->getHandle();
+  if( dataset_ptr )
   {
     // prepare shape
     std::vector<int> shape;
@@ -674,7 +680,8 @@ void NxsDataItem::loadMatrix()
   
     // Init Array
     //cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, m_item.DataType(), shape, data.Data() );
-    cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()), shape, data.Data() );
+    cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()),
+                                          shape, data.Data() );
 
     // remove ownership of the NexusDataSet
     data.SetData(NULL);
@@ -703,7 +710,7 @@ void NxsDataItem::initAttr()
   open();
   
   // Load attributes
-  NexusFilePtr file = m_dataset_ptr->getHandle();
+  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
   int nbAttr = file->AttrCount();
   if( nbAttr > 0 )
   {
@@ -737,7 +744,7 @@ void NxsDataItem::open( bool openNode )
   CDMA_FUNCTION_TRACE("NxsDataItem::open");
   
   // Open parent node
-  NexusFilePtr file = m_dataset_ptr->getHandle();
+  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
   
   if( file->CurrentGroupPath() != m_path || file->CurrentDataset() != m_name )
   {
