@@ -6,7 +6,7 @@
 
 // YAT library
 #include <yat/plugin/PlugInSymbols.h>
-// #include <yat/utils/URI.h>
+#include <yat/utils/URI.h>
 #include <yat/plugin/IPlugInInfo.h>
 
 // CDMA core
@@ -49,8 +49,7 @@ public:
   /// @param uri string object
   /// @return IDataset
   ///
-  IDatasetPtr openDataset(const std::string& path) throw ( cdma::Exception );
-  // IDatasetPtr openDataset(const yat::URI& uri) throw ( cdma::Exception );
+  IDatasetPtr openDataset(const yat::URI& uri) throw ( cdma::Exception );
 
   DictionaryPtr openDictionary(const std::string& filepath) throw ( cdma::Exception );
 
