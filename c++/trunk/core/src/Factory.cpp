@@ -8,12 +8,16 @@
 ///
 //*****************************************************************************
 
+// yat
 #include <yat/utils/String.h>
 #include <yat/utils/Logging.h>
 #include <yat/file/FileName.h>
+
+// cdma
 #include <cdma/Factory.h>
 #include <cdma/dictionary/Path.h>
 #include <cdma/IFactory.h>
+#include <cdma/IDataSource.h>
 
 namespace cdma
 {
@@ -312,6 +316,46 @@ PathParameterPtr Factory::createPathParameter(CDMAType::ParameterType type, std:
 IPathParamResolverPtr Factory::createPathParamResolver(const PathPtr& path)
 {
   THROW_NOT_IMPLEMENTED("Factory::createPathParamResolver");
+}
+
+//----------------------------------------------------------------------------
+// Factory::detectPluginFactory
+//----------------------------------------------------------------------------
+IFactoryPtr Factory::detectPluginFactory(const yat::URI& destination) 
+{
+  IFactoryPtr result;
+  IFactoryPtr compatible;
+  IFactoryPtr tmp;
+  IDataSourcePtr data_source;
+  std::string plugin_id;
+    
+  // for each plugin that where found
+  PluginMap::iterator iterator = instance().m_plugin_map.begin();
+  while( iterator != instance().m_plugin_map.end() )
+  {
+    // Get the corresponding factory
+    plugin_id = iterator->first;
+    tmp = instance().getPluginFactory( plugin_id );
+    data_source = tmp->getPluginURIDetector();
+    
+    // Ask if the URI is readable
+    if( data_source->isReadable( destination ) )
+    {
+      // Ask if the plugin is the owner of that URI
+      if( data_source->isProducer( destination ) )
+      {
+        result = tmp;
+        break;
+      }
+      else
+      {
+        // Not owner but can read so keep it for later if no owner are found
+        result = tmp;
+      }
+    }
+    iterator++;
+  }
+  return result;
 }
 
 } // namespace cdma
