@@ -8,8 +8,8 @@
 // See AUTHORS file
 //******************************************************************************
 
-#ifndef __CDMA_NXSDATASOURCE_H__
-#define __CDMA_NXSDATASOURCE_H__
+#ifndef __CDMA_SOLEIL_NXSDATASOURCE_H__
+#define __CDMA_SOLEIL_NXSDATASOURCE_H__
 
 // STD
 #include <string>
