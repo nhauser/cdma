@@ -30,12 +30,9 @@ namespace cdma
 class CDMA_DECL IFactory : public yat::IPlugInObject
 {
 public:
-/*
   /// d-tor
-  virtual ~IFactory()
-  {
-  }
-*/
+  virtual ~IFactory()  { CDMA_FUNCTION_TRACE("IFactory::~IFactory");  }
+
   /// Retrieve the dataset referenced by the path.
   /// 
   /// @param path can be either the string representation of an uri (see RFC 3986) or a file path
