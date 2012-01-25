@@ -70,6 +70,12 @@ public:
   /// @param 
   static void init(const std::string &plugin_path);
   
+  /// Clean up memory
+  /// !!! Call this method before program exiting
+  ///
+  /// @param 
+  static void cleanup();
+
   /// Get a reference to the factory of the specified plugin
   ///
   /// @param plugin_id   plugin id string (ex.: "SoleilNeXus")

@@ -45,39 +45,42 @@ Factory& Factory::instance()
 //----------------------------------------------------------------------------
 void Factory::init(const std::string &plugin_path)
 {
+  CDMA_STATIC_FUNCTION_TRACE("Factory::init");
+
   yat::FileEnum fe(plugin_path + '/', yat::FileEnum::ENUM_FILE);
-  std::cout << "Factory::init " << fe.path() << std::endl;
+  CDMA_STATIC_TRACE(fe.path());
 
   if( !fe.path_exist() )
     throw cdma::Exception("BAD_PATH", PSZ_FMT("Path not exists (%s)", PSZ(plugin_path)), "Factory::init");
   
   while( fe.find() )
   {
-    std::cout << "Factory::init found " << fe.name_ext() << " " << SHARED_LIB_EXTENSION << std::endl;
+    CDMA_STATIC_TRACE(fe.name_ext() << " " << SHARED_LIB_EXTENSION);
+
     if( fe.ext().is_equal(SHARED_LIB_EXTENSION) )
     {
       //- we found a shared lib
       Plugin plugin_objects;
 
-      std::cout << "Factory::init found lib " << fe.full_name() << std::endl;
+      CDMA_STATIC_TRACE("Found lib " << fe.full_name());
       try
       {
         PluginInfoPair plugin_pair = instance().m_plugin_manager.load( fe.full_name() );
         plugin_objects.info    = plugin_pair.first;
         plugin_objects.factory = plugin_pair.second;
-      std::cout << "Factory::init lib loaded" << std::endl;
+        CDMA_STATIC_TRACE("Lib loaded");
       }
       catch( yat::Exception& e)
       {
         e.dump();
         continue;
       }
-      std::cout << "Factory::init plugin_objects.info->get_interface_name: " << plugin_objects.info->get_interface_name() << std::endl;
+      CDMA_STATIC_TRACE("Plugin_objects.info->get_interface_name: " << plugin_objects.info->get_interface_name());
       
       if ( plugin_objects.info->get_interface_name() == INTERFACE_NAME )
       {
         // We found a CDMA plugin!
-        std::cout << "Factory::init: We found a CDMA plugin!" << std::endl;
+        CDMA_STATIC_TRACE("Found a CDMA plugin!");
         yat::IPlugInInfo* plugin_info = 0;
         try
         {
@@ -86,12 +89,10 @@ void Factory::init(const std::string &plugin_path)
             throw std::bad_cast();
           
           std::string plugin_id = plugin_objects.info->get_plugin_id();
-          std::cout << "Factory::init plugin_objects.info->get_plugin_id: " << plugin_objects.info->get_plugin_id() << std::endl;
-          //yat::log_info("cdma", PSZ_FMT("Loading plugin %s", plugin_id));
+          CDMA_STATIC_TRACE("Plugin_objects.info->get_plugin_id: " << plugin_objects.info->get_plugin_id());
           
-          std::cout << "Factory::init plugin before registered" << std::endl;
           instance().m_plugin_map[plugin_id] = plugin_objects;
-          std::cout << "Factory::init plugin registered" << std::endl;
+          CDMA_STATIC_TRACE("Plugin registered");
         }
         catch( std::bad_cast& )
         {
@@ -103,7 +104,14 @@ void Factory::init(const std::string &plugin_path)
       }
     }
   }
-  std::cout << "Factory::init Done" << std::endl;
+}
+
+//----------------------------------------------------------------------------
+// Factory::cleanup
+//----------------------------------------------------------------------------
+void Factory::cleanup()
+{
+  instance().m_plugin_factory_map.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -124,7 +132,7 @@ IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
     // Instanciate the IFactory implementation
     yat::IPlugInObject* obj;
     factory->create(obj);
-    IFactoryPtr factory_ptr = static_cast<cdma::IFactory*>(obj);
+    IFactoryPtr factory_ptr(dynamic_cast<cdma::IFactory*>(obj));
     instance().m_plugin_factory_map[plugin_id] = factory_ptr;
     
     return factory_ptr;

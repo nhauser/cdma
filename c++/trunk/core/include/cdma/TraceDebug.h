@@ -19,52 +19,52 @@ namespace cdma
 {
 
 #ifdef CDMA_DEBUG
-
-  // !!! DO NOT CALL THIS FUNCTION !!!
-  inline void _OutputDebug(const void* this_addr, const char* s1, const char* s2="")
-  {
-    std::cout << "[" 
-              << std::hex
-              << std::setfill('0')
-              << std::setw(8)
-              << yat::ThreadingUtilities::self() 
-              << "][" 
-              << std::hex
-              << std::setfill(' ')
-              << std::setw(10)
-              << this_addr
-              << std::dec
-              << "] - "
-              << s1
-              << s2
-              << std::endl;    
-  }
+  
+  #define CDMA_DBG_PREFIX(x) "[" << \
+                          std::hex << std::setfill(' ') << \
+                          std::setw(10) << \
+                          (void*)(x) << \
+                          "][" << \
+                          std::setfill('0') << \
+                          std::setw(8) << \
+                          yat::ThreadingUtilities::self() << \
+                          "] " << \
+                          std::dec
 
   // !!! DO NOT INSTANTIATE THIS CLASS !!!
-  class CDMA_DECL _FunctionTrace
+  class dbg_helper
   {
-  private:
-    const char* m_func_name;
-    const void* m_this_addr;
-    
-  public:
-    _FunctionTrace(const char *func_name, const void* this_addr) : m_func_name(func_name), m_this_addr(this_addr)
-    {
-      _OutputDebug(m_this_addr, "Entering ", m_func_name);
-    }
-    ~_FunctionTrace()
-    {
-      _OutputDebug(m_this_addr, "Leaving  ", m_func_name);
-    }
+    private:
+      std::string _s;
+      void *_this_object;
+    public:
+      dbg_helper(const std::string &s, void* this_object=(void*)(0x12345678)) : _s(s), _this_object(this_object)
+      {
+        std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "> " << _s << std::endl;
+        indent().append(2, ' ');
+      }
+      ~dbg_helper()
+      {
+        indent().erase(0,2);
+        std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "< " << _s << std::endl;
+      }
+      static std::string &indent()
+      {
+        static std::string indent;
+        return indent;
+      }
   };
-  
+
   /// A function trace helper
-  #define CDMA_FUNCTION_TRACE(function_name) cdma::_FunctionTrace _func_trace(function_name, this)
+  #define CDMA_FUNCTION_TRACE(function_name) cdma::dbg_helper _func_trace(function_name, this)
+  #define CDMA_STATIC_FUNCTION_TRACE(function_name) cdma::dbg_helper _func_trace(function_name)
 
   /// A simple trace helper
-  #define CDMA_TRACE(trace) _OutputDebug(this, trace)
+  #define CDMA_TRACE(s)  std::cout << CDMA_DBG_PREFIX(this) << dbg_helper::indent() << s << std::endl
+  #define CDMA_STATIC_TRACE(s)  std::cout << CDMA_DBG_PREFIX(0x12345678) << dbg_helper::indent() << s << std::endl
     
-#else  
+#else
+  class dbg_helper;
   #define CDMA_FUNCTION_TRACE(s)
   #define CDMA_TRACE(s)
 #endif
