@@ -267,7 +267,6 @@ void NxsDataset::save(const std::string&, const cdma::IAttributePtr&) throw ( cd
 //---------------------------------------------------------------------------
 NexusFileAccess::NexusFileAccess( const NexusFilePtr& ptrFile )
 {
-  CDMA_FUNCTION_TRACE("NexusFileAccess::NexusFileAccess"); 
   m_ptrNxFile = ptrFile;
   if( m_ptrNxFile )
   { 
@@ -280,7 +279,6 @@ NexusFileAccess::NexusFileAccess( const NexusFilePtr& ptrFile )
 //---------------------------------------------------------------------------
 NexusFileAccess::~NexusFileAccess()
 {
-  CDMA_FUNCTION_TRACE("NexusFileAccess::~NexusFileAccess"); 
   if( m_ptrNxFile ) 
   {
     m_ptrNxFile->Close();
