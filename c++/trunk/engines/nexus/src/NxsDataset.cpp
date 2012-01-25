@@ -39,8 +39,6 @@ NxsDataset::NxsDataset( const std::string& filename )
   // Utiliser yat pour sortir un FileName et récupérer son contenu (1 ou plusieurs fichiers)
   m_uri = filename;
   m_ptrNxFile.reset(new NexusFile(m_uri.data()));
-  m_detector = DictionaryDetector(m_ptrNxFile);
-  //##m_log_root.reset( new NxsLogicalGroup() );
 }
 
 //---------------------------------------------------------------------------
@@ -179,33 +177,7 @@ cdma::IGroupPtr NxsDataset::getRootGroup()
 //---------------------------------------------------------------------------
 cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
 {
-  CDMA_FUNCTION_TRACE("NxsDataset::getLogicalRoot");
-  if( m_log_root.is_null() )
-  {
-    CDMA_TRACE("Getting key file");
-    yat::String keyFile = Factory::getKeyDictionaryPath();
-
-    CDMA_TRACE("Creating Dictionary detector");
-    DictionaryDetector detector ( m_ptrNxFile );
-    CDMA_TRACE("Getting mapping file");
-//    yat::String file = Factory::getMappingDictionaryFolder( new NxsFactory() ) + detector.getDictionaryName();
-    yat::FileName file( Factory::getDictionariesFolder() + "/" + "NxsFactory" + "/" + detector.getDictionaryName());
-
-    yat::FileName mapFile ( file );
-
-    CDMA_TRACE("Creating dictionary");
-    DictionaryPtr dictionary ( new Dictionary( ) );
-    dictionary->setKeyFilePath( keyFile );
-    dictionary->setMappingFilePath( mapFile.full_name() );
-
-    CDMA_TRACE("Read the dictionary");
-    dictionary->readEntries();
-
-    CDMA_TRACE("Creating logical root");
-    LogicalGroup* ptrRoot = new LogicalGroup( this, NULL, KeyPtr(NULL), dictionary );
-    m_log_root.reset( ptrRoot );
-  }
-  return m_log_root;
+  THROW_NOT_IMPLEMENTED("NxsDataset::getLogicalRoot");
 }
 
 //---------------------------------------------------------------------------
@@ -289,14 +261,6 @@ void NxsDataset::save(const std::string&, const cdma::IAttributePtr&) throw ( cd
   THROW_NOT_IMPLEMENTED("NxsDimension::save");
 }
 
-
-//---------------------------------------------------------------------------
-// NxsDataset::getMappingFileName
-//---------------------------------------------------------------------------
-const std::string& NxsDataset::getMappingFileName()
-{
-  return m_detector.getDictionaryName();
-}
 
 //---------------------------------------------------------------------------
 // NexusFileAccess::NexusFileAccess

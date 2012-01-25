@@ -21,7 +21,6 @@
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
-#include <DictionaryDetector.h>
 
 #include "nxfile.h"
 
@@ -34,7 +33,7 @@ namespace cdma
 //==============================================================================
 class NxsDataset : public IDataset
 {
-private:
+protected:
   yat::String                           m_uri;          ///< uniform resource indentifier to the dataset
   bool                                  m_open;         ///< is the data source opened
   NexusFilePtr                          m_ptrNxFile;    ///< handle on file
@@ -42,7 +41,6 @@ private:
   LogicalGroupPtr                       m_log_root;     ///< document logical root
   std::map<yat::String, IGroupPtr>      m_group_map;    ///< association between groups and paths
   std::map<yat::String, IDataItemPtr>   m_item_map;     ///< association between data items and paths
-  DictionaryDetector                    m_detector;     ///< Mapping file name for that is used for the dictionary
   NxsDatasetWPtr                        m_self_wptr;    ///< weak self reference
 
 public:
@@ -137,14 +135,12 @@ public:
   //@} IDataset interface
   
   //@{IObject interface
+
   CDMAType::ModelType getModelType() const { return CDMAType::Dataset; };
   std::string getFactoryName() const { return NXS_FACTORY_NAME; };
+
   //@} IObject interface
 
-protected:
-  /// Retrieve the correct mapping file according to structure of the Nexus file
-  ///
-  const std::string& getMappingFileName();
 };
 
 typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;
