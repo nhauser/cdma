@@ -659,9 +659,11 @@ void NxsDataItem::loadMatrix()
   
   NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
 
-  yat::SharedPtr<NexusFile, yat::Mutex> file = dataset_ptr->getHandle();
   if( dataset_ptr )
   {
+    NexusFilePtr file_ptr = dataset_ptr->getHandle();
+    NexusFileAccess auto_open(file_ptr);
+
     // prepare shape
     std::vector<int> shape;
     for( int i = 0; i < m_item.Rank(); i++ )
@@ -676,7 +678,7 @@ void NxsDataItem::loadMatrix()
     NexusDataSet data;
 
     // Load data
-    file->GetData( &data, m_name.data() );
+    file_ptr->GetData( &data, m_name.data() );
   
     // Init Array
     //cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, m_item.DataType(), shape, data.Data() );
