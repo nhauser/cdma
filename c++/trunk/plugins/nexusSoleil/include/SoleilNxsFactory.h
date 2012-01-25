@@ -1,5 +1,5 @@
-#ifndef __CDMA_NXSFACTORY_H__
-#define __CDMA_NXSFACTORY_H__
+#ifndef __CDMA_SOLEIL_NXSFACTORY_H__
+#define __CDMA_SOLEIL_NXSFACTORY_H__
 
 #include <vector>
 #include <string>

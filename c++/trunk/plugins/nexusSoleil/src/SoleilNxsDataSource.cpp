@@ -21,10 +21,10 @@
 #include <cdma/navigation/IGroup.h>
 
 // CDMA engine
-#include <NxsDataset.h>
 #include <NxsAttribute.h>
 
 // CDMA plugin
+#include <SoleilNxsDataset.h>
 #include <SoleilNxsDataSource.h>
 
 
