@@ -67,6 +67,22 @@ std::string SoleilNxsFactoryInfo::get_version_number() const
 // class SoleilNxsFactory
 //==============================================================================
 //----------------------------------------------------------------------------
+// SoleilNxsFactory::SoleilNxsFactory
+//----------------------------------------------------------------------------
+SoleilNxsFactory::SoleilNxsFactory()
+{
+  CDMA_FUNCTION_TRACE("SoleilNxsFactory::SoleilNxsFactory");
+}
+
+//----------------------------------------------------------------------------
+// SoleilNxsFactory::~SoleilNxsFactory
+//----------------------------------------------------------------------------
+SoleilNxsFactory::~SoleilNxsFactory()
+{
+  CDMA_FUNCTION_TRACE("SoleilNxsFactory::~SoleilNxsFactory");
+}
+
+//----------------------------------------------------------------------------
 // SoleilNxsFactory::openDataset
 //----------------------------------------------------------------------------
 IDatasetPtr SoleilNxsFactory::openDataset(const yat::URI&) throw ( cdma::Exception )
