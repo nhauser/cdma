@@ -44,8 +44,8 @@ public:
 class SoleilNxsFactory : public IFactory 
 {
 public:
-  SoleilNxsFactory() {};
-  ~SoleilNxsFactory() {};
+  SoleilNxsFactory();
+  ~SoleilNxsFactory();
 
   /// Retrieve the dataset referenced by the string.
   ///
