@@ -53,7 +53,6 @@ NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& it
 //---------------------------------------------------------------------------
 NxsDataItem::~NxsDataItem()
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::~NxsDataItem");
 };
 
 //---------------------------------------------------------------------------
