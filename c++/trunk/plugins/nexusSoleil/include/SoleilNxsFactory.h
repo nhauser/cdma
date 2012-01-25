@@ -23,6 +23,9 @@
 
 namespace cdma
 {
+extern const std::string PlugInID;
+extern const std::string InterfaceName;
+extern const std::string VersionNumber;
 
 //==============================================================================
 /// Plugin info class

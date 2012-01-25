@@ -54,7 +54,7 @@ LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
     CDMA_TRACE("Creating Dictionary detector");
     DictionaryDetector detector ( m_ptrNxFile );
     CDMA_TRACE("Getting mapping file");
-    yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" + "Soleil" + "/" + detector.getDictionaryName());
+    yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" + PlugInID + "/" + detector.getDictionaryName());
 
     yat::FileName mapFile ( file );
 
