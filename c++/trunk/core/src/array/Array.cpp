@@ -19,6 +19,8 @@
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/array/Array.h>
+#include <cdma/math/ArrayMath.h>
+#include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/ArrayIterator.h>
 #include <cdma/array/SliceIterator.h>
 #include <cdma/array/Slicer.h>

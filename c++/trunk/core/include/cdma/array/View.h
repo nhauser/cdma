@@ -39,6 +39,7 @@ public:
   // Constructors
   View(const cdma::ViewPtr& view );
   View(int rank, int shape[], int start[]);
+  View(std::vector<int> shape, std::vector<int> start);
   ~View();
 
   /// Get the number of dimensions in the array.

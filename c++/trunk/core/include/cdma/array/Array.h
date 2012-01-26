@@ -23,8 +23,6 @@
 #include <vector>
 
 #include <cdma/exception/Exception.h>
-#include <cdma/math/ArrayMath.h>
-#include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/impl/ArrayStorage.h>
 #include <cdma/array/View.h>
 
@@ -98,7 +96,7 @@ public:
   ///
   /// @return value as a yat::Any
   ///
-  yat::Any& get(const ViewPtr& view, std::vector<int> position);
+  yat::Any& get( const ViewPtr& view, std::vector<int> position );
 
   /// Set the array element at the current element given position
   ///

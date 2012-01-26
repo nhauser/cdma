@@ -187,9 +187,6 @@ cdma::IGroupPtr NxsGroup::addSubgroup(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IDataItemPtr NxsGroup::getDataItem(const std::string& shortName) throw ( cdma::Exception )
 {
-  if( !m_ptrNxFile )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItem");
-  
   std::map<yat::String, cdma::IDataItemPtr>::iterator it = m_mapDataItems.find(shortName);
   if( it != m_mapDataItems.end() )
     return it->second;
@@ -220,9 +217,6 @@ cdma::IDimensionPtr NxsGroup::getDimension(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getGroup(const std::string& shortName)
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemWithAttribute");
-  
   std::map<yat::String, cdma::IGroupPtr>::iterator it = m_mapGroups.find(shortName);
   if( it != m_mapGroups.end() )
     return it->second;
@@ -245,9 +239,6 @@ cdma::IGroupPtr NxsGroup::getGroupWithAttribute(const std::string&, const std::s
 //-----------------------------------------------------------------------------
 std::list<cdma::IDataItemPtr> NxsGroup::getDataItemList()
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemList");
-
   if( !m_bChildren )
     PrivEnumChildren();
   
@@ -272,9 +263,6 @@ std::list<cdma::IDimensionPtr> NxsGroup::getDimensionList()
 //-----------------------------------------------------------------------------
 std::list<cdma::IGroupPtr> NxsGroup::getGroupList()
 {
-  if( m_ptrNxFile.is_null() )
-    THROW_NO_DATA("No NeXus file", "NxsGroup::getDataItemList");
-
   if( !m_bChildren )
     PrivEnumChildren();
   
@@ -432,7 +420,10 @@ std::string NxsGroup::getName() const
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getShortName() const
 {
-  return getName();
+  yat::String strClass, strName = getName();
+  strName.extract_token_right('<', &strClass);
+  
+  return strName;
 }
 
 //-----------------------------------------------------------------------------

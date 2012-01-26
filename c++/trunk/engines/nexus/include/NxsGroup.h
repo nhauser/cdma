@@ -42,7 +42,6 @@ class NxsGroup : public cdma::IGroup
 {
 private:
   NxsDatasetWPtr        m_dataset_wptr;  // Weak pointer to the parent dataset
-  NexusFilePtr          m_ptrNxFile;     // Shared pointer to the nexus file
   mutable NxsGroupWPtr  m_parent_wptr;   // Reference to the parent group
   NxsGroupWPtr          m_root_wptr;     // TODO appeler celui du Dataset
   NxsGroupWPtr          m_self_wptr;     // self reference given to its childrens
@@ -68,7 +67,6 @@ public:
 
   //@{ plug-in specific
   
-  void setFile(const NexusFilePtr& ptrFile) { m_ptrNxFile = ptrFile; }
   void setPath(const yat::String& strPath) { m_strPath = strPath; }
   void setSelfRef(const NxsGroupPtr& ptr);
   std::string getPath() const;
