@@ -72,6 +72,30 @@ View::View(int rank, int shape[], int start[])
 }
 
 //---------------------------------------------------------------------------
+// View::View
+//---------------------------------------------------------------------------
+View::View(std::vector<int> shape, std::vector<int> start)
+{
+  CDMA_FUNCTION_TRACE("View::View");
+  m_rank = shape.size();
+  m_ranges.resize(m_rank);
+
+  // Create new ranges
+  long stride = 1;
+  for( int i = m_rank - 1; i >= 0; i-- )
+  {
+    m_ranges[i].set(
+      "",
+      start[i] * stride,
+      (start[i] + shape[i] - 1) * stride,
+      stride
+    );
+    stride *= shape[i];
+  }
+  m_upToDate = false;
+}
+
+//---------------------------------------------------------------------------
 // View::~View
 //---------------------------------------------------------------------------
 View::~View()

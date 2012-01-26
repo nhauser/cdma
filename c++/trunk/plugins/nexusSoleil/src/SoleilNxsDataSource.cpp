@@ -24,7 +24,6 @@
 #include <NxsAttribute.h>
 
 // CDMA plugin
-#include <SoleilNxsDataset.h>
 #include <SoleilNxsDataSource.h>
 
 
@@ -74,11 +73,12 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
   {
     // Get the path from URI
     yat::String path = destination.get( yat::URI::PATH );
-    NxsDataset dataset ( path );
+    SoleilNxsFactory plug_factory;
+    IDatasetPtr dataset = plug_factory.createDatasetInstance( path );
     
     // seek at root for 'creator' attribute
-    IGroupPtr group = dataset.getRootGroup();
-    if( group->hasAttribute("creator") && group->getAttribute("creator")->toString() == CREATOR )
+    IGroupPtr group = dataset->getRootGroup();
+    if( group->hasAttribute("creator") && group->getAttribute("creator")->getStringValue() == CREATOR )
     {
       result = true;
     }
@@ -95,7 +95,6 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
       {
         
         std::string node = group->getShortName();
-      
         for( int i = 0; i < NB_BEAMLINES; i++ ) 
         {
           if( node == BEAMLINES[i]  ) 
