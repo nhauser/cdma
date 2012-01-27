@@ -52,7 +52,7 @@ public:
   /// @param uri string object
   /// @return IDataset
   ///
-  IDatasetPtr openDataset(const yat::URI& uri) throw ( cdma::Exception );
+  IDatasetPtr openDataset(const std::string& location) throw ( cdma::Exception );
 
   DictionaryPtr openDictionary(const std::string& filepath) throw ( cdma::Exception );
 

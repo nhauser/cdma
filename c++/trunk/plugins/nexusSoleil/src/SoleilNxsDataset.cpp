@@ -17,6 +17,7 @@
 // Yat
 #include <yat/plugin/PlugInSymbols.h>
 #include <yat/file/FileName.h>
+#include <yat/utils/URI.h>
 
 // CDMA core
 #include <cdma/dictionary/Key.h>
@@ -34,9 +35,39 @@ namespace cdma
 //---------------------------------------------------------------------------
 // SoleilNxsDataset::SoleilNxsDataset
 //---------------------------------------------------------------------------
-SoleilNxsDataset::SoleilNxsDataset(const std::string& filepath) : NxsDataset(filepath)
+SoleilNxsDataset::SoleilNxsDataset(const yat::URI& location)
+: NxsDataset(location)
 {
-  m_detector = DictionaryDetector(m_ptrNxFile);
+}
+
+//---------------------------------------------------------------------------
+// SoleilNxsDataset::SoleilNxsDataset
+//---------------------------------------------------------------------------
+SoleilNxsDataset::SoleilNxsDataset()
+: NxsDataset()
+{
+}
+
+//---------------------------------------------------------------------------
+// SoleilNxsDataset::getDataset
+//---------------------------------------------------------------------------
+NxsDatasetPtr SoleilNxsDataset::getDataset(const yat::URI& location)
+{
+  CDMA_STATIC_FUNCTION_TRACE("SoleilNxsFactory::getDataset");
+  NxsDatasetPtr ptr( new SoleilNxsDataset(location) );
+  ptr->setSelfRef(ptr);
+  return ptr;
+}
+
+//---------------------------------------------------------------------------
+// SoleilNxsDataset::newDataset
+//---------------------------------------------------------------------------
+NxsDatasetPtr SoleilNxsDataset::newDataset()
+{
+  CDMA_STATIC_FUNCTION_TRACE("SoleilNxsFactory::newDataset");
+  NxsDatasetPtr ptr( new SoleilNxsDataset() );
+  ptr->setSelfRef(ptr);
+  return ptr;
 }
 
 //---------------------------------------------------------------------------
@@ -52,9 +83,10 @@ LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
     yat::String keyFile = cdma::Factory::getKeyDictionaryPath();
 
     CDMA_TRACE("Creating Dictionary detector");
-    DictionaryDetector detector ( m_ptrNxFile );
+    DictionaryDetector detector ( m_file_handle );
     CDMA_TRACE("Getting mapping file");
-    yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" + PlugInID + "/" + detector.getDictionaryName());
+    yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" +\
+                        PlugInID + "/" + detector.getDictionaryName());
 
     yat::FileName mapFile ( file );
 
@@ -72,14 +104,5 @@ LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
   }
   return m_log_root;
 }
-
-//---------------------------------------------------------------------------
-// SoleilNxsDataset::getMappingFileName
-//---------------------------------------------------------------------------
-const std::string& SoleilNxsDataset::getMappingFileName()
-{
-  return m_detector.getDictionaryName();
-}
-
 
 } // namespace cdma
