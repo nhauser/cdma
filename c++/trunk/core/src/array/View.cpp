@@ -417,8 +417,7 @@ std::string View::getViewName(int dim)
 //---------------------------------------------------------------------------
 void View::reduce()
 {
-  int newRank = 0;
-
+  CDMA_FUNCTION_TRACE("View::reduce");
   for( int i = 0; i < m_ranges.size(); i++ )
   {
     if( m_ranges[i].length() == 1 && ! m_ranges[i].reduce() )

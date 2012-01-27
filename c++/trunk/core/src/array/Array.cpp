@@ -48,7 +48,7 @@ Array::Array( const Array& array ) : m_view ( array.m_view )
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const Array& array, ViewPtr view ) : m_view (view)
+Array::Array( const Array& array, const ViewPtr& view ) : m_view (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = array.m_data_impl;
@@ -59,7 +59,7 @@ Array::Array( const Array& array, ViewPtr view ) : m_view (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const ArrayPtr& array, ViewPtr view ) : m_view (view)
+Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = array->getStorage();
@@ -70,7 +70,7 @@ Array::Array( const ArrayPtr& array, ViewPtr view ) : m_view (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr view ) : m_view (view)
+Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = data_ptr;
@@ -187,22 +187,6 @@ ArrayPtr Array::deepCopy()
   // Copy memory storage
   return new Array( m_factory, m_data_impl->deepCopy(), new View(m_view) );
   
-}
-
-//---------------------------------------------------------------------------
-// Array::getArrayUtils
-//---------------------------------------------------------------------------
-ArrayUtilsPtr Array::getArrayUtils()
-{
-  THROW_NOT_IMPLEMENTED("Array::getArrayUtils");
-}
-
-//---------------------------------------------------------------------------
-// Array::getArrayMath
-//---------------------------------------------------------------------------
-ArrayMathPtr Array::getArrayMath()
-{
-  THROW_NOT_IMPLEMENTED("Array::getArrayMath");
 }
 
 //---------------------------------------------------------------------------

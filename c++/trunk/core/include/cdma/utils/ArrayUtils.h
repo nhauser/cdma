@@ -37,7 +37,7 @@ public:
   ///
   /// @return false if shapes do not match
   //
-  bool checkShape(const ArrayPtr& newArray) throw ( Exception );
+  bool checkShape(const ArrayPtr& newArray);
     
   /// Concatenate with another array. The array need to be equal of less in
   /// rank.
@@ -136,7 +136,7 @@ public:
   ArrayUtilsPtr permute(std::vector<int> dims);
 
 private:
-  ArrayWPtr m_array;   // WeakPtr on array
+  ArrayPtr m_array;   // SharedPtr on array
 };
 
 } //namespace CDMACore

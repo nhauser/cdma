@@ -60,9 +60,9 @@ class Array
 public:
   // Constructors
   Array( const Array& array );
-  Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr view );
-  Array( const Array& src, ViewPtr view );
-  Array( const ArrayPtr& src, ViewPtr view );
+  Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view );
+  Array( const Array& src, const ViewPtr& view );
+  Array( const ArrayPtr& src, const ViewPtr& view );
   Array( const std::string& plugin_id, const std::type_info& type, std::vector<int> shape, void* pData = NULL );
   template<typename T> Array(const std::string& factory, T* values, std::vector<int> shape);
 
@@ -76,18 +76,6 @@ public:
   /// @note be aware: can lead to out of memory 
   ///
   ArrayPtr deepCopy();
-  
-  /// Get an ArrayUtils that permits shape manipulations on arrays
-  ///
-  /// @return new ArrayUtils object
-  ///
-  ArrayUtilsPtr getArrayUtils();
-  
-  /// Get an ArrayMath that permits math calculations on arrays
-  ///
-  /// @return new ArrayMath object
-  ///
-  ArrayMathPtr getArrayMath();
   
   /// Get the array element at the given index position
   ///
