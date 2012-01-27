@@ -43,21 +43,21 @@ ArrayUtils::~ArrayUtils() { }
 //---------------------------------------------------------------------------
 ArrayPtr ArrayUtils::getArray()
 {
-  return m_array.lock();
+  CDMA_FUNCTION_TRACE("ArrayUtils::getArray");
+  return m_array;
 }
 
 //---------------------------------------------------------------------------
 // ArrayUtils::checkShape
 //---------------------------------------------------------------------------
-bool ArrayUtils::checkShape(const ArrayPtr& newArray) throw ( Exception )
+bool ArrayUtils::checkShape(const ArrayPtr& newArray)
 {
   bool result = true;
-  ArrayPtr thisArray = m_array.lock();
-  if( thisArray && newArray )
+  if( m_array && newArray )
   {
-    if( thisArray->getRank() == newArray->getRank() )
+    if( m_array->getRank() == newArray->getRank() )
     {
-      std::vector<int> shapeA = thisArray->getShape();
+      std::vector<int> shapeA = m_array->getShape();
       std::vector<int> shapeB = newArray->getShape();    
       
       for( unsigned int i = 0; i < shapeA.size(); i++ )
@@ -95,15 +95,20 @@ ArrayUtilsPtr ArrayUtils::concatenate(const Array& array) throw ( Exception )
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reduce()
 {
-  ArrayPtr thisArray = m_array.lock();
-  if( thisArray )
+  CDMA_FUNCTION_TRACE("ArrayUtils::reduce");
+
+  if( getArray() )
   {
-    ViewPtr view = new View( thisArray->getView() );
+    ViewPtr view = new View( m_array->getView() );
     view->reduce();
 
-    thisArray = new Array(thisArray, view);
+    return new ArrayUtils( new Array(getArray(), view) );
   }
-  return new ArrayUtils(thisArray);
+  else
+  {
+    return new ArrayUtils( getArray() );
+  }
+  
 }
 
 //---------------------------------------------------------------------------
@@ -111,7 +116,7 @@ ArrayUtilsPtr ArrayUtils::reduce()
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reduce(int dim)
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     ViewPtr view = new View( thisArray->getView() );
@@ -127,10 +132,9 @@ ArrayUtilsPtr ArrayUtils::reduce(int dim)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reduceTo(int rank)
 {
-  ArrayPtr thisArray = m_array.lock();
-  if( thisArray )
+  if( m_array )
   {
-    ViewPtr view = new View( thisArray->getView() );
+    ViewPtr view = new View( m_array->getView() );
     std::vector<int> shape = view->getShape();
     for( unsigned int i = 0; i < shape.size(); i++ )
     {
@@ -143,13 +147,14 @@ ArrayUtilsPtr ArrayUtils::reduceTo(int rank)
         if( shape[i] == 1 )
         {
           view->reduce(i);
+          shape = view->getShape();
         }
       }
     }
 
-    thisArray = new Array(thisArray, view);
+    return new ArrayUtils(new Array(m_array, view));
   }
-  return new ArrayUtils(thisArray);
+  return new ArrayUtils(m_array);
 }
 
 //---------------------------------------------------------------------------
@@ -157,7 +162,7 @@ ArrayUtilsPtr ArrayUtils::reduceTo(int rank)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reshape(std::vector<int> shape) throw ( Exception )
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     ViewPtr view = new View( thisArray->getView() );
@@ -173,7 +178,7 @@ ArrayUtilsPtr ArrayUtils::reshape(std::vector<int> shape) throw ( Exception )
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::slice(int dim, int value)
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     ViewPtr view = new View( thisArray->getView() );
@@ -210,7 +215,7 @@ ArrayUtilsPtr ArrayUtils::slice(int dim, int value)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::transpose(int dim1, int dim2)
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
@@ -255,7 +260,7 @@ ArrayUtilsPtr ArrayUtils::integrateDimension(int dimension, bool isVariance) thr
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::flip(int dim)
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
@@ -291,7 +296,7 @@ ArrayUtilsPtr ArrayUtils::flip(int dim)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::permute(std::vector<int> dims)
 {
-  ArrayPtr thisArray = m_array.lock();
+  ArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
