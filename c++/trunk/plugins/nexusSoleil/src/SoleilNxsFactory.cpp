@@ -85,25 +85,18 @@ SoleilNxsFactory::~SoleilNxsFactory()
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::openDataset(const yat::URI&) throw ( cdma::Exception )
+IDatasetPtr SoleilNxsFactory::openDataset(const std::string& location_string)
+throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDataset");
+  CDMA_FUNCTION_TRACE("SoleilNxsFactory::createDatasetInstance");
+  return SoleilNxsDataset::getDataset( yat::URI(location_string) );
 }
-
-/*
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::openDataset
-//----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::openDataset(const yat::URI& uri) throw ( cdma::Exception )
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDataset");
-}
-*/
 
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr SoleilNxsFactory::openDictionary(const std::string&) throw ( cdma::Exception )
+DictionaryPtr SoleilNxsFactory::openDictionary(const std::string&)
+throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDictionary");
 }
@@ -199,12 +192,9 @@ IAttributePtr SoleilNxsFactory::createAttribute(const std::string&, const void *
 //----------------------------------------------------------------------------
 // SoleilNxsFactory::createDatasetInstance
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::createDatasetInstance(const std::string& uri) throw ( cdma::Exception )
+IDatasetPtr SoleilNxsFactory::createDatasetInstance(const std::string&) throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::createDatasetInstance");
-  NxsDatasetPtr ptr(new SoleilNxsDataset(uri /*, this*/));
-  ptr->setSelfRef(ptr);
-  return ptr;
+  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDatasetInstance");
 }
 
 //----------------------------------------------------------------------------

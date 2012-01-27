@@ -33,19 +33,22 @@ namespace cdma
 class SoleilNxsDataset : public NxsDataset
 {
 private:
-  DictionaryDetector    m_detector;     ///< Mapping file name for that is used for the dictionary
 
-  /// Retrieve the correct mapping file according to structure of the Nexus file
-  ///
-  const std::string& getMappingFileName();
+  // Constructor
+  SoleilNxsDataset(const yat::URI& location);
+  SoleilNxsDataset();
 
 public:
 
-  /// Constructor
-  ///  param :
+  /// Create an instance on an existing dataset
+  ///
   /// @param : filepath string representing the file path
   ///
-  SoleilNxsDataset(const std::string& filepath);
+  static NxsDatasetPtr getDataset(const yat::URI& location);
+
+  /// Create an instance on an new dataset object
+  ///
+  static NxsDatasetPtr newDataset();
 
   /// Return the the logical root of the dataset.
   ///
