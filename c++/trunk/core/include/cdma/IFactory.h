@@ -39,15 +39,7 @@ public:
   /// @return CDMA Dataset
   /// @throw  Exception
   ///
-  virtual IDatasetPtr openDataset(const yat::URI& dataset_location) throw ( Exception ) = 0;
-
-  /// Retrieve the dataset referenced by an uri object.
-  /// 
-  /// @param uri string object
-  /// @return CDMA Dataset
-  /// @throw  Exception
-  ///
-  //virtual IDatasetPtr openDataset(const yat::URI& uri) throw ( Exception ) = 0;
+  virtual IDatasetPtr openDataset(const std::string& location_string) throw ( Exception ) = 0;
   
   /// Open a dictionary
   /// 
@@ -57,15 +49,6 @@ public:
   ///
   virtual DictionaryPtr openDictionary(const std::string& filepath) throw ( Exception ) = 0;
   
-  /// Returns the path of the mapping document for dictionary mechanism
-  /// 
-  /// @param dataset object
-  /// @return path
-  /// @throw  Exception
-  ///
-// virtual const std::string& getMappingFilePath(IDatasetPtr &dataset) throw ( Exception ) = 0;
-  
-
   /// Create a CDMA Dataset with a string reference. If the file exists, it will
   ///
   /// @param uri string object

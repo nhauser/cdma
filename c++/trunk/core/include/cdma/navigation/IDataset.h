@@ -11,6 +11,7 @@
 #define __CDMA_IDATASET_H__
 
 #include <yat/utils/String.h>
+#include <yat/utils/URI.h>
 #include <yat/memory/SharedPtr.h>
 #include <yat/threading/Mutex.h>
 
@@ -55,9 +56,14 @@ public:
   virtual std::string getTitle() = 0;
 
   /// Set the location field of the dataset.
-  /// @param location in string
+  /// @param location as string
   ///
   virtual void setLocation(const std::string& location) = 0;
+
+  /// Set the location field of the dataset.
+  /// @param location as yat::URI object
+  ///
+  virtual void setLocation(const yat::URI& location) = 0;
 
   /// Set the title for the Dataset.
   /// @param title a string object 
@@ -83,15 +89,18 @@ public:
 
   /// Save the attribute to the specific path of the file.
   ///
-  virtual void save(const std::string& parentPath, const IAttributePtr& attribute) throw ( Exception ) = 0;
+  virtual void save(const std::string& parentPath, const IAttributePtr& attribute)
+               throw ( Exception ) = 0;
 
-  /// Open the node defined by the path and returns the IGroup that corresponds
+  /// Open the node defined by the path (inside the dataset) and
+  /// returns the IGroup that corresponds
   /// @param path String representation of the IGroup's path
   /// @note the given path must be absolute
   ///
   virtual IGroupPtr getGroupFromPath(const std::string &path) = 0;
 
-  /// Open the node defined by the path and returns the IDataItem that corresponds
+  /// Open the node defined by the path (inside the dataset) and
+  /// returns the IDataItem that corresponds
   /// @param path String representation of the IDataItem's path
   /// @note the given path must be absolute
   ///
