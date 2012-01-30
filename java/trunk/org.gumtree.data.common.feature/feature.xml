@@ -31,14 +31,14 @@
          unpack="false"/>
 
    <plugin
-         id="com.springsource.org.jdom"
+         id="org.eclipse.osgi"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.osgi"
+         id="org.jdom"
          download-size="0"
          install-size="0"
          version="0.0.0"
