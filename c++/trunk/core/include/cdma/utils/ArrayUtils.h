@@ -39,17 +39,6 @@ public:
   //
   bool checkShape(const ArrayPtr& newArray);
     
-  /// Concatenate with another array. The array need to be equal of less in
-  /// rank.
-  /// 
-  /// @param array
-  ///            Array object
-  /// @return new Array
-  /// @throw  Exception
-  ///             mismatching shape
-  //
-  ArrayUtilsPtr concatenate(const Array& array) throw ( Exception );
-
   /// Create a new Array using same backing store as this Array, by eliminating
   /// any dimensions with length one.
   /// 
@@ -98,10 +87,8 @@ public:
   /// Create a new Array using same backing store as this Array, by transposing
   /// two of the indices.
   /// 
-  /// @param dim1
-  ///            transpose these two indices
-  /// @param dim2
-  ///            transpose these two indices
+  /// @param dim1 transpose these two indices
+  /// @param dim2 transpose these two indices
   /// @return the new Array
   //
   ArrayUtilsPtr transpose(int dim1, int dim2);
@@ -115,8 +102,8 @@ public:
   ///            true if the array serves as variance
   /// @return new Array object
   /// @throw  Exception
-  //
-  ArrayUtilsPtr integrateDimension(int dimension, bool isVariance) throw ( Exception );
+  //TODO method imported from JAVA: its implementation is obscure to me... Please complete it if you understand it.
+  //ArrayUtilsPtr integrateDimension(int dimension, bool isVariance) throw ( Exception );
 
   /// Create a new Array using same backing store as this Array, by flipping
   /// the index so that it runs from shape[index]-1 to 0.

@@ -40,6 +40,7 @@ public:
   View(const cdma::ViewPtr& view );
   View(int rank, int shape[], int start[]);
   View(std::vector<int> shape, std::vector<int> start);
+  View(std::vector<int> shape, std::vector<int> start, std::vector<int> stride);
   ~View();
 
   /// Get the number of dimensions in the array.
@@ -129,12 +130,22 @@ public:
   ///
   void reduce(int dim) throw ( Exception );
   
+  void compose(const ViewPtr& higher_view);
+  
 private:
-  int                m_rank;       // Rank of the View
-  std::vector<Range> m_ranges;     // Ranges that constitute the global View view in each dimension
-  bool               m_upToDate;   // Does the overall shape has changed
-  int                m_lastIndex;  // last indexed cell of the view 
-
+  int                m_rank;      // Rank of the View
+  std::vector<Range> m_ranges;    // Ranges that constitute the global View view in each dimension
+  bool               m_upToDate;  // Does the overall shape has changed
+  int                m_lastIndex; // Last indexed cell of the view 
+  ViewPtr            m_compound;  // Higher View from which this one is a sub-part
+  
+  
+private:
+  /// Get the position vector of the element at the given offset.
+  ///
+  /// @return vector<int> position of the offset
+  ///
+  std::vector<int> getPositionElement(long offset);
 };
 
 }

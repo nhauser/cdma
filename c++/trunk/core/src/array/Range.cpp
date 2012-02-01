@@ -15,6 +15,7 @@
 //*****************************************************************************
 
 #include <cdma/array/Range.h>
+#include <stdlib.h>
 
 namespace cdma
 {
@@ -24,11 +25,12 @@ namespace cdma
 #define TEMP_EXCEPTION(a,b) throw Exception("TARTAMPION", a, b)
 Range::Range()
 {
-  m_last    = 0;
-  m_first   = 0;
-  m_stride  = 1;
-  m_name    = "";
-  m_reduced = false;
+  m_last     = 0;
+  m_first    = 0;
+  m_stride   = 1;
+  m_name     = "";
+  m_length   = 1;
+  m_reduced  = false;
 }
 
 //---------------------------------------------------------------------------
@@ -62,11 +64,12 @@ Range::Range( const Range& range )
 void Range::set(int length)
 {
   //CDMA_FUNCTION_TRACE("Range::set( length)");
-  m_name    = "";
-  m_first   = 0;
-  m_stride  = 1;
-  m_last    = length - 1;
-  m_reduced = false;
+  m_name     = "";
+  m_first    = 0;
+  m_stride   = 1;
+  m_last     = abs(length - 1);
+  m_length   = length;
+  m_reduced  = false;
 }
 
 //---------------------------------------------------------------------------
@@ -74,12 +77,13 @@ void Range::set(int length)
 //---------------------------------------------------------------------------
 void Range::set(std::string name, long first, long last, long stride, bool reduced)
 {
-  m_last    = last;
-  m_first   = first;
-  m_stride  = stride;
-  m_name    = name;
-  m_reduced = reduced;
   //CDMA_FUNCTION_TRACE("Range::set(std::string name, long first, long last, long stride, bool reduced)");
+  m_last     = abs(last);
+  m_first    = abs(first);
+  m_stride   = stride;
+  m_name     = name;
+  m_length   = ((m_last - m_first) / m_stride) + 1;
+  m_reduced  = reduced;
 }
 
 //---------------------------------------------------------------------------
@@ -87,12 +91,13 @@ void Range::set(std::string name, long first, long last, long stride, bool reduc
 //---------------------------------------------------------------------------
 void Range::set( const Range& range )
 {
-  m_last    = range.last();
-  m_first   = range.first();
-  m_stride  = range.stride();
-  m_name    = range.getName();
-  m_reduced = range.reduce();
   //CDMA_FUNCTION_TRACE("Range::set(std::string name, long first, long last, long stride, bool reduced)");
+  m_last     = range.m_last;
+  m_first    = range.m_first;
+  m_stride   = range.m_stride;
+  m_name     = range.m_name;
+  m_length   = ((m_last - m_first) / m_stride) + 1;
+  m_reduced  = range.m_reduced;
 }
 
 //---------------------------------------------------------------------------
@@ -286,7 +291,7 @@ RangePtr Range::unionRanges(const Range& r) throw ( Exception )
 int Range::length() const
 {
   //CDMA_FUNCTION_TRACE("Range::length");
-  return (int) ((m_last - m_first) / m_stride) + 1;
+  return m_length;
 }
 
 //---------------------------------------------------------------------------
@@ -295,33 +300,34 @@ int Range::length() const
 int Range::element(int i) throw ( Exception )
 {
   //CDMA_FUNCTION_TRACE("Range::element(int)");
-  if (i < 0)
+  if ( i < 0 )
   {
     TEMP_EXCEPTION("index must be >= 0", "Range::element");
   }
-  if (i > m_last)
+  if ( i > m_length )
   {
     TEMP_EXCEPTION("index must be < length", "Range::element");
   }
-  return (int) (m_first + i * m_stride);
+  return (m_first + i * m_stride);
 }
 
 //---------------------------------------------------------------------------
 // Range::index
 //---------------------------------------------------------------------------
-int Range::index(int elem) throw ( Exception )
+int Range::index(long& elem) throw ( Exception )
 {
   //CDMA_FUNCTION_TRACE("Range::index(int)");
   if (elem < m_first) 
   {
     TEMP_EXCEPTION("elem must be >= first", "Range::index");
   }
-  long result = (elem - m_first) / m_stride;
+  int result = (int) ((elem - m_first) / m_stride);
+  elem = (elem - m_first) % m_stride;
   if (result > m_last) 
   {
     TEMP_EXCEPTION("elem must be <= last = n * stride", "Range::index");
   }
-  return (int) result;
+  return result;
 }
 
 //---------------------------------------------------------------------------
@@ -390,7 +396,7 @@ int Range::getFirstInInterval(int start)
   }
   if (start <= m_first) 
   {
-    return (int) m_first;
+    return m_first;
   }
   if (m_stride == 1) 
   {
@@ -399,6 +405,6 @@ int Range::getFirstInInterval(int start)
   long offset = start - m_first;
   long incr = offset % m_stride;
   long result = start + incr;
-  return (int) ((result > last()) ? -1 : result);
+  return ((result > last()) ? -1 : result);
 }
 }

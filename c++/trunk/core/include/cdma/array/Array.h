@@ -70,7 +70,8 @@ public:
   ~Array();
 
   /// Create a copy of this Array, copying the data so that physical order is
-  /// the same as logical order.
+  /// the same as logical order. If the view of this array only rely a part of the
+  /// whole storage, only the relevant part of the storage will be copied.
   ///
   /// @return the new Array
   /// @note be aware: can lead to out of memory 
