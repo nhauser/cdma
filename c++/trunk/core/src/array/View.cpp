@@ -27,7 +27,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 View::View(const cdma::ViewPtr& View)
 {
-  CDMA_FUNCTION_TRACE("View::View");
+  //CDMA_FUNCTION_TRACE("View::View");
   m_rank = View->getRank();
   
   // Create new ranges
@@ -52,7 +52,7 @@ View::View(const cdma::ViewPtr& View)
 //---------------------------------------------------------------------------
 View::View(int rank, int shape[], int start[])
 {
-  CDMA_FUNCTION_TRACE("View::View");
+  //CDMA_FUNCTION_TRACE("View::View");
   m_rank = rank;
   m_ranges.resize(m_rank);
 
@@ -76,7 +76,7 @@ View::View(int rank, int shape[], int start[])
 //---------------------------------------------------------------------------
 View::View(std::vector<int> shape, std::vector<int> start)
 {
-  CDMA_FUNCTION_TRACE("View::View");
+  //CDMA_FUNCTION_TRACE("View::View");
   m_rank = shape.size();
   m_ranges.resize(m_rank);
 
@@ -98,9 +98,45 @@ View::View(std::vector<int> shape, std::vector<int> start)
 //---------------------------------------------------------------------------
 // View::~View
 //---------------------------------------------------------------------------
+View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stride)
+{
+  //CDMA_FUNCTION_TRACE("View::View");
+  m_rank = shape.size();
+  m_ranges.resize(m_rank);
+  int delta;
+  
+  // Create new ranges
+  for( int i = m_rank - 1; i >= 0; i-- )
+  {
+    // Array starts at index 0 so the length when first = 0, last = 1023 and stride=1 is 1024
+    // if first = 1023, last = 0 and stride = -1 is 1024
+    // Delta is used to convert length into offset index in an array
+    if( stride[i] >= 0 )
+    {
+      delta = -1;
+    }
+    else
+    {
+      delta = 1;
+    }
+
+    m_ranges[i].set(
+      "",
+      start[i] * stride[i],
+      (start[i] + shape[i] + delta) * stride[i],
+      stride[i]
+    );
+  }
+  m_upToDate = false;
+
+}
+
+//---------------------------------------------------------------------------
+// View::~View
+//---------------------------------------------------------------------------
 View::~View()
 {
-  CDMA_FUNCTION_TRACE("View::~View");
+  //CDMA_FUNCTION_TRACE("View::~View");
 }
 
 //---------------------------------------------------------------------------
@@ -192,7 +228,50 @@ std::vector<int> View::getStride()
 //---------------------------------------------------------------------------
 long View::getElementOffset(std::vector<int> position)
 {
+
   long value = 0;
+  int j = 0;
+  try 
+  {
+    // For each range additionate offset matching the position
+    for( int i = 0; i < m_ranges.size(); i++ )
+    {
+      // If range not reduced calculate offset of the corresponding position
+      if( ! m_ranges[i].reduce() )
+      {
+        value += (m_ranges[i]).element( position[j] );
+        j++;
+      }
+      // If range is reduced calculate its first element's offset
+      else
+      {
+        value += (m_ranges[i]).element( 0 );
+      }
+    }
+    // Check if this is a portion of a bigger view
+    if( m_compound )
+    {
+      // Get the position of the offset in the bigger view
+      std::vector<int> projection = getPositionElement( value );
+      
+      // Get the offset of the bigger view from the calculated position
+      value = m_compound->getElementOffset( projection );
+    }
+  } catch (cdma::Exception& e)
+  {
+    // An error occured returns -1 that is an invalid result
+    value = -1;
+  }
+
+  return value;
+}
+
+//---------------------------------------------------------------------------
+// View::getPositionElement
+//---------------------------------------------------------------------------
+std::vector<int> View::getPositionElement(long offset)
+{
+  std::vector<int> position;
   int j = 0;
   try 
   {
@@ -200,20 +279,23 @@ long View::getElementOffset(std::vector<int> position)
     {
       if( ! m_ranges[i].reduce() )
       {
-        value += (m_ranges[i]).element( position[j] );
-        j++;
-      }
-      else
-      {
-        value += (m_ranges[i]).element( 0 );
+        position.push_back( m_ranges[i].index(offset) );
       }
     }
   } catch (cdma::Exception& e)
   {
-    value = -1;
+    position = std::vector<int>();
   }
 
-  return value;
+  return position;
+}
+
+//---------------------------------------------------------------------------
+// View::compose
+//---------------------------------------------------------------------------
+void View::compose(const ViewPtr& higher_view)
+{
+  m_compound = higher_view;
 }
 
 //---------------------------------------------------------------------------
@@ -344,11 +426,11 @@ void View::setShape(std::vector<int> shape)
     if( ! m_ranges[j].reduce() )
     {
       m_ranges[j].set(
-      m_ranges[j].getName(),
-      (long) m_ranges[j].first(),
-      (long) m_ranges[j].first() + m_ranges[j].stride() * (shape[i] - 1),
-      (long) m_ranges[j].stride(),
-      m_ranges[j].reduce()
+        m_ranges[j].getName(),
+        (long) m_ranges[j].first(),
+        (long) m_ranges[j].first() + m_ranges[j].stride() * (shape[i] - 1),
+        (long) m_ranges[j].stride(),
+        m_ranges[j].reduce()
       );
       i++;
     }

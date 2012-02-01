@@ -218,12 +218,12 @@ ArrayIterator Array::begin()
   {
     position.push_back(0);
   }
-  
 
   // We use "*this" to copy the array so the SharePtr on memory storage is incremented
   // that permits to not destroy memory storage when the iterator is released
   // There is no memory copy doing so only references are shared
   ArrayIterator iterator ( new Array(*this), view, position );
+
   return iterator;
 }
 
@@ -244,11 +244,12 @@ ArrayIterator Array::end()
   {
     position[i] = 0;
   }
-  
+
   // We use "*this" to copy the array so the SharePtr on memory storage is incremented
   // that permits to not destroy memory storage when the iterator is released
   // There is no memory copy doing so only references are shared
   ArrayIterator iterator ( new Array(*this), view, position );
+
   return iterator;
 }
 
@@ -319,16 +320,6 @@ yat::Any& Array::get(const cdma::ViewPtr& ind, std::vector<int> position)
 {
   return m_data_impl->get(ind, position);
 }
-
-//---------------------------------------------------------------------------
-// Array::get
-//---------------------------------------------------------------------------
-/*
-yat::Any& Array::get()
-{
-  return m_data_impl->get(0);
-}
-*/
 
 //---------------------------------------------------------------------------
 // Array::set

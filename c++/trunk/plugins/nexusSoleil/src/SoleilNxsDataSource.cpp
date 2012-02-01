@@ -72,9 +72,9 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
   if( isReadable( destination) )
   {
     // Get the path from URI
-    yat::String path = destination.get( yat::URI::PATH );
+    yat::String path = destination.get();
     SoleilNxsFactory plug_factory;
-    IDatasetPtr dataset = plug_factory.createDatasetInstance( path );
+    IDatasetPtr dataset = plug_factory.openDataset( path );
     
     // seek at root for 'creator' attribute
     IGroupPtr group = dataset->getRootGroup();

@@ -88,7 +88,7 @@ SoleilNxsFactory::~SoleilNxsFactory()
 IDatasetPtr SoleilNxsFactory::openDataset(const std::string& location_string)
 throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::createDatasetInstance");
+  CDMA_FUNCTION_TRACE("SoleilNxsFactory::openDataset");
   return SoleilNxsDataset::getDataset( yat::URI(location_string) );
 }
 

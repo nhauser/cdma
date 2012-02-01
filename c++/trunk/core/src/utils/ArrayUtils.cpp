@@ -23,6 +23,8 @@
 #include <cdma/array/SliceIterator.h>
 #include <cdma/array/Slicer.h>
 
+#include <string>
+#include <iostream>
 namespace cdma
 {
 //---------------------------------------------------------------------------
@@ -80,14 +82,6 @@ bool ArrayUtils::checkShape(const ArrayPtr& newArray)
   }
 
   return result;  
-}
-
-//---------------------------------------------------------------------------
-// ArrayUtils::concatenate
-//---------------------------------------------------------------------------
-ArrayUtilsPtr ArrayUtils::concatenate(const Array& array) throw ( Exception )
-{
-  //TODO
 }
 
 //---------------------------------------------------------------------------
@@ -165,8 +159,9 @@ ArrayUtilsPtr ArrayUtils::reshape(std::vector<int> shape) throw ( Exception )
   ArrayPtr thisArray = m_array;
   if( thisArray )
   {
-    ViewPtr view = new View( thisArray->getView() );
-    view->setShape(shape);
+    std::vector<int> start ( shape.size() );
+    ViewPtr view = new View( shape, start );
+    view->compose( thisArray->getView() );
 
     thisArray = new Array(thisArray, view);
   }
@@ -239,20 +234,15 @@ ArrayUtilsPtr ArrayUtils::transpose(int dim1, int dim2)
     stride[dim2] = str;
 
     // Construct new view
-    view = new View( shape, origin );
-    view->setStride(stride);
+    view = new View( shape, origin, stride );
+
+    shape  = view->getShape();
+    origin = view->getOrigin();
+    stride = view->getStride();
 
     thisArray = new Array(thisArray, view);
   }
   return new ArrayUtils(thisArray);
-}
-
-//---------------------------------------------------------------------------
-// ArrayUtils::integrateDimension
-//---------------------------------------------------------------------------
-ArrayUtilsPtr ArrayUtils::integrateDimension(int dimension, bool isVariance) throw ( Exception )
-{
-  //TODO to implement: I don't understand that method
 }
 
 //---------------------------------------------------------------------------
@@ -270,21 +260,12 @@ ArrayUtilsPtr ArrayUtils::flip(int dim)
     std::vector<int> origin = view->getOrigin();
     std::vector<int> stride = view->getStride();
 
-    // Prepare new properties
-    std::vector<int> newShape  (rank);
-    std::vector<int> newOrigin (rank);
-    std::vector<int> newStride (rank);
+    int length  = shape[dim];
+    stride[dim] = stride[dim] * (-1);
+    shape[dim]  = origin[dim] - length;
+    origin[dim] = origin[dim] + length - 1;
 
-    // Update properties
-    for( int i = 0; i < rank; i++ ) 
-    {
-	    newShape[i]  = shape[rank - 1 - i];
-	    newOrigin[i] = origin[rank - 1 - i];
-	    newStride[i] = stride[rank - 1 - i];
-    }
-
-    view = new View( newShape, newOrigin );
-    view->setStride(newStride);
+    view = new View( shape, origin, stride );
     
     thisArray = new Array(thisArray, view);
   }
@@ -318,8 +299,7 @@ ArrayUtilsPtr ArrayUtils::permute(std::vector<int> dims)
       newStride[i]   = stride[ dims[i] ];
     }
 
-    view = new View( newShape, newOrigin );
-    view->setStride(newStride);
+    view = new View( newShape, newOrigin, newStride );
 
     thisArray = new Array(thisArray, view);
   }

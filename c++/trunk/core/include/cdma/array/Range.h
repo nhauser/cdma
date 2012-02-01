@@ -45,19 +45,20 @@ public:
   ///
   int length() const ;
   
-  /// Get returns the position of the given offset
-  ///
-  /// @param offset of the element
-  /// @return the i-th element of a range.
-  ///
-  int element(int offset) throw ( cdma::Exception );
-  
-  /// Get the offset for this element: inverse of element.
+  /// Get the offset for this element: inverse of index.
   ///
   /// @param elem the element of the range
-  /// @return index
+  /// @return the offset corresponding to index-th element in the range.
   ///
-  int index(int elem) throw ( cdma::Exception );
+  int element(int index) throw ( cdma::Exception );
+  
+  /// Returns the position of the given offset
+  ///
+  /// @param offset of the element
+  /// @return index
+  /// @note the given offset is modified corresponding to what remains to the lower dimension
+  ///
+  int index(long& offset) throw ( cdma::Exception );
   
   /// Is the ith element contained in this Range?
   ///
@@ -164,6 +165,7 @@ private:
   int         m_last;     // offset of last element
   int         m_first;    // offset of first element
   int         m_stride;   // stride, must be >= 1
+  int         m_length;   // number of element in that range
   bool        m_reduced;  // was this ranged reduced or not
   std::string m_name;     // optional name
 };
