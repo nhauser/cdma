@@ -16,9 +16,7 @@
 #ifndef __CDMA_DEFAULTARRAYSTORAGE_HPP__
 #define __CDMA_DEFAULTARRAYSTORAGE_HPP__
 
-#include <stdio.h>
 #include <string.h>
-#include <iostream>
 
 namespace cdma
 {
@@ -83,8 +81,72 @@ template<typename T> void DefaultArrayStorage<T>::set(const cdma::ViewPtr& ima, 
 template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
 {
   T* data = new T[m_array_length];
-  memcpy( data, m_data, m_array_length );
+  memcpy( data, m_data, m_array_length * sizeof(T) );
   return new DefaultArrayStorage( data, m_array_length );
+}
+
+template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr view)
+{
+  // Initialize memory
+  T* data = new T[view->getSize()];
+  T* storage = data;
+
+  // Init start, pos & size of buff
+  unsigned int length  = view->getShape()[ view->getRank() - 1 ];
+  unsigned int nbBytes = length * sizeof( T );
+  int startSrc = 0;
+  int startDst = 0;
+  int current  = 0;
+  int last     = 1;
+  std::vector<int> shape = view->getShape();
+  std::vector<int> position ( shape.size() );
+  
+  // Only consider rank - 1 first dimensions
+  shape.pop_back();
+  position[shape.size() - 1] = 0;
+  
+  // Calculate last index position of slice
+  for( int i = 0; i < shape.size(); i++ )
+  {
+    last *= shape[i];
+  }
+  
+  // For each slice of rank 1
+  while( current <= last && current >= 0 )
+  {
+    // Increment position of the slice
+    if( position[0] < shape[0] )
+    {
+      // Determine start offset in memory
+      startSrc = view->getElementOffset( position );
+
+      // Copy memory
+      memcpy( (void*) (data + startDst), (const void*) (m_data + startSrc), nbBytes );
+
+      for( unsigned int i = shape.size() - 1; i >= 0; i-- )
+	    {
+	      if( position[i] + 1 >= shape[i] && i > 0)
+	      {
+        	position[i] = 0;
+        }
+        else
+        {
+		      position[i]++;
+		      break;
+        }
+	    }
+      // Update next start step in destination storage
+	    startDst += length;
+	  }
+	  else
+	  {
+	    break;
+	  }
+    
+    current++;
+  }
+  
+  return new DefaultArrayStorage<T>( storage, view->getSize() );
 }
 
 }

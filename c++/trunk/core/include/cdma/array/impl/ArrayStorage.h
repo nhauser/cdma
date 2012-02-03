@@ -50,6 +50,8 @@ public:
   yat::Any&             get( const cdma::ViewPtr& view, std::vector<int> position );
   
   IArrayStoragePtr      deepCopy();
+  IArrayStoragePtr      deepCopy(ViewPtr view);
+  
   //@}
   //@{ IObject interface
   CDMAType::ModelType getModelType() const { return CDMAType::Other; };

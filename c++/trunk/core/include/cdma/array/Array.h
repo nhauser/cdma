@@ -17,8 +17,6 @@
 #ifndef __CDMA_ARRAY_H__
 #define __CDMA_ARRAY_H__
 
-#include <stdio.h>
-#include <iostream>
 #include <string>
 #include <vector>
 
