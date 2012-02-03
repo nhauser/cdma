@@ -68,13 +68,22 @@ public:
   ///
   virtual void* getStorage() = 0;
   
-  /// Create a copy of this IArrayStorage, copying the data so that physical order is
-  /// the same as logical order.
+  /// Create a copy of this IArrayStorage, copying the data as it is in memory.
   ///
   /// @return the new IArrayStorage with copied memory storage
   /// @note be aware: can lead to out of memory 
   ///
   virtual IArrayStoragePtr deepCopy() = 0;
+
+  /// Create a copy of this IArrayStorage according to the given,
+  /// copying the data so that physical order is
+  /// the same as logical order. Only the viewable part memory will be
+  /// copied.
+  ///
+  /// @return the new IArrayStorage with copied memory storage
+  /// @note be aware: can lead to out of memory 
+  ///  
+  virtual IArrayStoragePtr deepCopy(ViewPtr view) = 0;
 };
 
 }
