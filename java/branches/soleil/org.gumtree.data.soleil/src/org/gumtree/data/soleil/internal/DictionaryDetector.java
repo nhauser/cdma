@@ -6,6 +6,7 @@ import org.nexusformat.NexusException;
 
 import fr.soleil.nexus4tango.NexusFileWriter;
 import fr.soleil.nexus4tango.NexusNode;
+import fr.soleil.nexus4tango.PathData;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
 
@@ -74,6 +75,9 @@ public final class DictionaryDetector {
 			case DISCO:
 				mModel = detectDataModelDisco();
 				break;
+			case SAMBA:
+				mModel = detectDataModelSamba();
+				break;
 			case UNKNOWN:
 			default:
 				mModel = DataModel.UNKNOWN;
@@ -107,6 +111,10 @@ public final class DictionaryDetector {
 	protected DataModel detectDataModelDisco() {
 		return detectStandardDataModel();
 	}
+	
+	protected DataModel detectDataModelSamba() {
+		return detectStandardDataModel();
+	}
 
 	// ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
@@ -136,15 +144,42 @@ public final class DictionaryDetector {
 		boolean result = false;
 		NexusFileWriter handler = mDataset.getHandler();
 		try {
-			PathNexus path = new PathGroup(new String[] {"<NXentry>", "scan_data<NXdata>"});
-			handler.openPath(path);
-			try {
-				handler.openNode( new NexusNode("time_1", "SDS") );
-			} catch (NexusException e) {
-				result = true;
+			PathNexus path = new PathGroup(new String[] {"<NXentry>"});
+			Object attr = handler.readAttr("model", path);
+			if( attr != null && attr instanceof String ) {
+				String stringAttr = (String) attr;
+				result = (stringAttr.equalsIgnoreCase("flyscan"));
+			}
+			else
+			{
+				try {
+					path = new PathData(new String[] {"<NXentry>", "scan_data<NXdata>"}, "time_1");
+					handler.openPath(path);
+				} catch (NexusException e) {
+					result = true;
+				}
 			}
 		}
 		catch (NexusException e) { }
+		
+		try {
+			handler.closeAll();
+		} catch (NexusException e) { }
+		
+		return result;
+	}
+	
+	protected boolean isQuickExafs() {
+		boolean result = false;
+		NexusFileWriter handler = mDataset.getHandler();
+		try {
+			PathNexus path = new PathGroup(new String[] {"QuickEXAFS*<NXentry>"});
+			handler.openPath(path);
+			result = true;
+		}
+		catch (NexusException e) {
+			result = false;
+		}
 		
 		try {
 			handler.closeAll();
@@ -158,6 +193,9 @@ public final class DictionaryDetector {
 		
 		if( isScanServer() ) {
 			model = DataModel.SCANSERVER;
+		}
+		else if( isQuickExafs() ) {
+			model = DataModel.QUICKEXAFS;
 		}
 		else if( isFlyScan() ) {
 			model = DataModel.FLYSCAN;
