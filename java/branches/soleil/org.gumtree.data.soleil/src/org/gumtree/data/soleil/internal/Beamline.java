@@ -6,6 +6,7 @@ public enum Beamline {
 	DISCO      ("disco"),
 	METROLOGIE ("metrologie"),
 	SWING      ("swing"),
+	SAMBA	   ("samba"),
 	UNKNOWN    ("unknown");
     
 

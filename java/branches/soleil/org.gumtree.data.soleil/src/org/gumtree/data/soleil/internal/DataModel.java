@@ -4,6 +4,7 @@ public enum DataModel {
 	SCANSERVER   ("scanserver"),
 	PASSERELLE   ("passerelle"),
 	FLYSCAN      ("flyscan"),
+	QUICKEXAFS   ("quickexafs"),
 	UNKNOWN      ("unknown");
     
 
