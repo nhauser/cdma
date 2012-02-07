@@ -18,6 +18,8 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/array/View.h>
 
+#include <stdlib.h>
+
 #define VIEW_ERROR(a,b) throw cdma::Exception("View error", a, b)
 
 namespace cdma
@@ -27,7 +29,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 View::View(const cdma::ViewPtr& View)
 {
-  //CDMA_FUNCTION_TRACE("View::View");
+//  CDMA_FUNCTION_TRACE("View::View");
   m_rank = View->getRank();
   
   // Create new ranges
@@ -52,7 +54,7 @@ View::View(const cdma::ViewPtr& View)
 //---------------------------------------------------------------------------
 View::View(int rank, int shape[], int start[])
 {
-  //CDMA_FUNCTION_TRACE("View::View");
+//  CDMA_FUNCTION_TRACE("View::View");
   m_rank = rank;
   m_ranges.resize(m_rank);
 
@@ -76,7 +78,7 @@ View::View(int rank, int shape[], int start[])
 //---------------------------------------------------------------------------
 View::View(std::vector<int> shape, std::vector<int> start)
 {
-  //CDMA_FUNCTION_TRACE("View::View");
+//  CDMA_FUNCTION_TRACE("View::View");
   m_rank = shape.size();
   m_ranges.resize(m_rank);
 
@@ -100,7 +102,7 @@ View::View(std::vector<int> shape, std::vector<int> start)
 //---------------------------------------------------------------------------
 View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stride)
 {
-  //CDMA_FUNCTION_TRACE("View::View");
+//  CDMA_FUNCTION_TRACE("View::View");
   m_rank = shape.size();
   m_ranges.resize(m_rank);
   int delta;
@@ -122,8 +124,8 @@ View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stri
 
     m_ranges[i].set(
       "",
-      start[i] * stride[i],
-      (start[i] + shape[i] + delta) * stride[i],
+      start[i] * abs(stride[i]),
+      (start[i] * abs(stride[i]) ) + ( shape[i] + delta) * stride[i],
       stride[i]
     );
   }
@@ -136,7 +138,7 @@ View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stri
 //---------------------------------------------------------------------------
 View::~View()
 {
-  //CDMA_FUNCTION_TRACE("View::~View");
+//  CDMA_FUNCTION_TRACE("View::~View");
 }
 
 //---------------------------------------------------------------------------
@@ -176,7 +178,7 @@ std::vector<int> View::getOrigin()
     // Only consider not reduced ranges
     if( ! m_ranges[i].reduce() )
     {
-      origin.push_back( (int) (m_ranges[i].first() / m_ranges[i].stride()) );
+      origin.push_back( (int) abs(m_ranges[i].first() / m_ranges[i].stride()) );
     }
   }
   return origin;
@@ -248,13 +250,11 @@ long View::getElementOffset(std::vector<int> position)
         value += (m_ranges[i]).element( 0 );
       }
     }
-    // Check if this is a portion of a bigger view
+    
+    // If view is a composition projects position into that view
     if( m_compound )
     {
-      // Get the position of the offset in the bigger view
       std::vector<int> projection = getPositionElement( value );
-      
-      // Get the offset of the bigger view from the calculated position
       value = m_compound->getElementOffset( projection );
     }
   } catch (cdma::Exception& e)
@@ -394,8 +394,8 @@ void View::setOrigin(std::vector<int> origin)
     {
       m_ranges[j].set(
         m_ranges[j].getName(),
-        (long) origin[i] * m_ranges[j].stride(),
-        (long) origin[i] * m_ranges[j].stride() + (m_ranges[j].length() - 1) * m_ranges[j].stride() ,
+        (long) origin[i] * abs(m_ranges[j].stride()),
+        (long) origin[i] * abs(m_ranges[j].stride()) + (m_ranges[j].length() - 1) * m_ranges[j].stride() ,
         (long) m_ranges[i].stride(),
         m_ranges[j].reduce()
       );

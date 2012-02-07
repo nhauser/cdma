@@ -185,8 +185,18 @@ Array::Array( const std::string& factory, const std::type_info& type, std::vecto
 ArrayPtr Array::deepCopy()
 {
   // Copy memory storage
-  return new Array( m_factory, m_data_impl->deepCopy(), new View(m_view) );
+  std::vector<int> origin( m_view->getRank() );
+  std::vector<int> shape  = m_view->getShape();
+  std::vector<int> stride = m_view->getStride();
+
+  int newStride = 1;
+  for( int i = m_view->getRank() - 1; i >= 0; i-- )
+  {
+    stride[i] = newStride;
+    newStride *= shape[i];
+  }
   
+  return new Array( m_factory, m_data_impl->deepCopy(m_view), new View( shape, origin, stride ) );
 }
 
 //---------------------------------------------------------------------------
