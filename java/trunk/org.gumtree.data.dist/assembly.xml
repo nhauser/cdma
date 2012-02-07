@@ -26,13 +26,15 @@
     		<directory>../org.gumtree.data.repository/target/repository/plugins</directory>
     		<outputDirectory>lib</outputDirectory>
     		<includes>
-    			<include>com.springsource*.jar</include>
     			<include>fr.soleil.nexus4tango_*.jar</include>
     			<include>ncsa.hdf*.jar</include>
     			<include>org.apache.commons*.jar</include>
     			<include>org.eclipse.osgi*.jar</include>
     			<include>org.nexusformat_*.jar</include>
     			<include>ucar.netcdf_*.jar</include>
+    			<include>ch.qos.logback*.jar</include>
+    			<include>org.jdom*.jar</include>
+    			<include>org.slf4j*.jar</include>
     		</includes>
     	</fileSet>
     	<fileSet>
