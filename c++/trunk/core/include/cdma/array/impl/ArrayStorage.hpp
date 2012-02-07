@@ -17,6 +17,7 @@
 #define __CDMA_DEFAULTARRAYSTORAGE_HPP__
 
 #include <string.h>
+#include <cstdlib>
 
 namespace cdma
 {
@@ -87,26 +88,45 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
 
 template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr view)
 {
+  CDMA_FUNCTION_TRACE("DefaultArrayStorage<T>::deepCopy(ViewPtr view)");
   // Initialize memory
   T* data = new T[view->getSize()];
   T* storage = data;
 
   // Init start, pos & size of buff
-  unsigned int length  = view->getShape()[ view->getRank() - 1 ];
-  unsigned int nbBytes = length * sizeof( T );
+  int rank = view->getRank();
+  unsigned int length;
+  unsigned int nbBytes;
   int startSrc = 0;
   int startDst = 0;
   int current  = 0;
   int last     = 1;
   std::vector<int> shape = view->getShape();
+  std::vector<int> stride = view->getStride();
   std::vector<int> position ( shape.size() );
-  
-  // Only consider rank - 1 first dimensions
-  shape.pop_back();
-  position[shape.size() - 1] = 0;
+ 
+  // If two consecutive cells are adjacents
+  if( abs(stride[ rank - 1 ]) == 1 )
+  {
+    // Data will be copied slabs of shape[rank-1] length
+    length  = view->getShape()[ rank - 1 ];
+    nbBytes = length * sizeof( T );
+
+    // Only consider rank - 1 first dimensions for iterations
+    shape.pop_back();
+    position[ rank - 1 ] = 0;
+    rank = rank - 1;
+  }
+  else
+  {
+    // Nothing to do: the array will be copied point by point
+    length  = 1;
+    nbBytes = length * sizeof( T );
+    position[ rank - 1 ] = 0;
+  }
   
   // Calculate last index position of slice
-  for( int i = 0; i < shape.size(); i++ )
+  for( int i = 0; i < rank; i++ )
   {
     last *= shape[i];
   }
@@ -120,10 +140,10 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
       // Determine start offset in memory
       startSrc = view->getElementOffset( position );
 
-      // Copy memory
+      // Copy memory as it is seen according to the view
       memcpy( (void*) (data + startDst), (const void*) (m_data + startSrc), nbBytes );
 
-      for( unsigned int i = shape.size() - 1; i >= 0; i-- )
+      for( unsigned int i = rank - 1; i >= 0; i-- )
 	    {
 	      if( position[i] + 1 >= shape[i] && i > 0)
 	      {
@@ -145,7 +165,6 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
     
     current++;
   }
-  
   return new DefaultArrayStorage<T>( storage, view->getSize() );
 }
 

@@ -29,7 +29,7 @@ namespace cdma
 //-----------------------------------------------------------------------------
 ArrayIterator::ArrayIterator(const cdma::ArrayPtr& array, const cdma::ViewPtr& view, std::vector<int> position) 
 {
-  CDMA_FUNCTION_TRACE("ArrayIterator::ArrayIterator");
+//  CDMA_FUNCTION_TRACE("ArrayIterator::ArrayIterator");
   m_array = array;
   m_view = view;
   m_position = position;
@@ -40,7 +40,7 @@ ArrayIterator::ArrayIterator(const cdma::ArrayPtr& array, const cdma::ViewPtr& v
 //-----------------------------------------------------------------------------
 ArrayIterator::ArrayIterator(const ArrayIterator& iter) : m_view ( iter.m_view )
 {
-  CDMA_FUNCTION_TRACE("ArrayIterator::ArrayIterator");
+//  CDMA_FUNCTION_TRACE("ArrayIterator::ArrayIterator");
   m_array = iter.m_array;
   m_position = iter.m_position;
 }
@@ -50,7 +50,7 @@ ArrayIterator::ArrayIterator(const ArrayIterator& iter) : m_view ( iter.m_view )
 //---------------------------------------------------------------------------
 ArrayIterator::~ArrayIterator()
 {
-  CDMA_FUNCTION_TRACE("ArrayIterator::~ArrayIterator");
+//  CDMA_FUNCTION_TRACE("ArrayIterator::~ArrayIterator");
 };
 
 //-----------------------------------------------------------------------------

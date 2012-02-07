@@ -15,7 +15,6 @@
 //*****************************************************************************
 
 #include <cdma/array/Range.h>
-#include <stdlib.h>
 
 namespace cdma
 {
@@ -67,7 +66,7 @@ void Range::set(int length)
   m_name     = "";
   m_first    = 0;
   m_stride   = 1;
-  m_last     = abs(length - 1);
+  m_last     = length - 1;
   m_length   = length;
   m_reduced  = false;
 }
@@ -78,11 +77,19 @@ void Range::set(int length)
 void Range::set(std::string name, long first, long last, long stride, bool reduced)
 {
   //CDMA_FUNCTION_TRACE("Range::set(std::string name, long first, long last, long stride, bool reduced)");
-  m_last     = abs(last);
-  m_first    = abs(first);
+  m_last     = last;
+  m_first    = first;
   m_stride   = stride;
   m_name     = name;
-  m_length   = ((m_last - m_first) / m_stride) + 1;
+  if( m_last < m_first )
+  {
+    m_length = ((m_last - m_first) / m_stride) - 1;
+  }
+  else
+  {
+    m_length = ((m_last - m_first) / m_stride) + 1;
+  }
+  
   m_reduced  = reduced;
 }
 
@@ -96,7 +103,7 @@ void Range::set( const Range& range )
   m_first    = range.m_first;
   m_stride   = range.m_stride;
   m_name     = range.m_name;
-  m_length   = ((m_last - m_first) / m_stride) + 1;
+  m_length   = range.m_length;
   m_reduced  = range.m_reduced;
 }
 

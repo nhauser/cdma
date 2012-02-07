@@ -260,14 +260,12 @@ ArrayUtilsPtr ArrayUtils::flip(int dim)
     std::vector<int> origin = view->getOrigin();
     std::vector<int> stride = view->getStride();
 
+    // Invert the requested dimension (i.e: starts at last and finish at first, stride becomes negative)
     int length  = shape[dim];
     stride[dim] = stride[dim] * (-1);
-    shape[dim]  = origin[dim] - length;
     origin[dim] = origin[dim] + length - 1;
 
-    view = new View( shape, origin, stride );
-    
-    thisArray = new Array(thisArray, view);
+    thisArray = new Array(thisArray, new View( shape, origin, stride ));
   }
   return new ArrayUtils(thisArray);
 }
