@@ -31,8 +31,8 @@ namespace cdma
 {
 
 std::string CREATOR = "Synchrotron SOLEIL";
-int          NB_BEAMLINES = 26;
-std::string BEAMLINES [] = {"contacq", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
+int          NB_BEAMLINES = 27;
+std::string BEAMLINES [] = {"contacq", "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
 
 
 //----------------------------------------------------------------------------
@@ -97,6 +97,7 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
         std::string node = group->getShortName();
         for( int i = 0; i < NB_BEAMLINES; i++ ) 
         {
+          std::cout<<BEAMLINES[i]<<" == "<<node<<std::endl;
           if( node == BEAMLINES[i]  ) 
           {
             result = true;
