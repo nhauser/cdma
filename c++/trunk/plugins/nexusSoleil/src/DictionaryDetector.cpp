@@ -72,8 +72,6 @@ void DictionaryDetector::detectBeamline()
   NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->OpenGroupPath(PSZ(path), false) )
   {
-    CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupName()).c_str());
-    CDMA_TRACE(std::string(m_ptrNxFile->CurrentGroupClass()).c_str());
     m_beamline = std::string(m_ptrNxFile->CurrentGroupName());
   }
   else
@@ -88,19 +86,37 @@ void DictionaryDetector::detectBeamline()
 void DictionaryDetector::detectDataModel()
 {
   m_model = "UNKNOWN";
+  
   if( m_beamline != "UNKNOWN" )
   {
-    if( isScanServer() )
+    if( m_model == "UNKNOWN" )
     {
-      m_model = "SCANSERVER";
+      yat::String pathGrp = "/<NXentry>/";
+      NexusFileAccess auto_open( m_ptrNxFile );
+      if( m_ptrNxFile->OpenGroupPath(PSZ(pathGrp), false) )
+      {
+        if( m_ptrNxFile->OpenDataSet( "acquisition_model", false ) )
+        {
+          NexusDataSet acq_model;
+          m_ptrNxFile->GetData(&acq_model, "acquisition_model");
+          m_model = ((char*) acq_model.Data());
+        }
+      }
     }
-    else if( isFlyScan() )
+    if( m_model == "UNKNOWN" )
     {
-      m_model = "FLYSCAN";
-    }
-    else
-    {
-      m_model = "PASSERELLE";
+      if( isScanServer() )
+      {
+        m_model = "SCANSERVER";
+      }
+      else if( isFlyScan() )
+      {
+        m_model = "FLYSCAN";
+      }
+      else
+      {
+        m_model = "PASSERELLE";
+      }
     }
   }
 }
@@ -118,7 +134,6 @@ bool DictionaryDetector::isFlyScan()
   NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
-    CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
     if( ! m_ptrNxFile->OpenDataSet( "time_1", false ) )
     {
       result = true;
@@ -140,7 +155,6 @@ bool DictionaryDetector::isScanServer()
   NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
-    CDMA_TRACE( std::string(m_ptrNxFile->CurrentGroupName()).c_str() );
     if( m_ptrNxFile->OpenDataSet( "time_1", false ) )
     {
       result = true;
