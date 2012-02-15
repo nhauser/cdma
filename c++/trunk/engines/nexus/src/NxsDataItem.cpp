@@ -31,15 +31,15 @@ namespace cdma
 //---------------------------------------------------------------------------
 // NxsDataItem::NxsDataItem
 //---------------------------------------------------------------------------
-NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const char* path, bool init_from_file )
+NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
   init(dataset_wptr, path);
 }
-NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const char* name )
+NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const std::string& name )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset_wptr, parent->getLocation() + "/" + yat::String(name) );
+  init( dataset_wptr, parent->getLocation() + "/" + name );
 }
 NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path)
 {
