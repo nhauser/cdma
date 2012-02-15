@@ -73,6 +73,7 @@ class CDMA_DECL CDMAType
 
 // Forward declarations
 DECLARE_CLASS_SHARED_WEAK_PTR(Array);
+DECLARE_CLASS_SHARED_WEAK_PTR(IDataset);
 DECLARE_CLASS_SHARED_PTR(ArrayIterator);
 DECLARE_CLASS_SHARED_PTR(ArrayUtils);
 DECLARE_CLASS_SHARED_PTR(ArrayMath);
@@ -83,7 +84,6 @@ DECLARE_CLASS_SHARED_PTR(IClassLoader);
 DECLARE_CLASS_SHARED_PTR(IContainer);
 DECLARE_CLASS_SHARED_PTR(IContext);
 DECLARE_CLASS_SHARED_PTR(IDataItem);
-DECLARE_CLASS_SHARED_PTR(IDataset);
 DECLARE_CLASS_SHARED_PTR(IDataSource);
 DECLARE_CLASS_SHARED_PTR(IDimension);
 DECLARE_CLASS_SHARED_PTR(IFactory);
@@ -92,7 +92,11 @@ DECLARE_CLASS_SHARED_PTR(IFactoryResolver);
 DECLARE_CLASS_SHARED_PTR(IGroup);
 DECLARE_CLASS_SHARED_PTR(IPathMethod);
 DECLARE_CLASS_SHARED_PTR(IPathParamResolver);
+DECLARE_CLASS_SHARED_PTR(IPluginMethod);
+DECLARE_CLASS_SHARED_PTR(IKeySolver);
 DECLARE_CLASS_SHARED_PTR(Key);
+DECLARE_CLASS_SHARED_PTR(KeyPath);
+DECLARE_CLASS_SHARED_PTR(KeyMethod);
 DECLARE_CLASS_SHARED_PTR(LogicalGroup);
 DECLARE_CLASS_SHARED_PTR(Path);
 DECLARE_CLASS_SHARED_PTR(PathParameter);
@@ -100,12 +104,14 @@ DECLARE_CLASS_SHARED_PTR(SliceIterator);
 DECLARE_CLASS_SHARED_PTR(Slicer);
 DECLARE_CLASS_SHARED_PTR(Range);
 DECLARE_CLASS_SHARED_PTR(View);
+DECLARE_CLASS_SHARED_PTR(Context);
 
 /// Generic types
 typedef std::list<std::string> StringList;
 typedef yat::SharedPtr<StringList, yat::Mutex> StringListPtr;
 
 //==============================================================================
+/// Bad design => TO BE REMOVED !!!
 /// IObject
 /// Base interface of all CDMA classes
 //==============================================================================

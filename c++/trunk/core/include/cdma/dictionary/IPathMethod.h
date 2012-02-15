@@ -33,50 +33,6 @@ namespace cdma
 //=============================================================================
 class IPathMethod 
 {
-public:
-  //Virtual destructor
-  virtual ~IPathMethod() {};
-
-  /// Returns name of the method that will be called (using it's package name)
-  /// return String
-  ///
-  virtual std::string getName() = 0;
-
-  /// Sets the name of the method that will be called (using it's package name)
-  /// return String
-  ///
-  virtual void setName(std::string method) = 0;
-
-  /// Return parameters Object that are used by this method
-  /// @return Object array
-  ///
-  virtual std::list<void > getParam() = 0;
-
-  /// Set a parameter value that will be used by this method
-  /// @return Object array
-  /// @note works as a FIFO
-  ///
-  virtual void pushParam(void* param) = 0;
-
-  /// Set a parameter value that will be used by this method
-  /// @return Object array
-  /// @note works as a FIFO
-  ///
-  virtual void* popParam() = 0;
-
-  /// Tells whether or not the method is already contained by the plug-in or if it 
-  /// will be dynamically loaded from the external folder specific to the plug-in.
-  /// @return bool
-  ///
-  virtual bool isExternalCall() = 0;
-
-  /// Set whether or not the method is already contained by the plug-in or if it 
-  /// will be dynamically loaded from the external folder specific to the plug-in.
-  /// @return bool
-  /// @see LogicalGroup.resolveMethod
-  /// @see org.gumtree.data.dictionary.IClassLoader
-  ///
-  virtual void isExternal(bool external) = 0;
 };
 
 } //namespace CDMACore

@@ -40,16 +40,20 @@ namespace cdma
 class LogicalGroup : public IObject
 {
 private:
-  IDataset*                              m_pDataset;       ///< Simple pointer to the parent dataset
-  LogicalGroup*                          m_pParent;        ///< Reference to the parent group (NULL if root)
-  KeyPtr                                 m_keyPtr;         ///< Key from which this logical group was intantiated (is_null() = true if root)
-  DictionaryPtr                          m_dictionaryPtr;  ///< Dictionary this logical group match to
-  std::map<std::string, LogicalGroupPtr> m_childGroups;    ///< List of child groups
-  StringListPtr                          m_listKeyPtr;
+  IDatasetWPtr                           m_dataset_wptr;   ///< Weak reference to the parent dataset
+  LogicalGroup*                          m_parent_ptr;     ///< C-style pointer to the parent group (NULL if root)
+  KeyPtr                                 m_key_ptr;        ///< Key from which this logical group was intantiated (is_null() = true if root)
+  DictionaryPtr                          m_dictionary_ptr; ///< Dictionary this logical group match to
+  std::map<std::string, LogicalGroupPtr> m_child_groups;   ///< List of child groups
+  StringListPtr                          m_listkey_ptr;
+
+  // Retreive the data associated with a keyword
+  void PrivSolveKey(Context *context_ptr);
 
 public:
   // Constructor
-  LogicalGroup( IDataset* pDataset, LogicalGroup* pParent, const KeyPtr& pKey, const DictionaryPtr& dictionary );
+  LogicalGroup( IDatasetWPtr dataset_wptr, LogicalGroup* parent_ptr, 
+                const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr );
 
   //Virtual destructor
   virtual ~LogicalGroup();
@@ -61,7 +65,7 @@ public:
   ///
   /// @return the first encountered DataItem that match the key, else null
   ///
-  IDataItemPtr getDataItem(const KeyPtr& key);
+  IDataItemPtr getDataItem(const KeyPtr& key_ptr);
 
   /// Find the DataItem corresponding to the given key in the dictionary.
   ///
@@ -80,7 +84,7 @@ public:
   ///
   /// @return a std::list of DataItem that match the key
   ///
-  std::list<IDataItemPtr> getDataItemList(const KeyPtr& key);
+  std::list<IDataItemPtr> getDataItemList(const KeyPtr& key_ptr);
 
   /// Find all IDataItems corresponding to the given path of key in the dictionary.
   ///
@@ -98,7 +102,7 @@ public:
   ///            entry name of the dictionary
   /// @return the first encountered LogicalGroup that matches the key, else null
   ///
-  LogicalGroupPtr getGroup(const KeyPtr& key);
+  LogicalGroupPtr getGroup(const KeyPtr& key_ptr);
 
   /// Find the Group corresponding to the given key in the dictionary.
   ///

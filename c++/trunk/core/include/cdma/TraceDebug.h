@@ -14,6 +14,7 @@
 #include <iostream>
 #include <iomanip>
 #include <yat/threading/Utilities.h>
+#include <yat/threading/Mutex.h>
 
 namespace cdma
 {
@@ -37,14 +38,17 @@ namespace cdma
     private:
       std::string _s;
       void *_this_object;
+
     public:
       dbg_helper(const std::string &s, void* this_object=(void*)(0x12345678)) : _s(s), _this_object(this_object)
       {
+        yat::AutoMutex<> _lock(mutex());
         std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "> " << _s << std::endl;
         indent().append(2, ' ');
       }
       ~dbg_helper()
       {
+        yat::AutoMutex<> _lock(mutex());
         indent().erase(0,2);
         std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "< " << _s << std::endl;
       }
@@ -52,6 +56,11 @@ namespace cdma
       {
         static std::string indent;
         return indent;
+      }
+      static yat::Mutex &mutex()
+      {
+        static yat::Mutex mtx;
+        return mtx;
       }
   };
 

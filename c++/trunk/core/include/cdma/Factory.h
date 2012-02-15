@@ -25,11 +25,19 @@
 // CDMA
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
+#include <cdma/dictionary/PluginMethods.h>
 
 namespace cdma
 {
 
-typedef IDataItemPtr (*ExternalFunction_t) ( void );
+typedef cdma::IPluginMethod* (*GetMethodObject_t) ( void );
+
+//==============================================================================
+/// class PluginManager
+/// Specialization of the yat::PluginManager class in order to able to get access
+/// to the plugins methods
+//==============================================================================
+class CDMA_DECL PlugInManager: public yat::PlugInManager { };
 
 //==============================================================================
 /// class IFactory
@@ -38,10 +46,13 @@ typedef IDataItemPtr (*ExternalFunction_t) ( void );
 class CDMA_DECL Factory 
 {
 private:
-  struct Plugin
+  typedef std::map<std::string, IPluginMethodPtr> PluginMethodsMap;
+  struct Plugin 
   {
-    yat::IPlugInInfo*    info;
-    yat::IPlugInFactory* factory;
+    yat::IPlugInInfo*      info;
+    yat::IPlugInFactory*   factory;
+    yat::PlugIn*           plugin_objet;
+    PluginMethodsMap       plugin_method_map;
   };
   
 public:
@@ -55,13 +66,15 @@ private:
   
   PluginMap            m_plugin_map;
   PluginFactoryPtrMap  m_plugin_factory_map;
-  yat::PlugInManager   m_plugin_manager;
+  cdma::PlugInManager  m_plugin_manager;
 
   // This is a singleton
   Factory() {}
   
   // static method to get the unique instance of the class
   static Factory& instance();
+
+  void initPluginMethods(const IFactoryPtr& factory_ptr, Factory::Plugin *plugin_ptr);
 
 public:
 
@@ -83,6 +96,16 @@ public:
   ///
   static IFactoryPtr getPluginFactory(const std::string &plugin_id);
   
+  /// Get a pointer or a plugin method
+  ///
+  /// @param plugin_id   plugin id string (ex.: "SoleilNeXus")
+  /// @param method_name the name of a method as it appears in a dictionary mapping document
+  /// @return            shared pointer on the factory object 
+  ///                    (may be null if the method was not found)
+  ///
+  static IPluginMethodPtr getPluginMethod(const std::string &plugin_id, 
+                                          const std::string &method_name);
+
   static void setActiveView( const std::string& experiment);
 
   static const std::string& getActiveView();
@@ -261,8 +284,15 @@ public:
 
 };
 
-template<typename T> ArrayPtr Factory::createArray(T type, const std::vector<int> shape) {}
-template<typename T> ArrayPtr Factory::createArray(T* storage, const std::vector<int> shape) {}
+template<typename T> ArrayPtr Factory::createArray(T type, const std::vector<int> shape)
+{
+  THROW_NOT_IMPLEMENTED("Factory::createArray");
+}
+
+template<typename T> ArrayPtr Factory::createArray(T* storage, const std::vector<int> shape)
+{
+  THROW_NOT_IMPLEMENTED("Factory::createArray");
+}
 
 } //namespace CDMACore
 #endif //__CDMA_FACTORY_H__

@@ -15,9 +15,9 @@
 
 // cdma
 #include <cdma/Factory.h>
-#include <cdma/dictionary/Path.h>
 #include <cdma/IFactory.h>
 #include <cdma/IDataSource.h>
+#include <cdma/dictionary/Context.h>
 
 namespace cdma
 {
@@ -41,6 +41,22 @@ Factory& Factory::instance()
 }
 
 //----------------------------------------------------------------------------
+// Factory::cleanup
+//----------------------------------------------------------------------------
+void Factory::cleanup()
+{
+  // Free method objects for each plugins
+  for( PluginMap::iterator it = instance().m_plugin_map.begin();
+                           it != instance().m_plugin_map.end(); it++)
+  {
+    it->second.plugin_method_map.clear();
+  }
+
+  // Release plugins
+  instance().m_plugin_factory_map.clear();
+}
+
+//----------------------------------------------------------------------------
 // Factory::init
 //----------------------------------------------------------------------------
 void Factory::init(const std::string &plugin_path)
@@ -60,58 +76,102 @@ void Factory::init(const std::string &plugin_path)
     if( fe.ext().is_equal(SHARED_LIB_EXTENSION) )
     {
       //- we found a shared lib
-      Plugin plugin_objects;
+      Plugin plugin_data;
 
       CDMA_STATIC_TRACE("Found lib " << fe.full_name());
       try
       {
-        PluginInfoPair plugin_pair = instance().m_plugin_manager.load( fe.full_name() );
-        plugin_objects.info    = plugin_pair.first;
-        plugin_objects.factory = plugin_pair.second;
-        CDMA_STATIC_TRACE("Lib loaded");
+        // Load the plugin
+        yat::PlugInManager::PlugInEntry plugin_entry;
+        instance().m_plugin_manager.load( fe.full_name(), &plugin_entry );
+        plugin_data.info = plugin_entry.m_info;
+        plugin_data.factory = plugin_entry.m_factory;
+        plugin_data.plugin_objet = plugin_entry.m_plugin;
+        CDMA_STATIC_TRACE("Plug-in loaded");
       }
       catch( yat::Exception& e)
       {
         e.dump();
         continue;
       }
-      CDMA_STATIC_TRACE("Plugin_objects.info->get_interface_name: " << plugin_objects.info->get_interface_name());
+      CDMA_STATIC_TRACE("plugin_data.info->get_interface_name: " << plugin_data.info->get_interface_name());
       
-      if ( plugin_objects.info->get_interface_name() == INTERFACE_NAME )
+      yat::IPlugInInfo* plugin_info = plugin_data.info;
+      if( plugin_info->get_interface_name() == INTERFACE_NAME )
       {
         // We found a CDMA plugin!
         CDMA_STATIC_TRACE("Found a CDMA plugin!");
-        yat::IPlugInInfo* plugin_info = 0;
-        try
-        {
-          plugin_info = static_cast<yat::IPlugInInfo*>(plugin_objects.info);
-          if (plugin_info == NULL)
-            throw std::bad_cast();
-          
-          std::string plugin_id = plugin_objects.info->get_plugin_id();
-          CDMA_STATIC_TRACE("Plugin_objects.info->get_plugin_id: " << plugin_objects.info->get_plugin_id());
-          
-          instance().m_plugin_map[plugin_id] = plugin_objects;
-          CDMA_STATIC_TRACE("Plugin registered");
-        }
-        catch( std::bad_cast& )
-        {
-          //- this is a CDMA, but its info class is not a yat::IPlugInInfo
-          //- ==> invalid plugin
-          yat::log_error("cdma", PSZ_FMT("Invalid CDMA plugin : %s", fe.path()));
-          continue;
-        }
+        
+        std::string plugin_id = plugin_info->get_plugin_id();
+        CDMA_STATIC_TRACE("Plugin_objects.info->get_plugin_id: " << plugin_info->get_plugin_id());
+        
+        instance().m_plugin_map[plugin_id] = plugin_data;
+        CDMA_STATIC_TRACE("Plugin registered");
       }
     }
   }
 }
 
 //----------------------------------------------------------------------------
-// Factory::cleanup
+// Factory::initPluginMethods
 //----------------------------------------------------------------------------
-void Factory::cleanup()
+void Factory::initPluginMethods(const IFactoryPtr& factory_ptr, Factory::Plugin *plugin_ptr)
 {
-  instance().m_plugin_factory_map.clear();
+  CDMA_FUNCTION_TRACE("Factory::initPluginMethods");
+  CDMA_TRACE("Plugin id: " << plugin_ptr->info->get_plugin_id());
+
+  // Retreive the list of supported dictionary methods
+  std::list<std::string> methods = factory_ptr->getPluginMethodsList();
+  for( std::list<std::string>::iterator it = methods.begin(); it != methods.end(); it++ )
+  {
+    CDMA_TRACE("Method: " << *it);
+    yat::String get_method_class = yat::String::str_format("get%sClass", PSZ(*it));
+    try
+    {
+      yat::PlugIn::Symbol symbol = plugin_ptr->plugin_objet->find_symbol(get_method_class);
+      GetMethodObject_t get_method_object_func = (GetMethodObject_t)(symbol);
+
+      cdma::IPluginMethod* method_ptr = get_method_object_func();
+
+      // Store the method object in association with the method name
+      plugin_ptr->plugin_method_map[*it] = method_ptr;
+
+      //Context context;
+      //method_ptr->execute(context);
+    }
+    catch( yat::Exception& ex )
+    {
+      RETHROW_YAT_ERROR(ex,
+                      "METHOD_NOT_FOUND",
+                      PSZ_FMT("Unable to find the '%s' symbol while initialize the '%s' plugin",
+                              PSZ(get_method_class), PSZ(plugin_ptr->info->get_plugin_id())),
+                      "PlugIn::factory");
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+// Factory::getPluginFactory
+//----------------------------------------------------------------------------
+IPluginMethodPtr Factory::getPluginMethod(const std::string &plugin_id, 
+                                          const std::string &method_name)
+{
+  // Find the plugin
+  PluginMap::iterator plugin_it = instance().m_plugin_map.find(plugin_id);
+  if( plugin_it == instance().m_plugin_map.end() )
+    throw cdma::Exception( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
+                           "cdma::Factory::getPluginMethod" );
+  
+  // Look for the requested method
+  PluginMethodsMap& methods_map = instance().m_plugin_map[plugin_id].plugin_method_map;
+  PluginMethodsMap::iterator method_it = methods_map.find(method_name);
+
+  if( method_it == methods_map.end() )
+    // Not found, returns a null pointer
+    return IPluginMethodPtr(NULL);
+
+  // ok
+  return (*method_it).second;
 }
 
 //----------------------------------------------------------------------------
@@ -125,7 +185,8 @@ IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
     // Find the plugin
     PluginMap::iterator it = instance().m_plugin_map.find(plugin_id);
     if( it == instance().m_plugin_map.end() )
-      throw cdma::Exception("NOT_FOUND", PSZ_FMT("No such plugin (%s).", plugin_id), "cdma::Factory::getPluginFactory");
+      throw cdma::Exception( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
+                             "cdma::Factory::getPluginFactory" );
     
     yat::IPlugInFactory* factory = (*it).second.factory;
 
@@ -135,6 +196,9 @@ IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
     IFactoryPtr factory_ptr(dynamic_cast<cdma::IFactory*>(obj));
     instance().m_plugin_factory_map[plugin_id] = factory_ptr;
     
+    // Initialize the dictionnary methods supported by this plugin factory
+    instance().initPluginMethods(factory_ptr, &(it->second));
+
     return factory_ptr;
   }
   

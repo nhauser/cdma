@@ -25,233 +25,280 @@
 #include <cdma/dictionary/LogicalGroup.h>
 #include <cdma/dictionary/Dictionary.h>
 #include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Path.h>
+#include <cdma/dictionary/Context.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/navigation/IDataItem.h>
 
 namespace cdma
 {
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::LogicalGroup
-  //-----------------------------------------------------------------------------
-  LogicalGroup::LogicalGroup( IDataset* pDataset, LogicalGroup* pParent, const KeyPtr& pKey, const DictionaryPtr& pDictionary )
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::LogicalGroup
+//-----------------------------------------------------------------------------
+LogicalGroup::LogicalGroup( IDatasetWPtr dataset_ptr, LogicalGroup* parent_ptr, 
+                            const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr )
+{
+  m_dataset_wptr = dataset_ptr;
+  m_parent_ptr = parent_ptr;
+  m_key_ptr = key_ptr;
+  m_dictionary_ptr = dictionary_ptr;
+}
+
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::~LogicalGroup
+//-----------------------------------------------------------------------------
+LogicalGroup::~LogicalGroup()
+{
+  
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::PrivSolveKey
+//-----------------------------------------------------------------------------
+void LogicalGroup::PrivSolveKey(Context *context_ptr)
+{
+  CDMA_FUNCTION_TRACE("LogicalGroup::PrivSolveKey");
+
+  KeyPtr key_ptr = context_ptr->getKey();
+
+  if( key_ptr )
   {
-    m_pDataset = pDataset;
-    m_pParent = pParent;
-    m_keyPtr = pKey;
-    m_dictionaryPtr = pDictionary;
+    try
+    {
+      SolverList solvers = m_dictionary_ptr->getSolversList(key_ptr);
+
+      // Iterate on the solvers list
+      for( SolverList::iterator it = solvers.begin(); it != solvers.end(); it++ )
+      {
+        (*it)->solve(*context_ptr);
+      }
+    }
+    catch( cdma::Exception &ex )
+    {
+      ex.push_error( "KEY_ERROR", PSZ_FMT( "Unable to get data from key '%s'",
+                                           PSZ( key_ptr->getName() ) ),
+                                           "LogicalGroup::PrivSolveKey" );
+      throw ex;
+    }
   }
-
-
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::~LogicalGroup
-  //-----------------------------------------------------------------------------
-  LogicalGroup::~LogicalGroup()
+  else
   {
-    
+    throw cdma::Exception( "NULL_POINTER",
+                           "A valid key is required",
+                           "LogicalGroup::PrivSolveKey" );
   }
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getDataItem
-  //-----------------------------------------------------------------------------
-  IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key)
+//-----------------------------------------------------------------------------
+// LogicalGroup::getDataItem
+//-----------------------------------------------------------------------------
+IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
+{
+  try
   {
     IDataItemPtr item;
-    if( ! key.is_null() )
+    Context context(m_dataset_wptr, key_ptr, m_dictionary_ptr);
+    PrivSolveKey(&context);
+    return context.getTopDataItem();
+  }
+  catch( cdma::Exception &ex )
+  {
+    throw;
+  }
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::getDataItem
+//-----------------------------------------------------------------------------
+IDataItemPtr LogicalGroup::getDataItem(const std::string& keyword)
+{
+  return getDataItem( KeyPtr( new Key( keyword, Key::ITEM ) ) );
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::getDataItemList
+//-----------------------------------------------------------------------------
+std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key_ptr)
+{
+  try
+  {
+    IDataItemPtr item;
+    Context context(m_dataset_wptr, key_ptr, m_dictionary_ptr);
+    PrivSolveKey(&context);
+    return context.getDataItems();
+  }
+  catch( cdma::Exception &ex )
+  {
+    throw;
+  }
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::getDataItemList
+//-----------------------------------------------------------------------------
+DataItemList LogicalGroup::getDataItemList(const std::string& keyword)
+{
+  return getDataItemList( KeyPtr( new Key( keyword, Key::ITEM ) ) );
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::getGroup
+//-----------------------------------------------------------------------------
+LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key_ptr)
+{
+  CDMA_FUNCTION_TRACE("LogicalGroup::getGroup");
+  // Check key isn't empty
+  LogicalGroupPtr child;
+  if( key_ptr )
+  {
+    // Store key's name
+    yat::String keyName = key_ptr->getName();
+
+    // Check key hasn't beed asked yet
+    std::map<std::string, LogicalGroupPtr>::iterator itChild = m_child_groups.find( keyName );
+    if( itChild != m_child_groups.end() )
     {
-      PathPtr path = m_dictionaryPtr->getPath(key);
-      yat::String pathValue;
-      if( ! path.is_null() )
-      {
-        pathValue = path->getValue();
-      }
-      item = m_pDataset->getItemFromPath(pathValue);
-      //item->setLocation(pathValue);
-      item->setShortName( key->getName() );
+      child = itChild->second;
     }
-    return item;
-  }
-
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getDataItem
-  //-----------------------------------------------------------------------------
-  IDataItemPtr LogicalGroup::getDataItem(const std::string& keyPath)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getDataItem");
-  }
-
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getDataItemList
-  //-----------------------------------------------------------------------------
-  std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getDataItemList");
-  }
-
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getDataItemList
-  //-----------------------------------------------------------------------------
-  std::list<IDataItemPtr> LogicalGroup::getDataItemList(const std::string& keyPath)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getDataItemList");
-  }
-
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getGroup
-  //-----------------------------------------------------------------------------
-  LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key)
-  {
-    CDMA_FUNCTION_TRACE("LogicalGroup::getGroup");
-    // Check key isn't empty
-    LogicalGroupPtr child;
-    if( ! key.is_null() )
+    // Check if key is in children list
+    else
     {
-      // Store key's name
-      yat::String keyName = key->getName();
-
-      // Check key hasn't beed asked yet
-      std::map<std::string, LogicalGroupPtr>::iterator itChild = m_childGroups.find( keyName );
-      if( itChild != m_childGroups.end() )
+      yat::String groupKeyName = m_key_ptr.is_null() ? "" : m_key_ptr->getName();
+      if( m_listkey_ptr.is_null() )
       {
-        child = itChild->second;
+        m_listkey_ptr = m_dictionary_ptr->getKeys( groupKeyName );
       }
-      // Check if key is in children list
-      else
+      StringList::iterator itChildren;
+      for( itChildren = m_listkey_ptr->begin(); itChildren != m_listkey_ptr->end(); itChildren++ )
       {
-        yat::String groupKeyName = m_keyPtr.is_null() ? "" : m_keyPtr->getName();
-        if( m_listKeyPtr.is_null() )
+        // Key is in children list -> construct group
+        if( *itChildren == keyName )
         {
-          m_listKeyPtr = m_dictionaryPtr->getKeys( groupKeyName );
-        }
-        StringList::iterator itChildren;
-        for( itChildren = m_listKeyPtr->begin(); itChildren != m_listKeyPtr->end(); itChildren++ )
-        {
-          // Key is in children list -> construct group
-          if( *itChildren == keyName )
-          {
-            child = new LogicalGroup(m_pDataset, this, key, m_dictionaryPtr );
-            m_childGroups[ keyName ] = child;
-            break;
-          }
+          child = new LogicalGroup(m_dataset_wptr, this, key_ptr, m_dictionary_ptr );
+          m_child_groups[ keyName ] = child;
+          break;
         }
       }
     }
-    return child;
   }
+  return child;
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getGroup
-  //-----------------------------------------------------------------------------
-  LogicalGroupPtr LogicalGroup::getGroup(const std::string& keyPath)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getGroup");
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::getGroup
+//-----------------------------------------------------------------------------
+LogicalGroupPtr LogicalGroup::getGroup(const std::string&)
+{
+  THROW_NOT_IMPLEMENTED("LogicalGroup::getGroup");
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getKeyNames
-  //-----------------------------------------------------------------------------
-  std::list<std::string> LogicalGroup::getKeyNames(CDMAType::ModelType model)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getKeyNames");
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::getKeyNames
+//-----------------------------------------------------------------------------
+std::list<std::string> LogicalGroup::getKeyNames(CDMAType::ModelType)
+{
+  THROW_NOT_IMPLEMENTED("LogicalGroup::getKeyNames");
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getKeys
-  //-----------------------------------------------------------------------------
-  std::list<KeyPtr> LogicalGroup::getKeys()
-  {
-    CDMA_FUNCTION_TRACE("LogicalGroup::getKeys");
-    std::list< KeyPtr > result;
+//-----------------------------------------------------------------------------
+// LogicalGroup::getKeys
+//-----------------------------------------------------------------------------
+std::list<KeyPtr> LogicalGroup::getKeys()
+{
+  CDMA_FUNCTION_TRACE("LogicalGroup::getKeys");
+  std::list< KeyPtr > result;
 
-    // Get children keys' names
-    yat::String key = m_keyPtr.is_null() ? "" : m_keyPtr->getName();
-    if( m_listKeyPtr.is_null() )
-    {
-      m_listKeyPtr = m_dictionaryPtr->getKeys( key );
-    }
-    for( StringList::iterator itChildren = m_listKeyPtr->begin(); itChildren != m_listKeyPtr->end(); itChildren++ )
-    {
-      result.push_back( KeyPtr(new Key( *itChildren, m_dictionaryPtr->getKeyType(*itChildren)) ) );
-    }
-    return result;
+  // Get children keys' names
+  yat::String key = m_key_ptr.is_null() ? "" : m_key_ptr->getName();
+  if( m_listkey_ptr.is_null() )
+  {
+    m_listkey_ptr = m_dictionary_ptr->getKeys( key );
   }
+  for( StringList::iterator itChildren = m_listkey_ptr->begin(); itChildren != m_listkey_ptr->end(); itChildren++ )
+  {
+    result.push_back( KeyPtr(new Key( *itChildren, m_dictionary_ptr->getKeyType(*itChildren)) ) );
+  }
+  return result;
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::bindKey
-  //-----------------------------------------------------------------------------
-  KeyPtr LogicalGroup::bindKey(const std::string& bind, const KeyPtr& key)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::bindKey");
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::bindKey
+//-----------------------------------------------------------------------------
+KeyPtr LogicalGroup::bindKey(const std::string&, const KeyPtr&)
+{
+  THROW_NOT_IMPLEMENTED("LogicalGroup::bindKey");
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getParameterValues
-  //-----------------------------------------------------------------------------
-  std::list<PathParameterPtr> LogicalGroup::getParameterValues(const KeyPtr& key)
-  {
-    THROW_NOT_IMPLEMENTED("LogicalGroup::getParameterValues");
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::getParameterValues
+//-----------------------------------------------------------------------------
+std::list<PathParameterPtr> LogicalGroup::getParameterValues(const KeyPtr&)
+{
+  THROW_NOT_IMPLEMENTED("LogicalGroup::getParameterValues");
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::setParent
-  //-----------------------------------------------------------------------------
-  void LogicalGroup::setParent(LogicalGroup& group)
-  {
-    m_pParent = &group;
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::setParent
+//-----------------------------------------------------------------------------
+void LogicalGroup::setParent(LogicalGroup& group)
+{
+  m_parent_ptr = &group;
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::setParent
-  //-----------------------------------------------------------------------------
-  LogicalGroupPtr LogicalGroup::getParent()
-  {
-    return m_pParent;
-  }
-  
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::setParent
-  //-----------------------------------------------------------------------------
-  std::string LogicalGroup::getLocation()
-  {
-    yat::String path = getName();
-    LogicalGroupPtr parent = getParent();
-    while( ! parent.is_null() )
-    {
-      path = parent->getName() + (parent->getName() == "" ? "" : "/" ) + path;
-      parent = parent->getParent();
-    }
-    return path;
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::setParent
+//-----------------------------------------------------------------------------
+LogicalGroupPtr LogicalGroup::getParent()
+{
+  return m_parent_ptr;
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::setParent
-  //-----------------------------------------------------------------------------
-  std::string LogicalGroup::getName()
+//-----------------------------------------------------------------------------
+// LogicalGroup::setParent
+//-----------------------------------------------------------------------------
+std::string LogicalGroup::getLocation()
+{
+  yat::String path = getName();
+  LogicalGroupPtr parent = getParent();
+  while( ! parent.is_null() )
   {
-    return m_keyPtr.is_null() ? "" : m_keyPtr->getName();
+    path = parent->getName() + (parent->getName() == "" ? "" : "/" ) + path;
+    parent = parent->getParent();
   }
+  return path;
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::setParent
-  //-----------------------------------------------------------------------------
-  std::string LogicalGroup::getShortName()
-  {
-    return getName();
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::setParent
+//-----------------------------------------------------------------------------
+std::string LogicalGroup::getName()
+{
+  return m_key_ptr.is_null() ? "" : m_key_ptr->getName();
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getFactoryName
-  //-----------------------------------------------------------------------------
-  std::string LogicalGroup::getFactoryName() const
-  {
-    return m_pDataset->getFactoryName();
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::setParent
+//-----------------------------------------------------------------------------
+std::string LogicalGroup::getShortName()
+{
+  return getName();
+}
 
-  //-----------------------------------------------------------------------------
-  // LogicalGroup::getModelType
-  //-----------------------------------------------------------------------------
-  cdma::CDMAType::ModelType LogicalGroup::getModelType() const
-  {
-    return cdma::CDMAType::LogicalGroup;
-  }
+//-----------------------------------------------------------------------------
+// LogicalGroup::getFactoryName
+//-----------------------------------------------------------------------------
+std::string LogicalGroup::getFactoryName() const
+{
+  return m_dataset_wptr.lock()->getFactoryName();
+}
+
+//-----------------------------------------------------------------------------
+// LogicalGroup::getModelType
+//-----------------------------------------------------------------------------
+cdma::CDMAType::ModelType LogicalGroup::getModelType() const
+{
+  return cdma::CDMAType::LogicalGroup;
+}
+
 }
