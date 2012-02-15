@@ -32,30 +32,31 @@ namespace cdma
 //==============================================================================
 class SoleilNxsDataset : public NxsDataset
 {
-private:
-
-  // Constructor
-  SoleilNxsDataset(const yat::URI& location);
-  SoleilNxsDataset();
-
 public:
 
   /// Create an instance on an existing dataset
   ///
   /// @param : filepath string representing the file path
   ///
-  static NxsDatasetPtr getDataset(const yat::URI& location);
+  static NxsDatasetPtr getDataset(const yat::URI& location, SoleilNxsFactory *factory_ptr);
 
   /// Create an instance on an new dataset object
   ///
   static NxsDatasetPtr newDataset();
 
-  /// Return the the logical root of the dataset.
-  ///
-  /// @return shared pointer on the LogicalGroup
-  ///
-  LogicalGroupPtr getLogicalRoot();
+  //@{ IDataset methods
 
+  LogicalGroupPtr getLogicalRoot();
+  
+  //@}
+
+private:
+
+  // Constructor
+  SoleilNxsDataset(const yat::URI& location);
+  SoleilNxsDataset();
+
+  SoleilNxsFactory* m_factory_ptr; // C-style pointer on factory. Never delete it !!
 };
 
 } //namespace CDMACore
