@@ -89,7 +89,7 @@ IDatasetPtr SoleilNxsFactory::openDataset(const std::string& location_string)
 throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SoleilNxsFactory::openDataset");
-  return SoleilNxsDataset::getDataset( yat::URI(location_string) );
+  return SoleilNxsDataset::getDataset( yat::URI(location_string), this);
 }
 
 //----------------------------------------------------------------------------
@@ -99,94 +99,6 @@ DictionaryPtr SoleilNxsFactory::openDictionary(const std::string&)
 throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDictionary");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createArray(const std::type_info, const std::vector<int>)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createArray(const std::type_info, const std::vector<int>, const void *)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createArray(const void *)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createStringArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createStringArray(const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createStringArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createDoubleArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createDoubleArray(double array[])
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDoubleArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createDoubleArray
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createDoubleArray(double array[], const std::vector<int>)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDoubleArray");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createArrayNoCopy
-//----------------------------------------------------------------------------
-ArrayPtr SoleilNxsFactory::createArrayNoCopy(const void *)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createArrayNoCopy");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createDataItem
-//----------------------------------------------------------------------------
-IDataItemPtr SoleilNxsFactory::createDataItem(const cdma::IGroupPtr&, const std::string&, const cdma::ArrayPtr&) throw ( cdma::Exception )
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDataItem");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createGroup
-
-IGroupPtr SoleilNxsFactory::createGroup(const cdma::IGroupPtr&, const std::string&, const bool)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createGroup");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createGroup
-//----------------------------------------------------------------------------
-IGroupPtr SoleilNxsFactory::createGroup(const std::string&) throw ( cdma::Exception )
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createGroup");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createAttribute
-//----------------------------------------------------------------------------
-IAttributePtr SoleilNxsFactory::createAttribute(const std::string&, const void *)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createAttribute");
 }
 
 //----------------------------------------------------------------------------
@@ -207,38 +119,6 @@ IDatasetPtr SoleilNxsFactory::createEmptyDatasetInstance() throw ( cdma::Excepti
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::createKey
-//----------------------------------------------------------------------------
-KeyPtr SoleilNxsFactory::createKey(std::string keyName)
-{
-  return new cdma::Key(keyName);
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createPath
-//----------------------------------------------------------------------------
-PathPtr SoleilNxsFactory::createPath( std::string )
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createPath");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createPathParameter
-//----------------------------------------------------------------------------
-PathParameterPtr SoleilNxsFactory::createPathParameter(cdma::CDMAType::ParameterType, const std::string&, void *)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createPathParameter");
-}
-
-//----------------------------------------------------------------------------
-// SoleilNxsFactory::createPathParamResolver
-//----------------------------------------------------------------------------
-IPathParamResolverPtr SoleilNxsFactory::createPathParamResolver(const cdma::PathPtr&)
-{
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createPathParamResolver");
-}
-
-//----------------------------------------------------------------------------
 // SoleilNxsFactory::getPathSeparator
 //----------------------------------------------------------------------------
 std::string SoleilNxsFactory::getPathSeparator()
@@ -254,5 +134,14 @@ IDataSourcePtr SoleilNxsFactory::getPluginURIDetector()
   return new SoleilNxsDataSource();
 }
 
+//----------------------------------------------------------------------------
+// SoleilNxsFactory::getPluginMethodsList
+//----------------------------------------------------------------------------
+std::list<std::string> SoleilNxsFactory::getPluginMethodsList()
+{
+  std::list<std::string> methods;
+  methods.push_back("TestMethod");
+  return methods;
+}
 
 } // namespace cdma
