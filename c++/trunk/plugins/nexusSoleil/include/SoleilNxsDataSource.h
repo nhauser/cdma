@@ -33,51 +33,25 @@ namespace cdma
 class SoleilNxsDataSource : public IDataSource 
 {
 public:
-  SoleilNxsDataSource() {};
+  SoleilNxsDataSource()  {};
   ~SoleilNxsDataSource() {};
 
-  /// Ask the plugin if the URI corresponds to a strictly readable dataset
-  /// Only the basic navigation is applicable in such a dataset
-  /// The dictionnary mechanism is not relevant for this kind of dataset
-  ///
-  /// @param URI: the URI asked for
-  ///
-  /// @return true of false
-  ///
-  bool isReadable(const yat::URI& destination) const;
-  
-  /// Ask the plugin if the URI corresponds to a strictly readable dataset
-  /// Only the basic navigation is applicable in such a dataset
-  /// The dictionnary mechanism is not relevant for this kind of dataset
-  ///
-  /// @param URI the URI asked for
-  ///
-  /// @return true of false
-  ///
-  bool isBrowsable(const yat::URI& destination) const;
+  //@{ IDataSource methods ------------
 
-  /// Ask the plugin if the URI corresponds to a strictly readable dataset
-  /// Only the basic navigation is applicable in such a dataset
-  /// The dictionnary mechanism is not relevant for this kind of dataset
-  ///
-  /// @param URI: the URI asked for
-  ///
-  /// @return true of false
-  ///
-  bool isProducer(const yat::URI& destination) const;
-  
-  /// Ask the plugin if the URI corresponds to a strictly readable dataset
-  /// Only the basic navigation is applicable in such a dataset
-  /// The dictionnary mechanism is not relevant for this kind of dataset
-  ///
-  /// @param URI: the URI asked for
-  ///
-  /// @return true of false
-  ///
+  bool   isReadable(const yat::URI& destination) const;
+  bool  isBrowsable(const yat::URI& destination) const;
+  bool   isProducer(const yat::URI& destination) const;
   bool isExperiment(const yat::URI& destination) const;
   
-  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
-  CDMAType::ModelType getModelType() const { return CDMAType::Other; };
+  //@}
+
+  //@{ IObject methods ----------------
+
+  std::string       getFactoryName() const { return NXS_FACTORY_NAME; }
+  CDMAType::ModelType getModelType() const { return CDMAType::Other; }
+
+  //@}
+
 };
 
 } //namespace CDMACore
