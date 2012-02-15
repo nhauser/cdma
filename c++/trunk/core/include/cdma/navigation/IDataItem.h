@@ -416,6 +416,8 @@ public:
   virtual IDataItemPtr clone() = 0;
  };
  
+ typedef std::list<IDataItemPtr> DataItemList;
+
 } //namespace cdma
 
 #endif //__CDMA_IDATAITEM_H__

@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <list>
 #include <typeinfo>
 
 #include <yat/memory/SharedPtr.h>
@@ -65,7 +66,7 @@ public:
   ///
   virtual IDatasetPtr createEmptyDatasetInstance() throw ( Exception ) = 0;
 
-  virtual yat::SharedPtr<IPathParamResolver, yat::Mutex> createPathParamResolver( const PathPtr& ptrPath ) = 0;
+  //virtual yat::SharedPtr<IPathParamResolver, yat::Mutex> createPathParamResolver( const PathPtr& ptrPath ) = 0;
 
   /// Return the symbol used by the plug-in to separate nodes in a string path
   /// @return
@@ -83,6 +84,9 @@ public:
   /// @return the plugin's mimplementation of the IDataSource interface
   ///
   virtual IDataSourcePtr getPluginURIDetector() = 0;
+
+  /// Returns the plugin methods list
+  virtual std::list<std::string> getPluginMethodsList() = 0;
 };
 
 } //namespace CDMACore

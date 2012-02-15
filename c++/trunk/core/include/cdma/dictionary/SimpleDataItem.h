@@ -43,18 +43,19 @@ class CDMA_DECL SimpleDataItem : public IDataItem
 {
 private:
   std::list<IAttributePtr> m_attr_list;
-  IDataset*                m_dataset_ptr;
+  IDatasetPtr              m_dataset_ptr;
   yat::String              m_name;        // Name of the dataitem
   ArrayPtr                 m_array_ptr;       // Array object
 
 public:
   /// c-tor
-  SimpleDataItem(IDataset* dataset, ArrayPtr ptrArray, const std::string &name);
+  SimpleDataItem(IDatasetPtr dataset_ptr, ArrayPtr ptrArray, const std::string &name);
   
   /// d-tor
   ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
 
   //@{ IDataItem interface
+
   IAttributePtr findAttributeIgnoreCase(const std::string& name);
   int findDimensionView(const std::string& name);
   IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
@@ -116,18 +117,20 @@ public:
   void setParent(const IGroupPtr&);
   IDatasetPtr getDataset();
   
-  //@}
+  //@} --------------------------------
+
   //@{IObject interface
+
   CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
   std::string getFactoryName() const { return "NO_NAME"; };
-  //@}
+
+  //@} --------------------------------
   
   //@{ plugin implementation should be call some of the following methods to properly initialize this object
   
   void setLogicalLocation(const std::string& location);
   
-  
-  //@}
+  //@} --------------------------------
 };
 
 //==============================================================================

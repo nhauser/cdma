@@ -1,5 +1,5 @@
 //******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
+// Copyright (c) 2011-2012 Synchrotron Soleil.
 // The CDMA library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
 // Software Foundation; either version 2 of the License, or (at your option)
@@ -17,6 +17,7 @@
 #include <yat/threading/Mutex.h>
 
 #include <cdma/IObject.h>
+#include <cdma/dictionary/Context.h>
 
 namespace cdma
 {
@@ -28,7 +29,7 @@ namespace cdma
 /// name corresponds to an entry in the dictionary. This entry targets a path in the
 /// currently explored document. The group will open it.
 ///
-/// The IKey can carry some filters to help group to decide which node is relevant.
+/// The Key can carry some filters to help group to decide which node is relevant.
 /// The filters can specify an order index to open a particular type of node, an
 /// attribute, a part of the name...
 ///
@@ -41,9 +42,9 @@ public:
   /// Kind of Key: will the key correspond to DataItem, a Group, or ...
   enum Type
   {
-    Undefined = 0,
-    Item,
-    Group
+    UNDEFINED = 0,
+    ITEM,
+    GROUP
   };
   
 private:
@@ -51,64 +52,99 @@ private:
   Type m_type;
   
 public:
-  // constructor
-  Key(const std::string& name, Type type = Undefined);
+  /// constructor
+  Key(const std::string& name, Type type = UNDEFINED)
+    : m_name(name), m_type(type) {}
 
-//destructor
-  ~Key();
-  
+  //@{ Accessors -----------------
+
   /// Get the entry name in the dictionary that will be
   /// searched when using this key.
   ///
   /// @return the name of this key
   ///
-  std::string getName();
+  const std::string& getName() const { return m_name; }
  
   /// Set the entry name in the dictionary that will be
   /// searched when using this key.
   ///
   /// @param name of this key
   ///
-  void setName(const std::string& name);
+  void setName(const std::string& name) { m_name = name; }
  
-  /// Return true if both key have similar names.
-  /// Filters are not compared.
-  /// @param key to compare
-  /// @return true if both keys have same name
-  ///
-  bool isEqual(const KeyPtr& ptrKey);
  
-  /// Get the list of filters that will be applied when using this key.
+  /// Get the key related notion: LogicalGroup or DataItem
   ///
-  /// @return list of IKeyFilter
+  /// @return Key::Type value
   ///
-  std::list<PathParameterPtr> getParameterList();
- 
-  /// Add a IKeyFilter to this IKey that will be used when
-  /// searching an object with this key. .
-  ///
-  /// @param filter to be applied
-  /// @note work as a FILO
-  ///
-  void pushParameter(const PathParameterPtr& filter);
- 
-  /// Remove a IKeyFilter to this IKey that will be used when
-  /// searching an object with this key.
-  ///
-  /// @return filter that won't be applied anymore
-  /// @note work as a FILO
-  ///
-  PathParameterPtr popParameter();
- 
-  /// Copy entirely the key : name and filters are cloned
-  /// @return a copy of this key
-  ///
-  KeyPtr clone();
+  const Type getType() const { return m_type; }
 
-  Type getType();
-  void setType(Type type);
+  /// Set the key related notion: LogicalGroup or DataItem
+  /// 
+  /// @param type of this key
+  ///
+  void setType(Type type) { m_type = type; }
 };
- 
+
+//==============================================================================
+/// IKeySolver
+//==============================================================================
+class IKeySolver
+{
+public:
+  // d-tor
+  virtual ~IKeySolver()  {  }
+
+  /// Solve the key
+  ///
+  /// @param context input/ouput context (see Context class definition)
+  /// @throw  Exception in case of any trouble
+  ///
+  virtual void solve(Context& context) throw (cdma::Exception) = 0;
+};
+
+typedef std::list<IKeySolverPtr> SolverList;
+
+//==============================================================================
+/// KeyPath
+//==============================================================================
+class KeyPath : public IKeySolver
+{
+private:
+  std::string m_path;
+
+public:
+
+  /// c-tor
+  KeyPath(const std::string &path) : m_path(path)
+  {
+  }
+
+  /// IKeyResolver
+  void solve(Context& context) throw (cdma::Exception);
+};
+
+//==============================================================================
+/// KeyMethod
+//==============================================================================
+class KeyMethod : public IKeySolver
+{
+private:
+  std::string      m_method_name;
+  IPluginMethodPtr m_method_ptr;
+
+public:
+
+  /// c-tor
+  KeyMethod(const std::string& method_name, const IPluginMethodPtr& method_ptr)
+  : m_method_name(method_name), m_method_ptr(method_ptr)
+  {
+  }
+
+  /// IKeyResolver
+  void solve(Context& context) throw (cdma::Exception);
+};
+
 } //namespace CDMACore
 
 #endif //__CDMA_KEY_H__
