@@ -30,14 +30,14 @@ namespace cdma
 class Range
 {
 public:
-	/// Constructors
-	Range();
+  /// Constructors
+  Range();
   Range( int length );
   Range( std::string name, long first, long last, long stride, bool reduced = false );
   Range( const cdma::Range& range );
   
   /// D-structor
-	~Range() { };
+  ~Range() { };
 
   /// Get the number of elements in the range.
   ///
@@ -73,18 +73,18 @@ public:
   
   /// @return last element's offset in range, inclusive
   ///
-	int last() const;
-	
-	/// @return stride, must be >= 1
+  int last() const;
+  
+  /// @return stride, must be >= 1
   ///
-	int stride() const;
-	
+  int stride() const;
+  
   /// Get name.
   ///
   /// @return name, or empty string
   ///
-	std::string getName() const;
-	
+  std::string getName() const;
+  
   /// Find the smallest element k in the Range, such that
   /// <ul>
   /// <li>k >= first
