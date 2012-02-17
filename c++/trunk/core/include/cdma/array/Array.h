@@ -55,6 +55,8 @@ namespace cdma
 
 class Array
 {
+friend class ArrayIterator;
+
 public:
   // Constructors
   Array( const Array& array );
@@ -62,7 +64,8 @@ public:
   Array( const Array& src, const ViewPtr& view );
   Array( const ArrayPtr& src, const ViewPtr& view );
   Array( const std::string& plugin_id, const std::type_info& type, std::vector<int> shape, void* pData = NULL );
-  template<typename T> Array(const std::string& factory, T* values, std::vector<int> shape);
+  template<typename T> explicit Array(const std::string& factory, std::vector<int> shape, T* values = NULL );
+  template<typename T> explicit Array(const std::string& factory, T values );
 
   // D-structor
   ~Array();
@@ -81,30 +84,67 @@ public:
   /// @param view describing the array with current element set
   /// @param position vector targeting an element of the array
   ///
-  /// @return value as a yat::Any
+  /// @return value converted to the type T
   ///
-  yat::Any& get( const ViewPtr& view, std::vector<int> position );
+  template<typename T>
+  T getValue( const ViewPtr& view, std::vector<int> position );
+
+  /// Get the array element at the given index position in the current (default) view
+  ///
+  /// @param position vector targeting an element of the array
+  ///
+  /// @return value converted to the type T
+  ///
+  template<typename T>
+  T getValue( std::vector<int> position );
+
+  /// Get the array element in the current (default) view
+  /// Use this method in the case of a scalar value
+  ///
+  /// @return value converted to the type T
+  ///
+  template<typename T>
+  T getValue( void );
 
   /// Set the array element at the current element given position
   ///
   /// @param view describing the array with current element set
   /// @param position where to set the value
   /// @param value the new value; cast to underlying data type if necessary.
+  /// @todo  move this method in the private section
   ///
-  void set(const ViewPtr& view, std::vector<int> position, const yat::Any& value);
+  template<typename T>
+  void setValue(const ViewPtr& view, std::vector<int> position, T value);
+  
+  /// Set the array element at the current element given position in the current (default) view
+  ///
+  /// @param view describing the array with current element set
+  /// @param position where to set the value
+  /// @param value the new value; cast to underlying data type if necessary.
+  ///
+  template<typename T>
+  void setValue(std::vector<int> position, T value);
+  
+  /// Set the array element at the current element in the current (default) view
+  /// Use this method in the case of a scalar value
+  ///
+  /// @param value the new value; cast to underlying data type if necessary.
+  ///
+  template<typename T>
+  void setValue(T value);
   
   /// Set the array element at the given iterator position
   ///
   /// @param iterator describing the array with current element set
   /// @param value the new value; cast to underlying data type if necessary.
   ///
-  template<typename T> void set(const ArrayIterator& target, T value);
+  template<typename T> void setValue(const ArrayIterator& target, T value);
   
   /// Get the element type of this Array.
   ///
   /// @return type info
   ///
-  const std::type_info& getElementType();
+  const std::type_info& getValueType();
   
   /// Get the View that describes this Array.
   ///
@@ -188,7 +228,7 @@ public:
 private:
   IArrayStoragePtr m_data_impl; // Memory storage of the matrix
   std::vector<int> m_shape;     // Shape of the matrix
-  ViewPtr          m_view;      // Viewable part of the matrix
+  ViewPtr          m_view_ptr;      // Viewable part of the matrix
   std::string      m_factory;   // name of the factory
 };
 
