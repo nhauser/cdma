@@ -95,12 +95,13 @@ void LogicalGroup::PrivSolveKey(Context *context_ptr)
 //-----------------------------------------------------------------------------
 IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
 {
+  CDMA_FUNCTION_TRACE("LogicalGroup::getDataItem");
   try
   {
-    IDataItemPtr item;
     Context context(m_dataset_wptr, key_ptr, m_dictionary_ptr);
     PrivSolveKey(&context);
-    return context.getTopDataItem();
+    IDataItemPtr item = context.getTopDataItem();
+    return item;
   }
   catch( cdma::Exception &ex )
   {
