@@ -33,13 +33,14 @@ namespace cdma
 class IArrayStorage : public IObject
 {
 public:
-  /// Get the "value" from the memory buffer according the position in the given view.
+
+  /// Get pointer to the "value" from the memory buffer according the position in the given view.
   ///
   /// @param view to consider for the index calculation
   /// @param position into which the value will be set
   /// @return yat::Any value
   ///
-  virtual yat::Any& get( const cdma::ViewPtr& view, std::vector<int> position ) = 0;
+  virtual void *getValue( const cdma::ViewPtr& view, std::vector<int> position ) = 0;
 
   /// Set "value" in the memory buffer according the position in the given view. The 
   /// given yat::Any will be casted into memory buffer type.
@@ -48,7 +49,7 @@ public:
   /// @param position into which the value will be set
   /// @param value to be set
   ///
-  virtual void set(const cdma::ViewPtr& view, std::vector<int> position, const yat::Any& value) = 0;
+  virtual void setValue(const cdma::ViewPtr& view, std::vector<int> position, void *value_ptr) = 0;
 
   /// Returns the type_info of the underlying canonical data
   ///
