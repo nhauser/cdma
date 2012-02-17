@@ -48,6 +48,7 @@ private:
   ArrayPtr                 m_array_ptr;       // Array object
 
 public:
+
   /// c-tor
   SimpleDataItem(IDatasetPtr dataset_ptr, ArrayPtr ptrArray, const std::string &name);
   
@@ -56,73 +57,77 @@ public:
 
   //@{ IDataItem interface
 
-  IAttributePtr findAttributeIgnoreCase(const std::string& name);
-  int findDimensionView(const std::string& name);
-  IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
-  IGroupPtr getParent();
-  IGroupPtr getRoot();
-  ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
-  ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
-  std::string getDescription();
-  std::list<IDimensionPtr> getDimensions(int i);
-  std::list<IDimensionPtr> getDimensionList();
-  std::string getDimensionsString();
-  int getElementSize();
-  std::string getNameAndDimensions();
-  std::string getNameAndDimensions(bool useFullName, bool showDimLength);
-  std::list<RangePtr> getRangeList();
-  int getRank();
-  IDataItemPtr getSection(std::list<RangePtr> section) throw ( cdma::Exception );
-  std::list<RangePtr> getSectionRanges();
-  std::vector<int> getShape();
-  long getSize();
-  int getSizeToCache();
-  IDataItemPtr getSlice(int dim, int value) throw ( cdma::Exception );
-  const std::type_info& getType();
-  std::string getUnitsString();
-  bool hasCachedData();
-  void invalidateCache();
-  bool isCaching();
-  bool isMemberOfStructure();
-  bool isMetadata();
-  bool isScalar();
-  bool isUnlimited();
-  bool isUnsigned();
-  unsigned char readScalarByte() throw ( cdma::Exception );
-  double readScalarDouble() throw ( cdma::Exception );
-  float readScalarFloat() throw ( cdma::Exception );
-  int readScalarInt() throw ( cdma::Exception );
-  long readScalarLong() throw ( cdma::Exception );
-  short readScalarShort() throw ( cdma::Exception );
-  std::string readScalarString() throw ( cdma::Exception );
-  void setCaching(bool caching);
-  void setDataType(const std::type_info& dataType);
-  void setDimensions(const std::string& dimString);
-  void setDimension(const IDimensionPtr& dim, int ind) throw ( cdma::Exception );
-  void setElementSize(int elementSize);
-  void setSizeToCache(int sizeToCache);
-  void setUnitsString(const std::string& units);
-  IDataItemPtr clone();
-  void addOneAttribute(const IAttributePtr&);
-  void addStringAttribute(const std::string&, const std::string&);
-  IAttributePtr getAttribute(const std::string&);
-  std::list<IAttributePtr > getAttributeList();
-  std::string getLocation();
-  std::string getName();
-  std::string getShortName();
-  bool hasAttribute(const std::string&, const std::string&);
-  bool removeAttribute(const IAttributePtr&);
-  void setName(const std::string&);
-  void setShortName(const std::string&);
-  void setParent(const IGroupPtr&);
-  IDatasetPtr getDataset();
+    IAttributePtr findAttributeIgnoreCase(const std::string& name);
+    int findDimensionView(const std::string& name);
+    IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
+    IGroupPtr getParent();
+    IGroupPtr getRoot();
+    ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
+    ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
+    std::string getDescription();
+    std::list<IDimensionPtr> getDimensions(int i);
+    std::list<IDimensionPtr> getDimensionList();
+    std::string getDimensionsString();
+    int getElementSize();
+    std::string getNameAndDimensions();
+    std::string getNameAndDimensions(bool useFullName, bool showDimLength);
+    std::list<RangePtr> getRangeList();
+    int getRank();
+    IDataItemPtr getSection(std::list<RangePtr> section) throw ( cdma::Exception );
+    std::list<RangePtr> getSectionRanges();
+    std::vector<int> getShape();
+    long getSize();
+    int getSizeToCache();
+    IDataItemPtr getSlice(int dim, int value) throw ( cdma::Exception );
+    const std::type_info& getType();
+    std::string getUnitsString();
+    bool hasCachedData();
+    void invalidateCache();
+    bool isCaching();
+    bool isMemberOfStructure();
+    bool isMetadata();
+    bool isScalar();
+    bool isUnlimited();
+    bool isUnsigned();
+    unsigned char readScalarByte() throw ( cdma::Exception );
+    double readScalarDouble() throw ( cdma::Exception );
+    float readScalarFloat() throw ( cdma::Exception );
+    int readScalarInt() throw ( cdma::Exception );
+    long readScalarLong() throw ( cdma::Exception );
+    short readScalarShort() throw ( cdma::Exception );
+    std::string readString() throw ( cdma::Exception );
+    void setCaching(bool caching);
+    void setDataType(const std::type_info& dataType);
+    void setDimensions(const std::string& dimString);
+    void setDimension(const IDimensionPtr& dim, int ind) throw ( cdma::Exception );
+    void setElementSize(int elementSize);
+    void setSizeToCache(int sizeToCache);
+    void setUnitsString(const std::string& units);
+    IDataItemPtr clone();
+    IAttributePtr getAttribute(const std::string&);
+    std::list<IAttributePtr > getAttributeList();
+    void setParent(const IGroupPtr&);
+    IDatasetPtr getDataset();
   
+  //@} --------------------------------
+
+  //@{ IContainer
+
+    cdma::IAttributePtr addAttribute(const std::string& name, yat::Any &value);
+    std::string getLocation() const;
+    std::string getName() const;
+    std::string getShortName() const;
+    bool hasAttribute(const std::string&);
+    bool removeAttribute(const IAttributePtr&);
+    void setName(const std::string&);
+    void setShortName(const std::string&);
+
   //@} --------------------------------
 
   //@{IObject interface
 
-  CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
-  std::string getFactoryName() const { return "NO_NAME"; };
+    CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
+    std::string getFactoryName() const { return "NO_NAME"; };
 
   //@} --------------------------------
   
