@@ -75,7 +75,7 @@ long ArrayIterator::currentElement() const
 ArrayIterator& ArrayIterator::operator++(void) 
 {
   this->incrementPosition(m_view, m_position);
-	return *this;
+  return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -85,7 +85,7 @@ ArrayIterator& ArrayIterator::operator++(int)
 {
   ArrayIterator iterator (m_array, m_view, m_position);
   operator++();
-	return iterator;
+  return iterator;
 }
 
 //-----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ ArrayIterator& ArrayIterator::operator++(int)
 ArrayIterator& ArrayIterator::operator--(void) 
 {
   this->decrementPosition(m_view, m_position);
-	return *this;
+  return *this;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,15 +104,7 @@ ArrayIterator& ArrayIterator::operator--(int)
 {
   ArrayIterator iterator (m_array, m_view, m_position);
   operator--();
-	return iterator;
-}
-
-//-----------------------------------------------------------------------------
-// ArrayIterator::operator++ suffix operator
-//-----------------------------------------------------------------------------
-yat::Any& ArrayIterator::operator*(void) const
-{
-  return m_array->get( m_view, m_position );
+  return iterator;
 }
 
 //-----------------------------------------------------------------------------
@@ -142,19 +134,19 @@ std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vec
   if( position[0] < shape[0] )
   {
     for( unsigned int i = position.size() - 1; i >= 0; i-- )
-	  {
-	    if( position[i] + 1 >= shape[i] && i > 0)
-	    {
-      	position[i] = 0;
+    {
+      if( position[i] + 1 >= shape[i] && i > 0)
+      {
+        position[i] = 0;
       }
       else
       {
-		    position[i]++;
-		    break;
+        position[i]++;
+        break;
       }
-	  }
-	}
-	return position;
+    }
+  }
+  return position;
 }
 
 //-----------------------------------------------------------------------------
@@ -174,17 +166,17 @@ std::vector<int>& ArrayIterator::decrementPosition(const ViewPtr& view, std::vec
       {
         if( position[i] - 1 < 0 && i > 0  )
         {
-	        position[i] = shape[i] - 1;
+          position[i] = shape[i] - 1;
         }
         else
         {
-        	position[i]--;
-        	break;
+          position[i]--;
+          break;
         }
       }
     }
   }
-	return position;
+  return position;
 }
 
 //-----------------------------------------------------------------------------
