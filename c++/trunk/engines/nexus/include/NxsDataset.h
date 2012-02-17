@@ -58,7 +58,7 @@ protected:
 
 public:
   
-  //@{ engine methods
+  //@{ engine methods -----------------
 
   /// Set a reference on the object himself
   void setSelfRef(const NxsDatasetPtr& ptr);
@@ -70,7 +70,7 @@ public:
 
   //@}
   
-  //@{ IDataset interface
+  //@{ IDataset interface -------------
   
   virtual ~NxsDataset() { }
   IGroupPtr getRootGroup();
@@ -91,7 +91,7 @@ public:
 
   //@} IDataset interface
   
-  //@{IObject interface
+  //@{IObject interface ---------------
 
   CDMAType::ModelType getModelType() const { return CDMAType::Dataset; };
   std::string getFactoryName() const { return NXS_FACTORY_NAME; };
