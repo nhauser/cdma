@@ -15,6 +15,7 @@
 #include <cdma/IObject.h>
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/PluginMethods.h>
+#include <cdma/dictionary/SimpleDataItem.h>
 
 // NeXus Engine 
 #include <NxsDataset.h>
@@ -47,9 +48,19 @@ EXPORT_PLUGIN_METHOD(TestMethod);
 //==============================================================================
 // TestMethod::execute
 //==============================================================================
-void TestMethod::execute(Context&) throw (cdma::Exception)
+void TestMethod::execute(Context& ctx) throw (cdma::Exception)
 {
   CDMA_FUNCTION_TRACE("TestMethod::execute");
+
+  IDataItemPtr dataitem_ptr = ctx.getTopDataItem();
+  double value = dataitem_ptr->readScalarDouble();
+
+  IDataItemPtr new_data_item_ptr = new SimpleDataItem(ctx.getDataset(),
+                                                        new cdma::Array(PlugInID, value * 2),
+                                                        "2yBin");
+
+  ctx.clearDataItems();
+  ctx.pushDataItem(new_data_item_ptr);
 }
 
 
