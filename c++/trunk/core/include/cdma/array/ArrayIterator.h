@@ -21,6 +21,7 @@
 #include <yat/any/Any.h>
 
 #include <cdma/IObject.h>
+#include <cdma/IObject.h>
 
 namespace cdma
 {
@@ -58,14 +59,12 @@ public:
   /// returned the reference of the current indexed element
   ///
   ArrayIterator& operator--(int);
-
-  /// Access operator: returns a reference on the currently targeted
-  /// cell. It has the form of a yat::Any to be casted into Array's element
-  /// type.
+  
+  /// Access method with explicit value conversion
   ///
-  /// @return yat::Any reference of the current cell
+  /// @return value converted to the type T if possible
   ///
-  yat::Any& operator*(void) const;
+  template <typename T> T getValue(void) const { return m_array->getValue<T>(m_view, m_position); }
   
   /// Comparison operator: egality
   ///
