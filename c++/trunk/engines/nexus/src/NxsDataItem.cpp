@@ -177,11 +177,9 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exc
 cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> origin, vector<int> shape)");
-  if( m_array.is_null() )
-  {
-    loadMatrix();
-  }
-  int rank = m_array->getRank();
+
+  checkArray();
+  int rank = m_array_ptr->getRank();
   int* iShape = new int[rank];
   int* iStart = new int[rank];
   for( int i = 0; i < rank; i++ )
@@ -190,7 +188,7 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> sh
     iShape[i]  = shape[i];
   }
   cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
-  cdma::ArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array.get())), view );
+  cdma::ArrayPtr array = new cdma::Array( *m_array_ptr, view );
   return array;
 }
 
@@ -388,7 +386,10 @@ bool NxsDataItem::isMetadata()
 //---------------------------------------------------------------------------
 bool NxsDataItem::isScalar()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::isScalar");
+  if( m_shape.empty() || m_shape.size() == 1 && m_shape[0] == 1 )
+    return true;
+
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -412,7 +413,8 @@ bool NxsDataItem::isUnsigned()
 //---------------------------------------------------------------------------
 unsigned char NxsDataItem::readScalarByte() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarByte");
+  checkArray();
+  return m_array_ptr->getValue<unsigned char>();
 }
 
 //---------------------------------------------------------------------------
@@ -420,7 +422,8 @@ unsigned char NxsDataItem::readScalarByte() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 double NxsDataItem::readScalarDouble() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarDouble");
+  checkArray();
+  return m_array_ptr->getValue<double>();
 }
 
 //---------------------------------------------------------------------------
@@ -428,7 +431,8 @@ double NxsDataItem::readScalarDouble() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 float NxsDataItem::readScalarFloat() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarFloat");
+  checkArray();
+  return m_array_ptr->getValue<float>();
 }
 
 //---------------------------------------------------------------------------
@@ -436,7 +440,8 @@ float NxsDataItem::readScalarFloat() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 int NxsDataItem::readScalarInt() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarInt");
+  checkArray();
+  return m_array_ptr->getValue<int>();
 }
 
 //---------------------------------------------------------------------------
@@ -444,7 +449,8 @@ int NxsDataItem::readScalarInt() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 long NxsDataItem::readScalarLong() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarLong");
+  checkArray();
+  return m_array_ptr->getValue<long>();
 }
 
 //---------------------------------------------------------------------------
@@ -452,13 +458,14 @@ long NxsDataItem::readScalarLong() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 short NxsDataItem::readScalarShort() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarShort");
+  checkArray();
+  return m_array_ptr->getValue<short>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarString
+// NxsDataItem::readString
 //---------------------------------------------------------------------------
-std::string NxsDataItem::readScalarString() throw ( cdma::Exception )
+std::string NxsDataItem::readString() throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::readScalarString");
 }
@@ -650,11 +657,22 @@ cdma::IDatasetPtr NxsDataItem::getDataset()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::loadMatrix
+// NxsDataItem::checkArray
 //---------------------------------------------------------------------------
-void NxsDataItem::loadMatrix()
+void NxsDataItem::checkArray()
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::loadMatrix");
+  if( !m_array_ptr )
+  {
+    loadArray();
+  }
+}
+
+//---------------------------------------------------------------------------
+// NxsDataItem::loadArray
+//---------------------------------------------------------------------------
+void NxsDataItem::loadArray()
+{
+  CDMA_FUNCTION_TRACE("NxsDataItem::loadArray");
   
   NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
 
@@ -681,18 +699,18 @@ void NxsDataItem::loadMatrix()
   
     // Init Array
     //cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, m_item.DataType(), shape, data.Data() );
-    cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()),
+    cdma::Array *array_ptr = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()),
                                           shape, data.Data() );
 
     // remove ownership of the NexusDataSet
     data.SetData(NULL);
 
     // update Array
-    m_array.reset(array);
+    m_array_ptr.reset(array_ptr);
   }
   else
   {
-    TEMP_EXCEPTION("Unable to read data: file is closed!", "NxsDataItem::loadMatrix");
+    TEMP_EXCEPTION("Unable to read data: file is closed!", "NxsDataItem::loadArray");
   }
 }
 
