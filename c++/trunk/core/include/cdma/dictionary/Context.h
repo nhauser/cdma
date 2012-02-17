@@ -51,9 +51,6 @@ public:
   Context(const IDatasetPtr& dataset_ptr, const KeyPtr& key_ptr, const DictionaryPtr dict_ptr)
     : m_key_ptr(key_ptr), m_dataset_ptr(dataset_ptr), m_dictionary_ptr(dict_ptr)  {}
 
-  /// Populates the dataitems list
-  void addDataItem(const IDataItemPtr& dataitem_ptr);
-
   //@{ Accessors
 
   /// Return smart pointer on key object
@@ -75,10 +72,7 @@ public:
   //@}
 
   /// Push a data items at the back of the list
-  void pushDataItem(IDataItemPtr dataitem_ptr) 
-  { 
-    m_dataitems.push_back(dataitem_ptr); 
-  }
+  void pushDataItem(const IDataItemPtr& dataitem_ptr);
 
   /// Clear the data items list
   void clearDataItems()
