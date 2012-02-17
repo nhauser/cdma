@@ -24,7 +24,7 @@ namespace cdma
   #define CDMA_DBG_PREFIX(x) "[" << \
                           std::hex << std::setfill(' ') << \
                           std::setw(10) << \
-                          (void*)(x) << \
+                          (const void*)(x) << \
                           "][" << \
                           std::setfill('0') << \
                           std::setw(8) << \
@@ -37,10 +37,10 @@ namespace cdma
   {
     private:
       std::string _s;
-      void *_this_object;
+      const void *_this_object;
 
     public:
-      dbg_helper(const std::string &s, void* this_object=(void*)(0x12345678)) : _s(s), _this_object(this_object)
+      dbg_helper(const std::string &s, const void* this_object=(const void*)(0x12345678)) : _s(s), _this_object(this_object)
       {
         yat::AutoMutex<> _lock(mutex());
         std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "> " << _s << std::endl;
