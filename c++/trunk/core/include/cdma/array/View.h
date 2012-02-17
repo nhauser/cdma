@@ -37,6 +37,7 @@ class View
 {
 public:
   // Constructors
+  View();
   View(const cdma::ViewPtr& view );
   View(int rank, int shape[], int start[]);
   View(std::vector<int> shape, std::vector<int> start);
@@ -138,7 +139,6 @@ private:
   bool               m_upToDate;  // Does the overall shape has changed
   int                m_lastIndex; // Last indexed cell of the view 
   ViewPtr            m_compound;  // Higher View from which this one is a sub-part
-  
   
 private:
   /// Get the position vector of the element at the given offset.
