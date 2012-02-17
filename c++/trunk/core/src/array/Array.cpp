@@ -38,17 +38,17 @@ Array::~Array()
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const Array& array ) : m_view ( array.m_view )
+Array::Array( const Array& array ) : m_view_ptr ( array.m_view_ptr )
 {
   m_data_impl = array.m_data_impl;
-  m_shape = array.m_view->getShape();
+  m_shape = array.m_view_ptr->getShape();
   m_factory = array.m_factory;
 }
 
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const Array& array, const ViewPtr& view ) : m_view (view)
+Array::Array( const Array& array, const ViewPtr& view ) : m_view_ptr (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = array.m_data_impl;
@@ -59,7 +59,7 @@ Array::Array( const Array& array, const ViewPtr& view ) : m_view (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view (view)
+Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view_ptr (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = array->getStorage();
@@ -70,7 +70,7 @@ Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view (view)
+Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view_ptr (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   m_data_impl = data_ptr;
@@ -176,7 +176,7 @@ Array::Array( const std::string& factory, const std::type_info& type, std::vecto
     shape_ptr[i] = shape[i];
     start_ptr[i] = 0;
   }
-  m_view = new View( rank, shape_ptr, start_ptr );
+  m_view_ptr = new View( rank, shape_ptr, start_ptr );
 }
 
 //---------------------------------------------------------------------------
@@ -185,24 +185,24 @@ Array::Array( const std::string& factory, const std::type_info& type, std::vecto
 ArrayPtr Array::deepCopy()
 {
   // Copy memory storage
-  std::vector<int> origin( m_view->getRank() );
-  std::vector<int> shape  = m_view->getShape();
-  std::vector<int> stride = m_view->getStride();
+  std::vector<int> origin( m_view_ptr->getRank() );
+  std::vector<int> shape  = m_view_ptr->getShape();
+  std::vector<int> stride = m_view_ptr->getStride();
 
   int newStride = 1;
-  for( int i = m_view->getRank() - 1; i >= 0; i-- )
+  for( int i = m_view_ptr->getRank() - 1; i >= 0; i-- )
   {
     stride[i] = newStride;
     newStride *= shape[i];
   }
   
-  return new Array( m_factory, m_data_impl->deepCopy(m_view), new View( shape, origin, stride ) );
+  return new Array( m_factory, m_data_impl->deepCopy(m_view_ptr), new View( shape, origin, stride ) );
 }
 
 //---------------------------------------------------------------------------
-// Array::getElementType
+// Array::getValueType
 //---------------------------------------------------------------------------
-const std::type_info& Array::getElementType()
+const std::type_info& Array::getValueType()
 {
   return m_data_impl->getType();
 }
@@ -213,7 +213,7 @@ const std::type_info& Array::getElementType()
 ViewPtr Array::getView()
 {
   CDMA_FUNCTION_TRACE("Array::getView");
-  return cdma::ViewPtr(m_view);
+  return cdma::ViewPtr(m_view_ptr);
 }
 
 //---------------------------------------------------------------------------
@@ -222,7 +222,7 @@ ViewPtr Array::getView()
 ArrayIterator Array::begin()
 {
   CDMA_FUNCTION_TRACE("Array::begin");
-  ViewPtr view = new View(m_view);
+  ViewPtr view = new View(m_view_ptr);
   std::vector<int> position;
   for( int i = 0; i < view->getRank(); i++ )
   {
@@ -244,7 +244,7 @@ ArrayIterator Array::end()
 {
   CDMA_FUNCTION_TRACE("Array::end");
   // Copy view
-  ViewPtr view = new View(m_view);
+  ViewPtr view = new View(m_view_ptr);
   
   // Construct a vector of position having 0 in each low dimension
   // the first is having shape[0]. Means positioned at the cell that just
@@ -268,7 +268,7 @@ ArrayIterator Array::end()
 //---------------------------------------------------------------------------
 int Array::getRank()
 {
-  return m_view->getRank();
+  return m_view_ptr->getRank();
 }
 
 //---------------------------------------------------------------------------
@@ -277,7 +277,7 @@ int Array::getRank()
 ArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("Array::getRegion");
-  ViewPtr view = new View(m_view);
+  ViewPtr view = new View(m_view_ptr);
   view->setOrigin(start);
   view->setShape(shape);
   return new Array(*this, view);
@@ -288,7 +288,7 @@ ArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw 
 //---------------------------------------------------------------------------
 std::vector<int> Array::getShape()
 {
-  return m_view->getShape();
+  return m_view_ptr->getShape();
 }
 
 //---------------------------------------------------------------------------
@@ -296,7 +296,7 @@ std::vector<int> Array::getShape()
 //---------------------------------------------------------------------------
 long Array::getSize()
 {
-  return m_view->getSize();
+  return m_view_ptr->getSize();
 }
 
 //---------------------------------------------------------------------------
@@ -304,7 +304,7 @@ long Array::getSize()
 //---------------------------------------------------------------------------
 void Array::setView(const cdma::ViewPtr& view)
 {
-  m_view = view;
+  m_view_ptr = view;
 }
 
 //---------------------------------------------------------------------------
@@ -312,7 +312,7 @@ void Array::setView(const cdma::ViewPtr& view)
 //---------------------------------------------------------------------------
 cdma::SlicerPtr Array::getSlicer(int rank) throw ( cdma::Exception )
 {
-  return new Slicer(new Array(*this, m_view), rank);
+  return new Slicer(new Array(*this, m_view_ptr), rank);
 }
 
 //---------------------------------------------------------------------------
@@ -321,22 +321,6 @@ cdma::SlicerPtr Array::getSlicer(int rank) throw ( cdma::Exception )
 bool Array::dirty()
 {
   return m_data_impl->dirty();
-}
-
-//---------------------------------------------------------------------------
-// Array::get
-//---------------------------------------------------------------------------
-yat::Any& Array::get(const cdma::ViewPtr& ind, std::vector<int> position)
-{
-  return m_data_impl->get(ind, position);
-}
-
-//---------------------------------------------------------------------------
-// Array::set
-//---------------------------------------------------------------------------
-void Array::set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value)
-{
-  m_data_impl->set(ima, position, value);
 }
 
 }
