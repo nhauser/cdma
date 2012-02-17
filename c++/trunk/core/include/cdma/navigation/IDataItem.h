@@ -332,13 +332,13 @@ public:
   ///
   virtual short readScalarShort() throw ( Exception ) = 0;
 
-  /// Get the value as a string for a scalar DataItem. May also be
-  /// one-dimensional of length 1. May also be one-dimensional of type CHAR,
-  /// which will be turned into a scalar String.
+  /// Get the value as a string. May also be one-dimensional of length 1.
+  /// May also be one-dimensional of type CHAR,
+  /// which will be turned into a single String.
   ///
   /// @return string object
   ///
-  virtual std::string readScalarString() throw ( Exception ) = 0;
+  virtual std::string readString() throw ( Exception ) = 0;
 
   /// Remove an Attribute : uses the attribute hashCode to find it.
   ///
