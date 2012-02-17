@@ -115,12 +115,12 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int>
   for( int i = 0; i < rank; i++ )
   {
     iStart[i] = origin[i];
-    iShape[i]  = shape[i];
+    iShape[i] = shape[i];
   }
   cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
   //## Should pass the shared pointer rather than a pointer to the referenced object
-  cdma::ArrayPtr array = new cdma::Array( *(static_cast<Array*>(m_array_ptr.get())), view );
-  return array;
+  cdma::ArrayPtr array_ptr = new cdma::Array( *m_array_ptr, view );
+  return array_ptr;
 }
 
 //---------------------------------------------------------------------------
@@ -248,7 +248,7 @@ cdma::IDataItemPtr SimpleDataItem::getSlice(int dim, int value) throw ( cdma::Ex
 //---------------------------------------------------------------------------
 const std::type_info& SimpleDataItem::getType()
 {
-  return m_array_ptr->getElementType();
+  return m_array_ptr->getValueType();
 }
 
 //---------------------------------------------------------------------------
@@ -333,7 +333,7 @@ bool SimpleDataItem::isUnsigned()
 //---------------------------------------------------------------------------
 unsigned char SimpleDataItem::readScalarByte() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarByte");
+  return m_array_ptr->getValue<unsigned char>();
 }
 
 //---------------------------------------------------------------------------
@@ -341,7 +341,7 @@ unsigned char SimpleDataItem::readScalarByte() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 double SimpleDataItem::readScalarDouble() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarDouble");
+  return m_array_ptr->getValue<double>();
 }
 
 //---------------------------------------------------------------------------
@@ -349,7 +349,7 @@ double SimpleDataItem::readScalarDouble() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 float SimpleDataItem::readScalarFloat() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarFloat");
+  return m_array_ptr->getValue<float>();
 }
 
 //---------------------------------------------------------------------------
@@ -357,7 +357,7 @@ float SimpleDataItem::readScalarFloat() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 int SimpleDataItem::readScalarInt() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarInt");
+  return m_array_ptr->getValue<int>();
 }
 
 //---------------------------------------------------------------------------
@@ -365,7 +365,7 @@ int SimpleDataItem::readScalarInt() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 long SimpleDataItem::readScalarLong() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarLong");
+  return m_array_ptr->getValue<long>();
 }
 
 //---------------------------------------------------------------------------
@@ -373,13 +373,13 @@ long SimpleDataItem::readScalarLong() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 short SimpleDataItem::readScalarShort() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarShort");
+  return m_array_ptr->getValue<short>();
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::readScalarString
+// SimpleDataItem::readString
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::readScalarString() throw ( cdma::Exception )
+std::string SimpleDataItem::readString() throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarString");
 }
@@ -462,19 +462,11 @@ IDataItemPtr SimpleDataItem::clone()
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::addOneAttribute
+// SimpleDataItem::addAttribute
 //---------------------------------------------------------------------------
-void SimpleDataItem::addOneAttribute(const cdma::IAttributePtr&)
+cdma::IAttributePtr SimpleDataItem::addAttribute(const std::string&, yat::Any&)
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::addOneAttribute");
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::addStringAttribute
-//---------------------------------------------------------------------------
-void SimpleDataItem::addStringAttribute(const std::string&, const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::addStringAttribute");
+  THROW_NOT_IMPLEMENTED("SimpleDataItem::addAttribute");
 }
 
 //---------------------------------------------------------------------------
@@ -496,7 +488,7 @@ std::list<yat::SharedPtr<cdma::IAttribute, yat::Mutex> > SimpleDataItem::getAttr
 //---------------------------------------------------------------------------
 // SimpleDataItem::getLocation
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::getLocation()
+std::string SimpleDataItem::getLocation() const
 {
   return m_name;
 }
@@ -504,7 +496,7 @@ std::string SimpleDataItem::getLocation()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getName
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::getName()
+std::string SimpleDataItem::getName() const
 {
   return m_name;
 }
@@ -512,7 +504,7 @@ std::string SimpleDataItem::getName()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getShortName
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::getShortName()
+std::string SimpleDataItem::getShortName() const
 {
   return m_name;
 }
@@ -520,7 +512,7 @@ std::string SimpleDataItem::getShortName()
 //---------------------------------------------------------------------------
 // SimpleDataItem::hasAttribute
 //---------------------------------------------------------------------------
-bool SimpleDataItem::hasAttribute(const std::string&, const std::string&)
+bool SimpleDataItem::hasAttribute(const std::string&)
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::hasAttribute");
 }
