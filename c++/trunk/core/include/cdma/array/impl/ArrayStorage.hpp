@@ -28,7 +28,7 @@ namespace cdma
 template<typename T> DefaultArrayStorage<T>::~DefaultArrayStorage()
 {
     CDMA_FUNCTION_TRACE("DefaultArrayStorage::~DefaultArrayStorage");
-    delete m_data;
+    delete [] m_data;
 }
 
 //----------------------------------------------------------------------------
@@ -58,13 +58,12 @@ template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, std::
 }
 
 //----------------------------------------------------------------------------
-// DefaultArrayStorage<T>::set
+// DefaultArrayStorage<T>::get
 //----------------------------------------------------------------------------
-template<typename T> yat::Any& DefaultArrayStorage<T>::get( const cdma::ViewPtr& view, std::vector<int> position )
+template<typename T> void* DefaultArrayStorage<T>::getValue( const cdma::ViewPtr& view, std::vector<int> position )
 {
   long idx = view->getElementOffset(position);
-  m_current = m_data[idx];
-  return m_current;
+  return (void*)(&m_data[idx]);
 }
 
 //----------------------------------------------------------------------------
@@ -78,6 +77,15 @@ template<typename T> void DefaultArrayStorage<T>::set(const cdma::ViewPtr& ima, 
 
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::set
+//----------------------------------------------------------------------------
+template<typename T> void DefaultArrayStorage<T>::setValue(const cdma::ViewPtr& ima, std::vector<int> position, void * value_ptr)
+{
+  memcpy(&m_data[ima->getElementOffset(position)], value_ptr, m_elem_size);
+  m_dirty = true;
+}
+
+//----------------------------------------------------------------------------
+// DefaultArrayStorage<T>::deepCopy
 //----------------------------------------------------------------------------
 template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
 {
@@ -144,24 +152,24 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
       memcpy( (void*) (data + startDst), (const void*) (m_data + startSrc), nbBytes );
 
       for( unsigned int i = rank - 1; i >= 0; i-- )
-	    {
-	      if( position[i] + 1 >= shape[i] && i > 0)
-	      {
-        	position[i] = 0;
+      {
+        if( position[i] + 1 >= shape[i] && i > 0)
+        {
+          position[i] = 0;
         }
         else
         {
-		      position[i]++;
-		      break;
+          position[i]++;
+          break;
         }
-	    }
+      }
       // Update next start step in destination storage
-	    startDst += length;
-	  }
-	  else
-	  {
-	    break;
-	  }
+      startDst += length;
+    }
+    else
+    {
+      break;
+    }
     
     current++;
   }
