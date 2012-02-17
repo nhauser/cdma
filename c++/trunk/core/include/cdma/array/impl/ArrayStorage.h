@@ -40,24 +40,26 @@ public:
   
   virtual ~DefaultArrayStorage();
 
-  //@{ IArrayStorage interface
-  void set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value);
+  //@{ IArrayStorage
 
-  const std::type_info& getType()            { return typeid(*m_data); };
-  void*                 getStorage()         { return (void*) m_data; }
-  bool                  dirty()              { return m_dirty; };
-  void                  setDirty(bool dirty) { m_dirty = dirty; };
-  yat::Any&             get( const cdma::ViewPtr& view, std::vector<int> position );
-  
-  IArrayStoragePtr      deepCopy();
-  IArrayStoragePtr      deepCopy(ViewPtr view);
-  
+    void set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value);
+    void setValue(const cdma::ViewPtr& ima, std::vector<int> position, void* value_ptr);
+    const std::type_info& getType()            { return typeid(*m_data); };
+    void*                 getStorage()         { return (void*) m_data; }
+    bool                  dirty()              { return m_dirty; };
+    void                  setDirty(bool dirty) { m_dirty = dirty; };
+    void*                 getValue( const cdma::ViewPtr& view, std::vector<int> position );
+    IArrayStoragePtr      deepCopy();
+    IArrayStoragePtr      deepCopy(ViewPtr view);
+
   //@}
+
   //@{ IObject interface
-  CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-  std::string getFactoryName() const { return m_factory; };
-  //@}
 
+    CDMAType::ModelType getModelType() const { return CDMAType::Other; };
+    std::string getFactoryName() const { return m_factory; };
+
+  //@}
 
   private:
   T*          m_data;          // pointor wearing physically the data
