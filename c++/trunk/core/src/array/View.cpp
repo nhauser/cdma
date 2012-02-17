@@ -24,6 +24,18 @@
 
 namespace cdma
 {
+
+//---------------------------------------------------------------------------
+// View::View
+//---------------------------------------------------------------------------
+View::View()
+{
+  m_rank = 0;
+  m_upToDate = false;
+  m_lastIndex = 0;
+
+}
+
 //---------------------------------------------------------------------------
 // View::View
 //---------------------------------------------------------------------------
@@ -105,7 +117,8 @@ View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stri
 //  CDMA_FUNCTION_TRACE("View::View");
   m_rank = shape.size();
   m_ranges.resize(m_rank);
-  int delta;
+
+  int delta = 0;
   
   // Create new ranges
   for( int i = m_rank - 1; i >= 0; i-- )
@@ -230,16 +243,16 @@ std::vector<int> View::getStride()
 //---------------------------------------------------------------------------
 long View::getElementOffset(std::vector<int> position)
 {
-
   long value = 0;
-  int j = 0;
+
   try 
   {
+    int j = 0;
     // For each range additionate offset matching the position
     for( int i = 0; i < m_ranges.size(); i++ )
     {
       // If range not reduced calculate offset of the corresponding position
-      if( ! m_ranges[i].reduce() )
+      if( ! m_ranges[i].reduce() && position.size() > 0 )
       {
         value += (m_ranges[i]).element( position[j] );
         j++;
@@ -257,7 +270,8 @@ long View::getElementOffset(std::vector<int> position)
       std::vector<int> projection = getPositionElement( value );
       value = m_compound->getElementOffset( projection );
     }
-  } catch (cdma::Exception& e)
+  } 
+  catch (cdma::Exception& e)
   {
     // An error occured returns -1 that is an invalid result
     value = -1;
@@ -521,14 +535,14 @@ void View::reduce(int dim) throw ( cdma::Exception )
     int range = -1;
     for(int j = 0; j < m_ranges.size(); j++)
     {
-	    if( ! m_ranges[j].reduce() )
-	    {
-		    if( i == dim ) 
-		    {
-			    range = i;
-		    }
-		    i++;
-	    }
+      if( ! m_ranges[j].reduce() )
+      {
+        if( i == dim ) 
+        {
+          range = i;
+        }
+        i++;
+      }
     }
 
     if( (dim < 0) || (dim >= m_rank) ) 
