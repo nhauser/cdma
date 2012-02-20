@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.gumtree.data.engine.jnexus.navigation.NexusDataItem;
-import org.gumtree.data.engine.jnexus.navigation.NexusDimension;
+import org.gumtree.data.engine.nexus.navigation.NexusDataItem;
+import org.gumtree.data.engine.nexus.navigation.NexusDimension;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
@@ -24,7 +24,7 @@ import org.gumtree.data.soleil.array.NxsIndex;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
-import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus.DataItem;
 
 public final class NxsDataItem implements IDataItem, Cloneable {
 
@@ -131,6 +131,13 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
         IArray array = getData().copy(false);
         IIndex index = array.getIndex();
+        int str      = 1;
+        long[] stride = new long[array.getRank()];
+        for( int i = array.getRank() - 1; i >= 0; i-- ) {
+        	stride[i] = str;
+        	str *= shape[i];
+        }
+        index.setStride(stride);
         index.setShape(shape);
         index.setOrigin(origin);
         array.setIndex(index);
@@ -576,10 +583,10 @@ public final class NxsDataItem implements IDataItem, Cloneable {
             IAttribute attr = item.getAttribute("axis");
             if( attr != null ) {
                 if( "*".equals(dimString) ) {
-                    setDimension(new NexusDimension(item), attr.getNumericValue().intValue() );
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue() );
                 }
                 else if( dimNames.contains(attr.getName()) ) {
-                    setDimension(new NexusDimension(item), attr.getNumericValue().intValue() );
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue() );
                 }
             }
         }

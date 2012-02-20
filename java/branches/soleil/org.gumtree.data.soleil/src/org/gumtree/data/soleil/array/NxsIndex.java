@@ -3,7 +3,7 @@ package org.gumtree.data.soleil.array;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gumtree.data.engine.jnexus.array.NexusIndex;
+import org.gumtree.data.engine.nexus.array.NexusIndex;
 import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
@@ -23,12 +23,14 @@ public final class NxsIndex implements IIndex, Cloneable {
 	 */
 	public NxsIndex(int matrixRank, int[] shape, int[] start, int[] length) {
 		mIndexArrayData = new NexusIndex(
+				NxsFactory.NAME, 
 				java.util.Arrays.copyOfRange(shape, 0, matrixRank),
 				java.util.Arrays.copyOfRange(start, 0, matrixRank),
 				java.util.Arrays.copyOfRange(length, 0, matrixRank)
 		   );
 		
 		mIndexStorage = new NexusIndex(
+				NxsFactory.NAME, 
 				java.util.Arrays.copyOfRange(shape, matrixRank, shape.length),
 				java.util.Arrays.copyOfRange(start, matrixRank, start.length),
 				java.util.Arrays.copyOfRange(length, matrixRank, length.length)
@@ -45,13 +47,13 @@ public final class NxsIndex implements IIndex, Cloneable {
     }
 	
 	public NxsIndex(int[] storage) {
-		mIndexArrayData = new NexusIndex( new int[] {});
-		mIndexStorage   = new NexusIndex(storage.clone());
+		mIndexArrayData = new NexusIndex( NxsFactory.NAME, new int[] {} );
+		mIndexStorage   = new NexusIndex( NxsFactory.NAME, storage.clone() );
 	}
 	
 	public NxsIndex(int[] matrix, int[] storage) {
-		mIndexArrayData = new NexusIndex(matrix.clone());
-		mIndexStorage   = new NexusIndex(storage.clone());
+		mIndexArrayData = new NexusIndex( NxsFactory.NAME, matrix.clone() );
+		mIndexStorage   = new NexusIndex( NxsFactory.NAME, storage.clone() );
 	}
 	
 	public NxsIndex(int matrixRank, IIndex index) {

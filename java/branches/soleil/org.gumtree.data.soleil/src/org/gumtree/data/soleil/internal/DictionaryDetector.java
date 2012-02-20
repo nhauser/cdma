@@ -1,16 +1,54 @@
 package org.gumtree.data.soleil.internal;
 
+
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.nexusformat.NexusException;
-
+/*
 import fr.soleil.nexus4tango.NexusFileWriter;
 import fr.soleil.nexus4tango.NexusNode;
 import fr.soleil.nexus4tango.PathData;
 import fr.soleil.nexus4tango.PathGroup;
 import fr.soleil.nexus4tango.PathNexus;
+*/
 
 public final class DictionaryDetector {
+/*	private NxsDataset mDataset;
+	private String     mBeamline;
+	private String     mModel;
+	private boolean    mDetected;
+	
+	public DictionaryDetector( NxsDataset dataset ) {
+		mDataset  = dataset;
+		mBeamline = "UNKNOWN";
+		mModel    = "UNKNOWN";
+		mDetected = false;
+	}
+	
+	public String getDictionaryName() {
+		if( ! mDetected ) {
+			detectBeamline();
+			detectModel();
+			mDetected = true;
+		}
+		
+		return mBeamline + "_" + mModel + ".xml";
+	}
+
+	private void detectBeamline() {
+		
+	}
+	
+	private void detectModel() {
+		
+	}
+	*/
+	
+	
+	
+	
+	
+	/*
 	static final String SEPARATOR = "_";
 	static final String EXTENSION = ".xml";
 	private NxsDataset mDataset;
@@ -206,4 +244,5 @@ public final class DictionaryDetector {
 		
 		return model;
 	}
+	*/
 }

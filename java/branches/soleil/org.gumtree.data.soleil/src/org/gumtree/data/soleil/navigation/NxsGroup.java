@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
-import org.gumtree.data.engine.jnexus.navigation.NexusDataItem;
-import org.gumtree.data.engine.jnexus.navigation.NexusGroup;
+import org.gumtree.data.engine.nexus.navigation.NexusDataItem;
+import org.gumtree.data.engine.nexus.navigation.NexusGroup;
 import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 import org.gumtree.data.interfaces.IAttribute;
@@ -25,8 +25,8 @@ import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.utils.Utilities.ModelType;
 
-import fr.soleil.nexus4tango.NexusNode;
-import fr.soleil.nexus4tango.PathNexus;
+import fr.soleil.nexus.NexusNode;
+import fr.soleil.nexus.PathNexus;
 
 public final class NxsGroup implements IGroup, Cloneable {
 	// ****************************************************

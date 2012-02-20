@@ -2,8 +2,8 @@ package org.gumtree.data.soleil.utils;
 
 import java.util.List;
 
-import org.gumtree.data.engine.jnexus.array.NexusIndex;
-import org.gumtree.data.engine.jnexus.utils.NexusArrayUtils;
+import org.gumtree.data.engine.nexus.array.NexusIndex;
+import org.gumtree.data.engine.nexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
