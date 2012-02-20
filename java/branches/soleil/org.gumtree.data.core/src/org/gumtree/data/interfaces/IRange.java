@@ -18,7 +18,7 @@ import org.gumtree.data.exception.InvalidRangeException;
  * 
  * @author nxi Created on 24/03/2009
  */
-public interface IRange extends IModelObject {
+public interface IRange {
 
 	/**
 	 * Create a new Range by composing a Range that is relative to this Range.

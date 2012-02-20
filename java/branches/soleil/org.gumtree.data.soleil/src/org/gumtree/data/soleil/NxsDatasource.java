@@ -1,28 +1,38 @@
 package org.gumtree.data.soleil;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 
 import org.gumtree.data.IDatasource;
-import org.gumtree.data.engine.jnexus.NexusDatasource.NeXusFilter;
+import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.nexusformat.NexusException;
 
-import fr.soleil.nexus4tango.DataItem;
-import fr.soleil.nexus4tango.NexusFileReader;
-import fr.soleil.nexus4tango.NexusNode;
-import fr.soleil.nexus4tango.PathGroup;
-import fr.soleil.nexus4tango.PathNexus;
+import fr.soleil.nexus.DataItem;
+import fr.soleil.nexus.NexusFileReader;
+import fr.soleil.nexus.NexusNode;
+import fr.soleil.nexus.PathGroup;
+import fr.soleil.nexus.PathNexus;
 
 public final class NxsDatasource implements IDatasource {
 	private static final int EXTENSION  = 4;
 	private static final String CREATOR = "Synchrotron SOLEIL";
 	private static final String[] BEAMLINES = new String[] {"CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
 	 
+	public static final class NeXusFilter implements FilenameFilter {
+		public static final int    EXTENSION_LENGTH = 4;
+		public static final String EXTENSION = ".nxs";
+		
+	    public boolean accept(File dir, String name) {
+	        return (name.endsWith(NeXusFilter.EXTENSION));
+	    }
+	}
+	
 	@Override
 	public String getFactoryName() {
 		return NxsFactory.NAME;
@@ -30,6 +40,8 @@ public final class NxsDatasource implements IDatasource {
 
 	@Override
 	public boolean isReadable(URI target) {
+		if (true) 
+			return false;
 		File file      = new File(target);
 		String name    = file.getName();
 		int length     = name.length();
@@ -51,54 +63,56 @@ public final class NxsDatasource implements IDatasource {
 	@Override
 	public boolean isProducer(URI target) {
 		boolean result = false;
-
-		
-		if( isReadable(target) ) {
-			File file = new File(target);
-			IDataset dataset = null;
-			try {
-				// instantiate
-				dataset = NxsDataset.instanciate( file.getAbsolutePath() );
-				
-				// open file
-				dataset.open();
-				
-				// seek at root for 'creator' attribute
-				IGroup group = dataset.getRootGroup();
-				if( group.hasAttribute("creator", CREATOR) ) {
-					result = true;
-				}
-				else {
-					group = group.getGroup("<NXentry>");
-					if( group != null ) {
-						group = group.getGroup("<NXinstrument>");
-					}
+		//if( config != null ) {
+			if( isReadable(target) ) {
+				File file = new File(target);
+				IDataset dataset = null;
+				try {
+					// instantiate
+					dataset = NxsDataset.instanciate( file );
 					
-					if( group != null ) {
-						String node = group.getShortName();
+					// open file
+					dataset.open();
+					
+					// seek at root for 'creator' attribute
+					IGroup group = dataset.getRootGroup();
+					if( group.hasAttribute("creator", CREATOR) ) {
+						result = true;
+					}
+					else {
+						group = group.getGroup("<NXentry>");
+						if( group != null ) {
+							group = group.getGroup("<NXinstrument>");
+						}
 						
-						for( String name : BEAMLINES ) {
-							if( node.equalsIgnoreCase(name) ) {
-								result = true;
-								break;
+						if( group != null ) {
+							String node = group.getShortName();
+							
+							for( String name : BEAMLINES ) {
+								if( node.equalsIgnoreCase(name) ) {
+									result = true;
+									break;
+								}
 							}
 						}
 					}
-				}
-				
-				// close file
-				dataset.close();
-				
-			} catch (IOException e) {
-				// close file
-				if( dataset != null ) {
-					try {
-						dataset.close();
-					} catch (IOException e1) {
+					
+					// close file
+					dataset.close();
+					
+				} catch (IOException e) {
+					// close file
+					if( dataset != null ) {
+						try {
+							dataset.close();
+						} catch (IOException e1) {
+						}
 					}
+				} catch (FileAccessException e) {
+					e.printStackTrace();
 				}
 			}
-		}
+		//}
 		return result;
 	}
 

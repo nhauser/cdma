@@ -14,7 +14,7 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.dictionary.impl.Key;
 import org.gumtree.data.dictionary.impl.Path;
 import org.gumtree.data.dictionary.impl.PathParameter;
-import org.gumtree.data.engine.jnexus.navigation.NexusAttribute;
+import org.gumtree.data.engine.nexus.navigation.NexusAttribute;
 import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.interfaces.IArray;
@@ -28,6 +28,7 @@ import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.array.NxsArray;
 import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
 import org.gumtree.data.soleil.dictionary.NxsPathParamResolver;
+import org.gumtree.data.soleil.internal.ConfigManager;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.gumtree.data.soleil.navigation.NxsGroup;
 import org.gumtree.data.soleil.utils.NxsArrayMath;
@@ -35,13 +36,14 @@ import org.gumtree.data.soleil.utils.NxsArrayUtils;
 import org.gumtree.data.utils.IArrayUtils;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
-import fr.soleil.nexus4tango.DataItem;
-import fr.soleil.nexus4tango.PathGroup;
-import fr.soleil.nexus4tango.PathNexus;
+import fr.soleil.nexus.DataItem;
+import fr.soleil.nexus.PathGroup;
+import fr.soleil.nexus.PathNexus;
 
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
+    private static ConfigManager configs;
     public static final String NAME = "org.gumtree.data.soleil.NxsFactory";
     public static final String LABEL = "SOLEIL's NeXus plug-in";
     public static final String DEBUG_INF = "CDMA_DEBUG_NXS";
@@ -56,6 +58,12 @@ public final class NxsFactory implements IFactory {
             if( factory == null ) {
                 factory  = new NxsFactory();
                 detector = new NxsDatasource();
+/*                try {
+                configs  = ConfigManager.getInstance();
+                } catch( FileAccessException e) {
+                	e.printStackTrace();
+                }
+*/                
             }
         }
         return factory;
@@ -118,7 +126,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
 	public IAttribute createAttribute(String name, Object value) {
-		return new NexusAttribute(name, value);
+		return new NexusAttribute(NAME ,name, value);
 	}
 
     @Override
@@ -128,7 +136,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-		return new NxsDataset(new File(uri));
+		return NxsDataset.instanciate(new File(uri.getPath()));
 	}
 
     @Override

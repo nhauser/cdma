@@ -1,9 +1,9 @@
 package org.gumtree.data.soleil.array;
 
-import org.gumtree.data.engine.jnexus.array.NexusArray;
-import org.gumtree.data.engine.jnexus.array.NexusArrayIterator;
-import org.gumtree.data.engine.jnexus.array.NexusIndex;
-import org.gumtree.data.engine.jnexus.array.NexusSliceIterator;
+import org.gumtree.data.engine.nexus.array.NexusArray;
+import org.gumtree.data.engine.nexus.array.NexusArrayIterator;
+import org.gumtree.data.engine.nexus.array.NexusIndex;
+import org.gumtree.data.engine.nexus.array.NexusSliceIterator;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
@@ -15,7 +15,7 @@ import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.utils.IArrayUtils;
 
-import fr.soleil.nexus4tango.DataItem;
+import fr.soleil.nexus.DataItem;
 
 public final class NxsArray implements IArray {
 	private Object	   mData;         // It's an array of values
@@ -50,11 +50,11 @@ public final class NxsArray implements IArray {
 	}
 	
 	public NxsArray(DataItem item) {
-		this( new IArray[] { new NexusArray(item) });
+		this( new IArray[] { new NexusArray(NxsFactory.NAME, item) });
 	}
 	
 	public NxsArray(Object oArray, int[] iShape) {
-        this( new IArray[] { new NexusArray(oArray, iShape) });
+        this( new IArray[] { new NexusArray(NxsFactory.NAME, oArray, iShape) });
 	}
 
     @Override
@@ -140,7 +140,12 @@ public final class NxsArray implements IArray {
 
 	@Override
 	public IArrayIterator getIterator() {
-		return (IArrayIterator) new NexusArrayIterator(this, mIndex.clone());
+		NxsIndex index = (NxsIndex) mIndex.clone();
+		NexusIndex storage = index.getIndexStorage();
+		storage.unReduce();
+		storage.setOrigin( new int[storage.getRank()] );
+		storage.reduce();
+		return new NexusArrayIterator(this, index );
 	}
 
 	@Override
@@ -151,8 +156,10 @@ public final class NxsArray implements IArray {
 	@Override
 	public IArrayIterator getRegionIterator(int[] reference, int[] range)
 			throws InvalidRangeException {
+		//TODO !!!!! changement ici
 		int[] shape = mIndex.getShape();
-	    IIndex index = new NexusIndex( shape, reference, range );
+		IIndex index = new NexusIndex( NxsFactory.NAME, shape, reference, range );
+	    //IIndex index = new NexusIndex( NxsFactory.NAME, range, reference, range );
         return new NexusArrayIterator(this, index);
 	}
 

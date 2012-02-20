@@ -12,8 +12,8 @@ import org.gumtree.data.soleil.navigation.NxsDataItem;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.gumtree.data.soleil.navigation.NxsGroup;
 
-import fr.soleil.nexus4tango.NexusNode;
-import fr.soleil.nexus4tango.PathNexus;
+import fr.soleil.nexus.NexusNode;
+import fr.soleil.nexus.PathNexus;
 
 public final class AttributeFilter {
 	/**

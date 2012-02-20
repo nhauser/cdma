@@ -10,7 +10,7 @@ import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
-import org.gumtree.data.soleil.internal.DictionaryDetector;
+import org.gumtree.data.soleil.internal.ConfigDataset;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 
 public class NxsLogicalGroup extends LogicalGroup {
@@ -57,10 +57,31 @@ public class NxsLogicalGroup extends LogicalGroup {
 	 * @throws FileAccessException 
 	 */
 	protected String detectDictionaryFile() throws FileAccessException {
+		//TODO
+		//ConfigManager config = ConfigManager.getInstance();
+		NxsDataset dataset = (NxsDataset) getDataset();
+		ConfigDataset conf = dataset.getConfiguration();
+		String beamline = conf.getParameter("BEAMLINE", dataset);
+		String model = conf.getParameter("MODEL", dataset);
+		if( beamline != null ) {
+			beamline = beamline.toLowerCase();
+		}
+		else {
+			beamline = "UNKNOWN";
+		}
+		if( model != null ) {
+			model = model.toLowerCase();
+		}
+		else {
+			model = "UNKNOWN";
+		}
+		return beamline + "_" + model + ".xml";
+		
+		/*
 		String mapFile;
 		DictionaryDetector detector = new DictionaryDetector( (NxsDataset) super.getDataset() );
 		mapFile = detector.getDictionaryName();
 		return mapFile;
+		*/
 	}
-	
 }
