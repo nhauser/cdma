@@ -40,8 +40,6 @@ public final class NxsDatasource implements IDatasource {
 
 	@Override
 	public boolean isReadable(URI target) {
-		if (true) 
-			return false;
 		File file      = new File(target);
 		String name    = file.getName();
 		int length     = name.length();

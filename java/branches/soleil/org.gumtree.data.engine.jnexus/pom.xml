@@ -32,16 +32,6 @@
 	</dependencies>
 	<build>
 		<sourceDirectory>src/</sourceDirectory>
-        <resources>
-            <resource>
-                <directory>META-INF</directory>
-                <targetPath>META-INF</targetPath>
-            </resource>
-            <resource>
-                <directory>OSGI-INF</directory>
-                <targetPath>OSGI-INF</targetPath>
-            </resource>
-        </resources>
 	</build>
 
 	<developers>

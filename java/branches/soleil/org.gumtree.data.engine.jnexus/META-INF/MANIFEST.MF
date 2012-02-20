@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.gumtree.data.CDMA.engine.jnexus
 Bundle-Version: 2.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: fr.soleil.nexus4tango,
- org.gumtree.data,
+Import-Package: org.gumtree.data,
  org.gumtree.data.exception,
  org.gumtree.data.interfaces,
  org.gumtree.data.math,
@@ -15,8 +14,9 @@ Import-Package: fr.soleil.nexus4tango,
  org.jdom.filter,
  org.jdom.input,
  org.nexusformat
-Service-Component: OSGI-INF/factory.xml
-Export-Package: org.gumtree.data.engine.jnexus
+Export-Package: fr.soleil.nexus,
+ org.gumtree.data.engine.nexus.array,
+ org.gumtree.data.engine.nexus.navigation,
+ org.gumtree.data.engine.nexus.utils
 Eclipse-BundleShape: jar
-Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
- fr.soleil.nexus4tango;visibility:=reexport
+Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport
