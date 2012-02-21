@@ -14,6 +14,7 @@
 // CDMA core
 #include <cdma/IObject.h>
 #include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/Context.h>
 #include <cdma/dictionary/PluginMethods.h>
 #include <cdma/dictionary/SimpleDataItem.h>
 

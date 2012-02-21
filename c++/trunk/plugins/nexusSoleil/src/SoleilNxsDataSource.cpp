@@ -114,9 +114,9 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
 //----------------------------------------------------------------------------
 // SoleilNxsDataSource::isExperiment
 //----------------------------------------------------------------------------
-bool SoleilNxsDataSource::isExperiment(const yat::URI& destination) const
+bool SoleilNxsDataSource::isExperiment(const yat::URI&) const
 {
-  bool result;
+  bool result=true;
   return result;
 }
 
