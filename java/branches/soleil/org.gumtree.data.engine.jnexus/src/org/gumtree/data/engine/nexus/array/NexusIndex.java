@@ -86,7 +86,7 @@ public final class NexusIndex implements IIndex, Cloneable {
             }
         } catch (InvalidRangeException e) {
             value = -1;
-        }        
+        }
         return value;
 	}
 

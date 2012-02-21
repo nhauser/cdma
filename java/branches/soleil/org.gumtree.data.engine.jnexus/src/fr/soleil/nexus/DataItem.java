@@ -33,6 +33,9 @@ public class DataItem implements Cloneable
 	private String    mNodeName;  // DataItem 's node name
 	private boolean   mSingleRaw; // Is the data stored in memory a single raw
 	private PathData  mPath;      // Path were the DataItem has been READ (not used when writing)
+	private int     mPrevSlabStart;
+	private int     mPrevSlabLength;
+	private SoftReference<Object>  mPrevSlab;
 	
 	private HashMap<String, Data<?> >	mAttribs;  // Map containing all node's attributes having name as key associated to value
 	
@@ -109,29 +112,6 @@ public class DataItem implements Cloneable
 	public Object getData()
 	{
 		return getData(mStart, mDimData);
-/*
-		Object result = null;
-		if( mData == null )
-		{
-			loadData();
-			result = ((SoftReference<Object>) mData).get();
-		}
-		else if( mData instanceof SoftReference )
-		{
-			Object content = ((SoftReference<Object>) mData).get();
-			if( content == null )
-			{
-				loadData();
-				content = ((SoftReference<Object>) mData).get();
-			}
-			result = content;
-		}
-		else
-		{
-			result = mData;
-		}
-		
-*/
 	}
 	
 	// Generic attribute accessors
@@ -321,7 +301,6 @@ public class DataItem implements Cloneable
 	@SuppressWarnings("unchecked")
 	public Object getData(int[] pos, int[] shape) {
 		// save current position and shape
-//		boolean newSlab = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(mStart, pos));
 		boolean reload = !alreadyLoaded(pos, shape);
 		Object data = getRawData();
 		if( reload || data == null ) {
@@ -329,8 +308,10 @@ public class DataItem implements Cloneable
 			mDimData = shape;
 			loadData();
 			data = ((SoftReference<Object>) mData).get();
+			mPrevSlabStart = -1; 
+			mPrevSlabLength = -1;
+			mPrevSlab = null;
 		}
-		
 		boolean slabData = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(mStart, pos));
 		if( slabData ) {
 			int start  = 0;
@@ -341,8 +322,15 @@ public class DataItem implements Cloneable
 				length *= shape[i];
 				stride *= shape[i];
 			}
-			
-			data = copy( data, start, length);
+			if( mPrevSlabStart != start || mPrevSlabLength != length || mPrevSlab.get() == null ) {
+				data = copy( data, start, length);
+				mPrevSlabStart = start; 
+				mPrevSlabLength = length;
+				mPrevSlab = new SoftReference<Object>(data);
+			}
+			else {
+				data = mPrevSlab.get();
+			}
 		}
 		
 		// restore previous position and shape
@@ -444,7 +432,6 @@ public class DataItem implements Cloneable
 				}
 			}
 		}		  
-		
 		return result;
 	}
 	
@@ -468,6 +455,7 @@ public class DataItem implements Cloneable
 	}
 	
 	private Object copy( Object data, int start, int length ) {
+		//System.out.println("copy from: " + start + " to: " + (start + length) );
 		Object result = null;
 		switch( mType )
 		{
@@ -501,7 +489,6 @@ public class DataItem implements Cloneable
 				break;
 
 		}
-		
 		return result;
 	}
 }

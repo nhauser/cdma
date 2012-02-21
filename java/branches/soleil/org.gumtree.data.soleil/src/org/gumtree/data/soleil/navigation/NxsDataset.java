@@ -71,10 +71,6 @@ public final class NxsDataset implements IDataset {
 		return result;
 	}
 	
-	public ConfigDataset getConfig() {
-		return mConfig;
-	}
-	
 	@Override
 	public String getFactoryName() {
 		return NxsFactory.NAME;

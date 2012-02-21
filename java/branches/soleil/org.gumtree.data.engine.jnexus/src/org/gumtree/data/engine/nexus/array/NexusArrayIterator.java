@@ -41,12 +41,14 @@ public final class NexusArrayIterator implements IArrayIterator {
 
 	@Override
 	public boolean getBooleanNext() {
-		return ((Boolean) next());
+		incrementIndex(mIndex);
+    	return mArray.getBoolean(mIndex);
 	}
 
 	@Override
 	public byte getByteNext() {
-        return ((Byte) next()).byteValue();
+		incrementIndex(mIndex);
+    	return mArray.getByte(mIndex);
 	}
 
 	@Override
@@ -61,22 +63,26 @@ public final class NexusArrayIterator implements IArrayIterator {
 
 	@Override
 	public double getDoubleNext() {
-		return ((Number) next()).doubleValue();
+		incrementIndex(mIndex);
+    	return mArray.getDouble(mIndex);
 	}
 
 	@Override
 	public float getFloatNext()	{
-		return ((Number) next()).floatValue();
+		incrementIndex(mIndex);
+    	return mArray.getFloat(mIndex);
 	}
 
 	@Override
 	public int getIntNext() {
-		return ((Number) next()).intValue();
+		incrementIndex(mIndex);
+    	return mArray.getInt(mIndex);
 	}
 
 	@Override
 	public long getLongNext() {
-		return ((Number) next()).longValue();
+		incrementIndex(mIndex);
+    	return mArray.getLong(mIndex);
 	}
 
 	@Override
@@ -86,7 +92,8 @@ public final class NexusArrayIterator implements IArrayIterator {
 
 	@Override
 	public short getShortNext() {
-		return ((Number) next()).shortValue();
+		incrementIndex(mIndex);
+    	return mArray.getShort(mIndex);
 	}
 
 	@Override
