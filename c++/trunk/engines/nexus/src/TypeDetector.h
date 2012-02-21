@@ -15,13 +15,13 @@ class TypeDetector
 {
 public:
   static const std::type_info& detectType( NexusDataType type );
-  static const NexusDataType&  detectType( const std::type_info& type);
-  template<typename T> static const NexusDataType& detectType( T* type );
+  static NexusDataType  detectType( const std::type_info& type);
+  template<typename T> static NexusDataType detectType( T* type );
   template<typename T> static T* allocate(NexusDataType type, unsigned int length);
 
 };
 
-template<typename T> const NexusDataType& TypeDetector::detectType( T* type )
+template<typename T> NexusDataType TypeDetector::detectType( T* type )
 {
   return detectType( typeid(*type) );
 }

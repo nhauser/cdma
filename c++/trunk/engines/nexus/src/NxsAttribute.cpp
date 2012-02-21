@@ -158,7 +158,7 @@ std::string NxsAttribute::toString()
 //---------------------------------------------------------------------------
 // NxsAttribute::setStringValue
 //---------------------------------------------------------------------------
-void NxsAttribute::setStringValue(std::string val)
+void NxsAttribute::setStringValue(const std::string&)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setStringValue");
 }
@@ -166,7 +166,7 @@ void NxsAttribute::setStringValue(std::string val)
 //---------------------------------------------------------------------------
 // NxsAttribute::setValue
 //---------------------------------------------------------------------------
-void NxsAttribute::setValue(cdma::Array& value)
+void NxsAttribute::setValue(const yat::Any&)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setValue");
 }
