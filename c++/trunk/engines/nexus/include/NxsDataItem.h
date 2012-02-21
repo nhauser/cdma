@@ -61,7 +61,7 @@ public:
 
   //@{ Constructors & Destructor
 
-    NxsDataItem(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file = true );
+    NxsDataItem(NxsDatasetWPtr dataset_wptr, const std::string& path);
     NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const std::string& name );
     NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path);
     ~NxsDataItem();

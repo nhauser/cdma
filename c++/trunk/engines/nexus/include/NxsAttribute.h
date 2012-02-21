@@ -41,6 +41,7 @@ private:
 public:
   NxsAttribute();
   NxsAttribute( NexusFilePtr file, NexusAttrInfo* info );
+
   //NxsAttribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
 
   /// Get the name of this Attribute. Attribute names are unique within a
@@ -118,13 +119,13 @@ public:
   ///
   /// @param val string object
   ///
-  void setStringValue(std::string val);
+  void setStringValue(const std::string& val);
 
   /// set the values from an Array.
   ///
   /// @param value Array object
   ///
-  void setValue(Array& value);
+  void setValue(const yat::Any& value);
 
   /// Retrieve entire value.
   ///

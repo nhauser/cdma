@@ -81,7 +81,7 @@ std::string NxsDimension::toString()
 //----------------------------------------------------------------------------
 // NxsDimension::compareTo
 //----------------------------------------------------------------------------
-int NxsDimension::compareTo(const cdma::IDimensionPtr& o)
+int NxsDimension::compareTo(const cdma::IDimensionPtr&)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::compareTo");
 }
@@ -89,14 +89,14 @@ int NxsDimension::compareTo(const cdma::IDimensionPtr& o)
 //----------------------------------------------------------------------------
 // NxsDimension::writeCDL
 //----------------------------------------------------------------------------
-std::string NxsDimension::writeCDL(bool strict)
+std::string NxsDimension::writeCDL(bool /*strict*/)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::writeCDL");
 }
 //----------------------------------------------------------------------------
 // NxsDimension::setUnlimited
 //----------------------------------------------------------------------------
-void NxsDimension::setUnlimited(bool b)
+void NxsDimension::setUnlimited(bool)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setUnlimited");
 }
@@ -104,7 +104,7 @@ void NxsDimension::setUnlimited(bool b)
 //----------------------------------------------------------------------------
 // NxsDimension::setVariableLength
 //----------------------------------------------------------------------------
-void NxsDimension::setVariableLength(bool b)
+void NxsDimension::setVariableLength(bool)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setVariableLength");
 }
@@ -112,7 +112,7 @@ void NxsDimension::setVariableLength(bool b)
 //----------------------------------------------------------------------------
 // NxsDimension::setShared
 //----------------------------------------------------------------------------
-void NxsDimension::setShared(bool b)
+void NxsDimension::setShared(bool)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setShared");
 }
@@ -120,7 +120,7 @@ void NxsDimension::setShared(bool b)
 //----------------------------------------------------------------------------
 // NxsDimension::setLength
 //----------------------------------------------------------------------------
-void NxsDimension::setLength(int n)
+void NxsDimension::setLength(int)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setLength");
 }
@@ -128,7 +128,7 @@ void NxsDimension::setLength(int n)
 //----------------------------------------------------------------------------
 // NxsDimension::setName
 //----------------------------------------------------------------------------
-void NxsDimension::setName(const std::string& name)
+void NxsDimension::setName(const std::string&)
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setName");
 }
@@ -136,7 +136,7 @@ void NxsDimension::setName(const std::string& name)
 //----------------------------------------------------------------------------
 // NxsDimension::setCoordinateVariable
 //----------------------------------------------------------------------------
-void NxsDimension::setCoordinateVariable(const cdma::ArrayPtr& array) throw ( cdma::Exception )
+void NxsDimension::setCoordinateVariable(const cdma::ArrayPtr&) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("NxsDimension::setCoordinateVariable");
 }

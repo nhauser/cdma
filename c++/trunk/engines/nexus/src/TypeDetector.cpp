@@ -22,85 +22,84 @@
 namespace cdma
 {
   
-  //-----------------------------------------------------------------------------
-  // TypeDetector::detectType
-  //-----------------------------------------------------------------------------
-  const std::type_info& TypeDetector::detectType( NexusDataType type )
+//-----------------------------------------------------------------------------
+// TypeDetector::detectType
+//-----------------------------------------------------------------------------
+const std::type_info& TypeDetector::detectType( NexusDataType type )
+{
+  switch( type )
   {
-    switch( type )
-    {
-      case NX_INT16:
-        return typeid(short);
-        break;
-      case NX_UINT16:
-        return typeid(unsigned short);
-        break;
-      case NX_UINT32:
-        return typeid(unsigned long);
-        break;
-      case NX_INT32:
-        return typeid(long);
-        break;
-      case NX_FLOAT32:
-        return typeid(float);
-        break;
-      case NX_INT64:
-        return typeid(yat::int64);
-        break;
-      case NX_UINT64:
-        return typeid(unsigned long);
-        break;
-      case NX_FLOAT64:
-        return typeid(double);
-        break;
-      default:  // CHAR, NX_INT8, NX_UINT8
-        return typeid(char);
-    }
+    case NX_INT16:
+      return typeid(short);
+      break;
+    case NX_UINT16:
+      return typeid(unsigned short);
+      break;
+    case NX_UINT32:
+      return typeid(unsigned long);
+      break;
+    case NX_INT32:
+      return typeid(long);
+      break;
+    case NX_FLOAT32:
+      return typeid(float);
+      break;
+    case NX_INT64:
+      return typeid(yat::int64);
+      break;
+    case NX_UINT64:
+      return typeid(unsigned long);
+      break;
+    case NX_FLOAT64:
+      return typeid(double);
+      break;
+    default:  // CHAR, NX_INT8, NX_UINT8
+      return typeid(char);
   }
+}
 
-  //-----------------------------------------------------------------------------
-  // TypeDetector::detectType
-  //-----------------------------------------------------------------------------
-  const NexusDataType& TypeDetector::detectType( const std::type_info& type )
+//-----------------------------------------------------------------------------
+// TypeDetector::detectType
+//-----------------------------------------------------------------------------
+NexusDataType TypeDetector::detectType( const std::type_info& type )
+{
+  if( type == typeid( short ) )
   {
-    NexusDataType result;
-    if( type == typeid( short ) )
-    {
-      result = NX_INT16;
-    }
-    else if( type == typeid( unsigned short ) )
-    {
-      result = NX_UINT16;
-    }
-    else if( type == typeid( unsigned long ) )
-    {
-      result = NX_UINT32;
-    }
-    else if( type == typeid( long ) )
-    {
-      result = NX_INT32;
-    }
-    else if( type == typeid( float ) )
-    {
-      result = NX_FLOAT32;
-    }
-    else if( type == typeid( yat::int64 ) )
-    {
-      result = NX_INT64;
-    }
-    else if( type == typeid( yat::uint64 ) )
-    {
-      result = NX_INT64;
-    }
-    else if( type == typeid( double ) )
-    {
-      result = NX_FLOAT64;
-    }
-    else
-    {
-      result = NX_CHAR;
-    }
-    return result;
+    return NX_INT16;
   }
+  else if( type == typeid( unsigned short ) )
+  {
+    return NX_UINT16;
+  }
+  else if( type == typeid( unsigned long ) )
+  {
+    return NX_UINT32;
+  }
+  else if( type == typeid( long ) )
+  {
+    return NX_INT32;
+  }
+  else if( type == typeid( float ) )
+  {
+    return NX_FLOAT32;
+  }
+  else if( type == typeid( yat::int64 ) )
+  {
+    return NX_INT64;
+  }
+  else if( type == typeid( yat::uint64 ) )
+  {
+    return NX_INT64;
+  }
+  else if( type == typeid( double ) )
+  {
+    return NX_FLOAT64;
+  }
+  else
+  {
+    return NX_CHAR;
+  }
+  return NX_NONE;
+}
   
 } // namespace
