@@ -23,6 +23,7 @@
 // CDMA Core
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
+#include <cdma/navigation/IDataset.h>
 #include <cdma/array/Array.h>
 
 namespace cdma

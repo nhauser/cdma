@@ -107,7 +107,7 @@ std::vector<int> SliceIterator::getSliceShape() throw ( cdma::Exception )
   int firsDim = m_array->getRank() - m_dimension;
   
   // Remove all dimension corresponding to the slice's shape
-  for( unsigned int i = 0; i < m_dimension; i++ )
+  for( int i = 0; i < m_dimension; i++ )
   {
     result[i] = shape[firsDim - i];
   }
@@ -124,7 +124,7 @@ std::vector<int> SliceIterator::getPosition()
   std::vector<int> result( m_array->getRank() - m_dimension );
   
   // Remove all dimension corresponding to the slice's shape
-  for( unsigned int i = 0; i < m_array->getRank() - m_dimension; i++ )
+  for( int i = 0; i < (int)(m_array->getRank()) - m_dimension; i++ )
   {
     result[i] = position[i];
   }
@@ -143,11 +143,11 @@ SliceIterator& SliceIterator::operator++(void)
 //---------------------------------------------------------------------------
 // SliceIterator::operator++(int)
 //---------------------------------------------------------------------------
-SliceIterator& SliceIterator::operator++(int)
+SliceIterator SliceIterator::operator++(int)
 {
   SliceIterator iterator (*this);
   operator++();
-	return iterator;
+  return iterator;
 }
 
 //---------------------------------------------------------------------------
@@ -209,7 +209,7 @@ void SliceIterator::get()
   int rank = m_array->getRank();
 
   // Reshape useless dimensions
-  for( unsigned int i = 0; i < rank - m_dimension; i++ )
+  for( int i = 0; i < rank - m_dimension; i++ )
   {
     shape[i] = 1;
   }

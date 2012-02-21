@@ -114,14 +114,16 @@ public:
   ///
   /// @param val string object
   ///
-  virtual void setStringValue(std::string val) = 0;
+  virtual void setStringValue(const std::string& val) = 0;
 
   /// set the values from an Array.
   ///
   /// @param value IArray object
   ///
-  virtual void setValue(Array& value) = 0;
+  virtual void setValue(const yat::Any& value) = 0;
 };
+
+DECLARE_SHARED_PTR(IAttribute);
 
 } //namespace CDMACore
 #endif //__CDMA_IATTRIBUTE_H__

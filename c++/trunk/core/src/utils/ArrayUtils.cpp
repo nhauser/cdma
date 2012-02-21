@@ -255,7 +255,6 @@ ArrayUtilsPtr ArrayUtils::flip(int dim)
   {
     // Get current view of the array
     ViewPtr view = new View( thisArray->getView() );
-    int rank = view->getRank();       
     std::vector<int> shape  = view->getShape();
     std::vector<int> origin = view->getOrigin();
     std::vector<int> stride = view->getStride();

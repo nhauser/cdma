@@ -16,6 +16,9 @@
 #include <yat/threading/Mutex.h>
 
 #include <cdma/exception/Exception.h>
+#include <cdma/navigation/IGroup.h>
+#include <cdma/navigation/IDataItem.h>
+#include <cdma/dictionary/LogicalGroup.h>
 
 namespace cdma
 {
@@ -106,6 +109,7 @@ public:
   ///
   virtual IDataItemPtr getItemFromPath(const std::string &path) = 0;
 };
+
 
 } //namespace cdma
 #endif //__CDMA_IDATASET_H__

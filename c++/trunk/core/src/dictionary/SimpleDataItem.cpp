@@ -36,7 +36,7 @@ m_dataset_ptr(dataset_ptr), m_name(name), m_array_ptr(ptrArray)
 //---------------------------------------------------------------------------
 // SimpleDataItem::findAttributeIgnoreCase
 //---------------------------------------------------------------------------
-cdma::IAttributePtr SimpleDataItem::findAttributeIgnoreCase(const std::string& name)
+cdma::IAttributePtr SimpleDataItem::findAttributeIgnoreCase( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::findAttributeIgnoreCase");
 }
@@ -44,7 +44,7 @@ cdma::IAttributePtr SimpleDataItem::findAttributeIgnoreCase(const std::string& n
 //---------------------------------------------------------------------------
 // SimpleDataItem::findDimensionView
 //---------------------------------------------------------------------------
-int SimpleDataItem::findDimensionView(const std::string& name)
+int SimpleDataItem::findDimensionView( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::findDimensionView");
 }
@@ -52,7 +52,7 @@ int SimpleDataItem::findDimensionView(const std::string& name)
 //---------------------------------------------------------------------------
 // SimpleDataItem::getASlice
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr SimpleDataItem::getASlice(int dimension, int value) throw ( cdma::Exception )
+cdma::IDataItemPtr SimpleDataItem::getASlice( int /*dimension*/, int /*value*/ ) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getASlice");
 }
@@ -80,14 +80,13 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> position)");
   int node_rank = m_array_ptr->getRank();
-  int slab_rank = node_rank - position.size();
   
   std::vector<int> origin;
   std::vector<int> shape;
 
   for( int dim = 0; dim < node_rank; dim++ )
   {
-    if( dim < position.size() )
+    if( dim < (int)position.size() )
     {
       origin.push_back( position[dim] );
       shape.push_back( m_array_ptr->getShape()[dim] - position[dim] );
@@ -134,7 +133,7 @@ std::string SimpleDataItem::getDescription()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getDimensions
 //---------------------------------------------------------------------------
-std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensions(int i)
+std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensions( int )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getDimensions");
 }
@@ -174,7 +173,7 @@ std::string SimpleDataItem::getNameAndDimensions()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getNameAndDimensions
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::getNameAndDimensions(bool useFullName, bool showDimLength)
+std::string SimpleDataItem::getNameAndDimensions( bool /*useFullName*/, bool /*showDimLength*/ )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getNameAndDimensions");
 }
@@ -198,7 +197,7 @@ int SimpleDataItem::getRank()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getSection
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr SimpleDataItem::getSection(std::list<cdma::RangePtr> section) throw ( cdma::Exception )
+cdma::IDataItemPtr SimpleDataItem::getSection( std::list<cdma::RangePtr> /*section*/ ) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getSection");
 }
@@ -238,7 +237,7 @@ int SimpleDataItem::getSizeToCache()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getSlice
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr SimpleDataItem::getSlice(int dim, int value) throw ( cdma::Exception )
+cdma::IDataItemPtr SimpleDataItem::getSlice(int /*dim*/, int /*value*/) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getSlice");
 }
@@ -387,7 +386,7 @@ std::string SimpleDataItem::readString() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 // SimpleDataItem::removeAttribute
 //---------------------------------------------------------------------------
-bool SimpleDataItem::removeAttribute(const cdma::IAttributePtr& a)
+bool SimpleDataItem::removeAttribute( const cdma::IAttributePtr& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::removeAttribute");
 }
@@ -400,7 +399,7 @@ bool SimpleDataItem::removeAttribute(const cdma::IAttributePtr& a)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setCaching
 //---------------------------------------------------------------------------
-void SimpleDataItem::setCaching(bool caching)
+void SimpleDataItem::setCaching( bool )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setCaching");
 }
@@ -408,7 +407,7 @@ void SimpleDataItem::setCaching(bool caching)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setDataType
 //---------------------------------------------------------------------------
-void SimpleDataItem::setDataType(const std::type_info& dataType)
+void SimpleDataItem::setDataType( const std::type_info& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setDataType");
 }
@@ -416,7 +415,7 @@ void SimpleDataItem::setDataType(const std::type_info& dataType)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setDimensions
 //---------------------------------------------------------------------------
-void SimpleDataItem::setDimensions(const std::string& dimString)
+void SimpleDataItem::setDimensions(const std::string& /*dimString*/)
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setDimensions");
 }
@@ -424,7 +423,7 @@ void SimpleDataItem::setDimensions(const std::string& dimString)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setDimension
 //---------------------------------------------------------------------------
-void SimpleDataItem::setDimension(const cdma::IDimensionPtr& dim, int ind) throw ( cdma::Exception )
+void SimpleDataItem::setDimension( const cdma::IDimensionPtr&, int /*ind*/) throw ( cdma::Exception )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setDimension");
 }
@@ -432,7 +431,7 @@ void SimpleDataItem::setDimension(const cdma::IDimensionPtr& dim, int ind) throw
 //---------------------------------------------------------------------------
 // SimpleDataItem::setElementSize
 //---------------------------------------------------------------------------
-void SimpleDataItem::setElementSize(int elementSize)
+void SimpleDataItem::setElementSize( int )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setElementSize");
 }
@@ -440,7 +439,7 @@ void SimpleDataItem::setElementSize(int elementSize)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setSizeToCache
 //---------------------------------------------------------------------------
-void SimpleDataItem::setSizeToCache(int sizeToCache)
+void SimpleDataItem::setSizeToCache( int )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setSizeToCache");
 }
@@ -448,7 +447,7 @@ void SimpleDataItem::setSizeToCache(int sizeToCache)
 //---------------------------------------------------------------------------
 // SimpleDataItem::setUnitsString
 //---------------------------------------------------------------------------
-void SimpleDataItem::setUnitsString(const std::string& units)
+void SimpleDataItem::setUnitsString( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::setUnitsString");
 }

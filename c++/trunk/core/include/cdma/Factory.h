@@ -25,6 +25,7 @@
 // CDMA
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
+#include <cdma/IFactory.h>
 #include <cdma/dictionary/PluginMethods.h>
 
 namespace cdma
@@ -272,8 +273,6 @@ public:
   static PathPtr createPath( std::string path );
 
   static PathParameterPtr createPathParameter(CDMAType::ParameterType type, std::string& name, void * value);
-
-  static IPathParamResolverPtr createPathParamResolver(const PathPtr& path);
 
   /// According to the given destination (file or folder or what ever)
   /// the factory will try to detect which plugin matches to that destination

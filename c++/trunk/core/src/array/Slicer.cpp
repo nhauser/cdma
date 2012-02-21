@@ -63,7 +63,7 @@ std::vector<int> Slicer::getSliceShape()
   std::vector<int> result;
   std::vector<int> shape = m_array->getShape();
   
-  for( int i = shape.size() - m_rank - 1; i < shape.size(); i++ )
+  for( yat::uint16 i = shape.size() - m_rank - 1; i < shape.size(); i++ )
   {
     result.push_back( shape[i] );
   }

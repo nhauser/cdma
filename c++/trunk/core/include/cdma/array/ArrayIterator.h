@@ -48,7 +48,7 @@ public:
   /// Suffix operator: increments the ArrayIterator after having 
   /// returned the reference of the current indexed element
   ///
-  ArrayIterator& operator++(int);
+  ArrayIterator operator++(int);
 
   /// Prefix operator: decrements the ArrayIterator before
   /// returning the reference of the previous indexed element
@@ -58,7 +58,7 @@ public:
   /// Suffix operator: decrements the ArrayIterator after having 
   /// returned the reference of the current indexed element
   ///
-  ArrayIterator& operator--(int);
+  ArrayIterator operator--(int);
   
   /// Access method with explicit value conversion
   ///

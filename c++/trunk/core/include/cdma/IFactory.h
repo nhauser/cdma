@@ -21,6 +21,8 @@
 
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
+#include <cdma/navigation/IDataset.h>
+#include <cdma/dictionary/Dictionary.h>
 
 namespace cdma
 {
@@ -88,6 +90,8 @@ public:
   /// Returns the plugin methods list
   virtual std::list<std::string> getPluginMethodsList() = 0;
 };
+
+DECLARE_SHARED_PTR(IFactory);
 
 } //namespace CDMACore
 #endif //__CDMA_IFACTORY_H__

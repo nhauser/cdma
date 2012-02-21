@@ -171,7 +171,7 @@ Array::Array( const std::string& factory, const std::type_info& type, std::vecto
   m_shape = shape;
   int *shape_ptr = new int[rank];
   int *start_ptr = new int[rank];
-  for( int i = 0; i < shape.size(); i++ )
+  for( yat::uint16 i = 0; i < shape.size(); i++ )
   {
     shape_ptr[i] = shape[i];
     start_ptr[i] = 0;

@@ -16,11 +16,15 @@
 #include <yat/memory/SharedPtr.h>
 #include <yat/threading/Mutex.h>
 
+#include <cdma/exception/Exception.h>
+#include <cdma/dictionary/PluginMethods.h>
 #include <cdma/IObject.h>
-#include <cdma/dictionary/Context.h>
 
 namespace cdma
 {
+
+// forward declaration
+class Context;
 
 //=============================================================================
 /// Key
@@ -77,7 +81,7 @@ public:
   ///
   /// @return Key::Type value
   ///
-  const Type getType() const { return m_type; }
+  const Type& getType() const { return m_type; }
 
   /// Set the key related notion: LogicalGroup or DataItem
   /// 

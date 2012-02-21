@@ -47,7 +47,7 @@ View::View(const cdma::ViewPtr& View)
   // Create new ranges
   std::vector<Range> ranges = View->m_ranges;
   m_ranges.resize( ranges.size() );
-  for( int i = 0; i < ranges.size(); i++ )
+  for( yat::uint16 i = 0; i < ranges.size(); i++ )
   {
     m_ranges[i].set(
       ranges[i].getName(),
@@ -169,7 +169,7 @@ std::vector<int> View::getShape()
 {
   //CDMA_FUNCTION_TRACE("View::getShape");
   std::vector<int> shape;
-  for( int i = 0; i < m_ranges.size(); i++ )
+  for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
   {
     // Only consider not reduced ranges
     if( ! m_ranges[i].reduce() )
@@ -186,7 +186,7 @@ std::vector<int> View::getShape()
 std::vector<int> View::getOrigin()
 {
   std::vector<int> origin;
-  for( int i = 0; i < m_ranges.size(); i++ )
+  for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
   {
     // Only consider not reduced ranges
     if( ! m_ranges[i].reduce() )
@@ -209,7 +209,7 @@ long View::getSize()
   }
   else
   {
-    for(int i = 0; i < m_ranges.size(); i++ )
+    for(yat::uint16 i = 0; i < m_ranges.size(); i++ )
     {
       // Only consider not reduced ranges
       if( ! m_ranges[i].reduce() )
@@ -227,7 +227,7 @@ long View::getSize()
 std::vector<int> View::getStride()
 {
   std::vector<int> stride;
-  for( int i = 0; i < m_ranges.size(); i++ )
+  for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
   {
     // Only consider not reduced ranges
     if( ! m_ranges[i].reduce() )
@@ -249,7 +249,7 @@ long View::getElementOffset(std::vector<int> position)
   {
     int j = 0;
     // For each range additionate offset matching the position
-    for( int i = 0; i < m_ranges.size(); i++ )
+    for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
     {
       // If range not reduced calculate offset of the corresponding position
       if( ! m_ranges[i].reduce() && position.size() > 0 )
@@ -286,10 +286,9 @@ long View::getElementOffset(std::vector<int> position)
 std::vector<int> View::getPositionElement(long offset)
 {
   std::vector<int> position;
-  int j = 0;
   try 
   {
-    for( int i = 0; i < m_ranges.size(); i++ )
+    for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
     {
       if( ! m_ranges[i].reduce() )
       {
@@ -320,7 +319,7 @@ long View::lastElement()
   if( ! m_upToDate )
   {
     long last = 0;
-    for( int i = 0; i < m_ranges.size(); i++ )
+    for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
     {
       last += m_ranges[i].last();
     }
@@ -395,12 +394,12 @@ void View::setDim(int dim, int value)
 void View::setOrigin(std::vector<int> origin)
 {
   CDMA_FUNCTION_TRACE("View::setOrigin");
-  if( origin.size() != m_rank )
+  if( origin.size() != (unsigned int)m_rank )
   {
     VIEW_ERROR("Origin must have same length as view's rank!", "View::setOrigin");
   }
-  int i = 0;
-  int j = 0;
+  yat::uint16 i = 0;
+  yat::uint16 j = 0;
   while( i < origin.size() )
   {
     // Only consider not reduced ranges
@@ -432,8 +431,8 @@ void View::setShape(std::vector<int> shape)
   }
 
   m_upToDate = false;
-  int i = 0;
-  int j = 0;
+  yat::uint16 i = 0;
+  yat::uint16 j = 0;
   while( i < shape.size() )
   {
     // Only consider not reduced ranges
@@ -457,14 +456,14 @@ void View::setShape(std::vector<int> shape)
 //---------------------------------------------------------------------------
 void View::setStride(std::vector<int> stride)
 {
-  if( stride.size() != m_rank )
+  if( stride.size() != (unsigned int)m_rank )
   {
     VIEW_ERROR("Origin must have same length as view's rank!", "View::setStride");
   }
 
   m_upToDate = false;
-  int i = 0;
-  int j = 0;
+  yat::uint16 i = 0;
+  yat::uint16 j = 0;
   while( i < stride.size() )
   {
     // Only consider not reduced ranges
@@ -514,7 +513,7 @@ std::string View::getViewName(int dim)
 void View::reduce()
 {
   CDMA_FUNCTION_TRACE("View::reduce");
-  for( int i = 0; i < m_ranges.size(); i++ )
+  for( yat::uint16 i = 0; i < m_ranges.size(); i++ )
   {
     if( m_ranges[i].length() == 1 && ! m_ranges[i].reduce() )
     {
@@ -533,7 +532,7 @@ void View::reduce(int dim) throw ( cdma::Exception )
 {
     int i = 0;
     int range = -1;
-    for(int j = 0; j < m_ranges.size(); j++)
+    for(yat::uint16 j = 0; j < m_ranges.size(); j++)
     {
       if( ! m_ranges[j].reduce() )
       {

@@ -15,9 +15,16 @@
 #include <yat/any/Any.h>
 
 #include <cdma/IObject.h>
+#include <cdma/navigation/IAttribute.h>
+
 
 namespace cdma
 {
+// Forward declarations
+DECLARE_CLASS_SHARED_PTR(IDataItem);
+DECLARE_CLASS_SHARED_PTR(IGroup);
+DECLARE_CLASS_SHARED_WEAK_PTR(IDataset);
+DECLARE_CLASS_SHARED_PTR(LogicalGroup);
   
 //==============================================================================
 /// IContainer

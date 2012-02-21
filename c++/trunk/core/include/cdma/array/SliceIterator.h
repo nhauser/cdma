@@ -44,7 +44,7 @@ public:
   /// Suffix operator: increments the ArrayIterator after having 
   /// returned the reference of the current indexed element
   ///
-  SliceIterator& operator++(int);
+  SliceIterator operator++(int);
   
   /// Access operator: returns a reference on the currently targeted
   /// slice.
