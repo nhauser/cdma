@@ -1,6 +1,5 @@
 package org.gumtree.data.engine.nexus.array;
 
-//import org.gumtree.data.engine.jnexus.NexusFactory;
 import org.gumtree.data.engine.nexus.utils.NexusArrayMath;
 import org.gumtree.data.engine.nexus.utils.NexusArrayUtils;
 import org.gumtree.data.exception.BackupException;
@@ -227,47 +226,208 @@ public final class NexusArray implements IArray {
     // IArray data getters and setters
     @Override
     public boolean getBoolean(IIndex ima) {
-        return (( Boolean ) get(ima)).booleanValue();
+    	boolean result;
+        IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Boolean) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((boolean[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = false;
+		}
+		return result;
     }
 
     @Override
     public byte getByte(IIndex ima) {
-        return (( Byte ) get(ima)).byteValue();
+    	byte result;
+        IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Byte) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((byte[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public char getChar(IIndex ima) {
-        return (( Character ) get(ima)).charValue();
+    	char result;
+        IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Character) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((char[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public double getDouble(IIndex ima) {
-        return (( Double ) get(ima)).doubleValue();
+    	double result;
+        IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Double) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((double[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public float getFloat(IIndex ima) {
-        return (( Float ) get(ima)).floatValue();
+    	float result = 0;
+    	IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Float) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((float[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public int getInt(IIndex ima) {
-        return (( Integer ) get(ima)).intValue();
+    	int result = 0;
+    	IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Integer) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((int[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public long getLong(IIndex ima) {
-        return (( Long ) get(ima)).longValue();
+    	long result = 0;
+    	IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Long) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((long[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public Object getObject(IIndex index) {
-        return get(index);
+    	Object result = new Object();
+    	IIndex idx;
+		try {
+			idx = index.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = java.lang.reflect.Array.get(oData, lPos);
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
 
     @Override
     public short getShort(IIndex ima) {
-        return (( Short ) get(ima)).shortValue();
+    	short result = 0;
+    	IIndex idx;
+		try {
+			idx = ima.clone();
+	        Object oData = getData();
+	        
+	        // If it's a scalar value then we return it
+	        if( ! oData.getClass().isArray() ) {
+	        	result = (Short) oData;
+	        }
+	        // else it's a single raw array, then we compute indexes to have the corresponding cell number
+	        else {
+	        	int lPos = (int) idx.currentElement();
+	        	result = ((short[]) oData)[lPos];
+	        }
+		} catch (CloneNotSupportedException e) {
+			result = 0;
+		}
+        return result;
     }
     
 	@Override
@@ -492,14 +652,7 @@ public final class NexusArray implements IArray {
         // If it's a single raw array, then we compute indexes to have the corresponding cell number 
         else if( mIsRawArray )
         {
-        	int lPos;
-        	//if( java.util.Arrays.equals(mN4TDataItem.getStart(), idx.getProjectionOrigin() ) ) {
-        		//lPos = idx.currentProjectionElement();
-        		lPos = (int) idx.currentElement();
-        	/*}
-        	else {
-        		lPos = (int) idx.currentElement();
-        	}*/
+        	int lPos = (int) idx.currentElement();
             return java.lang.reflect.Array.get(oData, lPos);
         }
         // If it's a multidimensional array, then we get sub-part until to have the single cell we're interested in
@@ -602,4 +755,44 @@ public final class NexusArray implements IArray {
 		
 	}
 }
+/*
+@SuppressWarnings("unused")
+	private <T> T get(IIndex index, T output) {
+     Object oCurObj = null;
+     NexusIndex idx = null;
+     if( index instanceof NexusIndex ) {
+     	idx = (NexusIndex) index;
+     }
+     else {
+     	idx = new NexusIndex(mFactory, index.getShape(), new int[index.getRank()], index.getShape());
+     	idx.set(index.getCurrentCounter());
+     }
+     
+     Object oData = getData();
+     
+     // If it's a string then no array 
+     if( output instanceof String )
+     {
+     	output = (T) oData;
+     }
+     // If it's a scalar value then we return it
+     else if( ! oData.getClass().isArray() )
+     {
+     	output = (T) oData;
+     }
+     // If it's a single raw array, then we compute indexes to have the corresponding cell number
+     else if( output instanceof Object ) {
+     	int lPos = (int) idx.currentElement();
+     	Object data = java.lang.reflect.Array.get(oData, lPos);
+         output = (T) data;
+     }
+     else
+     	//if( mIsRawArray )
+     {
+     	int lPos = (int) idx.currentElement();
+         output = ((T[]) oData)[lPos];
+     }
 
+     return output;
+ }
+*/
