@@ -62,7 +62,6 @@ Array::Array(const std::string& factory, T scalar_value)
   CDMA_FUNCTION_TRACE("template<typename T> Array::Array");
   m_factory = factory;
 
-  unsigned int size = 1;
   T* data_ptr = new T[1];
   *data_ptr = scalar_value;
   m_data_impl = new DefaultArrayStorage<T>(data_ptr, std::vector<int>());
@@ -148,6 +147,10 @@ template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> po
 
   else if( m_data_impl->getType() == typeid(unsigned int) )
     return T( *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
+
+  else
+    throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
+                          "Array::getValue");
 }
 
 }

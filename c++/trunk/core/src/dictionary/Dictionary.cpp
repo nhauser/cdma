@@ -17,6 +17,7 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/Dictionary.h>
+#include <cdma/navigation/IDataset.h>
 #include <cdma/Factory.h>
 
 namespace cdma
@@ -178,7 +179,7 @@ SolverList& MapDefAnalyser::get_solvers_list(int key_id)
 //----------------------------------------------------------------------------
 void MapDefAnalyser::on_element_content(const yat::String& element_name, 
                                         const yat::String& element_content, 
-                                        const yat::String& current_file)
+                                        const yat::String& /*current_file*/)
 {
   if( element_name.is_equal("path") )
   {
@@ -356,7 +357,7 @@ SolverList Dictionary::getSolversList(const KeyPtr& key_ptr)
 //----------------------------------------------------------------------------
 // Dictionary::getDictionary
 //----------------------------------------------------------------------------
-bool Dictionary::containsKey(const std::string& key)
+bool Dictionary::containsKey( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("Dictionary::containsKey");
 }

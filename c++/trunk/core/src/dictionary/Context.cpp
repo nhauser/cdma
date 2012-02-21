@@ -9,6 +9,8 @@
 //******************************************************************************
 
 // Include CDMA
+#include <cdma/dictionary/Dictionary.h>
+#include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/Context.h>
 
 namespace cdma

@@ -16,8 +16,11 @@
 
 #include <yat/memory/SharedPtr.h>
 
-#include <cdma/navigation/IContainer.h>
 #include <cdma/IObject.h>
+#include <cdma/navigation/IContainer.h>
+#include <cdma/navigation/IDataset.h>
+#include <cdma/dictionary/Dictionary.h>
+
 
 namespace cdma
 {
@@ -181,5 +184,6 @@ public:
   std::string getFactoryName() const;
   //@} IObject interface
 };
+
 } //namespace cdma
 #endif //__CDMA_LOGICALGROUP_H__

@@ -50,7 +50,7 @@ template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, std::
   m_data = data;
   m_elem_size = sizeof(T);
   m_array_length = 1;
-  for( int i = 0; i < shape.size(); i++ )
+  for( yat::uint16 i = 0; i < shape.size(); i++ )
   {
     m_array_length *= shape[i];
   }
@@ -151,7 +151,7 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
       // Copy memory as it is seen according to the view
       memcpy( (void*) (data + startDst), (const void*) (m_data + startSrc), nbBytes );
 
-      for( unsigned int i = rank - 1; i >= 0; i-- )
+      for( unsigned int i = rank - 1; i != 0; i-- )
       {
         if( position[i] + 1 >= shape[i] && i > 0)
         {

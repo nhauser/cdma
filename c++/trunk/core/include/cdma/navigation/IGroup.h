@@ -21,9 +21,11 @@
 
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
+#include <cdma/navigation/IDataItem.h>
 
 namespace cdma
 {
+
 //==============================================================================
 /// IGroup
 /// A Group is a collection of DataItems. The Groups in a Dataset form a
@@ -192,7 +194,8 @@ public:
  //@} Write-oriented methods
     
 };
-  
+ 
+
   
 } //namespace cdma
 #endif //__CDMA_IGROUP_H__

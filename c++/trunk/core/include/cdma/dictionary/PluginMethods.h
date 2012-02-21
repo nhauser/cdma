@@ -13,7 +13,6 @@
 // Include CDMA
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/Context.h>
 
 namespace cdma
 {
@@ -40,8 +39,10 @@ public:
   /// @param context input/ouput context (see Context class definition)
   /// @throw  Exception in case of any trouble
   ///
-  virtual void execute(Context& context) throw (cdma::Exception) = 0;
+  virtual void execute(class Context& context) throw (cdma::Exception) = 0;
 };
+
+DECLARE_SHARED_PTR(IPluginMethod);
 
 } //namespace CDMACore
 

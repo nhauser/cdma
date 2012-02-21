@@ -23,6 +23,7 @@
 #include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
+#include <cdma/navigation/IGroup.h>
 
 namespace cdma
 {

@@ -1,7 +1,8 @@
 
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/Dictionary.h>
+#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/Context.h>
 #include <cdma/dictionary/PluginMethods.h>
 
 namespace cdma

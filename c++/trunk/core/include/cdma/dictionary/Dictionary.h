@@ -130,6 +130,8 @@ public:
   void setMappingFilePath(const std::string& file_path) { m_mapping_file_path = file_path; }
 };
 
+DECLARE_SHARED_PTR(Dictionary);
+
 } //namespace
 
 #endif //__CDMA_DICTIONARY_H__

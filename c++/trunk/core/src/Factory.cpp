@@ -14,10 +14,12 @@
 #include <yat/file/FileName.h>
 
 // cdma
-#include <cdma/Factory.h>
-#include <cdma/IFactory.h>
-#include <cdma/IDataSource.h>
+#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/Dictionary.h>
 #include <cdma/dictionary/Context.h>
+#include <cdma/IDataSource.h>
+#include <cdma/IFactory.h>
+#include <cdma/Factory.h>
 
 namespace cdma
 {
@@ -257,7 +259,7 @@ std::string Factory::getDictionariesFolder()
 //----------------------------------------------------------------------------
 // Factory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr Factory::openDataset(const std::string& uri) throw ( Exception )
+IDatasetPtr Factory::openDataset( const std::string& ) throw ( Exception )
 {
   THROW_NOT_IMPLEMENTED("Factory::openDataset");
 }
@@ -265,7 +267,7 @@ IDatasetPtr Factory::openDataset(const std::string& uri) throw ( Exception )
 //----------------------------------------------------------------------------
 // Factory::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr Factory::openDictionary(const std::string& filepath) throw ( Exception )
+DictionaryPtr Factory::openDictionary( const std::string& ) throw ( Exception )
 {
   THROW_NOT_IMPLEMENTED("Factory::openDictionary");
 }
@@ -273,7 +275,7 @@ DictionaryPtr Factory::openDictionary(const std::string& filepath) throw ( Excep
 //----------------------------------------------------------------------------
 // Factory::createArray
 //----------------------------------------------------------------------------
-ArrayPtr Factory::createArray(const std::type_info clazz, const std::vector<int> shape)
+ArrayPtr Factory::createArray( const std::type_info, const std::vector<int> )
 {
   THROW_NOT_IMPLEMENTED("Factory::createArray");
 }
@@ -281,7 +283,7 @@ ArrayPtr Factory::createArray(const std::type_info clazz, const std::vector<int>
 //----------------------------------------------------------------------------
 // Factory::createArray
 //----------------------------------------------------------------------------
-ArrayPtr Factory::createArray(const void * array)
+ArrayPtr Factory::createArray( const void* )
 {
   THROW_NOT_IMPLEMENTED("Factory::createArray");
 }
@@ -289,7 +291,7 @@ ArrayPtr Factory::createArray(const void * array)
 //----------------------------------------------------------------------------
 // Factory::createStringArray
 //----------------------------------------------------------------------------
-ArrayPtr Factory::createStringArray(const std::string& value)
+ArrayPtr Factory::createStringArray( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("Factory::createStringArray");
 }
@@ -297,7 +299,7 @@ ArrayPtr Factory::createStringArray(const std::string& value)
 //----------------------------------------------------------------------------
 // Factory::createDoubleArray
 //----------------------------------------------------------------------------
-ArrayPtr Factory::createDoubleArray(double array[])
+ArrayPtr Factory::createDoubleArray( double [] )
 {
   THROW_NOT_IMPLEMENTED("Factory::createDoubleArray");
 }
@@ -305,7 +307,7 @@ ArrayPtr Factory::createDoubleArray(double array[])
 //----------------------------------------------------------------------------
 // Factory::createDoubleArray
 //----------------------------------------------------------------------------
-ArrayPtr Factory::createDoubleArray(double array[], const std::vector<int> shape)
+ArrayPtr Factory::createDoubleArray( double [], const std::vector<int> )
 {
   THROW_NOT_IMPLEMENTED("Factory::createDoubleArray");
 }
@@ -361,7 +363,7 @@ IDatasetPtr Factory::createEmptyDatasetInstance() throw ( Exception )
 //----------------------------------------------------------------------------
 // Factory::createKey
 //----------------------------------------------------------------------------
-KeyPtr Factory::createKey(std::string keyName)
+KeyPtr Factory::createKey( std::string )
 {
   THROW_NOT_IMPLEMENTED("Factory::createKey");
 }
@@ -369,7 +371,7 @@ KeyPtr Factory::createKey(std::string keyName)
 //----------------------------------------------------------------------------
 // Factory::createPath
 //----------------------------------------------------------------------------
-PathPtr Factory::createPath( std::string path )
+PathPtr Factory::createPath( std::string )
 {
   THROW_NOT_IMPLEMENTED("Factory::createPath");
 }
@@ -377,17 +379,9 @@ PathPtr Factory::createPath( std::string path )
 //----------------------------------------------------------------------------
 // Factory::createPathParameter
 //----------------------------------------------------------------------------
-PathParameterPtr Factory::createPathParameter(CDMAType::ParameterType type, std::string& name, void * value)
+PathParameterPtr Factory::createPathParameter( CDMAType::ParameterType, std::string&, void* )
 {
   THROW_NOT_IMPLEMENTED("Factory::createPathParameter");
-}
-
-//----------------------------------------------------------------------------
-// Factory::createPathParamResolver
-//----------------------------------------------------------------------------
-IPathParamResolverPtr Factory::createPathParamResolver(const PathPtr& path)
-{
-  THROW_NOT_IMPLEMENTED("Factory::createPathParamResolver");
 }
 
 //----------------------------------------------------------------------------

@@ -21,6 +21,7 @@
 #include <cdma/navigation/IDataset.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/Dictionary.h>
 
 namespace cdma
 {

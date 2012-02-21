@@ -81,11 +81,11 @@ ArrayIterator& ArrayIterator::operator++(void)
 //-----------------------------------------------------------------------------
 // ArrayIterator::operator++ suffix operator
 //-----------------------------------------------------------------------------
-ArrayIterator& ArrayIterator::operator++(int)
+ArrayIterator ArrayIterator::operator++(int)
 {
-  ArrayIterator iterator (m_array, m_view, m_position);
+  ArrayIterator it(*this);
   operator++();
-  return iterator;
+  return it;
 }
 
 //-----------------------------------------------------------------------------
@@ -100,11 +100,11 @@ ArrayIterator& ArrayIterator::operator--(void)
 //-----------------------------------------------------------------------------
 // ArrayIterator::operator-- suffix operator
 //-----------------------------------------------------------------------------
-ArrayIterator& ArrayIterator::operator--(int)
+ArrayIterator ArrayIterator::operator--(int)
 {
-  ArrayIterator iterator (m_array, m_view, m_position);
+  ArrayIterator it(*this);
   operator--();
-  return iterator;
+  return it;
 }
 
 //-----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vec
 
   if( position[0] < shape[0] )
   {
-    for( unsigned int i = position.size() - 1; i >= 0; i-- )
+    for( unsigned int i = position.size() - 1; i != 0; i-- )
     {
       if( position[i] + 1 >= shape[i] && i > 0)
       {
@@ -162,7 +162,7 @@ std::vector<int>& ArrayIterator::decrementPosition(const ViewPtr& view, std::vec
     // Check the position is not out of range
     if( position[0] >= 0 )
     {
-      for( unsigned int i = position.size() - 1; i >= 0; i-- )
+      for( unsigned int i = position.size() - 1; i != 0; i-- )
       {
         if( position[i] - 1 < 0 && i > 0  )
         {
