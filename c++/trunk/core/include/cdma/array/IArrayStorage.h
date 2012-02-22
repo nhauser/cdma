@@ -16,9 +16,19 @@
 #ifndef __CDMA_IDATA_H__
 #define __CDMA_IDATA_H__
 
-#include <yat/any/Any.h>
-#include <cdma/IObject.h>
 #include <vector>
+
+#include <yat/any/Any.h>
+
+#include <cdma/Common.h>
+#include <cdma/array/View.h>
+
+
+namespace cdma
+{
+
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(IArrayStorage);
 
 //==============================================================================
 /// IArrayStorage interface its the physical container of the memory matrix.
@@ -26,11 +36,7 @@
 /// a View and a position vector. Mainly to give a read/write access into
 /// memory buffer.
 //==============================================================================
-
-namespace cdma
-{
-
-class IArrayStorage : public IObject
+class IArrayStorage
 {
 public:
 

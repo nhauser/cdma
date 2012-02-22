@@ -20,16 +20,16 @@
 
 #include <yat/any/Any.h>
 
-#include <cdma/IObject.h>
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 
 namespace cdma
 {
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(ArrayIterator);
 
 //==============================================================================
 /// Array iterator to make transversal parsing of the Array
 //==============================================================================
-
 class ArrayIterator
 {
 public:
@@ -92,11 +92,6 @@ public:
   ///  
   long currentElement() const;
 
-  //@{ IObject interface
-  CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-  std::string getFactoryName() const { return m_array->getFactoryName(); };
-  //@}
-  
 protected:
     /// Increments the position vector according the defined view
     ///
@@ -127,6 +122,8 @@ private:
   ViewPtr          m_view;     // view of how to iterate over the array
   std::vector<int> m_position; // position in the current view of the iterator
 };
+
+DECLARE_SHARED_PTR(ArrayIterator);
 
 }
 #endif

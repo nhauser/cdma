@@ -11,7 +11,7 @@
 #define __CDMA_PLUGIN_METHODS_H__
 
 // Include CDMA
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 
 namespace cdma

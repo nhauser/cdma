@@ -16,9 +16,9 @@
 #include <yat/memory/SharedPtr.h>
 #include <yat/threading/Mutex.h>
 
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/PluginMethods.h>
-#include <cdma/IObject.h>
 
 namespace cdma
 {
@@ -90,6 +90,8 @@ public:
   void setType(Type type) { m_type = type; }
 };
 
+DECLARE_CLASS_SHARED_PTR(Key);
+
 //==============================================================================
 /// IKeySolver
 //==============================================================================
@@ -107,6 +109,7 @@ public:
   virtual void solve(Context& context) throw (cdma::Exception) = 0;
 };
 
+DECLARE_CLASS_SHARED_PTR(IKeySolver);
 typedef std::list<IKeySolverPtr> SolverList;
 
 //==============================================================================
@@ -148,6 +151,10 @@ public:
   /// IKeyResolver
   void solve(Context& context) throw (cdma::Exception);
 };
+
+// Smart pointers
+DECLARE_CLASS_SHARED_PTR(KeyPath);
+DECLARE_CLASS_SHARED_PTR(KeyMethod);
 
 } //namespace CDMACore
 

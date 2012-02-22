@@ -16,7 +16,7 @@
 
 #include <yat/memory/SharedPtr.h>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/dictionary/Dictionary.h>
@@ -40,7 +40,7 @@ namespace cdma
 /// while iterating over queries.
 /// @todo remove inheritance from IObject
 //==============================================================================
-class LogicalGroup : public IObject
+class CDMA_DECL LogicalGroup
 {
 private:
   IDatasetWPtr                           m_dataset_wptr;   ///< Weak reference to the parent dataset
@@ -122,7 +122,7 @@ public:
   ///
   /// @return List of type Group; may be empty, not null.
   ///
-  std::list<std::string> getKeyNames(CDMAType::ModelType model);
+  std::list<std::string> getKeyNames(IContainer::Type type);
 
   /// Return a list of available keys for this LogicalGroup
   ///
@@ -140,19 +140,6 @@ public:
   /// @return the given key
   ///
   KeyPtr bindKey(const std::string& bind, const KeyPtr& key);
-
-  /// Return the std::list of parameters we can set on the given key that will
-  /// have an occurrence in the dataset.
-  /// @param key
-  ///          Key for which we want the parameters values
-  /// @return
-  /// 			list<PathParameter> that can be directly applied on the key
-  /// @note <b>EXPERIMENTAL METHOD</b> do note use/implements
-  /// @note if the path that matches the key hold several different parameters
-  /// the method will return the FIRST undefined parameter. To know deeper parameters,
-  /// user has to set some PathParameter on the key and call again this method
-  ///
-  std::list<PathParameterPtr> getParameterValues(const KeyPtr& key);
 
   /// Get the parent of this logical group
   /// @return group LogicalGroup
@@ -178,11 +165,6 @@ public:
   std::string getLocation();
   std::string getName();
   std::string getShortName();
-
-  //@{IObject interface
-  CDMAType::ModelType getModelType() const;
-  std::string getFactoryName() const;
-  //@} IObject interface
 };
 
 } //namespace cdma

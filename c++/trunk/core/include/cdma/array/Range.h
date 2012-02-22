@@ -16,17 +16,19 @@
 #ifndef __CDMA_RANGE_H__
 #define __CDMA_RANGE_H__
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 
 namespace cdma
 {
 
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(Range);
+
 //==============================================================================
 /// A range represents a set of integers that are positions on one dimension. 
 /// It is used as a View descriptor for Arrays on a particular dimension.
 //==============================================================================
-
 class Range
 {
 public:

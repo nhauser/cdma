@@ -15,7 +15,7 @@
 #include <yat/memory/SharedPtr.h>
 
 // Include CDMA
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/Key.h>
 
@@ -69,12 +69,7 @@ public:
   /// invocation. 
   ///
   std::string getVersionNum();
-  
-  /// Get the plug-in implementation of a IClassLoader so invocations of external
-  /// are made possible.
-  ///
-  //## yat::SharedPtr<IClassLoader, yat::Mutex> getClassLoader();
-  
+    
   /// Read all keys stored in the XML dictionary file
   ///
   void readEntries() throw ( Exception );

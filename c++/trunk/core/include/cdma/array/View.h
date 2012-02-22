@@ -25,6 +25,9 @@
 namespace cdma
 {
 
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(View);
+
 //==============================================================================
 /// View of an array
 /// Views describe an array : its rank, in each dimension (Range) is provided 

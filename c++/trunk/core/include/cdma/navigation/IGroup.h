@@ -22,6 +22,7 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataItem.h>
+#include <cdma/navigation/IDimension.h>
 
 namespace cdma
 {
@@ -32,7 +33,7 @@ namespace cdma
 /// hierarchical tree, like directories on a disk. A Group has a name and
 /// optionally a set of Attributes.
 //==============================================================================
-class IGroup : public IContainer, public IObject
+class CDMA_DECL IGroup : public IContainer
 {
 public:
   virtual ~IGroup() {};

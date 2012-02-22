@@ -29,10 +29,15 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/array/Array.h>
 #include <cdma/array/ArrayIterator.h>
+#include <cdma/array/SliceIterator.h>
 
 namespace cdma
 {
 
+//==============================================================================
+/// Slicer
+/// @todo Write a a description here
+//==============================================================================
 class Slicer
 {
 public:
@@ -69,6 +74,8 @@ private:
   ArrayPtr m_array; // Array from which slices are desired
   int      m_rank;  // Desired rank of the slices
 };
+
+DECLARE_SHARED_PTR(Slicer);
 
 }
 #endif // __CDMA_SLICER_H__

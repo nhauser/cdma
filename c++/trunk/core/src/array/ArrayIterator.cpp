@@ -123,7 +123,6 @@ bool ArrayIterator::operator!=(const ArrayIterator& it)
   return m_view->getElementOffset(m_position) != it.m_view->getElementOffset(it.m_position);
 }
 
-
 //-----------------------------------------------------------------------------
 // ArrayIterator::incrementPosition
 //-----------------------------------------------------------------------------
@@ -133,7 +132,7 @@ std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vec
 
   if( position[0] < shape[0] )
   {
-    for( unsigned int i = position.size() - 1; i != 0; i-- )
+    for( int i = int(position.size()) - 1; i >= 0; i-- )
     {
       if( position[i] + 1 >= shape[i] && i > 0)
       {
@@ -162,7 +161,7 @@ std::vector<int>& ArrayIterator::decrementPosition(const ViewPtr& view, std::vec
     // Check the position is not out of range
     if( position[0] >= 0 )
     {
-      for( unsigned int i = position.size() - 1; i != 0; i-- )
+      for( int i = int(position.size()) - 1; i >= 0; i-- )
       {
         if( position[i] - 1 < 0 && i > 0  )
         {

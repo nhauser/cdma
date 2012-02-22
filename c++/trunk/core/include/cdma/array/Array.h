@@ -27,6 +27,11 @@
 namespace cdma
 {
 
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(Array);
+DECLARE_CLASS_SHARED_PTR(ArrayIterator);
+DECLARE_CLASS_SHARED_PTR(Slicer);
+
 //==============================================================================
 /// Array for multiple types of data.
 /// An Array has:
@@ -52,20 +57,19 @@ namespace cdma
 /// itself is read or written using an iterators or indexed positions.
 /// Array stores any needed state information for efficient traversal.
 //==============================================================================
-
-class Array
+class CDMA_DECL Array
 {
 friend class ArrayIterator;
 
 public:
   // Constructors
   Array( const Array& array );
-  Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view );
+  Array( const IArrayStoragePtr& data_ptr, const ViewPtr& view );
   Array( const Array& src, const ViewPtr& view );
   Array( const ArrayPtr& src, const ViewPtr& view );
-  Array( const std::string& plugin_id, const std::type_info& type, std::vector<int> shape, void* pData = NULL );
-  template<typename T> explicit Array(const std::string& factory, std::vector<int> shape, T* values = NULL );
-  template<typename T> explicit Array(const std::string& factory, T values );
+  Array( const std::type_info& type, std::vector<int> shape, void* pData = NULL );
+  template<typename T> explicit Array(std::vector<int> shape, T* values = NULL );
+  template<typename T> explicit Array(T values );
 
   // D-structor
   ~Array();
@@ -220,21 +224,13 @@ public:
   ///
   const IArrayStoragePtr& getStorage() { return m_data_impl; };
 
-  //@{ IObject interface
-  CDMAType::ModelType getModelType() const { return CDMAType::Array; };
-  std::string getFactoryName() const { return m_factory; };
-  //@}
-
 private:
   IArrayStoragePtr m_data_impl; // Memory storage of the matrix
   std::vector<int> m_shape;     // Shape of the matrix
   ViewPtr          m_view_ptr;      // Viewable part of the matrix
-  std::string      m_factory;   // name of the factory
 };
 
 }
-
-  
 
 #include "Array.hpp"
 #endif // __CDMA_ARRAY_H__

@@ -259,7 +259,7 @@ std::string Factory::getDictionariesFolder()
 //----------------------------------------------------------------------------
 // Factory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr Factory::openDataset( const std::string& ) throw ( Exception )
+std::pair<IDatasetPtr, IFactoryPtr> Factory::openDataset( const std::string& ) throw ( Exception )
 {
   THROW_NOT_IMPLEMENTED("Factory::openDataset");
 }
@@ -369,25 +369,9 @@ KeyPtr Factory::createKey( std::string )
 }
 
 //----------------------------------------------------------------------------
-// Factory::createPath
-//----------------------------------------------------------------------------
-PathPtr Factory::createPath( std::string )
-{
-  THROW_NOT_IMPLEMENTED("Factory::createPath");
-}
-
-//----------------------------------------------------------------------------
-// Factory::createPathParameter
-//----------------------------------------------------------------------------
-PathParameterPtr Factory::createPathParameter( CDMAType::ParameterType, std::string&, void* )
-{
-  THROW_NOT_IMPLEMENTED("Factory::createPathParameter");
-}
-
-//----------------------------------------------------------------------------
 // Factory::detectPluginFactory
 //----------------------------------------------------------------------------
-IFactoryPtr Factory::detectPluginFactory(const yat::URI& destination) 
+IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri) 
 {
   IFactoryPtr result;
   IFactoryPtr compatible;
@@ -405,10 +389,10 @@ IFactoryPtr Factory::detectPluginFactory(const yat::URI& destination)
     data_source = tmp->getPluginURIDetector();
     
     // Ask if the URI is readable
-    if( data_source->isReadable( destination ) )
+    if( data_source->isReadable( uri ) )
     {
       // Ask if the plugin is the owner of that URI
-      if( data_source->isProducer( destination ) )
+      if( data_source->isProducer( uri ) )
       {
         result = tmp;
         break;

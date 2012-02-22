@@ -97,8 +97,8 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::
       shape.push_back( m_array_ptr->getShape()[dim] );
     }
   }
-  cdma::ArrayPtr array = getData(origin, shape);
-  return array;
+  cdma::ArrayPtr array_ptr = getData(origin, shape);
+  return array_ptr;
 }
 
 //---------------------------------------------------------------------------

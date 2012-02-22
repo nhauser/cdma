@@ -197,7 +197,7 @@ LogicalGroupPtr LogicalGroup::getGroup(const std::string&)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getKeyNames
 //-----------------------------------------------------------------------------
-std::list<std::string> LogicalGroup::getKeyNames(CDMAType::ModelType)
+std::list<std::string> LogicalGroup::getKeyNames(IContainer::Type)
 {
   THROW_NOT_IMPLEMENTED("LogicalGroup::getKeyNames");
 }
@@ -229,14 +229,6 @@ std::list<KeyPtr> LogicalGroup::getKeys()
 KeyPtr LogicalGroup::bindKey(const std::string&, const KeyPtr&)
 {
   THROW_NOT_IMPLEMENTED("LogicalGroup::bindKey");
-}
-
-//-----------------------------------------------------------------------------
-// LogicalGroup::getParameterValues
-//-----------------------------------------------------------------------------
-std::list<PathParameterPtr> LogicalGroup::getParameterValues(const KeyPtr&)
-{
-  THROW_NOT_IMPLEMENTED("LogicalGroup::getParameterValues");
 }
 
 //-----------------------------------------------------------------------------
@@ -284,22 +276,6 @@ std::string LogicalGroup::getName()
 std::string LogicalGroup::getShortName()
 {
   return getName();
-}
-
-//-----------------------------------------------------------------------------
-// LogicalGroup::getFactoryName
-//-----------------------------------------------------------------------------
-std::string LogicalGroup::getFactoryName() const
-{
-  return m_dataset_wptr.lock()->getFactoryName();
-}
-
-//-----------------------------------------------------------------------------
-// LogicalGroup::getModelType
-//-----------------------------------------------------------------------------
-cdma::CDMAType::ModelType LogicalGroup::getModelType() const
-{
-  return cdma::CDMAType::LogicalGroup;
 }
 
 }
