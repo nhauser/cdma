@@ -44,14 +44,6 @@ public:
   bool isExperiment(const yat::URI& destination) const;
   
   //@}
-
-  //@{ IObject methods ----------------
-
-  std::string       getFactoryName() const { return NXS_FACTORY_NAME; }
-  CDMAType::ModelType getModelType() const { return CDMAType::Other; }
-
-  //@}
-
 };
 
 } //namespace CDMACore
