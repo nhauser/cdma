@@ -231,11 +231,7 @@ public final class NxsDataset implements IDataset {
 	/// Private methods
 	// ---------------------------------------------------------
 	private NxsDataset(File destination) {
-		try {
-			mPath = new URI(destination.getAbsolutePath());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		mPath = destination.toURI();
 		mDatasets = new ArrayList<NexusDataset>();
 		if( destination.exists() && destination.isDirectory() ) {
 			IDataset datafile;
