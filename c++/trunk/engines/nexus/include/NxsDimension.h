@@ -20,6 +20,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDimension.h>
+#include <cdma/array/Array.h>
 
 #include <internal/common.h>
 
@@ -34,27 +35,24 @@ class NxsDimension : public IDimension
 public:
   
   //@{ IDimension interface
-	std::string getName();
-	int getLength();
-	bool isUnlimited();
-	bool isVariableLength();
-	bool isShared();
-	Shape getCoordinateVariable();
-	int hashCode();
-	std::string toString();
-	int compareTo(const IDimensionPtr& o);
-	std::string writeCDL(bool strict);
-	void setUnlimited(bool b);
-	void setVariableLength(bool b);
-	void setShared(bool b);
-	void setLength(int n);
-	void setName(const std::string& name);
-	void setCoordinateVariable(const ArrayPtr& array) throw ( cdma::Exception );
-  //@}
 
-  //@{ IObject interface
-  CDMAType::ModelType getModelType() const { return CDMAType::Dimension; };
-  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
+    std::string getName();
+    int getLength();
+    bool isUnlimited();
+    bool isVariableLength();
+    bool isShared();
+    Shape getCoordinateVariable();
+    int hashCode();
+    std::string toString();
+    int compareTo(const IDimensionPtr& o);
+    std::string writeCDL(bool strict);
+    void setUnlimited(bool b);
+    void setVariableLength(bool b);
+    void setShared(bool b);
+    void setLength(int n);
+    void setName(const std::string& name);
+    void setCoordinateVariable(const ArrayPtr& array) throw ( cdma::Exception );
+
   //@}
  };
 }

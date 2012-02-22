@@ -158,11 +158,13 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exc
     if( dim < (int)(position.size()) )
     {
       origin.push_back( position[dim] );
+      CDMA_TRACE("shape.push_back " << m_item.DimArray()[dim] - position[dim]);
       shape.push_back( m_item.DimArray()[dim] - position[dim] );
     }
     else
     {
       origin.push_back( 0 );
+      CDMA_TRACE("shape.push_back " << m_item.DimArray()[dim]);
       shape.push_back( m_item.DimArray()[dim] );
     }
   }
@@ -187,8 +189,8 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> sh
     iShape[i]  = shape[i];
   }
   cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
-  cdma::ArrayPtr array = new cdma::Array( *m_array_ptr, view );
-  return array;
+  cdma::ArrayPtr array_ptr = new cdma::Array( *m_array_ptr, view );
+  return array_ptr;
 }
 
 //---------------------------------------------------------------------------
@@ -697,9 +699,8 @@ void NxsDataItem::loadArray()
     file_ptr->GetData( &data, m_name.data() );
   
     // Init Array
-    //cdma::Array *array = new cdma::Array( NXS_FACTORY_NAME, m_item.DataType(), shape, data.Data() );
-    cdma::Array *array_ptr = new cdma::Array( NXS_FACTORY_NAME, TypeDetector::detectType(m_item.DataType()),
-                                          shape, data.Data() );
+    cdma::Array *array_ptr = new cdma::Array( TypeDetector::detectType(m_item.DataType()),
+                                              shape, data.Data() );
 
     // remove ownership of the NexusDataSet
     data.SetData(NULL);

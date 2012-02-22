@@ -138,9 +138,6 @@ public:
   /// @return the first element of the value array, or null if its a String.
   ///
   double getFloatValue();
-  
-  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
-  CDMAType::ModelType getModelType() const { return CDMAType::Attribute; };
  };
 }
 #endif

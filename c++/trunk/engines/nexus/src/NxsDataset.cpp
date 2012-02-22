@@ -13,12 +13,16 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 //*****************************************************************************
+
+// Dependencies
 #include <yat/file/FileName.h>
 #include <yat/utils/String.h>
+
 #include <cdma/Common.h>
 #include <cdma/Factory.h>
 #include <cdma/dictionary/Dictionary.h>
 #include <cdma/dictionary/LogicalGroup.h>
+
 #include <NxsDataset.h>
 #include <NxsGroup.h>
 #include <NxsDataItem.h>
