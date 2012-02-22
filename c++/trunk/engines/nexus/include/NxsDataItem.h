@@ -134,13 +134,7 @@ public:
     bool removeAttribute(const IAttributePtr&);
     void setName(const std::string&);
     void setShortName(const std::string&);
-
-  //@} --------------------------------
-
-  //@{IObject interface
-
-    CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
-    std::string getFactoryName() const { return NXS_FACTORY_NAME; };
+    cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_ITEM; }
 
   //@} --------------------------------
 

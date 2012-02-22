@@ -16,9 +16,8 @@
 #ifndef __CDMA_NXSDATASET_H__
 #define __CDMA_NXSDATASET_H__
 
-// #include <yat/utils/URI.h>
 #include <internal/common.h>
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
 
@@ -90,14 +89,6 @@ public:
   IDataItemPtr getItemFromPath(const yat::String &path, const yat::String& name);
 
   //@} IDataset interface
-  
-  //@{IObject interface ---------------
-
-  CDMAType::ModelType getModelType() const { return CDMAType::Dataset; };
-  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
-
-  //@} IObject interface
-
 };
 
 typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;

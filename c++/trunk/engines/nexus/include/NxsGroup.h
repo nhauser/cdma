@@ -20,7 +20,7 @@
 #include <map>
 #include <string>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IGroup.h>
 
@@ -56,31 +56,29 @@ private:
   void PrivEnumAttributes();
   
 public:
+
   //@{ Constructors
 
-  NxsGroup(NxsDatasetWPtr dataset_wptr);
-  NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& parent_path, const yat::String& name);
-  NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_path);
-  ~NxsGroup();
+    NxsGroup(NxsDatasetWPtr dataset_wptr);
+    NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& parent_path, const yat::String& name);
+    NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_path);
+    ~NxsGroup();
 
-  //@}
+  //@} --------------------------------
 
   //@{ plug-in specific
   
-  void setPath(const yat::String& strPath) { m_strPath = strPath; }
-  void setSelfRef(const NxsGroupPtr& ptr);
-  std::string getPath() const;
+    void setPath(const yat::String& strPath) { m_strPath = strPath; }
+    void setSelfRef(const NxsGroupPtr& ptr);
+    std::string getPath() const;
 
-  //@}
+  //@} --------------------------------
   
   //@{ IGroup interface
   
   bool isRoot() const;
   bool isEntry() const;
   cdma::IGroupPtr getRoot() const;
-  std::string getLocation() const;
-  std::string getName() const;
-  std::string getShortName() const;
   cdma::IGroupPtr getParent() const;
   cdma::IDataItemPtr getDataItem(const std::string& short_name) throw ( cdma::Exception );
   cdma::IDataItemPtr getDataItemWithAttribute(const std::string& name, const std::string& value);
@@ -88,7 +86,6 @@ public:
   cdma::IAttributePtr getAttribute(const std::string&);
   cdma::IGroupPtr getGroup(const std::string& short_name);
   cdma::IGroupPtr getGroupWithAttribute(const std::string& attributeName, const std::string& value);
-  bool hasAttribute(const std::string&);
   std::list<cdma::IAttributePtr> getAttributeList();
   std::list<cdma::IDataItemPtr> getDataItemList();
   std::list<cdma::IDimensionPtr> getDimensionList();
@@ -96,25 +93,30 @@ public:
   cdma::IDataItemPtr addDataItem(const std::string& short_name);
   cdma::IDimensionPtr addDimension(const std::string& short_name);
   cdma::IGroupPtr addSubgroup(const std::string& short_name);
-  cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
   bool removeDataItem(const cdma::IDataItemPtr& item);
   bool removeDataItem(const std::string& varName);
   bool removeDimension(const std::string& dimName);
   bool removeGroup(const cdma::IGroupPtr& group);
   bool removeGroup(const std::string& short_name);
   bool removeDimension(const cdma::IDimensionPtr& dimension);
-  bool removeAttribute(const cdma::IAttributePtr&);
-  void setName(const std::string&);
-  void setShortName(const std::string&);
   void setParent(const cdma::IGroupPtr&);
   cdma::IGroupPtr clone();
-  //@} IGroup interface
-  
-  //@{IObject interface
-  cdma::CDMAType::ModelType getModelType() const { return cdma::CDMAType::Group; };
-  std::string getFactoryName() const { return NXS_FACTORY_NAME; };
-  //@} IObject interface
 
+  //@} --------------------------------
+  
+  //@{ IContainer
+
+    cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+    std::string getLocation() const;
+    std::string getName() const;
+    std::string getShortName() const;
+    bool hasAttribute(const std::string&);
+    bool removeAttribute(const IAttributePtr&);
+    void setName(const std::string&);
+    void setShortName(const std::string&);
+    cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_GROUP; }
+
+  //@} --------------------------------
 };
 
 typedef yat::SharedPtr<NxsGroup, yat::Mutex> NxsGroupPtr;
