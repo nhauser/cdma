@@ -12,7 +12,7 @@
 #include <yat/plugin/PlugInSymbols.h>
 
 // CDMA core
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/Context.h>
 #include <cdma/dictionary/PluginMethods.h>
@@ -57,7 +57,7 @@ void TestMethod::execute(Context& ctx) throw (cdma::Exception)
   double value = dataitem_ptr->readScalarDouble();
 
   IDataItemPtr new_data_item_ptr = new SimpleDataItem(ctx.getDataset(),
-                                                        new cdma::Array(PlugInID, value * 2),
+                                                        new cdma::Array(value * 2),
                                                         "2yBin");
 
   ctx.clearDataItems();

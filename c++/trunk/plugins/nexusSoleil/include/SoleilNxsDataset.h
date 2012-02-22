@@ -47,6 +47,7 @@ public:
   //@{ IDataset methods
 
   LogicalGroupPtr getLogicalRoot();
+  cdma::IFactory* getPluginFactory() const { return m_factory_ptr; };
   
   //@}
 

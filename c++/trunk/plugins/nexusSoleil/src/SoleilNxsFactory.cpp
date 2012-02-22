@@ -17,17 +17,17 @@
 // Yat
 #include <yat/plugin/PlugInSymbols.h>
 
+// CDMA core
+#include <cdma/Common.h>
+#include <cdma/dictionary/Key.h>
+
+// Engine NeXus
+#include <NxsDataset.h>
+
 // Soleil plugin
 #include <SoleilNxsFactory.h>
 #include <SoleilNxsDataSource.h>
 #include <SoleilNxsDataset.h>
-
-// Engin NeXus
-#include <NxsDataset.h>
-
-// CDMA core
-#include <cdma/IObject.h>
-#include <cdma/dictionary/Key.h>
 
 EXPORT_SINGLECLASS_PLUGIN(cdma::SoleilNxsFactory, \
                           cdma::SoleilNxsFactoryInfo);
