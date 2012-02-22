@@ -19,7 +19,8 @@
 #include <yat/plugin/IPlugInObject.h>
 #include <yat/utils/URI.h>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
+#include <cdma/IDataSource.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/dictionary/Dictionary.h>
@@ -67,8 +68,6 @@ public:
   /// @throw  Exception
   ///
   virtual IDatasetPtr createEmptyDatasetInstance() throw ( Exception ) = 0;
-
-  //virtual yat::SharedPtr<IPathParamResolver, yat::Mutex> createPathParamResolver( const PathPtr& ptrPath ) = 0;
 
   /// Return the symbol used by the plug-in to separate nodes in a string path
   /// @return

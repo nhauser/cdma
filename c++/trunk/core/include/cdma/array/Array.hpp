@@ -25,11 +25,10 @@ namespace cdma
 // Array::Array
 //---------------------------------------------------------------------------
 template<typename T>
-Array::Array(const std::string& factory, std::vector<int> shape, T* data_ptr)
+Array::Array(std::vector<int> shape, T* data_ptr)
 {
   CDMA_FUNCTION_TRACE("template<typename T> Array::Array");
   int rank = shape.size();
-  m_factory = factory;
 
   unsigned int size = 1;
   if( data_ptr == NULL )
@@ -57,10 +56,9 @@ Array::Array(const std::string& factory, std::vector<int> shape, T* data_ptr)
 // Array::Array
 //---------------------------------------------------------------------------
 template<typename T>
-Array::Array(const std::string& factory, T scalar_value)
+Array::Array(T scalar_value)
 {
   CDMA_FUNCTION_TRACE("template<typename T> Array::Array");
-  m_factory = factory;
 
   T* data_ptr = new T[1];
   *data_ptr = scalar_value;

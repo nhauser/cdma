@@ -13,12 +13,20 @@
 #include <list>
 #include <vector>
 
+#include "cdma/Common.h"
 #include "cdma/exception/Exception.h"
-#include "cdma/IObject.h"
+#include "cdma/array/Array.h"
 
 namespace cdma
 {
 
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(ArrayUtils);
+
+//==============================================================================
+/// ArrayUtils
+/// @todo Write here a description !
+//==============================================================================
 class CDMA_DECL ArrayUtils
 {
 public:

@@ -20,9 +20,9 @@
 #include <yat/memory/SharedPtr.h>
 
 // CDMA includes
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
-#include <cdma/IObject.h>
 
 namespace cdma
 {
@@ -32,7 +32,7 @@ namespace cdma
 /// A DataItem is a logical container for data. It has a DataType, a set of
 /// Dimensions that define its array shape, and optionally a set of Attributes.
 //==============================================================================
-class CDMA_DECL IDataSource : public IObject
+class CDMA_DECL IDataSource
 {
 public:
 
@@ -77,7 +77,9 @@ public:
   virtual bool isExperiment(const yat::URI& destination) const =0;
 
  };
- 
+
+DECLARE_SHARED_PTR(IDataSource);
+
 } //namespace cdma
 
 #endif //__CDMA_IDATASOURCE_H__

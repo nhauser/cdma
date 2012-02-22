@@ -20,10 +20,12 @@
 #include <yat/memory/SharedPtr.h>
 
 // CDMA includes
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IGroup.h>
+#include <cdma/navigation/IDimension.h>
+#include <cdma/array/Array.h>
 
 namespace cdma
 {
@@ -33,7 +35,7 @@ namespace cdma
 /// A DataItem is a logical container for data. It has a DataType, a set of
 /// Dimensions that define its array shape, and optionally a set of Attributes.
 //==============================================================================
-class IDataItem : public IObject, public IContainer 
+class CDMA_DECL IDataItem : public IContainer 
 {
 public:
   //Virtual destructor

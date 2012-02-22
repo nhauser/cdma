@@ -27,10 +27,14 @@
 namespace cdma
 {
  
-template<typename T> class DefaultArrayStorage : public IArrayStorage
+//==============================================================================
+/// Default array implementation
+//==============================================================================
+template<typename T> class CDMA_DECL DefaultArrayStorage : public IArrayStorage
 {
 public:
-  /// Template constructor
+
+  /// Constructor
   /// 
   /// @param data is the memory buffer 
   /// @param physical shape of the given buffer
@@ -51,13 +55,6 @@ public:
     void*                 getValue( const cdma::ViewPtr& view, std::vector<int> position );
     IArrayStoragePtr      deepCopy();
     IArrayStoragePtr      deepCopy(ViewPtr view);
-
-  //@}
-
-  //@{ IObject interface
-
-    CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-    std::string getFactoryName() const { return m_factory; };
 
   //@}
 

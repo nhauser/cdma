@@ -14,7 +14,8 @@
 #include <string>
 #include <yat/any/Any.h>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
+#include <cdma/array/Range.h>
 #include <cdma/navigation/IAttribute.h>
 
 
@@ -33,6 +34,13 @@ DECLARE_CLASS_SHARED_PTR(LogicalGroup);
 class IContainer
 {
 public:
+
+  enum Type
+  {
+    DATA_GROUP = 0,
+    DATA_ITEM = 1
+  };
+
   virtual ~IContainer()
   {
   }
@@ -95,6 +103,10 @@ public:
   ///
   virtual void setShortName(const std::string& name) = 0;
   
+  /// Return the real concrete container type
+  ///
+  virtual Type getContainerType() const = 0;
+
   /// Set the parent group.
   ///
   /// @param group

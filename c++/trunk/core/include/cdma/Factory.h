@@ -23,10 +23,11 @@
 #include <yat/utils/URI.h>
 
 // CDMA
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/IFactory.h>
 #include <cdma/dictionary/PluginMethods.h>
+#include <cdma/array/Array.h>
 
 namespace cdma
 {
@@ -146,7 +147,7 @@ public:
   /// @return     cdma Dataset
   /// @throw      Exception
   ///
-  static IDatasetPtr openDataset(const std::string& uri) throw ( Exception );
+  static std::pair<IDatasetPtr, IFactoryPtr> openDataset(const std::string& uri) throw ( Exception );
 
   static DictionaryPtr openDictionary(const std::string& filepath) throw ( Exception );
 
@@ -270,9 +271,6 @@ public:
 */
   static KeyPtr createKey(std::string keyName);
 
-  static PathPtr createPath( std::string path );
-
-  static PathParameterPtr createPathParameter(CDMAType::ParameterType type, std::string& name, void * value);
 
   /// According to the given destination (file or folder or what ever)
   /// the factory will try to detect which plugin matches to that destination

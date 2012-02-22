@@ -16,7 +16,7 @@
 
 #include <typeinfo>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/array/Array.h>
 #include <cdma/math/ArrayMath.h>
@@ -40,9 +40,9 @@ Array::~Array()
 //---------------------------------------------------------------------------
 Array::Array( const Array& array ) : m_view_ptr ( array.m_view_ptr )
 {
+  CDMA_FUNCTION_TRACE("Array::Array( const Array& array )");
   m_data_impl = array.m_data_impl;
   m_shape = array.m_view_ptr->getShape();
-  m_factory = array.m_factory;
 }
 
 //---------------------------------------------------------------------------
@@ -50,10 +50,9 @@ Array::Array( const Array& array ) : m_view_ptr ( array.m_view_ptr )
 //---------------------------------------------------------------------------
 Array::Array( const Array& array, const ViewPtr& view ) : m_view_ptr (view)
 {
-  CDMA_FUNCTION_TRACE("Array::Array");
+  CDMA_FUNCTION_TRACE("Array::Array( const Array& array, const ViewPtr& view )");
   m_data_impl = array.m_data_impl;
   m_shape = view->getShape();
-  m_factory = array.m_factory;
 }
 
 //---------------------------------------------------------------------------
@@ -61,31 +60,28 @@ Array::Array( const Array& array, const ViewPtr& view ) : m_view_ptr (view)
 //---------------------------------------------------------------------------
 Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view_ptr (view)
 {
-  CDMA_FUNCTION_TRACE("Array::Array");
+  CDMA_FUNCTION_TRACE("Array::Array( const ArrayPtr& array, const ViewPtr& view )");
   m_data_impl = array->getStorage();
   m_shape = view->getShape();
-  m_factory = array->getFactoryName();
 }
 
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view_ptr (view)
+Array::Array( const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view_ptr (view)
 {
-  CDMA_FUNCTION_TRACE("Array::Array");
+  CDMA_FUNCTION_TRACE("Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view )");
   m_data_impl = data_ptr;
   m_shape = view->getShape();
-  m_factory = factory;
 }
 
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const std::string& factory, const std::type_info& type, std::vector<int> shape, void* pData )
+Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
 {
   CDMA_FUNCTION_TRACE("Array::Array");
   int rank = shape.size();
-  m_factory = factory;
   unsigned int size = 1;
   if( pData == NULL )
   {
@@ -196,7 +192,7 @@ ArrayPtr Array::deepCopy()
     newStride *= shape[i];
   }
   
-  return new Array( m_factory, m_data_impl->deepCopy(m_view_ptr), new View( shape, origin, stride ) );
+  return new Array( m_data_impl->deepCopy(m_view_ptr), new View( shape, origin, stride ) );
 }
 
 //---------------------------------------------------------------------------

@@ -32,7 +32,7 @@ namespace cdma
 /// In case of a data file, Dataset would be the file handler that manages opening,
 /// close...
 //==============================================================================
-class CDMA_DECL IDataset : public IObject
+class CDMA_DECL IDataset
 {
 public:
   //Virtual destructor

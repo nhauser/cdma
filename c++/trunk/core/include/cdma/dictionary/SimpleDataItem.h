@@ -122,16 +122,10 @@ public:
     bool removeAttribute(const IAttributePtr&);
     void setName(const std::string&);
     void setShortName(const std::string&);
+    cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_ITEM; }
 
   //@} --------------------------------
 
-  //@{IObject interface
-
-    CDMAType::ModelType getModelType() const { return CDMAType::DataItem; };
-    std::string getFactoryName() const { return "NO_NAME"; };
-
-  //@} --------------------------------
-  
   //@{ plugin implementation should be call some of the following methods to properly initialize this object
   
   void setLogicalLocation(const std::string& location);

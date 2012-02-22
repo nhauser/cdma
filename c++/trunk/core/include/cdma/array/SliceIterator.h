@@ -19,14 +19,16 @@
 namespace cdma
 {
 
+// Forward declaration
+DECLARE_CLASS_SHARED_PTR(SliceIterator);
+
 //==============================================================================
 /// SliceIterator
 /// Iterator for slicing an Array. This is a way to iterate over slices of arrays.
 /// Each iteration returns an array of dimension i-th, representing the last i-th
 /// dimensions of the input array.
 //==============================================================================
-
-class SliceIterator
+class CDMA_DECL SliceIterator
 {
 public:
   // Consrtuctor
@@ -86,11 +88,6 @@ public:
   /// @note rank of the returned position is the same as the IArray shape we are slicing
   ///
   std::vector<int> getPosition();
-
-  //@{ IObject interface
-  CDMAType::ModelType getModelType() const { return CDMAType::Other; };
-  std::string getFactoryName() const { return m_array->getFactoryName(); };
-  //@}
   
 private:
   void get();
@@ -101,6 +98,7 @@ private:
   int              m_dimension;  // Dimension of the slice
   ArrayPtr         m_slice;      // Reference of the last read slice
 
- };
+};
+
 }
 #endif

@@ -16,7 +16,7 @@
 #include <yat/memory/SharedPtr.h>
 
 // Include CDMA
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/navigation/IDataItem.h>

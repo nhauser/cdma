@@ -14,7 +14,7 @@
 #include <yat/memory/SharedPtr.h>
 #include <typeinfo>
 
-#include <cdma/IObject.h>
+#include <cdma/Common.h>
 
 namespace cdma
 {
@@ -23,7 +23,7 @@ namespace cdma
 /// Interface IAttribute, with name and value. 
 /// The metadata for data items and groups.
 //==============================================================================
-class IAttribute : public IObject
+class CDMA_DECL IAttribute
 {
 public:
   virtual ~IAttribute()
