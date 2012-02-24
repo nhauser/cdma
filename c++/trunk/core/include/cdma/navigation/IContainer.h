@@ -35,12 +35,17 @@ class IContainer
 {
 public:
 
+  /// Type
+  ///
+  /// Concrete container type
+  ///
   enum Type
   {
     DATA_GROUP = 0,
     DATA_ITEM = 1
   };
 
+  /// d-tor
   virtual ~IContainer()
   {
   }
@@ -63,7 +68,7 @@ public:
   ///
   /// @return list of type Attribute; may be empty, not null.
   ///
-  virtual std::list<IAttributePtr> getAttributeList() = 0;
+  virtual AttributeList getAttributeList() = 0;
   
   /// Get the location referenced by the Dataset.
   ///
