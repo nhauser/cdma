@@ -36,7 +36,7 @@ void NxsGroup::PrivEnumChildren()
     NexusFileAccess auto_open(ptrFile);
 
     std::vector<std::string> datasets, groups, classes;
-    ptrFile->OpenGroupPath(PSZ(m_strPath), true);
+    ptrFile->OpenGroupPath(PSZ(m_path), true);
     ptrFile->GetGroupChildren(&datasets, &groups, &classes);
     
     for(yat::uint16 ui=0; ui < datasets.size(); ui++)
@@ -67,31 +67,19 @@ void NxsGroup::PrivEnumAttributes()
     NexusFileAccess auto_open (ptrNxFile);
     
     // Opening path
-    ptrNxFile->OpenGroupPath(PSZ(m_strPath), true);
-    yat::uint16 nbAttr = ptrNxFile->AttrCount();
+    ptrNxFile->OpenGroupPath(PSZ(m_path), true);
     
-    if( nbAttr > 0 )
+    if( ptrNxFile->AttrCount() > 0 )
     {
-      // First step
-      NexusAttrInfo *pAttrInfo = new NexusAttrInfo();
-      ptrNxFile->GetFirstAttribute(pAttrInfo);
+      NexusAttrInfo AttrInfo;
 
-      // Create cdma Attribute
-      yat::String attrName = pAttrInfo->AttrName();
-      IAttributePtr attribute( new NxsAttribute( ptrNxFile, pAttrInfo ) );
-      m_attributes_map[attrName] = attribute;
-
-      // Iterating on every following attribute
-      for( yat::uint16 ui = 1; ui < nbAttr; ui++ )
+      // Iterating on attributes collection
+      for( int rc = ptrNxFile->GetFirstAttribute(&AttrInfo); 
+           NX_OK == rc; 
+           rc = ptrNxFile->GetNextAttribute(&AttrInfo) )
       {
-        // Create a new nexus attribute info
-        pAttrInfo = new NexusAttrInfo();
-        ptrNxFile->GetNextAttribute(pAttrInfo);
-
         // Create cdma Attribute
-        attrName = pAttrInfo->AttrName();
-        attribute.reset( new NxsAttribute( ptrNxFile, pAttrInfo ) );
-        m_attributes_map[attrName] = attribute;
+        m_attributes_map[AttrInfo.AttrName()] = IAttributePtr(new NxsAttribute( ptrNxFile, AttrInfo ) );
       }
     }
     m_attributes_loaded = true;
@@ -113,7 +101,7 @@ NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr)
   m_root_wptr = NULL;
   m_parent_wptr = NULL;
 }
-NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_Path): m_strPath(full_Path)
+NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_Path): m_path(full_Path)
 {
   m_dataset_wptr = dataset_wptr;
   m_root_wptr = NULL;
@@ -126,8 +114,8 @@ NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& parent_path, 
   m_root_wptr = NULL;
   m_parent_wptr = NULL;
   m_bChildren = false;
-  m_strPath.printf("%s/%s", PSZ(parent_path), PSZ(name));
-  m_strPath.replace("//", "/");
+  m_path.printf("%s/%s", PSZ(parent_path), PSZ(name));
+  m_path.replace("//", "/");
 }
 
 //-----------------------------------------------------------------------------
@@ -150,7 +138,7 @@ cdma::IDataItemPtr NxsGroup::addDataItem(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getParent() const
 {
-  yat::String strPath = m_strPath, strTmp;
+  yat::String strPath = m_path, strTmp;
   strPath.extract_token_right('/', &strTmp);
   cdma::IGroupPtr ptrGroup = m_dataset_wptr.lock()->getGroupFromPath(strPath);
   if( !m_parent_wptr )
@@ -191,7 +179,7 @@ cdma::IDataItemPtr NxsGroup::getDataItem(const std::string& shortName) throw ( c
   if( it != m_mapDataItems.end() )
     return it->second;
 
-  cdma::IDataItemPtr ptrDataItem = m_dataset_wptr.lock()->getItemFromPath(m_strPath, shortName);
+  cdma::IDataItemPtr ptrDataItem = m_dataset_wptr.lock()->getItemFromPath(m_path, shortName);
   m_mapDataItems[shortName] = ptrDataItem;
   return ptrDataItem;
 }
@@ -221,7 +209,7 @@ cdma::IGroupPtr NxsGroup::getGroup(const std::string& shortName)
   if( it != m_mapGroups.end() )
     return it->second;
 
-  cdma::IGroupPtr ptrGroup = m_dataset_wptr.lock()->getGroupFromPath(NxsDataset::concatPath(m_strPath, shortName));
+  cdma::IGroupPtr ptrGroup = m_dataset_wptr.lock()->getGroupFromPath(NxsDataset::concatPath(m_path, shortName));
   m_mapGroups[shortName] = ptrGroup;
   return ptrGroup;
 }
@@ -402,7 +390,7 @@ std::string NxsGroup::getLocation() const
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getPath() const
 {
-  return m_strPath;
+  return m_path;
 }
 
 //-----------------------------------------------------------------------------
@@ -410,7 +398,7 @@ std::string NxsGroup::getPath() const
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getName() const
 {
-  yat::String strName, strPath = m_strPath;
+  yat::String strName, strPath = m_path;
   strPath.extract_token_right('/', &strName);
   return strName;
 }

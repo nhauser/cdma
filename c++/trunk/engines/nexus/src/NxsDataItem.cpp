@@ -15,7 +15,8 @@
 // ****************************************************************************
 #include <cdma/Common.h>
 #include <NxsDataItem.h>
-#include <TypeDetector.h>
+#include <TypeUtils.h>
+
 #define TEMP_EXCEPTION(a,b) throw cdma::Exception("TARTAMPION", a, b)
 
 /// A DataItem is a logical container for data. It has a DataType, a set of
@@ -44,7 +45,7 @@ NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, c
 NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path)
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset_wptr, yat::String(path), false );
+  init( dataset_wptr, yat::String(path) );
   m_item = item;
 }
 
@@ -53,6 +54,7 @@ NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& it
 //---------------------------------------------------------------------------
 NxsDataItem::~NxsDataItem()
 {
+  CDMA_TRACE("NxsDataItem::~NxsDataItem");
 };
 
 //---------------------------------------------------------------------------
@@ -198,7 +200,9 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> sh
 //---------------------------------------------------------------------------
 std::string NxsDataItem::getDescription()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::getDescription");
+  if( hasAttribute("description") )
+    return getAttribute("description")->getStringValue();
+  return yat::String::nil;
 }
 
 //---------------------------------------------------------------------------
@@ -326,7 +330,7 @@ cdma::IDataItemPtr NxsDataItem::getSlice(int /*dim*/, int /*value*/) throw ( cdm
 //---------------------------------------------------------------------------
 const std::type_info& NxsDataItem::getType()
 {
-  return TypeDetector::detectType(m_item.DataType());
+  return TypeUtils::toCType(m_item.DataType());
 }
 
 //---------------------------------------------------------------------------
@@ -334,7 +338,9 @@ const std::type_info& NxsDataItem::getType()
 //---------------------------------------------------------------------------
 std::string NxsDataItem::getUnitsString()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::getUnitsString");
+  if( hasAttribute("units") )
+    return getAttribute("units")->getStringValue();
+  return yat::String::nil;
 }
 
 //---------------------------------------------------------------------------
@@ -344,11 +350,6 @@ bool NxsDataItem::hasCachedData()
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::hasCachedData");
 }
-
-//---------------------------------------------------------------------------
-// NxsDataItem::findAttributeIgnoreCase
-//---------------------------------------------------------------------------
-//##int NxsDataItem::hashCode()
 
 //---------------------------------------------------------------------------
 // NxsDataItem::invalidateCache
@@ -371,7 +372,7 @@ bool NxsDataItem::isCaching()
 //---------------------------------------------------------------------------
 bool NxsDataItem::isMemberOfStructure()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::isMemberOfStructure");
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -406,7 +407,16 @@ bool NxsDataItem::isUnlimited()
 //---------------------------------------------------------------------------
 bool NxsDataItem::isUnsigned()
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::isUnsigned");
+  switch( m_item.DataType() )
+  {
+    case NX_UINT8:
+    case NX_UINT16:
+    case NX_UINT32:
+    case NX_UINT64:
+      return true;
+    default:
+      return false;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -478,11 +488,6 @@ bool NxsDataItem::removeAttribute(const cdma::IAttributePtr&)
 {
   THROW_NOT_IMPLEMENTED("NxsDataItem::removeAttribute");
 }
-
-//---------------------------------------------------------------------------
-// NxsDataItem::setCachedData
-//---------------------------------------------------------------------------
-//##void NxsDataItem::setCachedData(Array& cacheData, bool isMetadata) throw ( cdma::Exception )
 
 //---------------------------------------------------------------------------
 // NxsDataItem::setCaching
@@ -559,17 +564,24 @@ cdma::IAttributePtr NxsDataItem::addAttribute(const std::string&, yat::Any&)
 //---------------------------------------------------------------------------
 // NxsDataItem::getAttribute
 //---------------------------------------------------------------------------
-IAttributePtr NxsDataItem::getAttribute(const std::string&)
+IAttributePtr NxsDataItem::getAttribute( const std::string& attr_name )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::getAttribute");
+  AttributeMap::iterator it = m_attr_map.find(attr_name);
+  if( it != m_attr_map.end() )
+    return it->second;
+
+  return IAttributePtr(NULL);
 }
 
 //---------------------------------------------------------------------------
 // NxsDataItem::getAttributeList
 //---------------------------------------------------------------------------
-std::list<yat::SharedPtr<cdma::IAttribute, yat::Mutex> > NxsDataItem::getAttributeList()
+AttributeList NxsDataItem::getAttributeList()
 {
-  return m_attr_list;
+  AttributeList attr_list;
+  for( AttributeMap::iterator it = m_attr_map.begin(); it != m_attr_map.end(); it++ )
+    attr_list.push_back(it->second);
+  return attr_list;
 }
 
 //---------------------------------------------------------------------------
@@ -620,9 +632,11 @@ std::string NxsDataItem::getShortName() const
 //---------------------------------------------------------------------------
 // NxsDataItem::hasAttribute
 //---------------------------------------------------------------------------
-bool NxsDataItem::hasAttribute(const std::string&)
+bool NxsDataItem::hasAttribute( const std::string& attr_name )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::hasAttribute");
+  if( m_attr_map.find(attr_name) != m_attr_map.end() )
+    return true;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -699,7 +713,7 @@ void NxsDataItem::loadArray()
     file_ptr->GetData( &data, m_name.data() );
   
     // Init Array
-    cdma::Array *array_ptr = new cdma::Array( TypeDetector::detectType(m_item.DataType()),
+    cdma::Array *array_ptr = new cdma::Array( TypeUtils::toCType(m_item.DataType()),
                                               shape, data.Data() );
 
     // remove ownership of the NexusDataSet
@@ -719,38 +733,28 @@ void NxsDataItem::loadArray()
 //---------------------------------------------------------------------------
 void NxsDataItem::initAttr()
 {
+  CDMA_FUNCTION_TRACE("NxsDataItem::initAttr");
   // Clear previously loaded attr
-  if( !m_attr_list.empty() )
-  {
-    m_attr_list.clear();
-  }
+  m_attr_map.clear();
   
   // Open node
   open();
   
   // Load attributes
   NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
-  int nbAttr = file->AttrCount();
-  if( nbAttr > 0 )
+  if( file->AttrCount() > 0 )
   {
+    CDMA_TRACE("attr count: " << file->AttrCount());
     // Read attr infos
-    yat::String path = m_path + "/" + m_name;
-    NexusAttrInfo* tmp_attr = new NexusAttrInfo();
-    NxsAttribute *attr;
+    NexusAttrInfo attr_info;
     
-    // Iterate over nexus attr
-    file->GetFirstAttribute(tmp_attr);
-    attr = new NxsAttribute( file, tmp_attr );
-    m_attr_list.push_back( IAttributePtr(attr) );
-    for( int i = 0; i < nbAttr - 1; i++ )
+    // Iterate over attributes collection
+    for( int rc = file->GetFirstAttribute(&attr_info); 
+         NX_OK == rc; 
+         rc = file->GetNextAttribute(&attr_info) )
     {
-      // Scan attribute
-      tmp_attr = new NexusAttrInfo();
-      file->GetNextAttribute(tmp_attr);
-      
       // Create NxsAttribute
-      attr = new NxsAttribute( file, tmp_attr );
-      m_attr_list.push_back( IAttributePtr(attr) );
+      m_attr_map[attr_info.AttrName()] = new NxsAttribute( file, attr_info );
     }
   }
 }

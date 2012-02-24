@@ -10,8 +10,9 @@
 
 #include <cdma/Common.h>
 #include <cdma/array/Array.h>
+
 #include <NxsAttribute.h>
-#include <TypeDetector.h>
+#include <TypeUtils.h>
 
 #define MISMATCH_EXCEPTION(a,b) throw cdma::Exception("TYPE_MISMATCHING", a, b)
 
@@ -21,26 +22,31 @@ namespace cdma
 //---------------------------------------------------------------------------
 // NxsAttribute::NxsAttribute
 //---------------------------------------------------------------------------
-NxsAttribute::NxsAttribute()
+  NxsAttribute::NxsAttribute()
 {
-  m_info_ptr = NULL; 
 }
 
 //---------------------------------------------------------------------------
 // NxsAttribute::NxsAttribute
 //---------------------------------------------------------------------------
-NxsAttribute::NxsAttribute( NexusFilePtr file, NexusAttrInfo* info )
+NxsAttribute::NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info )
 {
   CDMA_FUNCTION_TRACE("NxsAttribute::NxsAttribute");
-  
-  m_info_ptr = info;
 
   // Allocate requested memory
-  m_value = TypeDetector::allocate<void>( info->DataType(), info->Len() );
+  int attr_bytes = info.Len() + 1;
+  if( info.DataType() == NX_CHAR )
+    attr_bytes += 1;
+
+  char *buf = new char[attr_bytes];
+  memset(buf, 0, attr_bytes);
 
   // Load corresponding data
-  int length = info->Len();
-  file->GetAttribute( info->AttrName(), &length, m_value, info->DataType() );
+  file_ptr->GetAttribute( info.AttrName(), &attr_bytes, buf, info.DataType() );
+  m_value_buf.attach( buf, attr_bytes );
+
+  m_name = info.AttrName();
+  m_datatype = info.DataType();
 }
 
 //---------------------------------------------------------------------------
@@ -48,7 +54,7 @@ NxsAttribute::NxsAttribute( NexusFilePtr file, NexusAttrInfo* info )
 //---------------------------------------------------------------------------
 std::string NxsAttribute::getName()
 {
-  return m_info_ptr->AttrName();
+  return m_name;
 }
 
 //---------------------------------------------------------------------------
@@ -56,7 +62,7 @@ std::string NxsAttribute::getName()
 //---------------------------------------------------------------------------
 const std::type_info& NxsAttribute::getType()
 {
-  return TypeDetector::detectType(m_info_ptr->DataType());
+  return TypeUtils::toCType(m_datatype);
 }
 
 //---------------------------------------------------------------------------
@@ -64,7 +70,7 @@ const std::type_info& NxsAttribute::getType()
 //---------------------------------------------------------------------------
 bool NxsAttribute::isString()
 {
-  return ( m_info_ptr->DataType() == NX_CHAR );
+  return ( m_datatype == NX_CHAR );
 }
 
 //---------------------------------------------------------------------------
@@ -80,17 +86,8 @@ bool NxsAttribute::isArray()
 //---------------------------------------------------------------------------
 int NxsAttribute::getLength()
 {
-  return m_info_ptr->Len();
+  return 1;
 }
-
-//---------------------------------------------------------------------------
-// NxsAttribute::getValue
-//---------------------------------------------------------------------------
-/*
-cdma::ArrayPtr NxsAttribute::getValue()
-{
-}
-*/
 
 //---------------------------------------------------------------------------
 // NxsAttribute::getStringValue
@@ -99,27 +96,19 @@ std::string NxsAttribute::getStringValue()
 {
   if( isString() )
   {
-    return yat::String((char*) m_value);
+    return yat::String( (char*)(m_value_buf.buf()) );
   }
   MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getStringValue");
 }
-
-//---------------------------------------------------------------------------
-// NxsAttribute::getStringValue
-//---------------------------------------------------------------------------
-/*std::string NxsAttribute::getStringValue(int index)
-{
-}
-*/
 
 //---------------------------------------------------------------------------
 // NxsAttribute::getIntValue
 //---------------------------------------------------------------------------
 long NxsAttribute::getIntValue()
 {
-  if( ! isString() )
+  if( !isString() )
   {
-    return *((long*) m_value);
+    return TypeUtils::valueToType<long>( m_value_buf.buf(), getType() );
   }
   MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getIntValue");
 }
@@ -129,9 +118,9 @@ long NxsAttribute::getIntValue()
 //---------------------------------------------------------------------------
 double NxsAttribute::getFloatValue()
 {
-  if( ! isString() )
+  if( !isString() )
   {
-    return *((double*) m_value);
+    return TypeUtils::valueToType<double>( m_value_buf.buf(), getType() );
   }
   MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getFloatValue");
 }
@@ -141,18 +130,16 @@ double NxsAttribute::getFloatValue()
 //---------------------------------------------------------------------------
 std::string NxsAttribute::toString()
 {
-  yat::String res = "";
   if( this->isString() )
   {
-    res = "Attr: " + this->getName() + " = " + this->getStringValue();
+    return getStringValue();
   }
   else
   {
     std::stringstream ss;
-    ss << "Attr: " << this->getName() << " = " <<this->getIntValue();
-    res =  ss.str();
+    ss << getFloatValue();
+    return ss.str();
   }
-  return res;
 }
 
 //---------------------------------------------------------------------------

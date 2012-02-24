@@ -45,7 +45,7 @@ private:
   mutable NxsGroupWPtr  m_parent_wptr;   // Reference to the parent group
   NxsGroupWPtr          m_root_wptr;     // TODO appeler celui du Dataset
   NxsGroupWPtr          m_self_wptr;     // self reference given to its childrens
-  yat::String           m_strPath;       // Group path inside the Nexus File
+  yat::String           m_path;          // Group path inside the Nexus File
   MapStringGroup        m_mapGroups;
   MapStringDataItem     m_mapDataItems;
   MapStringAttribute    m_attributes_map;
@@ -68,7 +68,7 @@ public:
 
   //@{ plug-in specific
   
-    void setPath(const yat::String& strPath) { m_strPath = strPath; }
+    void setPath(const yat::String& strPath) { m_path = strPath; }
     void setSelfRef(const NxsGroupPtr& ptr);
     std::string getPath() const;
 

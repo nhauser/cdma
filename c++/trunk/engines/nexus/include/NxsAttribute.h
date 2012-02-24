@@ -20,6 +20,8 @@
 
 #include <string>
 #include <yat/utils/String.h>
+#include <yat/memory/MemBuf.h>
+
 #include <nxfile.h>
 
 #include <internal/common.h>
@@ -35,12 +37,13 @@ namespace cdma
 class CDMA_DECL NxsAttribute : public IAttribute
 {
 private:
-  NexusAttrInfo* m_info_ptr;
-  void *m_value;
+  std::string    m_name;
+  NexusDataType  m_datatype;
+  yat::MemBuf    m_value_buf;
 
 public:
   NxsAttribute();
-  NxsAttribute( NexusFilePtr file, NexusAttrInfo* info );
+  NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info );
 
   //NxsAttribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
 
@@ -86,28 +89,6 @@ public:
   /// @return string if this is a string valued attribute, else null.
   ///
   std::string getStringValue();
-
-  /// Retrieve string value; only call if isString() is true.
-  ///
-  /// @param index integer value
-  /// @return string if this is a string valued attribute, else null.
-  ///
-//  string getStringValue(int index);
-
-  /// Retrieve numeric value. Equivalent to <code>getNumericValue(0)</code>
-  ///
-  /// @return the first element of the value array, or null if its a String.
-  ///
-//  double getNumericValue();
-
-  /// Retrieve a numeric value by index. If its a String, it will try to parse
-  /// it as a double.
-  ///
-  /// @param index the index into the value array.
-  /// @return Number <code>value[index]</code>, or null if its a non-parsable
-  ///         string or the index is out of range.
-  ///
-//  double getNumericValue(int index);
 
   /// string representation.
   ///
