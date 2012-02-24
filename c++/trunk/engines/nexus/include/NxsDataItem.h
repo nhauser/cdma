@@ -47,15 +47,18 @@ namespace cdma
 //==============================================================================
 class CDMA_DECL NxsDataItem : public IDataItem
 {
+public:
+  typedef std::map<std::string, IAttributePtr> AttributeMap;
+
 private:
-  std::list<IAttributePtr> m_attr_list;
-  NxsDatasetWPtr           m_dataset_wptr; // use a weakptr in order to solve the circular reference
-  yat::String              m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
-  yat::String              m_shortName;
-  yat::String              m_path;         // Path of the item through the dataset file structure (excluding item node name)
-  NexusDataSetInfo         m_item;         // Info on the belonged data
-  ArrayPtr                 m_array_ptr;    // Array object
-  std::vector<int>         m_shape;        // Shape defined by the NexusDatasetInfo
+  AttributeMap      m_attr_map;
+  NxsDatasetWPtr    m_dataset_wptr; // use a weakptr in order to solve the circular reference
+  yat::String       m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
+  yat::String       m_shortName;
+  yat::String       m_path;         // Path of the item through the dataset file structure (excluding item node name)
+  NexusDataSetInfo  m_item;         // Info on the belonged data
+  ArrayPtr          m_array_ptr;    // Array object
+  std::vector<int>  m_shape;        // Shape defined by the NexusDatasetInfo
 
 public:
 
@@ -118,7 +121,7 @@ public:
     void setUnitsString(const std::string& units);
     IDataItemPtr clone();
     IAttributePtr getAttribute(const std::string&);
-    std::list<IAttributePtr > getAttributeList();
+    AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
     IDatasetPtr getDataset();
   
