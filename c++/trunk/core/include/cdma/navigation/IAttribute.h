@@ -83,13 +83,13 @@ public:
   ///
   //virtual std::string getStringValue(int index) = 0;
 
-  /// Retrieve integer value
+  /// Retrieve integer value as long C-type
   ///
   /// @return the first element of the value array, or null if its a String.
   ///
   virtual long getIntValue() = 0;
 
-  /// Retrieve integer value
+  /// Retrieve floating point value as double C-type
   ///
   /// @return the first element of the value array, or null if its a String.
   ///
@@ -125,6 +125,10 @@ public:
 
 DECLARE_SHARED_PTR(IAttribute);
 
-} //namespace CDMACore
+/// CDMA types
+typedef std::list<IAttributePtr> AttributeList;
+
+} //namespace cdma
+
 #endif //__CDMA_IATTRIBUTE_H__
 
