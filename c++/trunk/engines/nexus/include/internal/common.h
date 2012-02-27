@@ -9,7 +9,6 @@
 
 // CDMA Core
 #include <cdma/Common.h>
-#include <cdma/IObject.h>
 
 namespace cdma
 {
