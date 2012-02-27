@@ -35,16 +35,12 @@ EXPORT_SINGLECLASS_PLUGIN(cdma::SoleilNxsFactory, \
 namespace cdma
 {
 
-const std::string PlugInID         ( "SoleilNeXus" );
-const std::string InterfaceName    ( "cdma::IFactory" );
-const std::string VersionNumber    ( "1.0.0" );
-
 //----------------------------------------------------------------------------
 // SoleilNxsFactoryInfo::get_plugin_id
 //----------------------------------------------------------------------------
 std::string SoleilNxsFactoryInfo::get_plugin_id() const
 {
-  return PlugInID;
+  return SoleilNxsFactory::plugin_id();
 }
 
 //----------------------------------------------------------------------------
@@ -52,7 +48,7 @@ std::string SoleilNxsFactoryInfo::get_plugin_id() const
 //----------------------------------------------------------------------------
 std::string SoleilNxsFactoryInfo::get_interface_name() const
 {
-  return InterfaceName;
+  return SoleilNxsFactory::interface_name();
 }
 
 //----------------------------------------------------------------------------
@@ -60,7 +56,7 @@ std::string SoleilNxsFactoryInfo::get_interface_name() const
 //----------------------------------------------------------------------------
 std::string SoleilNxsFactoryInfo::get_version_number() const
 {
-  return VersionNumber;
+  return SoleilNxsFactory::version_number();
 }
 
 //==============================================================================
@@ -79,7 +75,7 @@ SoleilNxsFactory::SoleilNxsFactory()
 //----------------------------------------------------------------------------
 SoleilNxsFactory::~SoleilNxsFactory()
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::~SoleilNxsFactory");
+  CDMA_TRACE("SoleilNxsFactory::~SoleilNxsFactory");
 }
 
 //----------------------------------------------------------------------------
@@ -89,7 +85,7 @@ IDatasetPtr SoleilNxsFactory::openDataset(const std::string& location_string)
 throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SoleilNxsFactory::openDataset");
-  return SoleilNxsDataset::getDataset( yat::URI(location_string), this);
+  return new SoleilNxsDataset( yat::URI(location_string), this );
 }
 
 //----------------------------------------------------------------------------
