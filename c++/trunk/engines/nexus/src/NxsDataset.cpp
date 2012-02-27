@@ -43,6 +43,7 @@ NxsDataset::NxsDataset( const yat::URI& location, IFactory *factory_ptr )
   // Utiliser yat pour sortir un FileName et récupérer son contenu (1 ou plusieurs fichiers)
   m_location = location;
   m_factory_ptr = factory_ptr;
+  m_phy_root.reset( new NxsGroup( this ) );
   CDMA_TRACE( "open file: " + m_location.get(yat::URI::PATH) );
   m_file_handle.reset( new NexusFile( PSZ( m_location.get(yat::URI::PATH) ) ) );
 }
@@ -59,7 +60,7 @@ NxsDataset::NxsDataset()
 //---------------------------------------------------------------------------
 NxsDataset::~NxsDataset()
 {
-  CDMA_TRACE("!!! NxsDataset::~NxsDataset");
+  CDMA_TRACE("NxsDataset::~NxsDataset");
 }
 
 //---------------------------------------------------------------------------
