@@ -31,8 +31,6 @@ namespace cdma
 //---------------------------------------------------------------------------
 NxsAttribute::NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info )
 {
-  CDMA_FUNCTION_TRACE("NxsAttribute::NxsAttribute");
-
   // Allocate requested memory
   int attr_bytes = info.Len() + 1;
   if( info.DataType() == NX_CHAR )

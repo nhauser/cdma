@@ -38,10 +38,11 @@ namespace cdma
 //---------------------------------------------------------------------------
 // NxsDataset::NxsDataset
 //---------------------------------------------------------------------------
-NxsDataset::NxsDataset( const yat::URI& location )
+NxsDataset::NxsDataset( const yat::URI& location, IFactory *factory_ptr )
 {
   // Utiliser yat pour sortir un FileName et récupérer son contenu (1 ou plusieurs fichiers)
   m_location = location;
+  m_factory_ptr = factory_ptr;
   CDMA_TRACE( "open file: " + m_location.get(yat::URI::PATH) );
   m_file_handle.reset( new NexusFile( PSZ( m_location.get(yat::URI::PATH) ) ) );
 }
@@ -54,17 +55,11 @@ NxsDataset::NxsDataset()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataset::setSelfRef
+// NxsDataset::NxsDataset
 //---------------------------------------------------------------------------
-void NxsDataset::setSelfRef(const NxsDatasetPtr& ptr)
+NxsDataset::~NxsDataset()
 {
-  if( ptr.get() != this )
-  {
-    THROW_INVALID_POINTER("Pointer mismatch", "NxsDataset::setSelfRef");
-  }
-
-  m_self_wptr = ptr;
-  m_phy_root.reset( new NxsGroup( m_self_wptr ) );
+  CDMA_TRACE("!!! NxsDataset::~NxsDataset");
 }
 
 //---------------------------------------------------------------------------
@@ -82,13 +77,16 @@ yat::String NxsDataset::concatPath(const yat::String &path, const yat::String& n
 //---------------------------------------------------------------------------
 cdma::IDataItemPtr NxsDataset::getItemFromPath(const std::string &fullPath)
 {
+  CDMA_FUNCTION_TRACE("NxsDataset::getItemFromPath(const std::string &)");
   yat::String strPath = fullPath, strName;
   strPath.extract_token_right('/', &strName);
   return getItemFromPath(strPath, strName);
 }
 
-cdma::IDataItemPtr NxsDataset::getItemFromPath(const yat::String &path, const yat::String& name)
+cdma::IDataItemPtr NxsDataset::getItemFromPath(const yat::String& path, const yat::String& name)
 {
+  CDMA_FUNCTION_TRACE("NxsDataset::getItemFromPath(const yat::String&, const yat::String&)");
+
   if( m_file_handle.is_null() )
     THROW_NO_DATA("No NeXus file", "NxsGroup::getItemFromPath");
   
@@ -118,7 +116,7 @@ cdma::IDataItemPtr NxsDataset::getItemFromPath(const yat::String &path, const ya
       return it->second;
       
     // Create corresponding object and stores it
-    cdma::IDataItemPtr ptrItem = new NxsDataItem(m_self_wptr, *info, strPath);
+    cdma::IDataItemPtr ptrItem = new NxsDataItem(this, *info, strPath);
     m_item_map[strPath] = ptrItem;
     m_file_handle->CloseDataSet();
     return ptrItem;
@@ -166,7 +164,7 @@ cdma::IGroupPtr NxsDataset::getGroupFromPath(const std::string &groupPath)
       return it->second;
 
     // Create corresponding object and stores it
-    cdma::IGroupPtr ptrGroup = new NxsGroup(m_self_wptr, path);
+    cdma::IGroupPtr ptrGroup = new NxsGroup(this, path);
     m_group_map[path] = ptrGroup;
     return ptrGroup;
   }
