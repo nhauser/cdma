@@ -20,7 +20,6 @@
 #include <yat/utils/String.h>
 #include "nxfile.h"
 #include <cdma/Common.h>
-#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <internal/common.h>
 

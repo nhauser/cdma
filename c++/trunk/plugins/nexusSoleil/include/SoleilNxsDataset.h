@@ -10,7 +10,6 @@
 #include <yat/plugin/IPlugInInfo.h>
 
 // CDMA core
-#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/Factory.h>
 #include <cdma/IFactory.h>
