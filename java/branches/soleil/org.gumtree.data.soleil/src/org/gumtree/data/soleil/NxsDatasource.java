@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 
 import org.gumtree.data.IDatasource;
-import org.gumtree.data.exception.FileAccessException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.navigation.NxsDataset;
@@ -106,7 +106,7 @@ public final class NxsDatasource implements IDatasource {
 						} catch (IOException e1) {
 						}
 					}
-				} catch (FileAccessException e) {
+				} catch (NoResultException e) {
 					e.printStackTrace();
 				}
 			}

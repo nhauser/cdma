@@ -15,8 +15,8 @@ import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.dictionary.impl.LogicalGroup;
 import org.gumtree.data.engine.nexus.navigation.NexusDataset;
 import org.gumtree.data.engine.nexus.navigation.NexusGroup;
-import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.GDMWriterException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataset;
@@ -24,8 +24,8 @@ import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.soleil.NxsDatasource.NeXusFilter;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
-import org.gumtree.data.soleil.internal.ConfigDataset;
-import org.gumtree.data.soleil.internal.ConfigManager;
+import org.gumtree.data.util.configuration.ConfigDataset;
+import org.gumtree.data.util.configuration.ConfigManager;
 
 import fr.soleil.nexus.NexusFileWriter;
 
@@ -55,20 +55,14 @@ public final class NxsDataset implements IDataset {
 	private ILogicalGroup      mRootLogical;  // Logical root of the document
 	private boolean            mOpen;         // is the dataset open 
 	
-	public static NxsDataset instanciate(File destination) throws IOException, FileAccessException
+	public static NxsDataset instanciate(File destination) throws IOException, NoResultException
 	{
-		NxsDataset result = new NxsDataset(destination);
-		result.open();
-		ConfigDataset conf;
-		try {
-			conf = ConfigManager.getInstance().getConfig(result);
-		} catch (FileAccessException e) {
-			result.close();
-			throw e;
-		}
-		result.setConfig(conf);
-		result.close();
-		return result;
+		NxsDataset dataset = new NxsDataset(destination);
+		dataset.open();
+		ConfigDataset conf = ConfigManager.getInstance( NxsFactory.getInstance(), NxsFactory.CONFIG_FILE ).getConfig(dataset);
+		dataset.setConfig(conf);
+		dataset.close();
+		return dataset;
 	}
 	
 	@Override

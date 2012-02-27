@@ -211,16 +211,19 @@ public class NexusFileReader extends NexusFileBrowser {
 	 */
 	private DataItem readDataItem(int iDataRank) throws NexusException {
 		DataItem dsData = readDataInfo();
+
+		Object data = readNodeValue(
+							new int[] { dsData.getSize().length, dsData.getType() }, 
+							dsData.getSize(), 
+							iDataRank
+							);
 		
-		dsData.setData( 
-						new SoftReference<Object >(
-							readNodeValue(
-								new int[] { dsData.getSize().length, dsData.getType() }, 
-								dsData.getSize(), 
-								iDataRank
-								)
-							)
-					  );
+		if( dsData.getType() == NexusFile.NX_CHAR ) {
+			dsData.setData(data);
+		}
+		else {
+			dsData.setData( new SoftReference<Object >(data) );
+		}
 
 		dsData.isSingleRawArray(m_bResultAsSingleRaw);
 
@@ -299,7 +302,6 @@ public class NexusFileReader extends NexusFileBrowser {
 	protected DataItem getDataItem(int iRank) throws NexusException {
 		DataItem dataItem;
 		NexusNode nnNode = getCurrentRealPath().getCurrentNode();
-
 		String sNodeName = nnNode.getNodeName();
 		String sNodeClass = nnNode.getClassName();
 
