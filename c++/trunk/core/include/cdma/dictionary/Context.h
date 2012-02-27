@@ -39,7 +39,7 @@ class Context
 {
 private:
   KeyPtr          m_key_ptr;
-  IDatasetPtr     m_dataset_ptr;
+  IDataset*       m_dataset_ptr;
   DataItemList    m_dataitems;
   DictionaryPtr   m_dictionary_ptr;
 
@@ -49,7 +49,7 @@ public:
   Context() {}
 
   /// Constructor
-  Context(const IDatasetPtr& dataset_ptr, const KeyPtr& key_ptr, const DictionaryPtr dict_ptr)
+  Context(IDataset* dataset_ptr, const KeyPtr& key_ptr, const DictionaryPtr dict_ptr)
     : m_key_ptr(key_ptr), m_dataset_ptr(dataset_ptr), m_dictionary_ptr(dict_ptr)  {}
 
   //@{ Accessors
@@ -62,7 +62,7 @@ public:
 
   /// Return smart pointer on dataset object
   // @warning non-const method!
-  const IDatasetPtr& getDataset() { return m_dataset_ptr; }
+  IDataset* getDataset() { return m_dataset_ptr; }
 
   /// Get read/write access on the data items list
   const DataItemList& getDataItems() const { return m_dataitems; }

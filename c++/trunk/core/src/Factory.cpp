@@ -47,6 +47,7 @@ Factory& Factory::instance()
 //----------------------------------------------------------------------------
 void Factory::cleanup()
 {
+  CDMA_STATIC_FUNCTION_TRACE("Factory::cleanup");
   // Free method objects for each plugins
   for( PluginMap::iterator it = instance().m_plugin_map.begin();
                            it != instance().m_plugin_map.end(); it++)
@@ -54,8 +55,11 @@ void Factory::cleanup()
     it->second.plugin_method_map.clear();
   }
 
+  CDMA_STATIC_TRACE("clear factory map");
+
   // Release plugins
   instance().m_plugin_factory_map.clear();
+  instance().m_plugin_map.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -105,7 +109,7 @@ void Factory::init(const std::string &plugin_path)
         CDMA_STATIC_TRACE("Found a CDMA plugin!");
         
         std::string plugin_id = plugin_info->get_plugin_id();
-        CDMA_STATIC_TRACE("Plugin_objects.info->get_plugin_id: " << plugin_info->get_plugin_id());
+        CDMA_STATIC_TRACE("Plugin_objects.info->get_plugin_id: " << plugin_id);
         
         instance().m_plugin_map[plugin_id] = plugin_data;
         CDMA_STATIC_TRACE("Plugin registered");

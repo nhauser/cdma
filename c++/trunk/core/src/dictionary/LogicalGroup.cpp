@@ -35,10 +35,10 @@ namespace cdma
 //-----------------------------------------------------------------------------
 // LogicalGroup::LogicalGroup
 //-----------------------------------------------------------------------------
-LogicalGroup::LogicalGroup( IDatasetWPtr dataset_ptr, LogicalGroup* parent_ptr, 
+LogicalGroup::LogicalGroup( IDataset* dataset_ptr, LogicalGroup* parent_ptr, 
                             const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr )
 {
-  m_dataset_wptr = dataset_ptr;
+  m_dataset_ptr = dataset_ptr;
   m_parent_ptr = parent_ptr;
   m_key_ptr = key_ptr;
   m_dictionary_ptr = dictionary_ptr;
@@ -96,9 +96,11 @@ void LogicalGroup::PrivSolveKey(Context *context_ptr)
 IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
 {
   CDMA_FUNCTION_TRACE("LogicalGroup::getDataItem");
+  CDMA_TRACE("key: " << key_ptr->getName());
+
   try
   {
-    Context context(m_dataset_wptr, key_ptr, m_dictionary_ptr);
+    Context context(m_dataset_ptr, key_ptr, m_dictionary_ptr);
     PrivSolveKey(&context);
     IDataItemPtr item = context.getTopDataItem();
     return item;
@@ -125,7 +127,7 @@ std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key_ptr)
   try
   {
     IDataItemPtr item;
-    Context context(m_dataset_wptr, key_ptr, m_dictionary_ptr);
+    Context context(m_dataset_ptr, key_ptr, m_dictionary_ptr);
     PrivSolveKey(&context);
     return context.getDataItems();
   }
@@ -176,7 +178,7 @@ LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key_ptr)
         // Key is in children list -> construct group
         if( *itChildren == keyName )
         {
-          child = new LogicalGroup(m_dataset_wptr, this, key_ptr, m_dictionary_ptr );
+          child = new LogicalGroup(m_dataset_ptr, this, key_ptr, m_dictionary_ptr );
           m_child_groups[ keyName ] = child;
           break;
         }

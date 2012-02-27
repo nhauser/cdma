@@ -24,7 +24,6 @@ namespace cdma
 //----------------------------------------------------------------------------
 IDataItemPtr Context::getTopDataItem() const
 {
-  CDMA_FUNCTION_TRACE("Context::getTopDataItem");
   if( m_dataitems.empty() )
   {
     CDMA_TRACE("No data items");
@@ -38,7 +37,6 @@ IDataItemPtr Context::getTopDataItem() const
 //----------------------------------------------------------------------------
 void Context::pushDataItem(const IDataItemPtr& dataitem_ptr) 
 { 
-  CDMA_FUNCTION_TRACE("Context::pushDataItem");
   m_dataitems.push_back(dataitem_ptr); 
 }
 

@@ -43,7 +43,7 @@ namespace cdma
 class CDMA_DECL LogicalGroup
 {
 private:
-  IDatasetWPtr                           m_dataset_wptr;   ///< Weak reference to the parent dataset
+  IDataset*                              m_dataset_ptr;    ///< C-style pointer to the parent dataset
   LogicalGroup*                          m_parent_ptr;     ///< C-style pointer to the parent group (NULL if root)
   KeyPtr                                 m_key_ptr;        ///< Key from which this logical group was intantiated (is_null() = true if root)
   DictionaryPtr                          m_dictionary_ptr; ///< Dictionary this logical group match to
@@ -55,7 +55,7 @@ private:
 
 public:
   // Constructor
-  LogicalGroup( IDatasetWPtr dataset_wptr, LogicalGroup* parent_ptr, 
+  LogicalGroup( IDataset* dataset_ptr, LogicalGroup* parent_ptr, 
                 const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr );
 
   //Virtual destructor
