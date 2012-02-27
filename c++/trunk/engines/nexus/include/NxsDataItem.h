@@ -52,7 +52,7 @@ public:
 
 private:
   AttributeMap      m_attr_map;
-  NxsDatasetWPtr    m_dataset_wptr; // use a weakptr in order to solve the circular reference
+  NxsDataset*       m_dataset_ptr;  // C-style pointer in order to solve the circular reference
   yat::String       m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
   yat::String       m_shortName;
   yat::String       m_path;         // Path of the item through the dataset file structure (excluding item node name)
@@ -64,9 +64,9 @@ public:
 
   //@{ Constructors & Destructor
 
-    NxsDataItem(NxsDatasetWPtr dataset_wptr, const std::string& path);
-    NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const std::string& name );
-    NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path);
+    NxsDataItem(NxsDataset* dataset_ptr, const std::string& path);
+    NxsDataItem(NxsDataset* dataset_ptr, const IGroupPtr& parent, const std::string& name );
+    NxsDataItem(NxsDataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path);
     ~NxsDataItem();
 
   //@} --------------------------------
@@ -148,7 +148,8 @@ public:
   //@} --------------------------------
 
 protected:
-  void init(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file = true);
+  void init(NxsDataset* dataset_ptr, const std::string& path, bool init_from_file = true);
+
 private:
   void loadArray();
   void checkArray();

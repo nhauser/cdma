@@ -41,11 +41,9 @@ typedef std::map<yat::String, cdma::IAttributePtr> MapStringAttribute;
 class NxsGroup : public cdma::IGroup
 {
 private:
-  NxsDatasetWPtr        m_dataset_wptr;  // Weak pointer to the parent dataset
-  mutable NxsGroupWPtr  m_parent_wptr;   // Reference to the parent group
-  NxsGroupWPtr          m_root_wptr;     // TODO appeler celui du Dataset
-  NxsGroupWPtr          m_self_wptr;     // self reference given to its childrens
-  yat::String           m_path;          // Group path inside the Nexus File
+  NxsDataset*           m_dataset_ptr;  // C-style pointer to the parent dataset
+  NxsGroup*             m_root_ptr;     // TODO appeler celui du Dataset
+  yat::String           m_path;         // Group path inside the Nexus File
   MapStringGroup        m_mapGroups;
   MapStringDataItem     m_mapDataItems;
   MapStringAttribute    m_attributes_map;
@@ -59,9 +57,9 @@ public:
 
   //@{ Constructors
 
-    NxsGroup(NxsDatasetWPtr dataset_wptr);
-    NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& parent_path, const yat::String& name);
-    NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_path);
+    NxsGroup(NxsDataset* dataset_ptr);
+    NxsGroup(NxsDataset* dataset_ptr, const yat::String& parent_path, const yat::String& name);
+    NxsGroup(NxsDataset* dataset_ptr, const yat::String& full_path);
     ~NxsGroup();
 
   //@} --------------------------------
@@ -69,7 +67,6 @@ public:
   //@{ plug-in specific
   
     void setPath(const yat::String& strPath) { m_path = strPath; }
-    void setSelfRef(const NxsGroupPtr& ptr);
     std::string getPath() const;
 
   //@} --------------------------------

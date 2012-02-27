@@ -20,6 +20,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
+#include <cdma/IFactory.h>
 
 #include "nxfile.h"
 
@@ -40,38 +41,39 @@ protected:
   LogicalGroupPtr                       m_log_root;     ///< document logical root
   std::map<yat::String, IGroupPtr>      m_group_map;    ///< association between groups and paths
   std::map<yat::String, IDataItemPtr>   m_item_map;     ///< association between data items and paths
-  NxsDatasetWPtr                        m_self_wptr;    ///< weak self reference
+  IFactory*                             m_factory_ptr;  ///< C-style pointer on factory
 
   // close dataset handle
   void close();
 
-  /// Constructor
-  ///
-  /// @param : filepath string representing the file path
-  ///
-  NxsDataset(const yat::URI& location);
-
-  /// Constructor
-  ///
+  /// Default constructor
   NxsDataset();
 
+  /// Constructor
+  ///
+  /// @param location dataset location in URI form
+  /// @param factory_ptr C-style pointer on the plugin factory creating this object
+  ///
+  NxsDataset( const yat::URI& location, IFactory *factory_ptr );
+
 public:
-  
+
   //@{ engine methods -----------------
 
-  /// Set a reference on the object himself
-  void setSelfRef(const NxsDatasetPtr& ptr);
-
-  // Path concatenation
+  /// Path concatenation
   static yat::String concatPath(const yat::String &path, const yat::String& name);
   
+  /// Accessor on the NeXus file object
   const NexusFilePtr& getHandle() { return m_file_handle; };
+
+  /// Returns a C-style pointer on the plugin factory who created this dataset
+  cdma::IFactory* getPluginFactory() const { return m_factory_ptr; };
 
   //@}
   
   //@{ IDataset interface -------------
   
-  virtual ~NxsDataset() { }
+  virtual ~NxsDataset();
   IGroupPtr getRootGroup();
   LogicalGroupPtr getLogicalRoot();
   std::string getLocation();

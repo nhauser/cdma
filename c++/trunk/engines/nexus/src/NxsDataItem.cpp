@@ -32,20 +32,20 @@ namespace cdma
 //---------------------------------------------------------------------------
 // NxsDataItem::NxsDataItem
 //---------------------------------------------------------------------------
-NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const std::string& path)
+NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const std::string& path)
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init(dataset_wptr, path);
+  init(dataset_ptr, path);
 }
-NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const IGroupPtr& parent, const std::string& name )
+NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const IGroupPtr& parent, const std::string& name )
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset_wptr, parent->getLocation() + "/" + name );
+  init( dataset_ptr, parent->getLocation() + "/" + name );
 }
-NxsDataItem::NxsDataItem(NxsDatasetWPtr dataset_wptr, const NexusDataSetInfo& item, const std::string& path)
+NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path)
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
-  init( dataset_wptr, yat::String(path) );
+  init( dataset_ptr, yat::String(path) );
   m_item = item;
 }
 
@@ -60,7 +60,7 @@ NxsDataItem::~NxsDataItem()
 //---------------------------------------------------------------------------
 // NxsDataItem::init
 //---------------------------------------------------------------------------
-void NxsDataItem::init(NxsDatasetWPtr dataset_wptr, const std::string& path, bool init_from_file)
+void NxsDataItem::init(NxsDataset* dataset_ptr, const std::string& path, bool init_from_file)
 {
   // Resolve dataitem name and path
   std::vector<yat::String> nodes;
@@ -81,9 +81,9 @@ void NxsDataItem::init(NxsDatasetWPtr dataset_wptr, const std::string& path, boo
   yat::String item = nodes[nodes.size() - 1 ];
   m_name = item;
 
-  m_dataset_wptr = dataset_wptr;
+  m_dataset_ptr = dataset_ptr;
 
-  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
+  NexusFilePtr file = m_dataset_ptr->getHandle();
   if( init_from_file )
   {
     // Open path
@@ -129,8 +129,8 @@ cdma::IDataItemPtr NxsDataItem::getASlice(int /*dimension*/, int /*value*/) thro
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataItem::getParent()
 {
-  if( m_dataset_wptr )
-    return m_dataset_wptr.lock()->getGroupFromPath( m_path );
+  if( m_dataset_ptr )
+    return m_dataset_ptr->getGroupFromPath( m_path );
   THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
 }
 
@@ -139,8 +139,8 @@ cdma::IGroupPtr NxsDataItem::getParent()
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataItem::getRoot()
 {
-  if( m_dataset_wptr )
-    return m_dataset_wptr.lock()->getRootGroup();
+  if( m_dataset_ptr )
+    return m_dataset_ptr->getRootGroup();
   THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
 }
 
@@ -668,7 +668,7 @@ void NxsDataItem::setParent(const cdma::IGroupPtr&)
 //---------------------------------------------------------------------------
 cdma::IDatasetPtr NxsDataItem::getDataset()
 {
-  return m_dataset_wptr.lock();
+  return m_dataset_ptr;
 }
 
 //---------------------------------------------------------------------------
@@ -689,11 +689,9 @@ void NxsDataItem::loadArray()
 {
   CDMA_FUNCTION_TRACE("NxsDataItem::loadArray");
   
-  NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
-
-  if( dataset_ptr )
+  if( m_dataset_ptr )
   {
-    NexusFilePtr file_ptr = dataset_ptr->getHandle();
+    NexusFilePtr file_ptr = m_dataset_ptr->getHandle();
     NexusFileAccess auto_open(file_ptr);
 
     // prepare shape
@@ -741,7 +739,7 @@ void NxsDataItem::initAttr()
   open();
   
   // Load attributes
-  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
+  NexusFilePtr file = m_dataset_ptr->getHandle();
   if( file->AttrCount() > 0 )
   {
     CDMA_TRACE("attr count: " << file->AttrCount());
@@ -767,7 +765,7 @@ void NxsDataItem::open( bool openNode )
   CDMA_FUNCTION_TRACE("NxsDataItem::open");
   
   // Open parent node
-  NexusFilePtr file = m_dataset_wptr.lock()->getHandle();
+  NexusFilePtr file = m_dataset_ptr->getHandle();
   
   if( file->CurrentGroupPath() != m_path || file->CurrentDataset() != m_name )
   {

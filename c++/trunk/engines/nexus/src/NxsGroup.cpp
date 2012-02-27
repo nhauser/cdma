@@ -30,7 +30,7 @@ void NxsGroup::PrivEnumChildren()
 {
   try
   {
-    NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
+    NxsDatasetPtr dataset_ptr = m_dataset_ptr;
 
     NexusFilePtr ptrFile = dataset_ptr->getHandle();
     NexusFileAccess auto_open(ptrFile);
@@ -61,9 +61,8 @@ void NxsGroup::PrivEnumAttributes()
   CDMA_FUNCTION_TRACE("NxsGroup::PrivEnumAttributes");
   try
   {
-    NxsDatasetPtr dataset_ptr = m_dataset_wptr.lock();
     // Get handle
-    NexusFilePtr ptrNxFile = dataset_ptr->getHandle();
+    NexusFilePtr ptrNxFile = m_dataset_ptr->getHandle();
     NexusFileAccess auto_open (ptrNxFile);
     
     // Opening path
@@ -94,25 +93,19 @@ void NxsGroup::PrivEnumAttributes()
 //-----------------------------------------------------------------------------
 // NxsGroup::NxsGroup
 //-----------------------------------------------------------------------------
-NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr)
+NxsGroup::NxsGroup(NxsDataset* dataset_ptr)
 {
-  m_dataset_wptr = dataset_wptr;
-  m_bChildren = false;
-  m_root_wptr = NULL;
-  m_parent_wptr = NULL;
-}
-NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& full_Path): m_path(full_Path)
-{
-  m_dataset_wptr = dataset_wptr;
-  m_root_wptr = NULL;
-  m_parent_wptr = NULL;
+  m_dataset_ptr = dataset_ptr;
   m_bChildren = false;
 }
-NxsGroup::NxsGroup(NxsDatasetWPtr dataset_wptr, const yat::String& parent_path, const yat::String& name)
+NxsGroup::NxsGroup(NxsDataset* dataset_ptr, const yat::String& full_Path): m_path(full_Path)
 {
-  m_dataset_wptr = dataset_wptr;
-  m_root_wptr = NULL;
-  m_parent_wptr = NULL;
+  m_dataset_ptr = dataset_ptr;
+  m_bChildren = false;
+}
+NxsGroup::NxsGroup(NxsDataset* dataset_ptr, const yat::String& parent_path, const yat::String& name)
+{
+  m_dataset_ptr = dataset_ptr;
   m_bChildren = false;
   m_path.printf("%s/%s", PSZ(parent_path), PSZ(name));
   m_path.replace("//", "/");
@@ -140,18 +133,15 @@ cdma::IGroupPtr NxsGroup::getParent() const
 {
   yat::String strPath = m_path, strTmp;
   strPath.extract_token_right('/', &strTmp);
-  cdma::IGroupPtr ptrGroup = m_dataset_wptr.lock()->getGroupFromPath(strPath);
-  if( !m_parent_wptr )
-    m_parent_wptr = ptrGroup;
-  return ptrGroup;
-  }
+  return m_dataset_ptr->getGroupFromPath(strPath);
+}
 
 //-----------------------------------------------------------------------------
 // NxsGroup::getRoot
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getRoot() const
 {
-  return m_dataset_wptr.lock()->getRootGroup();
+  return m_dataset_ptr->getRootGroup();
 }
 
 //-----------------------------------------------------------------------------
@@ -179,7 +169,7 @@ cdma::IDataItemPtr NxsGroup::getDataItem(const std::string& shortName) throw ( c
   if( it != m_mapDataItems.end() )
     return it->second;
 
-  cdma::IDataItemPtr ptrDataItem = m_dataset_wptr.lock()->getItemFromPath(m_path, shortName);
+  cdma::IDataItemPtr ptrDataItem = m_dataset_ptr->getItemFromPath(m_path, shortName);
   m_mapDataItems[shortName] = ptrDataItem;
   return ptrDataItem;
 }
@@ -209,7 +199,7 @@ cdma::IGroupPtr NxsGroup::getGroup(const std::string& shortName)
   if( it != m_mapGroups.end() )
     return it->second;
 
-  cdma::IGroupPtr ptrGroup = m_dataset_wptr.lock()->getGroupFromPath(NxsDataset::concatPath(m_path, shortName));
+  cdma::IGroupPtr ptrGroup = m_dataset_ptr->getGroupFromPath(NxsDataset::concatPath(m_path, shortName));
   m_mapGroups[shortName] = ptrGroup;
   return ptrGroup;
 }
@@ -462,19 +452,6 @@ void NxsGroup::setShortName(const std::string&)
 void NxsGroup::setParent(const cdma::IGroupPtr&)
 {
   THROW_NOT_IMPLEMENTED("NxsGroup::setParent");
-}
-
-//-----------------------------------------------------------------------------
-// NxsGroup::setSelfRef
-//-----------------------------------------------------------------------------
-void NxsGroup::setSelfRef(const NxsGroupPtr& ptr)
-{
-  if( ptr.get() != this )
-  {
-    THROW_INVALID_POINTER("Pointer mismatch", "NxsGroup::setSelfRef");
-  }
-
-  m_self_wptr = ptr;
 }
 
 } // namespace
