@@ -11,7 +11,7 @@
 
   <groupId>org.gumtree.data.CDMA</groupId>
   <artifactId>CDMAUtilities</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
 
   <name>CDMA Utilities</name>
   <description>
@@ -42,6 +42,17 @@
       <email>raphael.girardot@synchrotron-soleil.fr</email>
       <organization>EXTIA</organization>
       <organizationUrl>http://www.extia.fr</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+    <developer>
+      <id>crodriguez</id>
+      <name>Clément RODRIGUEZ</name>
+      <email>clement.rodriguez@synchrotron-soleil.fr</email>
+      <organization>ALTEN</organization>
+      <organizationUrl>http://www.alten.fr</organizationUrl>
       <roles>
         <role>Java Developer</role>
       </roles>

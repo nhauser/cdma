@@ -28,7 +28,6 @@ import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.array.NxsArray;
 import org.gumtree.data.soleil.dictionary.NxsLogicalGroup;
 import org.gumtree.data.soleil.dictionary.NxsPathParamResolver;
-import org.gumtree.data.soleil.internal.ConfigManager;
 import org.gumtree.data.soleil.navigation.NxsDataset;
 import org.gumtree.data.soleil.navigation.NxsGroup;
 import org.gumtree.data.soleil.utils.NxsArrayMath;
@@ -43,10 +42,10 @@ import fr.soleil.nexus.PathNexus;
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
-    private static ConfigManager configs;
-    public static final String NAME = "org.gumtree.data.soleil.NxsFactory";
-    public static final String LABEL = "SOLEIL's NeXus plug-in";
-    public static final String DEBUG_INF = "CDMA_DEBUG_NXS";
+    public static final String NAME        = "org.gumtree.data.soleil.NxsFactory";
+    public static final String LABEL       = "SOLEIL's NeXus plug-in";
+    public static final String DEBUG_INF   = "CDMA_DEBUG_NXS";
+    public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
     
     public static final String ERR_NOT_SUPPORTED = "not supported yet in plug-in!";
     
@@ -58,12 +57,6 @@ public final class NxsFactory implements IFactory {
             if( factory == null ) {
                 factory  = new NxsFactory();
                 detector = new NxsDatasource();
-/*                try {
-                configs  = ConfigManager.getInstance();
-                } catch( FileAccessException e) {
-                	e.printStackTrace();
-                }
-*/                
             }
         }
         return factory;

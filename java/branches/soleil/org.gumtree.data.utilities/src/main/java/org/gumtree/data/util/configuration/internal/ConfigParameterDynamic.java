@@ -1,4 +1,14 @@
-package org.gumtree.data.soleil.internal;
+/*******************************************************************************
+ * Copyright (c) 2012 Synchrotron SOLEIL.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0 
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
+ ******************************************************************************/
+package org.gumtree.data.util.configuration.internal;
 
 import java.io.IOException;
 
@@ -7,34 +17,56 @@ import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.util.configuration.internal.ConfigParameter.CriterionType;
 import org.jdom.Attribute;
 import org.jdom.Element;
 
+/**
+ * <b>ConfigParameterDynamic implements ConfigParameter</b><br>
+ * 
+ * The aim of that class is to define <b>parameters that are dependent</b> of the content 
+ * of the IDataset. It means that those parameters <b>are specific to that file</b>.
+ * The evaluation will be performed on the fly when requested.<p> 
+ * 
+ * This class is used by ConfigDataset when the plug-in asks for a specific value
+ * for that specific file. For example is:<br/>
+ * - how to know on which beamline it was created</br>
+ * - what the data model is</br><p>
+ * 
+ * <b>The parameter's type can be:</b><br/>
+ * - CriterionType.EXIST will try to find a specific path in the IDataset <br/>
+ * - CriterionType.NAME get the name of the object targeted by the path<br/>
+ * - CriterionType.VALUE get the value of IDataItem targeted by the path<br/>
+ * - CriterionType.CONSTANT the value will be a constant<br/>
+ * - CriterionType.EQUAL will compare values targeted by a path to a referent one<p>
+ * 
+ * It corresponds to "parameter" DOM element in the "parameters" section
+ * of the plug-in's configuration file.
+ *
+ * @see ConfigParameter
+ * @see CriterionType
+ * 
+ * @author rodriguez
+ */
 public final class ConfigParameterDynamic implements ConfigParameter {
 	private String         mName;        // Parameter name
 	private String         mPath;        // Path to seek in
 	private CriterionType  mType;        // Type of operation to do
 	private CriterionValue mTest;        // Expected property
-	//private CriterionValue mValue;       // Expected property
 	private String         mValue;       // Comparison value with the expected property
 	
 	
-	ConfigParameterDynamic(Element parameter) {
+	public ConfigParameterDynamic(Element parameter) {
 		init(parameter);
-		/*
-		String tmp;
-		mName = name;
-		mPath = domCriterion.getAttributeValue("target");
-		tmp = domCriterion.getAttributeValue("type");
-		if( tmp != null ) {
-			mType = CriterionType.valueOf(domCriterion.getAttributeValue("type").toString().toUpperCase());
-		}
-		tmp = domCriterion.getAttributeValue("value");
-		if( tmp != null ) {
-			mValue = CriterionValue.valueOf(tmp.toUpperCase());
-		}
-		mValueTest = domCriterion.getAttributeValue("constant");
-		*/
+	}
+	
+	@Override
+	public CriterionType getType() {
+		return mType;
+	}
+	
+	public String getName() {
+		return mName;
 	}
 	
 	public String getValue(IDataset dataset) {
@@ -104,10 +136,6 @@ public final class ConfigParameterDynamic implements ConfigParameter {
 				break;
 		}
 		return result;
-	}
-	
-	public String getName() {
-		return mName;
 	}
 	
 	// ---------------------------------------------------------
@@ -182,52 +210,6 @@ public final class ConfigParameterDynamic implements ConfigParameter {
 				}
 			}
 		}
-		
-		
-		
-		/*
-		// Checking each attribute of the current node
-		List<?> attributes = valueNode.getAttributes();
-		for( Object att : attributes ) {
-			attribute = (Attribute) att;
-			name  = attribute.getName();
-			value = attribute.getValue();
-
-			// Case of a path
-			if( name.equals("path") ) {
-				mPath = value;
-			}
-			// Case of exist attribute
-			else if( name.equals("exist") ) {
-				mType  = CriterionType.EXIST;
-				mTest  = CriterionValue.valueOf(value.toUpperCase());
-				mValue = "";
-				
-			}
-			// Case of exist attribute
-			else if( name.equals("equal") ) {
-				mType  = CriterionType.EQUAL;
-				mTest  = CriterionValue.TRUE;
-				mValue = value;
-			}
-			// Case of exist attribute
-			else if( name.equals("not_equal") ) {
-				mType  = CriterionType.EQUAL;
-				mTest  = CriterionValue.FALSE;
-				mValue = value;
-			}
-/*			else if( name.equals("value") ) {
-				mType  = CriterionType.VALUE;
-				mTest  = CriterionValue.NONE;
-				mValue = value;
-			}
-			else if ( name.equals("constant") ) {
-				mType  = CriterionType.VALUE;
-				mTest  = CriterionValue.NONE;
-				mValue = value;
-			}
-		}
-		*/
 	}
 	
 	private IContainer openPath( IDataset dataset ) {

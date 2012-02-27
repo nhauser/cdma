@@ -10,8 +10,8 @@ import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
-import org.gumtree.data.soleil.internal.ConfigDataset;
 import org.gumtree.data.soleil.navigation.NxsDataset;
+import org.gumtree.data.util.configuration.ConfigDataset;
 
 public class NxsLogicalGroup extends LogicalGroup {
 	

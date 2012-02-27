@@ -301,7 +301,7 @@ public class DataItem implements Cloneable
 	@SuppressWarnings("unchecked")
 	public Object getData(int[] pos, int[] shape) {
 		// save current position and shape
-		boolean reload = !alreadyLoaded(pos, shape);
+		boolean reload = !alreadyLoaded(pos, shape) && mType != NexusFile.NX_CHAR;
 		Object data = getRawData();
 		if( reload || data == null ) {
 			mStart = pos;
@@ -409,11 +409,12 @@ public class DataItem implements Cloneable
 		}
 		catch(NexusException ne)
 		{
-			try
-			{
-				mData = new SoftReference<Object>(null);
+			mData = new SoftReference<Object>(null);
+			try {
 				nfrFile.closeFile();
-			} catch(NexusException n) {}
+			} catch (NexusException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
