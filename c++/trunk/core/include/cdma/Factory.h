@@ -73,6 +73,8 @@ private:
   // This is a singleton
   Factory() {}
   
+  ~Factory() { std::cout << "~Factory()" << std::endl; }
+
   // static method to get the unique instance of the class
   static Factory& instance();
 

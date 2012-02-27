@@ -27,7 +27,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 // c-tor
 //---------------------------------------------------------------------------
-SimpleDataItem::SimpleDataItem(IDatasetPtr dataset_ptr, ArrayPtr ptrArray, const std::string &name):
+SimpleDataItem::SimpleDataItem(IDataset* dataset_ptr, ArrayPtr ptrArray, const std::string &name):
 m_dataset_ptr(dataset_ptr), m_name(name), m_array_ptr(ptrArray)
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::SimpleDataItem");

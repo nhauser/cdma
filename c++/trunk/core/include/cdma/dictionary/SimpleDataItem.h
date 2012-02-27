@@ -44,14 +44,14 @@ class CDMA_DECL SimpleDataItem : public IDataItem
 {
 private:
   std::list<IAttributePtr> m_attr_list;
-  IDatasetPtr              m_dataset_ptr;
+  IDataset*                m_dataset_ptr;
   yat::String              m_name;        // Name of the dataitem
   ArrayPtr                 m_array_ptr;       // Array object
 
 public:
 
   /// c-tor
-  SimpleDataItem(IDatasetPtr dataset_ptr, ArrayPtr ptrArray, const std::string &name);
+  SimpleDataItem(IDataset* dataset_ptr, ArrayPtr ptrArray, const std::string &name);
   
   /// d-tor
   ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
