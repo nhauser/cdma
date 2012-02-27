@@ -27,39 +27,30 @@ namespace cdma
 {
 
 //==============================================================================
-/// Dataset implementation based on the NeXus plug-in implementation
-  /// See cdma::IDataset definition for more explanation
+/// Dataset class based on the NeXus engine implementation
+/// See cdma::IDataset definition for more explanations
 //==============================================================================
 class SoleilNxsDataset : public NxsDataset
 {
+friend class SoleilNxsFactory;
+
 public:
-
-  /// Create an instance on an existing dataset
-  ///
-  /// @param : filepath string representing the file path
-  ///
-  static NxsDatasetPtr getDataset(const yat::URI& location, SoleilNxsFactory *factory_ptr);
-
-  /// Create an instance on an new dataset object
-  ///
-  static NxsDatasetPtr newDataset();
 
   //@{ IDataset methods
 
-  LogicalGroupPtr getLogicalRoot();
-  cdma::IFactory* getPluginFactory() const { return m_factory_ptr; };
+    LogicalGroupPtr getLogicalRoot();
   
   //@}
 
 private:
 
   // Constructor
-  SoleilNxsDataset(const yat::URI& location);
+  SoleilNxsDataset(const yat::URI& location, SoleilNxsFactory* factory_ptr);
   SoleilNxsDataset();
 
-  SoleilNxsFactory* m_factory_ptr; // C-style pointer on factory. Never delete it !!
 };
 
-} //namespace CDMACore
+} //namespace cdma
+
 #endif //__CDMA_IFACTORY_H__
 

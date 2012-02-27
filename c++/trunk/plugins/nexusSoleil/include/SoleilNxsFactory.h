@@ -11,7 +11,6 @@
 #include <yat/plugin/IPlugInInfo.h>
 
 // CDMA core
-#include <cdma/IObject.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/IFactory.h>
 #include <cdma/dictionary/Key.h>
@@ -24,9 +23,6 @@
 
 namespace cdma
 {
-extern const std::string PlugInID;
-extern const std::string InterfaceName;
-extern const std::string VersionNumber;
 
 //==============================================================================
 /// Plugin info class
@@ -42,7 +38,7 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class SoleilNxsFactory : public IFactory 
+class SoleilNxsFactory : public cdma::IFactory 
 {
 public:
   SoleilNxsFactory();
@@ -50,18 +46,22 @@ public:
 
   //@{ IFactory methods
 
-  IDatasetPtr openDataset(const std::string& location) throw ( cdma::Exception );
-  DictionaryPtr openDictionary(const std::string& filepath) throw ( cdma::Exception );
-  IDatasetPtr createDatasetInstance(const std::string& uri) throw ( cdma::Exception );
-  IDatasetPtr createEmptyDatasetInstance() throw ( cdma::Exception );
+  cdma::IDatasetPtr openDataset(const std::string& location) throw ( cdma::Exception );
+  cdma::DictionaryPtr openDictionary(const std::string& filepath) throw ( cdma::Exception );
+  cdma::IDatasetPtr createDatasetInstance(const std::string& uri) throw ( cdma::Exception );
+  cdma::IDatasetPtr createEmptyDatasetInstance() throw ( cdma::Exception );
   std::string getPathSeparator();
   std::string getName() { return NXS_FACTORY_NAME; };
-  IDataSourcePtr getPluginURIDetector();
+  cdma::IDataSourcePtr getPluginURIDetector();
   std::list<std::string> getPluginMethodsList();
 
   //@} IFactory methods
 
+  inline static std::string plugin_id() { return "SoleilNeXus"; }
+  inline static std::string interface_name() { return "cdma::IFactory"; }
+  inline static std::string version_number() { return "1.0.0"; }
+
 };
-} //namespace CDMACore
+} //namespace soleil_nexus
 #endif //__CDMA_IFACTORY_H__
 
