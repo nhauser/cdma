@@ -76,6 +76,8 @@ namespace cdma
   class dbg_helper;
   #define CDMA_FUNCTION_TRACE(s)
   #define CDMA_TRACE(s)
+  #define CDMA_STATIC_FUNCTION_TRACE(s)
+  #define CDMA_STATIC_TRACE(s)
 #endif
 
 } // namespace
