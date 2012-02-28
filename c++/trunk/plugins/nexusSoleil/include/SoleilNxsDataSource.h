@@ -38,9 +38,9 @@ public:
 
   //@{ IDataSource methods ------------
 
-  bool   isReadable(const yat::URI& destination) const;
-  bool  isBrowsable(const yat::URI& destination) const;
-  bool   isProducer(const yat::URI& destination) const;
+  bool isReadable(const yat::URI& destination) const;
+  bool isBrowsable(const yat::URI& destination) const;
+  bool isProducer(const yat::URI& destination) const;
   bool isExperiment(const yat::URI& destination) const;
   
   //@}
