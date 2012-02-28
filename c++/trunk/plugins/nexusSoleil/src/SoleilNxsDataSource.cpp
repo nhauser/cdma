@@ -97,7 +97,6 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
         std::string node = group->getShortName();
         for( int i = 0; i < NB_BEAMLINES; i++ ) 
         {
-          std::cout<<BEAMLINES[i]<<" == "<<node<<std::endl;
           if( node == BEAMLINES[i]  ) 
           {
             result = true;
