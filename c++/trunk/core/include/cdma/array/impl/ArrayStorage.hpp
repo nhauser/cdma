@@ -148,10 +148,11 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
       // Determine start offset in memory
       startSrc = view->getElementOffset( position );
 
+      
       // Copy memory as it is seen according to the view
       memcpy( (void*) (data + startDst), (const void*) (m_data + startSrc), nbBytes );
 
-      for( unsigned int i = rank - 1; i != 0; i-- )
+      for( int i = rank - 1; i >= 0; i-- )
       {
         if( position[i] + 1 >= shape[i] && i > 0)
         {
