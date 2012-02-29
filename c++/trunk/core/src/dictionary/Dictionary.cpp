@@ -77,7 +77,6 @@ SAXParsor::INodeAnalyser* DataDefAnalyser::on_element(const yat::String& element
     yat::String key;
     FIND_ATTR_VALUE(attrs, "key", key);
     m_dict_ptr->m_key_id_map[key] = ++s_key_id;
-    std::cout<<"Group: "<<key<<" Id: "<<s_key_id<< " Parent: "<<m_current_group_id.top()<<std::endl;
     m_dict_ptr->m_connection_map.insert(std::pair<int,int>(m_current_group_id.top(), s_key_id));
     m_current_group_id.push(s_key_id);
   }
@@ -87,7 +86,6 @@ SAXParsor::INodeAnalyser* DataDefAnalyser::on_element(const yat::String& element
     yat::String key;
     FIND_ATTR_VALUE(attrs, "key", key);
     m_dict_ptr->m_key_id_map[key] = ++s_key_id;
-    std::cout<<"Item: "<<key<<" Id: "<<s_key_id<< " Parent: "<<m_current_group_id.top()<<std::endl;
     m_dict_ptr->m_connection_map.insert(std::pair<int,int>(m_current_group_id.top(), s_key_id));
   }
   
