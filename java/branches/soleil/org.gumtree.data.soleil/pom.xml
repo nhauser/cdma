@@ -34,6 +34,7 @@
 		<dependency>
 			<groupId>org.gumtree.data.CDMA</groupId>
 			<artifactId>nexus</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>jdom</groupId>
