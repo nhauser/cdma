@@ -651,14 +651,13 @@ public final class NexusGroup implements IGroup, Cloneable {
         {
         	// Transform path into a NexusNode array
             NexusNode[] nodes = PathNexus.splitStringToNode(path);
+            PathNexus pnPath = new PathNexus(nodes);
+            pnPath.popNode();
             
             // Open path from root
             NexusFileWriter handler = mDataset.getHandler();
             handler.closeAll();
-            
-            for( int i = 0; i < nodes.length - 1; i++ ) {
-            	handler.openNode(nodes[i]);
-            }
+            handler.openPath(pnPath);
             
             // List child of the penultimate node in path
     		IContainer item;
