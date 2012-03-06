@@ -30,7 +30,7 @@ namespace cdma
 //==============================================================================
 /// Default array implementation
 //==============================================================================
-template<typename T> class CDMA_DECL DefaultArrayStorage : public IArrayStorage
+template<typename T> class DefaultArrayStorage : public IArrayStorage
 {
 public:
 

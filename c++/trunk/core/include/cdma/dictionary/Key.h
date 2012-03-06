@@ -24,7 +24,7 @@ namespace cdma
 {
 
 // forward declaration
-class Context;
+class CDMA_DECL Context;
 
 //=============================================================================
 /// Key
@@ -38,7 +38,7 @@ class Context;
 /// attribute, a part of the name...
 ///
 //=============================================================================
-class Key
+class CDMA_DECL Key
 {
 public:
 
@@ -95,7 +95,7 @@ DECLARE_CLASS_SHARED_PTR(Key);
 //==============================================================================
 /// IKeySolver
 //==============================================================================
-class IKeySolver
+class CDMA_DECL IKeySolver
 {
 public:
   // d-tor
@@ -115,7 +115,7 @@ typedef std::list<IKeySolverPtr> SolverList;
 //==============================================================================
 /// KeyPath
 //==============================================================================
-class KeyPath : public IKeySolver
+class CDMA_DECL KeyPath : public IKeySolver
 {
 private:
   std::string m_path;
@@ -134,7 +134,7 @@ public:
 //==============================================================================
 /// KeyMethod
 //==============================================================================
-class KeyMethod : public IKeySolver
+class CDMA_DECL KeyMethod : public IKeySolver
 {
 private:
   std::string      m_method_name;
@@ -153,8 +153,8 @@ public:
 };
 
 // Smart pointers
-DECLARE_CLASS_SHARED_PTR(KeyPath);
-DECLARE_CLASS_SHARED_PTR(KeyMethod);
+DECLARE_SHARED_PTR(KeyPath);
+DECLARE_SHARED_PTR(KeyMethod);
 
 } //namespace CDMACore
 

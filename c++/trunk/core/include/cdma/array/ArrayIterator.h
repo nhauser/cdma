@@ -30,7 +30,7 @@ DECLARE_CLASS_SHARED_PTR(ArrayIterator);
 //==============================================================================
 /// Array iterator to make transversal parsing of the Array
 //==============================================================================
-class ArrayIterator
+class CDMA_DECL ArrayIterator
 {
 public:
   // Constructor

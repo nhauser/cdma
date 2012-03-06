@@ -32,7 +32,7 @@ typedef std::multimap<int, std::string> KeySynonymsMap;
 ///
 /// 
 //==============================================================================
-class Dictionary 
+class CDMA_DECL Dictionary 
 {
 friend class DataDefAnalyser;
 friend class MapDefAnalyser;

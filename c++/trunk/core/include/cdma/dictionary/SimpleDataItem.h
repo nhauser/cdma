@@ -138,7 +138,7 @@ public:
 /// intended to simplify the creation of DataItem object related to a scalar
 /// value
 //==============================================================================
-class ScalarDataItem : public SimpleDataItem
+class CDMA_DECL ScalarDataItem : public SimpleDataItem
 {
   template <class T>
   ScalarDataItem(IDataset* dataset, T value, const std::string &name);
@@ -149,7 +149,7 @@ class ScalarDataItem : public SimpleDataItem
 /// intended to simplify the creation of DataItem object related to a 1-d array
 /// of values
 //==============================================================================
-class OneDimArrayDataItem : public SimpleDataItem
+class CDMA_DECL OneDimArrayDataItem : public SimpleDataItem
 {
   template <class T>
   OneDimArrayDataItem(IDataset* dataset, T* values, yat::uint32 size, const std::string &name);
@@ -160,7 +160,7 @@ class OneDimArrayDataItem : public SimpleDataItem
 /// intended to simplify the creation of DataItem object related to a 2-d array
 /// of values
 //==============================================================================
-class TwoDimArrayDataItem : public SimpleDataItem
+class CDMA_DECL TwoDimArrayDataItem : public SimpleDataItem
 {
   template <class T>
   TwoDimArrayDataItem(IDataset* dataset, T* values, yat::uint32 x_size, yat::uint32 y_size, const std::string &name);

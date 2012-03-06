@@ -35,7 +35,7 @@ namespace cdma
 /// have some parameters), the path (with parameters set) and some
 /// parameters that are set by the institute's plug-in.
 //==============================================================================
-class Context
+class CDMA_DECL Context
 {
 private:
   KeyPtr          m_key_ptr;

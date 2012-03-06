@@ -11,8 +11,8 @@
 #define __CDMA_COMMON_H__
 
 #ifndef CDMA_DECL
-#  if defined(WIN32) && defined(CDMA_DECL_DLL)
-#    if defined (CDMA_DECL_BUILD)
+#  if defined(WIN32) && defined(CDMA_DLL)
+#    if defined (CDMA_BUILD)
 #      define CDMA_DECL __declspec(dllexport)
 #    else
 #      define CDMA_DECL __declspec(dllimport)
