@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <nxfile.h>
 #include <cdma/exception/Exception.h>
+#include <internal/common.h>
 
 namespace cdma
 {
@@ -12,7 +13,7 @@ namespace cdma
 /// TypeUtils
 /// Internal class allowing type manipulation and data conversion
 //==============================================================================
-class TypeUtils
+class CDMA_NEXUS_DECL TypeUtils
 {
 public:
   static const std::type_info& toCType( NexusDataType type );

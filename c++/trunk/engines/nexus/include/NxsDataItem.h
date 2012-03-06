@@ -45,7 +45,7 @@ namespace cdma
 /// IDataItem implementation for NeXus engine
 /// See IDataItem definition for more explanation
 //==============================================================================
-class CDMA_DECL NxsDataItem : public IDataItem
+class CDMA_NEXUS_DECL NxsDataItem : public IDataItem
 {
 public:
   typedef std::map<std::string, IAttributePtr> AttributeMap;
