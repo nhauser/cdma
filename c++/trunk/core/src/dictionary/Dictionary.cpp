@@ -189,7 +189,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
       KeyPathPtr path_ptr = new KeyPath(element_content);
 
       // Push the KeyPath object at the back of the list
-      get_solvers_list(key_id).push_back(path_ptr);
+      get_solvers_list(key_id).push_back( IKeySolverPtr(path_ptr) );
     }
   }
   if( element_name.is_equal("call") )
@@ -203,7 +203,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
       KeyMethodPtr key_method_ptr = new KeyMethod(element_content, method_ptr);
 
       // Push the KeyMethod object reference at the back of the list
-      get_solvers_list(key_id).push_back(key_method_ptr);
+      get_solvers_list(key_id).push_back( IKeySolverPtr(key_method_ptr) );
     }
   }
 }
