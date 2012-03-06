@@ -31,7 +31,7 @@ namespace cdma
 /// IDataset implementation for NeXus engine
 /// See IDataset definition for more explanation
 //==============================================================================
-class NxsDataset : public IDataset
+class CDMA_NEXUS_DECL NxsDataset : public IDataset
 {
 protected:
   yat::URI                              m_location;     ///< uniform resource indentifier to the dataset
@@ -98,7 +98,7 @@ typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;
 //==============================================================================
 /// Convenient class
 //==============================================================================
-class NexusFileAccess
+class CDMA_NEXUS_DECL NexusFileAccess
 {
 private:
   NexusFilePtr m_file_handle;

@@ -34,7 +34,7 @@ namespace cdma
 /// IAttribute implementation for NeXus engine
 /// See IAttribute definition for more explanation
 //==============================================================================
-class CDMA_DECL NxsAttribute : public IAttribute
+class CDMA_NEXUS_DECL NxsAttribute : public IAttribute
 {
 private:
   std::string    m_name;

@@ -38,7 +38,7 @@ typedef std::map<yat::String, cdma::IAttributePtr> MapStringAttribute;
 /// IGroup implementation for NeXus engine
 /// See IGroup definition for more explanation
 //==============================================================================
-class NxsGroup : public cdma::IGroup
+class CDMA_NEXUS_DECL NxsGroup : public cdma::IGroup
 {
 private:
   NxsDataset*           m_dataset_ptr;  // C-style pointer to the parent dataset
