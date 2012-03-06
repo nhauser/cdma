@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>fr.soleil.lib.cdma</groupId>
-    <artifactId>CDMANeXus-${aol}-static-${mode}</artifactId>
+    <artifactId>CDMANeXus-${aol}-shared-${mode}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <packaging>nar</packaging>
@@ -40,33 +40,56 @@
         <url>${scm.url.cvs.soleil}/GD/Librairies/CDMA/SoleilNXS</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.freehep</groupId>
-                <artifactId>freehep-nar-plugin</artifactId>
-                <configuration>
-                    <cpp>
-                       <defines>
-                          <define>CDMA_DEBUG</define>
-                       </defines>
-                        <sourceDirectory>src</sourceDirectory>
-                        <includePaths>
-                            <includePath>include</includePath>
-                            <includePath>src</includePath>
-                        </includePaths>
-                    </cpp>
-                    <libraries>
-                        <library>
-                            <type>static</type>
-                        </library>
-                    </libraries>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.freehep</groupId>
+        <artifactId>freehep-nar-plugin</artifactId>
+        <configuration>
+          <cpp>
+            <sourceDirectory>src</sourceDirectory>
+            <includePaths>
+              <includePath>include</includePath>
+              <includePath>src</includePath>
+            </includePaths>
+            <defines>
+              <define>CDMA_DEBUG</define>
+            </defines>
+          </cpp>
+          <libraries>
+            <library>
+              <type>shared</type>
+            </library>
+          </libraries>
+          <specificConfigurations>
+            <specificConfiguration>
+              <id>CDMANeXus Linux</id>
+              <activation>
+                <os>Linux</os>
+              </activation>
+            </specificConfiguration>
+            <specificConfiguration>
+              <id>CDMANeXus Windows</id>
+              <activation>
+                <os>Windows</os>
+              </activation>
+              <cpp>
+                <defines>
+                  <define>CDMA_NEXUS_DLL</define>
+                  <define>CDMA_NEXUS_BUILD</define>
+                  <define>CDMA_DLL</define>
+                  <define>NEXUSCPP_DLL</define>
+                  <define>YAT_DLL</define>
+                </defines>
+              </cpp>
+            </specificConfiguration>
+          </specificConfigurations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-    <dependencies>
+  <dependencies>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
@@ -74,12 +97,13 @@
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
-            <artifactId>NexusCPP-${aol}-${library}-${mode}</artifactId>
+            <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+          <version>1.13.3-SNAPSHOT</version>
         </dependency>
         <dependency>
            <groupId>fr.soleil.lib</groupId>
-           <artifactId>YAT-${aol}-${library}-${mode}</artifactId>
-          <version>1.7.5-SNAPSHOT</version>
+           <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+          <version>1.7.8-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>net.zlib</groupId>
