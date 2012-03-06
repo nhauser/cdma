@@ -10,17 +10,21 @@
 #ifndef __CDMA_COMMON_H__
 #define __CDMA_COMMON_H__
 
-#ifndef CDMA_DECL
-#  if defined(WIN32) && defined(CDMA_DLL)
-#    if defined (CDMA_BUILD)
-#      define CDMA_DECL __declspec(dllexport)
-#    else
-#      define CDMA_DECL __declspec(dllimport)
-#    endif
-#  else
-#    define CDMA_DECL
-#  endif
-#endif
+# ifndef CDMA_DECL
+#   if defined(WIN32) && defined(CDMA_DLL)
+#     define CDMA_DECL_EXPORT __declspec(dllexport)
+#     define CDMA_DECL_IMPORT __declspec(dllimport)
+#     if defined (CDMA_BUILD)
+#       define CDMA_DECL CDMA_DECL_EXPORT
+#     else
+#       define CDMA_DECL CDMA_DECL_IMPORT
+#     endif
+#   else
+#     define CDMA_DECL
+#     define CDMA_DECL_EXPORT
+#     define CDMA_DECL_IMPORT
+#   endif
+# endif
 
 #include <cdma/TraceDebug.h>
 #include <list>
