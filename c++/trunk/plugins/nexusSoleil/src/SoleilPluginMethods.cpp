@@ -32,7 +32,7 @@ namespace cdma
 //==============================================================================
 /// Test method
 //==============================================================================
-class CDMA_DECL TestMethod : public cdma::IPluginMethod
+class TestMethod : public cdma::IPluginMethod
 {
 public:
   ~TestMethod() 
