@@ -105,7 +105,7 @@ IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
     IDataItemPtr item = context.getTopDataItem();
     return item;
   }
-  catch( cdma::Exception &ex )
+  catch( cdma::Exception& )
   {
     throw;
   }
@@ -131,7 +131,7 @@ std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key_ptr)
     PrivSolveKey(&context);
     return context.getDataItems();
   }
-  catch( cdma::Exception &ex )
+  catch( cdma::Exception& )
   {
     throw;
   }

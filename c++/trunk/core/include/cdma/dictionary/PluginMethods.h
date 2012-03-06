@@ -18,7 +18,7 @@ namespace cdma
 {
 
 #define EXPORT_PLUGIN_METHOD(m) \
-  extern "C" CDMA_DECL cdma::IPluginMethod* get ## m ## Class(void) { return new m(); }
+  extern "C" cdma::IPluginMethod* get ## m ## Class(void) { return new m(); }
 
 //==============================================================================
 /// The IPluginMethod aims to provide a mechanism permitting to call

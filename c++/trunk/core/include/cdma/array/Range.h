@@ -29,7 +29,7 @@ DECLARE_CLASS_SHARED_PTR(Range);
 /// A range represents a set of integers that are positions on one dimension. 
 /// It is used as a View descriptor for Arrays on a particular dimension.
 //==============================================================================
-class Range
+class CDMA_DECL Range
 {
 public:
   /// Constructors

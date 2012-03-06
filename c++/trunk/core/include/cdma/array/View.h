@@ -36,7 +36,7 @@ DECLARE_CLASS_SHARED_PTR(View);
 /// The view can be used to describe a whole array, a part of the array or a 
 /// different way to consider it.
 //==============================================================================
-class View
+class CDMA_DECL View
 {
 public:
   // Constructors

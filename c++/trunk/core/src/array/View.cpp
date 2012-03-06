@@ -270,7 +270,7 @@ long View::getElementOffset(std::vector<int> position)
       value = m_compound->getElementOffset( projection );
     }
   } 
-  catch (cdma::Exception& e)
+  catch( cdma::Exception& )
   {
     // An error occured returns -1 that is an invalid result
     value = -1;
@@ -294,7 +294,7 @@ std::vector<int> View::getPositionElement(long offset)
         position.push_back( m_ranges[i].index(offset) );
       }
     }
-  } catch (cdma::Exception& e)
+  } catch( cdma::Exception& )
   {
     position = std::vector<int>();
   }

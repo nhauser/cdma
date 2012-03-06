@@ -38,7 +38,7 @@ namespace cdma
 /// Slicer
 /// @todo Write a a description here
 //==============================================================================
-class Slicer
+class CDMA_DECL Slicer
 {
 public:
   /// Constructor

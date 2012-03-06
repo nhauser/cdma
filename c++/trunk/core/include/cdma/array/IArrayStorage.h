@@ -36,7 +36,7 @@ DECLARE_CLASS_SHARED_PTR(IArrayStorage);
 /// a View and a position vector. Mainly to give a read/write access into
 /// memory buffer.
 //==============================================================================
-class IArrayStorage
+class CDMA_DECL IArrayStorage
 {
 public:
 
