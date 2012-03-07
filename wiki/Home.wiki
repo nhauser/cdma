@@ -1,8 +1,6 @@
 #summary Common Data Model Access home page.
 #labels Featured
 
-#sidebar TableOfContents
-
 The CDMA project is aimed to provide to programmers a data access layer that is independent of the scientific datasets format.
 Using a plug-in mechanism, it allows transparently accessing data from several data formats.
 
