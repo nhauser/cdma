@@ -20,3 +20,4 @@
      * [PY_Plugin_development Plug-in development]
      * [PY_Reference_guide API Reference guide]
  * Dictionaries
+ * Plug-ins
