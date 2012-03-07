@@ -1,6 +1,6 @@
  * [Home Wiki home page]
  * [About About the CDMA]
- * [News Project news and announcements]
+ * [News Latest news]
  * [GettingStarted Getting started]
  * [KeyConcepts CDMA key concepts]
  * Documentation
