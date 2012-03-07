@@ -1,5 +1,6 @@
 #summary One-sentence summary of this page.
 
+*Content*
  * [#Introduction Introduction]
  * [#The_dictionary_mechanism The dictionary mechanism]
  * [#The_plug-in_mechanism The plug-in mechanism]
