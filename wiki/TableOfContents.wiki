@@ -4,11 +4,17 @@
  * [Getting_started Getting started]
  * [CDMA_concepts CDMA concepts]
  * C++
-   * [Plugin_development Developing a plug-in]
-   * [Reference_guide API Reference guide]
+   * [CPP_impl About the C++ implementation]
+   * [CPP_client Using the CDMA in C++]
+   * [CPP_Plugin_development Developing a plug-in]
+   * [CPP_Reference_guide API Reference guide]
  * Java
-   * [Plugin_development Developing a plug-in]
-   * [Reference_guide API Reference guide]
+   * [JAVA_impl About the Java implementation]
+   * [JAVA_client Using the CDMA in Java]
+   * [JAVA_Plugin_development Developing a plug-in]
+   * [JAVA_Reference_guide API Reference guide]
  * Python
-   * [Plugin_development Developing a plug-in]
-   * [Reference_guide API Reference guide]
+   * [PY_impl About the Python implementation]
+   * [PY_client Using the CDMA in Python]
+   * [PY_Plugin_development Developing a plug-in]
+   * [PY_Reference_guide API Reference guide]
