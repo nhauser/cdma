@@ -2,7 +2,7 @@
 #labels Featured
 
 The CDMA project is aimed to provide to programmers a data access layer that is independent of the scientific datasets format.
-Using a plug-in mechanism, it allows transparently accessing data from several data formats.
+Using a plug-in mechanism, it allows transparently accessing data from the data analysis application side.
 
 = About the CDMA =
 
