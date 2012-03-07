@@ -17,6 +17,6 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 = Documentation =
 
  * [Getting_started Getting started with CDMA]
- * [CDMA_concepts CDMA concepts]
+ * [KeyConcepts CDMA concepts]
  * [Plugin_development Developing a plug-in]
  * [Reference_guide API Reference guide]
