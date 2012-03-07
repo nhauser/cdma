@@ -18,7 +18,7 @@ The CDMA is made of a core API that access data through a data format plug-ins m
 
 = Documentation =
 
-[Getting_started Getting started with CDMA]
-[CDMA_concepts CDMA concepts]
-[Plugin_development How to development a new plug-in?]
-[Reference_guide API Reference guide]
+ *[Getting_started Getting started with CDMA]
+ *[CDMA_concepts CDMA concepts]
+ *[Plugin_development How to development a new plug-in?]
+ *[Reference_guide API Reference guide]
