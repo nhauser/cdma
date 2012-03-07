@@ -9,7 +9,7 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
 [About#Introduction]
 
-[About#History]
+[About#Genesis_of_the_project]
 
 [About#Our_motivations]
 
