@@ -7,11 +7,9 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
 = About the CDMA =
 
-[About#Introduction]
-
-[About#Genesis_of_the_project]
-
-[About#Our_motivations]
+ * [About#Introduction]
+ * [About#Genesis_of_the_project]
+ * [About#Our_motivations]
 
 = News =
 
