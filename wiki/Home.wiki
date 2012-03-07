@@ -18,5 +18,19 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
  * [GettingStarted Getting started with CDMA]
  * [KeyConcepts CDMA concepts]
- * [Plugin_development Developing a plug-in]
- * [Reference_guide API Reference guide]
+
+ * C++
+   * [CppImpl About the C++ implementation]
+   * [CppClient Client application development]
+   * [CppPlugin Plug-in development]
+   * [CppReference API Reference guide]
+ * Java
+   * [JavaImpl About the Java implementation]
+   * [JavaClient Client application development]
+   * [JavaPlugin Plug-in development]
+   * [JavaReference API Reference guide]
+ * Python
+   * [PyImpl About the Python implementation]
+   * [PyClient Client application development]
+   * [PyPlugin Plug-in development]
+   * [PyReference API Reference guide]
