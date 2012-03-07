@@ -1,6 +1,15 @@
 #summary Common Data Model Access home page.
 #labels Featured
+
 #sidebar TableOfContents
+ * [Home Wiki home page]
+ * [About About the CDMA]
+ * [News Project news]
+ * [Documentation]
+   * [Getting_started Getting started]
+   * [CDMA_concepts CDMA concepts]
+   * [Plugin_development Developing a plug-in]
+   * [Reference_guide API Reference guide]
 
 The CDMA project is aimed to provide to programmers a data access layer that is independent of the scientific datasets format.
 Using a plug-in mechanism, it allows transparently accessing data from several data formats.
@@ -19,5 +28,5 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
  * [Getting_started Getting started with CDMA]
  * [CDMA_concepts CDMA concepts]
- * [Plugin_development How to development a new plug-in?]
+ * [Plugin_development Developing a plug-in]
  * [Reference_guide API Reference guide]
