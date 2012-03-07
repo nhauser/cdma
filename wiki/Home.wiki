@@ -1,0 +1,18 @@
+#summary Common Data Model Api home page.
+#labels Featured
+#sidebar TableOfContents
+
+The CDMA project is aimed to provide to programmers a data access layer that is independent of the scientific datasets format.
+
+= Introduction =
+
+== What is the CDMA? ==
+
+Using a plug-in mechanism, it allows transparently accessing data from several data formats.
+
+= Tutorial =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
