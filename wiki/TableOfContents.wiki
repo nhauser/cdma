@@ -6,16 +6,17 @@
  * Documentation
    * C++
      * [CPP_impl About the C++ implementation]
-     * [CPP_client Using the CDMA in C++]
-     * [CPP_Plugin_development Developing a plug-in]
+     * [CPP_client Client application development]
+     * [CPP_Plugin_development Plug-in development]
      * [CPP_Reference_guide API Reference guide]
    * Java
      * [JAVA_impl About the Java implementation]
-     * [JAVA_client Using the CDMA in Java]
-     * [JAVA_Plugin_development Developing a plug-in]
+     * [JAVA_client Client application development]
+     * [JAVA_Plugin_development Plug-in development]
      * [JAVA_Reference_guide API Reference guide]
    * Python
      * [PY_impl About the Python implementation]
-     * [PY_client Using the CDMA in Python]
-     * [PY_Plugin_development Developing a plug-in]
+     * [PY_client Client application development]
+     * [PY_Plugin_development Plug-in development]
      * [PY_Reference_guide API Reference guide]
+ * Dictionaries
