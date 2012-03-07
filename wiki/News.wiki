@@ -2,11 +2,11 @@
 
 = 2012 =
 
-== Wednesday, March 7, 2012 ==
+*Wednesday, March 7, 2012*
 
 First CDMA developer's meeting will be held at [http://www.desy.de/ DESY] from April, 2nd 13:00h to April, 3rd 12:00h
 
-=== Tentative menu ===
+Tentative menu
 
  * CDMA C++ :   
    * CDMA C++ library status 
