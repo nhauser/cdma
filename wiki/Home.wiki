@@ -6,9 +6,9 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
 = About the CDMA =
 
- * [About#Introduction]
- * [About#Genesis_of_the_project]
- * [About#Our_motivations]
+ * [About#Introduction Introduction]
+ * [About#Genesis_of_the_project Genesis of the project]
+ * [About#Our_motivations Our motivations]
 
 = News =
 
@@ -16,7 +16,7 @@ Using a plug-in mechanism, it allows transparently accessing data from several d
 
 = Documentation =
 
- * [Getting_started Getting started with CDMA]
+ * [GettingStarted Getting started with CDMA]
  * [KeyConcepts CDMA concepts]
  * [Plugin_development Developing a plug-in]
  * [Reference_guide API Reference guide]
