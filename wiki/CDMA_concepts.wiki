@@ -35,3 +35,8 @@ It needs a strong knowledge of the physical data organisation to be written.
 
 == Responsibilities ==
 Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.
+
+
+= The plug-in mechanism =
+
+Using the CDMA library, data analysis developer don't have to care about data file format. The plug-in mechanism is able to dynamically load the plug-in (a dynamic library) able to get data from the data file the user is currently opening. Thus this mechanism allows an user to open files acquired in different institutes, in the same session.
