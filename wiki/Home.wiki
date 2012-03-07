@@ -5,12 +5,11 @@
 The CDMA project is aimed to provide to programmers a data access layer that is independent of the scientific datasets format.
 Using a plug-in mechanism, it allows transparently accessing data from several data formats.
 
-= Introduction =
+= About the CDMA =
 
-Since almost 20 years, the scientific community of neutron and synchrotron facilities has been dreaming of using a common data format to be able to exchange experimental results and to applications to analyse them. If using HDF5 as a physical container for data became quickly raised a large consensus, the big issue is the standardisation of data organisation. By introducing a new level of indirection for data access, the Common Data Model Access (CDMA) framework proposes a solution and allows splitting development efforts and responsibilities between institutes.
-The CDMA is made of a core API that access data through a data format plug-ins mechanism and scientific applications definitions (sets of keywords) coming from a consensus between scientists and institutes. Using a innovative “mapping” system between applications definitions and physical data organizations the CDMA allows developing data reduction application regardless data files formats AND organizations. Each institute have to develop data access plug-ins for its own data files formats along with the mapping between application definitions and its data files. Thus data reduction applications can be developed by from a strictly scientific point of view and immediately having the capability to process data coming from several institutes.
-
-[About About the CDMA]
+[About#Introduction]
+[About#History]
+[About#Our_motivations]
 
 = News =
 
