@@ -14,4 +14,4 @@ First CDMA developer's meeting will be held at [http://www.desy.de/ DESY] from A
    * Code camp trying to get concrete results
  * CDMA java : 
    * Status of the library 
-   * Code camp with ANKA people to get their data within the "CDMA DataBrowser"
+   * Code camp with ANKA people to get their data within the "CDMA Data Browser"
