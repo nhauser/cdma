@@ -1,0 +1,17 @@
+#summary News and annoucements.
+
+= 2012 =
+
+== CDMA developer's meeting ==
+
+First CDMA developer's meeting will be held at [http://www.desy.de/ DESY] from April, 2nd 13:00h to April, 3rd 12:00h
+
+=== Tentative menu ===
+
+ * CDMA C++ :   
+   * CDMA C++ library status 
+   * Discussion on the python implementation 
+   * Code camp trying to get concrete results
+ * CDMA java : 
+   * Status of the library 
+   * Code camp with ANKA people to get their data within the "CDMA DataBrowser"
