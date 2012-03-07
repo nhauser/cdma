@@ -1,23 +1,23 @@
  * [Home Wiki home page]
  * [About About the CDMA]
- * [News Project news]
- * [Getting_started Getting started]
- * [CDMA_concepts CDMA concepts]
+ * [News Project news and announcements]
+ * [GettingStarted Getting started]
+ * [KeyConcepts CDMA key concepts]
  * Documentation
    * C++
-     * [CPP_impl About the C++ implementation]
-     * [CPP_client Client application development]
-     * [CPP_Plugin_development Plug-in development]
-     * [CPP_Reference_guide API Reference guide]
+     * [CppImpl About the C++ implementation]
+     * [CppClient Client application development]
+     * [CppPlugin Plug-in development]
+     * [CppReference API Reference guide]
    * Java
-     * [JAVA_impl About the Java implementation]
-     * [JAVA_client Client application development]
-     * [JAVA_Plugin_development Plug-in development]
-     * [JAVA_Reference_guide API Reference guide]
+     * [JavaImpl About the Java implementation]
+     * [JavaClient Client application development]
+     * [JavaPlugin Plug-in development]
+     * [JavaReference API Reference guide]
    * Python
-     * [PY_impl About the Python implementation]
-     * [PY_client Client application development]
-     * [PY_Plugin_development Plug-in development]
-     * [PY_Reference_guide API Reference guide]
+     * [PyImpl About the Python implementation]
+     * [PyClient Client application development]
+     * [PyPlugin Plug-in development]
+     * [PyReference API Reference guide]
  * Dictionaries
  * Plug-ins
