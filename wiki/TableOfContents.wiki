@@ -1,8 +1,14 @@
  * [Home Wiki home page]
  * [About About the CDMA]
  * [News Project news]
- * Documentation
-   * [Getting_started Getting started]
-   * [CDMA_concepts CDMA concepts]
+ * [Getting_started Getting started]
+ * [CDMA_concepts CDMA concepts]
+ * C++
+   * [Plugin_development Developing a plug-in]
+   * [Reference_guide API Reference guide]
+ * Java
+   * [Plugin_development Developing a plug-in]
+   * [Reference_guide API Reference guide]
+ * Python
    * [Plugin_development Developing a plug-in]
    * [Reference_guide API Reference guide]
