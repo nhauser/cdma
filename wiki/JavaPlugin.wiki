@@ -130,7 +130,8 @@ org.gumtree.data.soleil.NxsFactory
  * The file OSGI-INF/factory.xml which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax: 
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" 	immediate="true" name="org.gumtree.data.soleil.factory">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+ immediate="true" name="org.gumtree.data.soleil.factory">
    <implementation class="org.gumtree.data.soleil.NxsFactory"/>
    <service>
       <provide interface="org.gumtree.data.IFactory"/>
