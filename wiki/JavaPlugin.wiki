@@ -119,7 +119,7 @@ Plug-ins are loaded at runtime. The “Core” contains a module that manage it.
 
 The SOLEIL's plug-in project in Eclipse have the following form:
 
-*_image_*
+[http://cdma.googlecode.com/svn/wiki/images/java_soleil_plugin_project.png]
 
 The code is stored in “org.gumtree.data.soleil”. But the 2 main points here are :
  * The file `META-INF/services/org.gumtree.data.IFactory` which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
