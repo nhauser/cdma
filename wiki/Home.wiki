@@ -25,15 +25,33 @@ Using a plug-in mechanism, it allows transparently accessing data from the data 
  * C++
    * [CppImpl About the C++ implementation]
    * [CppClient Client application development]
+   * [CppGuideLines Programmation guidelines]
+   * [CppEngine Data format engine development]
    * [CppPlugin Plug-in development]
    * [CppReference API Reference guide]
  * Java
    * [JavaImpl About the Java implementation]
    * [JavaClient Client application development]
+   * [JavaGuideLines Programmation guidelines]
+   * [JavaEngine Data format engine development]
    * [JavaPlugin Plug-in development]
    * [JavaReference API Reference guide]
  * Python
    * [PyImpl About the Python implementation]
    * [PyClient Client application development]
+   * [PyGuideLines Programmation guidelines]
+   * [PyEngine Data format engine development]
    * [PyPlugin Plug-in development]
    * [PyReference API Reference guide]
+
+= Dictionaries =
+
+Informations and available sets of scientific keywords: the dictionaries used by client applications
+
+= Available data formats plug-ins =
+ * [AnstoNetcdfPlugIn ANSTO NetCDF]
+ * [SoleilNeXusPlugIn SOLEIL NeXus]
+ * [RawNeXusPlugIn Raw NeXus]
+
+= Tools =
+ * [DataBrowser The Data Browser]
