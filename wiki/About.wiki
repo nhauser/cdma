@@ -21,7 +21,7 @@ At 2011/Q4, DESY will join the collaboration and help us developing the C++ port
 
 = Our motivations =
 
-The important thing we must understand is *the data format is not a issue*.
+The important thing we must understand is *the data format is not an issue*.
 
 The issue is: how allowing users of our institutes to use the same tools regardless the origin of the data? We can notice that even in the same synchrotron facility, data aren't stored the same ways across the beamlines.
 
