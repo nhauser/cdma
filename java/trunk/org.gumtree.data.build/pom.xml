@@ -15,7 +15,6 @@
 	<modules>
 		<module>../org.gumtree.data.parent</module>
 		<module>../org.gumtree.data.core</module>
-		<module>../org.gumtree.data.core.tests</module>
 		<module>../org.gumtree.data.common.feature</module>
 
 		<module>../ucar.netcdf</module>
@@ -27,16 +26,25 @@
 		<module>../ncsa.hdf.win32.x86</module>
 		<module>../ncsa.hdf.win32.x86_64</module>
 		<module>../org.gumtree.data.impl.netcdf</module>
-		<module>../org.gumtree.data.impl.netcdf.tests</module>
 		<module>../org.gumtree.data.ansto.feature</module>
 
 		<module>../org.nexusformat</module>
 		<module>../fr.soleil.nexus4tango</module>
 		<module>../org.gumtree.data.soleil</module>
-		<module>../org.gumtree.data.soleil.tests</module>
 		<module>../org.gumtree.data.soleil.feature</module>
 
 	</modules>
 
 	<name>CDMA Build POM</name>
+	
+	<profiles>
+		<profile>
+			<id>test</id>
+			<modules>
+				<module>../org.gumtree.data.core.tests</module>
+				<module>../org.gumtree.data.impl.netcdf.tests</module>
+				<module>../org.gumtree.data.soleil.tests</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>
