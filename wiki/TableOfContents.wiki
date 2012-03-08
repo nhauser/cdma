@@ -3,7 +3,7 @@
  * [News Latest news]
  * [GettingStarted Getting started]
  * [KeyConcepts CDMA key concepts]
- * [Documentation]
+ * Documentation
    * C++
      * [CppImpl About the C++ implementation]
      * [CppClient Client application development]
@@ -26,7 +26,7 @@
      * [PyPlugin Plug-in development]
      * [PyReference API Reference guide]
 
- * [Dictionaries Dictionaries]
+ * [Dictionaries]
 
  * [DataFormatEngines Data format engines]
    * [JavaEngines Java]
@@ -38,5 +38,5 @@
    * [CppPlugIns C++]
    * [PyPlugIns Python]
 
- * [Tools Tools]
+ * Tools
    * [DataBrowser Data Browser]
