@@ -2,7 +2,10 @@
 
 *Content*
 
-
+ * [#Introduction]
+ * [#How_to_develop_its_own_plug-in How to develop its own plug-in]
+ * [#Mandatory_modules_to_implement  Mandatory modules to implement]
+ * [#Optional_modules_to_customize Optional modules to customize]
 
 = Introduction =
 ----
@@ -162,7 +165,7 @@ The aim is to be able to browse the data source and get nodes' informations loca
 So here 4 classes are to be implemented: `IDataset, IGroup, IDataItem, IAttribute`.
 
  * `IDataset` is the one that handles the data source it permits to have a location on it, to open  or close an access on it,
- * vIGroup` which is a container for IDataItem or other `IGroup`. It's the one that let you exploring the tree
+ * `IGroup` which is a container for IDataItem or other `IGroup`. It's the one that let you exploring the tree
  * `IDataItem` which are considered as the leaves of our tree. They wear the physical data (more often a matrix), so it should be able to give some informations on it like type, size...
  * `IAttribute` are attribute or contextual data of nodes (`IGroup` or `IDataItem`). For instance, an `IDataItem` has timestamps which tells at what time it was recorded.
 
