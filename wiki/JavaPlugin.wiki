@@ -2,6 +2,7 @@
 
 *Content*
 
+#sidebar
  * [#Introduction Introduction]
  * [#How_to_develop_its_own_plug-in How to develop its own plug-in]
  * [#Mandatory_modules_to_implement  Mandatory modules to implement]
