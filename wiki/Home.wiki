@@ -19,6 +19,9 @@ Using a plug-in mechanism, it allows transparently accessing data from the data 
  * [GettingStarted Getting started with CDMA]
  * [KeyConcepts CDMA concepts]
 
+ * Tools
+   * [DataBrowser Data Browser]
+
  * C++
    * [CppImpl About the C++ implementation]
    * [CppClient Client application development]
