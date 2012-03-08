@@ -14,8 +14,19 @@ Using a plug-in mechanism, it allows transparently accessing data from the data 
 
 [News Major happenings within the CDMA community]
 
-= Documentation =
+= Available data formats plug-ins =
+ * [AnstoNetcdfPlugIn ANSTO NetCDF]
+ * [SoleilNeXusPlugIn SOLEIL NeXus]
+ * [RawNeXusPlugIn Raw NeXus]
 
+= Dictionaries =
+
+Informations and available sets of scientific keywords: the dictionaries used by client applications
+
+= Tools =
+ * [DataBrowser The Data Browser]
+
+= Documentation =
  * [GettingStarted Getting started with CDMA]
  * [KeyConcepts CDMA concepts]
  * C++
@@ -39,15 +50,3 @@ Using a plug-in mechanism, it allows transparently accessing data from the data 
    * [PyEngine Data format engine development]
    * [PyPlugin Plug-in development]
    * [PyReference API Reference guide]
-
-= Dictionaries =
-
-Informations and available sets of scientific keywords: the dictionaries used by client applications
-
-= Available data formats plug-ins =
- * [AnstoNetcdfPlugIn ANSTO NetCDF]
- * [SoleilNeXusPlugIn SOLEIL NeXus]
- * [RawNeXusPlugIn Raw NeXus]
-
-= Tools =
- * [DataBrowser The Data Browser]
