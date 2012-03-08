@@ -151,6 +151,7 @@ The factory is instantiated using its name in the plug-in. The name should conta
 
 
 = Mandatory modules to implement =
+----
 
 All things that are requested for a plug-in is in the package: `org.gumtree.data.interfaces`.
 
