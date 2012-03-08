@@ -25,18 +25,14 @@
      * [PyEngine Data format engine development]
      * [PyPlugin Plug-in development]
      * [PyReference API Reference guide]
-
  * [Dictionaries]
-
  * [DataFormatEngines Data format engines]
    * [JavaEngines Java]
    * [CppEngines C++]
    * [PyEngines Python]
-
  * [PlugIns Plug-ins]
    * [JavaPlugIns Java]
    * [CppPlugIns C++]
    * [PyPlugIns Python]
-
  * Tools
    * [DataBrowser Data Browser]
