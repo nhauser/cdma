@@ -1,0 +1,391 @@
+#summary One-sentence summary of this page.
+
+*Content*
+
+
+
+= Introduction =
+----
+== Getting started ==
+
+There are some evident principles behind a CDMA plug-in:
+
+ * observe behaviors described in each methods of a CDMA object,
+ * try to implement as much as possible requested methods (an incomplete plug-in would be unusable),
+ * to permit an access on data with the most possible efficiency,
+ * worry about the memory usage.
+
+Anyway, as you read / write data you know the best way to do it according to your file format constraints.
+
+The CDMA is just a convenience on how data should be accessed for reading or writing. It is used to permit to anyone to read/write your file format.
+
+== Main elements ==
+
+Several modules or parts can be distinguished in the Common Data Model:
+ * plug-in identification and dynamic loading,
+ * loading dictionary corresponding the data source,
+ * browsing the data tree structure,
+ * loading data and depending informations,
+ * manipulating loaded data (reshape, slice, simple math operations...).
+
+Some of those elements are only implemented in the plug-in. Other are only relevant from the “Core”. But almost all behaviors are customizable in the plug-in implementation.
+
+
+= How to develop its own plug-in =
+----
+
+== Plug-ins structure ==
+
+In order to make the plug-in usable there is 3 rules to respect:
+
+ * to have a factory whom is an implementation of IFactory interface (pattern Factory),
+ * to make it loadable using OSGI or using Java standard java.util.ServiceLoader,
+ * to have its own unique name.
+
+== To have a factory ==
+
+The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. Indeed the core provide the org.gumtree.data.core.Factory which calls the dynamic loading service (see section 2.1.2) to instantiate the right plug-in IFactory implementation.
+
+Below a sample of the “Core” main Factory:
+
+{{{
+import org.gumtree.data.utils.FactoryManager;
+import org.gumtree.data.utils.IFactoryManager;
+
+/**
+ * The Factory class in gumtree data model is a tools to create GDM 
+ * objects. The factory can take a URI as a parameter to read data 
+ * in as GDM object, or it can create an empty GDM object to hold 
+ * data in a future time.
+*/
+public final class Factory {
+	public static IFactory getFactory(String name) {
+		return getManager().getFactory(name);
+	}
+	...
+	public static IArray createArray(Class<?> clazz, int[] shape) {...}
+	public static IDataItem createDataItem(IGroup parent, String shortName, 
+			IArray array) throws InvalidArrayTypeException {...}
+	public static IGroup createGroup(IGroup parent, String shortName, 
+			boolean updateParent) {...}
+	public static IDataset createDatasetInstance(URI uri) throws Exception {...}
+	...
+}
+}}}
+
+Here  in all those static methods the main Factory starts by loading the plug-in factory and then call its methods to instantiate objects.
+
+Below a sample of SOLEIL's plug-in factory (`NxsFactory`):
+
+{{{
+import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.interfaces.IArray;
+...
+public final class NxsFactory {
+	private static NxsFactory factory;                                      // internally use of pattern Singleton
+	public final static String NAME = "org.gumtree.data.soleil.NxsFactory"; // factory name and plug-in name
+	public String IFactory getName() {
+		return NAME;
+	}
+	...
+	public static IArray createArray(Class<?> clazz, int[] shape){
+		Object o = java.lang.reflect.Array.newInstance(clazz, shape);
+		return new NxsArray( o, shape);
+	}
+	public static IGroup createGroup(IGroup parent,
+			String shortName, boolean updateParent){
+    		String path_val = parent.getLocation();
+	    	PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
+		NxsGroup group = new NxsGroup(parent, path, parent.getDataset());
+		return group;
+	}
+	public static IDataset createDatasetInstance(URI uri) throws Exception {
+		return new NxsDataSet(new File(uri));
+	}
+	...
+}
+}}}
+
+The factory's job is just to permit an access to plug-in's objects that are conform to CDMA policy due to interface implementations. So as we are in the plug-in when factory is loaded it just calls constructors of known classes.
+
+The main idea behind that is to stay in a known environment when using the CDMA.
+
+== Make it dynamically loadable ==
+
+Plug-ins are loaded at runtime. The “Core” contains a module that manage it. Two ways are available: one using the ServiceLoading provided by JAVA, the other one uses OSGI framework. Prerequisite is to store the JAR of the plug-in in the CLASSPATH of the project.
+
+The SOLEIL's plug-in project in Eclipse have the following form:
+
+*_image_*
+
+The code is stored in “org.gumtree.data.soleil”. But the 2 main points here are :
+ * The file `META-INF/services/org.gumtree.data.IFactory` which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
+ That interface's implementation is the plug-in entry point during the run time. In that plug-in the `IFactory` implementation is contained in package org.gumtree.data.soleil and is called `NxsFactory`. So the following is just the content of that file: 
+{{{
+org.gumtree.data.soleil.NxsFactory
+}}}
+ * The file OSGI-INF/factory.xml which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax: 
+{{{
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" 	immediate="true" name="org.gumtree.data.soleil.factory">
+   <implementation class="org.gumtree.data.soleil.NxsFactory"/>
+   <service>
+      <provide interface="org.gumtree.data.IFactory"/>
+   </service>
+</scr:component>
+}}}
+
+== Its own unique name ==
+
+Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins.
+{{{
+package org.gumtree.data.interfaces;
+public interface IModelObject {
+	public String getFactoryName();
+}
+}}}
+The factory is instantiated using its name in the plug-in. The name should contain the  namespace, and is bind to the factory in the FactoryManager.
+
+
+= Mandatory modules to implement =
+
+All things that are requested for a plug-in is in the package: `org.gumtree.data.interfaces`.
+
+Notice that 2 interfaces are not be implemented directly because they are inherited yet from other interfaces : `IModelObject` and `IContainer`. Their roles are respectively to give the property of a CDMA object for `IModelObject` to retrieve `IFactory`. For `IContainer` it's to give the property of physical node of the data source to prevent rewriting many methods many times.
+
+== Navigation ==
+
+The data source is considered as tree. But it's not mandatory: if you can do the big things, you can do the little things as well.
+
+The aim is to be able to browse the data source and get nodes' informations location, name, properties...
+
+So here 4 classes are to be implemented: `IDataset, IGroup, IDataItem, IAttribute`.
+
+ * `IDataset` is the one that handles the data source it permits to have a location on it, to open  or close an access on it,
+ * vIGroup` which is a container for IDataItem or other `IGroup`. It's the one that let you exploring the tree
+ * `IDataItem` which are considered as the leaves of our tree. They wear the physical data (more often a matrix), so it should be able to give some informations on it like type, size...
+ * `IAttribute` are attribute or contextual data of nodes (`IGroup` or `IDataItem`). For instance, an `IDataItem` has timestamps which tells at what time it was recorded.
+
+With such a structure we should be able to explore almost (to not say all) all data sources.
+
+Note: take care to share references on object. 
+
+*Example 1*
+{{{
+IDataset dataset = Factory.createDatasetInstance(URI);
+IGroup root = dataset.getRootGroup();
+IDataItem item = root.findDataItem( key );
+IGroup root2 = item.getRootGroup();
+}}}
+The code above should lead to “root” and “root2” to be 2 references of the same instance.
+
+*Example 2*
+
+Let suppose the following structure the root group has 1 group item called my_group. And my_group as one data item called my_data. Then: 
+{{{
+IDataset dataset = Factory.createDatasetInstance(URI);
+IGroup root = dataset.getRootGroup();
+IDataItem item = root.findDataItem( "my_data" );
+IGroup group1 = item.getParent();
+IGroup group2 = root.getGroup( "my_group" );
+IGroup group3 = root.findGroup( "my_group" );
+}}}
+Same as before, the above code should lead to have `group1`, `group2` and `group3` to be 3 references of the same instance. Only one called to the `IGroup` constructor should be done.
+
+== Data description and manipulation ==
+
+=== Data description ===
+
+Physical data are seen as matrices. Even when they are a scalar, they are always described using the IArray interface. It provides the following:
+{{{
+public interface IArray extends IModelObject {
+	IArrayUtils getArrayUtils();
+	IArrayMath getArrayMath();
+
+	Class<?> getElementType();
+	int getRank();
+	int[] getShape();
+	IIndex getIndex();
+	ISliceIterator getSliceIterator(int rank);
+	IArrayIterator getIterator();
+	...
+}
+}}}
+ * `IArray` is the entry point of data access and manipulation, it give all necessary informations to process, copy... matrices
+Classes used to described matrices are the following:
+ * `IArray` that holds and manages the memory storage
+ * `IIndex` defines the viewable part of an `IArray`, “independently” of it's storage. More exactly it does all index calculation when accessing the storage. For instance, when changing the IIndex of an array without reloading data, we can be able iterate over it by scanning one cell on two.
+ * `IRange` defines each dimension of the `IIndex`. It means its length, offset, stride. It tells on one dimension of the storage how many cells should be avoided between two cells that are seen as contiguous by the user.
+`IArray` uses an `IIndex` to do all its calculation of cell offset and position. `IIndex` uses `IRange` to define each dimension of the represented array.
+
+They are structured as following in SOLEIL's plugin:
+{{{
+public class NxsArray implements IArray {
+	private IIndex m_index;   // Viewable part of the array
+	private Object m_oData;   // Array of primitive
+	private int[]  m_shape;   // Shape of the backing storage
+...
+}
+
+public class NxsIndex implements IIndex {
+	private int   m_rank;    	// rank of the view
+	private int[] m_iCurPos; 	// Current position
+	private NxsRange[] m_ranges; // View in each dimension
+...
+}
+
+public class NxsRange implements IRange {
+    private long      m_last;     // number of elements
+    private long      m_first;    // first value in range
+    private long      m_stride;   // stride, must be >= 1
+    private String    m_name;     // optional name
+    private boolean   m_reduced;  // range reduced or not
+...
+}
+}}}
+At this point of the plug-in should be able to browse and load data from the data source.
+
+=== Data manipulation ===
+
+The manipulation of matrices is processed with following items:
+ * `IArrayIterator` permits to iterate over the array and get each value according to defined view (in the `IArray`).
+ * `ISliceIterator` permits to slice the IArray in several part and to get a new `IArray` (smaller than the original one) that share the same backing storage.
+ * `IArrayMath` is implemented by default in the “Core” but it uses `IArray` methods to apply its algorithms so it isn't the most efficient: see class `ArrayMath` in math package.
+ * `IArrayUtils` is implemented by default in the “Core” but it uses `IArray` methods to apply its algorithms so it isn't the most efficient: see class `ArrayUtils` in utils package.
+
+
+= Optional modules to customize =
+----
+
+== Extended dictionary mechanism ==
+
+This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
+A default implementation is provided in “Core” see package org.gumtree.data.dictionary.impl it can be customized totally or partially. The customization should impact only the instantiated plug-in. Indeed as it is accessed using the ILogicalGroup, instantiating a dedicated one (instead of org.gumtree.data.dictionary.impl.LogicalGroup) allow to manage own behaviors.
+The logical view is defined and activated with the two following lines:
+{{{
+Factory.setActiveView(String view);
+ILogicalGroup root = dataset.getLogicalRoot();
+}}}
+The association key/path is done by `IExtendedDictionary`. The `ILogicalGroup` will instantiate an `IExtendedDictionary` giving it path to reach key file and mapping file, through the method:
+{{{
+public IExtendedDictionary ILogicalGroup.findAndReadDictionary()
+}}}
+The loading of both files is done using:
+{{{
+public void IExtendedDictionary.readEntries();
+}}}
+That path will be managed by the ILogicalGroup to open the correct node using:
+{{{
+public List<IContainer> IGroup.findAllContainerByPath(String path);
+}}}
+As path are only interpreted by plug-in it can have any form when it can be translated into a String.
+
+Note: that mechanism requires to have some dictionary files installed somewhere, see following methods (from “Core”'s main Factory) to set / get expected paths (and structure) where to find them:
+{{{
+package org.gumtree.data;
+public final class Factory {
+	public static String getDictionariesFolder();
+	public static void setDictionariesFolder(String path);
+	public static String getKeyDictionaryPath();
+	public static String getMappingDictionaryFolder(IFactory factory);
+	...
+}
+}}}
+
+Below an example of the view file:
+{{{
+<data-def name="DATA_REDUCTION"> 
+    <group key="detectors"> 
+        <group key="detector"> 
+            <item key="camera"/> 
+            <item key="dark"/> 
+            <item key="distance"/> 
+            <item key="exposureTime"/> 
+            <item key="shutterCloseDelay"/> 
+            <item key="xBin"/> 
+            <item key="yBin"/> 
+        </group> 
+        <group key="monitor"> 
+            <item key="mi"/> 
+            <item key="gain"/> 
+            <item key="intensity"/> 
+        </group> 
+        <group key="monochromator"> 
+            <item key="lambda"/> 
+            <item key="energy"/> 
+        </group> 
+    </group> 
+    <group key="data"> 
+        <item key="images"/> 
+        <item key="spectrums"/> 
+        <item key="x_position"/> 
+        <item key="y_position"/> 
+    </group> 
+    <group key="info"> 
+        <item key="comments"/> 
+    </group> 
+</data-def>
+}}}
+
+Below an example of the mapping file:
+{{{
+<map-def name="SWING" version="1.0.0"> 
+    <item key="scienta"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/fixEnergy</path> 
+    </item> 
+    <item key="distance"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path> 
+    </item> 
+    <item key="dark"> 
+        <path>/{NXentry}/{nxinstrument}/{nxdetector}/intensityblack</path> 
+    </item> 
+    <item key="exposureTime"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path> 
+    </item> 
+    <item key="closeDelay"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path> 
+    </item> 
+    <item key="xBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path> 
+    </item> 
+    <item key="yBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path> 
+    </item> 
+    <item key="intensity"> 
+        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path> 
+    </item> 
+    <item key="lambda"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/Gain</path> 
+    </item> 
+    <item key="energy"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/intensity</path> 
+    </item> 
+    <item key="x_position"> 
+        <path>/{NXentry}/{NXdata}/Tx</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="y_position"> 
+        <path>/{NXentry}/{NXdata}/Tz</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="spectrums"> 
+        <path>/{NXentry}/{NXdata}/channel$(channel)*</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="comments"> 
+        <path>/{NXentry}/{NXsample}/comments/data</path> 
+    </item> 
+</map-def>
+}}}
+
+== Path Parameters ==
+
+`IPathParameter` need to be defined by the plug-in. It permit to modify at runtime the value of the path. Setting a parameter aims to distinguish two nodes when one path can lead to both them.
+It is instantiated by the plug-in factory as following:
+{{{
+public IPathParamResolver createPathParamResolver(IPath path);
+}}}
+The “path” parameter is the reference path of the requested key. Indeed `ILogicalGroup` internally will search all the node that correspond to the path. And then node by node it will ask the plug-in `IPathParamResolver` to give the parameter that permit to get the current node:
+{{{
+public IPathParameter resolvePathParameter(IContainer node);
+}}}
