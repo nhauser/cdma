@@ -21,3 +21,5 @@
      * [PyReference API Reference guide]
  * Dictionaries
  * Plug-ins
+ * Tools
+   * [DataBrowser Data Browser]
