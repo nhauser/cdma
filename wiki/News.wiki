@@ -3,6 +3,10 @@
 = 2012 =
 ----
 
+*Wednesday, March 9, 2012*
+
+CDMA Java 2.1.0 (the first Google Code hosted version) has been released.
+
 *Wednesday, March 7, 2012*
 
 First CDMA developer's meeting will be held at [http://www.desy.de/ DESY] from April, 2nd 13:00h to April, 3rd 12:00h
