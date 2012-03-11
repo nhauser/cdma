@@ -1,11 +1,12 @@
 #summary News and annoucements.
+#labels Featured
 
 = 2012 =
 ----
 
 *Wednesday, March 9, 2012*
 
-CDMA Java 2.1.0 (the first Google Code hosted version) has been released.
+CDMA Java 2.1.0 (the first Google Code hosted version) has been released.  It is available for download from [http://code.google.com/p/cdma/downloads/detail?name=cdma-java-dist-2.1.0.zip here].
 
 *Wednesday, March 7, 2012*
 
