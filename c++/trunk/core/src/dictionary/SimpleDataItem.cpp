@@ -464,7 +464,7 @@ IDataItemPtr SimpleDataItem::clone()
 // SimpleDataItem::addAttribute
 //---------------------------------------------------------------------------
 //cdma::IAttributePtr SimpleDataItem::addAttribute(const std::string&, yat::Any&)
-void SimpleDataItem::addAttribute(const cdma::IAttributePtr& attr)
+void SimpleDataItem::addAttribute(const cdma::IAttributePtr&)
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::addAttribute");
 }
