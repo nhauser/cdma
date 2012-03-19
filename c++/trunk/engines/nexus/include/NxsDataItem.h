@@ -57,7 +57,8 @@ private:
   
   NxsDataset*       m_dataset_ptr;  // C-style pointer in order to solve the circular reference
   yat::String       m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
-  yat::String       m_shortName;    // Short name of the node (physical name in NeXus file)
+  yat::String       m_shortName;    // Short name of the node (ie: the key name when using the dictionary)
+  yat::String       m_nodeName;     // physical name in NeXus file
   yat::String       m_path;         // Path of the item through the dataset file structure (excluding item node name)
   NexusDataSetInfo  m_item;         // Info on the belonged data
   ArrayPtr          m_array_ptr;    // Array object

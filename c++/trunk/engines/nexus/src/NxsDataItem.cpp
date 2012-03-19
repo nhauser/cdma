@@ -77,8 +77,9 @@ void NxsDataItem::init(NxsDataset* dataset_ptr, const std::string& path, bool in
   m_path = tmp;
 
   // Second the node name
-  m_shortName = nodes[nodes.size() - 1 ];
-  m_name = m_shortName;
+  m_nodeName = nodes[nodes.size() - 1 ];
+  m_shortName = m_nodeName;
+  m_name = m_nodeName;
   m_dataset_ptr = dataset_ptr;
 
   NexusFilePtr file = m_dataset_ptr->getHandle();
@@ -91,7 +92,7 @@ void NxsDataItem::init(NxsDataset* dataset_ptr, const std::string& path, bool in
     initAttr();
     
     // Read node's info
-    file->GetDataSetInfo( &m_item, m_shortName.c_str() );
+    file->GetDataSetInfo( &m_item, m_nodeName.c_str() );
 
     // Close all nodes
     file->CloseAllGroups();
@@ -619,7 +620,7 @@ AttributeList NxsDataItem::getAttributeList()
 //---------------------------------------------------------------------------
 std::string NxsDataItem::getLocation() const
 {
-  return NxsDataset::concatPath(m_path, m_shortName);
+  return NxsDataset::concatPath(m_path, m_nodeName);
 }
 
 //---------------------------------------------------------------------------
@@ -640,7 +641,7 @@ void NxsDataItem::setLocation(const std::string& path)
     }
   }
   m_path = tmp;
-  m_shortName = item;
+  m_nodeName = item;
 }
 
 //---------------------------------------------------------------------------
@@ -743,7 +744,7 @@ void NxsDataItem::loadArray()
     NexusDataSet data;
 
     // Load data
-    file_ptr->GetData( &data, m_shortName.data() );
+    file_ptr->GetData( &data, m_nodeName.data() );
   
     // Init Array
     cdma::Array *array_ptr = new cdma::Array( TypeUtils::toCType(m_item.DataType()),
@@ -802,7 +803,7 @@ void NxsDataItem::open( bool openNode )
   // Open parent node
   NexusFilePtr file = m_dataset_ptr->getHandle();
   
-  if( file->CurrentGroupPath() != m_path || file->CurrentDataset() != m_shortName )
+  if( file->CurrentGroupPath() != m_path || file->CurrentDataset() != m_nodeName )
   {
     if( file->CurrentGroupPath() != m_path )
     {
@@ -813,9 +814,9 @@ void NxsDataItem::open( bool openNode )
     }
     
     // Open item node
-    if( openNode && file->CurrentDataset() != m_shortName)
+    if( openNode && file->CurrentDataset() != m_nodeName)
     {
-      if( ! file->OpenDataSet( m_shortName.data(), false ) )
+      if( ! file->OpenDataSet( m_nodeName.data(), false ) )
       {
         THROW_FILE_ACCESS("Unable to open node!\nName: " +  m_shortName, "NxsDataItem::NxsDataItem");
       }
