@@ -12,7 +12,7 @@
 		<gumtree.version>1.7.0-SNAPSHOT</gumtree.version>
 		<cdma.version>2.1.0-SNAPSHOT</cdma.version>
 		<tycho.groupId>org.eclipse.tycho</tycho.groupId>
-		<tycho.version>0.12.0</tycho.version>
+		<tycho.version>0.14.1</tycho.version>
 		<maven.javadoc.version>2.8</maven.javadoc.version>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
 		<enableEmmaReport>false</enableEmmaReport>
