@@ -10,10 +10,12 @@
 #ifndef __CDMA_IATTRIBUTE_H__
 #define __CDMA_IATTRIBUTE_H__
 
-#include <yat/utils/String.h>
-#include <yat/memory/SharedPtr.h>
 #include <typeinfo>
 
+#include <yat/utils/String.h>
+#include <yat/memory/SharedPtr.h>
+
+#include <cdma/array/Array.h>
 #include <cdma/Common.h>
 
 namespace cdma
@@ -30,8 +32,7 @@ public:
   {
   }
 
-  /// Get the name of this Attribute. Attribute names are unique within a
-  /// NetcdfFile's global set, and within a Variable's set.
+  /// Get the name of this Attribute that is unique within a IContainer.
   ///
   /// @return string object
   ///
@@ -110,17 +111,23 @@ public:
   ///
   virtual std::string toString() = 0;
 
-  /// set the value as a String, trimming trailing zeroes.
+  /// set the value as a string, trimming trailing zeroes.
   ///
   /// @param val string object
   ///
   virtual void setStringValue(const std::string& val) = 0;
 
-  /// set the values from an Array.
+  /// set the value as an integer.
   ///
-  /// @param value IArray object
+  /// @param value int
   ///
-  virtual void setValue(const yat::Any& value) = 0;
+  virtual void setIntValue(int value) = 0;
+  
+  /// set the value as a float.
+  ///
+  /// @param value float
+  ///
+  virtual void setFloatValue(float value) = 0;
 };
 
 DECLARE_SHARED_PTR(IAttribute);

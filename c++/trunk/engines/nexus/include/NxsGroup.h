@@ -33,6 +33,7 @@ namespace cdma
 typedef std::map<yat::String, cdma::IGroupPtr> MapStringGroup;
 typedef std::map<yat::String, cdma::IDataItemPtr> MapStringDataItem;
 typedef std::map<yat::String, cdma::IAttributePtr> MapStringAttribute;
+typedef std::map<std::string, IDimensionPtr> MapStringDimension;
 
 //==============================================================================
 /// IGroup implementation for NeXus engine
@@ -41,14 +42,16 @@ typedef std::map<yat::String, cdma::IAttributePtr> MapStringAttribute;
 class CDMA_NEXUS_DECL NxsGroup : public cdma::IGroup
 {
 private:
-  NxsDataset*           m_dataset_ptr;  // C-style pointer to the parent dataset
-  NxsGroup*             m_root_ptr;     // TODO appeler celui du Dataset
-  yat::String           m_path;         // Group path inside the Nexus File
-  MapStringGroup        m_mapGroups;
-  MapStringDataItem     m_mapDataItems;
-  MapStringAttribute    m_attributes_map;
-  bool                  m_bChildren;      // true if childs are enumerated
+  NxsDataset*           m_dataset_ptr;       // C-style pointer to the parent dataset
+  NxsGroup*             m_root_ptr;          // TODO appeler celui du Dataset
+  yat::String           m_path;              // Group path inside the Nexus File
+  bool                  m_bChildren;         // true if childs are enumerated
   bool                  m_attributes_loaded; // 'true' when the attributes are loaded from the data source
+
+  MapStringGroup        m_mapGroups;         // Group map: map[group_name]= group child
+  MapStringDataItem     m_mapDataItems;      // DataItem map : map[name]=attribute
+  MapStringDimension    m_mapDimensions;     // Dimension map: map[dim_name] = dimension
+  MapStringAttribute    m_attributes_map;    // Attribute map : map[name]=attribute
 
   void PrivEnumChildren();
   void PrivEnumAttributes();
@@ -88,7 +91,7 @@ public:
   std::list<cdma::IDimensionPtr> getDimensionList();
   std::list<cdma::IGroupPtr> getGroupList();
   cdma::IDataItemPtr addDataItem(const std::string& short_name);
-  cdma::IDimensionPtr addDimension(const std::string& short_name);
+  cdma::IDimensionPtr addDimension(const cdma::IDimensionPtr& dim);
   cdma::IGroupPtr addSubgroup(const std::string& short_name);
   bool removeDataItem(const cdma::IDataItemPtr& item);
   bool removeDataItem(const std::string& varName);
@@ -97,13 +100,13 @@ public:
   bool removeGroup(const std::string& short_name);
   bool removeDimension(const cdma::IDimensionPtr& dimension);
   void setParent(const cdma::IGroupPtr&);
-  cdma::IGroupPtr clone();
 
   //@} --------------------------------
   
   //@{ IContainer
 
-    cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+  //  cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+    void addAttribute(const cdma::IAttributePtr& attr);
     std::string getLocation() const;
     std::string getName() const;
     std::string getShortName() const;

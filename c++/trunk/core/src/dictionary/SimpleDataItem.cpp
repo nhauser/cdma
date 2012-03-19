@@ -463,7 +463,8 @@ IDataItemPtr SimpleDataItem::clone()
 //---------------------------------------------------------------------------
 // SimpleDataItem::addAttribute
 //---------------------------------------------------------------------------
-cdma::IAttributePtr SimpleDataItem::addAttribute(const std::string&, yat::Any&)
+//cdma::IAttributePtr SimpleDataItem::addAttribute(const std::string&, yat::Any&)
+void SimpleDataItem::addAttribute(const cdma::IAttributePtr& attr)
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::addAttribute");
 }
@@ -545,6 +546,14 @@ void SimpleDataItem::setParent(const cdma::IGroupPtr&)
 cdma::IDatasetPtr SimpleDataItem::getDataset()
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::getDataset");
+}
+
+//---------------------------------------------------------------------------
+// SimpleDataItem::setData
+//---------------------------------------------------------------------------
+void SimpleDataItem::setData(const cdma::ArrayPtr& array)
+{
+  m_array_ptr = array;
 }
 
 } // namespace

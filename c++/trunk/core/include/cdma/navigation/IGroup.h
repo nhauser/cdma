@@ -139,7 +139,7 @@ public:
 
     /// Add a shared Dimension.
     ///
-    virtual IDimensionPtr addDimension(const std::string& shortName) = 0;
+    virtual IDimensionPtr addDimension(const cdma::IDimensionPtr& dim) = 0;
 
     /// Add a nested Group.
     ///

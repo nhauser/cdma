@@ -50,20 +50,10 @@ public:
 
   /// Find the index of the named Dimension in this DataItem.
   ///
-  /// @param namethe name of the dimension
+  /// @param name the name of the dimension
   /// @return the index of the named Dimension, or -1 if not found.
   ///
   virtual int findDimensionView(const std::string& name) = 0;
-
-  /// Create a new DataItem that is a logical slice of this DataItem, by fixing
-  /// the specified dimension at the specified index value. This reduces rank
-  /// by 1. No data is read until a read method is called on it.
-  ///
-  /// @param dimension which dimension to fix
-  /// @param value at what index value
-  /// @return a new DataItem which is a logical slice of this DataItem.
-  ///
-  virtual IDataItemPtr getASlice(int dimension, int value) throw ( Exception ) = 0;
 
   /// Get its parent Group, or null if its the root group.
   ///
@@ -144,52 +134,11 @@ public:
   ///
   virtual int getElementSize() = 0;
 
-  /// display name plus the dimensions.
-  ///
-  /// @return string object
-  ///
-  virtual std::string getNameAndDimensions() = 0;
-
-  /// Display name plus the dimensions.
-  ///
-  /// @param useFullName true or false value
-  /// @param showDimLength true or false value
-  ///
-  virtual std::string getNameAndDimensions(bool useFullName, bool showDimLength) = 0;
-
-  /// Get shape as an array of Range objects.
-  ///
-  /// @return array of Ranges, one for each Dimension.
-  ///
-  virtual std::list<RangePtr > getRangeList() = 0;
-
   /// Get the number of dimensions of the DataItem.
   ///
   /// @return integer value
   ///
   virtual int getRank() = 0;
-
-  /// Create a new DataItem that is a logical subsection of this DataItem. No
-  /// data is read until a read method is called on it.
-  ///
-  /// @param section
-  ///           list of type Range, with size equal to getRank(). Each Range
-  ///           corresponds to a Dimension, and specifies the section of data
-  ///           to read in that Dimension. A Range object may be null, which
-  ///           means use the entire dimension.
-  /// @return a new DataItem which is a logical section of this DataItem.
-  ///
-  virtual IDataItemPtr getSection(std::list<RangePtr > section) throw ( Exception ) = 0;
-
-  /// Get index subsection as an array of Range objects, relative to the
-  /// original variable. If this is a section, will reflect the index range
-  /// relative to the original variable. If its a slice, it will have a rank
-  /// different from this variable. Otherwise it will correspond to this
-  /// DataItem's shape, ie match getRanges().
-  ///
-  /// @return array of Ranges, one for each Dimension.
-  ///
-  virtual std::list<RangePtr > getSectionRanges() = 0;
 
   /// Get the shape: length of DataItem in each dimension.
   ///
@@ -205,12 +154,6 @@ public:
   /// @return total number of elements in the DataItem.
   ///
   virtual long getSize() = 0;
-
-  /// If total data is less than SizeToCache in bytes, then cache.
-  ///
-  /// @return integer value
-  ///
-  virtual int getSizeToCache() = 0;
 
   /// Create a new DataItem that is a logical slice of this DataItem, by fixing
   /// the specified dimension at the specified index value. This reduces rank
@@ -234,32 +177,6 @@ public:
   /// @return unit string, or null if not found.
   ///
   virtual std::string getUnitsString() = 0;
-
-  ///
-  /// Does this have its data read in and cached?
-  ///
-  /// @return true or false
-  ///
-  virtual bool hasCachedData() = 0;
-
-  ///
-  /// Override Object.hashCode() to implement equals.
-  ///
-  /// @return integer value
-  ///
-  //##virtual int hashCode() = 0;
-
-  ///
-  /// Invalidate the data cache.
-  ///
-  virtual void invalidateCache() = 0;
-
-  /// Will this DataItem be cached when read. Set externally, or calculated
-  /// based on total size < sizeToCache.
-  ///
-  /// @return true is caching
-  ///
-  virtual bool isCaching() = 0;
 
   /// Is this variable is a member of a Structure?
   ///
@@ -350,33 +267,17 @@ public:
   ///
   virtual bool removeAttribute(const IAttributePtr& attr) = 0;
 
-  /// Set the data cache.
-  ///
-  /// @param cacheData
-  ///           Array object
-  /// @param isMetadata
-  ///           : synthesised data, set true if must be saved in NcML output
-  ///           (i.e. data not actually in the file).
-  /// @throw  Exception
-  ///            invalid type
-  ///
-  //## virtual void setCachedData(Array& cacheData, bool isMetadata) throw ( Exception ) = 0;
-
-  /// Set whether to cache or not. Implies that the entire array will be
-  /// stored, once read. Normally this is set automatically based on size of
-  /// data.
-  ///
-  /// @param caching
-  ///           set if caching.
-  ///
-  virtual void setCaching(bool caching) = 0;
-
   /// Set the data type.
   ///
-  /// @param dataType
-  ///           Class object
+  /// @param dataType type_info of the underlying data
   ///
   virtual void setDataType(const std::type_info& dataType) = 0;
+  
+  /// Set the given array as new data for this IDataItem
+  ///
+  /// @param array ArrayPtr object
+  ///
+  virtual void setData(const ArrayPtr& array ) = 0;
 
   /// Set the dimensions using the dimensions names. The dimension is searched
   /// for recursively in the parent groups.
@@ -392,31 +293,12 @@ public:
   ///
   virtual void setDimension(const IDimensionPtr& dim, int ind) throw ( Exception ) = 0;
 
-  /// Set the element size. Usually elementSize is determined by the dataType,
-  /// use this only for exceptional cases.
-  ///
-  /// @param elementSize integer value
-  ///
-  virtual void setElementSize(int elementSize) = 0;
-
-  /// Set sizeToCache.
-  ///
-  /// @param sizeToCache integer value
-  ///
-  virtual void setSizeToCache(int sizeToCache) = 0;
-
   /// Set the units of the DataItem.
   ///
   /// @param units string object Created on 20/03/2008
   ///
   virtual void setUnitsString(const std::string& units) = 0;
 
-  /// Clone this data item. Return a new DataItem instance but share the same
-  /// Array data storage.
-  ///
-  /// @return new DataItem instance
-  ///
-  virtual IDataItemPtr clone() = 0;
  };
  
  typedef std::list<IDataItemPtr> DataItemList;

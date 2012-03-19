@@ -28,16 +28,146 @@ namespace cdma
   //-----------------------------------------------------------------------------
   // Tools::displayDataItem
   //-----------------------------------------------------------------------------
-  std::string Tools::displayDataItem( const IDataItemPtr& item)
+  std::string Tools::displayDataItem( const IDataItemPtr& item, std::string indent)
   {
     stringstream res;
 
-    res<<"Physical location: "<<item->getLocation()<<endl;
-    res<<"Key name: "<<item->getShortName()<<endl;
-    res<<"Rank: "<<item->getRank();
-    res<<"  Shape: "<<displayArray( item->getShape() );
-    res<<"  Nb element: "<<item->getSize();
-    res<<"  Type: "<<item->getType().name();
+    res<<indent<<"DataItem name: "<<item->getName()<<endl;
+    res<<indent<<"  short name: "<<item->getShortName()<<endl;
+    res<<indent<<"  Physical location: "<<item->getLocation()<<endl;
+    res<<indent<<"  Rank: "<<item->getRank();
+    res<<" Shape: "<<displayArray( item->getShape() );
+    res<<" Nb element: "<<item->getSize();
+    res<<" Type: "<<item->getType().name()<<std::endl;
+    std::list<IAttributePtr> list_attr = item->getAttributeList();
+    if( list_attr.size() > 0 )
+    {
+      res<<indent<<"   - getAttributeList: ";
+      int i = 0;
+      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); iter++)
+      {
+        if( iter != list_attr.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                       ";
+        res<<(*iter)->getName();
+        i++;
+      }
+      res<<std::endl;
+    }
+    std::list<IDimensionPtr> list_dim = item->getDimensionList();
+    if( list_dim.size() > 0 )
+    {
+      res<<indent<<"   - getDimensionList: ";
+      int i = 0;
+      for( std::list<IDimensionPtr>::iterator iter = list_dim.begin(); iter != list_dim.end(); iter++)
+      {
+        if( iter != list_dim.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                       ";
+        res<<(*iter)->getName();
+        i++;
+      }
+      res<<std::endl;
+    }
+    return res.str();
+  }
+
+  //-----------------------------------------------------------------------------
+  // Tools::displayGroup
+  //-----------------------------------------------------------------------------
+  std::string Tools::displayDimension( const cdma::IDimensionPtr& dim, std::string indent)
+  {
+    stringstream res;
+    
+    res<<indent<<"Dimension: "<<dim->getName()<<std::endl;
+    res<<indent<<"  Length: "<<dim->getLength()<<"  Unlimited: "<<(dim->isUnlimited() ? "true" : "false");
+    res<<"  Variable length:"<<(dim->isVariableLength() ? "true" : "false");
+    res<<"  Shared: "<<(dim->isShared() ? "true" : "false")<<std::endl;
+    res<<indent<<"  Axis: "<<dim->getDimensionAxis();
+    res<<"  Display order: "<<dim->getDisplayOrder();
+    res<<"  Units: "<<dim->getUnitsString()<<std::endl;
+    ArrayPtr arr = dim->getCoordinateVariable();
+    res << Tools::displayArray(arr, 15);
+    return res.str();
+  }
+
+  //-----------------------------------------------------------------------------
+  // Tools::displayGroup
+  //-----------------------------------------------------------------------------
+  std::string Tools::displayGroup( const cdma::IGroupPtr& group, std::string indent )
+  {
+    stringstream res;
+    res<<indent<<"Group: "<<group->getShortName()<<std::endl;
+    res<<indent<<" - getName='"<<group->getName()<<"'"<<std::endl;
+    res<<indent<<" - getLocation='"<<group->getLocation()<<"'"<<std::endl;
+    res<<indent<<" - isRoot='"<<( group->isRoot() ? "true": "false" )<<"'"<<std::endl;
+    res<<indent<<" - isEntry='"<<( group->isEntry() ? "true": "false" )<<"'"<<std::endl;
+    std::list<IGroupPtr> list_grp = group->getGroupList();
+    if( list_grp.size() > 0 )
+    {
+      res<<indent<<" - getGroupList: ";
+      int i = 0;
+      for( std::list<IGroupPtr>::iterator iter = list_grp.begin(); iter != list_grp.end(); iter++)
+      {
+        if( iter != list_grp.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                 ";
+        res<<(*iter)->getShortName();
+        i++;
+      }
+      res<<std::endl;
+    }
+    std::list<IDataItemPtr> list_item = group->getDataItemList();
+    if( list_item.size() > 0 )
+    {
+      res<<indent<<" - getDataItemList: ";
+      int i = 0;
+      for( std::list<IDataItemPtr>::iterator iter = list_item.begin(); iter != list_item.end(); iter++)
+      {
+        if( iter != list_item.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                    ";
+        res<<(*iter)->getShortName();
+        i++;
+      }
+      res<<std::endl;
+    }
+    std::list<IAttributePtr> list_attr = group->getAttributeList();
+    if( list_attr.size() > 0 )
+    {
+      res<<indent<<" - getAttributeList: ";
+      int i = 0;
+      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); iter++)
+      {
+        if( iter != list_attr.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                     ";
+        res<<(*iter)->getName();
+        i++;
+      }
+      res<<std::endl;
+    }
+    std::list<IDimensionPtr> list_dim = group->getDimensionList();
+    if( list_dim.size() > 0 )
+    {
+      res<<indent<<" - getDimensionList: ";
+      int i = 0;
+      for( std::list<IDimensionPtr>::iterator iter = list_dim.begin(); iter != list_dim.end(); iter++)
+      {
+        if( iter != list_dim.begin() )
+          res<<", ";
+        if( i > 0 && i % 10 == 0 )
+          res<<std::endl<<indent<<"                     ";
+        res<<(*iter)->getName();
+        i++;
+      }
+      res<<std::endl;
+    }
     return res.str();
   }
 

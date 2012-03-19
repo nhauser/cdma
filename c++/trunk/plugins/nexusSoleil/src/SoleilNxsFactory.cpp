@@ -58,7 +58,6 @@ std::string SoleilNxsFactoryInfo::get_version_number() const
 {
   return SoleilNxsFactory::version_number();
 }
-
 //==============================================================================
 // class SoleilNxsFactory
 //==============================================================================

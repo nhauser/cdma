@@ -68,6 +68,7 @@ bool SoleilNxsDataSource::isBrowsable(const yat::URI& destination) const
 //----------------------------------------------------------------------------
 bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
 {
+  CDMA_FUNCTION_TRACE("SoleilNxsDataSource::isProducer");
   bool result = false;
   if( isReadable( destination) )
   {
@@ -75,7 +76,6 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
     yat::String path = destination.get();
     SoleilNxsFactory plug_factory;
     IDatasetPtr dataset = plug_factory.openDataset( path );
-    
     // seek at root for 'creator' attribute
     IGroupPtr group = dataset->getRootGroup();
     if( group->hasAttribute("creator") && group->getAttribute("creator")->getStringValue() == CREATOR )
@@ -86,21 +86,19 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& destination) const
     else 
     {
       group = group->getGroup("<NXentry>");
-      if( ! group.is_null() ) 
+      if( group ) 
       {
         group = group->getGroup("<NXinstrument>");
-      }
-    
-      if( ! group.is_null() ) 
-      {
-        
-        std::string node = group->getShortName();
-        for( int i = 0; i < NB_BEAMLINES; i++ ) 
+        if( group ) 
         {
-          if( node == BEAMLINES[i]  ) 
+          std::string node = group->getShortName();
+          for( int i = 0; i < NB_BEAMLINES; i++ ) 
           {
-            result = true;
-            break;
+            if( node == BEAMLINES[i]  ) 
+            {
+              result = true;
+              break;
+            }
           }
         }
       }

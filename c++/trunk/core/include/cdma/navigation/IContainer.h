@@ -50,11 +50,12 @@ public:
   {
   }
   
-  /// Add a new attribute to the Group.
+  /// Add a new attribute to this Container.
   ///
   /// @param attribute  Attribute
   ///
-  virtual IAttributePtr addAttribute(const std::string& name, yat::Any &value) = 0;
+  //virtual IAttributePtr addAttribute(const std::string& name, yat::Any &value) = 0;
+  virtual void addAttribute(const IAttributePtr& attribute) = 0;
   
   /// Find an Attribute in this Group by its name.
   ///
@@ -70,15 +71,15 @@ public:
   ///
   virtual AttributeList getAttributeList() = 0;
   
-  /// Get the location referenced by the Dataset.
+  /// Get the location referenced in the Dataset.
   ///
-  /// @return string type Created on 18/06/2008
+  /// @return string type
   ///
   virtual std::string getLocation() const = 0;
   
-  /// Get the (long) name of the IObject, which contains the path information.
+  /// Get the (long) name of the IContainer.
   ///
-  /// @return string type object Created on 18/06/2008
+  /// @return string type object
   ///
   virtual std::string getName() const = 0;
   

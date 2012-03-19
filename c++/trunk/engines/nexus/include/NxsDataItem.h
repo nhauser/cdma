@@ -49,16 +49,20 @@ class CDMA_NEXUS_DECL NxsDataItem : public IDataItem
 {
 public:
   typedef std::map<std::string, IAttributePtr> AttributeMap;
+  typedef std::map<std::string, int>           DimOrderMap;
 
 private:
-  AttributeMap      m_attr_map;
+  AttributeMap      m_attr_map;     // Attribute map: map[attr_name] = IAttributePtr
+//  DimOrderMap       m_order_map;    // Dimension order map: map[dim_name] = order of the dimension
+  
   NxsDataset*       m_dataset_ptr;  // C-style pointer in order to solve the circular reference
   yat::String       m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
-  yat::String       m_shortName;
+  yat::String       m_shortName;    // Short name of the node (physical name in NeXus file)
   yat::String       m_path;         // Path of the item through the dataset file structure (excluding item node name)
   NexusDataSetInfo  m_item;         // Info on the belonged data
   ArrayPtr          m_array_ptr;    // Array object
   std::vector<int>  m_shape;        // Shape defined by the NexusDatasetInfo
+  bool              m_bDimension;   // Does dimension order map has been initialized
 
 public:
 
@@ -75,7 +79,6 @@ public:
 
     IAttributePtr findAttributeIgnoreCase(const std::string& name);
     int findDimensionView(const std::string& name);
-    IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
     IGroupPtr getParent();
     IGroupPtr getRoot();
     ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
@@ -85,21 +88,12 @@ public:
     std::list<IDimensionPtr> getDimensionList();
     std::string getDimensionsString();
     int getElementSize();
-    std::string getNameAndDimensions();
-    std::string getNameAndDimensions(bool useFullName, bool showDimLength);
-    std::list<RangePtr> getRangeList();
     int getRank();
-    IDataItemPtr getSection(std::list<RangePtr> section) throw ( cdma::Exception );
-    std::list<RangePtr> getSectionRanges();
     std::vector<int> getShape();
     long getSize();
-    int getSizeToCache();
     IDataItemPtr getSlice(int dim, int value) throw ( cdma::Exception );
     const std::type_info& getType();
     std::string getUnitsString();
-    bool hasCachedData();
-    void invalidateCache();
-    bool isCaching();
     bool isMemberOfStructure();
     bool isMetadata();
     bool isScalar();
@@ -112,14 +106,11 @@ public:
     long readScalarLong() throw ( cdma::Exception );
     short readScalarShort() throw ( cdma::Exception );
     std::string readString() throw ( cdma::Exception );
-    void setCaching(bool caching);
     void setDataType(const std::type_info& dataType);
+    void setData(const cdma::ArrayPtr&);
     void setDimensions(const std::string& dimString);
     void setDimension(const IDimensionPtr& dim, int ind) throw ( cdma::Exception );
-    void setElementSize(int elementSize);
-    void setSizeToCache(int sizeToCache);
     void setUnitsString(const std::string& units);
-    IDataItemPtr clone();
     IAttributePtr getAttribute(const std::string&);
     AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
@@ -129,7 +120,8 @@ public:
 
   //@{ IContainer
 
-    cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+    //cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+    void addAttribute(const cdma::IAttributePtr& attr);
     std::string getLocation() const;
     std::string getName() const;
     std::string getShortName() const;

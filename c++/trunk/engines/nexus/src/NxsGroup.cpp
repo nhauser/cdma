@@ -19,6 +19,8 @@
 //-----------------------------------------------------------------------------
 #include <cdma/exception/Exception.h>
 #include <NxsGroup.h>
+#include <NxsDataItem.h>
+#include <NxsDimension.h>
 
 namespace cdma
 {
@@ -28,9 +30,10 @@ namespace cdma
 //-----------------------------------------------------------------------------
 void NxsGroup::PrivEnumChildren()
 {
+  CDMA_FUNCTION_TRACE("PrivEnumChildren");
   try
   {
-    NxsDatasetPtr dataset_ptr = m_dataset_ptr;
+    NxsDataset* dataset_ptr = m_dataset_ptr;
 
     NexusFilePtr ptrFile = dataset_ptr->getHandle();
     NexusFileAccess auto_open(ptrFile);
@@ -40,10 +43,23 @@ void NxsGroup::PrivEnumChildren()
     ptrFile->GetGroupChildren(&datasets, &groups, &classes);
     
     for(yat::uint16 ui=0; ui < datasets.size(); ui++)
-      cdma::IDataItemPtr ptrDataItem = getDataItem(datasets[ui]);
+    {
+      cdma::IDataItemPtr ptrDataItem = dataset_ptr->getItemFromPath(m_path, datasets[ui]);
+      if( ptrDataItem->hasAttribute("axis") )
+      {
+        m_mapDimensions[ptrDataItem->getName()] = new NxsDimension( (NxsDataItemPtr)  ptrDataItem);
+      }
+      else
+      {
+        m_mapDataItems[ptrDataItem->getName()] = ptrDataItem;
+      }
+    }
       
     for(yat::uint16 ui=0; ui < groups.size(); ui++)
-      cdma::IGroupPtr ptrGroup = getGroup(groups[ui]);
+    {
+      cdma::IGroupPtr ptrGroup = dataset_ptr->getGroupFromPath( m_path + "/" + groups[ui]);
+      m_mapGroups[ ptrGroup->getShortName() ] = ptrGroup;
+    }
 
     m_bChildren = true;
   }
@@ -121,9 +137,16 @@ NxsGroup::~NxsGroup()
 //-----------------------------------------------------------------------------
 // NxsGroup::addDataItem
 //-----------------------------------------------------------------------------
-cdma::IDataItemPtr NxsGroup::addDataItem(const std::string&)
+cdma::IDataItemPtr NxsGroup::addDataItem(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::addDataItem");
+  IGroupPtr parent = NULL;
+  if( m_dataset_ptr != NULL )
+  {
+    parent = m_dataset_ptr->getGroupFromPath( m_path );
+  }
+  IDataItemPtr item = new NxsDataItem(m_dataset_ptr, parent, name );
+  m_mapDataItems[name] = item;
+  return item;
 }
 
 //-----------------------------------------------------------------------------
@@ -131,9 +154,14 @@ cdma::IDataItemPtr NxsGroup::addDataItem(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getParent() const
 {
-  yat::String strPath = m_path, strTmp;
-  strPath.extract_token_right('/', &strTmp);
-  return m_dataset_ptr->getGroupFromPath(strPath);
+  IGroupPtr group = NULL;
+  if( ! isRoot() )
+  {
+    yat::String strPath = m_path, strTmp;
+    strPath.extract_token_right('/', &strTmp);
+    group = m_dataset_ptr->getGroupFromPath(strPath);
+  }
+  return group;
 }
 
 //-----------------------------------------------------------------------------
@@ -147,17 +175,23 @@ cdma::IGroupPtr NxsGroup::getRoot() const
 //-----------------------------------------------------------------------------
 // NxsGroup::addDimension
 //-----------------------------------------------------------------------------
-cdma::IDimensionPtr NxsGroup::addDimension(const std::string&)
+cdma::IDimensionPtr NxsGroup::addDimension(const cdma::IDimensionPtr& dim)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::addOneDimension");
+  m_mapDimensions[dim->getName()] = dim;
+  return dim;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::addSubgroup
 //-----------------------------------------------------------------------------
-cdma::IGroupPtr NxsGroup::addSubgroup(const std::string&)
+cdma::IGroupPtr NxsGroup::addSubgroup(const std::string& groupName)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::addSubgroup");
+  if( !m_bChildren )
+    PrivEnumChildren();
+  
+  IGroupPtr subGroup = new NxsGroup(m_dataset_ptr, m_path, groupName);
+  m_mapGroups[subGroup->getShortName()] = subGroup;
+  return subGroup;
 }
 
 //-----------------------------------------------------------------------------
@@ -165,29 +199,66 @@ cdma::IGroupPtr NxsGroup::addSubgroup(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IDataItemPtr NxsGroup::getDataItem(const std::string& shortName) throw ( cdma::Exception )
 {
+  if( !m_bChildren )
+    PrivEnumChildren();
+ 
   std::map<yat::String, cdma::IDataItemPtr>::iterator it = m_mapDataItems.find(shortName);
   if( it != m_mapDataItems.end() )
+  {
     return it->second;
+  }
 
   cdma::IDataItemPtr ptrDataItem = m_dataset_ptr->getItemFromPath(m_path, shortName);
-  m_mapDataItems[shortName] = ptrDataItem;
+  if( ptrDataItem && !ptrDataItem->hasAttribute("axis") )
+  {
+    m_mapDataItems[shortName] = ptrDataItem;
+  }
+
   return ptrDataItem;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::getDataItemWithAttribute
 //-----------------------------------------------------------------------------
-cdma::IDataItemPtr NxsGroup::getDataItemWithAttribute(const std::string&, const std::string&)
+cdma::IDataItemPtr NxsGroup::getDataItemWithAttribute(const std::string& name, const std::string& value)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getDataItemWithAttribute");
+  IDataItemPtr result = NULL;
+  std::list<cdma::IDataItemPtr> items = getDataItemList();
+  for( std::list<cdma::IDataItemPtr>::iterator iter = items.begin(); iter != items.end(); iter++ ) 
+  {
+    if( (*iter)->hasAttribute(name) )
+    {
+      IAttributePtr attr = (*iter)->getAttribute(name);
+      if( attr->getStringValue() == value )
+      {
+        result = *iter;
+        break;
+      }
+    }
+  }
+  
+  return result;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::getDimension
 //-----------------------------------------------------------------------------
-cdma::IDimensionPtr NxsGroup::getDimension(const std::string&)
+cdma::IDimensionPtr NxsGroup::getDimension(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getDataItemWithAttribute");
+  if( ! m_bChildren )
+  {
+    PrivEnumChildren();
+  }
+  
+  MapStringDimension::iterator it = m_mapDimensions.find(name);
+  if( it != m_mapDimensions.end() )
+  {
+    return it->second;
+  }
+  else
+  {
+    return NULL;
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -195,21 +266,42 @@ cdma::IDimensionPtr NxsGroup::getDimension(const std::string&)
 //-----------------------------------------------------------------------------
 cdma::IGroupPtr NxsGroup::getGroup(const std::string& shortName)
 {
+  CDMA_FUNCTION_TRACE("NxsGroup::getGroup");
+  if( !m_bChildren )
+  {
+    PrivEnumChildren();
+  }
+  
   std::map<yat::String, cdma::IGroupPtr>::iterator it = m_mapGroups.find(shortName);
   if( it != m_mapGroups.end() )
     return it->second;
 
   cdma::IGroupPtr ptrGroup = m_dataset_ptr->getGroupFromPath(NxsDataset::concatPath(m_path, shortName));
-  m_mapGroups[shortName] = ptrGroup;
+  m_mapGroups[ptrGroup->getShortName()] = ptrGroup;
   return ptrGroup;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::getGroupWithAttribute
 //-----------------------------------------------------------------------------
-cdma::IGroupPtr NxsGroup::getGroupWithAttribute(const std::string&, const std::string&)
+cdma::IGroupPtr NxsGroup::getGroupWithAttribute(const std::string& name, const std::string& value)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getDataItemWithAttribute");
+  IGroupPtr result = NULL;
+  std::list<cdma::IGroupPtr> groups = getGroupList();
+  for( std::list<cdma::IGroupPtr>::iterator iter = groups.begin(); iter != groups.end(); iter++ ) 
+  {
+    if( (*iter)->hasAttribute(name) )
+    {
+      IAttributePtr attr = (*iter)->getAttribute(name);
+      if( attr->getStringValue() == value )
+      {
+        result = *iter;
+        break;
+      }
+    }
+  }
+  
+  return result;
 }
 
 //-----------------------------------------------------------------------------
@@ -223,7 +315,9 @@ std::list<cdma::IDataItemPtr> NxsGroup::getDataItemList()
   std::map<yat::String, cdma::IDataItemPtr>::iterator it = m_mapDataItems.begin();
   std::list<cdma::IDataItemPtr> data_items;
   for( ; it != m_mapDataItems.end(); it++ )
+  {
     data_items.push_back(it->second);
+  }
   
   return data_items;
 }
@@ -233,7 +327,16 @@ std::list<cdma::IDataItemPtr> NxsGroup::getDataItemList()
 //-----------------------------------------------------------------------------
 std::list<cdma::IDimensionPtr> NxsGroup::getDimensionList()
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getDimensionList");
+  if( ! m_bChildren )
+  {
+    PrivEnumChildren();
+  }
+  std::list<cdma::IDimensionPtr> dim_list;
+  for( MapStringDimension::iterator it = m_mapDimensions.begin(); it != m_mapDimensions.end(); it++ )
+  {
+    dim_list.push_back(it->second);
+  }
+  return dim_list;
 }
 
 //-----------------------------------------------------------------------------
@@ -247,7 +350,9 @@ std::list<cdma::IGroupPtr> NxsGroup::getGroupList()
   std::map<yat::String, cdma::IGroupPtr>::iterator it = m_mapGroups.begin();
   std::list<cdma::IGroupPtr> groups;
   for( ; it != m_mapGroups.end(); it++ )
+  {
     groups.push_back(it->second);
+  }
   
   return groups;
 }
@@ -305,7 +410,7 @@ bool NxsGroup::removeDimension(const cdma::IDimensionPtr&)
 //-----------------------------------------------------------------------------
 bool NxsGroup::isRoot() const
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::isRoot");
+  return (m_path == "");
 }
 
 //-----------------------------------------------------------------------------
@@ -313,23 +418,28 @@ bool NxsGroup::isRoot() const
 //-----------------------------------------------------------------------------
 bool NxsGroup::isEntry() const
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::isEntry");
-}
-
-//-----------------------------------------------------------------------------
-// NxsGroup::clone
-//-----------------------------------------------------------------------------
-cdma::IGroupPtr NxsGroup::clone()
-{
-  THROW_NOT_IMPLEMENTED("NxsGroup::clone");
+  IGroupPtr parent = getParent();
+  if( parent )
+  {
+    return parent->isRoot();
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::addAttribute
 //-----------------------------------------------------------------------------
-cdma::IAttributePtr NxsGroup::addAttribute(const std::string&, yat::Any&)
+void NxsGroup::addAttribute(const cdma::IAttributePtr& attr)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::addOneAttribute");
+/*
+  NxsAttribute* attr = new NxsAttribute();
+  IAttributePtr attribute = attr;
+  attr->setName( name );
+  attr->setValue( value );
+  m_attributes_map[name] = attribute;
+  */
+  m_attributes_map[attr->getName()] = attr;
+//  return attribute;
 }
 
 //-----------------------------------------------------------------------------
@@ -372,7 +482,7 @@ std::list<cdma::IAttributePtr> NxsGroup::getAttributeList()
 //-----------------------------------------------------------------------------
 std::string NxsGroup::getLocation() const
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::getLocation");
+  return m_path;
 }
 
 //-----------------------------------------------------------------------------
@@ -425,25 +535,41 @@ bool NxsGroup::hasAttribute(const std::string& name)
 //-----------------------------------------------------------------------------
 // NxsGroup::removeAttribute
 //-----------------------------------------------------------------------------
-bool NxsGroup::removeAttribute(const cdma::IAttributePtr&)
+bool NxsGroup::removeAttribute(const cdma::IAttributePtr& attr)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::removeAttribute");
+  MapStringAttribute::iterator iter = m_attributes_map.find( attr->getName() );
+  if( iter != m_attributes_map.end() )
+  {
+    m_attributes_map.erase( iter );
+    return true;
+  }
+  return false;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::setName
 //-----------------------------------------------------------------------------
-void NxsGroup::setName(const std::string&)
+void NxsGroup::setName(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::setName");
+  yat::String strName, strPath = m_path;
+  strPath.extract_token_right('/', &strName);
+  strPath = strPath.substr( 0, strPath.size() - strName.size() );
+  strPath += name;
 }
 
 //-----------------------------------------------------------------------------
 // NxsGroup::setShortName
 //-----------------------------------------------------------------------------
-void NxsGroup::setShortName(const std::string&)
+void NxsGroup::setShortName(const std::string& shortName)
 {
-  THROW_NOT_IMPLEMENTED("NxsGroup::setShortName");
+  yat::String strClass, strName, strPath = m_path;
+  strPath.replace('(', '<');
+  strPath.replace(')', '>');
+  strPath.extract_token_right('/', &strName);
+  strName.extract_token_right('<', &strClass);
+  strClass.extract_token('>', &strClass );
+  strPath = strPath.substr( 0, strPath.size() - strName.size() );
+  strPath += shortName + "<" + strClass + ">";
 }
 
 //-----------------------------------------------------------------------------

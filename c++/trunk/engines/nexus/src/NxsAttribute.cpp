@@ -92,6 +92,7 @@ int NxsAttribute::getLength()
 //---------------------------------------------------------------------------
 std::string NxsAttribute::getStringValue()
 {
+  CDMA_FUNCTION_TRACE("NxsAttribute::getStringValue");
   if( isString() )
   {
     return yat::String( (char*)(m_value_buf.buf()) );
@@ -149,11 +150,28 @@ void NxsAttribute::setStringValue(const std::string&)
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::setValue
+// NxsAttribute::setName
 //---------------------------------------------------------------------------
-void NxsAttribute::setValue(const yat::Any&)
+void NxsAttribute::setName(const std::string& name)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setValue");
+  m_name = name;
 }
+
+//---------------------------------------------------------------------------
+// NxsAttribute::setDisplayOrder
+//---------------------------------------------------------------------------
+void NxsAttribute::setIntValue(int)
+{
+  THROW_NOT_IMPLEMENTED("NxsDimension::setIntValue");
+}
+  
+//---------------------------------------------------------------------------
+// NxsAttribute::setDisplayOrder
+//---------------------------------------------------------------------------
+void NxsAttribute::setFloatValue(float)
+{
+  THROW_NOT_IMPLEMENTED("NxsDimension::setFloatValue");
+}
+
 
 }
