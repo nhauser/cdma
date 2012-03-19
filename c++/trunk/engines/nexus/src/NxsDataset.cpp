@@ -133,7 +133,6 @@ cdma::IDataItemPtr NxsDataset::getItemFromPath(const yat::String& path, const ya
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataset::getGroupFromPath(const std::string &groupPath)
 {
-  //## TODO debug
   if( m_file_handle.is_null() )
     THROW_NO_DATA("No NeXus file", "NxsGroup::getGroupFromPath");
 
@@ -180,6 +179,7 @@ cdma::IGroupPtr NxsDataset::getGroupFromPath(const std::string &groupPath)
 //---------------------------------------------------------------------------
 cdma::IGroupPtr NxsDataset::getRootGroup()
 {
+CDMA_FUNCTION_TRACE("NxsDataset::getRootGroup");
   return m_phy_root;
 }
 
@@ -248,7 +248,7 @@ bool NxsDataset::sync() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 void NxsDataset::save() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::save");
+  THROW_NOT_IMPLEMENTED("NxsDataset::save");
 }
 
 
@@ -257,7 +257,7 @@ void NxsDataset::save() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 void NxsDataset::saveTo(const std::string&) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::saveTo");
+  THROW_NOT_IMPLEMENTED("NxsDataset::saveTo");
 }
 
 
@@ -266,7 +266,7 @@ void NxsDataset::saveTo(const std::string&) throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 void NxsDataset::save(const cdma::IContainer&) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::save");
+  THROW_NOT_IMPLEMENTED("NxsDataset::save");
 }
 
 
@@ -275,7 +275,7 @@ void NxsDataset::save(const cdma::IContainer&) throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 void NxsDataset::save(const std::string&, const cdma::IAttributePtr&) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::save");
+  THROW_NOT_IMPLEMENTED("NxsDataset::save");
 }
 
 //---------------------------------------------------------------------------

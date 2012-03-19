@@ -109,12 +109,14 @@ public:
     std::list<IAttributePtr > getAttributeList();
     void setParent(const IGroupPtr&);
     IDatasetPtr getDataset();
+    void setData(const cdma::ArrayPtr& array);
   
   //@} --------------------------------
 
   //@{ IContainer
 
-    cdma::IAttributePtr addAttribute(const std::string& name, yat::Any &value);
+    //cdma::IAttributePtr addAttribute(const std::string& name, yat::Any &value);
+    void addAttribute(const cdma::IAttributePtr& attr);
     std::string getLocation() const;
     std::string getName() const;
     std::string getShortName() const;

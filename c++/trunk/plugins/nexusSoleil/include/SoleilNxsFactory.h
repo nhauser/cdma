@@ -18,11 +18,11 @@
 // NeXus engine
 #include <NxsDataset.h>
 
-// Soleil NeXus plug-in
-#include <SoleilNxsFactory.h>
-
 namespace cdma
 {
+
+// Soleil NeXus plug-in
+#define SOLEIL_NXS_FACTORY_NAME "SoleilNxsFactory"
 
 //==============================================================================
 /// Plugin info class
@@ -51,7 +51,7 @@ public:
   cdma::IDatasetPtr createDatasetInstance(const std::string& uri) throw ( cdma::Exception );
   cdma::IDatasetPtr createEmptyDatasetInstance() throw ( cdma::Exception );
   std::string getPathSeparator();
-  std::string getName() { return NXS_FACTORY_NAME; };
+  std::string getName() { return SOLEIL_NXS_FACTORY_NAME; };
   cdma::IDataSourcePtr getPluginURIDetector();
   std::list<std::string> getPluginMethodsList();
 

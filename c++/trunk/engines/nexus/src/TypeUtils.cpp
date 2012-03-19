@@ -21,7 +21,46 @@
 
 namespace cdma
 {
-  
+//-----------------------------------------------------------------------------
+// TypeUtils::toCType
+//-----------------------------------------------------------------------------
+NexusDataType TypeUtils::toNexusDataType( const std::type_info& type )
+{
+  if( type == typeid(short) )
+  {
+    return NX_INT16;
+  }
+  else if( type == typeid(unsigned short) )
+  {
+    return NX_UINT16;
+  }
+  else if( type == typeid(unsigned long) )
+  {
+    return NX_UINT64;
+  }
+  else if( type == typeid(long) )
+  {
+    return NX_INT32;
+  }
+  else if( type == typeid(float) )
+  {
+    return NX_FLOAT32;
+  }
+  else if( type == typeid(yat::int64) )
+  {
+    return NX_INT64;
+  }
+  else if( type == typeid(double) )
+  {
+    return NX_FLOAT64;
+  }
+  else
+  {
+    return NX_CHAR;
+  }
+}
+
+
 //-----------------------------------------------------------------------------
 // TypeUtils::toCType
 //-----------------------------------------------------------------------------

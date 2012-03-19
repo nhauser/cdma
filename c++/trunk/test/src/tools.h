@@ -36,8 +36,13 @@ namespace cdma
       static std::string displayArray( const cdma::ArrayPtr& array, int maxCell = 15 );
 
       // display properties of a DataItem
-      static std::string displayDataItem( const cdma::IDataItemPtr& item);
+      static std::string displayDataItem( const cdma::IDataItemPtr& item, std::string indent = "");
 
+      // display all properties of a Group
+      static std::string displayGroup( const cdma::IGroupPtr& group, std::string indent = "" );
+      
+      // display properties of a DataItem
+      static std::string displayDimension( const cdma::IDimensionPtr& dim, std::string indent = "");
       
       //static std::string iterate_over_keys( cdma::LogicalGroupPtr group, const std::string& indent, std::list<cdma::IDataItemPtr>& items );
 

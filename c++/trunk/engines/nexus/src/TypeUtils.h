@@ -18,6 +18,7 @@ class CDMA_NEXUS_DECL TypeUtils
 public:
   static const std::type_info& toCType( NexusDataType type );
   static int sizeOf(NexusDataType type);
+  static NexusDataType toNexusDataType( const std::type_info& type );
   template<typename T> static NexusDataType toNeXusDataType();
   template<typename T> static T valueToType( void* value_ptr, const std::type_info& Ctype );
 };

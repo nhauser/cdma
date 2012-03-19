@@ -21,6 +21,7 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDimension.h>
 #include <cdma/array/Array.h>
+#include <NxsDataItem.h>
 
 #include <internal/common.h>
 
@@ -32,27 +33,34 @@ namespace cdma
 //=============================================================================
 class NxsDimension : public IDimension
 {
-public:
-  
-  //@{ IDimension interface
+typedef std::map<std::string, IAttributePtr> AttributeMap;
 
+private:
+  NxsDataItemPtr m_item;   // NxsDataItem of the dimension
+  bool           m_shared; // Is this dimension shared
+
+public:
+  // Constructors
+    NxsDimension( NxsDataItemPtr item );
+    
+  //@{ IDimension interface
     std::string getName();
     int getLength();
     bool isUnlimited();
     bool isVariableLength();
     bool isShared();
-    Shape getCoordinateVariable();
-    int hashCode();
-    std::string toString();
-    int compareTo(const IDimensionPtr& o);
-    std::string writeCDL(bool strict);
+    ArrayPtr getCoordinateVariable();
+    int getDimensionAxis();
+    int getDisplayOrder();
     void setUnlimited(bool b);
     void setVariableLength(bool b);
     void setShared(bool b);
     void setLength(int n);
     void setName(const std::string& name);
     void setCoordinateVariable(const ArrayPtr& array) throw ( cdma::Exception );
-
+    void setDimensionAxis(int index);
+    void setDisplayOrder(int order);
+    std::string getUnitsString();
   //@}
  };
 }
