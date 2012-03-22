@@ -263,9 +263,15 @@ std::string Factory::getDictionariesFolder()
 //----------------------------------------------------------------------------
 // Factory::openDataset
 //----------------------------------------------------------------------------
-std::pair<IDatasetPtr, IFactoryPtr> Factory::openDataset( const std::string& ) throw ( Exception )
+std::pair<IDatasetPtr, IFactoryPtr> Factory::openDataset( const yat::URI& uri ) throw ( Exception )
 {
-  THROW_NOT_IMPLEMENTED("Factory::openDataset");
+  std::pair< IDatasetPtr, IFactoryPtr > result;
+  
+  result.second = detectPluginFactory(uri);
+  
+  result.first = result.second->openDataset( uri.get() );
+  
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -377,8 +383,8 @@ KeyPtr Factory::createKey( std::string )
 //----------------------------------------------------------------------------
 IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri) 
 {
+  CDMA_STATIC_FUNCTION_TRACE("Factory::detectPluginFactory");
   IFactoryPtr result;
-  IFactoryPtr compatible;
   IFactoryPtr tmp;
   IDataSourcePtr data_source;
   std::string plugin_id;
