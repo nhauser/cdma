@@ -29,10 +29,10 @@ namespace cdma
 DECLARE_CLASS_SHARED_PTR(IDimension);
 
 //==============================================================================
-/// IDimension
-/// A Dimension is used to define the array shape of a DataItem. It may be shared
-/// among DataItems, which provides a simple yet powerful way of associating
-/// DataItems.
+/// @brief a IDimension object defines the array shape of a DataItem.
+///
+/// It may be shared among IDataItem(s), which provides a simple yet powerful
+/// way of associating IDataItem(s).
 //==============================================================================
 class CDMA_DECL IDimension
 {
@@ -132,11 +132,12 @@ public:
   /// @param index of axis
   ///
   /// @see IDimension::getDisplayOrder
+  ///
   virtual void setDimensionAxis(int index) = 0;
 
   /// Set the prefered displaying order for this dimension, if several are availables.
   ///
-  /// @param index of axis
+  /// @param order display order of this axis
   ///
   virtual void setDisplayOrder(int order) = 0;
   

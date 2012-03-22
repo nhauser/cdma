@@ -16,6 +16,8 @@
 #include <cdma/array/Array.h>
 #include <cdma/array/ArrayIterator.h>
 
+/// @cond clientAPI
+
 namespace cdma
 {
 
@@ -23,8 +25,9 @@ namespace cdma
 DECLARE_CLASS_SHARED_PTR(SliceIterator);
 
 //==============================================================================
-/// SliceIterator
-/// Iterator for slicing an Array. This is a way to iterate over slices of arrays.
+/// @brief Iterator for slicing an Array
+///
+/// This is a way to iterate over slices of arrays.
 /// Each iteration returns an array of dimension i-th, representing the last i-th
 /// dimensions of the input array.
 //==============================================================================
@@ -57,14 +60,14 @@ public:
   
   /// Comparison operator: egality
   ///
-  /// @param iterator to compare this
+  /// @param it SliceIterator to compare with this instance
   /// @return true if both iterator refers to the same position
   ///
   bool operator==(const SliceIteratorPtr& it);
   
   /// Comparison operator: difference
   ///
-  /// @param iterator to compare this
+  /// @param it SliceIterator to compare with this instance
   /// @return true if both iterator refers to different position
   ///
   bool operator!=(const SliceIteratorPtr& it);
@@ -101,4 +104,7 @@ private:
 };
 
 }
+
+/// @endcond
+
 #endif

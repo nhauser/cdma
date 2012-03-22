@@ -22,8 +22,10 @@ namespace cdma
 {
 
 //==============================================================================
-/// Interface IAttribute, with name and value. 
-/// The metadata for data items and groups.
+/// @brief Abstraction of the metadata related to a IDataItem or a IGroup
+///
+/// @note It must be a base class of data format engine attribute class concretization
+/// which can be overrided, if needed, by plug-ins based on same engine
 //==============================================================================
 class CDMA_DECL IAttribute
 {
@@ -62,12 +64,6 @@ public:
   ///
   virtual int getLength() = 0;
 
-  /// Get the value as an Array.
-  ///
-  /// @return Array of values.
-  ///
-  //virtual IArrayPtr getValue() = 0;
-
   /// Retrieve string value; only call if isString() is true.
   ///
   /// @return string if this is a string valued attribute, else null.
@@ -75,35 +71,19 @@ public:
   ///
   virtual std::string getStringValue() = 0;
 
-  /// Retrieve string value; only call if isString() is true.
-  ///
-  /// @param index
-  ///            integer value
-  /// @return string if this is a string valued attribute, else null.
-  /// @see IAttribute#isString
-  ///
-  //virtual std::string getStringValue(int index) = 0;
-
   /// Retrieve integer value as long C-type
   ///
-  /// @return the first element of the value array, or null if its a String.
+  /// @return the value as a integer (converted if needed)
+  /// @throw throw an cdma::Exception if type conversion isn't possible
   ///
   virtual long getIntValue() = 0;
 
   /// Retrieve floating point value as double C-type
   ///
-  /// @return the first element of the value array, or null if its a String.
+  /// @return the value as a double (converted if needed)
+  /// @throw throw an cdma::Exception if type conversion isn't possible
   ///
   virtual double getFloatValue() = 0;
-
-  /// Retrieve a numeric value by index. If its a String, it will try to parse
-  /// it as a double.
-  ///
-  /// @param index the index into the value array.
-  /// @return double <code>value[index]</code>, or null if its a non-parsable
-  ///         string or the index is out of range.
-  ///
-  //virtual double getNumericValue(int index) = 0;
 
   /// string representation.
   ///

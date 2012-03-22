@@ -30,11 +30,14 @@ namespace cdma
 {
 
 //==============================================================================
+/// @brief Simple implementation that Plugins methods should use for
+///        creating compound IDataItem objects
+///
 /// This implementation is aimed to help plugin developper when special data 
 /// access methods have to be implemented.
 /// Such a method is invoked through the dictionary mechanism when a keyword
 /// is not directly mapped whith a path to the data file organization, but
-/// is mapped to this method through a <call> tag.
+/// is mapped to this method through a @c \<call\> tag.
 /// Use this implementation only when all data corresponding to the corresponding
 /// keyword request may be easely contained in the computer RAM like scalars, spectrum,
 /// images value but not stack of hundred or thousands images. For the laters cases
@@ -56,8 +59,8 @@ public:
   /// d-tor
   ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
 
-  //@{ IDataItem interface
-
+  ///@{
+  /// IDataItem interface
     IAttributePtr findAttributeIgnoreCase(const std::string& name);
     int findDimensionView(const std::string& name);
     IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
@@ -106,14 +109,14 @@ public:
     void setUnitsString(const std::string& units);
     IDataItemPtr clone();
     IAttributePtr getAttribute(const std::string&);
-    std::list<IAttributePtr > getAttributeList();
+    AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
     IDatasetPtr getDataset();
     void setData(const cdma::ArrayPtr& array);
   
-  //@} --------------------------------
+  ///@} --------------------------------
 
-  //@{ IContainer
+  ///@{ IContainer
 
     //cdma::IAttributePtr addAttribute(const std::string& name, yat::Any &value);
     void addAttribute(const cdma::IAttributePtr& attr);
@@ -126,44 +129,68 @@ public:
     void setShortName(const std::string&);
     cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_ITEM; }
 
-  //@} --------------------------------
+  ///@} --------------------------------
 
-  //@{ plugin implementation should be call some of the following methods to properly initialize this object
+  ///@{ plugin implementation should be call some of the following methods to properly initialize this object
   
   void setLogicalLocation(const std::string& location);
   
-  //@} --------------------------------
+  ///@} --------------------------------
 };
 
 //==============================================================================
-/// This implementation is a specialization of the SimpleDataItem
-/// intended to simplify the creation of DataItem object related to a scalar
-/// value
+/// @brief specialization of the SimpleDataItem for holding scalar values
+///
+/// ScalarDataItem is intended to simplify the creation of DataItem object
+/// containing a single scalar value
 //==============================================================================
 class CDMA_DECL ScalarDataItem : public SimpleDataItem
 {
+  /// c-tor
+  ///
+  /// @tparam T value type
+  /// @param dataset reference to the parent dataset
+  /// @param value the value
+  /// @param name name of the data item
+  ///
   template <class T>
   ScalarDataItem(IDataset* dataset, T value, const std::string &name);
 };
 
 //==============================================================================
-/// This implementation is a specialization of the SimpleDataItem
-/// intended to simplify the creation of DataItem object related to a 1-d array
-/// of values
+/// @brief specialization of the SimpleDataItem for holding 1-d array 
+///
+/// OneDimArrayDataItem is intended to simplify the creation of DataItem object
+/// containing a single 1-d array of values
 //==============================================================================
 class CDMA_DECL OneDimArrayDataItem : public SimpleDataItem
 {
+  /// c-tor
+  ///
+  /// @tparam T value type
+  /// @param dataset reference to the parent dataset
+  /// @param values array of T-type values
+  /// @param name name of the data item
+  ///
   template <class T>
   OneDimArrayDataItem(IDataset* dataset, T* values, yat::uint32 size, const std::string &name);
 };
 
 //==============================================================================
-/// This implementation is a specialization of the SimpleDataItem
-/// intended to simplify the creation of DataItem object related to a 2-d array
-/// of values
+/// @brief specialization of the SimpleDataItem for holding 2-d array 
+///
+/// OneDimArrayDataItem is intended to simplify the creation of DataItem object
+/// containing a single 2-d array of values
 //==============================================================================
 class CDMA_DECL TwoDimArrayDataItem : public SimpleDataItem
 {
+  /// c-tor
+  ///
+  /// @tparam T value type
+  /// @param dataset reference to the parent dataset
+  /// @param values array of T-type values
+  /// @param name name of the data item
+  ///
   template <class T>
   TwoDimArrayDataItem(IDataset* dataset, T* values, yat::uint32 x_size, yat::uint32 y_size, const std::string &name);
 };

@@ -463,8 +463,7 @@ IDataItemPtr SimpleDataItem::clone()
 //---------------------------------------------------------------------------
 // SimpleDataItem::addAttribute
 //---------------------------------------------------------------------------
-//cdma::IAttributePtr SimpleDataItem::addAttribute(const std::string&, yat::Any&)
-void SimpleDataItem::addAttribute(const cdma::IAttributePtr&)
+void SimpleDataItem::addAttribute( const cdma::IAttributePtr& )
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::addAttribute");
 }
@@ -480,7 +479,7 @@ IAttributePtr SimpleDataItem::getAttribute(const std::string&)
 //---------------------------------------------------------------------------
 // SimpleDataItem::getAttributeList
 //---------------------------------------------------------------------------
-std::list<yat::SharedPtr<cdma::IAttribute, yat::Mutex> > SimpleDataItem::getAttributeList()
+AttributeList SimpleDataItem::getAttributeList()
 {
   return m_attr_list;
 }

@@ -22,6 +22,8 @@
 
 #include <cdma/Common.h>
 
+/// @cond clientAPI
+
 namespace cdma
 {
 // Forward declaration
@@ -126,4 +128,7 @@ private:
 DECLARE_SHARED_PTR(ArrayIterator);
 
 }
+
+/// @endcond
+
 #endif

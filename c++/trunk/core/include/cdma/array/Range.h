@@ -22,23 +22,42 @@
 namespace cdma
 {
 
+// !! Range is a internal class !!
+/// @cond internal
+
 // Forward declaration
 DECLARE_CLASS_SHARED_PTR(Range);
 
 //==============================================================================
+/// @brief A closed interval on an array dimension
+///
 /// A range represents a set of integers that are positions on one dimension. 
 /// It is used as a View descriptor for Arrays on a particular dimension.
 //==============================================================================
-class CDMA_DECL Range
+class Range
 {
 public:
-  /// Constructors
+  /// Default c-tor
   Range();
+
+  /// c-tor with Range length
+  ///
+  /// @param length Range length
+  ///
   Range( int length );
+
+  /// c-tor with Range length
+  ///
+  /// @param name Range name
+  /// @param first First position
+  /// @param last Last position
+  /// @param stride Distance between each consecutive positions
+  /// @param reduced Is this range is visible trough the view
+  ///
   Range( std::string name, long first, long last, long stride, bool reduced = false );
   Range( const cdma::Range& range );
   
-  /// D-structor
+  /// d-tor
   ~Range() { };
 
   /// Get the number of elements in the range.
@@ -49,15 +68,15 @@ public:
   
   /// Get the offset for this element: inverse of index.
   ///
-  /// @param elem the element of the range
+  /// @param index the element of the range
   /// @return the offset corresponding to index-th element in the range.
   ///
   int element(int index) throw ( cdma::Exception );
   
   /// Returns the position of the given offset
   ///
-  /// @param offset of the element
-  /// @return index
+  /// @param offset Element offset
+  /// @return Index of the element
   /// @note the given offset is modified corresponding to what remains to the lower dimension
   ///
   int index(long& offset) throw ( cdma::Exception );
@@ -162,7 +181,6 @@ public:
   ///
   RangePtr unionRanges(const cdma::Range& r) throw ( cdma::Exception );
 
-
 private:
   int         m_last;     // offset of last element
   int         m_first;    // offset of first element
@@ -171,5 +189,9 @@ private:
   bool        m_reduced;  // was this ranged reduced or not
   std::string m_name;     // optional name
 };
+
+/// @endcond internal
+
 }
+
 #endif

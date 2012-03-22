@@ -24,6 +24,8 @@
 #include <cdma/array/impl/ArrayStorage.h>
 #include <cdma/array/View.h>
 
+/// @cond clientAPI
+
 namespace cdma
 {
 
@@ -33,7 +35,8 @@ DECLARE_CLASS_SHARED_PTR(ArrayIterator);
 DECLARE_CLASS_SHARED_PTR(Slicer);
 
 //==============================================================================
-/// Array for multiple types of data.
+/// @brief Array for multiple types of data.
+///
 /// An Array has:
 ///   - a <b>type info</b> which gives the type of its elements, 
 ///   - a <b>shape</b> which describes the number of elements in each dimension
@@ -62,16 +65,57 @@ class CDMA_DECL Array
 friend class ArrayIterator;
 
 public:
-  // Constructors
+  /// Copy constructor
   Array( const Array& array );
-  Array( const IArrayStoragePtr& data_ptr, const ViewPtr& view );
-  Array( const Array& src, const ViewPtr& view );
-  Array( const ArrayPtr& src, const ViewPtr& view );
-  Array( const std::type_info& type, std::vector<int> shape, void* pData = NULL );
-  template<typename T> explicit Array(std::vector<int> shape, T* values = NULL );
-  template<typename T> explicit Array(T values );
 
-  // D-structor
+  /// c-tor
+  /// @param data_ptr Shared pointer on a particular storage implementation
+  /// @param view_ptr Shared pointer on a specific view
+  ///
+  Array( const IArrayStoragePtr& data_ptr, const ViewPtr& view_ptr );
+
+  /// Copy constructor with view
+  ///
+  /// @param src Reference to copied Array object
+  /// @param view_ptr Shared pointer on a specific view
+  ///
+  Array( const Array& src, const ViewPtr& view_ptr );
+
+  /// Copy constructor with view
+  ///
+  /// @param array_ptr Shared pointer on a copied array
+  /// @param view_ptr Shared pointer on a specific view
+  ///
+  Array( const ArrayPtr& array_ptr, const ViewPtr& view_ptr );
+
+  /// Raw constructor
+  ///
+  /// @param type Data type
+  /// @param shape array shape
+  /// @param data_ptr anonymous c-style pointer on array data
+  /// @note data is not copied
+  /// @note ownership is transfered to the array
+  ///
+  Array( const std::type_info& type, std::vector<int> shape, void* data_ptr = NULL );
+
+  /// Templated constructor
+  ///
+  /// @tparam T Data type
+  /// @param shape array shape
+  /// @param values_ptr typed c-style pointer on array data
+  /// @note data is not copied
+  /// @note ownership is transfered to the array
+  ///
+  template<typename T> explicit Array(std::vector<int> shape, T* values_ptr = NULL );
+
+  /// Templated constructor for single value array (e.g. a scalar)
+  ///
+  /// @tparam T Data type
+  /// @param value typed value
+  ///
+  template<typename T> explicit Array(T value );
+
+  /// d-tor
   ~Array();
 
   /// Create a copy of this Array, copying the data so that physical order is
@@ -85,6 +129,7 @@ public:
   
   /// Get the array element at the given index position
   ///
+  /// @tparam T Data type
   /// @param view describing the array with current element set
   /// @param position vector targeting an element of the array
   ///
@@ -95,6 +140,7 @@ public:
 
   /// Get the array element at the given index position in the current (default) view
   ///
+  /// @tparam T Data type
   /// @param position vector targeting an element of the array
   ///
   /// @return value converted to the type T
@@ -105,6 +151,7 @@ public:
   /// Get the array element in the current (default) view
   /// Use this method in the case of a scalar value
   ///
+  /// @tparam T Data type
   /// @return value converted to the type T
   ///
   template<typename T>
@@ -112,18 +159,19 @@ public:
 
   /// Set the array element at the current element given position
   ///
-  /// @param view describing the array with current element set
-  /// @param position where to set the value
+  /// @tparam T Data type
+  /// @param view_ptr Shared pointer on the view describing the array with current element set
+  /// @param position Element position where to set the value
   /// @param value the new value; cast to underlying data type if necessary.
   /// @todo  move this method in the private section
   ///
   template<typename T>
-  void setValue(const ViewPtr& view, std::vector<int> position, T value);
+  void setValue(const ViewPtr& view_ptr, std::vector<int> position, T value);
   
   /// Set the array element at the current element given position in the current (default) view
   ///
-  /// @param view describing the array with current element set
-  /// @param position where to set the value
+  /// @tparam T Data type
+  /// @param position Element position where to set the value
   /// @param value the new value; cast to underlying data type if necessary.
   ///
   template<typename T>
@@ -132,6 +180,7 @@ public:
   /// Set the array element at the current element in the current (default) view
   /// Use this method in the case of a scalar value
   ///
+  /// @tparam T Data type
   /// @param value the new value; cast to underlying data type if necessary.
   ///
   template<typename T>
@@ -139,10 +188,11 @@ public:
   
   /// Set the array element at the given iterator position
   ///
-  /// @param iterator describing the array with current element set
+  /// @tparam T Data type
+  /// @param it ArrayIterator containing the position of the element to affect
   /// @param value the new value; cast to underlying data type if necessary.
   ///
-  template<typename T> void setValue(const ArrayIterator& target, T value);
+  template<typename T> void setValue(const ArrayIterator& it, T value);
   
   /// Get the element type of this Array.
   ///
@@ -152,7 +202,7 @@ public:
   
   /// Get the View that describes this Array.
   ///
-  /// @return View object
+  /// @return Shared pointer on View object
   ///
   ViewPtr getView();
   
@@ -200,8 +250,8 @@ public:
   long getSize();
   
   /// Get the slicer of this array defined with given rank. The rank of the slicer must be
-  /// equal or smaller than the array itself. Otherwise throw
-  /// Exception.
+  /// equal or smaller than the array itself. Otherwise throw Exception.
+  ///
   /// For example, for an array with the shape of [2x3x4x5]. If the rank of the
   /// slice is 1, there will be 2x3x4=24 slices. If the rank of slice is 2,
   /// there will be 2x3=6 slices. If the rank of the slice is 3, there will be
@@ -210,7 +260,7 @@ public:
   /// costly, there will be 120 slices.
   ///
   /// @param rank an integer value, this will be the rank of the slice
-  /// @return Slicer object
+  /// @return Shared pointer on Slicer object
   ///
   SlicerPtr getSlicer(int rank) throw ( cdma::Exception);
   
@@ -231,6 +281,8 @@ private:
 };
 
 }
+
+/// @endcond
 
 #include "Array.hpp"
 #endif // __CDMA_ARRAY_H__

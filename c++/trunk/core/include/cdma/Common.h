@@ -30,8 +30,11 @@
 #include <list>
 #include <yat/memory/SharedPtr.h>
 
+/// Macro helper to declare a shared pointer on a given object class
 #define DECLARE_SHARED_PTR(x)\
   typedef yat::SharedPtr<x, yat::Mutex> x##Ptr
+
+/// @cond internal
 
 #define DECLARE_CLASS_SHARED_PTR(x)\
   class x;\
@@ -53,8 +56,12 @@
   DECLARE_SHARED_PTR(x);\
   DECLARE_WEAK_PTR(x)
 
-/// Generic types
+/// @endcond internal
+
+// Generic types
+/// List of std::string objects
 typedef std::list<std::string> StringList;
+/// Declaration of shared pointer on StringList
 typedef yat::SharedPtr<StringList, yat::Mutex> StringListPtr;
 
 #endif // __CDMA_COMMON_H__

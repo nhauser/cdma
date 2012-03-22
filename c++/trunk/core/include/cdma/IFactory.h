@@ -28,35 +28,46 @@
 namespace cdma
 {
 
+/// @cond pluginAPI
+
 //==============================================================================
-/// Interface IFactory
+/// @brief Abstraction of the factory object that each plug-ins must provide
 //==============================================================================
 class CDMA_DECL IFactory : public yat::IPlugInObject
 {
 public:
   /// d-tor
-  virtual ~IFactory()  { CDMA_FUNCTION_TRACE("IFactory::~IFactory");  }
+  virtual ~IFactory()
+  {
+    CDMA_FUNCTION_TRACE("IFactory::~IFactory");
+  }
 
   /// Retrieve the dataset referenced by the path.
   /// 
-  /// @param path can be either the string representation of an uri (see RFC 3986) or a file path
-  /// @return CDMA Dataset
+  /// @param dataset_location string representation of an uri (see RFC 3986) locating the dataset
+  ///
+  /// @return shared pointer to a IDataset instance
+  ///
   /// @throw  Exception
   ///
-  virtual IDatasetPtr openDataset(const std::string& location_string) throw ( Exception ) = 0;
+  virtual IDatasetPtr openDataset(const std::string& dataset_location) throw ( Exception ) = 0;
   
   /// Open a dictionary
   /// 
-  /// @param uri string object
-  /// @return CDMA Dataset
+  /// @param file_path file path to the dictionary document
+  ///
+  /// @return shared pointer to a dictionary object
+  ///
   /// @throw  Exception
   ///
-  virtual DictionaryPtr openDictionary(const std::string& filepath) throw ( Exception ) = 0;
+  virtual DictionaryPtr openDictionary(const std::string& file_path) throw ( Exception ) = 0;
   
   /// Create a CDMA Dataset with a string reference. If the file exists, it will
   ///
   /// @param uri string object
-  /// @return CDMA Dataset
+  ///
+  /// @return shared pointer to a IDataset instance
+  ///
   /// @throw  Exception
   ///
   virtual IDatasetPtr createDatasetInstance(const std::string& uri) throw ( Exception ) = 0;
@@ -64,18 +75,20 @@ public:
   /// Create a CDMA Dataset in memory only. The dataset is not open yet. It is
   /// necessary to call dataset.open() to access the root of the dataset.
   ///
-  /// @return a CDMA Dataset
+  /// @return shared pointer to a IDataset instance
+  ///
   /// @throw  Exception
   ///
   virtual IDatasetPtr createEmptyDatasetInstance() throw ( Exception ) = 0;
 
   /// Return the symbol used by the plug-in to separate nodes in a string path
-  /// @return
+  ///
   /// @note <b>EXPERIMENTAL METHOD</b> do note use/implements
   ///
   virtual std::string getPathSeparator() = 0;
 
   /// The factory has a unique name that identifies it.
+  ///
   /// @return the factory's name
   ///
   virtual std::string getName() = 0;
@@ -91,6 +104,8 @@ public:
 };
 
 DECLARE_SHARED_PTR(IFactory);
+
+/// @endcond pluginAPI
 
 } //namespace CDMACore
 #endif //__CDMA_IFACTORY_H__

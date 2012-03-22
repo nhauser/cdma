@@ -31,24 +31,28 @@
 #include <cdma/array/ArrayIterator.h>
 #include <cdma/array/SliceIterator.h>
 
+/// @cond clientAPI
+
 namespace cdma
 {
 
 //==============================================================================
-/// Slicer
-/// @todo Write a a description here
+/// @brief Return begin and end SliceIterator(s) on an array following a 
+///        given dimension
+///
+/// @todo Write a long description here
 //==============================================================================
 class CDMA_DECL Slicer
 {
 public:
-  /// Constructor
+  /// c-tor
   ///
   /// @param array: the array we want to slice
   /// @param dim: rank of the slice
   ///
   Slicer(const ArrayPtr& array, int dim);
-  
-  // d-structor
+
+  /// d-tor
   ~Slicer();
 
   /// Returns the a SliceIterator positionned at the beginning of the array
@@ -75,7 +79,11 @@ private:
   int      m_rank;  // Desired rank of the slices
 };
 
+/// Declaration of shared pointer SlicerPtr
 DECLARE_SHARED_PTR(Slicer);
 
 }
+
+/// @endcond
+
 #endif // __CDMA_SLICER_H__

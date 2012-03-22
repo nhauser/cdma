@@ -236,15 +236,15 @@ KeyPtr LogicalGroup::bindKey(const std::string&, const KeyPtr&)
 //-----------------------------------------------------------------------------
 // LogicalGroup::setParent
 //-----------------------------------------------------------------------------
-void LogicalGroup::setParent(LogicalGroup& group)
+void LogicalGroup::setParent(LogicalGroup* group_ptr)
 {
-  m_parent_ptr = &group;
+  m_parent_ptr = group_ptr;
 }
 
 //-----------------------------------------------------------------------------
-// LogicalGroup::setParent
+// LogicalGroup::getParent
 //-----------------------------------------------------------------------------
-LogicalGroupPtr LogicalGroup::getParent()
+LogicalGroupPtr LogicalGroup::getParent() const
 {
   return m_parent_ptr;
 }
@@ -252,7 +252,7 @@ LogicalGroupPtr LogicalGroup::getParent()
 //-----------------------------------------------------------------------------
 // LogicalGroup::setParent
 //-----------------------------------------------------------------------------
-std::string LogicalGroup::getLocation()
+std::string LogicalGroup::getLocation() const
 {
   yat::String path = getName();
   LogicalGroupPtr parent = getParent();
@@ -267,7 +267,7 @@ std::string LogicalGroup::getLocation()
 //-----------------------------------------------------------------------------
 // LogicalGroup::setParent
 //-----------------------------------------------------------------------------
-std::string LogicalGroup::getName()
+std::string LogicalGroup::getName() const
 {
   return m_key_ptr.is_null() ? "" : m_key_ptr->getName();
 }
@@ -275,7 +275,7 @@ std::string LogicalGroup::getName()
 //-----------------------------------------------------------------------------
 // LogicalGroup::setParent
 //-----------------------------------------------------------------------------
-std::string LogicalGroup::getShortName()
+std::string LogicalGroup::getShortName() const
 {
   return getName();
 }

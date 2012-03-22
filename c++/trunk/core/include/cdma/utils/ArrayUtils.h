@@ -17,6 +17,8 @@
 #include "cdma/exception/Exception.h"
 #include "cdma/array/Array.h"
 
+/// @cond clientAPI
+
 namespace cdma
 {
 
@@ -24,8 +26,7 @@ namespace cdma
 DECLARE_CLASS_SHARED_PTR(ArrayUtils);
 
 //==============================================================================
-/// ArrayUtils
-/// @todo Write here a description !
+/// Array matrix manipulations
 //==============================================================================
 class CDMA_DECL ArrayUtils
 {
@@ -104,14 +105,13 @@ public:
   /// Integrate on given dimension. The result array will be one dimensional
   /// reduced from the given array.
   /// 
-  /// @param dimension
-  ///            integer value
-  /// @param isVariance
-  ///            true if the array serves as variance
+  /// @param dimension integer value
+  /// @param isVariance true if the array serves as variance
   /// @return new Array object
   /// @throw  Exception
-  //TODO method imported from JAVA: its implementation is obscure to me... Please complete it if you understand it.
-  //ArrayUtilsPtr integrateDimension(int dimension, bool isVariance) throw ( Exception );
+  ///
+  /// @todo method imported from JAVA: its implementation is obscure to me... Please complete it if you understand it.
+  ArrayUtilsPtr integrateDimension(int dimension, bool isVariance) throw ( Exception );
 
   /// Create a new Array using same backing store as this Array, by flipping
   /// the index so that it runs from shape[index]-1 to 0.
@@ -124,8 +124,7 @@ public:
   /// Create a new Array using same backing store as this Array, by permuting
   /// the indices.
   /// 
-  /// @param dims
-  ///            the old index dims[k] becomes the new kth index.
+  /// @param dims the old index dims[k] becomes the new kth index.
   /// @return the new Array
   //
   ArrayUtilsPtr permute(std::vector<int> dims);
@@ -134,5 +133,8 @@ private:
   ArrayPtr m_array;   // SharedPtr on array
 };
 
-} //namespace CDMACore
+} //namespace cdma
+
+/// @endcond
+
 #endif //__CDMA_ARRAYUTILS_H__
