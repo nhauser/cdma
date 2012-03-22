@@ -31,9 +31,13 @@ namespace cdma
 {
 
 //==============================================================================
-/// DataItem Interface
-/// A DataItem is a logical container for data. It has a DataType, a set of
-/// Dimensions that define its array shape, and optionally a set of Attributes.
+/// @brief Abstraction of a data item container.
+///
+/// It has a DataType, a set of Dimensions that define its Array shape,
+/// and optionally a set of Attributes (see IAttribute).
+///
+/// @note It must be a base class of data format engine data item class concretization
+/// which can be overrided, if needed, by plug-ins based on same engine
 //==============================================================================
 class CDMA_DECL IDataItem : public IContainer 
 {

@@ -19,6 +19,8 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/Key.h>
 
+/// @cond dictAPI
+
 namespace cdma
 {
 
@@ -28,9 +30,7 @@ typedef std::map<int, SolverList> KeySolverListMap;
 typedef std::multimap<int, std::string> KeySynonymsMap;
 
 //==============================================================================
-/// Dictionary
-///
-/// 
+/// Keywords dictionary manager
 //==============================================================================
 class CDMA_DECL Dictionary 
 {
@@ -128,6 +128,8 @@ public:
 DECLARE_SHARED_PTR(Dictionary);
 
 } //namespace
+
+/// @endcond clientAPI
 
 #endif //__CDMA_DICTIONARY_H__
 

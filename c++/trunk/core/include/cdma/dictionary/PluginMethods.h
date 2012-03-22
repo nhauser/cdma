@@ -14,13 +14,18 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 
+/// @cond pluginAPI
+
 namespace cdma
 {
 
+/// Macro helper aimed to declare dictionary methods
 #define EXPORT_PLUGIN_METHOD(m) \
   extern "C" CDMA_DECL_EXPORT cdma::IPluginMethod* get ## m ## Class(void) { return new m(); }
 
 //==============================================================================
+/// @brief Abstract interface of the "dictionary methods" implemented by the plugins
+///
 /// The IPluginMethod aims to provide a mechanism permitting to call
 /// methods that are specified in the xml mapping document from the
 /// dictionary mechanism
@@ -34,7 +39,7 @@ public:
   // d-tor
   virtual ~IPluginMethod()  {  }
 
-  /// Execute the method
+  /// Executes the method
   ///
   /// @param context input/ouput context (see Context class definition)
   /// @throw  Exception in case of any trouble
@@ -42,8 +47,11 @@ public:
   virtual void execute(class Context& context) throw (cdma::Exception) = 0;
 };
 
+/// Declaration of shared pointer IPluginMethodPtr 
 DECLARE_SHARED_PTR(IPluginMethod);
 
 } //namespace CDMACore
+
+/// @endcond pluginAPI
 
 #endif //__CDMA_PLUGIN_METHODS_H__

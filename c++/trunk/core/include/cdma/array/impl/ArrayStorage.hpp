@@ -19,6 +19,8 @@
 #include <string.h>
 #include <cstdlib>
 
+/// @cond excluded from documentation
+
 namespace cdma
 {
 
@@ -94,6 +96,9 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
   return new DefaultArrayStorage( data, m_array_length );
 }
 
+//----------------------------------------------------------------------------
+// DefaultArrayStorage<T>::deepCopy(view)
+//----------------------------------------------------------------------------
 template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr view)
 {
   CDMA_FUNCTION_TRACE("DefaultArrayStorage<T>::deepCopy(ViewPtr view)");
@@ -179,5 +184,6 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr v
 
 }
 
+/// @endcond
 
 #endif // __CDMA_DEFAULTARRAYSTORAGE_HPP__

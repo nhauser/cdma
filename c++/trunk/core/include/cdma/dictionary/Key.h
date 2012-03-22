@@ -20,6 +20,8 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/PluginMethods.h>
 
+/// @cond dictAPI
+
 namespace cdma
 {
 
@@ -27,13 +29,13 @@ namespace cdma
 class CDMA_DECL Context;
 
 //=============================================================================
-/// Key
+/// @brief Key object holds keywords realatives to LogicalGroup or IDataItem
 ///
-/// The IKey is used by group to interrogate the dictionary. Indeed the key's
-/// name corresponds to an entry in the dictionary. This entry targets a path in the
-/// currently explored document. The group will open it.
+/// Key objects are used by group to query the dictionary. Indeed the key's
+/// name corresponds to an entry in the dictionary. This entry targets a path 
+/// in the currently explored dataset or a dictionary methods.
 ///
-/// The Key can carry some filters to help group to decide which node is relevant.
+/// @todo supporting filters in order to help group to decide which node is relevant.
 /// The filters can specify an order index to open a particular type of node, an
 /// attribute, a part of the name...
 ///
@@ -42,8 +44,7 @@ class CDMA_DECL Key
 {
 public:
 
-  /// KeyType
-  /// Kind of Key: will the key correspond to DataItem, a Group, or ...
+  /// key type: determines if the key is related to a IDataItem or a LogicalGroup
   enum Type
   {
     UNDEFINED = 0,
@@ -60,8 +61,6 @@ public:
   Key(const std::string& name, Type type = UNDEFINED)
     : m_name(name), m_type(type) {}
 
-  //@{ Accessors -----------------
-
   /// Get the entry name in the dictionary that will be
   /// searched when using this key.
   ///
@@ -76,7 +75,6 @@ public:
   ///
   void setName(const std::string& name) { m_name = name; }
  
- 
   /// Get the key related notion: LogicalGroup or DataItem
   ///
   /// @return Key::Type value
@@ -90,10 +88,14 @@ public:
   void setType(Type type) { m_type = type; }
 };
 
+/// Declaration of shared pointer KeyPtr
 DECLARE_CLASS_SHARED_PTR(Key);
 
+/// @cond internal
+// !! IKeySolver, KeyPath, KeyMethod classes are strictly for internal purpose !!
+
 //==============================================================================
-/// IKeySolver
+/// Internal class
 //==============================================================================
 class CDMA_DECL IKeySolver
 {
@@ -101,19 +103,21 @@ public:
   // d-tor
   virtual ~IKeySolver()  {  }
 
-  /// Solve the key
-  ///
+  /// @internal Solve the key
   /// @param context input/ouput context (see Context class definition)
   /// @throw  Exception in case of any trouble
   ///
   virtual void solve(Context& context) throw (cdma::Exception) = 0;
 };
 
+/// internal declaration
 DECLARE_CLASS_SHARED_PTR(IKeySolver);
+/// internal declaration
 typedef std::list<IKeySolverPtr> SolverList;
 
+
 //==============================================================================
-/// KeyPath
+/// Internal class
 //==============================================================================
 class CDMA_DECL KeyPath : public IKeySolver
 {
@@ -122,17 +126,17 @@ private:
 
 public:
 
-  /// c-tor
+  /// @internal c-tor
   KeyPath(const std::string &path) : m_path(path)
   {
   }
 
-  /// IKeyResolver
+  /// @internal IKeyResolver
   void solve(Context& context) throw (cdma::Exception);
 };
 
 //==============================================================================
-/// KeyMethod
+/// Internal class
 //==============================================================================
 class CDMA_DECL KeyMethod : public IKeySolver
 {
@@ -148,14 +152,19 @@ public:
   {
   }
 
-  /// IKeyResolver
+  /// @internal IKeyResolver
   void solve(Context& context) throw (cdma::Exception);
 };
 
-// Smart pointers
+/// for internal purpose
 DECLARE_SHARED_PTR(KeyPath);
+/// for internal purpose
 DECLARE_SHARED_PTR(KeyMethod);
 
-} //namespace CDMACore
+/// @endcond internal
+
+} //namespace
+
+/// @endcond dictAPI
 
 #endif //__CDMA_KEY_H__

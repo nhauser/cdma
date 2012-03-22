@@ -23,6 +23,7 @@
 #include <cdma/Common.h>
 #include <cdma/array/View.h>
 
+/// @cond engineAPI
 
 namespace cdma
 {
@@ -31,10 +32,7 @@ namespace cdma
 DECLARE_CLASS_SHARED_PTR(IArrayStorage);
 
 //==============================================================================
-/// IArrayStorage interface its the physical container of the memory matrix.
-/// Its aim is to do the calculation of matrix's cells index according to a
-/// a View and a position vector. Mainly to give a read/write access into
-/// memory buffer.
+/// @brief Abstraction of the physical container of the array matrix.
 //==============================================================================
 class CDMA_DECL IArrayStorage
 {
@@ -42,20 +40,20 @@ public:
 
   /// Get pointer to the "value" from the memory buffer according the position in the given view.
   ///
-  /// @param view to consider for the index calculation
+  /// @param view_ptr Shared pointer on the view to consider for the index calculation
   /// @param position into which the value will be set
-  /// @return yat::Any value
+  /// @return anonymous pointer to the value
   ///
-  virtual void *getValue( const cdma::ViewPtr& view, std::vector<int> position ) = 0;
+  virtual void *getValue( const cdma::ViewPtr& view_ptr, std::vector<int> position ) = 0;
 
   /// Set "value" in the memory buffer according the position in the given view. The 
   /// given yat::Any will be casted into memory buffer type.
   ///
-  /// @param view to consider for the index calculation
+  /// @param view_ptr Shared pointer on the view to consider for the index calculation
   /// @param position into which the value will be set
-  /// @param value to be set
+  /// @param value_ptr C-style pointer to memory position to be set
   ///
-  virtual void setValue(const cdma::ViewPtr& view, std::vector<int> position, void *value_ptr) = 0;
+  virtual void setValue(const cdma::ViewPtr& view_ptr, std::vector<int> position, void *value_ptr) = 0;
 
   /// Returns the type_info of the underlying canonical data
   ///
@@ -92,6 +90,8 @@ public:
   ///  
   virtual IArrayStoragePtr deepCopy(ViewPtr view) = 0;
 };
+
+/// @endcond engineAPI
 
 }
 

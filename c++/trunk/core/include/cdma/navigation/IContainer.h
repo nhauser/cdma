@@ -28,8 +28,10 @@ DECLARE_CLASS_SHARED_WEAK_PTR(IDataset);
 DECLARE_CLASS_SHARED_PTR(LogicalGroup);
   
 //==============================================================================
-/// IContainer
-/// Shared interface between Groups and DataItems.
+/// @brief Base interface of IGroup and IDataItem
+///
+/// Must be implemented by concretized IGroup and IDataItem classes in data format engines
+/// and, if needed, in plug-ins
 //==============================================================================
 class IContainer
 {

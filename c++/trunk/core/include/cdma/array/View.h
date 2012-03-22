@@ -22,6 +22,8 @@
 
 #include <cdma/array/Range.h>
 
+/// @cond clientAPI
+
 namespace cdma
 {
 
@@ -29,21 +31,50 @@ namespace cdma
 DECLARE_CLASS_SHARED_PTR(View);
 
 //==============================================================================
-/// View of an array
-/// Views describe an array : its rank, in each dimension (Range) is provided 
-/// its length, offset between to consecutive elements, offset of the 
-/// first element.
+/// @brief Describes a way of parsing a array
+///
+/// A View is compound of ranges that describes each dimension 
+/// (length, offset between to consecutive elements, offset of the first element)
+///
 /// The view can be used to describe a whole array, a part of the array or a 
-/// different way to consider it.
+/// different way to parse it.
 //==============================================================================
 class CDMA_DECL View
 {
 public:
-  // Constructors
+  /// c-tor
   View();
+
+  /// Copy constructor
+  ///
+  /// @param view the source view
+  ///
   View(const cdma::ViewPtr& view );
+
+  /// c-tor
+  ///
+  /// @param rank Dimensions count
+  /// @param shape Length of each dimension
+  /// @param start Start position in each dimension
+  /// @todo add a method with stride parameter
+  ///
   View(int rank, int shape[], int start[]);
+
+  /// c-tor
+  ///
+  /// @param shape Length of each dimension
+  /// @param start Start position in each dimension
+  /// @todo remove it (see below)
+  ///
   View(std::vector<int> shape, std::vector<int> start);
+
+  /// c-tor
+  ///
+  /// @param shape Length of each dimension
+  /// @param start Start position in each dimension
+  /// @param stride offset between to consecutive element for the corresponding dimension
+  /// @todo stride default value
+  ///
   View(std::vector<int> shape, std::vector<int> start, std::vector<int> stride);
   ~View();
 
@@ -93,20 +124,20 @@ public:
   
   /// Set the origin on each dimension for this view
   ///
-  /// @param origin array of integers
+  /// @param origin An array of integers
   ///
   void setOrigin(std::vector<int> origin);
   
   /// Set the given shape for this view
   ///
-  /// @param value array of integers
+  /// @param shape An array of integers
   ///
   void setShape(std::vector<int> shape);
   
   /// Set the stride for this view. The stride is the number of
   /// cells between two consecutive cells in the same dimension.
   ///
-  /// @param stride array of integers
+  /// @param stride An array of integers
   ///
   void setStride(std::vector<int> stride);
   
@@ -152,4 +183,7 @@ private:
 };
 
 }
+
+/// @endcond
+
 #endif // __CDMA_VIEW_H__

@@ -24,24 +24,38 @@
 #include <cdma/array/IArrayStorage.h>
 #include <cdma/array/View.h>
 
+/// @cond engineAPI
+
 namespace cdma
 {
- 
+
 //==============================================================================
-/// Default array implementation
+/// @brief Default array storage implementation
+///
+/// This class implements all needed methods from IArrayStorage and provides
+/// a efficient way of storing data as a continuous bloc
+///
+/// @tparam T data type of array elements
 //==============================================================================
 template<typename T> class DefaultArrayStorage : public IArrayStorage
 {
 public:
 
-  /// Constructor
+  /// c-tor
   /// 
   /// @param data is the memory buffer 
-  /// @param physical shape of the given buffer
+  /// @param shape Array shape
   ///
   DefaultArrayStorage( T* data, std::vector<int> shape );
+
+  /// c-tor
+  /// 
+  /// @param data Typed C-style pointer data
+  /// @param length array length
+  /// @note The data is not copied
   DefaultArrayStorage( T* data, size_t length );
   
+  /// d-tor
   virtual ~DefaultArrayStorage();
 
   //@{ IArrayStorage
@@ -58,7 +72,7 @@ public:
 
   //@}
 
-  private:
+private:
   T*          m_data;          // pointor wearing physically the data
   size_t      m_elem_size;     // size of type T
   size_t      m_array_length;  // current number of element of type T
@@ -70,5 +84,7 @@ public:
 }
 
 #include "cdma/array/impl/ArrayStorage.hpp"
+
+/// @endcond
 
 #endif // __CDMA_DEFAULTARRAYSTORAGE_H__

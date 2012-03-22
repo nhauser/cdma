@@ -22,13 +22,15 @@
 namespace cdma
 {
 
+/// @cond internal
+
+// !! SAXParsor class is strictly for internal purpose !!
+
 //=============================================================================
-/// SAXParsor
-///
 /// Purpose : Reading a XML file using libxml2 library then parsing the document
 /// to construct a configuration
 //=============================================================================
-class CDMA_DECL SAXParsor
+class SAXParsor
 {
 public:
 
@@ -67,10 +69,13 @@ public :
       throw Exception("NOT_FOUND", yat::String::str_format("Unable to get value for attribute '%s'", name), "cdma::SAXParsor"); \
     value_string = cit->second
 
+/// Macro helper to retrive attribute value. nothrow
 #define FIND_ATTR_VALUE_NO_THROW(attrs, name, value_string) \
     cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name); \
     if( cit != attrs.end() ) \
       value_string = cit->second
+
+/// @endcond internal
 
 } // namespace
 

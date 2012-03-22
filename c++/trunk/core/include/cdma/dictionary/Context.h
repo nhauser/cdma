@@ -23,17 +23,19 @@
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/Dictionary.h>
 
+/// @cond pluginAPI
+
 namespace cdma
 {
 
 //==============================================================================
-/// This interface is used when invoking an external method.
-/// It should contain all required information so the called method,
-/// can work properly as if it were in the CDM.
-/// The context is compound of the dataset we are working on,
-/// the caller of the method, the key used to call that method (that can
-/// have some parameters), the path (with parameters set) and some
-/// parameters that are set by the institute's plug-in.
+/// @brief Container object used when invoking an external method.
+///
+/// It contains all required information by the called method:
+///  - reference to the source IDataset
+///  - reference to the Key object
+///  - reference to the Dictionary object
+///  - input/output list of data items (see IDataItem)
 //==============================================================================
 class CDMA_DECL Context
 {
@@ -81,6 +83,8 @@ public:
     m_dataitems.clear();
   }
 };
+
+/// @endcond pluginAPI
 
 } //namespace CDMACore
 #endif //__CDMA_CONTEXT_H__

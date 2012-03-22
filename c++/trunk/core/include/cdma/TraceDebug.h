@@ -42,13 +42,13 @@ namespace cdma
     public:
       dbg_helper(const std::string &s, const void* this_object=(const void*)(0x12345678)) : _s(s), _this_object(this_object)
       {
-        yat::AutoMutex<> _lock(mutex());
+        //yat::AutoMutex<> _lock(mutex());
         std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "> " << _s << std::endl;
         indent().append(2, ' ');
       }
       ~dbg_helper()
       {
-        yat::AutoMutex<> _lock(mutex());
+       // yat::AutoMutex<> _lock(mutex());
         indent().erase(0,2);
         std::cout << CDMA_DBG_PREFIX(_this_object) << indent() << "< " << _s << std::endl;
       }

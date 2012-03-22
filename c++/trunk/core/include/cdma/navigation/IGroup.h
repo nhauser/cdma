@@ -28,10 +28,15 @@ namespace cdma
 {
 
 //==============================================================================
-/// IGroup
-/// A Group is a collection of DataItems. The Groups in a Dataset form a
-/// hierarchical tree, like directories on a disk. A Group has a name and
-/// optionally a set of Attributes.
+/// @brief An IGroup is the abstraction of a collection of IDataItem(s).
+///
+/// The IGroup type objects in a Dataset form a hierarchical tree, like
+/// directories on a disk. 
+/// A IGroup has a name, contains one or mode IDataItem object and optionally
+/// a set of IAttribute objects containing its metadata.
+///
+/// @note It must be a base class of data format engine data group class concretization
+/// which can be overrided, if needed, by plug-ins based on same engine
 //==============================================================================
 class CDMA_DECL IGroup : public IContainer
 {

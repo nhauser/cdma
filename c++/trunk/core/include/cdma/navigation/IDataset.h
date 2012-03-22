@@ -24,13 +24,12 @@ namespace cdma
 {
 
 //==============================================================================
-/// Dataset Interface
-/// A Dataset is a handler on a physical storage of a data
-/// source. A dataset holds a reference of a root group, which is the root of a
+/// @brief Handler on a physical storage of a data source.
+///
+/// A dataset holds a reference of a root group, which is the root of a
 /// tree of Groups.
-/// Dataset is the entry point to have an access to data structure it represents.
-/// In case of a data file, Dataset would be the file handler that manages opening,
-/// close...
+/// IDataset is the entry point to have an access to data structure it represents.
+/// In case of a data file container, IDataset should refer to the file handle
 //==============================================================================
 class CDMA_DECL IDataset
 {
