@@ -115,7 +115,6 @@ public:
     IAttributePtr getAttribute(const std::string&);
     AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
-    IDatasetPtr getDataset();
   
   //@} --------------------------------
 

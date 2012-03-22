@@ -700,14 +700,6 @@ void NxsDataItem::setParent(const cdma::IGroupPtr&)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getDataset
-//---------------------------------------------------------------------------
-cdma::IDatasetPtr NxsDataItem::getDataset()
-{
-  return m_dataset_ptr;
-}
-
-//---------------------------------------------------------------------------
 // NxsDataItem::checkArray
 //---------------------------------------------------------------------------
 void NxsDataItem::checkArray()

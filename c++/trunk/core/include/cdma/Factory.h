@@ -145,11 +145,11 @@ public:
   
   /// Retrieve the dataset referenced by the string.
   ///
-  /// @param uri  string object
-  /// @return     cdma Dataset
+  /// @param uri  yat::URI object of the destination
+  /// @return     pair having first: IDataset and second: IFactory
   /// @throw      Exception
   ///
-  static std::pair<IDatasetPtr, IFactoryPtr> openDataset(const std::string& uri) throw ( Exception );
+  static std::pair<IDatasetPtr, IFactoryPtr> openDataset(const yat::URI& uri) throw ( Exception );
 
   static DictionaryPtr openDictionary(const std::string& filepath) throw ( Exception );
 
