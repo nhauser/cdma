@@ -1,0 +1,18 @@
+<data-def name="HIERARCHICAL">
+    <group key="detectors">
+        <group key="detector">
+            <item key="distance"/>
+            <item key="exposureTime"/>
+            <item key="shutterCloseDelay"/>
+            <item key="xBin"/>
+            <item key="yBin"/>
+        </group>
+        <group key="monitor">
+            <item key="gain"/>
+            <item key="intensity"/>
+        </group>
+    </group>
+    <group key="data">
+        <item key="images"/>
+    </group>
+</data-def>

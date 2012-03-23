@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
+
+<parent>
+  <groupId>fr.soleil</groupId>
+  <artifactId>super-pom-C-CPP</artifactId>
+  <version>RELEASE</version>
+</parent>
+
+<groupId>fr.soleil.lib.cdma</groupId>
+<artifactId>CDMAtest-${aol}-${library}-${mode}</artifactId>
+<name>CDMATest</name>
+<version>0.1.0-SNAPSHOT</version>
+<packaging>nar</packaging>
+
+<description>CDMA Core Cpp library</description>
+
+<developers>
+  <developer>
+    <id>rodriguez</id>
+    <name>rodriguez</name>
+    <email>clement.rodriguez@synchrotron-soleil.fr</email>
+    <url>http://www.synchrotron-soleil.fr</url>
+    <organization>Synchrotron Soleil</organization>
+    <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+    <roles>
+      <role>developper</role>
+    </roles>
+    <timezone>1</timezone>
+  </developer>
+</developers>
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.freehep</groupId>
+      <artifactId>freehep-nar-plugin</artifactId>
+      <configuration>
+        <output>${project.name}</output>
+        <libraries>
+          <library>
+            <type>executable</type>
+            <run>false</run>
+          </library>
+        </libraries>
+        <cpp>
+          <sourceDirectory>src</sourceDirectory>
+          <includePaths>
+            <includePath>src</includePath>
+          </includePaths>
+        </cpp>
+        <specificConfigurations>
+          <specificConfiguration>
+            <id>linux compile</id>
+            <activation>
+              <os>Linux</os>
+            </activation>
+<!--
+            <cpp>
+              <defines>
+                <define>CDMA_DEBUG</define>
+              </defines>
+            </cpp>
+-->
+            <linker>
+              <sysLibs>
+                <sysLib>
+                  <name>xml2</name>
+                  <type>shared</type>
+                </sysLib>
+              </sysLibs>
+            </linker>
+          </specificConfiguration>
+          <specificConfiguration>
+            <id>windows compile</id>
+            <activation>
+              <os>Windows</os>
+            </activation>
+            <linker>
+              <sysLibs>
+                <sysLib>
+                  <name>shell32</name>
+                  <type>shared</type>
+                </sysLib>
+              </sysLibs>
+            </linker>
+          </specificConfiguration>
+        </specificConfigurations>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+<dependencies>
+  <dependency>
+    <groupId>fr.soleil.lib</groupId>
+    <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+    <groupId>fr.soleil.lib</groupId>
+    <artifactId>NexusCPP-${aol}-static-${mode}</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>fr.soleil.lib</groupId>
+    <artifactId>YAT-${aol}-${library}-${mode}</artifactId>
+  </dependency>
+</dependencies>
+</project>
