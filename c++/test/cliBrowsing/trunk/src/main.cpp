@@ -7,23 +7,14 @@
 #include <yat/utils/URI.h>
 
 // Core
-#include <cdma/navigation/IDataItem.h>
 #include <cdma/IDataSource.h>
 #include <cdma/Factory.h>
 #include <cdma/IFactory.h>
 #include <cdma/navigation/IDataset.h>
-#include <cdma/dictionary/LogicalGroup.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/array/Array.h>
-#include <cdma/array/ArrayIterator.h>
-#include <cdma/array/SliceIterator.h>
-#include <cdma/array/Slicer.h>
-#include <cdma/navigation/IGroup.h>
-#include <cdma/utils/ArrayUtils.h>
 // Test
 #include <tools.h>
 #include <testArrayUtils.h>
-
+#include <testNavigation.h>
 #include <exception>
 
 
@@ -67,36 +58,26 @@ bool init(int argc, char* argv[] )
     }
 }
 
-string getCommand(String path, LogicalGroupPtr group, list<IDataItemPtr> list_of_items)
+bool isLogicalMode()
 {
-      string keyStr;
+  string entry;
+  cout<<"=============================="<<endl;
+  cout<<"Available navigation modes:"<<endl;
+  cout<<" - 1: logical"<<endl;
+  cout<<" - 2: physical"<<endl;
+  cout<<"=============================="<<endl;
+  cout<<"Please select a mode: ";
+  getline(cin, entry, '\n');
+  cout<<"=============================="<<endl;
 
-      // Display available keys
-      cout<<"=============================="<<endl;
-      cout<<"Current logical path: "<< path << endl;
-      cout<<"Available keys:"<<endl;
-      cout<<"=============================="<<endl;
-      cout<<Tools::iterate_over_keys( group, list_of_items );
-      cout<<"'help' for list of commands"<<endl;
-      cout<<"=============================="<<endl;
-
-      // Enter a key
-     
-      cout<<"Please enter a key name: ";
-      cin >> keyStr;
-      
-      if( keyStr == "help" || keyStr == "h" )
-      {
-        cout<<"=============================="<<endl;
-        cout<<"Usage:"<<endl;
-        cout<<"  enter 'name_of_key' to select the corresponding node"<<endl;
-        cout<<"  enter 'root' to get back to the root of the file"<<endl;
-        cout<<"  enter 'exit' to quit the program"<<endl;
-        cout<<"=============================="<<endl;
-        keyStr = "";
-      }
-      
-      return keyStr;
+  if( entry != "1" && entry != "2" && entry != "logical" && entry != "physical" )
+  {
+    return isLogicalMode();
+  }
+  else
+  {
+    return ( entry == "1" || entry == "physical" );
+  }
 }
 
 int main(int argc,char *argv[])
@@ -121,102 +102,37 @@ int main(int argc,char *argv[])
   {
     // Initialize plugins
     Factory::init( PLUGIN_PATH );
-    
+
     // Setting the view on data
     Factory::setActiveView( VIEW );
 
     // Instantiating a plugin factory
-    IFactoryPtr ptrFactory = Factory::detectPluginFactory( uri );
+    std::pair<IDatasetPtr, IFactoryPtr> plugin_pair = Factory::openDataset( uri );
+    IDatasetPtr dataset    = plugin_pair.first;
+    IFactoryPtr ptrFactory = plugin_pair.second;
+
+    TestNavigation navigation ( dataset );
 
     // Checking the source is readable    
     IDataSourcePtr dts = ptrFactory->getPluginURIDetector();
-
-    if( dts->isProducer( uri ) ) 
+    if( dts->isProducer( uri ) )
     {
       cout<<">>> Dictionary enabled"<<endl;
       
-      // Getting a handle on file
-      IDatasetPtr dataset = ptrFactory->openDataset( uri.get() );
-
-      // Accessing its logical root
-      LogicalGroupPtr log_root = dataset->getLogicalRoot();
-      LogicalGroupPtr group = log_root;
-
-      // Iterate over keys structure
-      list<IDataItemPtr> list_of_items;
-      KeyPtr key;
-      string path = "/";
-      
-      // Get the first command
-      string keyStr = getCommand( path, group, list_of_items );
-      
-      // While no 'exit' asked continue;
-      while( keyStr != "exit" )
+      if( isLogicalMode() )
       {
-        
-        if( keyStr != "" )
-        {
-          if( keyStr == "root" )
-          {
-            group = log_root;
-            path = "/";
-          }
-          else if( keyStr == "exit" || keyStr == "quit" )
-          {
-            break;
-          }
-          else 
-          {
-            // Create requested key
-            key = Tools::getKey(group, keyStr);
-            
-            // Ask for its target
-            if( ! key.is_null() )
-            {
-              if( key->getType() == Key::ITEM )
-              {
-                IDataItemPtr item = group->getDataItem( key );
-                cout<<endl<<"=============================="<<endl;
-                cout<<"Displaying data item informations"<<endl;
-                cout<<"Logical path: "<< path <<keyStr<<endl;
-                cout<<Tools::displayDataItem( item )<<endl;
-                cout<<"=============================="<<endl;
-                cout<<"=============================="<<endl; 
-                cout<<"Display values"<<endl;
-                ArrayPtr array = item->getData();
-                cout<<Tools::displayArray( array )<<endl;
-                cout<<"=============================="<<endl;
-                if( array->getRank() > 0 )
-                {
-                  cout<<"=============================="<<endl; 
-                  cout<<"Testing array"<<endl;
-                  TestArrayUtils test_utils( array );
-                  test_utils.run_test();
-                  cout<<"=============================="<<endl;
-                }
-                group = log_root;
-                path = "/";
-              }
-              else if( key->getType() == Key::GROUP )
-              {
-                group = group->getGroup( key );
-                path += keyStr + "/";
-              }
-            }
-            keyStr = "";
-          }
-        }
-
-        cout<<endl<<endl;
-
-        // Get the next command
-        keyStr = getCommand( path, group, list_of_items );
+        navigation.run_logical();
       }
+      else
+      {
+        navigation.run_physical();
+      }
+      
     }
     else
     {
       cout<<"Plugin isn't producer >>> Dictionary disabled"<<endl;
-      cout<<"Leaving program!!"<<endl;
+      navigation.run_physical();
     }
   
   }
@@ -236,6 +152,7 @@ int main(int argc,char *argv[])
   {
     cout<<"=======> Unknown Exception !! <======="<<endl;
   }
+  Factory::cleanup();
 }
 
 

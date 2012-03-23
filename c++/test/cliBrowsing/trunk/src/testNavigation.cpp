@@ -14,16 +14,19 @@
 //
 //*****************************************************************************
 
-#include <yat/utils/String.h>
+
 #include <testNavigation.h>
+#include <string>
+#include <iostream>
+
 #include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/Array.h>
 
 #include <tools.h>
-using namespace std;
+
 namespace cdma
 {
-
+using namespace std;
 //=============================================================================
 //
 // TestNavigation
@@ -42,66 +45,46 @@ TestNavigation::TestNavigation( const IDatasetPtr& dataset )
 //---------------------------------------------------------------------------
 // TestNavigation::run_test
 //---------------------------------------------------------------------------
-void TestNavigation::run_test()
+void TestNavigation::run_physical()
 {
-  m_log = "";
-  m_testOk = 0;
-  m_total = 0;
-
-  std::cout<<"Performing navigation tests: please wait..."<<std::endl;
-
-/*  scan_group();
-  std::cout<<"---------------------------------"<<std::endl;
-  std::cout<<"---------------------------------"<<std::endl;
-  std::cout<<"---------------------------------"<<std::endl;
-*/  scan_dataitem();
+  cout<<"Performing physical navigation tests:..."<<endl;
+  test_group(m_dataset->getRootGroup());
 
 
-//  test_dataitem();
-  
-//  test_attribute();
-
-//  test_dimension();
- 
-  std::cout<<"Result test: "<<m_testOk<<" / " <<m_total<<std::endl;
-  std::cout<<m_log<<std::endl;
-}
-
-
-//---------------------------------------------------------------------------
-// TestNavigation::scan_group
-//---------------------------------------------------------------------------
-void TestNavigation::scan_group(std::string indent)
-{
-  CDMA_FUNCTION_TRACE("TestArrayUtils::scan_group");
-  IGroupPtr grp = m_current;
-  std::cout<<Tools::displayGroup( m_current, indent );
-  
-  std::list<IGroupPtr> list = m_current->getGroupList();
-  for( std::list<IGroupPtr>::iterator iter = list.begin(); iter != list.end(); iter++ )
-  {
-    m_current = (*iter);
-    scan_group( indent + "  " );
-  }
-  m_current = grp;
+  cout<<"Result test: "<<m_testOk<<" / " <<m_total<<endl;
+  cout<<m_log<<endl;
 }
 
 //---------------------------------------------------------------------------
-// TestNavigation::scan_dataitem
+// TestNavigation::run_logical
 //---------------------------------------------------------------------------
-void TestNavigation::scan_dataitem(std::string indent)
+void TestNavigation::run_logical()
+{
+  cout<<"Performing logical navigation tests:..."<<endl;
+
+  // Accessing its logical root
+  LogicalGroupPtr log_root = m_dataset->getLogicalRoot();
+  LogicalGroupPtr group = log_root;
+
+  test_logical_group( m_dataset->getLogicalRoot() );
+}
+
+//---------------------------------------------------------------------------
+// TestNavigation::display_all
+//---------------------------------------------------------------------------
+void TestNavigation::display_all(string indent)
 {
   CDMA_FUNCTION_TRACE("TestArrayUtils::scan_group");
   IGroupPtr grp = m_current;
   
-  std::cout<<Tools::displayGroup( m_current, indent );
-  std::cout<<indent<<" |\\  "<<std::endl;
+  cout<<Tools::displayGroup( m_current, indent );
+  cout<<indent<<" |\\  "<<endl;
   // Scan all sub group
   std::list<IGroupPtr> list_grp = m_current->getGroupList();
   for( std::list<IGroupPtr>::iterator iter = list_grp.begin(); iter != list_grp.end(); iter++ )
   {
     m_current = (*iter);
-    scan_dataitem( indent + " | | ");
+    display_all( indent + " | | ");
   }
 
   // Scan all dataitem
@@ -109,20 +92,20 @@ void TestNavigation::scan_dataitem(std::string indent)
   for( std::list<IDataItemPtr>::iterator iter = list_itm.begin(); iter != list_itm.end(); iter++ )
   {
     IDataItemPtr item = (*iter);
-    std::cout<<Tools::displayDataItem( item, indent + " | | ");
+    cout<<Tools::displayDataItem( item, indent + " | | ");
     
     std::list<IDimensionPtr> list_dim = m_current->getDimensionList();
     if( list_dim.size() > 0) 
     {
-      std::cout<<indent<<" | |\\  "<<std::endl;
+      cout<<indent<<" | |\\  "<<endl;
       for( std::list<IDimensionPtr>::iterator iter_d = list_dim.begin(); iter_d != list_dim.end(); iter_d++ )
       {
-        std::cout<<Tools::displayDimension( (*iter_d), indent + " | | | ")<<std::endl;
+        cout<<Tools::displayDimension( (*iter_d), indent + " | | | ")<<endl;
       }
-      std::cout<<indent<<" | |/  "<<std::endl;    
+      cout<<indent<<" | |/  "<<endl;    
     }   
   }
-  std::cout<<indent<<" |/  "<<std::endl;
+  cout<<indent<<" |/  "<<endl;
   
   m_current = grp;
 }
@@ -130,56 +113,167 @@ void TestNavigation::scan_dataitem(std::string indent)
 //---------------------------------------------------------------------------
 // TestNavigation::test_dataitem
 //---------------------------------------------------------------------------
-bool TestNavigation::test_dataitem(const IDataItemPtr& )
+bool TestNavigation::test_dataitem(const IDataItemPtr& item)
 {
-  CDMA_FUNCTION_TRACE("TestArrayUtils::test_dataitem");
-  bool result = false;
+  CDMA_FUNCTION_TRACE("TestNavigation::test_dataitem");
+  bool doContinue = true;
   
-
-  if( result )
-    m_testOk++;
-  m_total++;
-  m_log += "\n- TestNavigation::test_dataitem: ";
-  m_log += ( result ? "Ok" : "Ko !!!" );
-  
-  return result;
-}
-
-//---------------------------------------------------------------------------
-// TestNavigation::test_attribute
-//---------------------------------------------------------------------------
-bool TestNavigation::test_attribute(const IAttributePtr& )
-{
-  CDMA_FUNCTION_TRACE("TestArrayUtils::test_attribute");
-  bool result = false;
-  
-
-  if( result )
-    m_testOk++;
-  m_total++;
-  m_log += "\n- TestNavigation::test_attribute: ";
-  m_log += ( result ? "Ok" : "Ko !!!" );
-  
-  return result;
+  TestDataItem::CommandItem cmd = TestDataItem::getCommandItem( getCommand(item.get()) );
+  if( cmd.command != TestDataItem::exit )
+  {
+    while( cmd.command != TestDataItem::exit && cmd.command != TestDataItem::back && doContinue)
+    {
+      if( cmd.command == TestDataItem::exit )
+      {
+        doContinue = false;
+      }
+      else
+      {
+        IDataItemPtr itm (NULL);
+        IGroupPtr grp (NULL);
+        TestDataItem::execute(item, cmd, itm, grp);
+        
+        if( grp )
+        {
+          doContinue = test_group( grp );
+        }
+        else if( itm )
+        {
+          doContinue = test_dataitem(itm);
+        }
+        
+        if( doContinue )
+        {
+          cmd = TestDataItem::getCommandItem( getCommand(item.get()) );
+          if( cmd.command == TestDataItem::exit )
+          {
+            doContinue = false;      
+          }
+        }
+      }
+    }
+  }  
+  return doContinue;
 }
 
 //---------------------------------------------------------------------------
 // TestNavigation::test_group
 //---------------------------------------------------------------------------
-bool TestNavigation::test_dimension(const IDimensionPtr& )
+bool TestNavigation::test_group(const IGroupPtr& group)
 {
-  CDMA_FUNCTION_TRACE("TestArrayUtils::test_dimension");
-  bool result = false;
+  CDMA_FUNCTION_TRACE("TestNavigation::test_dataitem");
+  bool doContinue = true;
   
-
-  if( result )
-    m_testOk++;
-  m_total++;
-  m_log += "\n- TestNavigation::test_dimension: ";
-  m_log += ( result ? "Ok" : "Ko !!!" );
-  
-  return result;
+  TestGroup::CommandGroup cmd = TestGroup::getCommandGroup( getCommand(group.get()) );
+  if( cmd.command != TestGroup::exit )
+  {
+    while( doContinue && cmd.command != TestGroup::back)
+    {
+      IDataItemPtr itm (NULL);
+      IGroupPtr grp (NULL);
+      TestGroup::execute(group, cmd, itm, grp);
+      
+      if( grp )
+      {
+        doContinue = test_group( grp );
+      }
+      else if( itm )
+      {
+        doContinue = test_dataitem(itm);
+      }
+      
+      if( doContinue )
+      {
+        cmd = TestGroup::getCommandGroup( getCommand(group.get()) );
+        if( cmd.command == TestGroup::exit )
+        {
+          doContinue = false;      
+        }
+      }
+    }
+  }
+  return doContinue;
 }
 
+//---------------------------------------------------------------------------
+// TestNavigation::test_logical_group
+//---------------------------------------------------------------------------
+bool TestNavigation::test_logical_group(const LogicalGroupPtr& group)
+{
+  CDMA_FUNCTION_TRACE("TestArrayUtils::test_logical_group");
+  bool doContinue = true;
+  
+  TestLogicalGroup::CommandLogicalGroup cmd = TestLogicalGroup::getCommandLogicalGroup( getCommand(group) );
+  if( cmd.command != TestLogicalGroup::exit )
+  {
+    while( doContinue && cmd.command != TestLogicalGroup::back)
+    {
+      IDataItemPtr itm (NULL);
+      LogicalGroupPtr grp (NULL);
+      TestLogicalGroup::execute(group, cmd, itm, grp);
+      
+      if( grp )
+      {
+        doContinue = test_logical_group( grp );
+      }
+      else if( itm )
+      {
+        doContinue = test_dataitem(itm);
+      }
+      
+      if( doContinue )
+      {
+        cmd = TestLogicalGroup::getCommandLogicalGroup( getCommand(group) );
+        if( cmd.command == TestLogicalGroup::exit )
+        {
+          doContinue = false;
+        }
+      }
+    }
+  } 
+  return doContinue;
+}
+
+//---------------------------------------------------------------------------
+// TestNavigation::getCommand
+//---------------------------------------------------------------------------
+std::string TestNavigation::getCommand(IContainer* cnt)
+{
+  string entry;
+  cout<<endl<<endl<<"=============================="<<endl;
+  if( cnt != NULL )
+  {
+    cout<<"Current node: "<<cnt->getName()<<endl;
+    cout<<"Current location: "<<cnt->getLocation()<<endl;
+  }
+  cout<<"=============================="<<endl;
+  cout<<"Please enter a command or 'h' for help: ";
+  getline(cin, entry, '\n');
+  cout<<"=============================="<<endl;
+  return entry;
+}
+
+//---------------------------------------------------------------------------
+// TestNavigation::getCommand
+//---------------------------------------------------------------------------
+std::string TestNavigation::getCommand(const LogicalGroupPtr& group)
+{
+  string entry;
+  std::list<IDataItemPtr> list_of_items;
+
+  // Display available keys
+  cout<<endl<<endl<<"=============================="<<endl;
+  cout<<"Current logical path: "<< group->getLocation() << endl;
+  cout<<"Available keys:"<<endl;
+  cout<<Tools::iterate_over_keys( group, list_of_items );
+
+  // Enter a key
+  cout<<"=============================="<<endl;
+  cout<<"Please enter a command or 'h' for help: ";
+  getline(cin, entry, '\n');
+  cout<<"=============================="<<endl;
+  
+  return entry;
+}
 
 }

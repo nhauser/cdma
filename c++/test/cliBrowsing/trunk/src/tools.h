@@ -35,11 +35,17 @@ namespace cdma
       // display Array's content
       static std::string displayArray( const cdma::ArrayPtr& array, int maxCell = 15 );
 
+      // display attribute
+      static std::string displayAttribute( const cdma::IAttributePtr& attr, std::string indent = "" );
+
       // display properties of a DataItem
       static std::string displayDataItem( const cdma::IDataItemPtr& item, std::string indent = "");
 
       // display all properties of a Group
       static std::string displayGroup( const cdma::IGroupPtr& group, std::string indent = "" );
+      
+      // display all properties of a Group
+      static std::string displayLogicalGroup( const cdma::LogicalGroupPtr& group, std::string indent = "" );
       
       // display properties of a DataItem
       static std::string displayDimension( const cdma::IDimensionPtr& dim, std::string indent = "");
@@ -57,6 +63,9 @@ namespace cdma
       
       // display all keys in a structured string representation
       static std::string iterate_over_keys( LogicalGroupPtr group, std::list<IDataItemPtr>& items );
+      
+      template<typename T, size_t N> static T * end(T (&ra)[N]) { return ra + N; };
+
       
     private:
       static std::string iterate_over_keys( LogicalGroupPtr group, const std::string& indent, std::list<IDataItemPtr>& items );
