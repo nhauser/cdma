@@ -10,7 +10,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <version>RELEASE</version>
 </parent>
 
-<groupId>fr.soleil.lib.cdma</groupId>
+<groupId>org.cdma</groupId>
 <artifactId>CDMAtest-${aol}-${library}-${mode}</artifactId>
 <name>CDMATest</name>
 <version>0.1.0-SNAPSHOT</version>
@@ -32,6 +32,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <timezone>1</timezone>
   </developer>
 </developers>
+
+<scm>
+  <connection>scm:svn:http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</connection>
+  <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</developerConnection>
+  <url>http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</url>
+</scm>
+
 <build>
   <plugins>
     <plugin>
@@ -94,8 +101,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 </build>
 <dependencies>
   <dependency>
-    <groupId>fr.soleil.lib</groupId>
-    <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
+    <groupId>org.cdma</groupId>
+    <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </dependency>
   <dependency>
@@ -105,6 +112,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <dependency>
     <groupId>fr.soleil.lib</groupId>
     <artifactId>YAT-${aol}-${library}-${mode}</artifactId>
+    <version>1.7.8-SNAPSHOT</version>
   </dependency>
 </dependencies>
 </project>
