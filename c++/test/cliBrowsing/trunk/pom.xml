@@ -16,7 +16,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 <version>0.1.0-SNAPSHOT</version>
 <packaging>nar</packaging>
 
-<description>CDMA Core Cpp library</description>
+<description>Command line interface testing tool</description>
 
 <developers>
   <developer>
