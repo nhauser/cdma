@@ -10,14 +10,14 @@
        <version>RELEASE</version>
     </parent>
 
-    <groupId>fr.soleil.lib.cdma</groupId>
-    <artifactId>RawNeXus-${aol}-shared-${mode}</artifactId>
+    <groupId>org.cdma.plugins</groupId>
+    <artifactId>CdmaRawNeXus-${aol}-shared-${mode}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <packaging>nar</packaging>
 
-    <name>rawnexus</name>
-    <description>rawnexus</description>
+    <name>cdmarawnexus</name>
+    <description>CDMA Raw NeXus Plugin</description>
 
     <developers>
         <developer>
@@ -34,11 +34,11 @@
         </developer>
     </developers>
 
-    <scm>
-        <connection>${scm.connection.cvs.Raw}:GD/Librairies/CDMA/RawNXS</connection>
-        <developerConnection>${scm.developerConnection.cvs.Raw}:GD/Librairies/CDMA/RawNXS</developerConnection>
-        <url>${scm.url.cvs.Raw}/GD/Librairies/CDMA/RawNXS</url>
-    </scm>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/plugins/nexusRaw/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/plugins/nexusRaw/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/plugins/nexusRaw/trunk</url>
+  </scm>
 
     <build>
         <plugins>
@@ -68,13 +68,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>fr.soleil.lib.cdma</groupId>
-            <artifactId>CDMANeXus-${aol}-static-${mode}</artifactId>
+            <groupId>org.cdma.engines</groupId>
+            <artifactId>CdmaNexusEngine-${aol}-static-${mode}</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
+            <groupId>org.cdma</groupId>
+            <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
