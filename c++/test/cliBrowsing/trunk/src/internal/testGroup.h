@@ -14,53 +14,68 @@
 //
 //*****************************************************************************
 
-#ifndef __NXS_TEST_NAVIGATION_H__
-#define __NXS_TEST_NAVIGATION_H__
+#ifndef __TEST_GROUP_H__
+#define __TEST_GROUP_H__
 
 #include <list>
 #include <vector>
 #include <string>
-#include <iostream>
-#include <cdma/navigation/IContainer.h>
+
 #include <cdma/navigation/IGroup.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/navigation/IDimension.h>
 #include <cdma/navigation/IAttribute.h>
-#include <yat/utils/String.h>
 
-#include <internal/testDataItem.h>
-#include <internal/testGroup.h>
-#include <internal/testLogicalGroup.h>
 namespace cdma
 {
 
-class TestNavigation
+class TestGroup
 {
 public:
-  TestNavigation( const IDatasetPtr& array );
+  enum CommandGrp
+  {
+    getParent = 0,
+    getRoot,
+    getDimensionList,
+    getAttribute,
+    getAttributeList,
+    getContainerType,
+    getLocation,
+    getName,
+    getShortName,
+    hasAttribute,
+    isRoot,
+    isEntry,
+    getDataItemList,
+    getDataItem, 
+    getDataItemWithAttribute,
+    getDimension,
+    getGroupList,
+    getGroup,
+    getGroupWithAttribute,
+    display,
+    help,
+    list,
+    exit,
+    back
+  };
+
+  struct CommandGroup
+  {
+  public:
+    CommandGroup() {};
+    CommandGrp command;
+    std::vector<yat::String> args;
+  };
   
-  void run_physical();
-  void run_logical();
-
-protected:
-  void display_all(std::string indent = "");
-
-  bool test_dataitem(const IDataItemPtr& item);
-  bool test_group(const IGroupPtr& group );
-  bool test_logical_group(const LogicalGroupPtr& group );
-
-private:
-  std::string getCommand(IContainer* cnt);
-  std::string getCommand(const LogicalGroupPtr& group);
-  IGroupPtr m_current;
-  IDatasetPtr m_dataset;
-  std::string m_log;
-  int m_total;
-  int m_testOk;
-  int m_depth;
-
+  static CommandGroup getCommandGroup(const std::string& entry);
+  static void execute(const IGroupPtr& group, CommandGroup command, IDataItemPtr& out_item, IGroupPtr& out_group);
+  
+  static std::vector<std::string>     s_commandNames;
+  static std::vector<TestGroup::CommandGrp> s_commandGroup;
+  
 };
 
 }
 
-#endif // __NXS_TEST_NAVIGATION_H__
+#endif

@@ -94,6 +94,59 @@ namespace cdma
   }
 
   //-----------------------------------------------------------------------------
+  // Tools::displayLogicalGroup
+  //-----------------------------------------------------------------------------
+  std::string Tools::displayLogicalGroup( const cdma::LogicalGroupPtr& group, std::string indent )
+  {
+    stringstream res;
+    res<<indent<<"Logical group: "<<group->getShortName()<<std::endl;
+    res<<indent<<" - getName='"<<group->getName()<<"'"<<std::endl;
+    res<<indent<<" - getLocation='"<<group->getLocation()<<"'"<<std::endl;
+    
+    std::list<KeyPtr> list_keys = group->getKeys();
+    if( list_keys.size() > 0 )
+    { 
+      res<<indent<<" - getKeys:"<<std::endl;   
+      for( std::list<KeyPtr>::iterator it = list_keys.begin(); it != list_keys.end(); it++ )
+      {
+        if( (*it)->getType() != Key::ITEM )
+        {
+          res<<indent<<"     Group: '"<< (*it)->getName() <<"'"<<std::endl;
+        }
+      }
+      for( std::list<KeyPtr>::iterator it = list_keys.begin(); it != list_keys.end(); it++ )
+      {
+        if( (*it)->getType() == Key::ITEM )
+        {
+          res<<indent<<"     Item: '"<< (*it)->getName() <<"'"<<std::endl;
+        }
+      }
+    }
+    return res.str();  
+  }
+
+  //-----------------------------------------------------------------------------
+  // Tools::displayGroup
+  //-----------------------------------------------------------------------------
+  std::string Tools::displayAttribute( const cdma::IAttributePtr& attr, std::string indent )
+  {
+    stringstream res;
+    
+    res<<indent<<"Attribute: '"<<attr->getName();
+    
+    if( attr->isString() )
+    {
+      res<<"'  value: '"<<attr->getStringValue()<<"'";
+    }
+    else 
+    {
+      res<<"'  value: '"<<attr->getFloatValue()<<"'";
+    }
+    
+    return res.str();
+  }
+
+  //-----------------------------------------------------------------------------
   // Tools::displayGroup
   //-----------------------------------------------------------------------------
   std::string Tools::displayGroup( const cdma::IGroupPtr& group, std::string indent )
