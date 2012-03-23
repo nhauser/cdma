@@ -10,16 +10,34 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
    <version>RELEASE</version>
 </parent>
 
-<groupId>fr.soleil.lib</groupId>
-<artifactId>CDMA-${aol}-${library}-${mode}</artifactId>
-<name>cdma</name>
+<groupId>org.cdma</groupId>
+<artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
+<name>cdmacore</name>
 <version>0.1.0-SNAPSHOT</version>
 <packaging>nar</packaging>
 
 <description>CDMA Core Cpp library</description>
 
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/core/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/core/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/core/trunk</url>
+  </scm>
+
 <developers>
-   <developer>
+  <developer>
+    <id>poirier</id>
+    <name>poirier</name>
+    <email>stephane.poirier@synchrotron-soleil.fr</email>
+    <url>http://www.synchrotron-soleil.fr</url>
+    <organization>Synchrotron Soleil</organization>
+    <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+    <roles>
+      <role>leader</role>
+    </roles>
+    <timezone>1</timezone>
+  </developer>
+  <developer>
     <id>rodriguez</id>
     <name>rodriguez</name>
     <email>clement.rodriguez@synchrotron-soleil.fr</email>
@@ -27,10 +45,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
     <organization>Synchrotron Soleil</organization>
     <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
     <roles>
-     <role>developper</role>
+      <role>developer</role>
     </roles>
     <timezone>1</timezone>
-   </developer>
+  </developer>
 </developers>
 
 <profiles>
@@ -42,11 +60,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       </os>
     </activation>
     <dependencies>
-      <dependency>
-        <groupId>fr.soleil.lib</groupId>
-        <artifactId>YAT-${aol}-shared-${mode}</artifactId>
-        <version>1.7.8-SNAPSHOT</version>
-      </dependency>
       <dependency>
         <groupId>com.zlatkovic</groupId>
         <artifactId>Iconv-${aol}-shared-release</artifactId>
