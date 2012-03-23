@@ -10,14 +10,14 @@
        <version>RELEASE</version>
     </parent>
 
-    <groupId>fr.soleil.lib.cdma</groupId>
-    <artifactId>CDMANeXus-${aol}-shared-${mode}</artifactId>
+    <groupId>org.cdma.engines</groupId>
+    <artifactId>CdmaNexusEngine-${aol}-shared-${mode}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <packaging>nar</packaging>
 
-    <name>cdmanexus</name>
-    <description>cdmanexus</description>
+    <name>cdmanexusengine</name>
+    <description>NeXus engine library for the CDMA project</description>
 
     <developers>
         <developer>
@@ -34,11 +34,11 @@
         </developer>
     </developers>
 
-    <scm>
-        <connection>${scm.connection.cvs.soleil}:GD/Librairies/CDMA/SoleilNXS</connection>
-        <developerConnection>${scm.developerConnection.cvs.soleil}:GD/Librairies/CDMA/SoleilNXS</developerConnection>
-        <url>${scm.url.cvs.soleil}/GD/Librairies/CDMA/SoleilNXS</url>
-    </scm>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/engines/nexus/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/engines/nexus/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/engines/nexus/trunk</url>
+  </scm>
 
   <build>
     <plugins>
@@ -91,14 +91,14 @@
 
   <dependencies>
         <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
+            <groupId>org.cdma</groupId>
+            <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
-          <version>1.13.3-SNAPSHOT</version>
+          <version>1.13.4-SNAPSHOT</version>
         </dependency>
         <dependency>
            <groupId>fr.soleil.lib</groupId>
