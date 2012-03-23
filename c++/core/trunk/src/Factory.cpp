@@ -302,22 +302,29 @@ IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri)
     tmp = instance().getPluginFactory( plugin_id );
     data_source = tmp->getPluginURIDetector();
     
-    // Ask if the URI is readable
-    if( data_source->isReadable( uri ) )
+    if( !data_source )
     {
-      // Ask if the plugin is the owner of that URI
-      if( data_source->isProducer( uri ) )
+      yat::log_warning("cdma", "Plugin %s should implements IDataSource interface. Skip it.", PSZ(plugin_id));
+    }
+    else
+    {
+      // Ask if the URI is readable
+      if( data_source->isReadable( uri ) )
       {
-        result = tmp;
-        break;
-      }
-      else
-      {
-        // Not owner but can read so keep it for later if no owner are found
-        result = tmp;
+        // Ask if the plugin is the owner of that URI
+        if( data_source->isProducer( uri ) )
+        {
+          result = tmp;
+          break;
+        }
+        else
+        {
+          // Not owner but can read so keep it for later if no owner are found
+          result = tmp;
+        }
       }
     }
-    iterator++;
+    ++iterator;
   }
   return result;
 }
