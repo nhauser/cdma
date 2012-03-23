@@ -10,14 +10,14 @@
      <version>RELEASE</version>
   </parent>
 
-  <groupId>fr.soleil.lib.cdma</groupId>
+  <groupId>org.cdma.plugins</groupId>
   <artifactId>SoleilNeXus-${aol}-shared-${mode}</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <packaging>nar</packaging>
 
-  <name>soleilnexus</name>
-  <description>soleilnexus</description>
+  <name>cdmasoleilnexus</name>
+  <description>CDMA Soleil NeXus plugin</description>
 
   <developers>
     <developer>
@@ -92,19 +92,19 @@
 
   <dependencies>
     <dependency>
-      <groupId>fr.soleil.lib.cdma</groupId>
-      <artifactId>CDMANeXus-${aol}-shared-${mode}</artifactId>
+      <groupId>org.cdma.engines</groupId>
+      <artifactId>CdmaNexusEngine-${aol}-shared-${mode}</artifactId>
       <version>1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>fr.soleil.lib</groupId>
-      <artifactId>CDMA-${aol}-shared-${mode}</artifactId>
+      <groupId>org.cdma</groupId>
+      <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
       <version>0.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fr.soleil.lib</groupId>
       <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
-      <version>1.13.3-SNAPSHOT</version>
+      <version>1.13.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>fr.soleil.lib</groupId>
