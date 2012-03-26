@@ -62,8 +62,12 @@ Array::Array(T scalar_value)
 
   T* data_ptr = new T[1];
   *data_ptr = scalar_value;
-  m_data_impl = new DefaultArrayStorage<T>(data_ptr, std::vector<int>());
-  m_view_ptr = new View();
+  std::vector<int> shape;
+  shape.push_back(1);
+  std::vector<int> start;
+  start.push_back(0);
+  m_data_impl = new DefaultArrayStorage<T>(data_ptr, shape);
+  m_view_ptr = new View(shape, start);
 }
 
 //----------------------------------------------------------------------------
