@@ -48,7 +48,7 @@
                 <configuration>
                     <cpp>
                        <defines>
-                          <define>CDMA_DEBUG</define>
+                          <!--define>CDMA_DEBUG</define-->
                        </defines>
                         <sourceDirectory>src</sourceDirectory>
                         <includePaths>
@@ -80,7 +80,7 @@
         <dependency>
            <groupId>fr.soleil.lib</groupId>
            <artifactId>YAT-${aol}-shared-${mode}</artifactId>
-           <version>1.7.7</version>
+           <version>1.7.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
     
