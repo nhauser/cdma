@@ -53,7 +53,7 @@
               <includePath>src</includePath>
             </includePaths>
             <defines>
-              <define>CDMA_DEBUG</define>
+              <!--define>CDMA_DEBUG</define-->
             </defines>
           </cpp>
           <libraries>
