@@ -35,9 +35,9 @@
   </developers>
 
   <scm>
-    <connection>${scm.connection.cvs.soleil}:GD/Librairies/CDMA/SoleilNXS</connection>
-    <developerConnection>${scm.developerConnection.cvs.soleil}:GD/Librairies/CDMA/SoleilNXS</developerConnection>
-    <url>${scm.url.cvs.soleil}/GD/Librairies/CDMA/SoleilNXS</url>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/plugins/nexusSoleil/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/plugins/nexusSoleil/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/plugins/nexusSoleil/trunk</url>
   </scm>
 
   <build>
@@ -108,8 +108,8 @@
     </dependency>
     <dependency>
       <groupId>fr.soleil.lib</groupId>
-      <artifactId>YAT-${aol}-${library}-${mode}</artifactId>
-      <version>1.7.8-SNAPSHOT</version>
+      <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+      <version>1.7.7</version>
     </dependency>
   </dependencies>
   
