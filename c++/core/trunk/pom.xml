@@ -90,7 +90,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         </systemIncludePaths>
       </cpp>
       <defines>
-        <define>CDMA_DEBUG</define>
+        <!--define>CDMA_DEBUG</define-->
       </defines>
       <libraries>
         <library>
