@@ -117,7 +117,7 @@ IDatasetPtr RawNxsFactory::createEmptyDatasetInstance() throw ( cdma::Exception 
 //----------------------------------------------------------------------------
 std::string RawNxsFactory::getPathSeparator()
 {
-  return yat::String::nil;
+  return std::string();
 }
 
 //----------------------------------------------------------------------------
