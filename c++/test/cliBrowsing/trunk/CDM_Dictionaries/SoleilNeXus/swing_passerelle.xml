@@ -19,6 +19,10 @@
     <item key="yBin">
         <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin/data</path>
     </item>
+    <item key="2xBin">
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin/data</path>
+        <call>TestMethod</call>
+    </item>
 <!--
     <item key="mi">
         <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}</path>
