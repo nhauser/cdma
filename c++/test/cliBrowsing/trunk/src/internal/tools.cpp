@@ -8,7 +8,8 @@
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/LogicalGroup.h>
 #include <cdma/Common.h>
-#include <tools.h>
+
+#include <internal/tools.h>
 
 using namespace std;
 using namespace cdma;
@@ -242,10 +243,13 @@ namespace cdma
   {
     list<KeyPtr> keys = group->getKeys();
     list<KeyPtr>::iterator key_it;
-
+    yat::String name, yKey = key;
+    yKey.to_lower();
     for( key_it = keys.begin(); key_it != keys.end(); key_it++ )
     {
-      if( (*key_it)->getName() == key )
+      name = (*key_it)->getName();
+      name.to_lower();
+      if( name == yKey )
       {
         return *key_it;
       }
@@ -258,12 +262,18 @@ namespace cdma
   //-----------------------------------------------------------------------------
   std::string Tools::displayValues(const ArrayPtr& array) 
   {
-    std::cout<<"Entering Tools::displayValues"<<std::endl;
     std::string str;
-    ArrayIterator begin = array->begin();
-    ArrayIterator end = array->end();
-    str = scanValues(begin, end, 15);
-    std::cout<<"Leaving Tools::displayValues"<<std::endl;
+    if( array->getValueType() != typeid(std::string) )
+    {
+      ArrayIterator begin = array->begin();
+      ArrayIterator end = array->end();
+      str = scanValues(begin, end, 15);
+    }
+    else
+    {
+    // TODO manage string case
+//      str = array->getValue< std::string > ( );
+    }
     return str;
   }
   
@@ -272,8 +282,6 @@ namespace cdma
   //-----------------------------------------------------------------------------
   std::string Tools::scanValues(ArrayIterator& iterator, ArrayIterator& end, int maxCell) 
   {
-    std::cout<<"Entering Tools::scanValues"<<std::endl;
-
     stringstream res;
     int j = 0;
     vector<int> current = iterator.getPosition();
@@ -317,12 +325,11 @@ namespace cdma
     }
     res << "...";
     std::string str = res.str();
-    std::cout<<"Leaving Tools::scanValues"<<std::endl;
     return str;
   }
   
   //-----------------------------------------------------------------------------
-  // Tools::scanValues
+  // Tools::iterate_over_keys
   //-----------------------------------------------------------------------------
   string Tools::iterate_over_keys( LogicalGroupPtr group, list<IDataItemPtr>& items )
   {

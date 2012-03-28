@@ -1,0 +1,11 @@
+<data-def name="FLAT">
+    <item key="distance"/>
+    <item key="exposureTime"/>
+    <item key="shutterCloseDelay"/>
+    <item key="xBin"/>
+    <item key="yBin"/>
+    <item key="2xBin"/>
+    <item key="gain"/>
+    <item key="intensity"/>
+    <item key="images"/>
+</data-def>
