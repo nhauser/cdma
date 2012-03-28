@@ -14,69 +14,45 @@
 //
 //*****************************************************************************
 
-#ifndef __TEST_GROUP_H__
-#define __TEST_GROUP_H__
+#ifndef __NXS_TEST_NAVIGATION_H__
+#define __NXS_TEST_NAVIGATION_H__
 
 #include <list>
 #include <vector>
 #include <string>
-
+#include <iostream>
+#include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IGroup.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/navigation/IDimension.h>
 #include <cdma/navigation/IAttribute.h>
+#include <yat/utils/String.h>
 
+#include <internal/testGroup.h>
+#include <internal/testLogicalGroup.h>
 namespace cdma
 {
 
-class TestGroup
+class TestNavigation
 {
 public:
-  enum CommandGrp
-  {
-    getParent = 0,
-    getRoot,
-    getDimensionList,
-    getAttribute,
-    getAttributeList,
-    getContainerType,
-    getLocation,
-    getName,
-    getShortName,
-    hasAttribute,
-    isRoot,
-    isEntry,
-    getDataItemList,
-    getDataItem, 
-    getDataItemWithAttribute,
-    getDimension,
-    getGroupList,
-    getGroup,
-    getGroupWithAttribute,
-    display,
-    help,
-    list,
-    exit,
-    back,
-    open
-  };
+  TestNavigation( const IDatasetPtr& array );
+  
+  void run_physical();
+  void run_logical();
 
-  struct CommandGroup
-  {
-  public:
-    CommandGroup() {};
-    CommandGrp command;
-    std::vector<yat::String> args;
-  };
-  
-  static CommandGroup getCommandGroup(const std::string& entry);
-  static void execute(const IGroupPtr& group, CommandGroup command, IDataItemPtr& out_item, IGroupPtr& out_group);
-  
-  static std::vector<std::string>     s_commandNames;
-  static std::vector<TestGroup::CommandGrp> s_commandGroup;
-  
+protected:
+  void display_all(std::string indent = "");
+
+  bool test_group(const IGroupPtr& group );
+  bool test_logical_group(const LogicalGroupPtr& group );
+
+private:
+  IGroupPtr m_current;
+  IDatasetPtr m_dataset;
+  std::string m_log;
 };
 
 }
 
-#endif
+#endif // __NXS_TEST_NAVIGATION_H__

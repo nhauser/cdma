@@ -14,8 +14,8 @@
 //
 //*****************************************************************************
 
-#ifndef __TEST_GROUP_H__
-#define __TEST_GROUP_H__
+#ifndef __TEST_DATAITEM_H__
+#define __TEST_DATAITEM_H__
 
 #include <list>
 #include <vector>
@@ -29,14 +29,39 @@
 namespace cdma
 {
 
-class TestGroup
+class TestDataItem
 {
 public:
-  enum CommandGrp
+  enum CommandDataItem
   {
-    getParent = 0,
+    findAttributeIgnoreCase = 0,
+    findDimensionView,
+    getParent,
     getRoot,
+    getData,
+    getDescription,
+    getDimensions,
     getDimensionList,
+    getDimensionsString,
+    getElementSize,
+    getRank,
+    getShape,
+    getSize,
+    getSlice,
+    getType,
+    getUnitsString,
+    isMemberOfStructure,
+    isMetadata,
+    isScalar,
+    isUnlimited,
+    isUnsigned,
+    readScalarByte,
+    readScalarDouble,
+    readScalarFloat,
+    readScalarInt,
+    readScalarLong,
+    readScalarShort,
+    readString,
     getAttribute,
     getAttributeList,
     getContainerType,
@@ -44,36 +69,28 @@ public:
     getName,
     getShortName,
     hasAttribute,
-    isRoot,
-    isEntry,
-    getDataItemList,
-    getDataItem, 
-    getDataItemWithAttribute,
-    getDimension,
-    getGroupList,
-    getGroup,
-    getGroupWithAttribute,
-    display,
+    test,
     help,
     list,
     exit,
-    back,
-    open
+    display,
+    back
   };
 
-  struct CommandGroup
+  struct CommandItem
   {
   public:
-    CommandGroup() {};
-    CommandGrp command;
+    CommandItem() {};
+    CommandDataItem command;
     std::vector<yat::String> args;
   };
   
-  static CommandGroup getCommandGroup(const std::string& entry);
-  static void execute(const IGroupPtr& group, CommandGroup command, IDataItemPtr& out_item, IGroupPtr& out_group);
-  
+  static CommandItem getCommandItem(const std::string& entry);
+  static void execute(const IDataItemPtr& item, CommandItem command, IDataItemPtr& out_item, IGroupPtr& out_group);
+
+private:  
   static std::vector<std::string>     s_commandNames;
-  static std::vector<TestGroup::CommandGrp> s_commandGroup;
+  static std::vector<TestDataItem::CommandDataItem> s_commandItems;
   
 };
 

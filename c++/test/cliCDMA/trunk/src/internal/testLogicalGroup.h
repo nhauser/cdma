@@ -14,14 +14,14 @@
 //
 //*****************************************************************************
 
-#ifndef __TEST_GROUP_H__
-#define __TEST_GROUP_H__
+#ifndef __TEST_LOGICAL_GROUP_H__
+#define __TEST_LOGICAL_GROUP_H__
 
 #include <list>
 #include <vector>
 #include <string>
 
-#include <cdma/navigation/IGroup.h>
+#include <cdma/dictionary/LogicalGroup.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/navigation/IDimension.h>
 #include <cdma/navigation/IAttribute.h>
@@ -29,51 +29,43 @@
 namespace cdma
 {
 
-class TestGroup
+class TestLogicalGroup
 {
+
+
 public:
-  enum CommandGrp
+  enum CommandLogicalGrp
   {
     getParent = 0,
-    getRoot,
-    getDimensionList,
-    getAttribute,
-    getAttributeList,
-    getContainerType,
-    getLocation,
     getName,
     getShortName,
-    hasAttribute,
-    isRoot,
-    isEntry,
+    getLocation,
+    getDataItem,
     getDataItemList,
-    getDataItem, 
-    getDataItemWithAttribute,
-    getDimension,
-    getGroupList,
     getGroup,
-    getGroupWithAttribute,
+    getKeyNames,
+    getKeys,
     display,
     help,
+    open,
     list,
     exit,
-    back,
-    open
+    back
   };
 
-  struct CommandGroup
+  struct CommandLogicalGroup
   {
   public:
-    CommandGroup() {};
-    CommandGrp command;
+    CommandLogicalGroup() {};
+    CommandLogicalGrp command;
     std::vector<yat::String> args;
   };
   
-  static CommandGroup getCommandGroup(const std::string& entry);
-  static void execute(const IGroupPtr& group, CommandGroup command, IDataItemPtr& out_item, IGroupPtr& out_group);
+  static CommandLogicalGroup getCommandLogicalGroup(const std::string& entry);
+  static void execute(const LogicalGroupPtr& group, CommandLogicalGroup command, IDataItemPtr& out_item, LogicalGroupPtr& out_group);
   
-  static std::vector<std::string>     s_commandNames;
-  static std::vector<TestGroup::CommandGrp> s_commandGroup;
+  static std::vector<std::string>                         s_commandLogicalNames;
+  static std::vector<TestLogicalGroup::CommandLogicalGrp> s_commandLogicalGroup;
   
 };
 
