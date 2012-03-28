@@ -127,7 +127,7 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int>
 //---------------------------------------------------------------------------
 std::string SimpleDataItem::getDescription()
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::getDescription");
+  return std::string("");
 }
 
 //---------------------------------------------------------------------------
@@ -135,7 +135,7 @@ std::string SimpleDataItem::getDescription()
 //---------------------------------------------------------------------------
 std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensions( int )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::getDimensions");
+  return std::list<cdma::IDimensionPtr>();
 }
 
 //---------------------------------------------------------------------------
@@ -143,7 +143,7 @@ std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensions( int )
 //---------------------------------------------------------------------------
 std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensionList()
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::getDimensionList");
+  return std::list<cdma::IDimensionPtr>();
 }
 
 //---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ std::list<cdma::IDimensionPtr> SimpleDataItem::getDimensionList()
 //---------------------------------------------------------------------------
 std::string SimpleDataItem::getDimensionsString()
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::getDimensionsString");
+  return std::string("");
 }
 
 //---------------------------------------------------------------------------
