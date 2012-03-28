@@ -46,7 +46,7 @@ class CDMA_DECL LogicalGroup
 {
 private:
   IDataset*                              m_dataset_ptr;    // C-style pointer to the parent dataset
-  LogicalGroup*                          m_parent_ptr;     // C-style pointer to the parent group (NULL if root)
+  std::string                            m_parent_path;    // Path of parent logical group
   KeyPtr                                 m_key_ptr;        // Key from which this logical group was intantiated (is_null() = true if root)
   DictionaryPtr                          m_dictionary_ptr; // Dictionary this logical group match to
   std::map<std::string, LogicalGroupPtr> m_child_groups;   // List of child groups
@@ -79,7 +79,7 @@ public:
 
   /// Find the DataItem corresponding to the given key in the dictionary.
   ///
-  /// @param keyPath keywords path (keyword1::keyword2...)
+  /// @param keyPath keywords path (keyword1:keyword2...)
   ///
   /// @return the first encountered DataItem that match the key, else null
   /// @note keyPath can contain several keys concatenated with a plug-in's separator

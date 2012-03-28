@@ -34,31 +34,12 @@ class TestGroup
 public:
   enum CommandGrp
   {
-    getParent = 0,
-    getRoot,
-    getDimensionList,
-    getAttribute,
-    getAttributeList,
-    getContainerType,
-    getLocation,
-    getName,
-    getShortName,
-    hasAttribute,
-    isRoot,
-    isEntry,
-    getDataItemList,
-    getDataItem, 
-    getDataItemWithAttribute,
-    getDimension,
-    getGroupList,
-    getGroup,
-    getGroupWithAttribute,
+    parent = 0,
+    open,
     display,
     help,
-    list,
     exit,
-    back,
-    open
+    back
   };
 
   struct CommandGroup
@@ -71,8 +52,10 @@ public:
   
   static CommandGroup getCommandGroup(const std::string& entry);
   static void execute(const IGroupPtr& group, CommandGroup command, IDataItemPtr& out_item, IGroupPtr& out_group);
+  static std::string getCommand(const IGroupPtr& cnt);
+  static std::string listChild( const IGroupPtr& group );
   
-  static std::vector<std::string>     s_commandNames;
+  static std::vector<std::string>           s_commandNames;
   static std::vector<TestGroup::CommandGrp> s_commandGroup;
   
 };
