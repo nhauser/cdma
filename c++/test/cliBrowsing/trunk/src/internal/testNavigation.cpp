@@ -42,33 +42,25 @@ TestNavigation::TestNavigation( const IDatasetPtr& dataset )
 //---------------------------------------------------------------------------
 // TestNavigation::run_test
 //---------------------------------------------------------------------------
-void TestNavigation::run_physical()
+bool TestNavigation::run_physical()
 {
   cout<<"Performing physical navigation tests:..."<<endl;
-  bool bContinue = true;
   
-  while( bContinue )
-  {
-    bContinue = test_group( m_dataset->getRootGroup() );
-  }
+  return test_group( m_dataset->getRootGroup() );
 }
 
 //---------------------------------------------------------------------------
 // TestNavigation::run_logical
 //---------------------------------------------------------------------------
-void TestNavigation::run_logical()
+bool TestNavigation::run_logical()
 {
   cout<<"Performing logical navigation tests:..."<<endl;
 
   // Accessing its logical root
   LogicalGroupPtr log_root = m_dataset->getLogicalRoot();
   LogicalGroupPtr group = log_root;
-  bool bContinue = true;
 
-  while( bContinue )
-  {
-    bContinue = test_logical_group( m_dataset->getLogicalRoot() );
-  }
+  return test_logical_group( m_dataset->getLogicalRoot() );
 }
 
 //---------------------------------------------------------------------------
@@ -172,14 +164,13 @@ bool TestNavigation::test_logical_group(const LogicalGroupPtr& group)
   
   while( doContinue && cmd.command != TestLogicalGroup::back)
   {
-    IDataItemPtr itm (NULL);
-    LogicalGroupPtr grp (NULL);
-    
-    //TestLogicalGroup::listChild( group );
     cmd = TestLogicalGroup::getCommandLogicalGroup( TestLogicalGroup::getCommand(group) );    
-    
+
     try
     {
+      IDataItemPtr itm (NULL);
+      LogicalGroupPtr grp (NULL);
+    
       TestLogicalGroup::execute(group, cmd, itm, grp);
       
       if( grp )

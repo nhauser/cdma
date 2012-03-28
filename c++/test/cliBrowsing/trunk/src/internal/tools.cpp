@@ -43,18 +43,15 @@ namespace cdma
     std::list<IAttributePtr> list_attr = item->getAttributeList();
     if( list_attr.size() > 0 )
     {
-      res<<indent<<"   - getAttributeList: ";
-      int i = 0;
-      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); iter++)
+      res<<indent<<"   - getAttributeList: "<<endl;
+      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); )
       {
-        if( iter != list_attr.begin() )
+        res << Tools::displayAttribute( (*iter), indent + "      * " );
+        iter++;
+        if( iter != list_attr.end() )
           res<<", ";
-        if( i > 0 && i % 10 == 0 )
-          res<<std::endl<<indent<<"                       ";
-        res<<(*iter)->getName();
-        i++;
+        res<<endl;
       }
-      res<<std::endl;
     }
     std::list<IDimensionPtr> list_dim = item->getDimensionList();
     if( list_dim.size() > 0 )
@@ -137,11 +134,11 @@ namespace cdma
     
     if( attr->isString() )
     {
-      res<<"'  value: '"<<attr->getStringValue()<<"'";
+      res<<"' value: '"<<attr->getStringValue()<<"'";
     }
     else 
     {
-      res<<"'  value: '"<<attr->getFloatValue()<<"'";
+      res<<"' value: '"<<attr->getFloatValue()<<"'";
     }
     
     return res.str();
@@ -193,18 +190,15 @@ namespace cdma
     std::list<IAttributePtr> list_attr = group->getAttributeList();
     if( list_attr.size() > 0 )
     {
-      res<<indent<<" - getAttributeList: ";
-      int i = 0;
-      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); iter++)
+      res<<indent<<"   - getAttributeList: "<<endl;
+      for( std::list<IAttributePtr>::iterator iter = list_attr.begin(); iter != list_attr.end(); )
       {
-        if( iter != list_attr.begin() )
+        res << Tools::displayAttribute( (*iter), indent + "      * " );
+        iter++;
+        if( iter != list_attr.end() )
           res<<", ";
-        if( i > 0 && i % 10 == 0 )
-          res<<std::endl<<indent<<"                     ";
-        res<<(*iter)->getName();
-        i++;
+        res<<endl;
       }
-      res<<std::endl;
     }
     std::list<IDimensionPtr> list_dim = group->getDimensionList();
     if( list_dim.size() > 0 )

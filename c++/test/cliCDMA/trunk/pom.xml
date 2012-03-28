@@ -11,12 +11,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 </parent>
 
 <groupId>org.cdma</groupId>
-<artifactId>CDMATestInterface-${aol}-${library}-${mode}</artifactId>
-<name>Command Line Interface CDMA Driver</name>
+<artifactId>CDMACliBrowsing-${aol}-${library}-${mode}</artifactId>
+<name>Command Line Interface Browser</name>
 <version>0.1.0-SNAPSHOT</version>
 <packaging>nar</packaging>
 
-<description>Command line interface CDMA driving tool</description>
+<description>Command line interface browsing tool</description>
 
 <developers>
   <developer>
@@ -34,9 +34,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 </developers>
 
 <scm>
-  <connection>scm:svn:http://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</connection>
-  <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</developerConnection>
-  <url>http://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</url>
+  <connection>scm:svn:http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</connection>
+  <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</developerConnection>
+  <url>http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</url>
 </scm>
 
 <build>
@@ -107,7 +107,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   </dependency>
   <dependency>
     <groupId>fr.soleil.lib</groupId>
-    <artifactId>NexusCPP-${aol}-static-${mode}</artifactId>
+    <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+    <version>1.13.4-SNAPSHOT</version>
   </dependency>
   <dependency>
     <groupId>fr.soleil.lib</groupId>

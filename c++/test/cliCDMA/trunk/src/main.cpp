@@ -7,15 +7,14 @@
 #include <yat/utils/URI.h>
 
 // Core
+#include <exception>
 #include <cdma/IDataSource.h>
 #include <cdma/Factory.h>
 #include <cdma/IFactory.h>
 #include <cdma/navigation/IDataset.h>
 // Test
-#include <tools.h>
-#include <testArrayUtils.h>
-#include <testNavigation.h>
-#include <exception>
+#include <internal/tools.h>
+#include <internal/testNavigation.h>
 
 
 using namespace std;
@@ -60,14 +59,18 @@ bool init(int argc, char* argv[] )
 
 bool isLogicalMode()
 {
-  string entry;
+  yat::String entry;
   cout<<"=============================="<<endl;
   cout<<"Available navigation modes:"<<endl;
   cout<<" - 1: logical"<<endl;
   cout<<" - 2: physical"<<endl;
   cout<<"=============================="<<endl;
   cout<<"Please select a mode: ";
-  getline(cin, entry, '\n');
+  while( entry == "" )
+  {
+    getline(cin, entry, '\n');
+    entry.trim();
+  }
   cout<<"=============================="<<endl;
 
   if( entry != "1" && entry != "2" && entry != "logical" && entry != "physical" )

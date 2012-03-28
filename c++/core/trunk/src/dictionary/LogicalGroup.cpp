@@ -39,7 +39,10 @@ LogicalGroup::LogicalGroup( IDataset* dataset_ptr, LogicalGroup* parent_ptr,
                             const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr )
 {
   m_dataset_ptr = dataset_ptr;
-  m_parent_ptr = parent_ptr;
+  if( parent_ptr != NULL )
+  {
+    m_parent_path = parent_ptr->getLocation();
+  }
   m_key_ptr = key_ptr;
   m_dictionary_ptr = dictionary_ptr;
 }
@@ -114,9 +117,33 @@ IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getDataItem
 //-----------------------------------------------------------------------------
-IDataItemPtr LogicalGroup::getDataItem(const std::string& keyword)
+IDataItemPtr LogicalGroup::getDataItem(const std::string& keypath)
 {
-  return getDataItem( KeyPtr( new Key( keyword, Key::ITEM ) ) );
+  if( m_dataset_ptr != NULL )
+  {
+    yat::String path = keypath;
+    
+    std::vector<yat::String> keys;
+    path.replace( "::", "/" );
+    path.split( '/', &keys );
+    
+    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+    
+    for( unsigned int i = 0; i < keys.size() - 1 && ! tmp.is_null(); i++ )
+    {
+       tmp = tmp->getGroup( KeyPtr( new Key( keys[i], Key::GROUP ) ) );
+    }
+    
+    if( tmp )
+    {
+      return tmp->getDataItem( KeyPtr( new Key( keys[ keys.size() - 1 ], Key::ITEM ) ) );
+    }
+    else
+    {
+      return NULL;
+    }
+  }
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -191,9 +218,27 @@ LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key_ptr)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getGroup
 //-----------------------------------------------------------------------------
-LogicalGroupPtr LogicalGroup::getGroup(const std::string&)
+LogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
 {
-  THROW_NOT_IMPLEMENTED("LogicalGroup::getGroup");
+  // TODO if path starts with ':' then consider it as absolute path else as a relative path
+  if( m_dataset_ptr != NULL )
+  {
+    yat::String path = keypath;
+    
+    std::vector<yat::String> keys;
+    path.replace( "/", ":" );
+    path.split( ':', &keys );
+    
+    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+
+    for( unsigned int i = 0; i < keys.size() && ! tmp.is_null(); i++ )
+    {
+       tmp = tmp->getGroup( KeyPtr( new Key( keys[i], Key::GROUP ) ) );
+    }
+    
+    return tmp;
+  }
+  return NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -236,9 +281,9 @@ KeyPtr LogicalGroup::bindKey(const std::string&, const KeyPtr&)
 //-----------------------------------------------------------------------------
 // LogicalGroup::setParent
 //-----------------------------------------------------------------------------
-void LogicalGroup::setParent(LogicalGroup* group_ptr)
+void LogicalGroup::setParent(LogicalGroup*)
 {
-  m_parent_ptr = group_ptr;
+  THROW_NOT_IMPLEMENTED("LogicalGroup::setParent");
 }
 
 //-----------------------------------------------------------------------------
@@ -246,7 +291,13 @@ void LogicalGroup::setParent(LogicalGroup* group_ptr)
 //-----------------------------------------------------------------------------
 LogicalGroupPtr LogicalGroup::getParent() const
 {
-  return m_parent_ptr;
+  LogicalGroupPtr res (NULL);
+  if( m_dataset_ptr != NULL )
+  {
+    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+    res = tmp->getGroup( m_parent_path );
+  }
+  return res;
 }
 
 //-----------------------------------------------------------------------------
@@ -254,13 +305,14 @@ LogicalGroupPtr LogicalGroup::getParent() const
 //-----------------------------------------------------------------------------
 std::string LogicalGroup::getLocation() const
 {
-  yat::String path = getName();
-  LogicalGroupPtr parent = getParent();
-  while( ! parent.is_null() )
+  yat::String path = m_parent_path;
+  
+  if( path != "" )
   {
-    path = parent->getName() + (parent->getName() == "" ? "" : "/" ) + path;
-    parent = parent->getParent();
+    path += ":";
   }
+  path += getName();
+
   return path;
 }
 
