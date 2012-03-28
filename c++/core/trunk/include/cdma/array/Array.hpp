@@ -15,6 +15,8 @@
 //
 // *****************************************************************************
 
+/// @cond excluded_from_doxygen_generation
+
 #ifndef __CDMA_ARRAY_HPP__
 #define __CDMA_ARRAY_HPP__
 #include <cdma/array/ArrayIterator.h>
@@ -158,3 +160,5 @@ template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> po
 }
 
 #endif // __CDMA_ARRAY_HPP__
+
+/// @endcond
