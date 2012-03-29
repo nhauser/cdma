@@ -57,29 +57,37 @@ bool init(int argc, char* argv[] )
     }
 }
 
-bool isLogicalMode()
+// Return int value: 
+//     - result > 0 implies logical mode
+//     - result = 0 implies physical mode
+//     - result < 0 implies exit
+int isLogicalMode()
 {
-  yat::String entry;
+  string entry = "";
   cout<<"=============================="<<endl;
   cout<<"Available navigation modes:"<<endl;
   cout<<" - 1: logical"<<endl;
   cout<<" - 2: physical"<<endl;
+  cout<<" - 3: quit"<<endl;
   cout<<"=============================="<<endl;
   cout<<"Please select a mode: ";
-  while( entry == "" )
+  while( entry == "" ) 
   {
     getline(cin, entry, '\n');
-    entry.trim();
   }
   cout<<"=============================="<<endl;
-
-  if( entry != "1" && entry != "2" && entry != "logical" && entry != "physical" )
+  
+  if( entry == "quit" || entry == "exit" || entry == "q" || entry == "e" || entry == "3" )
+  {
+    return -1;
+  }
+  else if( entry != "1" && entry != "2" && entry != "logical" && entry != "physical" )
   {
     return isLogicalMode();
   }
   else
   {
-    return ( entry == "1" || entry == "physical" );
+    return ( entry == "1" || entry == "logical" ) ? 1 : 0;
   }
 }
 
@@ -121,14 +129,24 @@ int main(int argc,char *argv[])
     if( dts->isProducer( uri ) )
     {
       cout<<">>> Dictionary enabled"<<endl;
+      bool doContinue = true;
       
-      if( isLogicalMode() )
+      // While not exit is required
+      while( doContinue )
       {
-        navigation.run_logical();
-      }
-      else
-      {
-        navigation.run_physical();
+        int action = isLogicalMode();
+        if( action > 0 )
+        {
+          doContinue = navigation.run_logical();
+        }
+        else if( action == 0 )
+        {
+          doContinue = navigation.run_physical();
+        }
+        else 
+        {
+          doContinue = false;
+        }
       }
     }
     else

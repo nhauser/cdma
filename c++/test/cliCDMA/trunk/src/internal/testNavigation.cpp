@@ -39,26 +39,21 @@ TestNavigation::TestNavigation( const IDatasetPtr& dataset )
 {
   m_dataset = dataset;
   m_current = dataset->getRootGroup();
-  m_depth = 0;
 }
 
 //---------------------------------------------------------------------------
 // TestNavigation::run_test
 //---------------------------------------------------------------------------
-void TestNavigation::run_physical()
+bool TestNavigation::run_physical()
 {
   cout<<"Performing physical navigation tests:..."<<endl;
-  test_group(m_dataset->getRootGroup());
-
-
-  cout<<"Result test: "<<m_testOk<<" / " <<m_total<<endl;
-  cout<<m_log<<endl;
+  return test_group(m_dataset->getRootGroup());
 }
 
 //---------------------------------------------------------------------------
 // TestNavigation::run_logical
 //---------------------------------------------------------------------------
-void TestNavigation::run_logical()
+bool TestNavigation::run_logical()
 {
   cout<<"Performing logical navigation tests:..."<<endl;
 
@@ -66,7 +61,7 @@ void TestNavigation::run_logical()
   LogicalGroupPtr log_root = m_dataset->getLogicalRoot();
   LogicalGroupPtr group = log_root;
 
-  test_logical_group( m_dataset->getLogicalRoot() );
+  return test_logical_group( m_dataset->getLogicalRoot() );
 }
 
 //---------------------------------------------------------------------------
