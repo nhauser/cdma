@@ -15,11 +15,11 @@
 //*****************************************************************************
 
 #include <yat/utils/String.h>
-#include <testArrayUtils.h>
+#include <internal/testArrayUtils.h>
 #include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/Array.h>
 
-#include <tools.h>
+#include <internal/tools.h>
 using namespace std;
 namespace cdma
 {

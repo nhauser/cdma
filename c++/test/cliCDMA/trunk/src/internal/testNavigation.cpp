@@ -15,14 +15,14 @@
 //*****************************************************************************
 
 
-#include <testNavigation.h>
+#include <internal/testNavigation.h>
 #include <string>
 #include <iostream>
 
 #include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/Array.h>
 
-#include <tools.h>
+#include <internal/tools.h>
 
 namespace cdma
 {
