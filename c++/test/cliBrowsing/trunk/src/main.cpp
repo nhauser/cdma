@@ -63,7 +63,7 @@ bool init(int argc, char* argv[] )
 //     - result < 0 implies exit
 int isLogicalMode()
 {
-  string entry;
+  string entry = "";
   cout<<"=============================="<<endl;
   cout<<"Available navigation modes:"<<endl;
   cout<<" - 1: logical"<<endl;
@@ -71,7 +71,10 @@ int isLogicalMode()
   cout<<" - 3: quit"<<endl;
   cout<<"=============================="<<endl;
   cout<<"Please select a mode: ";
-  getline(cin, entry, '\n');
+  while( entry == "" ) 
+  {
+    getline(cin, entry, '\n');
+  }
   cout<<"=============================="<<endl;
   
   if( entry == "quit" || entry == "exit" || entry == "q" || entry == "e" || entry == "3" )

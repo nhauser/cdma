@@ -36,10 +36,17 @@ class TestLogicalGroup
 public:
   enum CommandLogicalGrp
   {
-    parent = 0,
+    getParent = 0,
+    getName,
+    getShortName,
+    getLocation,
+    getDataItem,
+    getDataItemList,
+    getGroup,
     display,
     help,
     open,
+    list,
     exit,
     back
   };
@@ -52,7 +59,6 @@ public:
     std::vector<yat::String> args;
   };
   
-  static std::string getCommand(const LogicalGroupPtr& group);
   static CommandLogicalGroup getCommandLogicalGroup(const std::string& entry);
   static void execute(const LogicalGroupPtr& group, CommandLogicalGroup command, IDataItemPtr& out_item, LogicalGroupPtr& out_group);
   

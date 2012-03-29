@@ -39,8 +39,8 @@ class TestNavigation
 public:
   TestNavigation( const IDatasetPtr& array );
   
-  void run_physical();
-  void run_logical();
+  bool run_physical();
+  bool run_logical();
 
 protected:
   void display_all(std::string indent = "");
@@ -54,11 +54,6 @@ private:
   std::string getCommand(const LogicalGroupPtr& group);
   IGroupPtr m_current;
   IDatasetPtr m_dataset;
-  std::string m_log;
-  int m_total;
-  int m_testOk;
-  int m_depth;
-
 };
 
 }
