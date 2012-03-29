@@ -2,5 +2,13 @@
 
 = API Reference guide =
 
-This doc is generated with DOxygen from the CDMA source code.
+This doc is generated with DOxygen from the CDMA source code. It is split in 3 parts:
 
+For client application developers:
+[http://cdma.googlecode.com/svn/c++/core/trunk/doc/clientAPI/html/index.html Client reference API]
+
+For data format engines developers:
+[http://cdma.googlecode.com/svn/c++/core/trunk/doc/engineAPI/html/index.html Engine reference API]
+
+For plug-ins developpers:
+[http://cdma.googlecode.com/svn/c++/core/trunk/doc/pluginAPI/html/index.html Plug-ins reference API]
