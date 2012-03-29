@@ -11,12 +11,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 </parent>
 
 <groupId>org.cdma</groupId>
-<artifactId>CDMACliBrowsing-${aol}-${library}-${mode}</artifactId>
-<name>Command Line Interface Browser</name>
+<artifactId>CDMA-Test-cli-${aol}-${library}-${mode}</artifactId>
+<name>CDMATest</name>
 <version>0.1.0-SNAPSHOT</version>
 <packaging>nar</packaging>
 
-<description>Command line interface browsing tool</description>
+<description>Command line interface testing tool</description>
 
 <developers>
   <developer>

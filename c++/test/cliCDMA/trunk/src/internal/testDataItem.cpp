@@ -16,10 +16,10 @@
 
 
 #include <internal/testDataItem.h>
-#include <testArrayUtils.h>
+#include <internal/testArrayUtils.h>
 #include <string>
 
-#include <tools.h>
+#include <internal/tools.h>
 
 namespace cdma
 {

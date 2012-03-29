@@ -8,7 +8,7 @@
 #include <cdma/dictionary/Key.h>
 #include <cdma/dictionary/LogicalGroup.h>
 #include <cdma/Common.h>
-#include <tools.h>
+#include <internal/tools.h>
 
 using namespace std;
 using namespace cdma;
