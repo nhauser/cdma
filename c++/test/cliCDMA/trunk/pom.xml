@@ -34,9 +34,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 </developers>
 
 <scm>
-  <connection>scm:svn:http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</connection>
-  <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</developerConnection>
-  <url>http://cdma.googlecode.com/svn/c++/test/cliBrowsing/trunk</url>
+  <connection>scm:svn:http://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</connection>
+  <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</developerConnection>
+  <url>http://cdma.googlecode.com/svn/c++/test/cliCDMA/trunk</url>
 </scm>
 
 <build>
