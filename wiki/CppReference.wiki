@@ -1,8 +1,8 @@
-#summary One-sentence summary of this page.
+#summary C++ API reference guide.
 
 = API Reference guide =
 
-This doc is generated with DOxygen from the CDMA source code. It is split in 3 parts:
+The API reference is generated with DOxygen from the CDMA source code. It is split in 3 parts:
 
 For client application developers:
 [http://cdma.googlecode.com/svn/c++/core/trunk/doc/clientAPI/html/index.html Client reference API]
