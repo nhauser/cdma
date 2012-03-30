@@ -58,7 +58,7 @@ void TestMethod::execute(Context& ctx) throw (cdma::Exception)
 
   IDataItemPtr new_data_item_ptr = new SimpleDataItem(ctx.getDataset(),
                                                         new cdma::Array(value * 2),
-                                                        "2yBin");
+                                                        ctx.getKey()->getName());
 
   ctx.clearDataItems();
   ctx.pushDataItem(new_data_item_ptr);
