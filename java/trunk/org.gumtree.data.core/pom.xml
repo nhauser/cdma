@@ -11,7 +11,7 @@
 		<dependency>
 			<groupId>${gumtree.groupId}</groupId>
 			<artifactId>org.eclipse.osgi</artifactId>
-			<version>3.7.1.R37x_v20110808-1106</version>
+			<version>3.7.2.v20120110-1415</version>
 		</dependency>
 		<dependency>
 			<groupId>jdom</groupId>
