@@ -12,11 +12,11 @@
 	<groupId>org.gumtree.data.CDMA</groupId>
 	<artifactId>Core</artifactId>
 	<name>CDMA Core</name>
-	<version>2.2.0</version>
+	<version>3.0.0</version>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/Core-2.2.0</connection>
-		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/Core-2.2.0</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/Core-3.0.0</connection>
+		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/Core-3.0.0</developerConnection>
 	</scm>
 
 	<build>
