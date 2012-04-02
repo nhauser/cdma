@@ -10,13 +10,13 @@
 
     <groupId>org.gumtree.data.CDMA</groupId>
     <artifactId>jnexus</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>CDMA Engine Nexus</name>
     <description>CDMA Engine: NeXus based on Soleil's API</description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/jnexus-0.0.1</connection>
-		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/jnexus-0.0.1</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/jnexus-0.0.2</connection>
+		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/jnexus-0.0.2</developerConnection>
 	</scm>
 
 

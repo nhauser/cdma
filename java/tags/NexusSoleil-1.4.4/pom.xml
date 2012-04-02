@@ -10,7 +10,7 @@
 
 	<groupId>org.gumtree.data.CDMA</groupId>
 	<artifactId>NexusSoleil</artifactId>
-	<version>1.4.1</version>
+	<version>1.4.4</version>
 	<name>CDMA NeXus Soleil Plugin</name>
 
   <description>
@@ -18,8 +18,8 @@
   </description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/NexusSoleil-1.4.1</connection>
-		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/NexusSoleil-1.4.1</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tags/NexusSoleil-1.4.4</connection>
+		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/tags/NexusSoleil-1.4.4</developerConnection>
 	</scm>
 
 	<dependencies>
@@ -35,7 +35,7 @@
 		<dependency>	
 	    	<groupId>org.gumtree.data.CDMA</groupId>
 		    <artifactId>jnexus</artifactId>
-		    <version>0.0.1</version>
+		    <version>0.0.2</version>
    		</dependency>
 	</dependencies>
 	<build>
