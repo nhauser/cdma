@@ -22,7 +22,6 @@ Export-Package: org.gumtree.data.soleil,
  org.gumtree.data.soleil.array,
  org.gumtree.data.soleil.dictionary,
  org.gumtree.data.soleil.external,
- org.gumtree.data.soleil.internal,
  org.gumtree.data.soleil.navigation,
  org.gumtree.data.soleil.utils
 Eclipse-BundleShape: jar

@@ -49,17 +49,6 @@ public interface ISliceIterator extends IModelObject {
 	IArray getArrayNext() throws InvalidRangeException;
 
 	/**
-	 * Get the current slice of Array.
-	 * 
-	 * @return GDM Array
-	 * @throws InvalidRangeException
-	 *             Created on 10/11/2008
-	 * @deprecated use instead IArray.getArrayNext
-	 */
-	//[SOLEIL][clement][11/29/2011] fitting the java.util.Iterator behavior: no current 
-	IArray getArrayCurrent() throws InvalidRangeException;
-
-	/**
 	 * Get the shape of any slice that is returned. This could be used when a
 	 * temporary array of the right shape needs to be created.
 	 * 
@@ -75,5 +64,5 @@ public interface ISliceIterator extends IModelObject {
 	 * @return <code>int</code> array of the current position of the slice
 	 * @note rank of the returned position is the same as the IArray shape we are slicing 
 	 */
-	public int[] getSlicePosition();
+	int[] getSlicePosition();
 }

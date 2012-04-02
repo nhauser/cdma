@@ -855,6 +855,25 @@ public class NexusFileBrowser extends NexusFileInstance {
 		 return m_hAttrTab;
 	 }
 
+	 public static String getStringValue(Byte[] reference) {
+		 byte[] toTransform = null;
+		 if (reference == null) {
+			 return "";
+		 }
+		 else {
+			 toTransform = new byte[reference.length];
+		 }
+		 for (int i = 0; i < reference.length; i++) {
+			 if (reference[i] == null) {
+				 toTransform[i] = (byte) 0;
+			 } else {
+				 toTransform[i] = reference[i].byteValue();
+			 }
+		 }
+		 
+		 return new String(toTransform);
+	 }
+
 	 // ---------------------------------------------------------
 	 // ---------------------------------------------------------
 	 // / Private methods
@@ -970,11 +989,6 @@ public class NexusFileBrowser extends NexusFileInstance {
 				 
 				 hmNodeList = new TreeMap<String, String>(new NameCollator());
 				 hmNodeList.putAll(getNexusFile().groupdir());
-				 /*
-				 if( m_pRealPath.getCurrentNode() != null ) {
-					 hmNodeList.put(PathNexus.PARENT_NODE, "");
-				 }
-				 */
 				 time = System.currentTimeMillis() - time;
 				 m_tNodeTab = hmNodeList;
 				 putNodeInPath((TreeMap<String, String>) m_tNodeTab.clone(), time.intValue());
@@ -1069,23 +1083,5 @@ public class NexusFileBrowser extends NexusFileInstance {
 		 }
 	 }
 
-	 public static String getStringValue(Byte[] reference) {
-		 byte[] toTransform = null;
-		 if (reference == null) {
-			 return "";
-		 }
-		 else {
-			 toTransform = new byte[reference.length];
-		 }
-		 for (int i = 0; i < reference.length; i++) {
-			 if (reference[i] == null) {
-				 toTransform[i] = (byte) 0;
-			 } else {
-				 toTransform[i] = reference[i].byteValue();
-			 }
-		 }
-		 
-		 return new String(toTransform);
-	 }
 
 }
