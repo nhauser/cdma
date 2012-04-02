@@ -53,11 +53,6 @@ public final class NexusSliceIterator implements ISliceIterator {
     }
     
     /// Public methods
-	@Override
-	public IArray getArrayCurrent() throws InvalidRangeException {
-		return createSlice();
-	}
-
     @Override
     public IArray getArrayNext() throws InvalidRangeException {
     	next();

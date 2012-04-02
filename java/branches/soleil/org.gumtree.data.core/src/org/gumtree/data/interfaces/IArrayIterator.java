@@ -22,9 +22,6 @@ package org.gumtree.data.interfaces;
  * @author nxi
  * 
  */
-//[SOLEIL][clement][11/24/2011] it appears important, to me, to fit with the behavior of standard java.util.Iterator .
-// To extend it isn't mandatory (it will even 'break your framework' because of parameterized types) but to respect
-// the convention will ease its use and will prevent to have different usage between to plugin
 
 public interface IArrayIterator extends IModelObject {
 
@@ -36,14 +33,6 @@ public interface IArrayIterator extends IModelObject {
 	boolean hasNext();
 
 	/**
-	 * Return true if there is an element in the current iteration.
-	 * 
-	 * @return true or false
-	 * @deprecated
-	 */
-	boolean hasCurrent();
-	
-	/**
 	 * Get next value as a double.
 	 * 
 	 * @return double value
@@ -51,31 +40,11 @@ public interface IArrayIterator extends IModelObject {
 	double getDoubleNext();
 
 	/**
-	 * Set next value with a double.
+	 * Set the value with a given double.
 	 * 
-	 * @param val
-	 *            double value
-	 * @deprecated prefer using IArrayIterator.setDouble()
+	 * @param val double value
 	 */
-	void setDoubleNext(double val);
 	void setDouble(double val);
-
-	/**
-	 * Get current value as a double.
-	 * 
-	 * @return double value
-	 * @deprecated
-	 */
-	double getDoubleCurrent();
-
-	/**
-	 * Set current value with a double.
-	 * 
-	 * @param val
-	 *            double value
-	 * @deprecated prefer using IArrayIterator.setDouble()
-	 */
-	void setDoubleCurrent(double val);
 
 	/**
 	 * Get next value as a float.
@@ -85,30 +54,10 @@ public interface IArrayIterator extends IModelObject {
 	float getFloatNext();
 
 	/**
-	 * Set next value with a float.
+	 * Set the value with a float.
 	 * 
-	 * @param val
-	 *            float value
-	 * @deprecated prefer using IArrayIterator.setFloat()
+	 * @param val float value
 	 */
-	void setFloatNext(float val);
-
-	/**
-	 * Get current value as a float.
-	 * 
-	 * @return float value
-	 * @deprecated
-	 */
-	float getFloatCurrent();
-
-	/**
-	 * Set current value with a float.
-	 * 
-	 * @param val
-	 *            float value
-	 * @deprecated prefer using IArrayIterator.setFloat()
-	 */
-	void setFloatCurrent(float val);
 	void setFloat(float val);
 
 	/**
@@ -119,65 +68,25 @@ public interface IArrayIterator extends IModelObject {
 	long getLongNext();
 
 	/**
-	 * Set next value with a long.
+	 * Set the value with a long.
 	 * 
-	 * @param val
-	 *            long value
-	 * @deprecated prefer using IArrayIterator.setLong()
+	 * @param val long value
 	 */
-	void setLongNext(long val);
-
-	/**
-	 * Get current value as a long.
-	 * 
-	 * @return long value
-	 * @deprecated
-	 */
-	long getLongCurrent();
-
-	/**
-	 * Set current value with a long.
-	 * 
-	 * @param val
-	 *            long value
-	 * @deprecated prefer using IArrayIterator.setLong()
-	 */
-	void setLongCurrent(long val);
 	void setLong(long val);
 
 	/**
-	 * Get next value as a int.
+	 * Get next value as a integer.
 	 * 
 	 * @return integer value
 	 */
 	int getIntNext();
 
 	/**
-	 * Set next value with a int.
+	 * Set the value with a integer.
 	 * 
-	 * @param val
-	 *            integer value
-	 * @deprecated prefer using IArrayIterator.setInt()
+	 * @param val integer value
 	 */
-	void setIntNext(int val);
 	void setInt(int val);
-
-	/**
-	 * Get current value as a int.
-	 * 
-	 * @return integer value
-	 * @deprecated prefer using IArrayIterator.getIntNext()
-	 */
-	int getIntCurrent();
-
-	/**
-	 * Set current value with a int.
-	 * 
-	 * @param val
-	 *            integer value
-	 * @deprecated prefer using IArrayIterator.setInt()
-	 */
-	void setIntCurrent(int val);
 
 	/**
 	 * Get next value as a short.
@@ -187,31 +96,10 @@ public interface IArrayIterator extends IModelObject {
 	short getShortNext();
 
 	/**
-	 * Set next value with a short.
+	 * Set the value with a short.
 	 * 
-	 * @param val
-	 *            short value
-	 * @deprecated prefer using IArrayIterator.setShort()
+	 * @param val short value
 	 */
-	void setShortNext(short val);
-
-	/**
-	 * Get current value as a short.
-	 * 
-	 * @return short value
-	 * @deprecated prefer using IArrayIterator.getShort()
-	 */
-	short getShortCurrent();
-	short getShort();
-
-	/**
-	 * Set current value with a short.
-	 * 
-	 * @param val
-	 *            short value
-	 * @deprecated prefer using IArrayIterator.setShort()
-	 */
-	void setShortCurrent(short val);
 	void setShort(short val);
 
 	/**
@@ -222,31 +110,11 @@ public interface IArrayIterator extends IModelObject {
 	byte getByteNext();
 
 	/**
-	 * Set next value with a byte.
+	 * Set the value with a byte.
 	 * 
-	 * @param val
-	 *            byte value
-	 * @deprecated prefer using IArrayIterator.setByte()
+	 * @param val byte value
 	 */
-	void setByteNext(byte val);
 	void setByte(byte val);
-
-	/**
-	 * Get current value as a byte.
-	 * 
-	 * @return byte value
-	 * @deprecated prefer using IArrayIterator.getByteNext()
-	 */
-	byte getByteCurrent();
-
-	/**
-	 * Set current value with a byte.
-	 * 
-	 * @param val
-	 *            byte value
-	 * @deprecated prefer using IArrayIterator.setByte()
-	 */
-	void setByteCurrent(byte val);
 
 	/**
 	 * Get next value as a char.
@@ -256,31 +124,11 @@ public interface IArrayIterator extends IModelObject {
 	char getCharNext();
 
 	/**
-	 * Set next value with a char.
+	 * Set the value with a char.
 	 * 
-	 * @param val
-	 *            char value
-	 * @deprecated prefer using IArrayIterator.setChar()
+	 * @param val char value
 	 */
-	void setCharNext(char val);
 	void setChar(char val);
-
-	/**
-	 * Get current value as a char.
-	 * 
-	 * @return char value
-	 * @deprecated prefer using IArrayIterator.getCharNext()
-	 */
-	char getCharCurrent();
-
-	/**
-	 * Set current value with a char.
-	 * 
-	 * @param val
-	 *            char value
-	 * @deprecated prefer using IArrayIterator.setChar()
-	 */
-	void setCharCurrent(char val);
 
 	/**
 	 * Get next value as a boolean.
@@ -290,31 +138,11 @@ public interface IArrayIterator extends IModelObject {
 	boolean getBooleanNext();
 
 	/**
-	 * Set next value with a boolean.
+	 * Set the value with a boolean.
 	 * 
-	 * @param val
-	 *            true or false
-	 * @deprecated prefer using IArrayIterator.setBoolean()
+	 * @param val true or false
 	 */
-	void setBooleanNext(boolean val);
 	void setBoolean(boolean val);
-
-	/**
-	 * Get current value as a boolean.
-	 * 
-	 * @return true or false
-	 * @deprecated prefer using IArrayIterator.getBooleanNext()
-	 */
-	boolean getBooleanCurrent();
-
-	/**
-	 * Set current value with a boolean.
-	 * 
-	 * @param val
-	 *            boolean true or false
-	 * @deprecated prefer using IArrayIterator.setBoolean()
-	 */
-	void setBooleanCurrent(boolean val);
 
 	/**
 	 * Get next value as an Object.
@@ -324,31 +152,11 @@ public interface IArrayIterator extends IModelObject {
 	Object getObjectNext();
 
 	/**
-	 * Set next value with a Object.
+	 * Set the value with a Object.
 	 * 
-	 * @param val
-	 *            any Object
-	 * @deprecated prefer using IArrayIterator.setObject()
+	 * @param val any Object
 	 */
-	void setObjectNext(Object val);
 	void setObject(Object val);
-
-	/**
-	 * Get current value as a Object.
-	 * 
-	 * @return Object
-	 * @deprecated prefer using IArrayIterator.getObjectNext()
-	 */
-	Object getObjectCurrent();
-
-	/**
-	 * Set current value with a Object.
-	 * 
-	 * @param val
-	 *            any Object
-	 * @deprecated prefer using IArrayIterator.setObject()
-	 */
-	void setObjectCurrent(Object val);
 
 	/**
 	 * Get next value as an Object.
@@ -361,8 +169,6 @@ public interface IArrayIterator extends IModelObject {
 	 * Get the current counter, use for debugging.
 	 * 
 	 * @return array of integer
-	 * @deprecated prefer using IArrayIterator.getCounter()
 	 */
-	int[] getCurrentCounter();
 	int[] getCounter();
 }

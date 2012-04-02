@@ -26,15 +26,17 @@
 		<dependency>
 			<groupId>org.gumtree.data.CDMA</groupId>
 			<artifactId>Core</artifactId>
+			<version>3.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gumtree.data.CDMA</groupId>
 			<artifactId>CDMAUtilities</artifactId>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.gumtree.data.CDMA</groupId>
 			<artifactId>nexus</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>jdom</groupId>

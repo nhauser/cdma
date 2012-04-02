@@ -57,12 +57,15 @@ public class NxsLogicalGroup extends LogicalGroup {
 	 * @throws FileAccessException 
 	 */
 	protected String detectDictionaryFile() throws FileAccessException {
-		//TODO
-		//ConfigManager config = ConfigManager.getInstance();
+		// Get the belonging Dataset and its configuration
 		NxsDataset dataset = (NxsDataset) getDataset();
 		ConfigDataset conf = dataset.getConfiguration();
+		
+		// Ask for beamline and datamodel parameters
 		String beamline = conf.getParameter("BEAMLINE", dataset);
 		String model = conf.getParameter("MODEL", dataset);
+		
+		// Construct the dictionary file name
 		if( beamline != null ) {
 			beamline = beamline.toLowerCase();
 		}
@@ -76,12 +79,5 @@ public class NxsLogicalGroup extends LogicalGroup {
 			model = "UNKNOWN";
 		}
 		return beamline + "_" + model + ".xml";
-		
-		/*
-		String mapFile;
-		DictionaryDetector detector = new DictionaryDetector( (NxsDataset) super.getDataset() );
-		mapFile = detector.getDictionaryName();
-		return mapFile;
-		*/
 	}
 }
