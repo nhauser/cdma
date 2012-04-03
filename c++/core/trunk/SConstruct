@@ -1,18 +1,97 @@
 from os import path
-vars = Variables()
+import platform
+import os
+
+###================================================================================
+# The names under which a library can be used depend heavily on the operating 
+# system. Unix provides the most detailed naming scheme depending on three 
+# parameters:
+#  libname ............. the name of the library
+#  version ............. the API version of the library
+#  soversion ........... the ABI version of the library
+#
+# On Linux a shared object is available under three names following the
+# following naming convention
+# lib<libname>.so.<soversion>.<version>
+# lib<libname>.so.<soversion>
+# lib<libname>.so
+#
+# The functions defined in this section create the appropriate names for the 
+# library target and add them to the build environment.
+#
+
+def create_full_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]+"."+env["VERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+"."+env["VERSION"]+env["SHLIBSUFFIX"]
+    env.Append(LIBFULLNAME = rstr) 
+
+def create_so_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+env["SHLIBSUFFIX"]
+
+    env.Append(LIBSONAME = rstr)
+
+def create_link_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]+env["SHLIBSUFFIX"]
+    env.Append(LIBLINKNAME = rstr)
+        
+    
+#==================================================================================
+
+
+#===================set build variables========================================
+vars = Variables("BuildConfig.py")
 vars.Add(PathVariable("YATINC","YAT include directory","/usr/include"))
 vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib"))
 vars.Add(PathVariable("XMLINC","libxml include directory","/usr/include/libxml2"))
+vars.Add("SOVERSION","ABI version of the core libraray","")
+vars.Add("VERSION","API version of the core libraray","")
+vars.Add("LIBNAME","Name of the core library","")
+vars.Add("DOCDIR","Installation directory of documentation","")
+vars.Add("LIBDIR","Installation directory of the libraray","")
+vars.Add("INCDIR","Installation directory of the header files","")
+vars.Add("PREFIX","Installation prefix","/usr")
 
 
-env = Environment(variables=vars)
+#=====================create the basic build environment=======================
+env = Environment(variables=vars,tools=["default","textfile"])
 env.Append(CPPPATH=[env["YATINC"],"include",env["XMLINC"]])
 env.Append(LIBPATH=[env["YATLIB"]])
-core_env = env.Clone()
 
+#===================create and export the core environment=====================
+core_env = env.Clone()
+#set library name environment variables
+create_full_libname(core_env)
+create_so_libname(core_env)
+create_link_libname(core_env)
+core_env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
 core_env.Append(CPPPATH=["#include/"])
+
+#manage installation paths
+if env["LIBDIR"]:
+    core_env.Append(LIBDIR=env["LIBDIR"])
+else:
+    core_env.Append(LIBDIR=os.path.join(env["PREFIX"],"lib"))
+
+if env["INCDIR"]:
+    core_env.Append(INCDIR=env["INCDIR"])
+else:
+    core_env.Append(INCDIR=os.path.join(env["PREFIX"],"include"))
+
+if env["DOCDIR"]:
+    core_env.Append(DOCDIR=env["DOCDIR"])
+else:
+    core_env.Append(DOCDIR=os.path.join(env["DOCDIR"],"share/doc/libcdmacore"))
 
 
 Export("core_env")
 
+#=======================call SConscript files==================================
 SConscript(["src/SConscript"])
+SConscript(["doc/SConscript"])
