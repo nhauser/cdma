@@ -1,3 +1,4 @@
+import os
 #build CDMA core component
 
 #import build environment
@@ -11,5 +12,43 @@ coresrc.extend(Glob("dictionary/*.cpp"))
 coresrc.extend(Glob("math/*.cpp"))
 coresrc.extend(Glob("utils/*.cpp"))
 
-libcore_sharelib = core_env.SharedLibrary(core_env["LIBNAME"],coresrc)
+#build the shared library
+libcore_shared = core_env.SharedLibrary(core_env["LIBNAME"]+"tmp",coresrc)
+
+if os.name == "posix":
+    #rename the library binary and change permissions
+    shared_library = core_env.Command("$LIBFULLNAME",libcore_shared,
+                     [  Move("$TARGET","$SOURCE"),
+                        Chmod("$TARGET",0644)])
+
+    #create a link with the link name of the library
+    shared_library_link = core_env.Command("$LIBLINKNAME",shared_library,
+                          "cd src; ln -sf ${SOURCE.file} ${TARGET.file}")
+
+    #create a link with the so name of the library
+    shared_library_so = core_env.Command("$LIBSONAME",shared_library,
+                        "cd src; ln -sf ${SOURCE.file} ${TARGET.file}")
+
+    #add everything to the all target
+    core_env.Alias("all",[shared_library,shared_library_link,shared_library_so])
+
+
+#==================install the library=========================================
+hdr_inst_path = os.path.join("$INCDIR","../include/cdma")
+
+shared_library_install = core_env.Install("$LIBDIR",[shared_library])
+shared_library_link_install = core_env.Command("${SOURCE.dir}/$LIBLINKNAME",
+                                                shared_library_install,
+             "cd ${TARGET.dir}; ln -sf ${SOURCE.file} ${TARGET.file}")
+shared_library_so_install = core_env.Command("${SOURCE.dir}/$LIBSONAME",shared_library_install,
+             "cd ${TARGET.dir}; ln -sf ${SOURCE.file} ${TARGET.file}")
+
+
+header_inst = core_env.Install("$INCDIR","../include/cdma")
+
+core_env.Alias("install",[shared_library_install,
+                           shared_library_link_install,
+                           shared_library_so_install,
+                           header_inst])
+
 

@@ -1,5 +1,4 @@
 from os import path
-import platform
 import os
 
 ###================================================================================
@@ -47,9 +46,13 @@ def create_link_libname(env):
 
 #===================set build variables========================================
 vars = Variables("BuildConfig.py")
-vars.Add(PathVariable("YATINC","YAT include directory","/usr/include"))
-vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib"))
-vars.Add(PathVariable("XMLINC","libxml include directory","/usr/include/libxml2"))
+vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("XMLINC","libxml include directory",
+         "/usr/include/libxml2",PathVariable.PathAccept))
+
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
 vars.Add("LIBNAME","Name of the core library","")
@@ -70,8 +73,12 @@ core_env = env.Clone()
 create_full_libname(core_env)
 create_so_libname(core_env)
 create_link_libname(core_env)
-core_env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
 core_env.Append(CPPPATH=["#include/"])
+
+if os.name == "posix":
+    #add special link flag to ensure that the soname of the library is 
+    #entioned in the ELF header
+    core_env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
 
 #manage installation paths
 if env["LIBDIR"]:
@@ -87,7 +94,7 @@ else:
 if env["DOCDIR"]:
     core_env.Append(DOCDIR=env["DOCDIR"])
 else:
-    core_env.Append(DOCDIR=os.path.join(env["DOCDIR"],"share/doc/libcdmacore"))
+    core_env.Append(DOCDIR=os.path.join(env["PREFIX"],"share/doc/libcdmacore"))
 
 
 Export("core_env")
