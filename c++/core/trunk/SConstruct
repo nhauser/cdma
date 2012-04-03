@@ -1,0 +1,18 @@
+from os import path
+vars = Variables()
+vars.Add(PathVariable("YATINC","YAT include directory","/usr/include"))
+vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib"))
+vars.Add(PathVariable("XMLINC","libxml include directory","/usr/include/libxml2"))
+
+
+env = Environment(variables=vars)
+env.Append(CPPPATH=[env["YATINC"],"include",env["XMLINC"]])
+env.Append(LIBPATH=[env["YATLIB"]])
+core_env = env.Clone()
+
+core_env.Append(CPPPATH=["#include/"])
+
+
+Export("core_env")
+
+SConscript(["src/SConscript"])

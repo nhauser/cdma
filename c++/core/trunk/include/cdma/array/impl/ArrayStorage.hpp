@@ -36,7 +36,8 @@ template<typename T> DefaultArrayStorage<T>::~DefaultArrayStorage()
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::DefaultArrayStorage
 //----------------------------------------------------------------------------
-template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, size_t length )
+template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data,
+        size_t length )
 {
   m_data = data;
   m_elem_size = sizeof(T);
