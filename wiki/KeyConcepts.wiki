@@ -10,7 +10,7 @@
 
 The CDMA is made of:
  * a client layer API for writing data reduction and analysis applications.
- * a developer API to build data access plug-in.
+ * a developer API to build data access engines and plug-ins.
 
 
 Using the client API, data reduction applications developer don't have to know anything about the file formats because it uses an abstract data access layer that hide data files specifications.
@@ -35,15 +35,49 @@ The point is: the way the data is organized into data files is no longer a issue
 The dictionary mechanism rely on two XML documents.
 
 == Data definitions ==
-The first document is a set a keywords matching scientific or technical data items. For instance a key named current should refer to the effective current in a storage ring at acquisition time. These keywords may be just listed by this document or organized through a tree hierarchy. In this last case, this document describe a particular a view on the data, like a NeXus application definition.
+The first document is a set a keywords matching scientific or technical data items. For instance a key named _source_current_ should refer to the effective current in a storage ring at acquisition time. These keywords may be just listed by this document or organized through a tree hierarchy. In this last case, this document describe a particular a view on the data, like a NeXus application definition.
 This document is intended to be independent of the way the data is physically organized.
 There are (at least) two ways of writing this document: 
  * it may be written for a specific data analysis software which is already existent and adapted to use the CDMA,
  * or it may be written independently of any software like the NeXus application definitions.
 
+a data definition may looks like this:
+
+{{{
+<data-def name="data_definition_name">
+  <item key = "user_name"/>
+  <item key = "facility_name"/>
+  <item key = "source_current"/>
+  <item key = "beamline_energy"/>
+  ...
+</data-def>
+}}}
+
+This is a list of keywords which should be the result of a consensus among the users community. keywords can also be grouped together, but
+However, a keywords synonyms mechanism allows data analysis application developers to can not wait until this kind of consensus exists.
+
 == Keywords mapping ==
-The second document is the dictionary itself. It's the mapping between keywords and real paths.
-It needs a strong knowledge of the physical data organisation to be written.
+The second document is the mapping between keywords and physical data organization.
+It needs a strong knowledge of the physical data organisation to be written. This is therefore the responsibility of the institute producing data to write this document.
+
+a mapping definition may looks like this:
+
+{{{
+<map-def name="data_definition_name">
+  <item key = "user_name">
+    <path>/path/to/the/user/name</path>
+  <item key = "facility_name"/>
+    <path>/path/to/the/user/name</path>
+  <item key = "source_current"/>
+    <path>/path/to/the/current</path>
+  <item key = "beamline_energy"/>
+    <path>/path/to/the/wavelength</path>
+    <call>WavelengthToEnergy</call>
+  ...
+</data-def>
+}}}
+
+In the example above, the _beamline_energy_ keyword refer to a _wavelength_ data item following by a _call_ tag. The CDMA provide a mechanism allowing on the fly data transformation if the stored data does not match keyword definition.
 
 == Responsibilities ==
 Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.
