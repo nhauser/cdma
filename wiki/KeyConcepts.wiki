@@ -66,13 +66,17 @@ a mapping definition may looks like this:
 <map-def name="data_definition_name">
   <item key = "user_name">
     <path>/path/to/the/user/name</path>
-  <item key = "facility_name"/>
+  </item>
+  <item key = "facility_name">
     <path>/path/to/the/user/name</path>
-  <item key = "source_current"/>
+  </item>
+  <item key = "source_current">
     <path>/path/to/the/current</path>
-  <item key = "beamline_energy"/>
+  </item>
+  <item key = "beamline_energy">
     <path>/path/to/the/wavelength</path>
     <call>WavelengthToEnergy</call>
+  </item>
   ...
 </data-def>
 }}}
