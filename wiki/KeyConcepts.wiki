@@ -2,8 +2,9 @@
 
 *Content*
  * [#Introduction Introduction]
- * [#The_dictionary_mechanism The dictionary mechanism]
+ * [#The_data_model The data model]
  * [#The_plug-in_mechanism The plug-in mechanism]
+ * [#The_dictionary_mechanism The dictionary mechanism]
 
 = Introduction =
 ----
@@ -11,7 +12,6 @@
 The CDMA is made of:
  * a client layer API for writing data reduction and analysis applications.
  * a developer API to build data access engines and plug-ins.
-
 
 Using the client API, data reduction applications developer don't have to know anything about the file formats because it uses an abstract data access layer that hide data files specifications.
 The data files specifications are embedded through a plug-in mechanism. Therefore it's the institutes responsibility to develop their own data access plug-in in order to give the possibility to open datasets acquired in their institutes through the CDMA.
@@ -26,6 +26,21 @@ Please not that the old-style navigation API is still available but we strongly 
 The schema below summarizes the principles of the CDMA:
 
 [http://cdma.googlecode.com/svn/wiki/images/cdma_schema1.png]
+
+= The data model =
+----
+
+Basically the CDMA consider a scientific data set as a hierarchical organization, containing groups and sub groups to data item which are leafs. Each level of of this tree organization can also contains metadata describing the data itself.
+
+Many data container will fit well such an organization, for example:
+ * HDF files are naturally hierarchical with groups and data items
+ * CIF files fit this model with data blocks and data items
+ * A control system like Tango fit this model too if we consider a tango data base as a a CDMA dataset, a device as a CDMA group and an device attribute as a CDMA data item.
+
+= The plug-in mechanism =
+----
+
+Using the CDMA library, data analysis developer don't have to care about data file format. The plug-in mechanism is able to dynamically load the plug-in (a dynamic library) able to get data from the data file the user is currently opening. Thus this mechanism allows an user to open files acquired in different institutes, in the same session.
 
 = The dictionary mechanism =
 ----
@@ -86,8 +101,3 @@ In the example above, the _beamline_energy_ keyword refer to a _wavelength_ data
 == Responsibilities ==
 Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.
 
-
-= The plug-in mechanism =
-----
-
-Using the CDMA library, data analysis developer don't have to care about data file format. The plug-in mechanism is able to dynamically load the plug-in (a dynamic library) able to get data from the data file the user is currently opening. Thus this mechanism allows an user to open files acquired in different institutes, in the same session.
