@@ -2,7 +2,7 @@
 
 = The {{{cdma::Factory}}} =
 
-A main class C++ client uses is {{{cdma::Factory}}}. This is a singleton object. Every C++ client must begin and ending with it:
+The main class a C++ client uses is {{{cdma::Factory}}}. This is a singleton object. Every C++ client must begin and ending with it:
 
 {{{
 int main(int argc,char *argv[])
