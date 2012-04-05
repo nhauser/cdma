@@ -32,6 +32,8 @@ The schema below summarizes the principles of the CDMA:
 
 Basically the CDMA consider a scientific data set as a hierarchical organization, containing groups and sub groups to data item which are leafs. Each level of of this tree organization can also contains metadata describing the data itself.
 
+[http://cdma.googlecode.com/svn/wiki/images/datamodel.png]
+
 Many data container will fit well such an organization, for example:
  * HDF files are naturally hierarchical with groups and data items
  * CIF files fit this model with data blocks and data items
@@ -40,7 +42,11 @@ Many data container will fit well such an organization, for example:
 = The plug-in mechanism =
 ----
 
-Using the CDMA library, data analysis developer don't have to care about data file format. The plug-in mechanism is able to dynamically load the plug-in (a dynamic library) able to get data from the data file the user is currently opening. Thus this mechanism allows an user to open files acquired in different institutes, in the same session.
+Using the CDMA library, data analysis developer don't have to care about data file format. Accessing data is done by a plug-in mechanism. Institutes producing data have to develop the plug-ins able to offering access to their data through the CDMA.
+
+Client applications developers don't have to care about existing plug-in while developing data analysis applications. The CDMA is able to automatically detect which plug-in to use accordingly to a data set.
+
+Also this mechanism allows an user to open files acquired in different institutes, in the same session.
 
 = The dictionary mechanism =
 ----
@@ -100,4 +106,3 @@ In the example above, the _beamline_energy_ keyword refer to a _wavelength_ data
 
 == Responsibilities ==
 Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.
-
