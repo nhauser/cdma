@@ -2,7 +2,7 @@
 
 = CDMA Documentation =
 
-  * [DictionariesSyntax Writing dictionaries documents]
+  * [DictionariesSyntax Dictionaries]
     * [DataDefSyntax Data definition documents]
     * [MapDefSynatx Mapping documents]
   * [CppImpl C++]
