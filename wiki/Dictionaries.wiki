@@ -1,0 +1,18 @@
+#summary CDMA dictionary.
+
+= Introduction =
+
+This section is intended to documents the CDMA keywords used through the dictionary mechanism.
+Each data item in a data set is identified by a unique keyword.
+The CDMA dictionary should apply for Photon and Neutron science.
+
+It contains, like the CIF dictionary, a core dictionary with generic keywords, and extensions that applies to specific experimental technics (SAX, EXAFS, Powder diffraction,...)
+
+At this early stage, this is a tentative list:
+
+ * [CoreDict Core dictionary]
+ * [SAXSDict Small-angle X-ray Scattering (SAXS) extension]
+ * [XASDict X-ray Absorption Spectroscopy (XAS) extension]
+ * [XRFDict X-Ray Fluorescence (XRF) extension]
+ * [PowderDiffrDict Powder diffraction extension]
+ * [TomoDict Tomography extension]
