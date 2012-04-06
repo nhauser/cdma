@@ -1,7 +1,27 @@
 #summary C++ client application development guide.
 
-= The {{{cdma::Factory}}} =
+= Requirements =
 
+The YAT library v1.7.7 or higher.
+
+== Linux ==
+
+You should compile using gcc v4.4.2 or higher
+
+== Windows ==
+
+You should compile using VC8 or higher
+
+If you are not using Maven to compile your project you need the following libraries:
+
+ * Iconv v1.9.2 or higher
+ * Xml2 v2.7.8 or higher
+
+Windows binaries are available from this web site: [http://www.zlatkovic.com/libxml.en.html]
+
+= Setting up The CDMA library =
+
+CDMA classes are accessible through the namespace `cdma`.
 The main class a C++ client uses is {{{cdma::Factory}}}. This is a singleton object. Every C++ client must begin and ending with it:
 
 {{{
@@ -11,12 +31,13 @@ int main(int argc,char *argv[])
   ...
   
   // The first action is the Factory initialization
-  Factory::init( "Plugins_path" );
+  cdma::Factory::init( "Plugins_path" );
 
   ...
 
   // Calling the cleanup method is necessary to ensure
   // the correct termination of the CDMA core library
-  Factory::cleanup();
+  cdma::Factory::cleanup();
 }
 }}}
+
