@@ -11,6 +11,9 @@
  * Tools
    * [DataBrowser Data Browser]
  * [Documentation]
+   * [DictionariesSyntax Dictionaries]
+     * [DataDefSyntax Data definition documents]
+     * [MapDefSynatx Mapping documents]
    * [CppImpl C++]
      * [CppClient Client application development]
      * [CppGuideLines Programmation guidelines]
