@@ -23,8 +23,6 @@
   * [DataFormatEngines Data format engines]
     * [JavaEngines Java]
     * [CppEngines C++]
-    * [PyEngines Python]
   * [PlugIns Plug-ins]
     * [JavaPlugIns Java]
     * [CppPlugIns C++]
-    * [PyPlugIns Python]
