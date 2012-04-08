@@ -1,0 +1,63 @@
+#summary One-sentence summary of this page.
+
+
+= Naming conventions =
+----
+
+== Type names ==
+
+Names representing types must be in mixed case starting with upper case.
+{{{
+LogicalGroup, BadArrayTypeException
+}}}
+
+== Variables names ==
+
+Variable names must be in mixed case starting with lower case. 
+{{{
+rank, startArray
+}}}
+
+== Constants ==
+
+Named constants (including enumeration values) must be all uppercase using underscore to separate words.
+{{{
+MAX_RANK, BUFFER_MIN_SIZE
+}}}
+
+== Methods and function names ==
+
+Names representing methods or functions must be verbs and written in mixed case starting with lower case.
+{{{
+setLocation(), getTitle()
+}}}
+
+== Template types ==
+
+Names representing template types should be a single uppercase letter. 
+{{{
+template<class T> ...
+template<class C, class D> ...
+}}}
+
+== Private class variables ==
+
+Private class variables should be prefixed by '`m_`'.
+{{{
+class MyClass
+{
+private:
+  int m_length;
+};
+}}}
+This remnant of the Hungarian notation helps to distinguish local from class variables. This is important because class variables are considered to have higher significance than method variables, and should be treated with special care by the programmer.
+
+== Class accessors ==
+
+Like in Java, the terms get/set must be used where an attribute is accessed directly. 
+{{{
+dataset.getLocation();
+dataitem.getArray();
+}}}
+
+...
