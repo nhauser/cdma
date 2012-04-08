@@ -1,0 +1,10 @@
+#summary C++ programmation style guidelines and practice.
+
+ * [#Introduction Introduction]
+ * [cppStyleGuidelines C++ Programming style guidelines]
+ * [cppPracticesguidelines C++ Programming practices guidelines]
+
+= Introduction =
+
+This section lists C++ coding recommendations for CDMA project. It is divided in to parts, the first related to programming style, the second to programming practices.
+The recommendations are based on established standards collected from a number of sources, individual experience, local requirements/needs.
