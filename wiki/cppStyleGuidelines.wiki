@@ -13,7 +13,7 @@ LogicalGroup, BadArrayTypeException
 
 == Variables names ==
 
-Variable names must be in lower case separated by underscore. 
+Variable names must be in lowercase using underscore to separate words. 
 {{{
 rank, start_array
 }}}
