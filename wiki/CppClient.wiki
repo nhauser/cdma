@@ -60,7 +60,7 @@ Getting access to a dataset is done through the CDMA factory. This sample show h
 // Return a std::pair object containing two references:
 // - to the dataset
 // - to the plug-in factory used
-DatasetFactoryPair datasetFactoryPair = Factory::openDataset("path/to/my/dataset");
+DatasetFactoryPair datasetFactoryPair = cdma::Factory::openDataset("path/to/my/dataset");
 
 IDatasetPtr dataset_ptr = datasetFactoryPair.first;
 }}}
