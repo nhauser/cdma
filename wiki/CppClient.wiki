@@ -25,6 +25,8 @@ CDMA classes are accessible through the namespace `cdma`.
 The main class a C++ client uses is {{{cdma::Factory}}}. This is a singleton object. Every C++ client must begin and ending with it:
 
 {{{
+#include <cdma/Factory.h>
+
 int main(int argc,char *argv[])
 {
   
@@ -41,3 +43,58 @@ int main(int argc,char *argv[])
 }
 }}}
 
+= Getting access to a dataset =
+
+A CDMA dataset is a handle for all the data of one experiment.
+Getting access to a dataset is done through the CDMA factory. This sample show how to proceed:
+
+{{{
+#include <cdma/Factory.h>
+#include <cdma/IFactory.h>
+#include <cdma/navigation/IDataset.h>
+
+int main(int argc,char *argv[])
+{
+  
+  ...
+
+  // Return a std::pair object containing two references:
+  // - to the dataset
+  // - to the plug-in factory used
+  DatasetFactoryPair datasetFactoryPair = Factory::openDataset("path/to/my/dataset");
+
+  IDatasetPtr dataset_ptr = datasetFactoryPair.first;
+
+  ...
+}
+}}}
+
+It's necessary to keep alive the plug-in factory reference ({{{datasetFactoryPair.second}}} is the sample code above) until the reference to the dataset ({{{datasetFactoryPair.first}}}) is dropped.
+
+As you can read it, most CDMA methods returns references which are smart pointers on object. These smart pointers are of yat::SharedPtr type (very similar to type `boost::shared_ptr` with compatible signatures).
+
+= Choosing the access mode =
+
+The CDMA library offers two way of accessing data.
+
+== Standard (physical) way ==
+The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it.
+
+
+{{{
+int main(int argc,char *argv[])
+{
+  ...
+
+  // Returns the physical root group
+  // Thus, all subsequents calls to sub-groups and dataitems will be based on 
+  // the physical data organization.
+  IGroupPtr root_ptr = dataset_ptr->getRootGroup();
+  
+  ...
+}
+}}}
+
+== Using the dictionary mechanism ==
+
+The other way of accessing data uses the dictionary mechanism. It allows writing applications with no need to know something about the data organization. Thus applications using this mechanism can access data regardless the way they are stored without need to change their source code.
