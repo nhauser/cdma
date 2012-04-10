@@ -1,5 +1,10 @@
 #summary C++ client application development guide.
 
+ * [#Requirements Requirements]
+ * [#Setting_up_The_CDMA_library Setting up The CDMA library]
+ * [#Getting_access_to_a_dataset Getting access to a dataset]
+ * [#Choosing_the_access_mode Choosing the access mode]
+
 = Requirements =
 
 The YAT library v1.7.7 or higher.
@@ -26,6 +31,8 @@ The main class a C++ client uses is {{{cdma::Factory}}}. This is a singleton obj
 
 {{{
 #include <cdma/Factory.h>
+#include <cdma/IFactory.h>
+#include <cdma/navigation/IDataset.h>
 
 int main(int argc,char *argv[])
 {
@@ -49,24 +56,12 @@ A CDMA dataset is a handle for all the data of one experiment.
 Getting access to a dataset is done through the CDMA factory. This sample show how to proceed:
 
 {{{
-#include <cdma/Factory.h>
-#include <cdma/IFactory.h>
-#include <cdma/navigation/IDataset.h>
+// Return a std::pair object containing two references:
+// - to the dataset
+// - to the plug-in factory used
+DatasetFactoryPair datasetFactoryPair = Factory::openDataset("path/to/my/dataset");
 
-int main(int argc,char *argv[])
-{
-  
-  ...
-
-  // Return a std::pair object containing two references:
-  // - to the dataset
-  // - to the plug-in factory used
-  DatasetFactoryPair datasetFactoryPair = Factory::openDataset("path/to/my/dataset");
-
-  IDatasetPtr dataset_ptr = datasetFactoryPair.first;
-
-  ...
-}
+IDatasetPtr dataset_ptr = datasetFactoryPair.first;
 }}}
 
 It's necessary to keep alive the plug-in factory reference ({{{datasetFactoryPair.second}}} is the sample code above) until the reference to the dataset ({{{datasetFactoryPair.first}}}) is dropped.
@@ -80,21 +75,31 @@ The CDMA library offers two way of accessing data.
 == Standard (physical) way ==
 The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it.
 
-
 {{{
-int main(int argc,char *argv[])
-{
-  ...
-
-  // Returns the physical root group
-  // Thus, all subsequents calls to sub-groups and dataitems will be based on 
-  // the physical data organization.
-  IGroupPtr root_ptr = dataset_ptr->getRootGroup();
-  
-  ...
-}
+// Returns the physical root group
+// Thus, all subsequents calls to sub-groups and dataitems will be based on 
+// the physical data organization.
+IGroupPtr root_ptr = dataset_ptr->getRootGroup();
 }}}
 
 == Using the dictionary mechanism ==
 
 The other way of accessing data uses the dictionary mechanism. It allows writing applications with no need to know something about the data organization. Thus applications using this mechanism can access data regardless the way they are stored without need to change their source code.
+
+In order to be able to use the dictionary mechanism, a data definition document have to be selected. This kind of XML document is called a _view_. All view documents must be suffixed by '_view' ('my_app_view.xml', 'my_other_app_view.xml'). To select the view insert the following code:
+
+{{{
+// View (data definition document) selection
+cdma::Factory::setActiveView("my_app");
+}}}
+
+We now can get an handle to the logical root group, and get access to the data items
+
+{{{
+// Returns the logical root group
+// Thus, all subsequents calls to sub-groups and dataitems will be based on 
+// a logical data organization driven by a data definition document.
+LogicalGroupPtr root_ptr = dataset_ptr->getLogicalRoot();
+
+IDataItemPtr a_item_ptr = root_ptr->getDataItem("a_key_name");
+}}}
