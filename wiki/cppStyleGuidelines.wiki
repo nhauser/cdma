@@ -13,9 +13,9 @@ LogicalGroup, BadArrayTypeException
 
 == Variables names ==
 
-Variable names must be in mixed case starting with lower case. 
+Variable names must be in lower case separated by underscore. 
 {{{
-rank, startArray
+rank, start_array
 }}}
 
 == Constants ==
