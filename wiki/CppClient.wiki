@@ -87,7 +87,7 @@ IGroupPtr root_ptr = dataset_ptr->getRootGroup();
 
 The other way of accessing data uses the dictionary mechanism. It allows writing applications with no need to know something about the data organization. Thus applications using this mechanism can access data regardless the way they are stored without need to change their source code.
 
-In order to be able to use the dictionary mechanism, a data definition document have to be selected. This kind of XML document is called a _view_. All view documents must be suffixed by '_view' ('my_app_view.xml', 'my_other_app_view.xml'). To select the view insert the following code:
+In order to be able to use the dictionary mechanism, a data definition document have to be selected. This kind of XML document is called a _view_. All view documents must be suffixed by '`_view`' ('my_app_view.xml', 'my_other_app_view.xml'). To select the view insert the following code:
 
 {{{
 // View (data definition document) selection
