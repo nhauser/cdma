@@ -60,4 +60,82 @@ dataset.getLocation();
 dataitem.getArray();
 }}}
 
+== Abbreviations in names ==
+
+Abbreviations in names should be avoided. Complete words are more readable.
+
+= Code formatting =
+----
+
+== File content must be kept within 100 columns == 
+
+In the dark ages, when printer can output only up to 80 columns width, the source code must be kept within 80 columns.
+Today, with large screens (and printer capabilities, but you shouldn't print your code on paper, at least because of ecology issues), the 80 columns limit constraint is no longer relevant.
+However, because very large lines of code is not comfortable to read, we recommend to not exceed 100 columns width.
+
+== Indentation ==
+
+For CDMA project indent is 2 blank spaces width.
+Tabulation character is forbidden because its rendering depends of the  editor.
+
+== Block layout ==
+
+Braces that delimit a block must be vertically aligned. It gives better redability
+
+{{{
+// BAD
+for( int i = 0; i < n; ++i ) {
+  ...do something...
+}
+
+// GOOD
+for( int i = 0; i < n; ++i )
+{
+  ...do something...
+}
+}}}
+
+== White spaces ==
+
+ * Operators must be surrounded by a space character
+ * Commas, colons and semicolons must be followed by a white space.
+ * Parenthesis must be preceded or followed by a space character.
+
+{{{
+a = (b + c) * d; // NOT: a=(b+c)*d
+
+while (true)   // NOT: while(true) 
+{
+  ...
+
+doSomething( a, b, c, d );  // NOT: doSomething(a,b,c,d);
+
+for (i = 0; i < 10; ++i) // NOT: for(i=0;i<10;++i){
+{  ...
+}}}
+
+== Methods separation ==
+
+Methods implementation must be preceded by a comment block containing its name and parent class name. A single blank line also separates two consecutive methods
+
+{{{
+//-----------------------------------------------------------------------------
+// ClassName::method
+//-----------------------------------------------------------------------------
+ClassName::method( ... )
+{
 ...
+}
+}}}
+
+== Comments ==
+
+All comments should be written in English. It's a very good exercise for French developers ;-)
+
+== Class and method header comments ==
+
+Class and method header comments should follow the JavaDoc conventions.
+Regarding standardized class and method documentation the Java development community is more mature than the C/C++ one. This is due to the standard automatic Javadoc tool that is part of the development kit and that help producing high quality hypertext documentation from these comments.
+
+The CDMA project uses Doxygen to produce html code documentation.
+
