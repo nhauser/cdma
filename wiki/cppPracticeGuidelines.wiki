@@ -1,6 +1,6 @@
 #summary C++ practices guidelines.
 
-Here the main C++ practice adopted for CDMA that should be adopted for CDMA engines/plug-ins.
+This section is not intended to be a exhaustive guide of good C++ practices, but just a set of rules adopted for the CDMA project.
 
 = C++ programming language version =
 
@@ -57,6 +57,15 @@ Pass-by-value should be avoided for objects.
 
 {{{
 myMethod (const SomeClass &object) // NOT: myMethod (SomeClass object)
+}}}
+
+== Methods using a object without altering it ==
+
+If a method need an object but will never alter it, this object should be passe as through `const &`.
+
+{{{
+// This method just uses const methods of SomeClass object
+myMethod (const SomeClass &object)
 }}}
 
 == Methods altering a object ==
