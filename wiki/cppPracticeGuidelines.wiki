@@ -18,13 +18,13 @@ This issue is easily solved in C++ using smart pointers.
 
 All objects that must be shared with another part of the project, the client application, or stored in a collection (list, vector, map,...) must be provided through the yat::SharedPtr shared pointer object.
 
-The `yat::SharedPtr` proposes the same behavior and the same methods as the `boost::shared_ptr` class (see [http://www.boost.org/doc/libs/1_49_0/libs/smart_ptr/shared_ptr.htm])
+The `yat::SharedPtr` template class proposes the same behavior and the same methods as the `boost::shared_ptr` class (see [http://www.boost.org/doc/libs/1_49_0/libs/smart_ptr/shared_ptr.htm])
 
-Note that the yat::SharedPtr class is thread safe (this does not imply the thread safety of referenced objects).
+Note that the `yat::SharedPtr` class is thread safe (this does not imply the thread safety of referenced objects).
 
-== Collection ==
+== Collections ==
 
-Collections of objects (`std::map`, `std::list`, `std::vector`,...) must only store objects through `yat::SharedPtr`.
+Collections of objects (`std::map`, `std::list`, `std::vector`,...) must only manage `yat::SharedPtr<T>` objects.
 thus, once a object is instantiated, no copy is needed if we have to manage a collection of object of the same kind. when the collection is dropped, only pointers are deleted. The object himself will be deleted after the last pointer to this object is deleted.
 
 {{{
@@ -44,3 +44,31 @@ aMethod()
   ...
 }
 }}}
+
+= Over recommendations =
+
+== The keyword `const` ==
+
+The keyword `const` should be used wherever possible. In particular, member functions that does not affect the state of an object is to be declared const. This is the case of getter methods.
+
+== Pass-by-value ==
+
+Pass-by-value should be avoided for objects.
+
+{{{
+myMethod (const SomeClass &object) // NOT: myMethod (SomeClass object)
+}}}
+
+== Methods altering a object ==
+
+If a method may alter a object passed as a argument, this argument should be a C-style pointer or a yat::SharedPtr<T> object.
+
+{{{
+ // this method may alter 'object'
+myMethod (SomeClass *object)
+
+// Not recommended
+myMethod (SomeClass &object)
+}}}
+
+It's just a convention. Actually, passing the object through a reference is possible but we promote this rule for readability.
