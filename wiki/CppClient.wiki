@@ -65,8 +65,6 @@ DatasetFactoryPair datasetFactoryPair = cdma::Factory::openDataset("path/to/my/d
 IDatasetPtr dataset_ptr = datasetFactoryPair.first;
 }}}
 
-It's necessary to keep alive the plug-in factory reference ({{{datasetFactoryPair.second}}} is the sample code above) until the reference to the dataset ({{{datasetFactoryPair.first}}}) is dropped.
-
 As you can read it, most CDMA methods returns references which are smart pointers on object. These smart pointers are of yat::SharedPtr type (very similar to type `boost::shared_ptr` with compatible signatures).
 
 = Choosing the access mode =
@@ -81,6 +79,13 @@ The so called _standard_ way needs a perfect knowledge of the data organization,
 // Thus, all subsequents calls to sub-groups and dataitems will be based on 
 // the physical data organization.
 IGroupPtr root_ptr = dataset_ptr->getRootGroup();
+}}}
+
+We can now browse the dataset to get data items
+
+{{{
+IGroupPtr a_group_ptr = root_ptr->getGroup("sub_group");
+IDataItemPtr a_item_ptr = a_group_ptr ->getDataItem("dataitem_name");
 }}}
 
 == Using the dictionary mechanism ==
@@ -104,3 +109,23 @@ LogicalGroupPtr root_ptr = dataset_ptr->getLogicalRoot();
 
 IDataItemPtr a_item_ptr = root_ptr->getDataItem("a_key_name");
 }}}
+
+== Read data ==
+
+Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through Array objects. A array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
+
+Using the generic method is applicable to all data kind:
+
+{{{
+IArrayPtr array_ptr = a_item_ptr->getData();
+}}}
+
+If the data is assumed to be a single value (scalar type), you can use a dedicated set of convenience methods like:
+
+{{{
+double double_value = double_type_item_ptr->readScalarDouble();
+int integer_value = integer_type_item_ptr->readScalarInt();
+}}}
+
+If the actual value does not match the requested type, it is converted.
+
