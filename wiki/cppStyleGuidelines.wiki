@@ -1,5 +1,6 @@
 #summary C++ programming style guidelines.
 
+Here are the main source code writing rules adopted for the CDMA project.
 
 = Naming conventions =
 ----
@@ -138,4 +139,3 @@ Class and method header comments should follow the JavaDoc conventions.
 Regarding standardized class and method documentation the Java development community is more mature than the C/C++ one. This is due to the standard automatic Javadoc tool that is part of the development kit and that help producing high quality hypertext documentation from these comments.
 
 The CDMA project uses Doxygen to produce html code documentation.
-
