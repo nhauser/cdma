@@ -61,7 +61,7 @@ myMethod (const SomeClass &object) // NOT: myMethod (SomeClass object)
 
 == Methods altering a object ==
 
-If a method may alter a object passed as a argument, this argument should be a C-style pointer or a yat::SharedPtr<T> object.
+If a method may alter a object passed as a argument, this argument should be a C-style pointer.
 
 {{{
  // this method may alter 'object'
@@ -72,3 +72,5 @@ myMethod (SomeClass &object)
 }}}
 
 It's just a convention. Actually, passing the object through a reference is possible but we promote this rule for readability.
+
+Note: A method that receives a object through a C-style pointer must never store this pointer (to keep it alive after method exit) nor trying to call delete on it!
