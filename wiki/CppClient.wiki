@@ -110,7 +110,7 @@ LogicalGroupPtr root_ptr = dataset_ptr->getLogicalRoot();
 IDataItemPtr a_item_ptr = root_ptr->getDataItem("a_key_name");
 }}}
 
-== Read data ==
+= Reading data =
 
 Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through Array objects. A array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
 
@@ -128,4 +128,3 @@ int integer_value = integer_type_item_ptr->readScalarInt();
 }}}
 
 If the actual value does not match the requested type, it is converted.
-
