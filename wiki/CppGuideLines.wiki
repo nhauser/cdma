@@ -1,5 +1,6 @@
 #summary C++ programmation style and pratice guidelines.
 
+*Content*
  * [#Introduction Introduction]
  * [cppStyleGuidelines C++ Programming style guidelines]
  * [cppPracticeGuidelines C++ Programming practice guidelines]
