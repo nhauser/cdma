@@ -1,0 +1,46 @@
+#summary C++ practices guidelines.
+
+Here the main C++ practice adopted for CDMA that should be adopted for CDMA engines/plug-ins.
+
+= C++ programming language version =
+
+Because all needed compilers (mainly the Microsoft compiler) don't yet support C++11, developers of CDMA engines and plug-ins must use the C++03.
+
+We don't use the BOOST library, It's a very huge library, somewhat difficult to use and we need only a few classes.
+On the other hand, we use developed a C++ toolkit named YAT (Yet Another Toolkit) which is a lightweight library part of the TANGO project.
+
+= Memory management =
+
+One very delicate thing in C++ is the memory management. In C language, developers massively use pointers and have to face memory issues.
+This issue is easily solved in C++ using smart pointers.
+
+== Shared pointers ==
+
+All objects that must be shared with another part of the project, the client application, or stored in a collection (list, vector, map,...) must be provided through the yat::SharedPtr shared pointer object.
+
+The `yat::SharedPtr` proposes the same behavior and the same methods as the `boost::shared_ptr` class (see [http://www.boost.org/doc/libs/1_49_0/libs/smart_ptr/shared_ptr.htm])
+
+Note that the yat::SharedPtr class is thread safe (this does not imply the thread safety of referenced objects).
+
+== Collection ==
+
+Collections of objects (`std::map`, `std::list`, `std::vector`,...) must only store objects through `yat::SharedPtr`.
+thus, once a object is instantiated, no copy is needed if we have to manage a collection of object of the same kind. when the collection is dropped, only pointers are deleted. The object himself will be deleted after the last pointer to this object is deleted.
+
+{{{
+class MyClass
+{
+...
+};
+
+typedef yat::SharedPtr<MyClass> MyClassPtr;
+
+aMethod()
+{
+  std::list<MyClassPtr> objects;
+
+  MyClassPtr obj_ptr(new MyClass);
+  objects.push_back(obj_ptr);
+  ...
+}
+}}}
