@@ -1,0 +1,23 @@
+#summary C++ engine development guide.
+
+= Introduction =
+
+This section is intended to help developers developing new data format engines.
+Separation between plug-ins and engines is very important because, it helps for:
+ * developing physical access to a particular data format (like NeXus) only once,
+ * quickly developing plug-ins which implement specific data organisation of institutes,
+ * keeping project modular.
+
+= Getting started ==
+
+A engine must implements the navigation interfaces provided by the CDMA core library:
+ * `IDataset`
+ * `IDataItem`
+ * `IGroup`
+ * `IAttribute`
+
+Therefore plug-ins developers will use those implementations in order to access data without care about specific API (if it exists) related to the physical format. The physical data format is entirely handled by the engine library.
+
+Because an engine may needs access to the CDMA core as well as plug-ins and of course client applications, it must be a shared library (or dynamic linked library on Windows).
+
+...
