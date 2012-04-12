@@ -12,12 +12,45 @@ Separation between plug-ins and engines is very important because, it helps for:
 
 A engine must implements the navigation interfaces provided by the CDMA core library:
  * `IDataset`
- * `IDataItem`
  * `IGroup`
+ * `IDataItem`
  * `IAttribute`
 
 Therefore plug-ins developers will use those implementations in order to access data without care about specific API (if it exists) related to the physical format. The physical data format is entirely handled by the engine library.
 
-Because an engine may needs access to the CDMA core as well as plug-ins and of course client applications, it must be a shared library (or dynamic linked library on Windows).
+*Note*: Engines libraries are only a concern for plug-ins. <b>Client applications will never directly uses a engine.</b>
+
+Because an engine may needs access to the CDMA core as well as plug-ins and of course client applications, it must be a shared library (or Dynamic Link Library on Windows).
+
+== `IDataset` ==
+
+In most cases the engine implementation if this interface will match a handle to a physical data file.
+
+All the methods defined in the abstract interface IDataset makes sense in its the engine implementation.
+The only exception concern the method getLogicalRoot with should returns a logical group based on the dictionary mechanism.
+Since a engine don't have to implements any class or method related to this mechanism, this method will throw a exception.
+Below is the NeXus engine implementation of this method:
+
+{{{
+
+namespace cdma
+{
+
+class NxsDataset: public IDataset
+{
+...
+};
+
+...
+
+cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
+{
+  THROW_NOT_IMPLEMENTED("NxsDataset::getLogicalRoot");
+}
+}
+}}}
+
+== `IGroup` ==
+
 
 ...
