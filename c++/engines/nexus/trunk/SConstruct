@@ -1,0 +1,119 @@
+from os import path
+import os
+
+
+
+#===================set build variables========================================
+vars = Variables("BuildConfig.py")
+vars.Add(PathVariable("NEXUSINC","NEXUS include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSLIB","NEXUS library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSCPPINC","NEXUS Soleil C++ interface include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSCPPLIB","NEXUS Soleil C++ interface library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("H5LIB","HDF5 library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("H5INC","HDF5 include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("CDMACORELIB","CDMA core library directory","/usr/lib",
+                      PathVariable.PathAccept))
+vars.Add(PathVariable("CDMACOREINC","CMDA core include directory","/usr/include",
+                      PathVariable.PathAccept))
+vars.Add(PathVariable("ZLIB","ZLIB library directory","/usr/lib",
+                      PathVariable.PathAccept))
+vars.Add(PathVariable("ZINC","ZLIB include directory","/usr/include",
+                      PathVariable.PathAccept))
+
+vars.Add("SOVERSION","ABI version of the core libraray","")
+vars.Add("VERSION","API version of the core libraray","")
+vars.Add("SONAME","Name of the shared object","")
+vars.Add("DOCDIR","Installation directory of documentation","")
+vars.Add("SODIR","Installation directory of the libraray","lib/cdma/engines")
+vars.Add("PREFIX","Installation prefix","/usr")
+
+
+#=====================create the basic build environment=======================
+env = Environment(variables=vars,tools=["default","textfile"])
+env.AppendUnique(CPPPATH=[env["YATINC"],"include",env["NEXUSINC"],env["H5INC"],
+                    env["ZINC"],env["CDMACOREINC"],env["NEXUSCPPINC"]])
+env.AppendUnique(LIBPATH=[env["YATLIB"],env["H5LIB"],env["NEXUSLIB"],
+                    env["NEXUSCPPLIB"],env["CDMACORELIB"],env["ZLIB"]])
+
+
+#=====================here we need some autoconfiguration======================
+conf = Configure(env)
+
+if not conf.CheckCHeader("hdf5.h"):
+    print "No HDF5 header file found!"
+    Exit(1)
+
+if not conf.CheckLib("hdf5"):
+    print "HDF5 library not found!"
+    Exit(1)
+
+if not conf.CheckCHeader("zlib.h"):
+    print "No zlib header found!"
+    Exit(1)
+
+if not conf.CheckLib("z"):
+    print "No zlib library found!"
+    Exit(1)
+
+if not conf.CheckHeader("napi.h"):
+    print "No Nexus NAPI header file found!"
+    Exit(1)
+
+if not conf.CheckLib("NeXus"):
+    print "Nexus library not found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("nxwriter.h"):
+    print "No header for the Soleil Nexus C++ interface found"
+    Exit(1)
+
+if not conf.CheckLib("nexuscpp"):
+    print "No Soleil Nexus C++ interface library found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("yat/CommonHeader.h"):
+    print "No YAT headers found!"
+    Exit(1)
+
+if not conf.CheckLib("yat"):
+    print "No YAT library found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("cdma/Factory.h"):
+    print "No CDMA core header files found!"
+    Exit(1)
+
+if not conf.CheckLib("cdmacore"):
+    print "CDMA core library not found!"
+    Exit(1)
+
+
+
+env = conf.Finish()
+
+#===================create and export the core environment=====================
+env.Append(CPPPATH=["#include/","#src/"])
+
+if os.name == "posix":
+    #add special link flag to ensure that the soname of the library is 
+    #entioned in the ELF header
+    env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
+
+#manage installation paths
+env.Append(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
+
+
+#=======================build the plugin==================================
+sources = []
+sources.append(Glob("src/*.cpp"))
+plugin = env.SharedLibrary(env["SONAME"],sources,SHLIBPREFIX="")
