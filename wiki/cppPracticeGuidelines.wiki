@@ -6,8 +6,8 @@ This section is not intended to be a exhaustive guide of good C++ practices, but
 
 Because all needed compilers (mainly the Microsoft compiler) don't yet support C++11, developers of CDMA engines and plug-ins must use the C++03.
 
-We don't use the BOOST library, It's a very huge library, somewhat difficult to use and we need only a few classes.
-On the other hand, we use developed a C++ toolkit named YAT (Yet Another Toolkit) which is a lightweight library part of the TANGO project.
+We don't use the BOOST library, It's a very huge library, somewhat difficult to use. It offers many classes we consider useless for our project.
+On the other hand, for all generic functionality, we have developed a C++ toolkit named YAT (Yet Another Toolkit) which is a lightweight (and debugged!) library also used in the TANGO project.
 
 = Memory management =
 
