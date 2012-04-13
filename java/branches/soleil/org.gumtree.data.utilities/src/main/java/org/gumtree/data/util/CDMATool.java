@@ -89,7 +89,7 @@ public class CDMATool {
     }
 
     /**
-     * Prepares the CDM {@link Factory} to use a particular dictionary
+     * Prepares the CDMA {@link Factory} to use a particular dictionary
      * 
      * @param activeDictionary The experiment name of the dictionary (example: "FLYSCAN")
      */
@@ -101,7 +101,7 @@ public class CDMATool {
     }
 
     /**
-     * Prepares the CDM {@link Factory} to use a particular dictionary
+     * Prepares the CDMA {@link Factory} to use a particular dictionary
      * 
      * @param activeDictionary The experiment name of the dictionary (example: "FLYSCAN")
      * @param reference The {@link InputStream} that contains the dictionary xml code, if the

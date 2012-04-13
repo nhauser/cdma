@@ -33,59 +33,59 @@ import org.jdom.Element;
  *
  */
 public class ConfigCriteria {
-	// Private members
-	private List<ConfigParameterCriterion> mCriterion;
-	
-	/**
-	 * Constructor
-	 * 
-	 * @note if no ConfigParameterCriterion are added, then it will match any IDataset
-	 */
-	public ConfigCriteria() {
-		mCriterion = new ArrayList<ConfigParameterCriterion>();
-	}
-	
-	/**
-	 * Parse the DOM element, to add every "if" children element as ConfigParameterCriterion.
-	 * 
-	 * @param domCriteria DOM element corresponding to "criteria" section in XML
-	 */
-	public void add(Element domCriteria) {
-		// Managing criterion
-		if( domCriteria.getName().equals("criteria") ) {
-			List<?> nodes = domCriteria.getChildren("if");
-			for( Object node : nodes ) {
-				mCriterion.add( new ConfigParameterCriterion((Element) node) );
-			}
-		}
-	}
-	
-	/**
-	 * Add the given ConfigParameterCriterion to the set of ConfigParameter.
-	 * 
-	 * @param item ConfigParameterCriterion that will be checked when matching 
-	 */
-	public void add(ConfigParameterCriterion item) {
-		mCriterion.add(item);
-	}
-	
-	/**
-	 * Tells if the given IDataset matches this ConfigCriteria. All clause must be
-	 * respected by the given IDataset. 
-	 * 
-	 * @param dataset to be checked
-	 * @return boolean true if each ConfigParameterCriterion are respected in the given IDataset
-	 */
-	public boolean match( IDataset dataset ) {
-		boolean result = true;
-		
-		for( ConfigParameterCriterion criterion : mCriterion ) {
-			if( criterion.getValue(dataset).equals(CriterionValue.FALSE.toString()) ) {
-				result = false;
-				break;
-			}
-		}
-		
-		return result;
-	}
+  // Private members
+  private List<ConfigParameterCriterion> mCriterion;
+  
+  /**
+   * Constructor
+   * 
+   * @note if no ConfigParameterCriterion are added, then it will match any IDataset
+   */
+  public ConfigCriteria() {
+    mCriterion = new ArrayList<ConfigParameterCriterion>();
+  }
+  
+  /**
+   * Parse the DOM element, to add every "if" children element as ConfigParameterCriterion.
+   * 
+   * @param domCriteria DOM element corresponding to "criteria" section in XML
+   */
+  public void add(Element domCriteria) {
+    // Managing criterion
+    if( domCriteria.getName().equals("criteria") ) {
+      List<?> nodes = domCriteria.getChildren("if");
+      for( Object node : nodes ) {
+        mCriterion.add( new ConfigParameterCriterion((Element) node) );
+      }
+    }
+  }
+  
+  /**
+   * Add the given ConfigParameterCriterion to the set of ConfigParameter.
+   * 
+   * @param item ConfigParameterCriterion that will be checked when matching 
+   */
+  public void add(ConfigParameterCriterion item) {
+    mCriterion.add(item);
+  }
+  
+  /**
+   * Tells if the given IDataset matches this ConfigCriteria. All clause must be
+   * respected by the given IDataset. 
+   * 
+   * @param dataset to be checked
+   * @return boolean true if each ConfigParameterCriterion are respected in the given IDataset
+   */
+  public boolean match( IDataset dataset ) {
+    boolean result = true;
+    
+    for( ConfigParameterCriterion criterion : mCriterion ) {
+      if( criterion.getValue(dataset).equals(CriterionValue.FALSE.toString()) ) {
+        result = false;
+        break;
+      }
+    }
+    
+    return result;
+  }
 }

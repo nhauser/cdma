@@ -56,8 +56,8 @@ public final class NexusRange implements IRange, Cloneable {
     }
     
     public NexusRange(String name, long first, long last, long stride, boolean reduced) throws InvalidRangeException {
-    	this(name, first, last, stride);
-    	mReduced = reduced;
+      this(name, first, last, stride);
+      mReduced = reduced;
     }
     
     public NexusRange( IRange range ) {
@@ -95,15 +95,15 @@ public final class NexusRange implements IRange, Cloneable {
     }
     
     public void stride(long value) {
-    	mStride = value;
+      mStride = value;
     }
     
     public void last(long value) {
-    	mLast = value;
+      mLast = value;
     }
     
     public void first(long value) {
-    	mFirst = value;
+      mFirst = value;
     }
     
     /// Methods
@@ -118,9 +118,9 @@ public final class NexusRange implements IRange, Cloneable {
         return range;
     }
     
-	@Override
-	public IRange compact() throws InvalidRangeException {
-		long first, last, stride;
+  @Override
+  public IRange compact() throws InvalidRangeException {
+    long first, last, stride;
         String name;
 
         stride = 1;
@@ -129,10 +129,10 @@ public final class NexusRange implements IRange, Cloneable {
         name   = mName; 
         
         return new NexusRange(name, first, last, stride);
-	}
+  }
 
-	@Override
-	public IRange compose(IRange r) throws InvalidRangeException {
+  @Override
+  public IRange compose(IRange r) throws InvalidRangeException {
         if ((length() == 0) || (r.length() == 0)) {
             return EMPTY;
         }
@@ -144,10 +144,10 @@ public final class NexusRange implements IRange, Cloneable {
         long stride = stride() * r.stride();
         long last   = element(r.last());
         return new NexusRange(mName, first, last, stride);
-	}
+  }
 
-	@Override
-	public boolean contains(int i) {
+  @Override
+  public boolean contains(int i) {
         if( i < first() ) {
             return false;
         }
@@ -158,22 +158,22 @@ public final class NexusRange implements IRange, Cloneable {
             return true;
         }
         return (i - mFirst) % mStride == 0;
-	}
+  }
 
-	@Override
-	public int element(long i) throws InvalidRangeException {
-	    if (i < 0) {
+  @Override
+  public int element(long i) throws InvalidRangeException {
+      if (i < 0) {
             throw new InvalidRangeException("i must be >= 0");
         }
-	    if (i > mLast) {
-	        throw new InvalidRangeException("i must be < length");
-	    }
+      if (i > mLast) {
+          throw new InvalidRangeException("i must be < length");
+      }
 
         return (int) (mFirst + i * mStride);
-	}
+  }
 
-	@Override
-	public int getFirstInInterval(int start) {
+  @Override
+  public int getFirstInInterval(int start) {
         if (start > last()) { 
             return -1;
         }
@@ -187,10 +187,10 @@ public final class NexusRange implements IRange, Cloneable {
         long incr = offset % mStride;
         long result = start + incr;
         return (int) ((result > last()) ? -1 : result);
-	}
+  }
 
-	@Override
-	public long index(int elem) throws InvalidRangeException {
+  @Override
+  public long index(int elem) throws InvalidRangeException {
         if (elem < mFirst) {
             throw new InvalidRangeException("elem must be >= first");
         }
@@ -199,10 +199,10 @@ public final class NexusRange implements IRange, Cloneable {
             throw new InvalidRangeException("elem must be <= last = n * stride");
         }
         return (int) result;
-	}
+  }
 
-	@Override
-	public IRange intersect(IRange r) throws InvalidRangeException {
+  @Override
+  public IRange intersect(IRange r) throws InvalidRangeException {
         if ((length() == 0) || (r.length() == 0)) {
             return EMPTY;
         }
@@ -248,10 +248,10 @@ public final class NexusRange implements IRange, Cloneable {
             return EMPTY;
         }
         return new NexusRange(mName, useFirst, last, stride);
-	}
+  }
 
-	@Override
-	public boolean intersects(IRange r) {
+  @Override
+  public boolean intersects(IRange r) {
         if ((length() == 0) || (r.length() == 0)) {
             return false;
         }
@@ -271,7 +271,7 @@ public final class NexusRange implements IRange, Cloneable {
                 useFirst = r.first();
             }
             else {
-            	long incr = (first() - r.first()) / stride;
+              long incr = (first() - r.first()) / stride;
                 useFirst = r.first() + incr * stride;
                 if (useFirst < first()) {
                     useFirst += stride;
@@ -283,7 +283,7 @@ public final class NexusRange implements IRange, Cloneable {
                 useFirst = first();
             }
             else {
-            	long incr = (r.first() - first()) / stride;
+              long incr = (r.first() - first()) / stride;
                 useFirst = first() + incr * stride;
                 if (useFirst < r.first()) {
                     useFirst += stride;
@@ -294,17 +294,17 @@ public final class NexusRange implements IRange, Cloneable {
             throw new UnsupportedOperationException("Intersection when both ranges have a stride");
         }
         return (useFirst <= last);
-	}
+  }
     
-	@Override
-	public IRange shiftOrigin(int origin) throws InvalidRangeException {
+  @Override
+  public IRange shiftOrigin(int origin) throws InvalidRangeException {
         return new NexusRange( mName, mFirst + origin, mLast + origin, mStride, mReduced );
-	}
+  }
 
-	@Override
-	public IRange union(IRange r) throws InvalidRangeException {
-	    if( r.stride() != mStride ) {
-	        throw new InvalidRangeException("Stride must identical to make a IRange union!");
+  @Override
+  public IRange union(IRange r) throws InvalidRangeException {
+      if( r.stride() != mStride ) {
+          throw new InvalidRangeException("Stride must identical to make a IRange union!");
         }
         
         if (length() == 0) {
@@ -325,7 +325,7 @@ public final class NexusRange implements IRange, Cloneable {
         last  = Math.max( mLast , r.last()  );
         
         return new NexusRange(name, first, last, mStride);
-	}
+  }
 
     @Override
     public String toString() {
@@ -339,11 +339,11 @@ public final class NexusRange implements IRange, Cloneable {
         return str.toString();
     }
     
-	public boolean reduced() {
-		return mReduced;
-	}
-	
-	public void reduced(boolean reduce) {
-		mReduced = reduce;
-	}
+  public boolean reduced() {
+    return mReduced;
+  }
+  
+  public void reduced(boolean reduce) {
+    mReduced = reduce;
+  }
 }

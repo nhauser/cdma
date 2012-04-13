@@ -16,41 +16,37 @@ package org.gumtree.data.exception;
  */
 public class FileAccessException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5360865109579178570L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 5360865109579178570L;
 
-	/**
-	 * 
-	 */
-	public FileAccessException() {
-	}
+  /**
+   * 
+   */
+  public FileAccessException() {
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 */
-	public FileAccessException(final String arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 String value
+   */
+  public FileAccessException(final String arg0) {
+    super(arg0);
+  }
 
-	/**
-	 * @param arg0
-	 *            Throwable object
-	 */
-	public FileAccessException(final Throwable arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 Throwable object
+   */
+  public FileAccessException(final Throwable arg0) {
+    super(arg0);
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 * @param arg1
-	 *            Throwable object
-	 */
-	public FileAccessException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-	}
+  /**
+   * @param arg0 String value
+   * @param arg1 Throwable object
+   */
+  public FileAccessException(final String arg0, final Throwable arg1) {
+    super(arg0, arg1);
+  }
 
 }

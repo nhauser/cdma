@@ -9,19 +9,19 @@ import org.osgi.framework.ServiceReference;
 
 public class OsgiFactoryResolver implements IFactoryResolver {
 
-	public void discoverFactories(IFactoryManager manager) {
-		BundleContext context = Activator.getDefault().getContext();
-		ServiceReference[] refs = null;
-		try {
-			refs = context.getServiceReferences(IFactory.class.getName(), null);
-		} catch (InvalidSyntaxException e) {
-		}
-		if (refs != null) {
-			for (ServiceReference ref : refs) {
-				IFactory factory = (IFactory) context.getService(ref);
-				manager.registerFactory(factory.getName(), factory);
-			}
-		}
-	}
-	
+  public void discoverFactories(IFactoryManager manager) {
+    BundleContext context = Activator.getDefault().getContext();
+    ServiceReference[] refs = null;
+    try {
+      refs = context.getServiceReferences(IFactory.class.getName(), null);
+    } catch (InvalidSyntaxException e) {
+    }
+    if (refs != null) {
+      for (ServiceReference ref : refs) {
+        IFactory factory = (IFactory) context.getService(ref);
+        manager.registerFactory(factory.getName(), factory);
+      }
+    }
+  }
+  
 }

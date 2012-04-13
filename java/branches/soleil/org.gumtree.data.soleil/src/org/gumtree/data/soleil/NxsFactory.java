@@ -63,209 +63,209 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-	public IArray createArray(Class<?> clazz, int[] shape) {
-    	Object o = java.lang.reflect.Array.newInstance(clazz, shape);
-		return new NxsArray( o, shape);
-	}
+  public IArray createArray(Class<?> clazz, int[] shape) {
+      Object o = java.lang.reflect.Array.newInstance(clazz, shape);
+    return new NxsArray( o, shape);
+  }
 
     @Override
-	public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
-    	IArray result = null;
-    	if( storage instanceof IArray[] ) {
-    		result = new NxsArray( (IArray[]) storage );
-    	}
-    	else if( storage instanceof DataItem ) {
-    		result = new NxsArray( (DataItem) storage );
-    	}
-    	else {
-    		result = new NxsArray( storage, shape);
-    	}
-		return result;
-	}
+  public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
+      IArray result = null;
+      if( storage instanceof IArray[] ) {
+        result = new NxsArray( (IArray[]) storage );
+      }
+      else if( storage instanceof DataItem ) {
+        result = new NxsArray( (DataItem) storage );
+      }
+      else {
+        result = new NxsArray( storage, shape);
+      }
+    return result;
+  }
 
     @Override
-	public IArray createArray(Object javaArray) {
-    	IArray result = null;
-    	// [ANSTO][Tony][2011-08-31] testing isArray may be slow
-    	// http://stackoverflow.com/questions/219881/java-array-reflection-isarray-vs-instanceof
-    	if (javaArray != null && javaArray.getClass().isArray()) {
-    		int size = Array.getLength(javaArray);
-    		result = new NxsArray(javaArray, new int[] { size });
-    	}
-		return result;
-	}
+  public IArray createArray(Object javaArray) {
+      IArray result = null;
+      // [ANSTO][Tony][2011-08-31] testing isArray may be slow
+      // http://stackoverflow.com/questions/219881/java-array-reflection-isarray-vs-instanceof
+      if (javaArray != null && javaArray.getClass().isArray()) {
+        int size = Array.getLength(javaArray);
+        result = new NxsArray(javaArray, new int[] { size });
+      }
+    return result;
+  }
 
     @Override
-	public IArray createArrayNoCopy(Object array) {
-    	IArray result = null;
-    	if( array instanceof IArray[] ) {
-    		result = new NxsArray( (IArray[]) array);
-    	}
-    	else if( array instanceof DataItem ) {
-    		result = new NxsArray( (DataItem) array);
-    	}
-    	else {
-    		DataItem dataset = null;
-    		try {
-        		dataset = new DataItem(array);
-        		result = new NxsArray(dataset);
-        	} catch( Exception e ) {
-        		result = null;
-        	}
-        	
-    	}
-		return result;
-	}
+  public IArray createArrayNoCopy(Object array) {
+      IArray result = null;
+      if( array instanceof IArray[] ) {
+        result = new NxsArray( (IArray[]) array);
+      }
+      else if( array instanceof DataItem ) {
+        result = new NxsArray( (DataItem) array);
+      }
+      else {
+        DataItem dataset = null;
+        try {
+            dataset = new DataItem(array);
+            result = new NxsArray(dataset);
+          } catch( Exception e ) {
+            result = null;
+          }
+          
+      }
+    return result;
+  }
 
     @Override
-	public IAttribute createAttribute(String name, Object value) {
-		return new NexusAttribute(NAME ,name, value);
-	}
+  public IAttribute createAttribute(String name, Object value) {
+    return new NexusAttribute(NAME ,name, value);
+  }
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-    	throw new InvalidArrayTypeException(ERR_NOT_SUPPORTED);
-	}
+      throw new InvalidArrayTypeException(ERR_NOT_SUPPORTED);
+  }
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-		return NxsDataset.instanciate(new File(uri.getPath()));
-	}
+    return NxsDataset.instanciate(new File(uri.getPath()));
+  }
 
     @Override
     public IArray createDoubleArray(double[] javaArray) {
-    	DataItem dataset;
-    	try {
-    		dataset = new DataItem(javaArray);
-    	} catch( Exception e ) {
-    		dataset = null;
-    	}
-		return new NxsArray(dataset);
-	}
+      DataItem dataset;
+      try {
+        dataset = new DataItem(javaArray);
+      } catch( Exception e ) {
+        dataset = null;
+      }
+    return new NxsArray(dataset);
+  }
 
     @Override
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
-    	DataItem dataset;
-    	try {
-    		dataset = new DataItem(javaArray);
-    	} catch( Exception e ) {
-    		dataset = null;
-    	}
-		return new NxsArray(dataset);
-	}
+      DataItem dataset;
+      try {
+        dataset = new DataItem(javaArray);
+      } catch( Exception e ) {
+        dataset = null;
+      }
+    return new NxsArray(dataset);
+  }
 
     @Override
-	public IDataset createEmptyDatasetInstance() throws IOException {
-		// TODO Auto-generated method stub
-    	throw new IOException(ERR_NOT_SUPPORTED);
-	}
+  public IDataset createEmptyDatasetInstance() throws IOException {
+    // TODO Auto-generated method stub
+      throw new IOException(ERR_NOT_SUPPORTED);
+  }
 
     @Override
     public IGroup createGroup(IGroup parent, String shortName, boolean updateParent) {
-    	String path_val = parent.getLocation();
-    	PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
-		NxsGroup group = new NxsGroup( parent, (PathNexus) path, (NxsDataset) parent.getDataset());
-		
-		return group;
+      String path_val = parent.getLocation();
+      PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
+    NxsGroup group = new NxsGroup( parent, (PathNexus) path, (NxsDataset) parent.getDataset());
+    
+    return group;
     }
 
     @Override
     public IGroup createGroup(String shortName) throws IOException {
-		// TODO Auto-generated method stub
-    	throw new IOException(ERR_NOT_SUPPORTED);
-	}
+    // TODO Auto-generated method stub
+      throw new IOException(ERR_NOT_SUPPORTED);
+  }
 
     @Override
     public IArray createStringArray(String string) {
-		// TODO Auto-generated method stub
-    	return null;
+    // TODO Auto-generated method stub
+      return null;
     }
 
     @Override
     public String getName() {
-		return NAME;
-	}
+    return NAME;
+  }
     
-	@Override
-	public String getPluginLabel() {
-		return LABEL;
-	}
+  @Override
+  public String getPluginLabel() {
+    return LABEL;
+  }
 
-	@Override
-	public IDatasource getPluginURIDetector() {
-		synchronized (NxsDatasource.class ) {
-			if( detector == null ) {
-				detector = new NxsDatasource();
-			}
-		}
-		return detector;
-	}
-	
+  @Override
+  public IDatasource getPluginURIDetector() {
+    synchronized (NxsDatasource.class ) {
+      if( detector == null ) {
+        detector = new NxsDatasource();
+      }
+    }
+    return detector;
+  }
+  
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
-		// TODO Auto-generated method stub
-    	throw new FileAccessException(ERR_NOT_SUPPORTED);
-	}
+    // TODO Auto-generated method stub
+      throw new FileAccessException(ERR_NOT_SUPPORTED);
+  }
 
-	@Override
-	public IKey createKey(String keyName) {
-		return new Key(this, keyName);
-	}
+  @Override
+  public IKey createKey(String keyName) {
+    return new Key(this, keyName);
+  }
 
-	@Override
-	public IPathParameter createPathParameter(ParameterType type, String name, Object value) {
-		return new PathParameter(this, type, name, value);
-	}
+  @Override
+  public IPathParameter createPathParameter(ParameterType type, String name, Object value) {
+    return new PathParameter(this, type, name, value);
+  }
 
-	@Override
-	public ILogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
-		return new NxsLogicalGroup(dataset, key);
-	}
+  @Override
+  public ILogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
+    return new NxsLogicalGroup(dataset, key);
+  }
 
-	@Override
-	public IPath createPath(String path) {
-		return new Path(this, path);
-	}
+  @Override
+  public IPath createPath(String path) {
+    return new Path(this, path);
+  }
 
-	@Override
-	public String getPathSeparator() {
-		return "/";
-	}
+  @Override
+  public String getPathSeparator() {
+    return "/";
+  }
 
-	@Override
-	public IPathParamResolver createPathParamResolver(IPath path) {
-		IPathParamResolver result;
-		if( path instanceof Path ) {
-			result = new NxsPathParamResolver(this, (Path) path);
-		}
-		else {
-			result = new NxsPathParamResolver( this, new Path(this, path.getValue() ) );
-		}
-		
-		return result;
-	}
+  @Override
+  public IPathParamResolver createPathParamResolver(IPath path) {
+    IPathParamResolver result;
+    if( path instanceof Path ) {
+      result = new NxsPathParamResolver(this, (Path) path);
+    }
+    else {
+      result = new NxsPathParamResolver( this, new Path(this, path.getValue() ) );
+    }
+    
+    return result;
+  }
 
-	@Override
-	public IDictionary openDictionary(URI uri) throws FileAccessException {
-		throw new UnsupportedOperationException();
-	}
+  @Override
+  public IDictionary openDictionary(URI uri) throws FileAccessException {
+    throw new UnsupportedOperationException();
+  }
 
-	@Override
-	public IDictionary openDictionary(String filepath)
-			throws FileAccessException {
-		throw new UnsupportedOperationException();
-	}
+  @Override
+  public IDictionary openDictionary(String filepath)
+      throws FileAccessException {
+    throw new UnsupportedOperationException();
+  }
 
-	@Override
-	public IDictionary createDictionary() {
-		throw new UnsupportedOperationException();
-	}
-	
-	public static IArrayUtils createArrayUtils(NxsArray array) {
-		return new NxsArrayUtils(array);
-	}
-	
-	public static IArrayMath createArrayMath(NxsArray array) {
-		return new NxsArrayMath(array);
-	}
+  @Override
+  public IDictionary createDictionary() {
+    throw new UnsupportedOperationException();
+  }
+  
+  public static IArrayUtils createArrayUtils(NxsArray array) {
+    return new NxsArrayUtils(array);
+  }
+  
+  public static IArrayMath createArrayMath(NxsArray array) {
+    return new NxsArrayMath(array);
+  }
 }

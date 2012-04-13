@@ -1,78 +1,78 @@
 package fr.soleil.nexus;
 
 public class NexusNode implements Cloneable {
-	// Private definitions
-	private static final String CLASS_SEPARATOR_START  = "<";
+  // Private definitions
+  private static final String CLASS_SEPARATOR_START  = "<";
     private static final String CLASS_SEPARATOR_START2 = "{";
     private static final String CLASS_SEPARATOR_END2 = "}";
 
-	private String  m_sNodeName  = "";
-	private String  m_sClassName = "";
-	private boolean m_bIsGroup	 = false;
+  private String  m_sNodeName  = "";
+  private String  m_sClassName = "";
+  private boolean m_bIsGroup   = false;
 
-	public NexusNode() 														{}
-	public NexusNode(String sNodeName, String sClassName) 					{ m_sNodeName = sNodeName; m_sClassName = sClassName; m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName));}
-	public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) { m_sNodeName = sNodeName; m_sClassName = sClassName; m_bIsGroup = bIsGroup; }
+  public NexusNode()                             {}
+  public NexusNode(String sNodeName, String sClassName)           { m_sNodeName = sNodeName; m_sClassName = sClassName; m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName));}
+  public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) { m_sNodeName = sNodeName; m_sClassName = sClassName; m_bIsGroup = bIsGroup; }
 
-	public void setNodeName(String sNodeName) 	{ m_sNodeName  = sNodeName; }
-	public void setClassName(String sClassName) { m_sClassName = sClassName; }
-	public void setIsGroup(boolean bIsGroup) 	{ m_bIsGroup   = bIsGroup; }
+  public void setNodeName(String sNodeName)   { m_sNodeName  = sNodeName; }
+  public void setClassName(String sClassName) { m_sClassName = sClassName; }
+  public void setIsGroup(boolean bIsGroup)   { m_bIsGroup   = bIsGroup; }
 
-	public String  getNodeName()	{ return m_sNodeName; }
-	public String  getClassName()	{ return m_sClassName; }
-	public boolean isGroup()		{ return m_bIsGroup; }
-	public boolean isRealGroup()	{ return ! m_sClassName.equals("SDS"); }
+  public String  getNodeName()  { return m_sNodeName; }
+  public String  getClassName()  { return m_sClassName; }
+  public boolean isGroup()    { return m_bIsGroup; }
+  public boolean isRealGroup()  { return ! m_sClassName.equals("SDS"); }
 
-	protected NexusNode clone()
-	{
-		NexusNode nNewNode    = new NexusNode();
-		nNewNode.m_sNodeName  = m_sNodeName;
-		nNewNode.m_sClassName = m_sClassName;
-		nNewNode.m_bIsGroup   = m_bIsGroup;
+  protected NexusNode clone()
+  {
+    NexusNode nNewNode    = new NexusNode();
+    nNewNode.m_sNodeName  = m_sNodeName;
+    nNewNode.m_sClassName = m_sClassName;
+    nNewNode.m_bIsGroup   = m_bIsGroup;
 
-		return nNewNode;
-	}
+    return nNewNode;
+  }
 
-	@Override
-	public boolean equals(Object node)
-	{
-		return (
-					node instanceof NexusNode
-					&& m_sNodeName.equals(((NexusNode)node).m_sNodeName)
-					&& m_sClassName.equals(((NexusNode)node).m_sClassName)
-					&& m_bIsGroup == ((NexusNode)node).m_bIsGroup
-				);
-	}
-	
-	@Override
-	public int hashCode() {
-		return m_sNodeName.hashCode() + m_sClassName.hashCode();
-	}
+  @Override
+  public boolean equals(Object node)
+  {
+    return (
+          node instanceof NexusNode
+          && m_sNodeName.equals(((NexusNode)node).m_sNodeName)
+          && m_sClassName.equals(((NexusNode)node).m_sClassName)
+          && m_bIsGroup == ((NexusNode)node).m_bIsGroup
+        );
+  }
+  
+  @Override
+  public int hashCode() {
+    return m_sNodeName.hashCode() + m_sClassName.hashCode();
+  }
 
-	public String toString()
-	{
+  public String toString()
+  {
         String sName = getNodeName();
         if( ! getClassName().trim().equals("") && isRealGroup() )
-        	sName += CLASS_SEPARATOR_START2 + getClassName() + CLASS_SEPARATOR_END2;
+          sName += CLASS_SEPARATOR_START2 + getClassName() + CLASS_SEPARATOR_END2;
         return sName;
-	}
+  }
 
-	public static NexusNode getNexusNode(String sNodeFullName, boolean bIsGroup)
-	{
-		NexusNode	node = null;
-		String		tmpNodeName = NexusNode.extractName(sNodeFullName);
-		String		tmpClassName = NexusNode.extractClass(sNodeFullName);
+  public static NexusNode getNexusNode(String sNodeFullName, boolean bIsGroup)
+  {
+    NexusNode  node = null;
+    String    tmpNodeName = NexusNode.extractName(sNodeFullName);
+    String    tmpClassName = NexusNode.extractClass(sNodeFullName);
 
-		if( !"".equals(tmpNodeName) || !"".equals(tmpClassName) )
-			node = new NexusNode(tmpNodeName, tmpClassName, bIsGroup);
+    if( !"".equals(tmpNodeName) || !"".equals(tmpClassName) )
+      node = new NexusNode(tmpNodeName, tmpClassName, bIsGroup);
 
-		return node;
-	}
+    return node;
+  }
 
-	public static String getNodeFullName(String sNodeName, String sNodeClass)
-	{
-		return sNodeName + (sNodeClass.equals("SDS") ? "" : (CLASS_SEPARATOR_START2 + sNodeClass + CLASS_SEPARATOR_END2) );
-	}
+  public static String getNodeFullName(String sNodeName, String sNodeClass)
+  {
+    return sNodeName + (sNodeClass.equals("SDS") ? "" : (CLASS_SEPARATOR_START2 + sNodeClass + CLASS_SEPARATOR_END2) );
+  }
     
     public static String extractName(String sNodeName) {
         int iPosClassSep;
@@ -98,8 +98,7 @@ public class NexusNode implements Cloneable {
     
     /**
      * Return true when the given node (which is this) matches this node.
-     * @param node
-     *           NexusNode that is a pattern referent: it should have  
+     * @param node NexusNode that is a pattern referent: it should have  
      *           name XOR class name defined
      * @return true when this node fit the given pattern node
      */

@@ -42,65 +42,65 @@ public final class NexusSliceIterator implements ISliceIterator {
         // to create an origin.
         
         IIndex index = mArray.getIndex();
-			
+      
         // As we get a reference on array's IIndex we directly modify it
         index.setOrigin(origin);
         index.setStride(stride);
         index.setShape(rangeList);
         
         mIterator = new NexusArrayIterator(mArray, index, false);
-			
+      
     }
     
     /// Public methods
     @Override
     public IArray getArrayNext() throws InvalidRangeException {
-    	next();
+      next();
         return createSlice();
     }
 
-	@Override
-	public int[] getSliceShape() throws InvalidRangeException {
-		return mDimension.clone();
-	}
-	
-	public int[] getSlicePosition() {
-		return mIterator.getCounter();
-	}
+  @Override
+  public int[] getSliceShape() throws InvalidRangeException {
+    return mDimension.clone();
+  }
+  
+  public int[] getSlicePosition() {
+    return mIterator.getCounter();
+  }
 
-	@Override
-	public boolean hasNext() {
-		return mIterator.hasNext();
-	}
+  @Override
+  public boolean hasNext() {
+    return mIterator.hasNext();
+  }
 
-	@Override
-	public void next() {
-		mIterator.incrementIndex();
-	}
+  @Override
+  public void next() {
+    mIterator.incrementIndex();
+  }
 
-	@Override
-	public String getFactoryName() {
-		return mArray.getFactoryName();
-	}
-	
+  @Override
+  public String getFactoryName() {
+    return mArray.getFactoryName();
+  }
+  
     private IArray createSlice() throws InvalidRangeException {
-    	int i = 0;
-    	int[] iShape  = mArray.getShape();
-    	int[] iOrigin = mArray.getIndex().getOrigin();
-    	int[] iCurPos = mIterator.getCounter();
-    	for( int pos : iCurPos ) {
-    		if( pos >= iShape[i] ) {
-    			return null;
-    		}
-    		iOrigin[i] += pos;
-    		i++;
-    	}
-    	
-    	java.util.Arrays.fill(iShape, 1);
-    	System.arraycopy(mDimension, 0, iShape, iShape.length - mDimension.length, mDimension.length); 
+      int i = 0;
+      int[] iShape  = mArray.getShape();
+      int[] iOrigin = mArray.getIndex().getOrigin();
+      int[] iCurPos = mIterator.getCounter();
+      for( int pos : iCurPos ) {
+        if( pos >= iShape[i] ) {
+          return null;
+        }
+        iOrigin[i] += pos;
+        i++;
+      }
+      
+      java.util.Arrays.fill(iShape, 1);
+      System.arraycopy(mDimension, 0, iShape, iShape.length - mDimension.length, mDimension.length); 
 
         IArray slice = mArray.copy(false);
-    	
+      
         IIndex index = slice.getIndex();
         index.setShape(iShape);
         index.setOrigin(iOrigin);

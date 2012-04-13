@@ -32,29 +32,29 @@ import org.gumtree.data.util.configuration.internal.ConfigParameter.CriterionTyp
  * @author rodriguez
  */
 public final class ConfigParameterStatic implements ConfigParameter {
-	private String         mName;     // Parameter name
-	private String         mValue;    // Parameter value
+  private String         mName;     // Parameter name
+  private String         mValue;    // Parameter value
 
-	public ConfigParameterStatic(String name, String value) {
-		mName = name;
-		mValue = value;
-		
-	}
-	
-	@Override
-	public String getValue(IDataset dataset) {
-		return mValue;
-	}
-	
-	@Override
-	public String getName() {
-	    return mName;
-	}
-	
-	@Override
-	public CriterionType getType() {
-		return CriterionType.CONSTANT;
-	}
-	
+  public ConfigParameterStatic(String name, String value) {
+    mName = name;
+    mValue = value;
+    
+  }
+  
+  @Override
+  public String getValue(IDataset dataset) {
+    return mValue;
+  }
+  
+  @Override
+  public String getName() {
+      return mName;
+  }
+  
+  @Override
+  public CriterionType getType() {
+    return CriterionType.CONSTANT;
+  }
+  
 }
 

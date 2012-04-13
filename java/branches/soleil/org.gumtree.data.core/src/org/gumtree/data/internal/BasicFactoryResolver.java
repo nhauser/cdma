@@ -8,11 +8,11 @@ import org.gumtree.data.utils.IFactoryResolver;
 
 public class BasicFactoryResolver implements IFactoryResolver {
 
-	public void discoverFactories(IFactoryManager manager) {
-		ServiceLoader<IFactory> factories = ServiceLoader.load(IFactory.class);
-		for (IFactory factory : factories) {
-			manager.registerFactory(factory.getName(), factory);
-		}
-	}
+  public void discoverFactories(IFactoryManager manager) {
+    ServiceLoader<IFactory> factories = ServiceLoader.load(IFactory.class);
+    for (IFactory factory : factories) {
+      manager.registerFactory(factory.getName(), factory);
+    }
+  }
 
 }

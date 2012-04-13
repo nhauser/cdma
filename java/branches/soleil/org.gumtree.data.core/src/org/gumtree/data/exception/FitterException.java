@@ -11,45 +11,41 @@
 package org.gumtree.data.exception;
 
 /**
- * @author nxi Created on 20/06/2008
+ * @author nxi 
  */
 public class FitterException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8055965069428891892L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8055965069428891892L;
 
-	/**
-	 * 
-	 */
-	public FitterException() {
-	}
+  /**
+   * 
+   */
+  public FitterException() {
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 */
-	public FitterException(final String message) {
-		super(message);
-	}
+  /**
+   * @param message String value
+   */
+  public FitterException(final String message) {
+    super(message);
+  }
 
-	/**
-	 * @param cause
-	 *            Throwable object
-	 */
-	public FitterException(final Throwable cause) {
-		super(cause);
-	}
+  /**
+   * @param cause Throwable object
+   */
+  public FitterException(final Throwable cause) {
+    super(cause);
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 * @param cause
-	 *            Throwable object
-	 */
-	public FitterException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+  /**
+   * @param message String value
+   * @param cause Throwable object
+   */
+  public FitterException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
 }

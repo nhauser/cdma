@@ -1,14 +1,14 @@
-/****************************************************************************** 
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
- * 	  Clement Rodriguez - initial API and implementation
- *    Norman Xiong
- ******************************************************************************/
+// ****************************************************************************
+// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0 
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html
+// 
+// Contributors
+//    Clement Rodriguez - initial API and implementation
+//    Norman Xiong
+// ****************************************************************************
 package org.gumtree.data.dictionary;
 
 /**
@@ -29,52 +29,57 @@ package org.gumtree.data.dictionary;
  */
 public interface IPathMethod {
 
-	/**
-	 * Returns name of the method that will be called (using it's package name)
-	 * return String
-	 */
-	public String getName();
+  /**
+   * Returns name of the method that will be called (using it's package name)
+   * return String
+   */
+  public String getName();
 
-	/**
-	 * Sets the name of the method that will be called (using it's package name)
-	 * return String
-	 */
-	public void setName(String method);
+  /**
+   * Sets the name of the method that will be called (using it's package name)
+   * return String
+   */
+  public void setName(String method);
 
-	/**
-	 * Return parameters Object that are used by this method
-	 * @return Object array
-	 */
-	public Object[] getParam();
+  /**
+   * Return parameters Object that are used by this method
+   * 
+   * @return Object array
+   */
+  public Object[] getParam();
 
-	/**
-	 * Set a parameter value that will be used by this method
-	 * @return Object array
-	 * @note works as a FIFO
-	 */
-	public void pushParam(Object param);
+  /**
+   * Set a parameter value that will be used by this method
+   * 
+   * @return Object array
+   * @note works as a FIFO
+   */
+  public void pushParam(Object param);
 
-	/**
-	 * Set a parameter value that will be used by this method
-	 * @return Object array
-	 * @note works as a FIFO
-	 */
-	public Object popParam();
+  /**
+   * Set a parameter value that will be used by this method
+   * 
+   * @return Object array
+   * @note works as a FIFO
+   */
+  public Object popParam();
 
-	/**
-	 * Tells whether or not the method is already contained by the plug-in or if it 
-	 * will be dynamically loaded from the external folder specific to the plug-in.
-	 * @return boolean
-	 */
-	public boolean isExternalCall();
+  /**
+   * Tells whether or not the method is already contained by the plug-in or if it 
+   * will be dynamically loaded from the external folder specific to the plug-in.
+   * 
+   * @return boolean
+   */
+  public boolean isExternalCall();
 
-	/**
-	 * Set whether or not the method is already contained by the plug-in or if it 
-	 * will be dynamically loaded from the external folder specific to the plug-in.
-	 * @return boolean
-	 * @see LogicalGroup.resolveMethod
-	 * @see org.gumtree.data.dictionary.IClassLoader
-	 */
-	public void isExternal(boolean external);
+  /**
+   * Set whether or not the method is already contained by the plug-in or if it 
+   * will be dynamically loaded from the external folder specific to the plug-in.
+   * 
+   * @return boolean
+   * @see LogicalGroup.resolveMethod
+   * @see org.gumtree.data.dictionary.IClassLoader
+   */
+  public void isExternal(boolean external);
 
 }

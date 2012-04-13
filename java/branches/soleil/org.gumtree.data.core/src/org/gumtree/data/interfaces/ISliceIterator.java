@@ -15,7 +15,7 @@ import org.gumtree.data.exception.InvalidRangeException;
 /**
  * Iterator for slicing an Array. 
  * This is a way to iterate over slices of arrays, and should eventually be
- * incorporated into the Gumtree Data Model rather than lying around here. Each
+ * incorporated into the CDMA Data Model rather than lying around here. Each
  * iteration returns an array of dimension dim, representing the last dim
  * dimensions of the input array. So for 3D data consisting of a set of 2D
  * arrays, each of the 2D arrays will be returned.
@@ -25,44 +25,42 @@ import org.gumtree.data.exception.InvalidRangeException;
  */
 public interface ISliceIterator extends IModelObject {
 
-	/**
-	 * Check if there is next slice.
-	 * 
-	 * @return Boolean type Created on 10/11/2008
-	 */
-	boolean hasNext();
+  /**
+   * Check if there is next slice.
+   * 
+   * @return Boolean type 
+   */
+  boolean hasNext();
 
-	/**
-	 * Jump to the next slice.
-	 * 
-	 * Created on 10/11/2008
-	 */
-	void next();
+  /**
+   * Jump to the next slice.
+   * 
+   */
+  void next();
 
-	/**
-	 * Get the next slice of Array.
-	 * 
-	 * @return GDM Array
-	 * @throws InvalidRangeException
-	 *             Created on 10/11/2008
-	 */
-	IArray getArrayNext() throws InvalidRangeException;
+  /**
+   * Get the next slice of Array.
+   * 
+   * @return CDMA Array
+   * @throws InvalidRangeException
+   */
+  IArray getArrayNext() throws InvalidRangeException;
 
-	/**
-	 * Get the shape of any slice that is returned. This could be used when a
-	 * temporary array of the right shape needs to be created.
-	 * 
-	 * @return dimensions of a single slice from the iterator
-	 * @throws InvalidRangeException
-	 *             invalid range
-	 */
-	int[] getSliceShape() throws InvalidRangeException;
-	
-	/**
-	 * Get the slice position in the whole array from which this slice iterator
-	 * was created.
-	 * @return <code>int</code> array of the current position of the slice
-	 * @note rank of the returned position is the same as the IArray shape we are slicing 
-	 */
-	int[] getSlicePosition();
+  /**
+   * Get the shape of any slice that is returned. This could be used when a
+   * temporary array of the right shape needs to be created.
+   * 
+   * @return dimensions of a single slice from the iterator
+   * @throws InvalidRangeException
+   *             invalid range
+   */
+  int[] getSliceShape() throws InvalidRangeException;
+  
+  /**
+   * Get the slice position in the whole array from which this slice iterator
+   * was created.
+   * @return <code>int</code> array of the current position of the slice
+   * @note rank of the returned position is the same as the IArray shape we are slicing 
+   */
+  int[] getSlicePosition();
 }

@@ -19,20 +19,20 @@ package org.gumtree.data.interfaces;
  */
 public interface IIndex extends IModelObject, Cloneable {
 
-	/**
-	 * Get the number of dimensions in the array.
-	 * 
-	 * @return integer value
-	 */
-	int getRank();
+  /**
+   * Get the number of dimensions in the array.
+   * 
+   * @return integer value
+   */
+  int getRank();
 
-	/**
-	 * Get the shape: length of array in each dimension.
-	 * 
-	 * @return array of integer
-	 */
-	int[] getShape();
-	
+  /**
+   * Get the shape: length of array in each dimension.
+   * 
+   * @return array of integer
+   */
+  int[] getShape();
+  
     /**
      * Get the origin: first index of array in each dimension.
      * 
@@ -40,12 +40,12 @@ public interface IIndex extends IModelObject, Cloneable {
      */
     int[] getOrigin();
 
-	/**
-	 * Get the total number of elements in the array.
-	 * 
-	 * @return long value
-	 */
-	long getSize();
+  /**
+   * Get the total number of elements in the array.
+   * 
+   * @return long value
+   */
+  long getSize();
 
     /**
      * Get the stride: for each dimension number elements to jump in the array between two 
@@ -55,52 +55,47 @@ public interface IIndex extends IModelObject, Cloneable {
      */
     long[] getStride();
     
-	/**
-	 * Get the current element's index into the 1D backing array.
-	 * 
-	 * @return integer value
-	 */
-	long currentElement();
+  /**
+   * Get the current element's index into the 1D backing array.
+   * 
+   * @return integer value
+   */
+  long currentElement();
 
-	/**
-	 * Get the last element's index into the 1D backing array.
-	 * 
-	 * @return integer value
-	 */
-	long lastElement();
-	
-	/**
-	 * Set the current element's index. General-rank case.
-	 * 
-	 * @param index
-	 *            array of integer
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set(int[] index);
+  /**
+   * Get the last element's index into the 1D backing array.
+   * 
+   * @return integer value
+   */
+  long lastElement();
+  
+  /**
+   * Set the current element's index. General-rank case.
+   * 
+   * @param index array of integer
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set(int[] index);
 
-	/**
-	 * set current element at dimension dim to v.
-	 * 
-	 * @param dim
-	 *            integer value
-	 * @param value
-	 *            integer value
-	 */
-	void setDim(int dim, int value);
+  /**
+   * set current element at dimension dim to v.
+   * 
+   * @param dim integer value
+   * @param value integer value
+   */
+  void setDim(int dim, int value);
     
     /**
      * set the origin on each dimension for this index
      * 
-     * @param origin
-     *            array of integers
+     * @param origin array of integers
      */
     void setOrigin(int[] origin);
     
     /**
      * set the given shape for this index
      * 
-     * @param value
-     *            array of integers
+     * @param value array of integers
      */
     void setShape(int[] shape);
 
@@ -108,211 +103,172 @@ public interface IIndex extends IModelObject, Cloneable {
      * set the stride for this index. The stride is the number of 
      * cells between two consecutive cells in the same dimension.
      * 
-     * @param stride
-     *            array of integers
+     * @param stride array of integers
      */
     void setStride(long[] stride);
     
-	/**
-	 * set current element at dimension 0 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set0(int v);
+  /**
+   * set current element at dimension 0 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set0(int v);
 
-	/**
-	 * set current element at dimension 1 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set1(int v);
+  /**
+   * set current element at dimension 1 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set1(int v);
 
-	/**
-	 * set current element at dimension 2 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set2(int v);
+  /**
+   * set current element at dimension 2 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set2(int v);
 
-	/**
-	 * set current element at dimension 3 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set3(int v);
+  /**
+   * set current element at dimension 3 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set3(int v);
 
-	/**
-	 * set current element at dimension 4 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set4(int v);
+  /**
+   * set current element at dimension 4 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set4(int v);
 
-	/**
-	 * set current element at dimension 5 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set5(int v);
+  /**
+   * set current element at dimension 5 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set5(int v);
 
-	/**
-	 * set current element at dimension 6 to v.
-	 * 
-	 * @param v
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set6(int v);
+  /**
+   * set current element at dimension 6 to v.
+   * 
+   * @param v integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set6(int v);
 
-	/**
-	 * set current element at dimension 0 to v0.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i))
-	 */
-	IIndex set(int v0);
+  /**
+   * set current element at dimension 0 to v0.
+   * 
+   * @param v0 integer value
+   * @return this, so you can use A.get(i.set(i))
+   */
+  IIndex set(int v0);
 
-	/**
-	 * set current element at dimension 0,1 to v0,v1.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j))
-	 */
-	IIndex set(int v0, int v1);
+  /**
+   * set current element at dimension 0,1 to v0,v1.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @return this, so you can use A.get(i.set(i,j))
+   */
+  IIndex set(int v0, int v1);
 
-	/**
-	 * set current element at dimension 0,1,2 to v0,v1,v2.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @param v2
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j,k))
-	 */
-	IIndex set(int v0, int v1, int v2);
+  /**
+   * set current element at dimension 0,1,2 to v0,v1,v2.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @param v2 integer value
+   * @return this, so you can use A.get(i.set(i,j,k))
+   */
+  IIndex set(int v0, int v1, int v2);
 
-	/**
-	 * set current element at dimension 0,1,2,3 to v0,v1,v2,v3.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @param v2
-	 *            integer value
-	 * @param v3
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j,k,l))
-	 */
-	IIndex set(int v0, int v1, int v2, int v3);
+  /**
+   * set current element at dimension 0,1,2,3 to v0,v1,v2,v3.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @param v2 integer value
+   * @param v3 integer value
+   * @return this, so you can use A.get(i.set(i,j,k,l))
+   */
+  IIndex set(int v0, int v1, int v2, int v3);
 
-	/**
-	 * set current element at dimension 0,1,2,3,4 to v0,v1,v2,v3,v4.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @param v2
-	 *            integer value
-	 * @param v3
-	 *            integer value
-	 * @param v4
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j,k,l,m))
-	 */
-	IIndex set(int v0, int v1, int v2, int v3, int v4);
+  /**
+   * set current element at dimension 0,1,2,3,4 to v0,v1,v2,v3,v4.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @param v2 integer value
+   * @param v3 integer value
+   * @param v4 integer value
+   * @return this, so you can use A.get(i.set(i,j,k,l,m))
+   */
+  IIndex set(int v0, int v1, int v2, int v3, int v4);
 
-	/**
-	 * set current element at dimension 0,1,2,3,4,5 to v0,v1,v2,v3,v4,v5.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @param v2
-	 *            integer value
-	 * @param v3
-	 *            integer value
-	 * @param v4
-	 *            integer value
-	 * @param v5
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j,k,l,m,n))
-	 */
-	IIndex set(int v0, int v1, int v2, int v3, int v4, int v5);
+  /**
+   * set current element at dimension 0,1,2,3,4,5 to v0,v1,v2,v3,v4,v5.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @param v2 integer value
+   * @param v3 integer value
+   * @param v4 integer value
+   * @param v5 integer value
+   * @return this, so you can use A.get(i.set(i,j,k,l,m,n))
+   */
+  IIndex set(int v0, int v1, int v2, int v3, int v4, int v5);
 
-	/**
-	 * set current element at dimension 0,1,2,3,4,5,6 to v0,v1,v2,v3,v4,v5,v6.
-	 * 
-	 * @param v0
-	 *            integer value
-	 * @param v1
-	 *            integer value
-	 * @param v2
-	 *            integer value
-	 * @param v3
-	 *            integer value
-	 * @param v4
-	 *            integer value
-	 * @param v5
-	 *            integer value
-	 * @param v6
-	 *            integer value
-	 * @return this, so you can use A.get(i.set(i,j,k,l,m,n,p))
-	 */
-	IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6);
+  /**
+   * set current element at dimension 0,1,2,3,4,5,6 to v0,v1,v2,v3,v4,v5,v6.
+   * 
+   * @param v0 integer value
+   * @param v1 integer value
+   * @param v2 integer value
+   * @param v3 integer value
+   * @param v4 integer value
+   * @param v5 integer value
+   * @param v6 integer value
+   * @return this, so you can use A.get(i.set(i,j,k,l,m,n,p))
+   */
+  IIndex set(int v0, int v1, int v2, int v3, int v4, int v5, int v6);
 
-	/**
-	 * String representation.
-	 * 
-	 * @return String object
-	 */
-	String toStringDebug();
+  /**
+   * String representation.
+   * 
+   * @return String object
+   */
+  String toStringDebug();
 
-	/**
-	 * Return the current location of the index.
-	 * 
-	 * @return java array of integer Created on 18/06/2008
-	 */
-	int[] getCurrentCounter();
+  /**
+   * Return the current location of the index.
+   * 
+   * @return java array of integer 
+   */
+  int[] getCurrentCounter();
 
-	/**
-	 * Set the name of one of the indices.
-	 * 
-	 * @param dim
-	 *            which index
-	 * @param indexName
-	 *            name of index
-	 */
-	void setIndexName(int dim, String indexName);
+  /**
+   * Set the name of one of the indices.
+   * 
+   * @param dim which index
+   * @param indexName name of index
+   */
+  void setIndexName(int dim, String indexName);
 
-	/**
-	 * Get the name of one of the indices.
-	 * 
-	 * @param dim
-	 *            which index?
-	 * @return name of index, or null if none.
-	 */
-	String getIndexName(int dim);
+  /**
+   * Get the name of one of the indices.
+   * 
+   * @param dim which index?
+   * @return name of index, or null if none.
+   */
+  String getIndexName(int dim);
 
     /**
      * Remove all index with length one.
@@ -323,8 +279,7 @@ public interface IIndex extends IModelObject, Cloneable {
     /**
      * Eliminate the specified dimension.
      * 
-     * @param dim
-     *            dimension to eliminate: must be of length one, else
+     * @param dim dimension to eliminate: must be of length one, else
      *            IllegalArgumentException
      * @return the new index
      */
