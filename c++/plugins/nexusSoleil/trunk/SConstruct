@@ -1,0 +1,162 @@
+from os import path
+import os
+
+###================================================================================
+# The names under which a library can be used depend heavily on the operating 
+# system. Unix provides the most detailed naming scheme depending on three 
+# parameters:
+#  libname ............. the name of the library
+#  version ............. the API version of the library
+#  soversion ........... the ABI version of the library
+#
+# On Linux a shared object is available under three names following the
+# following naming convention
+# lib<libname>.so.<soversion>.<version>
+# lib<libname>.so.<soversion>
+# lib<libname>.so
+#
+# The functions defined in this section create the appropriate names for the 
+# library target and add them to the build environment.
+#
+
+def create_full_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]+"."+env["VERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+"."+env["VERSION"]+env["SHLIBSUFFIX"]
+    env.Append(LIBFULLNAME = rstr) 
+
+def create_so_libname(env):
+    rstr = env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+env["SHLIBSUFFIX"]
+
+    env.Append(LIBSONAME = rstr)
+
+def create_link_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]+env["SHLIBSUFFIX"]
+    env.Append(LIBLINKNAME = rstr)
+        
+    
+#==================================================================================
+
+
+#===================set build variables========================================
+vars = Variables("BuildConfig.py")
+vars.Add(PathVariable("NEXUSENGINEINC","NEXUS engine include directory",
+                      "/usr/include/cdma/engines/nexus",PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSENGINELIB","NEXUS engine library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSCPPINC","NEXUS Soleil C++ interface include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("NEXUSCPPLIB","NEXUS Soleil C++ interface library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
+         PathVariable.PathAccept))
+vars.Add(PathVariable("CDMACORELIB","CDMA core library directory","/usr/lib",
+                      PathVariable.PathAccept))
+vars.Add(PathVariable("CDMACOREINC","CMDA core include directory","/usr/include",
+                      PathVariable.PathAccept))
+
+vars.Add("SOVERSION","ABI version of the core libraray","")
+vars.Add("VERSION","API version of the core libraray","")
+vars.Add("LIBNAME","Name of the shared library","")
+vars.Add("LIBDIR","Installation directory of the libraray","")
+vars.Add("INCDIR","Installation directory for the header files","")
+vars.Add("PREFIX","Installation prefix","/usr")
+
+
+#=====================create the basic build environment=======================
+env = Environment(variables=vars,tools=["default","textfile"])
+env.AppendUnique(CPPPATH=[env["YATINC"],"include",env["CDMACOREINC"],
+                 env["NEXUSCPPINC"],env["NEXUSENGINEINC"]])
+env.AppendUnique(LIBPATH=[env["YATLIB"],env["NEXUSCPPLIB"],env["CDMACORELIB"]
+                 ,env["NEXUSENGINEINC"]])
+
+#=====================here we need some autoconfiguration======================
+conf = Configure(env)
+
+
+#src/DictionaryDetector.h:#include "nxfile.h"
+#src/DictionaryDetector.h:#include <internal/common.h>
+
+
+#check for header files
+if not conf.CheckCXXHeader("yat/plugin/PlugInSymbols.h") or \
+   not conf.CheckCXXHeader("yat/plugin/IPlugInInfo.h") or \
+   not conf.CheckCXXHeader("yat/utils/URI.h") or\
+   not conf.CheckCXXHeader("yat/utils/String.h") or \
+   not conf.CheckCXXHeader("yat/file/FileName.h"):
+    print "YAT header files not found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("NxsDataset.h") or \
+   not conf.CheckCXXHeader("NxsAttribute.h"):
+    print "Nexus CDMA engine header file not found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/IFactory.h") or \
+   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/Key.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
+   not conf.CheckCXXHeader("cdma/navigation/IGroup.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/Context.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/PluginMethods.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/SimpleDataItem.h"):
+    print "No CDMA core header files found!"
+    Exit(1)
+
+#check for libraries
+if not conf.CheckLib("cdmacore"):
+    print "CDMA core library not found!"
+    Exit(1)
+
+if not conf.CheckLib("yat"):
+    print "YAT library not found!"
+    Exit(1)
+
+if not conf.CheckLib("cdmaengine_nexus"):
+    print "CDMA nexus engine not found!"
+    Exit(1)
+
+if not conf.CheckLib("nexuscpp"):
+    print "SOLEIL Nexus C++ library not found!"
+    Exit(1)
+
+
+
+env = conf.Finish()
+
+#===================create and export the build environment=====================
+env.Append(CPPPATH=["#include/","#src/"])
+
+#set library name environment variables
+create_full_libname(env)
+create_so_libname(env)
+create_link_libname(env)
+
+if os.name == "posix":
+    #add special link flag to ensure that the soname of the library is 
+    #entioned in the ELF header
+    env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
+
+#manage installation paths
+if env["LIBDIR"]:
+    env.Replace(LIBDIR=env["LIBDIR"])
+else:
+    env.Replace(LIBDIR=os.path.join(env["PREFIX"],"lib/cdma/plugins"))
+
+
+
+Export("env")
+
+#=======================build the plugin==================================
+SConscript(["src/SConscript"])
+

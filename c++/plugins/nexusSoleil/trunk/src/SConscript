@@ -1,0 +1,19 @@
+import os
+
+#import build environment
+Import("env")
+
+#generate source list
+pluginsrc = Glob("*.cpp")
+
+
+#build the shared library
+plugin = env.SharedLibrary(env["LIBNAME"],pluginsrc,SHLIBPREFIX="")
+
+
+plugin_install = env.Install("$LIBDIR",plugin)
+
+env.Alias("all",[plugin])
+env.Alias("install",[plugin_install])
+Default("all")
+
