@@ -8,11 +8,11 @@
 		<version>RELEASE</version>
 	</parent>
 
-    <groupId>org.gumtree.data.CDMA</groupId>
-    <artifactId>nexus</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
-    <name>CDMA Engine Nexus</name>
-    <description>CDMA Engine: NeXus based on Soleil's API</description>
+	<groupId>org.gumtree.data.CDMA</groupId>
+	<artifactId>nexus</artifactId>
+	<version>0.0.4-SNAPSHOT</version>
+	<name>CDMA Engine Nexus</name>
+	<description>CDMA Engine: NeXus based on Soleil's API</description>
 
 	<scm>
 		<connection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.engine.jnexus</connection>
@@ -27,7 +27,11 @@
 		<dependency>
 			<groupId>org.gumtree.data.CDMA</groupId>
 			<artifactId>Core</artifactId>
-			<version>3.0.1-SNAPSHOT</version>
+			<version>3.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -43,7 +47,7 @@
 			<organization>Synchrotron Soleil</organization>
 			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
 			<roles>
-			<role>developer</role>
+				<role>developer</role>
 			</roles>
 			<timezone>1</timezone>
 		</developer>

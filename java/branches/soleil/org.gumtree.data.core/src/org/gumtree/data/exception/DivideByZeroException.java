@@ -11,46 +11,42 @@
 package org.gumtree.data.exception;
 
 /**
- * @author nxi Created on 09/07/2008
+ * @author nxi 
  */
 public class DivideByZeroException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1487401668115555904L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -1487401668115555904L;
 
-	/**
-	 * 
-	 */
-	public DivideByZeroException() {
-		super();
-	}
+  /**
+   * 
+   */
+  public DivideByZeroException() {
+    super();
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 * @param arg1
-	 *            Throwable object
-	 */
-	public DivideByZeroException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-	}
+  /**
+   * @param arg0 String value
+   * @param arg1 Throwable object
+   */
+  public DivideByZeroException(final String arg0, final Throwable arg1) {
+    super(arg0, arg1);
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 */
-	public DivideByZeroException(final String arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 String value
+   */
+  public DivideByZeroException(final String arg0) {
+    super(arg0);
+  }
 
-	/**
-	 * @param arg0
-	 *            Throwable object
-	 */
-	public DivideByZeroException(final Throwable arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 Throwable object
+   */
+  public DivideByZeroException(final Throwable arg0) {
+    super(arg0);
+  }
 
 }

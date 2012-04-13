@@ -34,65 +34,65 @@ import org.gumtree.data.interfaces.IDataset;
  * @author rodriguez
  */
 public interface ConfigParameter {
-	/**
-	 * Get the name of that ConfigParameter
-	 * @return name of the parameter
-	 */
-	public String getName();
-	
-	/**
-	 * Get the type of this ConfigParameter 
-	 * @return CriterionType
-	 * @see CriterionType
-	 */
-	public CriterionType getType();
-	
-	/**
-	 * Evaluate the parameter according its type and a given IDataset.
-	 * 
-	 * @param dataset the data source that will be used to perform evaluation
-	 * 
-	 * @return the result of the evaluation in a String representation
-	 */
-	public String getValue(IDataset dataset);
-	
-	/**
-	 * CriterionType is an enumeration where elements are :<br/>
-	 * - EXIST check if the path exists in IDataset, a boolean value can be associated<br/>
-	 * - NAME get the name of the object targeted by the path<br/>
-	 * - VALUE get the value of IDataItem targeted by the path<br/>
-	 * - CONSTANT the value will be a constant<br/>
-	 * - EQUAL will operate an equality test between targeted IDataItem's and a given value<br/>
-	 * - NONE parameter value will be null<br/>
-	 */
-	public enum CriterionType {
-		EXIST     ("exist"),
-		NAME      ("name"),
-		VALUE     ("value"),
-		CONSTANT  ("constant"),
-		EQUAL     ("equal"),
-		NONE      ("");
-	    
-	    private String mName;
+  /**
+   * Get the name of that ConfigParameter
+   * @return name of the parameter
+   */
+  public String getName();
+  
+  /**
+   * Get the type of this ConfigParameter 
+   * @return CriterionType
+   * @see CriterionType
+   */
+  public CriterionType getType();
+  
+  /**
+   * Evaluate the parameter according its type and a given IDataset.
+   * 
+   * @param dataset the data source that will be used to perform evaluation
+   * 
+   * @return the result of the evaluation in a String representation
+   */
+  public String getValue(IDataset dataset);
+  
+  /**
+   * CriterionType is an enumeration where elements are :<br/>
+   * - EXIST check if the path exists in IDataset, a boolean value can be associated<br/>
+   * - NAME get the name of the object targeted by the path<br/>
+   * - VALUE get the value of IDataItem targeted by the path<br/>
+   * - CONSTANT the value will be a constant<br/>
+   * - EQUAL will operate an equality test between targeted IDataItem's and a given value<br/>
+   * - NONE parameter value will be null<br/>
+   */
+  public enum CriterionType {
+    EXIST     ("exist"),
+    NAME      ("name"),
+    VALUE     ("value"),
+    CONSTANT  ("constant"),
+    EQUAL     ("equal"),
+    NONE      ("");
+      
+      private String mName;
 
-	    private CriterionType(String type) { mName = type; }
-	    public String getName()            { return mName; }
-	}
-	
-	/**
-	 * CriterionValue is an enumeration where elements are :<br/>
-	 * - TRUE having value string "true"<br/>
-	 * - FALSE having value string "false"<br/>
-	 * - NONE having value string ""<br/>
-	 */
-	public enum CriterionValue {
-		TRUE     ("true"),
-		FALSE    ("false"),
-		NONE     ("");
-	    
-	    private String mName;
+      private CriterionType(String type) { mName = type; }
+      public String getName()            { return mName; }
+  }
+  
+  /**
+   * CriterionValue is an enumeration where elements are :<br/>
+   * - TRUE having value string "true"<br/>
+   * - FALSE having value string "false"<br/>
+   * - NONE having value string ""<br/>
+   */
+  public enum CriterionValue {
+    TRUE     ("true"),
+    FALSE    ("false"),
+    NONE     ("");
+      
+      private String mName;
 
-	    private CriterionValue(String type) { mName = type; }
-	    public String getName()             { return mName; }
-	}
+      private CriterionValue(String type) { mName = type; }
+      public String getName()             { return mName; }
+  }
 }

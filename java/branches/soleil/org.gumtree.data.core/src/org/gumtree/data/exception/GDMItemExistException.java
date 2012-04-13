@@ -16,41 +16,37 @@ package org.gumtree.data.exception;
  */
 public class GDMItemExistException extends GDMWriterException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3550694606967945269L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 3550694606967945269L;
 
-	/**
-	 * 
-	 */
-	public GDMItemExistException() {
-	}
+  /**
+   * 
+   */
+  public GDMItemExistException() {
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 */
-	public GDMItemExistException(final String arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 String value
+   */
+  public GDMItemExistException(final String arg0) {
+    super(arg0);
+  }
 
-	/**
-	 * @param arg0
-	 *            Throwable object
-	 */
-	public GDMItemExistException(final Throwable arg0) {
-		super(arg0);
-	}
+  /**
+   * @param arg0 Throwable object
+   */
+  public GDMItemExistException(final Throwable arg0) {
+    super(arg0);
+  }
 
-	/**
-	 * @param arg0
-	 *            String value
-	 * @param arg1
-	 *            Throwable object
-	 */
-	public GDMItemExistException(final String arg0, final Throwable arg1) {
-		super(arg0, arg1);
-	}
+  /**
+   * @param arg0 String value
+   * @param arg1 Throwable object
+   */
+  public GDMItemExistException(final String arg0, final Throwable arg1) {
+    super(arg0, arg1);
+  }
 
 }

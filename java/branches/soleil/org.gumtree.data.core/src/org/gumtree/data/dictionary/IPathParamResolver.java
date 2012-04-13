@@ -1,14 +1,14 @@
-/****************************************************************************** 
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
- * 	  Clement Rodriguez - initial API and implementation
- *    Norman Xiong
- ******************************************************************************/
+// ****************************************************************************
+// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0 
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html
+// 
+// Contributors
+//    Clement Rodriguez - initial API and implementation
+//    Norman Xiong
+// ****************************************************************************
 package org.gumtree.data.dictionary;
 
 import org.gumtree.data.interfaces.IContainer;
@@ -31,10 +31,9 @@ import org.gumtree.data.interfaces.IModelObject;
 
 public interface IPathParamResolver extends IModelObject {
 
-	/**
-	 * It will returns
-	 * @param node 
-	 * @return
-	 */
-	IPathParameter resolvePathParameter(IContainer node);
+  /**
+   * It will returns
+   * @param node @return
+   */
+  IPathParameter resolvePathParameter(IContainer node);
 }

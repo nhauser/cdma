@@ -11,46 +11,42 @@
 package org.gumtree.data.exception;
 
 /**
- * @author nxi Created on 19/06/2008
+ * @author nxi 
  */
 public class DimensionNotSupportedException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8704918780837836462L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -8704918780837836462L;
 
-	/**
-	 * 
-	 */
-	public DimensionNotSupportedException() {
-	}
+  /**
+   * 
+   */
+  public DimensionNotSupportedException() {
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 */
-	public DimensionNotSupportedException(final String message) {
-		super(message);
-	}
+  /**
+   * @param message String value
+   */
+  public DimensionNotSupportedException(final String message) {
+    super(message);
+  }
 
-	/**
-	 * @param cause
-	 *            Throwable object
-	 */
-	public DimensionNotSupportedException(final Throwable cause) {
-		super(cause);
-	}
+  /**
+   * @param cause Throwable object
+   */
+  public DimensionNotSupportedException(final Throwable cause) {
+    super(cause);
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 * @param cause
-	 *            Throwable object
-	 */
-	public DimensionNotSupportedException(final String message,
-			final Throwable cause) {
-		super(message, cause);
-	}
+  /**
+   * @param message String value
+   * @param cause Throwable object
+   */
+  public DimensionNotSupportedException(final String message,
+      final Throwable cause) {
+    super(message, cause);
+  }
 
 }

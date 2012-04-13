@@ -13,49 +13,46 @@ package org.gumtree.data.math;
 /**
  * The data wrapper for error propagation mathematics.
  * 
- * @param <T>
- *            the parameter class type
- * @author nxi Created on 09/07/2008
+ * @param <T> the parameter class type
+ * @author nxi 
  */
 public class EData<T> {
 
-	/**
-	 * Data storage.
-	 */
-	private T data;
-	/**
-	 * Variance data storage.
-	 */
-	private T variance;
+  /**
+   * Data storage.
+   */
+  private T data;
+  /**
+   * Variance data storage.
+   */
+  private T variance;
 
-	/**
-	 * Constructor fully parameterised.
-	 * 
-	 * @param data
-	 *            T type
-	 * @param variance
-	 *            T type
-	 */
-	public EData(final T data, final T variance) {
-		this.data = data;
-		this.variance = variance;
-	}
+  /**
+   * Constructor fully parameterised.
+   * 
+   * @param data T type
+   * @param variance T type
+   */
+  public EData(final T data, final T variance) {
+    this.data = data;
+    this.variance = variance;
+  }
 
-	/**
-	 * Return the data field.
-	 * 
-	 * @return a generic type Created on 15/07/2008
-	 */
-	public T getData() {
-		return data;
-	}
+  /**
+   * Return the data field.
+   * 
+   * @return a generic type 
+   */
+  public T getData() {
+    return data;
+  }
 
-	/**
-	 * Return the variance field.
-	 * 
-	 * @return a generic type Created on 15/07/2008
-	 */
-	public T getVariance() {
-		return variance;
-	}
+  /**
+   * Return the variance field.
+   * 
+   * @return a generic type 
+   */
+  public T getVariance() {
+    return variance;
+  }
 }

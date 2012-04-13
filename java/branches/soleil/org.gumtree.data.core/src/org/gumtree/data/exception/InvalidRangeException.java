@@ -16,41 +16,37 @@ package org.gumtree.data.exception;
  */
 public class InvalidRangeException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2056636620291514276L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 2056636620291514276L;
 
-	/**
-	 * 
-	 */
-	public InvalidRangeException() {
-	}
+  /**
+   * 
+   */
+  public InvalidRangeException() {
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 */
-	public InvalidRangeException(final String message) {
-		super(message);
-	}
+  /**
+   * @param message String value
+   */
+  public InvalidRangeException(final String message) {
+    super(message);
+  }
 
-	/**
-	 * @param cause
-	 *            Throwable object
-	 */
-	public InvalidRangeException(final Throwable cause) {
-		super(cause);
-	}
+  /**
+   * @param cause Throwable object
+   */
+  public InvalidRangeException(final Throwable cause) {
+    super(cause);
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 * @param cause
-	 *            Throwable object
-	 */
-	public InvalidRangeException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
+  /**
+   * @param message String value
+   * @param cause Throwable object
+   */
+  public InvalidRangeException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 
 }

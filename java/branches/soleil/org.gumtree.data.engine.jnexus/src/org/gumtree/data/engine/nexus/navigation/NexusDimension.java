@@ -17,7 +17,7 @@ public final class NexusDimension implements IDimension {
     private String    mFactory;
     
     public NexusDimension(String factoryName, IDataItem item) {
-    	mFactory   = factoryName;
+      mFactory   = factoryName;
         mLongName  = item.getName();
         mIsUnlimited = item.isUnlimited();
         try {
@@ -28,98 +28,98 @@ public final class NexusDimension implements IDimension {
     }
     
     public NexusDimension(NexusDimension dim) {
-    	mFactory          = dim.mFactory;
+      mFactory          = dim.mFactory;
         mLongName         = dim.mLongName;
         mArray            = dim.mArray;
         mIsVariableLength = dim.mIsVariableLength;
         mIsUnlimited      = dim.mIsUnlimited;
     }
     
-	@Override
-	public int compareTo(Object o) {
-		if( this.equals(o) ) {
-			return 0;
-		}
-		else {
-			IDimension dim = (IDimension) o;
-			return mLongName.compareTo( dim.getName() );
-		}
-	}
-	
-	@Override
-	public boolean equals(Object dim) {
-		boolean result;
-		if( dim instanceof IDimension ) {
-			result = mLongName.equals(((IDimension) dim).getName());
-		}
-		else {
-			result = false;
-		}
-		return result;
-	}
-	
-	@Override
-	public int hashCode() {
-		return mLongName.hashCode();
-	}
+  @Override
+  public int compareTo(Object o) {
+    if( this.equals(o) ) {
+      return 0;
+    }
+    else {
+      IDimension dim = (IDimension) o;
+      return mLongName.compareTo( dim.getName() );
+    }
+  }
+  
+  @Override
+  public boolean equals(Object dim) {
+    boolean result;
+    if( dim instanceof IDimension ) {
+      result = mLongName.equals(((IDimension) dim).getName());
+    }
+    else {
+      result = false;
+    }
+    return result;
+  }
+  
+  @Override
+  public int hashCode() {
+    return mLongName.hashCode();
+  }
 
-	@Override
-	public IArray getCoordinateVariable() {
-		return mArray;
-	}
+  @Override
+  public IArray getCoordinateVariable() {
+    return mArray;
+  }
 
-	@Override
-	public int getLength() {
+  @Override
+  public int getLength() {
         return Long.valueOf(mArray.getSize()).intValue();
-	}
+  }
 
-	@Override
-	public String getName() {
-		return mLongName;
-	}
+  @Override
+  public String getName() {
+    return mLongName;
+  }
 
-	@Override
-	public boolean isShared() {
-		return mIsShared;
-	}
+  @Override
+  public boolean isShared() {
+    return mIsShared;
+  }
 
-	@Override
-	public boolean isUnlimited() {
-		return mIsUnlimited;
-	}
+  @Override
+  public boolean isUnlimited() {
+    return mIsUnlimited;
+  }
 
-	@Override
-	public boolean isVariableLength() {
-		return mIsVariableLength;
-	}
+  @Override
+  public boolean isVariableLength() {
+    return mIsVariableLength;
+  }
 
-	@Override
-	public void setLength(int n) {
-	    try {
-	        mArray.getArrayUtils().reshape( new int[] {n} );
+  @Override
+  public void setLength(int n) {
+      try {
+          mArray.getArrayUtils().reshape( new int[] {n} );
         } catch ( ShapeNotMatchException e) {
         }
     }
 
-	@Override
-	public void setName(String name) {
+  @Override
+  public void setName(String name) {
         mLongName = name;
-	}
+  }
 
-	@Override
-	public void setShared(boolean b) {
+  @Override
+  public void setShared(boolean b) {
         mIsShared = b;
-	}
+  }
 
-	@Override
-	public void setUnlimited(boolean b) {
-	    mIsUnlimited = b;
-	}
+  @Override
+  public void setUnlimited(boolean b) {
+      mIsUnlimited = b;
+  }
 
-	@Override
-	public void setVariableLength(boolean b) {
-	    mIsVariableLength = b;
-	}
+  @Override
+  public void setVariableLength(boolean b) {
+      mIsVariableLength = b;
+  }
     
     @Override
     public void setCoordinateVariable(IArray array) throws ShapeNotMatchException {
@@ -129,14 +129,14 @@ public final class NexusDimension implements IDimension {
         mArray = array;
     }
 
-	@Override
-	public String writeCDL(boolean strict) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getFactoryName() {
-		return mFactory;
-	}
+  @Override
+  public String writeCDL(boolean strict) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
+  @Override
+  public String getFactoryName() {
+    return mFactory;
+  }
 }

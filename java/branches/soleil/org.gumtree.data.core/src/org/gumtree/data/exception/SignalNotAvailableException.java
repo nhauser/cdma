@@ -19,42 +19,38 @@ package org.gumtree.data.exception;
  */
 public class SignalNotAvailableException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4635308951458654040L;
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -4635308951458654040L;
 
-	/**
-	 * 
-	 */
-	public SignalNotAvailableException() {
-	}
+  /**
+   * 
+   */
+  public SignalNotAvailableException() {
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 */
-	public SignalNotAvailableException(final String message) {
-		super(message);
-	}
+  /**
+   * @param message String value
+   */
+  public SignalNotAvailableException(final String message) {
+    super(message);
+  }
 
-	/**
-	 * @param cause
-	 *            Throwable object
-	 */
-	public SignalNotAvailableException(final Throwable cause) {
-		super(cause);
-	}
+  /**
+   * @param cause Throwable object
+   */
+  public SignalNotAvailableException(final Throwable cause) {
+    super(cause);
+  }
 
-	/**
-	 * @param message
-	 *            String value
-	 * @param cause
-	 *            Throwable object
-	 */
-	public SignalNotAvailableException(final String message,
-			final Throwable cause) {
-		super(message, cause);
-	}
+  /**
+   * @param message String value
+   * @param cause Throwable object
+   */
+  public SignalNotAvailableException(final String message,
+      final Throwable cause) {
+    super(message, cause);
+  }
 
 }
