@@ -11,6 +11,7 @@
 
 package org.gumtree.data;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -56,21 +57,37 @@ public final class Factory {
   private static final String DICO_PATH_PROP = "CDM_DICTIONARY_PATH";
   
   /**
-   * Retrieve the dataset referenced by the URI.
+   * Create a CDMA Dataset that can read the given URI.
    * 
    * @param uri URI object
    * @return CDMA Dataset
-   * @throws FileAccessException
+   * @throws Exception
    */
-  public static IDataset openDataset(URI uri)
-      throws FileAccessException {
-    Object rootGroup = Utilities.findObject(uri, null);
-    if (rootGroup != null) {
-      return ((IGroup) rootGroup).getDataset();
-    } else {
-      return null;
-    }
+  public static IDataset openDataset(URI uri ) throws Exception {
+	  return openDataset(uri, false);
   }
+
+  /**
+   * Create a CDMA Dataset that can read the given URI and use optionally the Extended Dictionary
+   * mechanism.
+   * 
+   * @param uri URI object
+   * @param useProducer only 
+   * @return CDMA Dataset
+   * @throws Exception
+   */
+  public static IDataset openDataset(URI uri, boolean useDictionary) throws Exception {
+	IFactory factory = detectPlugin(uri);
+	IDataset dataset = null;
+	if( factory != null ) {
+		IDatasource source = factory.getPluginURIDetector();
+		if( ! useDictionary || source.isProducer( uri ) ) {
+			dataset = factory.openDataset(uri);
+		}
+	}
+	return dataset;
+  }
+  
   
   /**
    * Set the name of the current view (e.q experiment) that will be active for
@@ -104,7 +121,7 @@ public final class Factory {
     String sDict = getDictionariesFolder();
     String sFile = ( getActiveView() + "_view.xml" ).toLowerCase();
     
-    return sDict + "/" + sFile;
+    return sDict + File.separator + sFile;
   }
   
   /**
@@ -118,7 +135,7 @@ public final class Factory {
   public static String getMappingDictionaryFolder(IFactory factory) {
     String sDict = getDictionariesFolder();
 
-    return sDict + "/" + factory.getName() + "/";
+    return sDict + File.separator + factory.getName() + File.separator;
   }
   
   /**
@@ -142,10 +159,10 @@ public final class Factory {
   }
 
   /**
-   * Create an index of Array by given a shape of the Array.
+   * Create an index of IArray by given a shape of the IArray.
    * 
    * @param shape java array of integer
-   * @return CDMA Array Index
+   * @return CDMA IArray Index
    * @deprecated it is recommended to use Array#getIndex() instead.
    * @see IArray#getIndex()
    */
@@ -154,11 +171,11 @@ public final class Factory {
   }
 
   /**
-   * Create an empty Array with a certain data type and certain shape.
+   * Create an empty IArray with a certain data type and certain shape.
    * 
    * @param clazz Class type
    * @param shape java array of integer
-   * @return CDMA Array 
+   * @return CDMA IArray 
    * @deprecated it is recommended to use {@link IFactory#createArray(Class, int[])}
    */
   public static IArray createArray(Class<?> clazz, int[] shape) {
@@ -166,12 +183,12 @@ public final class Factory {
   }
 
   /**
-   * Create an Array with a given data type, shape and data storage.
+   * Create an IArray with a given data type, shape and data storage.
    * 
    * @param clazz in Class type
    * @param shape java array of integer
    * @param storage a 1D java array in the type reference by clazz
-   * @return CDMA Array
+   * @return CDMA IArray
    * @deprecated it is recommended to use {@link IFactory#createArray(Class, int[], Object)}
    */
   public static IArray createArray(Class<?> clazz, int[] shape,
@@ -180,13 +197,13 @@ public final class Factory {
   }
 
   /**
-   * Create an Array from a java array. A new 1D java array storage will be
-   * created. The new CDMA Array will be in the same type and same shape as the
+   * Create an IArray from a java array. A new 1D java array storage will be
+   * created. The new CDMA IArray will be in the same type and same shape as the
    * java array. The storage of the new array will be a COPY of the supplied
    * java array.
    * 
    * @param javaArray one to many dimensional java array
-   * @return CDMA Array 
+   * @return CDMA IArray 
    * @deprecated it is recommended to use {@link IFactory#createArray(Object)}
    */
   public static IArray createArray(final Object javaArray) {
@@ -194,11 +211,11 @@ public final class Factory {
   }
 
   /**
-   * Create an Array of String storage. The rank of the new Array will be 2
-   * because it treat the Array as 2D char array.
+   * Create an IArray of String storage. The rank of the new IArray will be 2
+   * because it treat the IArray as 2D char array.
    * 
    * @param string String value
-   * @return new Array object
+   * @return new IArray object
    */
   public static IArray createStringArray(String string) {
     return createArray(String.class, new int[] { 1 }, new String[] { string
@@ -206,11 +223,11 @@ public final class Factory {
   }
 
   /**
-   * Create a double type Array with a given single dimensional java double
-   * storage. The rank of the generated Array object will be 1.
+   * Create a double type IArray with a given single dimensional java double
+   * storage. The rank of the generated IArray object will be 1.
    * 
    * @param javaArray java double array in one dimension
-   * @return new Array object 
+   * @return new IArray object 
    * @deprecated it is recommended to use {@link IFactory#createDoubleArray(double[])}
    */
   public static IArray createDoubleArray(double[] javaArray) {
@@ -218,11 +235,11 @@ public final class Factory {
   }
 
   /**
-   * Create a double type Array with a given java double storage and shape.
+   * Create a double type IArray with a given java double storage and shape.
    * 
    * @param javaArray java double array in one dimension
    * @param shape java integer array
-   * @return new Array object 
+   * @return new IArray object 
    * @deprecated it is recommended to use {@link IFactory#createDoubleArray(double[], int[])}
    */
   public static IArray createDoubleArray(double[] javaArray,
@@ -232,7 +249,7 @@ public final class Factory {
 
   /**
    * Create an IArray from a java array. A new 1D java array storage will be
-   * created. The new CDMA Array will be in the same type and same shape as the
+   * created. The new CDMA IArray will be in the same type and same shape as the
    * java array. The storage of the new array will be the supplied java array.
    * 
    * @param javaArray java primary array
@@ -258,18 +275,18 @@ public final class Factory {
       cType = jArray.getClass();
     }
 
-    // create the Array
+    // create the IArray
     return createArray(componentType, shape, javaArray);
   }
 
   /**
-   * Create a CDMA DataItem with a given parent Group, Dataset, name and GDM
-   * Array data.
+   * Create a CDMA IDataItem with a given parent Group, Dataset, name and GDM
+   * IArray data.
    * 
    * @param dataset CDMA Dataset
    * @param parent CDMA Group
    * @param shortName in String type
-   * @param array CDMA Array
+   * @param array CDMA IArray
    * @return CDMA IDataItem
    * @throws InvalidArrayTypeException
    *             wrong type
@@ -283,13 +300,13 @@ public final class Factory {
   }
 
   /**
-   * Create a DataItem with a given CDMA parent Group, name and CDMA Array data.
+   * Create a IDataItem with a given CDMA parent Group, name and CDMA IArray data.
    * If the parent Group is null, it will generate a temporary Group as the
    * parent group.
    * 
    * @param parent CDMA Group
    * @param shortName in String type
-   * @param array CDMA Array
+   * @param array CDMA IArray
    * @return CDMA IDataItem
    * @throws InvalidArrayTypeException
    * @deprecated it is recommended to use {@link IFactory#createDataItem(IGroup, String, IArray)}
@@ -374,15 +391,38 @@ public final class Factory {
   }
 
   /**
-   * Create a CDMA Dataset with a URI reference. If the file exists, it will
+   * Create a CDMA Dataset that can read the given URI.
    * 
    * @param uri URI object
    * @return CDMA Dataset
    * @throws Exception
+   * @deprecated use openDataset(URI)
    */
-  public static IDataset createDatasetInstance(URI uri)
-      throws Exception {
-    return getFactory().createDatasetInstance(uri);
+  public static IDataset createDatasetInstance(URI uri ) throws Exception {
+	  return createDatasetInstance(uri, false);
+  }
+
+  /**
+   * Create a CDMA Dataset that can read the given URI and use optionally the Extended Dictionary
+   * mechanism.
+   * 
+   * @param uri URI object
+   * @param useProducer only 
+   * @return CDMA Dataset
+   * @throws Exception
+   * @deprecated use openDataset(URI, boolean)
+   */
+  public static IDataset createDatasetInstance(URI uri, boolean useDictionary) throws Exception {
+	IFactory factory = detectPlugin(uri);
+	IDataset dataset = null;
+	if( factory != null ) {
+		IDatasource source = factory.getPluginURIDetector();
+		if( ! useDictionary || source.isProducer( uri ) ) {
+			dataset = factory.createDatasetInstance(uri);
+		}
+	}
+
+	return dataset; 
   }
 
   /**
