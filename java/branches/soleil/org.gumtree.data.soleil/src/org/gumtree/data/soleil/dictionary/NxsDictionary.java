@@ -18,6 +18,8 @@ import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.navigation.NxsDataset;
+import org.gumtree.data.util.configuration.ConfigDataset;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -133,46 +135,15 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         mPath = dicFile.getAbsolutePath();
         root = dictionary.getRootElement();
         
-        List<?> nodes = root.getChildren("entry"), tmpList;
+        List<?> nodes = root.getChildren("item"), tmpList;
         
-        Element result;
         String key;
-        String xml_name;
+        String path = "";
         for( Element node : (List<Element>) nodes ) {
-            key = node.getChildText("key");
-            result = node.getChild("return");
-            xml_name = result.getChildText("data-item");
-            tmpList = result.getChildren("data");
-            for( Element tmpNode : (List<Element>) tmpList ) {
-                if( tmpNode.getAttributeValue("name").equals(xml_name) ) {
-                    String path = "";
-                    for( Element pathNode : (List<Element>) tmpNode.getChild("path").getChildren("node") ) {
-                        String filter = pathNode.getAttributeValue("filter");
-                        
-                        if( filter == null || !"false".equals(filter) ) {
-                          // If "filter" == null then any filters can be applied
-                          if( filter == null ) {
-                            path += pathNode.getText();
-                          }
-                          // If "filter" == "name" then only filter "name" can be applied
-                          else {
-                            String type = pathNode.getAttributeValue("type");
-                            String operand = pathNode.getAttributeValue("value");
-                            path += "_[" +
-                                ( type != null ? (type) : "" ) +
-                                ( operand != null ? ("=" + operand) : "" ) +
-                                "]_" +  pathNode.getText();
-                          }
-                            
-                        }
-                        // else "filter" == false then NO filter can be applied
-                        else {
-                          path += pathNode.getText();
-                        }
-                        
-                    }
-                    addEntry(key, path);
-                }
+            key = node.getAttributeValue("key");
+            path = node.getChildText("path");
+            if( key != null && !key.isEmpty() && path != null && ! path.isEmpty() ) {
+            	addEntry(key, path);
             }
         }
     }
@@ -213,5 +184,35 @@ public final class NxsDictionary implements IDictionary, Cloneable {
   @Override
   public String getFactoryName() {
     return NxsFactory.NAME;
+  }
+  
+  /**
+   * According to the current corresponding dataset, this method will try
+   * to guess which XML dictionary mapping file should be used
+   * @return
+   * @throws FileAccessException 
+   */
+  public static String detectDictionaryFile(NxsDataset dataset) throws FileAccessException {
+    // Get the configuration
+    ConfigDataset conf = dataset.getConfiguration();
+    
+    // Ask for beamline and datamodel parameters
+    String beamline = conf.getParameter("BEAMLINE", dataset);
+    String model = conf.getParameter("MODEL", dataset);
+    
+    // Construct the dictionary file name
+    if( beamline != null ) {
+      beamline = beamline.toLowerCase();
+    }
+    else {
+      beamline = "UNKNOWN";
+    }
+    if( model != null ) {
+      model = model.toLowerCase();
+    }
+    else {
+      model = "UNKNOWN";
+    }
+    return beamline + "_" + model + ".xml";
   }
 }

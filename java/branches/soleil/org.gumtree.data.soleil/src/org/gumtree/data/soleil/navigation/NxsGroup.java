@@ -8,10 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.gumtree.data.Factory;
+import org.gumtree.data.IFactory;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.dictionary.impl.Key;
+import org.gumtree.data.dictionary.impl.Path;
 import org.gumtree.data.engine.nexus.navigation.NexusDataItem;
 import org.gumtree.data.engine.nexus.navigation.NexusGroup;
+import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 import org.gumtree.data.interfaces.IAttribute;
@@ -23,6 +27,7 @@ import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.soleil.NxsFactory;
+import org.gumtree.data.soleil.dictionary.NxsDictionary;
 import org.gumtree.data.utils.Utilities.ModelType;
 
 import fr.soleil.nexus.NexusNode;
@@ -284,7 +289,7 @@ public final class NxsGroup implements IGroup, Cloneable {
 
   @Override
   public IDataItem findDataItemWithAttribute(IKey key, String name,
-      String attribute) throws Exception {
+      String attribute) throws NoResultException {
     List<IContainer> list = findAllContainers(key);
     IDataItem result = null;
     for( IContainer item : list ) {
@@ -495,7 +500,7 @@ public final class NxsGroup implements IGroup, Cloneable {
           )
         );
       }
-      // If a DataItem list then construct a new compound NxsDataItem 
+      // If a IDataItem list then construct a new compound NxsDataItem 
       else {
         ArrayList<NexusDataItem> dataItems = new ArrayList<NexusDataItem>();
         for( IContainer item : tmp ) {
@@ -560,8 +565,16 @@ public final class NxsGroup implements IGroup, Cloneable {
   @Override
   public IDictionary findDictionary() {
     IDictionary dictionary = null;
-    if( mGroups.length > 0 ) {
-      dictionary = mGroups[0].findDictionary();
+	    if( mGroups.length > 0 ) {
+	      IFactory factory = NxsFactory.getInstance();
+	      dictionary = new NxsDictionary();
+	      try {
+			dictionary.readEntries( Factory.getMappingDictionaryFolder( factory ) + NxsDictionary.detectDictionaryFile( (NxsDataset) getDataset() ) );
+		} catch (FileAccessException e) {
+			dictionary = null;
+			e.printStackTrace();
+		}
+      //dictionary = mGroups[0].findDictionary();
     }
     return dictionary;
   }
@@ -583,8 +596,10 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
   public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
-      String path = findDictionary().getPath(key).toString();
-    return findAllContainerByPath(path);
+      String pathStr = findDictionary().getPath(key).toString();
+      Path path = new Path(NxsFactory.getInstance(), pathStr);
+      path.removeUnsetParameters();
+    return findAllContainerByPath(path.getValue());
   }
     
   @Override
@@ -727,7 +742,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             )
           );
         }
-        // If a DataItem list then construct a new compound NxsDataItem 
+        // If a IDataItem list then construct a new compound NxsDataItem 
         else {
           ArrayList<NexusDataItem> nxsDataItems = new ArrayList<NexusDataItem>();
           for( IContainer item : tmp ) {
