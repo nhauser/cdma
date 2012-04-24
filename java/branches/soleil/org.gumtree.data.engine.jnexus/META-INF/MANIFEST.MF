@@ -19,4 +19,5 @@ Export-Package: fr.soleil.nexus,
  org.gumtree.data.engine.nexus.navigation,
  org.gumtree.data.engine.nexus.utils
 Eclipse-BundleShape: jar
-Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport
+Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
+ org.nexusformat 

@@ -18,80 +18,80 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IKey;
 
 public final class Context implements IContext {
-  private IDataset    mDataset;
-  private IContainer  mCaller;
-  private IKey        mKey;
-  private IPath       mPath;
-  private Object[]    mParams;
-  
-  public Context(IDataset dataset) {
-    mDataset = dataset;
-    mCaller  = null;
-    mKey     = null;
-    mPath    = null;
-    mParams  = null;
-  }
-  
-  public Context( IDataset dataset, IContainer caller, IKey key, IPath path ) {
-    mDataset = dataset;
-    mCaller  = caller;
-    mKey     = key;
-    mPath    = path;
-    mParams  = null;
-  }
-  
-  @Override
-  public String getFactoryName() {
-    return mDataset.getFactoryName();
-  }
+    private IDataset    mDataset;
+    private IContainer  mCaller;
+    private IKey        mKey;
+    private IPath       mPath;
+    private Object[]    mParams;
 
-  @Override
-  public IDataset getDataset() {
-    return mDataset;
-  }
+    public Context(IDataset dataset) {
+        mDataset = dataset;
+        mCaller  = null;
+        mKey     = null;
+        mPath    = null;
+        mParams  = null;
+    }
 
-  @Override
-  public void setDataset(IDataset dataset) {
-    mDataset = dataset;
-  }
+    public Context( IDataset dataset, IContainer caller, IKey key, IPath path ) {
+        mDataset = dataset;
+        mCaller  = caller;
+        mKey     = key;
+        mPath    = path;
+        mParams  = null;
+    }
 
-  @Override
-  public IContainer getCaller() {
-    return mCaller;
-  }
+    @Override
+    public String getFactoryName() {
+        return mDataset.getFactoryName();
+    }
 
-  @Override
-  public void setCaller(IContainer caller) {
-    mCaller = caller;
-  }
+    @Override
+    public IDataset getDataset() {
+        return mDataset;
+    }
 
-  @Override
-  public IKey getKey() {
-    return mKey;
-  }
+    @Override
+    public void setDataset(IDataset dataset) {
+        mDataset = dataset;
+    }
 
-  @Override
-  public void setKey(IKey key) {
-    mKey = key;
-  }
+    @Override
+    public IContainer getCaller() {
+        return mCaller;
+    }
 
-  @Override
-  public IPath getPath() {
-    return mPath;
-  }
+    @Override
+    public void setCaller(IContainer caller) {
+        mCaller = caller;
+    }
 
-  @Override
-  public void setPath(IPath path) {
-    mPath = path;
-  }
+    @Override
+    public IKey getKey() {
+        return mKey;
+    }
 
-  @Override
-  public Object[] getParams() {
-    return mParams.clone();
-  }
+    @Override
+    public void setKey(IKey key) {
+        mKey = key;
+    }
 
-  @Override
-  public void setParams(Object[] params) {
-    mParams = params.clone();
-  }
+    @Override
+    public IPath getPath() {
+        return mPath;
+    }
+
+    @Override
+    public void setPath(IPath path) {
+        mPath = path;
+    }
+
+    @Override
+    public Object[] getParams() {
+        return mParams.clone();
+    }
+
+    @Override
+    public void setParams(Object[] params) {
+        mParams = params.clone();
+    }
 }

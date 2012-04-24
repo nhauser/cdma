@@ -25,112 +25,112 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 public class Path implements IPath {
-  final public String PARAM_PATTERN = "\\$\\(([^\\)]*)\\)"; // parameters have following shape "/my/path/$(parameter)/my_node"
-  final private String PATH_SEPARATOR;
-  
-  String            m_factory;
-  String            m_pathValue;
-  String            m_pathOrigin;
-  List<IPathMethod> m_methods;
+    final public String PARAM_PATTERN = "\\$\\(([^\\)]*)\\)"; // parameters have following shape "/my/path/$(parameter)/my_node"
+    final private String PATH_SEPARATOR;
 
-  public Path(IFactory factory) {
-    m_factory      = factory.getName();
-    m_pathValue    = null;
-    m_pathOrigin   = null;
-    m_methods      = new ArrayList<IPathMethod>();
-    PATH_SEPARATOR = factory.getPathSeparator();
-  }
+    String            m_factory;
+    String            m_pathValue;
+    String            m_pathOrigin;
+    List<IPathMethod> m_methods;
 
-  public Path(IFactory factory, String path) {
-    m_factory      = factory.getName();
-    m_pathOrigin   = path;
-    m_pathValue    = path;
-    m_methods      = new ArrayList<IPathMethod>();
-    PATH_SEPARATOR = factory.getPathSeparator();
-  }
-  
-  @Override
-  public String toString() {
-    return m_pathValue;
-  }
-
-  @Override
-  public String getFactoryName() {
-    return null;
-  }
-
-  @Override
-  public String getValue() {
-    return m_pathValue;
-  }
-  
-  @Override
-  public List<IPathMethod> getMethods() {
-    return Collections.unmodifiableList(new ArrayList<IPathMethod>(m_methods));
-  }
-
-  public void setMethods(List<IPathMethod> methods) {
-    m_methods = methods;
-  }
-
-  @Override
-  public void setValue(String path) {
-    m_pathOrigin = path;
-    m_pathValue  = path;
-  }
-  
-  @Override
-  public void applyParameters(List<IPathParameter> params) {
-    for( IPathParameter param : params ) {
-      m_pathValue = m_pathValue.replace( "$("+ param.getName() + ")" , param.getValue().toString() );
+    public Path(IFactory factory) {
+        m_factory      = factory.getName();
+        m_pathValue    = null;
+        m_pathOrigin   = null;
+        m_methods      = new ArrayList<IPathMethod>();
+        PATH_SEPARATOR = factory.getPathSeparator();
     }
-  }
-  
-  @Override
-  public void removeUnsetParameters() {
-    m_pathValue = m_pathValue.replaceAll( PARAM_PATTERN , "");
-  }
-  
-  @Override
-  public void resetParameters() {
-    m_pathValue = m_pathOrigin;
-  }
 
-  @Override
-  public Object clone() {
-    try {
-      return super.clone();
-    } catch (CloneNotSupportedException e) {
-      e.printStackTrace();
-      return null;
+    public Path(IFactory factory, String path) {
+        m_factory      = factory.getName();
+        m_pathOrigin   = path;
+        m_pathValue    = path;
+        m_methods      = new ArrayList<IPathMethod>();
+        PATH_SEPARATOR = factory.getPathSeparator();
     }
-  }
-  
-  @Override
-  public IPathParameter getFirstPathParameter(StringBuffer output) {
-    IPathParameter result = null;
-    String[] pathParts = m_pathValue.split(Pattern.quote(PATH_SEPARATOR));
-    String name;
 
-    // Split the path into nodes
-    for( String part : pathParts ) {
-      if( part != null && !part.isEmpty() ) {
-        output.append(PATH_SEPARATOR);
-        Pattern pattern = Pattern.compile(PARAM_PATTERN);
-        Matcher matcher = pattern.matcher(part);
-        if( matcher.find() ) {
-          name = part.replaceAll(".*" + PARAM_PATTERN + ".*", "$1");
-          result = Factory.getFactory(m_factory).createPathParameter(ParameterType.SUBSTITUTION, name, "");
-          output.append(part.replaceAll( PARAM_PATTERN , "") );
-          break;
+    @Override
+    public String toString() {
+        return m_pathValue;
+    }
+
+    @Override
+    public String getFactoryName() {
+        return null;
+    }
+
+    @Override
+    public String getValue() {
+        return m_pathValue;
+    }
+
+    @Override
+    public List<IPathMethod> getMethods() {
+        return Collections.unmodifiableList(new ArrayList<IPathMethod>(m_methods));
+    }
+
+    public void setMethods(List<IPathMethod> methods) {
+        m_methods = methods;
+    }
+
+    @Override
+    public void setValue(String path) {
+        m_pathOrigin = path;
+        m_pathValue  = path;
+    }
+
+    @Override
+    public void applyParameters(List<IPathParameter> params) {
+        for( IPathParameter param : params ) {
+            m_pathValue = m_pathValue.replace( "$("+ param.getName() + ")" , param.getValue().toString() );
         }
-        else {
-          output.append(part);
-        }
-      }
     }
-    
-    return result;
-  }
-  
+
+    @Override
+    public void removeUnsetParameters() {
+        m_pathValue = m_pathValue.replaceAll( PARAM_PATTERN , "");
+    }
+
+    @Override
+    public void resetParameters() {
+        m_pathValue = m_pathOrigin;
+    }
+
+    @Override
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public IPathParameter getFirstPathParameter(StringBuffer output) {
+        IPathParameter result = null;
+        String[] pathParts = m_pathValue.split(Pattern.quote(PATH_SEPARATOR));
+        String name;
+
+        // Split the path into nodes
+        for( String part : pathParts ) {
+            if( part != null && !part.isEmpty() ) {
+                output.append(PATH_SEPARATOR);
+                Pattern pattern = Pattern.compile(PARAM_PATTERN);
+                Matcher matcher = pattern.matcher(part);
+                if( matcher.find() ) {
+                    name = part.replaceAll(".*" + PARAM_PATTERN + ".*", "$1");
+                    result = Factory.getFactory(m_factory).createPathParameter(ParameterType.SUBSTITUTION, name, "");
+                    output.append(part.replaceAll( PARAM_PATTERN , "") );
+                    break;
+                }
+                else {
+                    output.append(part);
+                }
+            }
+        }
+
+        return result;
+    }
+
 }

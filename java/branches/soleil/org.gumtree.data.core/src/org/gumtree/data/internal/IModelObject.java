@@ -8,26 +8,10 @@
 // Contributors: 
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 // ****************************************************************************
-package org.gumtree.data.utils;
+package org.gumtree.data.internal;
 
-import java.util.Map;
+public interface IModelObject {
 
-/**
- * @brief The IFactorManager register all plug-ins from class path.
- * 
- * This interface define how a plug-in once found can be instantiated using the factory manager.
- */
-
-import org.gumtree.data.IFactory;
-
-public interface IFactoryManager {
-
-    public void registerFactory(String name, IFactory factory);
-
-    public IFactory getFactory();
-
-    public IFactory getFactory(String name);
-
-    public Map<String, IFactory> getFactoryRegistry();
+    String getFactoryName();
 
 }

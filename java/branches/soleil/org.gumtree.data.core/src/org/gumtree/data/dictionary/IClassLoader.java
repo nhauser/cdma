@@ -11,7 +11,7 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary;
 
-import org.gumtree.data.interfaces.IModelObject;
+import org.gumtree.data.internal.IModelObject;
 
 /**
  * The IClassLoader aims to provide a mechanism permitting to dynamically

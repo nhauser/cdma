@@ -9,13 +9,13 @@
  *    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
  ******************************************************************************/
 package org.gumtree.data.util;
- 
+
 import java.util.Arrays;
 import java.util.HashMap;
 
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.interfaces.IArray;
- 
+
 /**
  * CubeData is a tool based on the CDMA API. It aims to slice a given IArray and to
  * load data by packet.
@@ -45,18 +45,18 @@ public class CubeData {
     private int    mPos;         // Current position of the lastly considered sub-cube
     private int    mNbSlices;    // Number of slices that compound 1 sub-cube
     private HashMap<Integer, CubeData> mSubCubes;  // sub-cubes: portion of the whole array
-   
+
     public CubeData(IArray array, int sliceRank) {
         this( array, sliceRank, MAX_BUFFER);
     }
-   
+
     public CubeData(IArray array, int sliceRank, int bufferSize) {
         maxBuffer = bufferSize;
         mArray = array;
         mSliceRank = sliceRank;
         mPos  = 0;
         mSubCubes = new HashMap<Integer, CubeData>();
-       
+
         if( mArray.getRank() == mSliceRank + 1 ) {
             mRank = mArray.getRank();
             mShape = mArray.getShape();
@@ -68,7 +68,7 @@ public class CubeData {
                 }
                 mLength *= mShape[i];
             }
-           
+
             // Calculate number of slices
             if( mLength > maxBuffer ) {
                 mNbSlices = (int) (maxBuffer / mSliceLength);
@@ -90,14 +90,12 @@ public class CubeData {
         IArray data = null;
         int rank = mArray.getRank();
         if( rank == mSliceRank + 1 ) {
-           
+
             if( mLength > maxBuffer ) {
- 
-               
                 // Calculate slice number of the requested position
                 int posSlice = position[0] / mNbSlices;
                 position[0] = position[0] % mNbSlices;
- 
+
                 // If sub-Cube already created
                 if( mSubCubes.containsKey(posSlice) ) {
                     data = mSubCubes.get(posSlice).getData( position );
@@ -112,24 +110,24 @@ public class CubeData {
                             nbSlices = mShape[0];
                         }
                     }
-                   
+
                     // Slice the array
                     int[] shape = Arrays.copyOf(mShape, mRank);
                     shape[0] = nbSlices;
                     int[] projPos = new int[rank];
                     projPos[0] = posSlice;
-                   
+
                     IArray tmpArray = null;
                     try {
                         tmpArray = mArray.getArrayUtils().section(projPos, shape).getArray();
                     } catch (InvalidRangeException e) {
                         e.printStackTrace();
                     }
-                   
+
                     CubeData tmpCube = new CubeData(tmpArray, mSliceRank, maxBuffer);
                     mSubCubes.put(posSlice, tmpCube );
                     data = mSubCubes.get(posSlice).getData( position );
-                   
+
                 }
             }
             else {
@@ -144,14 +142,14 @@ public class CubeData {
             }
             else {
                 IArray tmpArray = section(position[0]);
-               
+
                 CubeData tmpCube = new CubeData(tmpArray, mSliceRank, maxBuffer);
                 mSubCubes.put(position[0], tmpCube );
                 return tmpCube.getData( Arrays.copyOfRange(position, 1, position.length) );
             }
-           
+
         }
-       
+
         return data;
     }
 
@@ -176,18 +174,18 @@ public class CubeData {
         return position;
     }
 
-  // ---------------------------------------------------------
-  // ---------------------------------------------------------
-  // / Private methods
-  // ---------------------------------------------------------
-  // ---------------------------------------------------------
+    // ---------------------------------------------------------
+    // ---------------------------------------------------------
+    // / Private methods
+    // ---------------------------------------------------------
+    // ---------------------------------------------------------
     private IArray section(int position) {
         IArray result = null;
         int rank = mArray.getRank();
         if( position <= mArray.getShape()[0] ) {
             int[] shape   = mArray.getShape();
             int[] projPos = new int[rank];
- 
+
             shape[0] = 1;
             projPos[0] = position;
             try {
@@ -198,5 +196,5 @@ public class CubeData {
         }
         return result;
     }
- 
+
 }

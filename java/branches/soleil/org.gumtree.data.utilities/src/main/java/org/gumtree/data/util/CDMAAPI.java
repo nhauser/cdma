@@ -305,7 +305,7 @@ public class CDMAAPI {
             charArray[index] = iterator.next().charValue();
             index++;
         }
-        // System.out.println(Arrays.toString(charArray));
+
         String readValue = "";
         if (charArray != null) {
             readValue = String.valueOf(charArray);
