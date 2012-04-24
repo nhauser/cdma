@@ -26,18 +26,18 @@ import org.gumtree.data.dictionary.IContext;
 import org.gumtree.data.exception.NoResultException;
 
 public final class ExternalClassLoader extends URLClassLoader implements IClassLoader {
-  private String mVersion; // plugin implementation version
-  private String mFactory; // plugin implementation factory
-  
-  private Map<String, Class<?> > mLoaded; // Class name / Class already loaded
-  
-  public ExternalClassLoader(String factoryName, String version) {
-    super(new URL[] {} );
-    mFactory = factoryName;
-    mVersion = version;
-    mLoaded  = new HashMap<String, Class<?> >();
-  } 
-  
+    private String mVersion; // plugin implementation version
+    private String mFactory; // plugin implementation factory
+
+    private Map<String, Class<?> > mLoaded; // Class name / Class already loaded
+
+    public ExternalClassLoader(String factoryName, String version) {
+        super(new URL[] {} );
+        mFactory = factoryName;
+        mVersion = version;
+        mLoaded  = new HashMap<String, Class<?> >();
+    } 
+
     /**
      * Execute the method that is given using it's namespace. The corresponding
      * class will be searched, loaded and instantiated, so the method can called.
@@ -49,69 +49,69 @@ public final class ExternalClassLoader extends URLClassLoader implements IClassL
      * 
      * @note the method's namespace must be that form: my.package.if.any.MyClass.MyMethod
      */
-  @Override
+    @Override
     public Object invoke( String methodNameSpace, IContext context ) throws Exception {
-      Object result = null;
-      
-      // Extract package, class and method names
-      String className  = methodNameSpace.replaceAll("(^.*[^\\.]+)(\\.[^\\.]+$)+", "$1");
-      String methodName = methodNameSpace.replaceAll("(^.*[^\\.]+\\.)([^\\.]+$)+", "$2");
-      
-      // Load the class
-    Class<?> c = findClass(className);
-    boolean found = false;
-    for( Method meth : c.getMethods() ) {
-      if( meth.getName().equals(methodName) ) {
-        found = true;
-        try {
-          result = meth.invoke( c.newInstance(), context );
-        } catch (InvocationTargetException e) {
-          throw new InvocationTargetException(e, "Error occured while invoking method: " + methodNameSpace);
-        }
-        
-        break;
-      }
-    }
-    if( !found ) {
-      throw new NoResultException("Method not found in class path!");
-    }
-      return result;
-    }
+        Object result = null;
 
-  @Override
-    protected Class<?> findClass(String name) {
-        Class<?> result = null;
-        
-        // Has this class been already loaded
-        if( mLoaded.containsKey(name)) {
-          result = mLoaded.get(name);
+        // Extract package, class and method names
+        String className  = methodNameSpace.replaceAll("(^.*[^\\.]+)(\\.[^\\.]+$)+", "$1");
+        String methodName = methodNameSpace.replaceAll("(^.*[^\\.]+\\.)([^\\.]+$)+", "$2");
+
+        // Load the class
+        Class<?> c = findClass(className);
+        boolean found = false;
+        for( Method meth : c.getMethods() ) {
+            if( meth.getName().equals(methodName) ) {
+                found = true;
+                try {
+                    result = meth.invoke( c.newInstance(), context );
+                } catch (InvocationTargetException e) {
+                    throw new InvocationTargetException(e, "Error occured while invoking method: " + methodNameSpace);
+                }
+
+                break;
+            }
         }
-        else {
-      try {
-        // Extract the package name
-        String namespace = name.replaceAll("((.*[^\\.])+\\.)?([^\\.]+$)+", "$2");
-       
-        // Get folder containing the package
-          File path = new File(Factory.getMappingDictionaryFolder( Factory.getFactory(mFactory) ));
-        
-        // Construct an URL
-          try {
-            URL url = new URL("file", "", path.getAbsolutePath() + '/' + mVersion + '/' + namespace + ".jar" );
-          this.addURL(url);
-        } catch (MalformedURLException e) {
-        }
-        
-        // Ask the class loader to load the class
-        result = super.findClass(name);
-        mLoaded.put(name, result);
-      } catch (ClassNotFoundException e) {
-      }
+        if( !found ) {
+            throw new NoResultException("Method not found in class path!");
         }
         return result;
     }
 
-  @Override
-  public String getFactoryName() {
-    return mFactory;
-  }
+    @Override
+    protected Class<?> findClass(String name) {
+        Class<?> result = null;
+
+        // Has this class been already loaded
+        if( mLoaded.containsKey(name)) {
+            result = mLoaded.get(name);
+        }
+        else {
+            try {
+                // Extract the package name
+                String namespace = name.replaceAll("((.*[^\\.])+\\.)?([^\\.]+$)+", "$2");
+
+                // Get folder containing the package
+                File path = new File(Factory.getMappingDictionaryFolder( Factory.getFactory(mFactory) ));
+
+                // Construct an URL
+                try {
+                    URL url = new URL("file", "", path.getAbsolutePath() + '/' + mVersion + '/' + namespace + ".jar" );
+                    this.addURL(url);
+                } catch (MalformedURLException e) {
+                }
+
+                // Ask the class loader to load the class
+                result = super.findClass(name);
+                mLoaded.put(name, result);
+            } catch (ClassNotFoundException e) {
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String getFactoryName() {
+        return mFactory;
+    }
 }

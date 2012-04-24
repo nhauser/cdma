@@ -12,6 +12,8 @@
 package org.gumtree.data.dictionary;
 
 /**
+ * @brief The IPathMethod interface refers to a method that should be executed to obtain the requested data.
+ * 
  * This interface is only used by the extended dictionary mechanism. Its aim
  * is to allow mapping dictionary to specify how to get a IDataItem that don't
  * only rely on a specific path. The IPathMethod permits to specify a method that
@@ -29,57 +31,58 @@ package org.gumtree.data.dictionary;
  */
 public interface IPathMethod {
 
-  /**
-   * Returns name of the method that will be called (using it's package name)
-   * return String
-   */
-  public String getName();
+    /**
+     * Returns name of the method that will be called (using it's package name)
+     * return String
+     */
+    public String getName();
 
-  /**
-   * Sets the name of the method that will be called (using it's package name)
-   * return String
-   */
-  public void setName(String method);
+    /**
+     * Sets the name of the method that will be called (using it's package name)
+     * 
+     * @param method in its namespace
+     */
+    public void setName(String method);
 
-  /**
-   * Return parameters Object that are used by this method
-   * 
-   * @return Object array
-   */
-  public Object[] getParam();
+    /**
+     * Return parameters Object that are used by this method
+     * 
+     * @return Object array
+     */
+    public Object[] getParam();
 
-  /**
-   * Set a parameter value that will be used by this method
-   * 
-   * @return Object array
-   * @note works as a FIFO
-   */
-  public void pushParam(Object param);
+    /**
+     * Set a parameter value that will be used by this method
+     * 
+     * @param param Object that will be used by this method
+     * @note works as a FIFO
+     */
+    public void pushParam(Object param);
 
-  /**
-   * Set a parameter value that will be used by this method
-   * 
-   * @return Object array
-   * @note works as a FIFO
-   */
-  public Object popParam();
+    /**
+     * Set a parameter value that will be used by this method
+     * 
+     * @return Object that will be used by this method
+     * @note works as a FIFO
+     */
+    public Object popParam();
 
-  /**
-   * Tells whether or not the method is already contained by the plug-in or if it 
-   * will be dynamically loaded from the external folder specific to the plug-in.
-   * 
-   * @return boolean
-   */
-  public boolean isExternalCall();
+    /**
+     * Tells whether or not the method is already contained by the plug-in or if it 
+     * will be dynamically loaded from the external folder specific to the plug-in.
+     * 
+     * @return boolean
+     */
+    public boolean isExternalCall();
 
-  /**
-   * Set whether or not the method is already contained by the plug-in or if it 
-   * will be dynamically loaded from the external folder specific to the plug-in.
-   * 
-   * @return boolean
-   * @see LogicalGroup.resolveMethod
-   * @see org.gumtree.data.dictionary.IClassLoader
-   */
-  public void isExternal(boolean external);
+    /**
+     * Set whether or not the method is already contained by the plug-in or if it 
+     * will be dynamically loaded from the external folder specific to the plug-in.
+     * 
+     * @return boolean
+     * @see LogicalGroup.resolveMethod
+     * @see org.gumtree.data.dictionary.IClassLoader
+     */
+    public void isExternal(boolean external);
 
 }

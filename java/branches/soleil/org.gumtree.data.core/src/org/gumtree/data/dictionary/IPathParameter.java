@@ -11,11 +11,13 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary;
 
-import org.gumtree.data.interfaces.IModelObject;
+import org.gumtree.data.internal.IModelObject;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 
 /**
+ * @brief The IPathParameter interface is used to make a selective choice when browsing a IDataset.
+ * 
  * A IPathParameter represents conditions that permits identifying a specific node using the 
  * extended dictionary mechanism. 
  * When according to a given IPath several IContainer can be returned, the path parameter
@@ -27,62 +29,63 @@ import org.gumtree.data.utils.Utilities.ParameterType;
  * 
  * @see org.gumtree.data.utils.Utilities.ParameterType
  * @see org.gumtree.data.dictionary.IPath
+ * 
  * @author rodriguez
  *
  */
 public interface IPathParameter extends IModelObject, Cloneable {
 
-  // ---------------------------------------------------------
-  /// Public methods
-  // ---------------------------------------------------------
-  /**
-   * Get the filter's kind
-   * 
-   * @return filter's kind
-   */
-  public ParameterType getType();
-    
-  /**
-   * Get the filter's value
-   * 
-   * @return filter's value
-   */
-  public Object getValue();
+    // ---------------------------------------------------------
+    /// Public methods
+    // ---------------------------------------------------------
+    /**
+     * Get the filter's kind
+     * 
+     * @return filter's kind
+     */
+    public ParameterType getType();
 
-  /**
-   * Get the filter's name
-   * 
-   * @return name of the filter
-   */
-  public String getName();
-  
+    /**
+     * Get the filter's value
+     * 
+     * @return filter's value
+     */
+    public Object getValue();
 
-  /**
-   * Set the filter's value
-   * 
-   * @param value of the filter
-   */
-  public void setValue(Object value);
+    /**
+     * Get the filter's name
+     * 
+     * @return name of the filter
+     */
+    public String getName();
 
-  /**
-   * Equality test
-   * 
-   * @return true if both KeyFilter have same kind and value
-   */
-  public boolean equals(IPathParameter keyfilter);
 
-  /**
-   * To String method
-   * 
-   * @return a string representation of the KeyFilter
-   */
-  public String toString();
-    
-  /**
-   * Clone this IKeyFilter
-   * @return a copy of this
-   */
-  public IPathParameter clone();
+    /**
+     * Set the filter's value
+     * 
+     * @param value of the filter
+     */
+    public void setValue(Object value);
+
+    /**
+     * Equality test
+     * 
+     * @return true if both KeyFilter have same kind and value
+     */
+    public boolean equals(IPathParameter keyfilter);
+
+    /**
+     * To String method
+     * 
+     * @return a string representation of the KeyFilter
+     */
+    public String toString();
+
+    /**
+     * Clone this IKeyFilter
+     * @return a copy of this
+     */
+    public IPathParameter clone();
 }
 
 

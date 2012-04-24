@@ -19,11 +19,11 @@ public final class NexusRange implements IRange, Cloneable {
      * Used for EMPTY
      */
     private NexusRange() {
-      this.mLast    = 0;
-      this.mFirst   = 0;
-      this.mStride  = 1;
-      this.mName    = null;
-      this.mReduced = false;
+	this.mLast    = 0;
+	this.mFirst   = 0;
+	this.mStride  = 1;
+	this.mName    = null;
+	this.mReduced = false;
     }
 
     /**
@@ -31,13 +31,13 @@ public final class NexusRange implements IRange, Cloneable {
      * @param length number of elements in the NxsRange
      */
     public NexusRange(int length) {
-      this.mName    = null;
-      this.mFirst   = 0;
-      this.mStride  = 1;
-      this.mLast    = length - 1;
-      this.mReduced = false;
+	this.mName    = null;
+	this.mFirst   = 0;
+	this.mStride  = 1;
+	this.mLast    = length - 1;
+	this.mReduced = false;
     }
-    
+
     /**
      * Create a range with a specified stride.
      *
@@ -48,302 +48,302 @@ public final class NexusRange implements IRange, Cloneable {
      * @throws InvalidRangeException elements must be nonnegative: 0 <= first <= last, stride > 0
      */
     public NexusRange(String name, long first, long last, long stride) throws InvalidRangeException {
-        this.mLast    = last;
-        this.mFirst   = first;
-        this.mStride  = stride;
-        this.mName    = name;
-        this.mReduced = false;
+	this.mLast    = last;
+	this.mFirst   = first;
+	this.mStride  = stride;
+	this.mName    = name;
+	this.mReduced = false;
     }
-    
+
     public NexusRange(String name, long first, long last, long stride, boolean reduced) throws InvalidRangeException {
-      this(name, first, last, stride);
-      mReduced = reduced;
+	this(name, first, last, stride);
+	mReduced = reduced;
     }
-    
+
     public NexusRange( IRange range ) {
-        this.mLast    = range.last();
-        this.mFirst   = range.first();
-        this.mStride  = range.stride();
-        this.mName    = range.getName();
-        this.mReduced = false;
+	this.mLast    = range.last();
+	this.mFirst   = range.first();
+	this.mStride  = range.stride();
+	this.mName    = range.getName();
+	this.mReduced = false;
     }
-    
+
     /// Accessors
     @Override
     public String getName() {
-        return mName;
+	return mName;
     }
 
     @Override
     public long first() {
-        return mFirst;
+	return mFirst;
     }
-    
+
     @Override
     public long last() {
-        return mLast;
+	return mLast;
     }
 
     @Override
     public int length() {
-        return (int) ((mLast - mFirst) / mStride) + 1;
+	return (int) ((mLast - mFirst) / mStride) + 1;
     }
 
     @Override
     public long stride() {
-        return mStride;
+	return mStride;
     }
-    
+
     public void stride(long value) {
-      mStride = value;
+	mStride = value;
     }
-    
+
     public void last(long value) {
-      mLast = value;
+	mLast = value;
     }
-    
+
     public void first(long value) {
-      mFirst = value;
+	mFirst = value;
     }
-    
+
     /// Methods
     @Override
     public IRange clone() {
-        NexusRange range = NexusRange.EMPTY;
-        try {
-            range = new NexusRange(mName, mFirst, mLast, mStride);
-            range.mReduced = mReduced;
-        } catch( InvalidRangeException e ) {
-        }
-        return range;
+	NexusRange range = NexusRange.EMPTY;
+	try {
+	    range = new NexusRange(mName, mFirst, mLast, mStride);
+	    range.mReduced = mReduced;
+	} catch( InvalidRangeException e ) {
+	}
+	return range;
     }
-    
-  @Override
-  public IRange compact() throws InvalidRangeException {
-    long first, last, stride;
-        String name;
 
-        stride = 1;
-        first  = mFirst / mStride;
-        last   = mLast / mStride;
-        name   = mName; 
-        
-        return new NexusRange(name, first, last, stride);
-  }
+    @Override
+    public IRange compact() throws InvalidRangeException {
+	long first, last, stride;
+	String name;
 
-  @Override
-  public IRange compose(IRange r) throws InvalidRangeException {
-        if ((length() == 0) || (r.length() == 0)) {
-            return EMPTY;
-        }
-        if ( this.equals(VLEN) || r.equals(VLEN) ) {
-            return VLEN;
-        }
+	stride = 1;
+	first  = mFirst / mStride;
+	last   = mLast / mStride;
+	name   = mName; 
 
-        long first  = element(r.first());
-        long stride = stride() * r.stride();
-        long last   = element(r.last());
-        return new NexusRange(mName, first, last, stride);
-  }
+	return new NexusRange(name, first, last, stride);
+    }
 
-  @Override
-  public boolean contains(int i) {
-        if( i < first() ) {
-            return false;
-        }
-        if( i > last()) {
-            return false;
-        }
-        if( mStride == 1) {
-            return true;
-        }
-        return (i - mFirst) % mStride == 0;
-  }
+    @Override
+    public IRange compose(IRange r) throws InvalidRangeException {
+	if ((length() == 0) || (r.length() == 0)) {
+	    return EMPTY;
+	}
+	if ( this.equals(VLEN) || r.equals(VLEN) ) {
+	    return VLEN;
+	}
 
-  @Override
-  public int element(long i) throws InvalidRangeException {
-      if (i < 0) {
-            throw new InvalidRangeException("i must be >= 0");
-        }
-      if (i > mLast) {
-          throw new InvalidRangeException("i must be < length");
-      }
+	long first  = element(r.first());
+	long stride = stride() * r.stride();
+	long last   = element(r.last());
+	return new NexusRange(mName, first, last, stride);
+    }
 
-        return (int) (mFirst + i * mStride);
-  }
+    @Override
+    public boolean contains(int i) {
+	if( i < first() ) {
+	    return false;
+	}
+	if( i > last()) {
+	    return false;
+	}
+	if( mStride == 1) {
+	    return true;
+	}
+	return (i - mFirst) % mStride == 0;
+    }
 
-  @Override
-  public int getFirstInInterval(int start) {
-        if (start > last()) { 
-            return -1;
-        }
-        if (start <= mFirst) { 
-            return (int) mFirst;
-        }
-        if (mStride == 1) { 
-            return start;
-        }
-        long offset = start - mFirst;
-        long incr = offset % mStride;
-        long result = start + incr;
-        return (int) ((result > last()) ? -1 : result);
-  }
+    @Override
+    public int element(long i) throws InvalidRangeException {
+	if (i < 0) {
+	    throw new InvalidRangeException("i must be >= 0");
+	}
+	if (i > mLast) {
+	    throw new InvalidRangeException("i must be < length");
+	}
 
-  @Override
-  public long index(int elem) throws InvalidRangeException {
-        if (elem < mFirst) {
-            throw new InvalidRangeException("elem must be >= first");
-        }
-        long result = (elem - mFirst) / mStride;
-        if (result > mLast) {
-            throw new InvalidRangeException("elem must be <= last = n * stride");
-        }
-        return (int) result;
-  }
+	return (int) (mFirst + i * mStride);
+    }
 
-  @Override
-  public IRange intersect(IRange r) throws InvalidRangeException {
-        if ((length() == 0) || (r.length() == 0)) {
-            return EMPTY;
-        }
-        if ( this.equals(VLEN) || r.equals(VLEN) ) {
-            return VLEN;
-        }
+    @Override
+    public int getFirstInInterval(int start) {
+	if (start > last()) { 
+	    return -1;
+	}
+	if (start <= mFirst) { 
+	    return (int) mFirst;
+	}
+	if (mStride == 1) { 
+	    return start;
+	}
+	long offset = start - mFirst;
+	long incr = offset % mStride;
+	long result = start + incr;
+	return (int) ((result > last()) ? -1 : result);
+    }
 
-        long last = Math.min(this.last(), r.last());
-        long stride = stride() * r.stride();
+    @Override
+    public long index(int elem) throws InvalidRangeException {
+	if (elem < mFirst) {
+	    throw new InvalidRangeException("elem must be >= first");
+	}
+	long result = (elem - mFirst) / mStride;
+	if (result > mLast) {
+	    throw new InvalidRangeException("elem must be <= last = n * stride");
+	}
+	return (int) result;
+    }
 
-        long useFirst;
-        if (stride == 1) {
-            useFirst = Math.max(this.first(), r.first());
-        }
-        else if (stride() == 1) { // then r has a stride
-            if (r.first() >= first()) {
-                useFirst = r.first();
-            }
-            else {
-                long incr = (first() - r.first()) / stride;
-                useFirst = r.first() + incr * stride;
-                if (useFirst < first()) {
-                    useFirst += stride;
-                }
-            }
-        }
-        else if (r.stride() == 1) { // then this has a stride
-            if (first() >= r.first()) {
-                useFirst = first();
-            }
-            else {
-                long incr = (r.first() - first()) / stride;
-                useFirst = first() + incr * stride;
-                if (useFirst < r.first()) {
-                    useFirst += stride;
-                }
-            }
-        }
-        else {
-            throw new UnsupportedOperationException("Intersection when both ranges have a stride");
-        }
-        if (useFirst > last) {
-            return EMPTY;
-        }
-        return new NexusRange(mName, useFirst, last, stride);
-  }
+    @Override
+    public IRange intersect(IRange r) throws InvalidRangeException {
+	if ((length() == 0) || (r.length() == 0)) {
+	    return EMPTY;
+	}
+	if ( this.equals(VLEN) || r.equals(VLEN) ) {
+	    return VLEN;
+	}
 
-  @Override
-  public boolean intersects(IRange r) {
-        if ((length() == 0) || (r.length() == 0)) {
-            return false;
-        }
-        if ( this.equals(VLEN) || r.equals(VLEN) ) {
-            return true;
-        }
+	long last = Math.min(this.last(), r.last());
+	long stride = stride() * r.stride();
 
-        long last = Math.min(this.last(), r.last());
-        long stride = stride() * r.stride();
+	long useFirst;
+	if (stride == 1) {
+	    useFirst = Math.max(this.first(), r.first());
+	}
+	else if (stride() == 1) { // then r has a stride
+	    if (r.first() >= first()) {
+		useFirst = r.first();
+	    }
+	    else {
+		long incr = (first() - r.first()) / stride;
+		useFirst = r.first() + incr * stride;
+		if (useFirst < first()) {
+		    useFirst += stride;
+		}
+	    }
+	}
+	else if (r.stride() == 1) { // then this has a stride
+	    if (first() >= r.first()) {
+		useFirst = first();
+	    }
+	    else {
+		long incr = (r.first() - first()) / stride;
+		useFirst = first() + incr * stride;
+		if (useFirst < r.first()) {
+		    useFirst += stride;
+		}
+	    }
+	}
+	else {
+	    throw new UnsupportedOperationException("Intersection when both ranges have a stride");
+	}
+	if (useFirst > last) {
+	    return EMPTY;
+	}
+	return new NexusRange(mName, useFirst, last, stride);
+    }
 
-        long useFirst;
-        if (stride == 1) {
-            useFirst = Math.max(this.first(), r.first());
-        }
-        else if (stride() == 1) { // then r has a stride
-            if (r.first() >= first()) {
-                useFirst = r.first();
-            }
-            else {
-              long incr = (first() - r.first()) / stride;
-                useFirst = r.first() + incr * stride;
-                if (useFirst < first()) {
-                    useFirst += stride;
-                }
-            }
-        }
-        else if (r.stride() == 1) { // then this has a stride
-            if (first() >= r.first()) {
-                useFirst = first();
-            }
-            else {
-              long incr = (r.first() - first()) / stride;
-                useFirst = first() + incr * stride;
-                if (useFirst < r.first()) {
-                    useFirst += stride;
-                }
-            }
-        }
-        else {
-            throw new UnsupportedOperationException("Intersection when both ranges have a stride");
-        }
-        return (useFirst <= last);
-  }
-    
-  @Override
-  public IRange shiftOrigin(int origin) throws InvalidRangeException {
-        return new NexusRange( mName, mFirst + origin, mLast + origin, mStride, mReduced );
-  }
+    @Override
+    public boolean intersects(IRange r) {
+	if ((length() == 0) || (r.length() == 0)) {
+	    return false;
+	}
+	if ( this.equals(VLEN) || r.equals(VLEN) ) {
+	    return true;
+	}
 
-  @Override
-  public IRange union(IRange r) throws InvalidRangeException {
-      if( r.stride() != mStride ) {
-          throw new InvalidRangeException("Stride must identical to make a IRange union!");
-        }
-        
-        if (length() == 0) {
-            return r;
-        }
-        if ( this.equals(VLEN) || r.equals(VLEN) ) {
-            return VLEN;
-        }
-        if (r.length() == 0) {
-            return this;
-        }
-        
-        long first, last;
-        String name = mName;
-        
-        // Seek the smallest value
-        first = Math.min( mFirst, r.first() );
-        last  = Math.max( mLast , r.last()  );
-        
-        return new NexusRange(name, first, last, mStride);
-  }
+	long last = Math.min(this.last(), r.last());
+	long stride = stride() * r.stride();
+
+	long useFirst;
+	if (stride == 1) {
+	    useFirst = Math.max(this.first(), r.first());
+	}
+	else if (stride() == 1) { // then r has a stride
+	    if (r.first() >= first()) {
+		useFirst = r.first();
+	    }
+	    else {
+		long incr = (first() - r.first()) / stride;
+		useFirst = r.first() + incr * stride;
+		if (useFirst < first()) {
+		    useFirst += stride;
+		}
+	    }
+	}
+	else if (r.stride() == 1) { // then this has a stride
+	    if (first() >= r.first()) {
+		useFirst = first();
+	    }
+	    else {
+		long incr = (r.first() - first()) / stride;
+		useFirst = first() + incr * stride;
+		if (useFirst < r.first()) {
+		    useFirst += stride;
+		}
+	    }
+	}
+	else {
+	    throw new UnsupportedOperationException("Intersection when both ranges have a stride");
+	}
+	return (useFirst <= last);
+    }
+
+    @Override
+    public IRange shiftOrigin(int origin) throws InvalidRangeException {
+	return new NexusRange( mName, mFirst + origin, mLast + origin, mStride, mReduced );
+    }
+
+    @Override
+    public IRange union(IRange r) throws InvalidRangeException {
+	if( r.stride() != mStride ) {
+	    throw new InvalidRangeException("Stride must identical to make a IRange union!");
+	}
+
+	if (length() == 0) {
+	    return r;
+	}
+	if ( this.equals(VLEN) || r.equals(VLEN) ) {
+	    return VLEN;
+	}
+	if (r.length() == 0) {
+	    return this;
+	}
+
+	long first, last;
+	String name = mName;
+
+	// Seek the smallest value
+	first = Math.min( mFirst, r.first() );
+	last  = Math.max( mLast , r.last()  );
+
+	return new NexusRange(name, first, last, mStride);
+    }
 
     @Override
     public String toString() {
-        StringBuffer str = new StringBuffer();
-        str.append("name: '"   ).append(getName());
-        str.append("', first: ").append(first());
-        str.append(", last: "  ).append(last());
-        str.append(", stride: ").append(stride());
-        str.append(", length: ").append(length());
-        str.append(", reduce: ").append(mReduced);
-        return str.toString();
+	StringBuffer str = new StringBuffer();
+	str.append("name: '"   ).append(getName());
+	str.append("', first: ").append(first());
+	str.append(", last: "  ).append(last());
+	str.append(", stride: ").append(stride());
+	str.append(", length: ").append(length());
+	str.append(", reduce: ").append(mReduced);
+	return str.toString();
     }
-    
-  public boolean reduced() {
-    return mReduced;
-  }
-  
-  public void reduced(boolean reduce) {
-    mReduced = reduce;
-  }
+
+    public boolean reduced() {
+	return mReduced;
+    }
+
+    public void reduced(boolean reduce) {
+	mReduced = reduce;
+    }
 }

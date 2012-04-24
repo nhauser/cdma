@@ -11,46 +11,42 @@
 package org.gumtree.data.exception;
 
 /**
- * This exception is thrown when the IArray storage is not reachable in a
- * IDataItem instance.
- * 
  * @author nxi
  * 
  */
-public class SignalNotAvailableException extends Exception {
+public class ItemExistException extends WriterException {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -4635308951458654040L;
+    private static final long serialVersionUID = 3550694606967945269L;
 
     /**
      * 
      */
-    public SignalNotAvailableException() {
+    public ItemExistException() {
     }
 
     /**
-     * @param message String value
+     * @param arg0 String value
      */
-    public SignalNotAvailableException(final String message) {
-        super(message);
+    public ItemExistException(final String arg0) {
+        super(arg0);
     }
 
     /**
-     * @param cause Throwable object
+     * @param arg0 Throwable object
      */
-    public SignalNotAvailableException(final Throwable cause) {
-        super(cause);
+    public ItemExistException(final Throwable arg0) {
+        super(arg0);
     }
 
     /**
-     * @param message String value
-     * @param cause Throwable object
+     * @param arg0 String value
+     * @param arg1 Throwable object
      */
-    public SignalNotAvailableException(final String message,
-            final Throwable cause) {
-        super(message, cause);
+    public ItemExistException(final String arg0, final Throwable arg1) {
+        super(arg0, arg1);
     }
 
 }

@@ -30,55 +30,55 @@ import org.gumtree.data.interfaces.IKey;
  */
 
 public interface IExtendedDictionary extends IDictionary {
-  /**
-   * Get a sub part of this dictionary that corresponds to a key.
-   * @param IKey object
-   * @return IExtendedDictionary matching the key
-   */
-  public IExtendedDictionary getDictionary(IKey key);
-  
-  /**
-   * Get the version number (in 3 digits default implementation) that is plug-in
-   * dependent. This version corresponds of the dictionary defining the path. It  
-   * permits to distinguish various generation of IDataset for a same institutes.
-   * Moreover it's required to select the right class when using a IClassLoader
-   * invocation.
-   * 
-   * @return the string representation of the plug-in's version number
-   */
-  public String getVersionNum();
-  
-  /**
-   * Get the plug-in implementation of a IClassLoader so invocations of external
-   * code are made possible.
-   * 
-   * @return the plug-in's class loader
-   */
-  public IClassLoader getClassLoader();
-  
-  /**
-   * Get the view name matching this dictionary
-   * 
-   * @return the name of the experimental view
-   */
-  public String getView();
-  
-  /**
-   * Read all keys stored in the XML dictionary file
-   */
-  public void readEntries() throws FileAccessException;
-  
-  /**
-   * Return the path to reach the key dictionary file
-   * 
-   * @return the path of the dictionary key file
-   */
-  public String getKeyFilePath();
-  
-  /**
-   * Return the path to reach the mapping dictionary file
-   * 
-   * @return the path of the plug-in's dictionary mapping file
-   */
-  public String getMappingFilePath();
+    /**
+     * Get a sub part of this dictionary that corresponds to a key.
+     * @param IKey object
+     * @return IExtendedDictionary matching the key
+     */
+    public IExtendedDictionary getDictionary(IKey key);
+
+    /**
+     * Get the version number (in 3 digits default implementation) that is plug-in
+     * dependent. This version corresponds of the dictionary defining the path. It  
+     * permits to distinguish various generation of IDataset for a same institutes.
+     * Moreover it's required to select the right class when using a IClassLoader
+     * invocation.
+     * 
+     * @return the string representation of the plug-in's version number
+     */
+    public String getVersionNum();
+
+    /**
+     * Get the plug-in implementation of a IClassLoader so invocations of external
+     * code are made possible.
+     * 
+     * @return the plug-in's class loader
+     */
+    public IClassLoader getClassLoader();
+
+    /**
+     * Get the view name matching this dictionary
+     * 
+     * @return the name of the experimental view
+     */
+    public String getView();
+
+    /**
+     * Read all keys stored in the XML dictionary file
+     */
+    public void readEntries() throws FileAccessException;
+
+    /**
+     * Return the path to reach the key dictionary file
+     * 
+     * @return the path of the dictionary key file
+     */
+    public String getKeyFilePath();
+
+    /**
+     * Return the path to reach the mapping dictionary file
+     * 
+     * @return the path of the plug-in's dictionary mapping file
+     */
+    public String getMappingFilePath();
 }

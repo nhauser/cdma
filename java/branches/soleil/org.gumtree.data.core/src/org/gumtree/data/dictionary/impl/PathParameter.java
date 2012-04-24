@@ -16,18 +16,18 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
 public class PathParameter implements IPathParameter {
-  private ParameterType  m_type;
+    private ParameterType  m_type;
     private Object         m_value;
     private String         m_name;
     private String         m_factory;
-    
+
     public PathParameter(IFactory factory, ParameterType filter, String name) {
-      m_name    = name;
+        m_name    = name;
         m_type    = filter;
         m_value   = null;
         m_factory = factory.getName();
     }
-    
+
     public PathParameter(IFactory factory, ParameterType filter, String name, Object value) {
         m_type    = filter;
         m_value   = value;
@@ -37,56 +37,56 @@ public class PathParameter implements IPathParameter {
 
     @Override
     public ParameterType getType() {
-      return m_type;
+        return m_type;
     }
-    
+
     @Override
     public Object getValue() {
-      return m_value;
+        return m_value;
     }
-    
+
     @Override
     public void setValue(Object value) {
-      m_value = value;
+        m_value = value;
     }
 
     @Override
     public boolean equals(IPathParameter keyfilter) {
         return ( m_value.equals(keyfilter.getValue()) && m_type.equals(keyfilter.getType()) ) ;
     }
-    
+
     @Override
     public String toString() {
         return m_name + "=" + m_value; 
     }
-    
+
     @Override
     public IPathParameter clone() {
-      PathParameter param = new PathParameter();
-      param.m_factory = m_factory;
-      param.m_name    = m_name;
-      param.m_type    = m_type;
-      param.m_value   = m_value;
-      return param;
+        PathParameter param = new PathParameter();
+        param.m_factory = m_factory;
+        param.m_name    = m_name;
+        param.m_type    = m_type;
+        param.m_value   = m_value;
+        return param;
     }
 
-  @Override
-  public String getName() {
-    return m_name;
-  }
+    @Override
+    public String getName() {
+        return m_name;
+    }
 
-  @Override
-  public String getFactoryName() {
-    return m_factory;
-  }
+    @Override
+    public String getFactoryName() {
+        return m_factory;
+    }
 
-  /*
+    /*
   @Override
   public void update(IPath path) {
     String value = path.getValue();
     value = value.replaceAll("\\$\\(" + m_name + "\\)", m_value.toString() );
     path.setValue(value);
   }
-  */
-  private PathParameter() {};
+     */
+    private PathParameter() {};
 }

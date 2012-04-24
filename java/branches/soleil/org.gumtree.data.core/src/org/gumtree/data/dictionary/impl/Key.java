@@ -20,30 +20,30 @@ import org.gumtree.data.dictionary.IPathParameter;
 import org.gumtree.data.interfaces.IKey;
 
 public final class Key implements IKey, Cloneable {
-  private String mFactory;
+    private String mFactory;
     private String mKey = "";   // key name
     private List<IPathParameter> mFilters;
-    
+
     public Key(IFactory factory, String name) {
-      mKey     = name;
-      mFactory = factory.getName();
+        mKey     = name;
+        mFactory = factory.getName();
         mFilters = new ArrayList<IPathParameter>();
     }
-    
+
     public Key(IKey key) {
-      mKey     = key.getName();
-      mFactory = key.getFactoryName();
+        mKey     = key.getName();
+        mFactory = key.getFactoryName();
         mFilters = new ArrayList<IPathParameter>();
         for( IPathParameter param : key.getParameterList() ) {
-          mFilters.add(param.clone());
+            mFilters.add(param.clone());
         }
     }
-    
+
     @Override
     public List<IPathParameter> getParameterList() {
         return mFilters;
     }
-    
+
     @Override
     public String getName() {
         return mKey;
@@ -56,20 +56,20 @@ public final class Key implements IKey, Cloneable {
 
     @Override
     public boolean equals(Object key) {
-      if( ! (key instanceof IKey) ) {
-        return false;
-      }
-      else {
-        return mKey.equals( ((IKey) key).getName());
-      }
+        if( ! (key instanceof IKey) ) {
+            return false;
+        }
+        else {
+            return mKey.equals( ((IKey) key).getName());
+        }
     }
-    
+
     @Override
     public int hashCode() {
-      return mKey.hashCode();
+        return mKey.hashCode();
     }
-    
-  @Override
+
+    @Override
     public String toString() {
         return mKey;
     }
@@ -88,23 +88,23 @@ public final class Key implements IKey, Cloneable {
             return null;
         }
     }
-    
+
     @Override
     public IKey clone() {
-      IKey key = Factory.getFactory(mFactory).createKey(mKey);
-      for( IPathParameter filter : mFilters ) {
-        key.pushParameter( filter.clone() );
-      }
-      return key;
+        IKey key = Factory.getFactory(mFactory).createKey(mKey);
+        for( IPathParameter filter : mFilters ) {
+            key.pushParameter( filter.clone() );
+        }
+        return key;
     }
-    
-  @Override
-  public String getFactoryName() {
-    return mFactory;
-  }
 
-  @Override
-  public int compareTo(Object arg0) {
-    return this.getName().compareTo(arg0.toString());
-  }
+    @Override
+    public String getFactoryName() {
+        return mFactory;
+    }
+
+    @Override
+    public int compareTo(Object arg0) {
+        return this.getName().compareTo(arg0.toString());
+    }
 }
