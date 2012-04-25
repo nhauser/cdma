@@ -1,8 +1,18 @@
-#summary JAVA port documentations.
+#summary JAVA documentations.
+
+Welcome to the JAVA section of the CDMA documentation. It describes how to use the CDMA library to help the development of data analysis applications.
+
+This section is divided into six sections:
 
 
- * [JavaClient Client application development]
- * [JavaGuideLines Programmation guidelines]
- * [JavaEngine Data format engine development]
- * [JavaPlugin Plug-in development]
- * [JavaReference API Reference guide]
+ * an [#Introduction Introduction] explaining the JAVA version design and guidelines.
+
+ * a section for data analysis application developers: [JavaClient Client application development].
+
+ * an introduction section for contributors describing the [JavaGuideLines programmation guidelines] to follow when adding new functionalities to the core library or working on new or existing data format engines.
+
+ * the [JavaEngine data format engine development] guide
+
+ * the [JavaPlugin Plug-in development] guide
+
+ * finally the automatically generated DOxygen documentation of the CDMA source code [JavaReference API Reference guide]
