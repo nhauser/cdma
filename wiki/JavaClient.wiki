@@ -16,10 +16,13 @@ To make the CDMA working the following is required:
 == Extended Dictionary mechanism ==
 
 To use the Extended Dictionary mechanism, two things are required:
- * a system property <i>CDM_DICTIONARY_PATH</i> declaring where to find view dictionaries;
- * having installed mapping dictionaries into sub-folder having the same name as the plug-in they belong to.
+ * a system property <i>CDM_DICTIONARY_PATH</i> declaring where to find view dictionaries
 
+[http://cdma.googlecode.com/svn/wiki/images/java_sys_prop.png]
 
+ * having installed mapping dictionaries into sub-folder having the same name as the plug-in they belong to
+
+[http://cdma.googlecode.com/svn/wiki/images/java_deploy_folder.png]
 
 
 == Windows ==
