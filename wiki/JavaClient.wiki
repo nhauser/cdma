@@ -35,7 +35,9 @@ CDMA classes are accessible through the core packages. The main class a Java cli
 
 A CDMA dataset is a handle for all the data of an experiment.
 Getting access to a dataset is done through the CDMA factory. Those two samples show how to proceed:
+
 - auto-detect a plug-in and instantiate both plug-in's factory and dataset
+
 {{{
 // Auto detecting a plug-in for an URI
 URI uri = new URI( "/uri/to/reach/my/datasource" );
@@ -47,6 +49,7 @@ IDataset dataset = factory.createDatasetInstance( uri );
 }}}
 
 - auto-detect a plug-in and instantiate the correct dataset
+
 {{{
 // Auto detect a plug-in for an URI and
 // get the associated dataset
