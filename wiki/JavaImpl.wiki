@@ -32,6 +32,35 @@ In 2012 it has reached a maturity that permits to different institutes (ANSTO an
 
 This Java implementation uses several modules:
 
- * a core library
- * engines libraries
- * data plug-ins
+ * [#Core core library]
+ * [#Engines engines libraries]
+ * [#Plug-ins data plug-ins]
+
+== Core ==
+
+The core library contains:
+
+ * the {{{Factory}}} class: entry point for client applications,
+ * a set of interfaces that must be implemented by the engines (may be override by plug-ins),
+ * a set of tools for arrays manipulations
+ * the dictionary mechanism,
+ * the plug-ins system management (loading, method invocation).
+
+The core library massively uses the YAT library, a lightweight generic cpp toolkit ([http://tango-cs.svn.sourceforge.net/viewvc/tango-cs/share/yat/ source code available here]).
+In particular, it uses the smart pointers class {{{yat::SharedPtr}}} in order to avoid manual memory management and ensure code stability (less risk of memory leaks, object ownership troubles,...).
+
+== Engines ==
+
+The engines are shared libraries that implement all the needed code to handle physical data formats. A data format engine can be used by several plug-ins (see below). They can't be directly used by the core library, but only through the plug-ins mechanism.
+
+== Plug-ins ==
+
+Data plug-in encapsulates all the institute specific way of organizing data into physical containers (files, database, ...).
+
+<i>To be completed...</i>
+
+== Components schema ==
+
+The schema below summarizes the dependencies between the different software components, from a application point of view.
+
+[http://cdma.googlecode.com/svn/wiki/images/cpp_archi.png]
