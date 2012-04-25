@@ -42,25 +42,22 @@ The core library contains:
 
  * the {{{Factory}}} class: entry point for client applications,
  * a set of interfaces that must be implemented by the engines (may be override by plug-ins),
- * a set of tools for arrays manipulations
  * the dictionary mechanism,
+ * the plug-ins detection mechanism,
  * the plug-ins system management (loading, method invocation).
+ * a set of tools for arrays manipulations
 
-The core library massively uses the YAT library, a lightweight generic cpp toolkit ([http://tango-cs.svn.sourceforge.net/viewvc/tango-cs/share/yat/ source code available here]).
-In particular, it uses the smart pointers class {{{yat::SharedPtr}}} in order to avoid manual memory management and ensure code stability (less risk of memory leaks, object ownership troubles,...).
 
 == Engines ==
 
-The engines are shared libraries that implement all the needed code to handle physical data formats. A data format engine can be used by several plug-ins (see below). They can't be directly used by the core library, but only through the plug-ins mechanism.
+Engines are packages that implement all the needed code to handle physical data formats. A same data format engine can be used by several different plug-ins (see below). They can't be directly used by the core library, but only through the plug-ins mechanism.
 
 == Plug-ins ==
 
-Data plug-in encapsulates all the institute specific way of organizing data into physical containers (files, database, ...).
-
-<i>To be completed...</i>
+Data plug-in encapsulates all the institute specific way of organizing data into physical containers (files, database, ...). Loaded at runt time, they drive the underlying engine to get an access to the institute data source.
 
 == Components schema ==
 
-The schema below summarizes the dependencies between the different software components, from a application point of view.
+The schema below summarizes the dependencies between the different software components, from an application point of view.
 
-[http://cdma.googlecode.com/svn/wiki/images/cpp_archi.png]
+[http://cdma.googlecode.com/svn/wiki/images/java_archi.png]
