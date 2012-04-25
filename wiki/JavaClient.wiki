@@ -8,12 +8,13 @@
 
 = Requirements =
 
+== Mandatory ==
 To make the CDMA working the following is required:
  * to have the CDMA core package in class path
  * to have the OSGI bundle in class path (available from eclipse update site)
  * to have the JDom bundle in class path (available from eclipse update site)
 
-== Extended Dictionary mechanism ==
+== Optional Extended Dictionary mechanism ==
 
 To use the Extended Dictionary mechanism, two things are required:
  * a system property <i>CDM_DICTIONARY_PATH</i> declaring where to find view dictionaries
@@ -25,42 +26,11 @@ To use the Extended Dictionary mechanism, two things are required:
 [http://cdma.googlecode.com/svn/wiki/images/java_deploy_folder.png]
 
 
-== Windows ==
-
-You should compile using VC8 or higher
-
-If you are not using Maven to compile your project you need the following libraries:
-
- * Iconv v1.9.2 or higher
- * Xml2 v2.7.8 or higher
-
-Windows binaries are available from this web site: [http://www.zlatkovic.com/libxml.en.html]
-
 = Setting up The CDMA library =
 
-CDMA classes are accessible through the namespace `cdma`.
-The main class a C++ client uses is {{{cdma::Factory}}}. This is a singleton object. Every C++ client must begin and ending with it:
+CDMA classes are accessible through the package `org.gumtree.data`.
+The main class a Java client uses is {{{org.gummtree.data.Factory}}}. This is a singleton object.
 
-{{{
-#include <cdma/Factory.h>
-#include <cdma/IFactory.h>
-#include <cdma/navigation/IDataset.h>
-
-int main(int argc,char *argv[])
-{
-  
-  ...
-  
-  // The first action is the Factory initialization
-  cdma::Factory::init( "Plugins_path" );
-
-  ...
-
-  // Calling the cleanup method is necessary to ensure
-  // the correct termination of the CDMA core library
-  cdma::Factory::cleanup();
-}
-}}}
 
 = Getting access to a dataset =
 
