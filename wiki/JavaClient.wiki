@@ -28,45 +28,61 @@ To use the Extended Dictionary mechanism, two things are required:
 
 = Setting up The CDMA library =
 
-CDMA classes are accessible through the package `org.gumtree.data`.
-The main class a Java client uses is {{{org.gummtree.data.Factory}}}. This is a singleton object.
+CDMA classes are accessible through the core packages. The main class a Java client uses is {{{org.gumtree.data.Factory}}}. This is the entry point for using the CDMA, it is a singleton static object. It will be used to instantiate a plug-in.
 
 
 = Getting access to a dataset =
 
-A CDMA dataset is a handle for all the data of one experiment.
-Getting access to a dataset is done through the CDMA factory. This sample show how to proceed:
-
+A CDMA dataset is a handle for all the data of an experiment.
+Getting access to a dataset is done through the CDMA factory. Those two samples show how to proceed:
+- auto-detect a plug-in and instantiate both plug-in's factory and dataset
 {{{
-// Return a std::pair object containing two references:
-// - to the dataset
-// - to the plug-in factory used
-DatasetFactoryPair datasetFactoryPair = cdma::Factory::openDataset("path/to/my/dataset");
+// Auto detecting a plug-in for an URI
+URI uri = new URI( "/uri/to/reach/my/datasource" );
+IFactory factory = Factory.getFactory( uri );
 
-IDatasetPtr dataset_ptr = datasetFactoryPair.first;
+// Instantiate the dataset according that auto detected plug-in
+IDataset dataset = factory.createDatasetInstance( uri );
+
 }}}
 
-As you can read it, most CDMA methods returns references which are smart pointers on object. These smart pointers are of yat::SharedPtr type (very similar to type `boost::shared_ptr` with compatible signatures).
+- auto-detect a plug-in and instantiate the correct dataset
+{{{
+// Auto detect a plug-in for an URI and
+// get the associated dataset
+URI uri = new URI( "/uri/to/reach/my/datasource" );
+IDataset dataset = Factory.openDataset( uri );
+
+}}}
 
 = Choosing the access mode =
 
 The CDMA library offers two way of accessing data.
 
 == Standard (physical) way ==
-The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it.
+The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it or if you need to make a GUI data browser.
 
 {{{
 // Returns the physical root group
 // Thus, all subsequents calls to sub-groups and dataitems will be based on 
 // the physical data organization.
-IGroupPtr root_ptr = dataset_ptr->getRootGroup();
+IGroup root = dataset.getRootGroup();
 }}}
 
 We can now browse the dataset to get data items
 
 {{{
-IGroupPtr a_group_ptr = root_ptr->getGroup("sub_group");
-IDataItemPtr a_item_ptr = a_group_ptr ->getDataItem("dataitem_name");
+// Get a specific sub-group
+IGroup a_group = root.getGroup("sub_group");
+
+// Get all sub-groups
+List<IGroup> list_groups = root.getGroupList();
+
+// Get a specific sub data item
+IDataItem a_item = a_group.getDataItem("dataitem_name");
+
+// Get all sub data item
+List<IDataItem> list_groups = root.getgetDataItemList();
 }}}
 
 == Using the dictionary mechanism ==
@@ -77,7 +93,7 @@ In order to be able to use the dictionary mechanism, a data definition document 
 
 {{{
 // View (data definition document) selection
-cdma::Factory::setActiveView("my_app");
+Factory.setActiveView("my_app");
 }}}
 
 We now can get an handle to the logical root group, and get access to the data items
@@ -86,26 +102,26 @@ We now can get an handle to the logical root group, and get access to the data i
 // Returns the logical root group
 // Thus, all subsequents calls to sub-groups and dataitems will be based on 
 // a logical data organization driven by a data definition document.
-LogicalGroupPtr root_ptr = dataset_ptr->getLogicalRoot();
+ILogicalGroup root = dataset.getLogicalRoot();
 
-IDataItemPtr a_item_ptr = root_ptr->getDataItem("a_key_name");
+IDataItem a_item = root.getDataItem("a_key_name");
 }}}
 
 = Reading data =
 
-Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through Array objects. A array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
+Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through IArray objects. An array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
 
 Using the generic method is applicable to all data kind:
 
 {{{
-IArrayPtr array_ptr = a_item_ptr->getData();
+IArray array = a_item.getData();
 }}}
 
 If the data is assumed to be a single value (scalar type), you can use a dedicated set of convenience methods like:
 
 {{{
-double double_value = double_type_item_ptr->readScalarDouble();
-int integer_value = integer_type_item_ptr->readScalarInt();
+double double_value = double_type_item.readScalarDouble();
+int integer_value = integer_type_item.readScalarInt();
 }}}
 
 If the actual value does not match the requested type, it is converted.
