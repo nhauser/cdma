@@ -16,8 +16,8 @@ To make the CDMA working the following is required:
 == Extended Dictionary mechanism ==
 
 To use the Extended Dictionary mechanism, two things are required:
- * an environment variable declaring where to find view dictionaries;
- * having installed mapping dictionaries sub-folder having the same name as the plug-in they belong to.
+ * a system property <i>CDM_DICTIONARY_PATH</i> declaring where to find view dictionaries;
+ * having installed mapping dictionaries into sub-folder having the same name as the plug-in they belong to.
 
 
 
