@@ -1,11 +1,11 @@
-#summary JAVA documentations.
+#summary Java documentations.
 
-Welcome to the JAVA section of the CDMA documentation. It describes how to use the CDMA library to help the development of data analysis applications.
+Welcome to the Java section of the CDMA documentation. It describes how to use the CDMA library to help the development of data analysis applications.
 
 This section is divided into six sections:
 
 
- * an [#Introduction Introduction] explaining the JAVA version design and guidelines.
+ * an [#Introduction Introduction] explaining the Java version design and guidelines.
 
  * a section for data analysis application developers: [JavaClient Client application development].
 
@@ -16,3 +16,22 @@ This section is divided into six sections:
  * the [JavaPlugin Plug-in development] guide
 
  * finally the automatically generated DOxygen documentation of the CDMA source code [JavaReference API Reference guide]
+
+
+= Introduction =
+
+The Java implementation of the CDMA was initially developed above the NetCDF data format to extract a common interface layer. The idea was to add further data format according those interfaces.
+The project after several enhancing iterations has now the ability:
+ * to manage several different format
+ * to detect which one is the most appropriate
+ * to abstract its physical structure
+ * to give a common layer and tools to manipulate big arrays
+
+In 2012 it has reached a maturity that permits to different institutes (ANSTO and SOLEIL) using different data format to share a common GUI application: the DataBrowser.
+
+
+This Java implementation uses several modules:
+
+ * a core library
+ * engines libraries
+ * data plug-ins
