@@ -47,7 +47,7 @@ In order to make the plug-in usable there are 3 rules to respect:
 
 == To have a factory ==
 
-The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. Indeed the core provide the org.gumtree.data.core.Factory which calls the dynamic loading service (see section 2.1.2) to instantiate the right plug-in (i.e. IFactory) implementation.
+The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. Indeed the core provide the org.gumtree.data.core.Factory which calls the dynamic loading service to instantiate the right plug-in (i.e. IFactory) implementation.
 
 Below a sample of the “Core” main Factory:
 
@@ -56,10 +56,7 @@ import org.gumtree.data.utils.FactoryManager;
 import org.gumtree.data.utils.IFactoryManager;
 
 /**
- * The Factory class in gumtree data model is a tools to create GDM 
- * objects. The factory can take a URI as a parameter to read data 
- * in as GDM object, or it can create an empty GDM object to hold 
- * data in a future time.
+ * The Factory class in CDMA is a tools to create CDMA objects corresponding to certain plug-in.
 */
 public final class Factory {
 	public static IFactory getFactory(String name) {
@@ -67,10 +64,8 @@ public final class Factory {
 	}
 	...
 	public static IArray createArray(Class<?> clazz, int[] shape) {...}
-	public static IDataItem createDataItem(IGroup parent, String shortName, 
-			IArray array) throws InvalidArrayTypeException {...}
-	public static IGroup createGroup(IGroup parent, String shortName, 
-			boolean updateParent) {...}
+	public static IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {...}
+	public static IGroup createGroup(IGroup parent, String shortName, boolean updateParent) {...}
 	public static IDataset createDatasetInstance(URI uri) throws Exception {...}
 	...
 }
