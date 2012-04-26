@@ -39,7 +39,7 @@ Some of those elements are only implemented in the plug-in. Other are only relev
 
 == Plug-ins structure ==
 
-In order to make the plug-in usable there is 3 rules to respect:
+In order to make the plug-in usable there are 3 rules to respect:
 
  * to have a factory whom is an implementation of IFactory interface (pattern Factory),
  * to make it loadable using OSGI or using Java standard java.util.ServiceLoader,
@@ -47,7 +47,7 @@ In order to make the plug-in usable there is 3 rules to respect:
 
 == To have a factory ==
 
-The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. Indeed the core provide the org.gumtree.data.core.Factory which calls the dynamic loading service (see section 2.1.2) to instantiate the right plug-in IFactory implementation.
+The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. Indeed the core provide the org.gumtree.data.core.Factory which calls the dynamic loading service (see section 2.1.2) to instantiate the right plug-in (i.e. IFactory) implementation.
 
 Below a sample of the “Core” main Factory:
 
