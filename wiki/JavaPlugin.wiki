@@ -65,12 +65,12 @@ Below a screenshot of the Java CDMA soleil plug-in based on NeXus engine:
 [http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png]
 
 We can see there that our plug-in is organized as following:
-- some packages that customize some behaviours due to our data format constraints (see: the [#Optional_modules_to_customize Customize section]),
-- the IFactory implementation is done by the NxsFactory class
-- the IDatasource implementation is done by the NxsDatasource class
-- the META-INF/services/org.gumtree.data.IFactory file used by the service loading provided by Java
-- OSGI-INF/factory.xml used by the OSGI loading system
-- a folder <i>resources</i> that contains our mapping dictionaries which must be deployed (see: [#JavaClient requirements section]
+ * some packages that customize some behaviours due to our data format constraints (see: the [#Optional_modules_to_customize Customize section]),
+ * the IFactory implementation is done by the NxsFactory class
+ * the IDatasource implementation is done by the NxsDatasource class
+ * the META-INF/services/org.gumtree.data.IFactory file used by the service loading provided by Java
+ * OSGI-INF/factory.xml used by the OSGI loading system
+ * a folder <i>resources</i> that contains our mapping dictionaries which must be deployed (see: [#JavaClient requirements section]
 
 Lets imagine a very simple plug-in that is fully functional and which relays on an engine. It should have the following structure and nothing more is necessary:
 
