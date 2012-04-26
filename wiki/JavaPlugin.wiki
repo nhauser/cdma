@@ -3,7 +3,12 @@
 *Content*
 
  * [#Introduction Introduction]
+   * [#Getting_started Getting started]
+   * [#Main_elements Main elements]
  * [#How_to_develop_its_own_plug-in How to develop its own plug-in]
+   * [#Rely_on_a_CDMA_engine Rely on a CDMA engine]
+   * [#Plug-ins_structure Plug-ins structure]
+   * [#To_have_a_plug-in_factory To have a plug-in factory]
  * [#Optional_modules_to_customize Optional modules to customize]
 
 = Introduction =
@@ -35,6 +40,14 @@ Some of those elements are only implemented in the plug-in. Other are only relev
 
 = How to develop its own plug-in =
 ----
+== Rely on a CDMA engine ==
+
+A [JavaEngine CDMA engine] manages data source handle, navigation, and access to data. All classes needed by the CDMA are available inside, but it cannot be instantiated as it is. The plug-in is here to drive it and allow it to be instantiated through the plug-in existence. 
+
+Some engines already exist, maybe the one you might need for this future plug-in. Therefore, there is no need to recode everything and a plug-in can be very quickly developed. 
+
+If no corresponding engine are available, you might need to implement one in first. Or maybe for different reason, you might want to integrate it directly in your plug-in.
+
 
 == Plug-ins structure ==
 
