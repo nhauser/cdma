@@ -59,6 +59,8 @@ In order to make the plug-in usable there are 3 rules to respect:
  * to make it loadable using OSGI or using Java standard java.util.ServiceLoader,
  * to have its own unique name.
 
+[http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png]
+
 == To have a plug-in factory ==
 
 The CDMA core aims to detect the right plug-in and return its entry point: the plug-in's factory. Then the user can start working with the plug-in. That process is done using the main Factory which only contains static methods.
