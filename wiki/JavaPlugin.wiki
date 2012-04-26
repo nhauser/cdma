@@ -17,7 +17,7 @@
 
 There are some evident principles behind a CDMA plug-in:
 
- * observe behaviors described in each methods of a CDMA object,
+ * observe behaviours described in each methods of a CDMA object,
  * try to implement as much as possible requested methods (an incomplete plug-in would be unusable),
  * to permit an access on data with the most possible efficiency,
  * worry about the memory usage.
@@ -46,14 +46,16 @@ A [JavaEngine CDMA engine] manages data source handle, navigation, and access to
 
 Some engines already exist, maybe the one you might need for this future plug-in. Therefore, there is no need to recode everything and a plug-in can be very quickly developed. 
 
-If no corresponding engine are available, you might need to implement one in first. Or maybe for different reason, you might want to integrate it directly in your plug-in.
+If the right engine is available, you almost only have to implement a plug-in factory: IFactory.
+
+<b>If no corresponding engine are available, you might need to [JavaEngine develop one] in first.</b> Or maybe for different reason, you might want to integrate it directly in your plug-in.
 
 
 == Plug-ins structure ==
 
 In order to make the plug-in usable there are 3 rules to respect:
 
- * to have a factory whom is an implementation of IFactory interface (pattern Factory),
+ * to have a factory whom is an implementation of IFactory interface (using the pattern can be a good idea),
  * to make it loadable using OSGI or using Java standard java.util.ServiceLoader,
  * to have its own unique name.
 
