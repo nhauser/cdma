@@ -360,8 +360,34 @@ If several available mappings a customization of <i>IExtendedDictionary.getMappi
 
 == Customize navigation ==
 
-The navigation which is principally done by an engine can be customized partially. To do so 
+The navigation which is principally done by an engine can be customized partially. To do so you might inherit or encapsulate one or several classes from the underlying CDMA engine. 
 
+The main point is as the entry point is the plug-in factory you are free to return an object of your own. So here you are able to override almost all behaviours of the engine.
+
+The only constraint is that you must ensure the object returned by the interfaces' calls are overridden objects. 
+
+For example to change a behaviour on the IGroup from an engine:
+ * you will have to make the IDataset returning a modified IGroup implementation when calling IDataset.getRootGrouop()
+ * you will have to override all methods returning object IGroup from the IGroup implementation of your plug-in (the overridden can essentially call the super method and construct a new object from what it has returned).
+
+It can be easily done this way:
+
+{{{
+public final class PluginGroup extends EngineGroup {
+    public PluginGroup( EngineGroup group ) { super(group); }
+
+    @Override
+    public IGroup getGroupList() {
+        List<IGroup> list = super.getGroupList();
+        List<IGroup> result = new ArrayList<IGroup>();
+        for( IGroup group : list ) {
+           result.add( new PluginGroup(group) );
+        }
+        return result;
+    }
+}
+
+}}}
 
 == Customize Extended Dictionary mechanism ==
 
