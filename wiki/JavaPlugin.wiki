@@ -444,10 +444,12 @@ Below an example of the view file:
 To customize that mechanism you can inherit from ExtendedDictionary (default implementation) or LogicalGroup to change a specific behaviour by overriding.
 
 Mainly it will be to allow a specific path determination for mapping file. 
-That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches:
+
+That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches. Below the whole NxsLogicalGroup class (only constructors have been removed):
 
 {{{
 public class NxsLogicalGroup extends LogicalGroup {
+    // some constructors
     ...
 
     public IExtendedDictionary findAndReadDictionary() {
@@ -457,7 +459,8 @@ public class NxsLogicalGroup extends LogicalGroup {
         try {
             // Detect the key dictionary file and mapping dictionary file
             String keyFile = Factory.getKeyDictionaryPath();
-            String mapFile = Factory.getMappingDictionaryFolder( factory ) + detectDictionaryFile( (NxsDataset) getDataset() );
+            String mapFile = Factory.getMappingDictionaryFolder( factory ) 
+                             + detectDictionaryFile( (NxsDataset) getDataset() );
             dictionary = new ExtendedDictionary( factory, keyFile, mapFile );
             dictionary.readEntries();
         } catch (FileAccessException e) {
@@ -468,9 +471,7 @@ public class NxsLogicalGroup extends LogicalGroup {
         return dictionary;
     }
 
-    ...
-
-public String detectDictionaryFile(NxsDataset dataset) throws FileAccessException {
+    public String detectDictionaryFile(NxsDataset dataset) throws FileAccessException {
         // Get the configuration
         ConfigDataset conf = dataset.getConfiguration();
 
@@ -499,6 +500,9 @@ public String detectDictionaryFile(NxsDataset dataset) throws FileAccessExceptio
 
 }}}
 
+As the entire Extended Dictionary mechanism is manipulated using interfaces (even when a plug-in uses the default implementation), it is possible to customize a part of the mechanism.
+
+Note: it is very important to not change the way view definition XML file are loaded. Particularly to respect the view file DTD.
 
 
 == Path Parameters ==
