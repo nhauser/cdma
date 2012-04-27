@@ -367,7 +367,7 @@ The main point is as the entry point is the plug-in factory you are free to retu
 The only constraint is that you must ensure the object returned by the interfaces' calls are overridden objects. 
 
 For example to change a behaviour on the IGroup from an engine:
- * you will have to make the IDataset returning a modified IGroup implementation when calling IDataset.getRootGrouop()
+ * you will have to make the IDataset returning a modified IGroup implementation when calling IDataset.getRootGroup()
  * you will have to override all methods returning object IGroup from the IGroup implementation of your plug-in (the overridden can essentially call the super method and construct a new object from what it has returned).
 
 It can be easily done this way:
