@@ -361,27 +361,37 @@ If several available mappings a customization of <i>IExtendedDictionary.getMappi
 == Customize navigation ==
 
 
+
+
 == Customize Extended Dictionary mechanism ==
 
 This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
-A default implementation is provided in “Core” see package org.gumtree.data.dictionary.impl it can be customized totally or partially. The customization should impact only the instantiated plug-in. Indeed as it is accessed using the ILogicalGroup, instantiating a dedicated one (instead of org.gumtree.data.dictionary.impl.LogicalGroup) allow to manage own behaviors.
+A default implementation is provided in “Core” see package org.gumtree.data.dictionary.impl it can be customized totally or partially. The customization should impact only the instantiated plug-in. Indeed as it is accessed using the ILogicalGroup, instantiating a dedicated one (instead of org.gumtree.data.dictionary.impl.LogicalGroup) allow to manage own behaviours.
+
 The logical view is defined and activated with the two following lines:
+
 {{{
 Factory.setActiveView(String view);
 ILogicalGroup root = dataset.getLogicalRoot();
 }}}
+
 The association key/path is done by `IExtendedDictionary`. The `ILogicalGroup` will instantiate an `IExtendedDictionary` giving it path to reach key file and mapping file, through the method:
+
 {{{
 public IExtendedDictionary ILogicalGroup.findAndReadDictionary()
 }}}
+
 The loading of both files is done using:
+
 {{{
 public void IExtendedDictionary.readEntries();
 }}}
+
 That path will be managed by the ILogicalGroup to open the correct node using:
 {{{
 public List<IContainer> IGroup.findAllContainerByPath(String path);
 }}}
+
 As path are only interpreted by plug-in it can have any form when it can be translated into a String.
 
 Note: that mechanism requires to have some dictionary files installed somewhere, see following methods (from “Core”'s main Factory) to set / get expected paths (and structure) where to find them:
@@ -430,6 +440,66 @@ Below an example of the view file:
     </group> 
 </data-def>
 }}}
+
+To customize that mechanism you can inherit from ExtendedDictionary (default implementation) or LogicalGroup to change a specific behaviour by overriding.
+
+Mainly it will be to allow a specific path determination for mapping file. 
+That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches:
+
+{{{
+public class NxsLogicalGroup extends LogicalGroup {
+    ...
+
+    public IExtendedDictionary findAndReadDictionary() {
+        IFactory factory = NxsFactory.getInstance();
+        IExtendedDictionary dictionary = null;
+        
+        try {
+            // Detect the key dictionary file and mapping dictionary file
+            String keyFile = Factory.getKeyDictionaryPath();
+            String mapFile = Factory.getMappingDictionaryFolder( factory ) + detectDictionaryFile( (NxsDataset) getDataset() );
+            dictionary = new ExtendedDictionary( factory, keyFile, mapFile );
+            dictionary.readEntries();
+        } catch (FileAccessException e) {
+            e.printStackTrace();
+            dictionary = null;
+        }
+
+        return dictionary;
+    }
+
+    ...
+
+public String detectDictionaryFile(NxsDataset dataset) throws FileAccessException {
+        // Get the configuration
+        ConfigDataset conf = dataset.getConfiguration();
+
+        // Ask for beamline and datamodel parameters
+        String beamline = conf.getParameter("BEAMLINE", dataset);
+        String model = conf.getParameter("MODEL", dataset);
+
+        // Construct the dictionary file name
+        if( beamline != null ) {
+            beamline = beamline.toLowerCase();
+        }
+        else {
+            beamline = "UNKNOWN";
+        }
+        if( model != null ) {
+            model = model.toLowerCase();
+        }
+        else {
+            model = "UNKNOWN";
+        }
+        return beamline + "_" + model + ".xml";
+    }
+
+}
+
+
+}}}
+
+
 
 == Path Parameters ==
 
