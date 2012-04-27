@@ -360,7 +360,7 @@ If several available mappings a customization of <i>IExtendedDictionary.getMappi
 
 == Customize navigation ==
 
-
+The navigation which is principally done by an engine can be customized partially. To do so 
 
 
 == Customize Extended Dictionary mechanism ==
@@ -445,7 +445,7 @@ To customize that mechanism you can inherit from ExtendedDictionary (default imp
 
 Mainly it will be to allow a specific path determination for mapping file. 
 
-That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches. Below the whole NxsLogicalGroup class (only constructors have been removed):
+That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches. Below the whole NxsLogicalGroup class (only constructors have been removed) of Soleil's plug-in:
 
 {{{
 public class NxsLogicalGroup extends LogicalGroup {
