@@ -15,6 +15,9 @@
    * [#Make_it_auto-detectable Make it auto-detectable]
    * [#Having_mapping_dictionaries Having mapping dictionaries]
  * [#Optional_modules_to_customize Optional modules to customize]
+   * [#Customize_navigation Customize navigation]
+   * [#Customize_Extended_Dictionary_mechanism Customize Extended Dictionary mechanism]
+   * [#Path_Parameters Path Parameters]
 
 
 
@@ -290,13 +293,9 @@ As we can see above, the file extension is check to determine if the plug-in can
 
 == Having mapping dictionaries ==
 
-Mapping dictionaries define when using the Extended Dictionary mechanism jointly the plug-in where to find data items in that data source. They are really specific to the institute that manages the plug-in.
-
-Although an institute uses a single data format, it might have several different way of storing its data. For example in the case of different kind of experiments.
+Mapping dictionaries define when using the Extended Dictionary mechanism jointly the plug-in where to find data items in that data source. They are really specific to the institute that manages the plug-in. The loading dictionary (i.e view definition plus mapping file), is done directly by the ExtendendDictionary class (provided in the `Core`).
 
 Earlier in [#Plug-ins_structure structure section] a <i>resources</i> folder were evoked. It should contains <b>XML files which are the mapping dictionaries</b>.
-
-
 
 Below an example of the mapping file:
 {{{
@@ -349,13 +348,20 @@ Below an example of the mapping file:
 </map-def>
 }}}
 
+The resource folder isn't necessary, but is highly recommended, because it will permit tools to set mapping dictionaries in the right folder when deploying plug-ins.
+
+Although an institute uses a single data format, it might have several different way of storing its data. For example in the case of different kind of experiments. 
+
+If several available mappings a customization of <i>IExtendedDictionary.getMappingFilePath()</i> is required see [#Customize_Extended_Dictionary_mechanism the customize section].
+
+
 = Optional modules to customize =
 ----
 
 == Customize navigation ==
 
 
-== Extended dictionary mechanism ==
+== Customize Extended Dictionary mechanism ==
 
 This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
 A default implementation is provided in “Core” see package org.gumtree.data.dictionary.impl it can be customized totally or partially. The customization should impact only the instantiated plug-in. Indeed as it is accessed using the ILogicalGroup, instantiating a dedicated one (instead of org.gumtree.data.dictionary.impl.LogicalGroup) allow to manage own behaviors.
