@@ -9,6 +9,9 @@
    * [#Rely_on_a_CDMA_engine Rely on a CDMA engine]
    * [#Plug-ins_structure Plug-ins structure]
    * [#To_have_a_plug-in_factory To have a plug-in factory]
+   * [#Make_it_dynamically_loadable Make it dynamically loadable]
+     * [#Java_Service_Loader Java Service Loader]
+     * [#OSGI_Service_Loader OSGI Service Loader]
  * [#Optional_modules_to_customize Optional modules to customize]
 
 = Introduction =
@@ -162,7 +165,7 @@ The code is stored in “org.gumtree.data.soleil.*”. But the 2 main points her
  * the Java Standard Service loading, 
  * the OSGI framework for dynamic loading.
 
-=== Java Service Loading ===
+=== Java Service Loader ===
 
 The file <i>META-INF/services/org.gumtree.data.IFactory</i> which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
 
@@ -173,7 +176,7 @@ org.gumtree.data.soleil.NxsFactory
 
 It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in services folder.
 
-=== OSGI framework loader ===
+=== OSGI Service Loader ===
 
 The file <i>OSGI-INF/factory.xml</i> which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax: 
 {{{
