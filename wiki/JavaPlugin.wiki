@@ -142,21 +142,40 @@ The factory's job is just to permit an access to plug-in's objects that are conf
 
 The main idea behind that is to stay in a known environment when using the CDMA.
 
+The plug-in's factory must be able to return:
+- the IDatasource implementation to make the auto-detection mechanism available
+- the IDataset implementation for an URI that corresponds to its data format
+
 == Make it dynamically loadable ==
 
-Plug-ins are loaded at runtime. The “Core” contains a module that manage it. Two ways are available: one using the ServiceLoading provided by JAVA, the other one uses OSGI framework. Prerequisite is to store the JAR of the plug-in in the CLASSPATH of the project.
+Plug-ins are loaded at runtime. The “Core” contains a module that manages it. Two ways are available: 
+ * one using the ServiceLoading provided by JAVA, 
+ * ne uses OSGI framework. 
+
+Prerequisite is to store the JAR of the plug-in in the class path of the application project.
 
 The SOLEIL's plug-in project in Eclipse have the following form:
 
-[http://cdma.googlecode.com/svn/wiki/images/java_soleil_plugin_project.png]
+[http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png]
 
-The code is stored in “org.gumtree.data.soleil”. But the 2 main points here are :
- * The file `META-INF/services/org.gumtree.data.IFactory` which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
- That interface's implementation is the plug-in entry point during the run time. In that plug-in the `IFactory` implementation is contained in package org.gumtree.data.soleil and is called `NxsFactory`. So the following is just the content of that file: 
+The code is stored in “org.gumtree.data.soleil.*”. But the 2 main points here are :
+ * the Java Standard Service loading, 
+ * the OSGI framework for dynamic loading.
+
+=== Java Service Loading ===
+
+The file <i>META-INF/services/org.gumtree.data.IFactory</i> which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
+
+So the following is just the content of that file: 
 {{{
 org.gumtree.data.soleil.NxsFactory
 }}}
- * The file OSGI-INF/factory.xml which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax: 
+
+It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in services folder.
+
+=== OSGI framework loader ===
+
+The file <i>OSGI-INF/factory.xml</i> which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax: 
 {{{
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
@@ -168,20 +187,20 @@ org.gumtree.data.soleil.NxsFactory
 </scr:component>
 }}}
 
+Using such mechanism only one file can describe several different services. Whereas in the previous point there must be a different file for each different services.
+
 == Its own unique name ==
 
-Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins.
+Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins, when we are using a specific one.
+
 {{{
 package org.gumtree.data.interfaces;
 public interface IModelObject {
 	public String getFactoryName();
 }
 }}}
-The factory is instantiated using its name in the plug-in. The name should contain the  namespace, and is bind to the factory in the FactoryManager.
 
-
-
-
+The factory is instantiated using its name in the plug-in. The name should contain the namespace, and is bind to the factory in the FactoryManager. That's is the reason why the factory name must be unique and should represent both it's institute and engine.
 
 = Optional modules to customize =
 ----
