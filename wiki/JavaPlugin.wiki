@@ -14,6 +14,8 @@
      * [#OSGI_Service_Loader OSGI Service Loader]
  * [#Optional_modules_to_customize Optional modules to customize]
 
+
+
 = Introduction =
 ----
 == Getting started ==
@@ -29,6 +31,7 @@ Anyway, as you read / write data you know the best way to do it according to you
 
 The CDMA is just a convenience on how data should be accessed for reading or writing. It is used to permit to anyone to read/write your file format.
 
+
 == Main elements ==
 
 Several modules or parts can be distinguished in the Common Data Model:
@@ -39,6 +42,7 @@ Several modules or parts can be distinguished in the Common Data Model:
  * manipulating loaded data (reshape, slice, simple math operations...).
 
 Some of those elements are only implemented in the plug-in. Other are only relevant from the “Core”. But almost all behaviors are customizable in the plug-in implementation.
+
 
 
 = How to develop its own plug-in =
@@ -78,6 +82,7 @@ We can see there that our plug-in is organized as following:
 Lets imagine a very simple plug-in that is fully functional and which relays on an engine. It should have the following structure and nothing more is necessary:
 
 [http://cdma.googlecode.com/svn/wiki/images/java_std_plugin_struct.png]
+
 
 == To have a plug-in factory ==
 
@@ -149,6 +154,7 @@ The plug-in's factory must be able to return:
 - the IDatasource implementation to make the auto-detection mechanism available
 - the IDataset implementation for an URI that corresponds to its data format
 
+
 == Make it dynamically loadable ==
 
 Plug-ins are loaded at runtime. The “Core” contains a module that manages it. Two ways are available: 
@@ -165,6 +171,7 @@ The code is stored in “org.gumtree.data.soleil.*”. But the 2 main points her
  * the Java Standard Service loading, 
  * the OSGI framework for dynamic loading.
 
+
 === Java Service Loader ===
 
 The file <i>META-INF/services/org.gumtree.data.IFactory</i> which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
@@ -174,7 +181,8 @@ So the following is just the content of that file:
 org.gumtree.data.soleil.NxsFactory
 }}}
 
-It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in services folder.
+It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in <i>services</i> folder.
+
 
 === OSGI Service Loader ===
 
@@ -192,6 +200,7 @@ The file <i>OSGI-INF/factory.xml</i> which is used by the OSGI framework to dyna
 
 Using such mechanism only one file can describe several different services. Whereas in the previous point there must be a different file for each different services.
 
+
 == Its own unique name ==
 
 Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins, when we are using a specific one.
@@ -207,7 +216,6 @@ The factory is instantiated using its name in the plug-in. The name should conta
 
 = Optional modules to customize =
 ----
-
 == Extended dictionary mechanism ==
 
 This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
