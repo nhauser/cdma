@@ -13,6 +13,7 @@
      * [#Java_Service_Loader Java Service Loader]
      * [#OSGI_Service_Loader OSGI Service Loader]
    * [#Make_it_auto-detectable Make it auto-detectable]
+   * [#Having_mapping_dictionaries Having mapping dictionaries]
  * [#Optional_modules_to_customize Optional modules to customize]
 
 
@@ -284,10 +285,76 @@ public final class NxsDatasource implements IDatasource {
 }
 }}}
 
-As we can see above, the file extension is check to determine if the plug-in can read the URI. In that case we use the plug-in dataset that is compatible to seek for a signature of the institute. In our case we were looking for an attribute called <i>creator</i> that has the string <i>Synchrotron SOLEIL</i> for value.
+As we can see above, the file extension is check to determine if the plug-in can read the URI. In that case we use the plug-in dataset that is compatible to seek for a signature of the institute. In our case we were looking for an attribute called `<i>creator</i>` that has the string `<i>Synchrotron SOLEIL</i>` for value.
+
+
+== Having mapping dictionaries ==
+
+Mapping dictionaries define when using the Extended Dictionary mechanism jointly the plug-in where to find data items in that data source. They are really specific to the institute that manages the plug-in.
+
+Although an institute uses a single data format, it might have several different way of storing its data. For example in the case of different kind of experiments.
+
+Earlier in [#Plug-ins_structure structure section] a <i>resources</i> folder were evoked. It should contains <b>XML files which are the mapping dictionaries</b>.
+
+
+
+Below an example of the mapping file:
+{{{
+<map-def name="SWING" version="1.0.0"> 
+    <item key="scienta"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/fixEnergy</path> 
+    </item> 
+    <item key="distance"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path> 
+    </item> 
+    <item key="dark"> 
+        <path>/{NXentry}/{nxinstrument}/{nxdetector}/intensityblack</path> 
+    </item> 
+    <item key="exposureTime"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path> 
+    </item> 
+    <item key="closeDelay"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path> 
+    </item> 
+    <item key="xBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path> 
+    </item> 
+    <item key="yBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path> 
+    </item> 
+    <item key="intensity"> 
+        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path> 
+    </item> 
+    <item key="lambda"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/Gain</path> 
+    </item> 
+    <item key="energy"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/intensity</path> 
+    </item> 
+    <item key="x_position"> 
+        <path>/{NXentry}/{NXdata}/Tx</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="y_position"> 
+        <path>/{NXentry}/{NXdata}/Tz</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="spectrums"> 
+        <path>/{NXentry}/{NXdata}/channel$(channel)*</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="comments"> 
+        <path>/{NXentry}/{NXsample}/comments/data</path> 
+    </item> 
+</map-def>
+}}}
 
 = Optional modules to customize =
 ----
+
+== Customize navigation ==
+
+
 == Extended dictionary mechanism ==
 
 This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
@@ -356,57 +423,6 @@ Below an example of the view file:
         <item key="comments"/> 
     </group> 
 </data-def>
-}}}
-
-Below an example of the mapping file:
-{{{
-<map-def name="SWING" version="1.0.0"> 
-    <item key="scienta"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/fixEnergy</path> 
-    </item> 
-    <item key="distance"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path> 
-    </item> 
-    <item key="dark"> 
-        <path>/{NXentry}/{nxinstrument}/{nxdetector}/intensityblack</path> 
-    </item> 
-    <item key="exposureTime"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path> 
-    </item> 
-    <item key="closeDelay"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path> 
-    </item> 
-    <item key="xBin"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path> 
-    </item> 
-    <item key="yBin"> 
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path> 
-    </item> 
-    <item key="intensity"> 
-        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path> 
-    </item> 
-    <item key="lambda"> 
-        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/Gain</path> 
-    </item> 
-    <item key="energy"> 
-        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/intensity</path> 
-    </item> 
-    <item key="x_position"> 
-        <path>/{NXentry}/{NXdata}/Tx</path> 
-        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
-    </item> 
-    <item key="y_position"> 
-        <path>/{NXentry}/{NXdata}/Tz</path> 
-        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
-    </item> 
-    <item key="spectrums"> 
-        <path>/{NXentry}/{NXdata}/channel$(channel)*</path> 
-        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
-    </item> 
-    <item key="comments"> 
-        <path>/{NXentry}/{NXsample}/comments/data</path> 
-    </item> 
-</map-def>
 }}}
 
 == Path Parameters ==
