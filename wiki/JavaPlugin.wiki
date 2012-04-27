@@ -235,7 +235,7 @@ public final class NxsDatasource implements IDatasource {
         int length     = name.length();
         boolean result = false;
 
-        if( file.isDirectory() ) {
+        if( ! file.isDirectory() ) {
             // Check if the URI is a NeXus file
             if( length > EXTENSION && name.substring(length - EXTENSION).equals(".nxs") ) {
                 result = true;
@@ -284,6 +284,7 @@ public final class NxsDatasource implements IDatasource {
 }
 }}}
 
+As we can see above, the file extension is check to determine if the plug-in can read the URI. In that case we use the plug-in dataset that is compatible to seek for a signature of the institute. In our case we were looking for an attribute called <i>creator</i> that has the string <i>Synchrotron SOLEIL</i> for value.
 
 = Optional modules to customize =
 ----
