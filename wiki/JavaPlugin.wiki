@@ -12,6 +12,7 @@
    * [#Make_it_dynamically_loadable Make it dynamically loadable]
      * [#Java_Service_Loader Java Service Loader]
      * [#OSGI_Service_Loader OSGI Service Loader]
+   * [#Make_it_auto-detectable Make it auto-detectable]
  * [#Optional_modules_to_customize Optional modules to customize]
 
 
@@ -213,6 +214,76 @@ public interface IModelObject {
 }}}
 
 The factory is instantiated using its name in the plug-in. The name should contain the namespace, and is bind to the factory in the FactoryManager. That's is the reason why the factory name must be unique and should represent both it's institute and engine.
+
+== Make it auto-detectable ==
+
+To determine if an URI is relevant of a plug-in, the `Core` detection mechanism need to have access to the plug-in IDatasource implementation. That class permits to answer compatibility questions between a plug-in and an URI.
+
+Indeed while trying to detect the right plug-in the `Core` ask to each one if it is compatible to that data format. When yes it asks if the plug-in is the producer of that data source.
+
+Below a sample of SOLEIL's plug-in IDatasource implementation:
+
+{{{
+public final class NxsDatasource implements IDatasource {
+    private static final String CREATOR = "Synchrotron SOLEIL";
+    ...
+
+    @Override
+    public boolean isReadable(URI target) {
+        File file      = new File(target);
+        String name    = file.getName();
+        int length     = name.length();
+        boolean result = false;
+
+        if( file.isDirectory() ) {
+            // Check if the URI is a NeXus file
+            if( length > EXTENSION && name.substring(length - EXTENSION).equals(".nxs") ) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    ...
+
+    @Override
+    public boolean isProducer(URI target) {
+        boolean result = false;
+        if( isReadable(target) ) {
+            File file = new File(target);
+            IDataset dataset = null;
+            try {
+                // instantiate
+                dataset = NxsDataset.instanciate( file );
+
+                // open file
+                dataset.open();
+
+                // seek at root for 'creator' attribute
+                IGroup group = dataset.getRootGroup();
+                if( group.hasAttribute("creator", CREATOR) ) {
+                    result = true;
+                }
+
+                // close file
+                dataset.close();
+
+            } catch (IOException e) {
+                // close file
+                if( dataset != null ) {
+                    try {
+                        dataset.close();
+                    } catch (IOException e1) {}
+                }
+            } catch (NoResultException e) {}
+        }
+        return result;
+    }
+    ...
+
+}
+}}}
+
 
 = Optional modules to customize =
 ----
