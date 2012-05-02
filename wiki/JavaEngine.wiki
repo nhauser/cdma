@@ -19,7 +19,7 @@ The engine developer should focus on efficiency and memory usage.
 = Main parts of an engine =
 ----
 
-All things an engine should implement are stored in the Core package: `org.gumtree.data.interfaces`.
+All the things an engine should implement are stored in the Core package _interfaces_: `org.gumtree.data.interfaces`.
 
 Notice that one particular interface shouldn't be implemented directly because it is inherited yet from other interfaces : _IContainer_. Its role is to give the property of a physical node of the data source to prevent rewriting many methods many times.
 
@@ -33,6 +33,11 @@ The engine is split among 3 main packages:
  * _array_ that manages matrices loading and description
 
 == Handle the data source ==
+
+The data source is manipulated using a CDMA engine. According so that's the engine whose handles it and ask for read / write access. The data source handler is done by implementing the _IDataset_ interface. It provides open and close methods, a generic write methods.
+
+Above all, it's the _IDataset_ interface which give access to the navigation part using the _getRootGroup_ method. That call returns the entry point of the data source which is mandatory a _IGroup_ implementation.
+
 
 == Navigation ==
 
