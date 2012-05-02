@@ -1,8 +1,8 @@
-#summary This section describes available CDMA engines
+#summary This section describes available CDMA Java engines
 
 = Introduction =
 
-This section is dedicated to existing CDMA engines. It shortly presents what data format they are able to support.
+This section is dedicated to existing CDMA engines for the Java version. It shortly presents what data format they are able to support.
 
 Today some CDMA engines already exist:
  * [#NetCDF_engine NetCDF]
