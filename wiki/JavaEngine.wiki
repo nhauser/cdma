@@ -6,7 +6,7 @@
  * [#Main_parts_of_an_engine Main parts of an engine]
 
 = Introduction =
-
+----
 A CDMA engine is used to access on a particular data format like NeXus, NetCDF, a data base or what ever. Indeed it manages data source handle, navigation, and access to data. It can't be instantiated, as it is, by the Core API: it's not a plug-in at all. The engine only cares about:
  * handling the data source (opening and closing its target URI)
  * navigation
@@ -19,9 +19,18 @@ The engine developer should focus on efficiency and memory usage.
 = Main parts of an engine =
 ----
 
-All things an engine should implement are in the package: `org.gumtree.data.interfaces`.
+All things an engine should implement are stored in the Core package: `org.gumtree.data.interfaces`.
 
-Notice that 2 interfaces are not be implemented directly because they are inherited yet from other interfaces : `IModelObject` and `IContainer`. Their roles are respectively to give the property of a CDMA object for `IModelObject` to retrieve `IFactory`. For `IContainer` it's to give the property of physical node of the data source to prevent rewriting many methods many times.
+Notice that one particular interface shouldn't be implemented directly because it is inherited yet from other interfaces : _IContainer_. Its role is to give the property of a physical node of the data source to prevent rewriting many methods many times.
+
+Below an example of the CDMA NeXus engine structure:
+
+[http://cdma.googlecode.com/svn/wiki/images/java_engine_nexus_structure.png]
+
+The engine is split among 3 main packages: 
+ * _fr.soleil.nexus_ which is the NeXus API by this engine (it enhances array loading, memory and disk usage)
+ * _navigation_ that regroups all concerning the navigation and data source handling
+ * _array_ that manages matrices loading and description
 
 == Handle the data source ==
 
