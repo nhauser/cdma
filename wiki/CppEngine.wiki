@@ -18,7 +18,7 @@ A engine must implements the navigation interfaces provided by the CDMA core lib
 
 Therefore plug-ins developers will use those implementations in order to access data without care about specific API (if it exists) related to the physical format. The physical data format is entirely handled by the engine library.
 
-*Note*: Engines libraries are only a concern for plug-ins. <b>Client applications will never directly uses an engine.</b>
+*Note*: Engines libraries are only a concern for plug-ins. <b>Client applications will never directly use an engine.</b>
 
 Because an engine may needs access to the CDMA core as well as plug-ins and of course client applications, it must be a shared library (or Dynamic Link Library on Windows).
 
