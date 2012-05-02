@@ -1,6 +1,6 @@
 #summary Developing a Java plug-in.
 
-*Content*
+= Content =
 
  * [#Introduction Introduction]
    * [#Getting_started Getting started]
@@ -36,6 +36,7 @@ Anyway, as you read / write data you know the best way to do it according to you
 
 The CDMA is just a convenience on how data should be accessed for reading or writing. It is used to permit to anyone to read/write your file format.
 
+[#Content back to top]
 
 == Main elements ==
 
@@ -48,7 +49,7 @@ Several modules or parts can be distinguished in the Common Data Model:
 
 Some of those elements are only implemented in the plug-in. Other are only relevant from the “Core”. But almost all behaviors are customizable in the plug-in implementation.
 
-
+[#Content back to top]
 
 = How to develop its own plug-in =
 ----
@@ -62,6 +63,8 @@ If the right engine is available, you almost only have to implement a plug-in fa
 
 <b>If no corresponding engine are available, you might need to [JavaEngine develop one] in first.</b> Or maybe for different reason, you might want to integrate it directly in your plug-in.
 
+
+[#Content back to top]
 
 == Plug-ins structure ==
 
@@ -88,6 +91,8 @@ Lets imagine a very simple plug-in that is fully functional and which relays on 
 
 [http://cdma.googlecode.com/svn/wiki/images/java_std_plugin_struct.png]
 
+
+[#Content back to top]
 
 == To have a plug-in factory ==
 
@@ -160,6 +165,8 @@ The plug-in's factory must be able to return:
 - the IDataset implementation for an URI that corresponds to its data format
 
 
+[#Content back to top]
+
 == Make it dynamically loadable ==
 
 Plug-ins are loaded at runtime. The “Core” contains a module that manages it. Two ways are available: 
@@ -177,6 +184,8 @@ The code is stored in “org.gumtree.data.soleil.*”. But the 2 main points her
  * the OSGI framework for dynamic loading.
 
 
+[#Content back to top]
+
 === Java Service Loader ===
 
 The file <i>META-INF/services/org.gumtree.data.IFactory</i> which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
@@ -188,6 +197,8 @@ org.gumtree.data.soleil.NxsFactory
 
 It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in <i>services</i> folder.
 
+
+[#Content back to top]
 
 === OSGI Service Loader ===
 
@@ -206,6 +217,8 @@ The file <i>OSGI-INF/factory.xml</i> which is used by the OSGI framework to dyna
 Using such mechanism only one file can describe several different services. Whereas in the previous point there must be a different file for each different services.
 
 
+[#Content back to top]
+
 == Its own unique name ==
 
 Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins, when we are using a specific one.
@@ -218,6 +231,8 @@ public interface IModelObject {
 }}}
 
 The factory is instantiated using its name in the plug-in. The name should contain the namespace, and is bind to the factory in the FactoryManager. That's is the reason why the factory name must be unique and should represent both it's institute and engine.
+
+[#Content back to top]
 
 == Make it auto-detectable ==
 
@@ -291,6 +306,8 @@ public final class NxsDatasource implements IDatasource {
 As we can see above, the file extension is check to determine if the plug-in can read the URI. In that case we use the plug-in dataset that is compatible to seek for a signature of the institute. In our case we were looking for an attribute called `<i>creator</i>` that has the string `<i>Synchrotron SOLEIL</i>` for value.
 
 
+[#Content back to top]
+
 == Having mapping dictionaries ==
 
 Mapping dictionaries define when using the Extended Dictionary mechanism jointly the plug-in where to find data items in that data source. They are really specific to the institute that manages the plug-in. The loading dictionary (i.e view definition plus mapping file), is done directly by the ExtendendDictionary class (provided in the `Core`).
@@ -355,6 +372,9 @@ Although an institute uses a single data format, it might have several different
 If several available mappings a customization of <i>IExtendedDictionary.getMappingFilePath()</i> is required see [#Customize_Extended_Dictionary_mechanism the customize section].
 
 
+
+[#Content back to top]
+
 = Optional modules to customize =
 ----
 
@@ -388,6 +408,9 @@ public final class PluginGroup extends EngineGroup {
 }
 
 }}}
+
+
+[#Content back to top]
 
 == Customize Extended Dictionary mechanism ==
 
@@ -530,6 +553,8 @@ As the entire Extended Dictionary mechanism is manipulated using interfaces (eve
 
 Note: it is very important to not change the way view definition XML file are loaded. Particularly to respect the view file DTD.
 
+
+[#Content back to top]
 
 == Path Parameters ==
 
