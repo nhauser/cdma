@@ -29,7 +29,7 @@ The *CDMA NeXus engine is thread safe*. All read / write operations are canonica
 
 ==== Navigation optimizations ====
 
-The navigation system uses a buffer. The original API had some slowness troubles with very populated nodes. For example a group having hundreds of children, was long to answer each time a request was asked. The cache system used in the enhanced API permits to avoid it. The first request might be a bit long, but all others will be processed almost instantly.
+The navigation system uses a buffer. The original API had some slowness troubles with very populated nodes. For example a group having hundreds of children, was long to answer each time a request was asked. The cache system used in the enhanced API permits to avoid it. The first request might be a bit long, but all others will be processed almost instantly without accessing the NeXus file.
 
 ==== Data loading optimizations ====
 
