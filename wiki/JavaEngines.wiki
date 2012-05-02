@@ -33,7 +33,7 @@ The navigation system uses a buffer. The original API had some slowness troubles
 
 ==== Data loading optimizations ====
 
-The data loading systems has been enhanced too. Only the requested portion of a matrix is loaded at a time. It means if you are interested about an image, of 1024 * 1024 in a 2D stack lets say 150 * 400, that image only will be loaded and not the whole matrix of 150*400*1024*1024.
+The data loading systems has been enhanced too. Only the requested portion of a matrix is loaded at a time. It means if you are interested about an image, of 1024 x 1024 in a 2D stack lets say 150 x 400, that image only will be loaded and not the whole matrix of 150 x 400 x 1024 x 1024.
 
 The loading is done at the request of the first storage's bit. You can have the full description of an array without having loaded a single bit from the matrix.
 
