@@ -41,9 +41,9 @@ Above all, it's the _IDataset_ interface which give access to the navigation par
 
 == Navigation ==
 
-The data source is considered as tree. But it's not mandatory: if you can do the big things, you can do the little things as well.
+The data source is considered as a tree. But it's not mandatory: if you can do the big things, you can do the little things as well.
 
-The aim is to be able to browse the data source and get nodes' informations location, name, properties...
+The aim is to be able to browse the data source and get nodes' informations, location, name, properties...
 
 So here 4 classes are to be implemented: `IDataset, IGroup, IDataItem, IAttribute`.
 
@@ -51,12 +51,13 @@ So here 4 classes are to be implemented: `IDataset, IGroup, IDataItem, IAttribut
  * `IGroup` which is a container for IDataItem or other `IGroup`. It's the one that let you exploring the tree
  * `IDataItem` which are considered as the leaves of our tree. They wear the physical data (more often a matrix), so it should be able to give some informations on it like type, size...
  * `IAttribute` are attribute or contextual data of nodes (`IGroup` or `IDataItem`). For instance, an `IDataItem` has timestamps which tells at what time it was recorded.
+ * `IDimension` they are the axis of a data item. For instance, it should store motor positions when a detector that produced a stack of spectrum has been translated while acquiring it.
 
-With such a structure we should be able to explore almost (to not say all) all data sources.
+With such a structure we should be able to explore almost all (to not say all) data sources.
 
-Note: take care to share references on object. 
+*Take care to share references on object.*
 
-*Example 1*
+Example 1:
 {{{
 IDataset dataset = Factory.createDatasetInstance(URI);
 IGroup root = dataset.getRootGroup();
@@ -65,18 +66,18 @@ IGroup root2 = item.getRootGroup();
 }}}
 The code above should lead to “root” and “root2” to be 2 references of the same instance.
 
-*Example 2*
+Example 2:
 
 Let suppose the following structure the root group has 1 group item called my_group. And my_group as one data item called my_data. Then: 
 {{{
-IDataset dataset = Factory.createDatasetInstance(URI);
+IDataset dataset = Factory.openDataset(URI);
 IGroup root = dataset.getRootGroup();
 IDataItem item = root.findDataItem( "my_data" );
 IGroup group1 = item.getParent();
 IGroup group2 = root.getGroup( "my_group" );
 IGroup group3 = root.findGroup( "my_group" );
 }}}
-Same as before, the above code should lead to have `group1`, `group2` and `group3` to be 3 references of the same instance. Only one called to the `IGroup` constructor should be done.
+Same as before, the above code should lead to have `group1`, `group2` and `group3` to be 3 references of the same instance. Only one call to the `IGroup` constructor should be done.
 
 == Data description and manipulation ==
 
