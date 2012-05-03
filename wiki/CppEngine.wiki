@@ -52,13 +52,10 @@ cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
 }
 }}}
 
-== `IDataItem` ==
+== `IDataItem`, `IGroup`, `IAttribute`, `IDimension`  ==
 
+All the methods defined in these interfaces have to be implemented in the engine.
 
-== `IGroup`, `IAttribute`, `IDimension`  ==
-
-All the methods defined in the abstract interface `IGroup` makes sense in its the engine implementation.
-The engine implementation of those interface should be sufficient for plug-ins built on top of them.
 
 
 ...
