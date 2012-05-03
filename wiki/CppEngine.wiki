@@ -25,9 +25,10 @@ Because an engine may needs access to the CDMA core as well as plug-ins and of c
 == `IDataset` ==
 
 In most cases the engine implementation if this interface will match a handle to a physical data file.
+Note that plug-ins may use or override this engine implementation to matches some data organisation specificity.
 
-All the methods defined in the abstract interface IDataset makes sense in its the engine implementation.
-The only exception concern the method getLogicalRoot with should returns a logical group based on the dictionary mechanism.
+All the methods defined in the abstract interface `IDataset` makes sense in its the engine implementation.
+The only exception concern the method getLogicalRoot witch should returns a logical group based on the dictionary mechanism.
 Since a engine don't have to implements any class or method related to this mechanism, this method will throw a exception.
 Below is the NeXus engine implementation of this method:
 
@@ -47,10 +48,17 @@ cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
 {
   THROW_NOT_IMPLEMENTED("NxsDataset::getLogicalRoot");
 }
+
 }
 }}}
 
-== `IGroup` ==
+== `IDataItem` ==
+
+
+== `IGroup`, `IAttribute`, `IDimension`  ==
+
+All the methods defined in the abstract interface `IGroup` makes sense in its the engine implementation.
+The engine implementation of those interface should be sufficient for plug-ins built on top of them.
 
 
 ...
