@@ -1,21 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.math;
 
 /**
  * The data wrapper for error propagation mathematics.
  * 
- * @param <T>
- *            the parameter class type
- * @author nxi Created on 09/07/2008
+ * @param <T> the parameter class type
+ * @author nxi 
  */
 public class EData<T> {
 
@@ -31,10 +33,8 @@ public class EData<T> {
 	/**
 	 * Constructor fully parameterised.
 	 * 
-	 * @param data
-	 *            T type
-	 * @param variance
-	 *            T type
+     * @param data T type
+     * @param variance T type
 	 */
 	public EData(final T data, final T variance) {
 		this.data = data;
@@ -44,7 +44,7 @@ public class EData<T> {
 	/**
 	 * Return the data field.
 	 * 
-	 * @return a generic type Created on 15/07/2008
+     * @return a generic type 
 	 */
 	public T getData() {
 		return data;
@@ -53,7 +53,7 @@ public class EData<T> {
 	/**
 	 * Return the variance field.
 	 * 
-	 * @return a generic type Created on 15/07/2008
+     * @return a generic type 
 	 */
 	public T getVariance() {
 		return variance;

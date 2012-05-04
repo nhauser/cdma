@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- *******************************************************************************/
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
+ ******************************************************************************/
+
 package org.gumtree.data.utils;
 
 import java.lang.management.ManagementFactory;
@@ -21,17 +24,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.gumtree.data.DataType;
+import org.gumtree.data.Factory;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.io.IWriter;
-import org.gumtree.data.Factory;
-import org.gumtree.data.DataType;
 
 /**
- * A register class for GDM Arrays. This class has the logic to control memory
+ * @brief A register class for CDMA Arrays.
+ * 
+ * This class has the logic to control memory
  * usage of arrays. If too many data are loaded at the same time which is likely
  * to use up the JVM memory, it triggers the logic to dump some data into
  * physical storage such as hard drive. So that the memory will be cleaned up.
@@ -39,7 +44,6 @@ import org.gumtree.data.DataType;
  * 
  * @author nxi
  * @version 0.9 Beta (still under construction, not fully performing yet)
- *          Created on 03/03/2009
  */
 public class Register {
 

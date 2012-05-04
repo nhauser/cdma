@@ -1,33 +1,38 @@
-/****************************************************************************** 
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * 	  Clement Rodriguez - initial API and implementation
- *    Norman Xiong
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
+
 package org.gumtree.data.dictionary;
 
 import java.util.List;
+
 import org.gumtree.data.interfaces.IModelObject;
 
 
 /**
- * The IPath is an interface that describe how to reach a specific item in the
- * IDataset. The way that path are written is format plug-in dependent.
- * The more often it will be a <code>String</code> with a separator between nodes
- * that is relevant for the plug-in.
+ * @brief The IPath interface defines a destination that will be interpreted by the plug-in.
+ * 
+ * A IPath is describes how to reach a specific item in the IDataset. The way that path
+ * are written is format plug-in dependent. The more often it will be a <code>String</code>
+ * with a separator between nodes that are relevant for the plug-in.
  * <p>
  * The String representation will only be interpreted by the plug-in. But it can be modified
  * using some parameters to make selective choice while browsing the nodes structure of the
  * IDataset.
  * <p>
- * In other cases (for the extended dictionary mechanism) it can also be (or be completed by)
- * a call on a plug-in method. It permits to describe from the dictionary how to have
- * access to the requested node.
+ * In other cases (for the extended dictionary mechanism) it can also be a call on a plug-in 
+ * specific method. It permits to conform to standardized way of returning a data item. For instance
+ * it can be returning a stack of spectrums that are split among several nodes. 
  * 
  * @author rodriguez
  * @see org.gumtree.data.interfaces.IKey
@@ -37,6 +42,8 @@ import org.gumtree.data.interfaces.IModelObject;
 public interface IPath extends IModelObject, Cloneable {
 	/**
 	 * Set the value of the path in string
+     * 
+     * @param path string representation of the targeted node in a IDataset
 	 */
 	void setValue(String path);
 	
@@ -50,19 +57,19 @@ public interface IPath extends IModelObject, Cloneable {
 	/**
 	 * Clone the path so it keep unmodified when updated while it
 	 * has an occurrence in a dictionary
-	 * @return
+     * 
+     * @return a clone this path
 	 */
 	Object clone();
 
 	/**
-	 * @return the String representation of the path
+     * Returns the String representation of the path.
 	 */
 	String toString();
 	
 	/**
 	 * Getter on methods that should be invoked to get data.
-	 * The returned list is unmodifiable, key is the method and
-	 * value is an array of Object arguments.
+     * The returned list is unmodifiable.
 	 *  
 	 * @return unmodifiable list of methods
 	 */
@@ -101,8 +108,7 @@ public interface IPath extends IModelObject, Cloneable {
 	 * Return the path parameter to open the node. The parameter has 
 	 * a wildcard for value (i.e: all matching nodes can be opened) 
 	 * 
-	 * @param param 
-	 *           output path that will be updated with the appropriate node's
+     * @param param output path that will be updated with the appropriate node's
 	 *           type and name until to reach the first path parameter
 	 * 
 	 * @return IPathParameter 

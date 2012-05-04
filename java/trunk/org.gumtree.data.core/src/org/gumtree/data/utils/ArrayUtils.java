@@ -1,4 +1,17 @@
- 	package org.gumtree.data.utils;
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
+ ******************************************************************************/
+
+package org.gumtree.data.utils;
 
 import org.gumtree.data.Factory;
 import org.gumtree.data.exception.InvalidRangeException;
@@ -25,8 +38,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 	 * Copy the contents of this array to another array. The two arrays must
 	 * have the same size.
 	 * 
-	 * @param newArray
-	 *            an existing array
+     * @param newArray an existing array
 	 * @throws ShapeNotMatchException
 	 *             wrong shape
 	 */
@@ -39,7 +51,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 		IArrayIterator iterator = getArray().getIterator();
 		IArrayIterator newIterator = newArray.getIterator();
 		while (iterator.hasNext()) {
-			newIterator.setObjectNext(iterator.getObjectNext());
+			newIterator.next().setObjectCurrent(iterator.getObjectNext());
 		}
 	}
 
@@ -51,8 +63,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 							((Long) getArray().getSize()).intValue() );
 		int index = 0;
 		while( iter.hasNext() ) {
-			java.lang.reflect.Array.set(result, index++, iter.getObjectCurrent());
-			iter.next();
+            java.lang.reflect.Array.set(result, index++, iter.getObjectNext());
 		}
 		
 		return result;
@@ -76,7 +87,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 			int dim = rank - 2;
 			
 			while( slice.hasNext() ) {
-				slab    = slice.getArrayCurrent();
+                slab    = slice.getArrayNext();
 				subPart = result;
 				
 				// Get the right array slab
@@ -87,8 +98,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 				// Copy values into the right offset
 				iter = slab.getIterator();
 				for( int index = 0; index < shape[rank - 1]; index++ ) {
-					java.lang.reflect.Array.set(subPart, index, iter.getObjectCurrent());
-					iter.next();
+                    java.lang.reflect.Array.set(subPart, index, iter.getObjectNext());
 				}
 				
 				while( dim > -1 ) {
@@ -102,7 +112,6 @@ public abstract class ArrayUtils implements IArrayUtils {
 					}
 				}
 				dim = rank - 2;
-				slice.next();
 			}
 		} catch (ShapeNotMatchException e) {
 			result = null;
@@ -115,12 +124,11 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	
-	// / Array shape manipulation
+    // / IArray shape manipulation
 	/**
-	 * Check if the shape matches with another Array object.
+     * Check if the shape matches with another IArray object.
 	 * 
-	 * @param newArray
-	 *            another Array object
+     * @param newArray another IArray object
 	 * @throws ShapeNotMatchException
 	 *             shape not match
 	 */
@@ -146,8 +154,7 @@ public abstract class ArrayUtils implements IArrayUtils {
 	 * Concatenate with another array. The "array" need to be equal or less in
 	 * rank.
 	 * 
-	 * @param array
-	 *            IArray object
+     * @param array IArray object
 	 * @return new IArray
 	 * @throws ShapeNotMatchException
 	 *             mismatching shape
@@ -191,7 +198,8 @@ public abstract class ArrayUtils implements IArrayUtils {
 			}
 			newShape[concatDimension] = shape1[concatDimension]
 					+ shape2[concatDimension];
-			newArray = Factory.getFactory(getArray().getFactoryName()).createArray(class1, newShape);
+			newArray = Factory.getFactory(getArray().getFactoryName())
+					.createArray(class1, newShape);
 			ISliceIterator newSliceIterator = null;
 			ISliceIterator sliceIterator1 = null;
 			ISliceIterator sliceIterator2 = null;
@@ -208,10 +216,12 @@ public abstract class ArrayUtils implements IArrayUtils {
 					IArrayIterator slice2 = sliceIterator2.getArrayNext()
 							.getIterator();
 					while (slice1.hasNext()) {
-						newSlice.setObjectNext(slice1.getObjectNext());
+						newSlice.next()
+								.setObjectCurrent(slice1.getObjectNext());
 					}
 					while (slice2.hasNext()) {
-						newSlice.setObjectNext(slice2.getObjectNext());
+						newSlice.next()
+								.setObjectCurrent(slice2.getObjectNext());
 					}
 				}
 			} catch (Exception e) {
@@ -223,10 +233,10 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	/**
-	 * Create a new Array using same backing store as this Array, by eliminating
+     * Create a new IArray using same backing store as this Array, by eliminating
 	 * any dimensions with length one.
 	 * 
-	 * @return the new Array
+     * @return the new IArray
 	 */
 	@Override
 	public IArrayUtils reduce() {
@@ -260,9 +270,13 @@ public abstract class ArrayUtils implements IArrayUtils {
 	
 	@Override
 	public IArrayUtils slice(int dim, int value) {
-		int[] shape = getArray().getIndex().getShape().clone();
-		int[] origin = getArray().getIndex().getOrigin().clone();
-		long[] stride = getArray().getIndex().getStride().clone();
+		IIndex index  = getArray().getIndex();
+		// [ANSTO][Tony][2012-05-03] I'm not sure if clone() will have any
+		// performance issue here, not it is the safest because sectionNoReduce()
+		// will use those array to create when an array.
+		int[] shape = index.getShape().clone();
+		int[] origin = index.getOrigin().clone();
+		long[] stride = index.getStride().clone();
 
 		if (dim >= getArray().getRank()) {
 			throw new IllegalArgumentException(
@@ -293,10 +307,9 @@ public abstract class ArrayUtils implements IArrayUtils {
 	 * Create a new ArrayUtils using same backing store as this Array, by
 	 * eliminating the specified dimension.
 	 * 
-	 * @param dim
-	 *            dimension to eliminate: must be of length one, else
+     * @param dim dimension to eliminate: must be of length one, else
 	 *            IllegalArgumentException
-	 * @return the new Array
+     * @return the new IArray
 	 */
 	@Override
 	public IArrayUtils reduce(int dim) {
@@ -310,11 +323,8 @@ public abstract class ArrayUtils implements IArrayUtils {
 					shape[dim]);
 		}
 		if (shape.length == 1) {
-			// [SOLEIL][clement] here is a copy of the backing storage so it doesn't respect API specification
-			//return getArray().copy().getArrayUtils();
 			return getArray().copy(false).getArrayUtils();
 		}
-		//[SOLEIL][clement] TODO temporary bug fix
 		IArray array = getArray().copy(false);
 		IIndex index = array.getIndex().reduce(dim);
 		array.setIndex(index);
@@ -325,9 +335,8 @@ public abstract class ArrayUtils implements IArrayUtils {
 	 * Reduce the array to at least certain rank. The dimension with only 1 bin
 	 * will be reduced.
 	 * 
-	 * @param rank
-	 *            in int type
-	 * @return CDM IArrayUtils whom IArray has the same storage Created on
+     * @param rank in int type
+     * @return CDMA IArrayUtils whom IArray has the same storage Created on
 	 *         10/11/2008
 	 */
 	@Override
@@ -348,11 +357,10 @@ public abstract class ArrayUtils implements IArrayUtils {
 
 	/**
 	 * Create a new Array, with the given shape, that references the same
-	 * backing store as this Array.
+     * backing store as this IArray.
 	 * 
-	 * @param shape
-	 *            the new shape
-	 * @return the new Array
+     * @param shape the new shape
+     * @return the new IArray
 	 */
 	@Override
 	public IArrayUtils reshape(int[] shape) throws ShapeNotMatchException {
@@ -364,19 +372,17 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	/**
-	 * Create a new Array as a subsection of this Array, with rank reduction. No
-	 * data is moved, so the new Array references the same backing store as the
+     * Create a new IArray as a subsection of this Array, with rank reduction. No
+     * data is moved, so the new IArray references the same backing store as the
 	 * original.
 	 * <p>
 	 * 
-	 * @param origin
-	 *            int array specifying the starting index. Must be same rank as
-	 *            original Array.
-	 * @param shape
-	 *            int array specifying the extents in each dimension. This
-	 *            becomes the shape of the returned Array. Must be same rank as
-	 *            original Array. If shape[dim] == 1, then the rank of the
-	 *            resulting Array is reduced at that dimension.
+     * @param origin int array specifying the starting index. Must be same rank as
+     *            original IArray.
+     * @param shape int array specifying the extents in each dimension. This
+     *            becomes the shape of the returned IArray. Must be same rank as
+     *            original IArray. If shape[dim] == 1, then the rank of the
+     *            resulting IArray is reduced at that dimension.
 	 * @return IArray object
 	 * @throws InvalidRangeException
 	 *             invalid range
@@ -399,23 +405,20 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	/**
-	 * Create a new Array as a subsection of this Array, with rank reduction. No
-	 * data is moved, so the new Array references the same backing store as the
+     * Create a new IArray as a subsection of this Array, with rank reduction. No
+     * data is moved, so the new IArray references the same backing store as the
 	 * original.
 	 * <p>
 	 * 
-	 * @param origin
-	 *            int array specifying the starting index. Must be same rank as
-	 *            original Array.
-	 * @param shape
-	 *            int array specifying the extents in each dimension. This
-	 *            becomes the shape of the returned Array. Must be same rank as
-	 *            original Array. If shape[dim] == 1, then the rank of the
-	 *            resulting Array is reduced at that dimension.
-	 * @param stride
-	 *            int array specifying the strides in each dimension. If null,
+     * @param origin int array specifying the starting index. Must be same rank as
+     *            original IArray.
+     * @param shape int array specifying the extents in each dimension. This
+     *            becomes the shape of the returned IArray. Must be same rank as
+     *            original IArray. If shape[dim] == 1, then the rank of the
+     *            resulting IArray is reduced at that dimension.
+     * @param stride int array specifying the strides in each dimension. If null,
 	 *            assume all ones.
-	 * @return the new Array
+     * @return the new IArray
 	 * @throws InvalidRangeException
 	 *             invalid range
 	 */
@@ -437,21 +440,18 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	/**
-	 * Create a new Array as a subsection of this Array, without rank reduction.
-	 * No data is moved, so the new Array references the same backing store as
+     * Create a new IArray as a subsection of this Array, without rank reduction.
+     * No data is moved, so the new IArray references the same backing store as
 	 * the original.
 	 * 
-	 * @param origin
-	 *            int array specifying the starting index. Must be same rank as
-	 *            original Array.
-	 * @param shape
-	 *            int array specifying the extents in each dimension. This
-	 *            becomes the shape of the returned Array. Must be same rank as
-	 *            original Array.
-	 * @param stride
-	 *            int array specifying the strides in each dimension. If null,
+     * @param origin int array specifying the starting index. Must be same rank as
+     *            original IArray.
+     * @param shape int array specifying the extents in each dimension. This
+     *            becomes the shape of the returned IArray. Must be same rank as
+     *            original IArray.
+     * @param stride int array specifying the strides in each dimension. If null,
 	 *            assume all ones.
-	 * @return the new Array
+     * @return the new IArray
 	 * @throws InvalidRangeException
 	 *             invalid range
 	 */
@@ -481,87 +481,80 @@ public abstract class ArrayUtils implements IArrayUtils {
 	}
 
 	/**
-	 * Element-wise apply a boolean map to the array. The values of the Array
+     * Element-wise apply a boolean map to the array. The values of the IArray
 	 * will get updated. The map's rank must be smaller or equal to the rank of
 	 * the array. If the rank of the map is smaller, apply the map to subset of
 	 * the array in the lowest dimensions iteratively. For each element, if the
 	 * AND map value is true, return itself, otherwise return NaN.
 	 * 
-	 * @param booleanMap
-	 *            boolean Array
-	 * @return Array itself
+     * @param booleanMap boolean IArray
+     * @return IArray itself
 	 * @throws ShapeNotMatchException
-	 *             Created on 04/08/2008
 	 */
 	@Override
-	   public IArrayUtils eltAnd(IArray booleanMap)
-    throws ShapeNotMatchException {
-        int[] shape = getArray().getShape();
-        int[] mapShape = booleanMap.getShape();
-        for (int i = 0; i < mapShape.length; i++) {
-            if (mapShape[mapShape.length - 1 - i] 
-                         != shape[shape.length - 1 - i]) {
-                throw new ShapeNotMatchException(
-                        "the shape of the map does not match with the array");
-            }
-        }
-        IArray resultArray = Factory.createArray(Double.TYPE, shape);
-        if (shape.length > mapShape.length) {
-            try {
-                ISliceIterator sliceIterator = getArray().getSliceIterator(
-                        mapShape.length);
-                ISliceIterator resultSliceIterator = resultArray
-                        .getSliceIterator(mapShape.length);
-                while (sliceIterator.hasNext() 
-                        && resultSliceIterator.hasNext()) {
-                    IArray slice = sliceIterator.getArrayNext();
-                    IArray resultSlice = resultSliceIterator.getArrayNext();
-                    IArrayIterator arrayIterator = slice.getIterator();
-                    IArrayIterator resultIterator = resultSlice.getIterator();
-                    IArrayIterator mapIterator = booleanMap.getIterator();
-                    while (arrayIterator.hasNext() && resultIterator.hasNext()
-                            && mapIterator.hasNext()) {
-                        if (mapIterator.getBooleanNext()) {
-                            resultIterator.setDoubleNext(arrayIterator
-                                    .getDoubleNext());
-                        } else {
-                            resultIterator.setDoubleNext(Double.NaN);
-                            arrayIterator.next();
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new ShapeNotMatchException(e);
-            }
-        } else {
-            IArrayIterator arrayIterator = getArray().getIterator();
-            IArrayIterator resultIterator = resultArray.getIterator();
-            IArrayIterator mapIterator = booleanMap.getIterator();
-            while (arrayIterator.hasNext() && resultIterator.hasNext()
-                    && mapIterator.hasNext()) {
-                if (mapIterator.getBooleanNext()) {
-                    resultIterator.setDoubleNext(arrayIterator.getDoubleNext());
-                } else {
-                    resultIterator.setDoubleNext(Double.NaN);
-                    arrayIterator.next();
-                }
-            }
-        }
+	public IArrayUtils eltAnd(IArray booleanMap) throws ShapeNotMatchException {
+		int[] shape = getArray().getShape();
+		int[] mapShape = booleanMap.getShape();
+		for (int i = 0; i < mapShape.length; i++) {
+			if (mapShape[mapShape.length - 1 - i] != shape[shape.length - 1 - i]) {
+				throw new ShapeNotMatchException(
+						"the shape of the map does not match with the array");
+			}
+		}
+		IArray resultArray = Factory.createArray(Double.TYPE, shape);
+		if (shape.length > mapShape.length) {
+			try {
+				ISliceIterator sliceIterator = getArray().getSliceIterator(
+						mapShape.length);
+				ISliceIterator resultSliceIterator = resultArray
+						.getSliceIterator(mapShape.length);
+				while (sliceIterator.hasNext() && resultSliceIterator.hasNext()) {
+					IArray slice = sliceIterator.getArrayNext();
+					IArray resultSlice = resultSliceIterator.getArrayNext();
+					IArrayIterator arrayIterator = slice.getIterator();
+					IArrayIterator resultIterator = resultSlice.getIterator();
+					IArrayIterator mapIterator = booleanMap.getIterator();
+					while (arrayIterator.hasNext() && resultIterator.hasNext()
+							&& mapIterator.hasNext()) {
+						if (mapIterator.getBooleanNext()) {
+							resultIterator.next().setDoubleCurrent(
+									arrayIterator.getDoubleNext());
+						} else {
+							resultIterator.next().setDoubleCurrent(Double.NaN);
+							arrayIterator.next();
+						}
+					}
+				}
+			} catch (Exception e) {
+				throw new ShapeNotMatchException(e);
+			}
+		} else {
+			IArrayIterator arrayIterator = getArray().getIterator();
+			IArrayIterator resultIterator = resultArray.getIterator();
+			IArrayIterator mapIterator = booleanMap.getIterator();
+			while (arrayIterator.hasNext() && resultIterator.hasNext()
+					&& mapIterator.hasNext()) {
+				if (mapIterator.getBooleanNext()) {
+					resultIterator.next().setDoubleCurrent(
+							arrayIterator.getDoubleNext());
+				} else {
+					resultIterator.next().setDoubleCurrent(Double.NaN);
+					arrayIterator.next();
+				}
+			}
+		}
 
-        return resultArray.getArrayUtils();
-    }
+		return resultArray.getArrayUtils();
+	}
 
 	/**
 	 * Integrate on given dimension. The result array will be one dimensional
 	 * reduced from the given array.
 	 * 
-	 * @param dimension
-	 *            integer value
-	 * @param isVariance
-	 *            true if the array serves as variance
-	 * @return new Array object
+     * @param dimension integer value
+     * @param isVariance true if the array serves as variance
+     * @return new IArray object
 	 * @throws ShapeNotMatchException
-	 *             Created on 30/09/2008
 	 */
 	@Override
     public IArrayUtils enclosedIntegrateDimension(final int dimension,
@@ -588,7 +581,7 @@ public abstract class ArrayUtils implements IArrayUtils {
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();
-            int[] counter = newIterator.getCurrentCounter();
+            int[] counter = newIterator.getCounter();
             for (int j = 0; j < newShape.length; j++) {
                 if (j < dimension) {
                     origin[j] = counter[j];
@@ -598,11 +591,7 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
             try {
                 IArray vector = section(origin, section).getArray();
-                if (!isVariance) {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().sum());
-                } else {
-                    newIterator.setDoubleCurrent(vector.getArrayMath().sum());
-                }
+                newIterator.setDoubleCurrent(vector.getArrayMath().sum());
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException(e);
             }
@@ -614,13 +603,10 @@ public abstract class ArrayUtils implements IArrayUtils {
 	 * Integrate on given dimension. The result array will be one dimensional
 	 * reduced from the given array.
 	 * 
-	 * @param dimension
-	 *            integer value
-	 * @param isVariance
-	 *            true if the array serves as variance
-	 * @return new Array object
+     * @param dimension integer value
+     * @param isVariance true if the array serves as variance
+     * @return new IArray object
 	 * @throws ShapeNotMatchException
-	 *             Created on 30/09/2008
 	 */
 	@Override
     public IArrayUtils integrateDimension(int dimension,boolean isVariance) throws ShapeNotMatchException {
@@ -646,7 +632,7 @@ public abstract class ArrayUtils implements IArrayUtils {
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();
-            int[] counter = newIterator.getCurrentCounter();
+            int[] counter = newIterator.getCounter();
             for (int j = 0; j < newShape.length; j++) {
                 if (j < dimension) {
                     origin[j] = counter[j];
@@ -656,6 +642,7 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
             try {
                 IArray vector = section(origin, section).getArray();
+                newIterator.next();
                 if (!isVariance) {
                     newIterator.setDoubleCurrent(vector.getArrayMath().sumNormalise());
                 } else {

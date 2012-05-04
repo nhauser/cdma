@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
+ ******************************************************************************/
+
+
 package org.gumtree.data.dictionary;
 
 import org.gumtree.data.interfaces.IContainer;
@@ -7,11 +21,12 @@ import org.gumtree.data.interfaces.IModelObject;
 
 
 /**
- * This interface is used when invoking an external method.
- * It should contain all required information so the called method,
- * can work properly as if it were in the CDM.
- * The context is compound of the dataset we are working on,
- * the caller of the method, the key used to call that method (that can
+ * @brief This IContext interface is used when invoking an external method.
+ * 
+ * It should contain all required information, so the called method
+ * can work properly as if it were in the CDMA.
+ * The context is compound of the current dataset, the caller of the 
+ * method, the key used to call that method (that can
  * have some parameters), the path (with parameters set) and some
  * parameters that are set by the institute's plug-in.
  */

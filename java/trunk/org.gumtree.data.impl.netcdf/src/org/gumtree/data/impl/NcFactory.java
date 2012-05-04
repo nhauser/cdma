@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 
+import org.gumtree.data.IDatasource;
 import org.gumtree.data.IFactory;
 import org.gumtree.data.dictionary.ILogicalGroup;
 import org.gumtree.data.dictionary.IPath;
@@ -58,10 +59,13 @@ public class NcFactory implements IFactory {
 	
 	public static final String LABEL = "NetCDF implemenetation of CDMA";
 	
+	private NcDatasource detector;
+	
 	/**
 	 * Hide default constructor.
 	 */
 	public NcFactory() {
+		detector = new NcDatasource();
 	}
 
 	/**
@@ -536,6 +540,11 @@ public class NcFactory implements IFactory {
 	@Override
 	public IDictionary createDictionary() {
 		return new NcDictionary();
+	}
+
+	@Override
+	public IDatasource getPluginURIDetector() {
+		return detector;
 	}
 	
 }

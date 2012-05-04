@@ -1,21 +1,24 @@
-/*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+/******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data;
 
 import java.nio.ByteBuffer;
 
 /**
- * Data types for Array.
+ * Data types for IArray.
  * 
- * @author nxi Created on 07/04/2009
+ * @author nxi
  */
 public enum DataType {
 
@@ -48,10 +51,8 @@ public enum DataType {
 	private int size;
 
 	/**
-	 * @param s
-	 *            String value
-	 * @param size
-	 *            integer value
+     * @param s String value
+     * @param size integer value
 	 */
 	private DataType(final String s, final int size) {
 		this.niceName = s;
@@ -143,9 +144,18 @@ public enum DataType {
 	 * @return true if numeric
 	 */
 	public boolean isNumeric() {
-		return (this == DataType.BYTE) || (this == DataType.FLOAT)
-				|| (this == DataType.DOUBLE) || (this == DataType.INT)
-				|| (this == DataType.SHORT) || (this == DataType.LONG);
+        boolean result = false;
+        // Below test is weird but is done as it is to prevent having a boolean test complexity higher than 3
+        if( (this == DataType.BYTE) || (this == DataType.FLOAT) ) {
+            result = true;
+        }
+        else if( (this == DataType.DOUBLE) || (this == DataType.INT) ) {
+            result = true;
+        }
+        else if ( (this == DataType.SHORT) || (this == DataType.LONG) ) {
+            result = true;   
+        }
+        return result;
 	}
 
 	/**
@@ -171,8 +181,7 @@ public enum DataType {
 	/**
 	 * Find the DataType that matches this name.
 	 * 
-	 * @param name
-	 *            find DataType with this name.
+     * @param name find DataType with this name.
 	 * @return DataType or null if no match.
 	 */
 	public static DataType getType(final String name) {
@@ -189,8 +198,7 @@ public enum DataType {
 	/**
 	 * Find the DataType that matches this class.
 	 * 
-	 * @param c
-	 *            primitive or object class, eg float.class or Float.class
+     * @param c primitive or object class, eg float.class or Float.class
 	 * @return DataType or null if no match.
 	 */
 	public static DataType getType(final Class<?> c) {
@@ -230,8 +238,7 @@ public enum DataType {
 	/**
 	 * widen an unsigned int to a long.
 	 * 
-	 * @param i
-	 *            unsigned int
+     * @param i unsigned int
 	 * @return equivilent long value
 	 */
 	public static long unsignedIntToLong(final int i) {
@@ -241,8 +248,7 @@ public enum DataType {
 	/**
 	 * widen an unsigned short to an int.
 	 * 
-	 * @param s
-	 *            unsigned short
+     * @param s unsigned short
 	 * @return equivalent int value
 	 */
 	public static int unsignedShortToInt(final short s) {
@@ -252,8 +258,7 @@ public enum DataType {
 	/**
 	 * widen an unsigned byte to a short.
 	 * 
-	 * @param b
-	 *            unsigned byte
+     * @param b unsigned byte
 	 * @return equivalent short value
 	 */
 	public static short unsignedByteToShort(final byte b) {

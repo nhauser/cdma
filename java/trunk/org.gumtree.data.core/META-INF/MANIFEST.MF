@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Gumtree Data Core
 Bundle-SymbolicName: org.gumtree.data.core
-Bundle-Version: 2.1.0.qualifier
+Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.gumtree.data,
  org.gumtree.data.dictionary,
@@ -16,5 +16,4 @@ Import-Package: org.jdom;version="1.1.0";resolution:=optional,
  org.jdom.input;version="1.1.0";resolution:=optional,
  org.osgi.framework;version="1.5.0";resolution:=optional
 Bundle-Activator: org.gumtree.data.internal.Activator
-Eclipse-BundleShape: jar
 Bundle-ActivationPolicy: lazy

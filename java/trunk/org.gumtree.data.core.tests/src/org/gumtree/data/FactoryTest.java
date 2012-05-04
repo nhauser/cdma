@@ -53,9 +53,9 @@ public class FactoryTest extends DataTestObject {
 		IArray array = getFactory().createDoubleArray(new double[] { 0.0, 1.0, 2.0,
 				3.0, 4.0 });
 		assertEquals(getFactory().getName(), array.getFactoryName());
-		assertEquals(0.0, array.getInt(array.getIndex().set0(0)), 0.1);
-		assertEquals(1.0, array.getInt(array.getIndex().set0(1)), 0.1);
-		assertEquals(4.0, array.getInt(array.getIndex().set0(4)), 0.1);
+		assertEquals(0.0, array.getDouble(array.getIndex().set0(0)), 0.1);
+		assertEquals(1.0, array.getDouble(array.getIndex().set0(1)), 0.1);
+		assertEquals(4.0, array.getDouble(array.getIndex().set0(4)), 0.1);
 	}
 	
 	@Test

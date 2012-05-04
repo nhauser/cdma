@@ -1,3 +1,16 @@
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors: 
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
+ ******************************************************************************/
+
 package org.gumtree.data.math;
 
 import org.gumtree.data.Factory;
@@ -28,14 +41,13 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Add two Array together, element-wisely. The two arrays must have the same
+     * Add two IArray together, element-wisely. The two arrays must have the same
 	 * shape.
 	 * 
-	 * @param array
-	 *            in Array type
-	 * @return Array with new storage
+     * @param array in IArray type
+     * @return IArray with new storage
 	 * @throws ShapeNotMatchException
-	 *             mismatching shape Created on 14/07/2008
+     *             mismatching shape 
 	 */
 	public IArrayMath toAdd(IArrayMath array) throws ShapeNotMatchException {
 		return toAdd(array.getArray());
@@ -46,29 +58,29 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
     /**
-     * Add a value to the Array element-wisely.
+     * Add a value to the IArray element-wisely.
      * 
-     * @param value
-     *            double type
-     * @return Array with new storage Created on 14/07/2008
+     * @param value double type
+     * @return IArray with new storage 
      */
-    public IArrayMath toAdd(double value) {
-    	// [ANSTO][Tony][2011-08-30] Resulting array should be typed as double
-        IArray result = getFactory().createArray(double.class, getArray().getShape());
-        IArrayIterator oldIterator = getArray().getIterator();
-        IArrayIterator newIterator = result.getIterator();
-        while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() + value);
-        }
-        return result.getArrayMath();
-    }
+	public IArrayMath toAdd(double value) {
+		// [ANSTO][Tony][2011-08-30] Resulting array should be typed as double
+		IArray result = getFactory().createArray(double.class,
+				getArray().getShape());
+		IArrayIterator oldIterator = getArray().getIterator();
+		IArrayIterator newIterator = result.getIterator();
+		while (oldIterator.hasNext()) {
+			newIterator.next().setDoubleCurrent(
+					oldIterator.getDoubleNext() + value);
+		}
+		return result.getArrayMath();
+	}
 
 	/**
 	 * Update the array with adding a constant to its values.
 	 * 
-	 * @param value
-	 *            double type
-	 * @return Array itself Created on 14/07/2008
+     * @param value double type
+     * @return IArray itself 
 	 */
 	public IArrayMath add(double val) {
 		IArrayIterator iter = getArray().getIterator();
@@ -111,11 +123,10 @@ public abstract class ArrayMath implements IArrayMath {
 	 * Multiply the two arrays element-wisely. Xij = Aij * Bij. The two arrays
 	 * must have the same shape.
 	 * 
-	 * @param array
-	 *            in Array type
-	 * @return Array with new storage
+     * @param array in IArray type
+     * @return IArray with new storage
 	 * @throws ShapeNotMatchException
-	 *             mismatching shape Created on 14/07/2008
+     *             mismatching shape 
 	 */
 	public IArrayMath toEltRemainder(IArray newArray)
 			throws ShapeNotMatchException {
@@ -188,11 +199,10 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with the element wise multiply of its values.
 	 * 
-	 * @param array
-	 *            IArray object
-	 * @return Array itself
+     * @param array IArray object
+     * @return IArray itself
 	 * @throws ShapeNotMatchException
-	 *             mismatching shape Created on 14/07/2008
+     *             mismatching shape 
 	 */
 	public IArrayMath eltMultiply(IArray newArray)
 			throws ShapeNotMatchException {
@@ -225,43 +235,44 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Scale the array with a double value.
      * 
-     * @param value
-     *            double type
-     * @return Array with new storage Created on 14/07/2008
+     * @param value double type
+     * @return IArray with new storage 
      */
-    public IArrayMath toScale(double value) {
-        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
-        IArrayIterator oldIterator = getArray().getIterator();
-        IArrayIterator newIterator = result.getIterator();
-        while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() * value);
-        }
-        return result.getArrayMath();
-    }
+	public IArrayMath toScale(double value) {
+		IArray result = getFactory().createArray(getArray().getElementType(),
+				getArray().getShape());
+		IArrayIterator oldIterator = getArray().getIterator();
+		IArrayIterator newIterator = result.getIterator();
+		while (oldIterator.hasNext()) {
+			newIterator.next().setDoubleCurrent(
+					oldIterator.getDoubleNext() * value);
+		}
+		return result.getArrayMath();
+	}
 
     /**
      * Modulo the array with a double value.
      * 
-     * @param value
-     *            double type
-     * @return Array with new storage Created on 14/07/2008
+     * @param value double type
+     * @return IArray with new storage 
      */
-    public IArrayMath toMod(double value) {
-        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
-        IArrayIterator oldIterator = getArray().getIterator();
-        IArrayIterator newIterator = result.getIterator();
-        while (oldIterator.hasNext()) {
-            newIterator.setDoubleNext(oldIterator.getDoubleNext() % value);
-        }
-        return result.getArrayMath();
-    }
+	public IArrayMath toMod(double value) {
+		IArray result = getFactory().createArray(getArray().getElementType(),
+				getArray().getShape());
+		IArrayIterator oldIterator = getArray().getIterator();
+		IArrayIterator newIterator = result.getIterator();
+		while (oldIterator.hasNext()) {
+			newIterator.next().setDoubleCurrent(
+					oldIterator.getDoubleNext() % value);
+		}
+		return result.getArrayMath();
+	}
 
 	/**
 	 * Update the array with the scale of its values.
 	 * 
-	 * @param value
-	 *            double type
-	 * @return Array itself Created on 14/07/2008
+     * @param value double type
+     * @return IArray itself 
 	 */
 	public IArrayMath scale(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -275,9 +286,8 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with the mod of a value.
 	 * 
-	 * @param value
-	 *            double type
-	 * @return Array itself Created on 14/07/2008
+     * @param value double type
+     * @return IArray itself 
 	 */
 	public IArrayMath mod(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -296,7 +306,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Calculate the square root value of every element of the array.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toSqrt() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -304,7 +314,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.sqrt(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.sqrt(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -312,7 +323,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with of the square root its value.
 	 * 
-	 * @return Array itself Created on 14/07/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath sqrt() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -325,10 +336,10 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the e raised to the power of double values in the Array
+     * Calculate the e raised to the power of double values in the IArray
 	 * element-wisely.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toExp() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -336,7 +347,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.exp(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.exp(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -344,7 +356,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with e raised to the power of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath exp() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -356,9 +368,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate an element-wise natural logarithm of values of an Array.
+     * Calculate an element-wise natural logarithm of values of an IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toLn() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -368,9 +380,9 @@ public abstract class ArrayMath implements IArrayMath {
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				newIterator.setDoubleNext(Double.NaN);
+				newIterator.next().setDoubleCurrent(Double.NaN);
 			} else {
-				newIterator.setDoubleNext(Math.log(value));
+				newIterator.next().setDoubleCurrent(Math.log(value));
 			}
 		}
 		return result.getArrayMath();
@@ -379,16 +391,16 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with element-wise natural logarithm of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath ln() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				oldIterator.setDoubleCurrent(Double.NaN);
+                oldIterator.setDoubleCurrent(Double.NaN);
 			} else {
-				oldIterator.setDoubleCurrent(Math.log(value));
+                oldIterator.setDoubleCurrent(Math.log(value));
 			}
 		}
 		getArray().setDirty(true);
@@ -396,9 +408,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate an element-wise logarithm (base 10) of values of an Array.
+     * Calculate an element-wise logarithm (base 10) of values of an IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toLog10() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -408,9 +420,9 @@ public abstract class ArrayMath implements IArrayMath {
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				newIterator.setDoubleNext(Double.NaN);
+				newIterator.next().setDoubleCurrent(Double.NaN);
 			} else {
-				newIterator.setDoubleNext(Math.log10(value));
+				newIterator.next().setDoubleCurrent(Math.log10(value));
 			}
 		}
 		return result.getArrayMath();
@@ -419,16 +431,16 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with element-wise logarithm (base 10) of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath log10() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
 			double value = oldIterator.getDoubleNext();
 			if (value == 0) {
-				oldIterator.setDoubleCurrent(Double.NaN);
+                oldIterator.setDoubleCurrent(Double.NaN);
 			} else {
-				oldIterator.setDoubleCurrent(Math.log10(value));
+                oldIterator.setDoubleCurrent(Math.log10(value));
 			}
 		}
 		getArray().setDirty(true);
@@ -436,9 +448,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the sine value of each elements in the Array.
+     * Calculate the sine value of each elements in the IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toSin() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -446,7 +458,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.sin(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.sin(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -454,7 +467,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with sine of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath sin() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -466,9 +479,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the arc sine value of each elements in the Array.
+     * Calculate the arc sine value of each elements in the IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toAsin() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -476,7 +489,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.asin(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.asin(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -484,7 +498,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with arc sine of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+	 * @return IArray itself
 	 */
 	public IArrayMath asin() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -497,9 +511,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the cosine value of each elements in the Array.
+     * Calculate the cosine value of each elements in the IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toCos() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -507,17 +521,17 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.cos(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.cos(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
 
 	/**
-	 * Calculate the arc cosine value of each elements in the Array.
+     * Calculate the arc cosine value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in array type
-	 * @return Array with new storage Created on 14/07/2008
+     * @param array in array type
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toAcos() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -525,7 +539,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.acos(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.acos(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -533,9 +548,8 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with cosine of its values.
 	 * 
-	 * @param array
-	 *            in array type
-	 * @return Array itself Created on 11/12/2008
+     * @param array in array type
+     * @return IArray itself 
 	 */
 	public IArrayMath cos() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -549,7 +563,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with arc cosine of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath acos() {
 		IArrayIterator iterator = getArray().getIterator();
@@ -561,9 +575,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the trigonometric value of each elements in the Array.
+     * Calculate the trigonometric value of each elements in the IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toTan() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -571,7 +585,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.tan(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.tan(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -579,7 +594,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with trigonometric of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath tan() {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -591,9 +606,9 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Calculate the arc trigonometric value of each elements in the Array.
+     * Calculate the arc trigonometric value of each elements in the IArray.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toAtan() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -601,7 +616,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.atan(oldIterator.getDoubleNext()));
+			newIterator.next().setDoubleCurrent(
+					Math.atan(oldIterator.getDoubleNext()));
 		}
 		return result.getArrayMath();
 	}
@@ -609,13 +625,12 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with arc trigonometric of its values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath atan() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator
-					.setDoubleCurrent(Math.atan(oldIterator.getDoubleNext()));
+            oldIterator.setDoubleCurrent(Math.atan(oldIterator.getDoubleNext()));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -624,9 +639,8 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Do an element-wise power calculation of the array. Yij = Xij ^ power.
 	 * 
-	 * @param power
-	 *            double value
-	 * @return Array with new storage Created on 14/07/2008
+     * @param power double value
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toPower(double value) {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -634,8 +648,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator oldIterator = getArray().getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.pow(oldIterator.getDoubleNext(),
-					value));
+			newIterator.next().setDoubleCurrent(
+					Math.pow(oldIterator.getDoubleNext(), value));
 		}
 		return result.getArrayMath();
 	}
@@ -643,15 +657,13 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with to a constant power of its values.
 	 * 
-	 * @param power
-	 *            double value
-	 * @return Array itself Created on 11/12/2008
+     * @param power double value
+     * @return IArray itself 
 	 */
 	public IArrayMath power(double value) {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
-			oldIterator.setDoubleCurrent(Math.pow(oldIterator.getDoubleNext(),
-					value));
+            oldIterator.setDoubleCurrent(Math.pow(oldIterator.getDoubleNext(),value));
 		}
 		getArray().setDirty(true);
 		return this;
@@ -662,15 +674,11 @@ public abstract class ArrayMath implements IArrayMath {
      * of the array to a certain power, then do a sum on a certain dimension,
      * and put weight on the result.
      * 
-     * @param axis
-     *            IArray object
-     * @param dimension
-     *            integer
-     * @param power
-     *            double value
-     * @return Array with new storage
+     * @param axis IArray object
+     * @param dimension integer
+     * @param power double value
+     * @return IArray with new storage
      * @throws ShapeNotMatchException
-     *             Created on 14/07/2008
      */
     public double powerSum(IArray axis, int dimension,
             double power) throws ShapeNotMatchException {
@@ -705,7 +713,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Calculate the sum value of the array. If an element is NaN, skip it.
 	 * 
-	 * @return a double value Created on 14/07/2008
+     * @return a double value 
 	 */
 	public double sum() {
 		double sum = Double.NaN;
@@ -732,7 +740,7 @@ public abstract class ArrayMath implements IArrayMath {
 	 * For example, result = raw sum * size of array / (size of array - number
 	 * of NaNs).
 	 * 
-	 * @return a double value Created on 04/08/2008
+     * @return a double value 
 	 */
 	public double sumNormalise() {
 		double sum = Double.NaN;
@@ -765,9 +773,8 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Inverse every element of the array into a new storage.
 	 * 
-	 * @return Array with new storage
+     * @return IArray with new storage
 	 * @throws DivideByZeroException
-	 *             Created on 14/07/2008
 	 */
 	public IArrayMath toEltInverse() throws DivideByZeroException {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -776,7 +783,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			try {
-				newIterator.setDoubleNext(1 / oldIterator.getDoubleNext());
+				newIterator.next().setDoubleCurrent(
+						1 / oldIterator.getDoubleNext());
 			} catch (Exception e) {
 				throw new DivideByZeroException(e);
 			}
@@ -787,9 +795,9 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Update the array with element-wise inverse of its values.
 	 * 
-	 * @return Array itself
+     * @return IArray itself
 	 * @throws DivideByZeroException
-	 *             divided by zero Created on 11/12/2008
+     *             divided by zero 
 	 */
 	public IArrayMath eltInverse() throws DivideByZeroException {
 		IArrayIterator oldIterator = getArray().getIterator();
@@ -808,7 +816,7 @@ public abstract class ArrayMath implements IArrayMath {
 	 * Do a element-wise inverse calculation that skip zero values. Yij = 1 /
 	 * Xij.
 	 * 
-	 * @return Array with new storage Created on 14/07/2008
+     * @return IArray with new storage 
 	 */
 	public IArrayMath toEltInverseSkipZero() {
 		IArray result = getFactory().createArray(Double.TYPE,
@@ -817,7 +825,7 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator newIterator = result.getIterator();
 		while (oldIterator.hasNext()) {
 			double det = oldIterator.getDoubleNext();
-			newIterator.setDoubleNext(det == 0 ? 0 : 1 / det);
+            newIterator.next().setDoubleCurrent(det == 0 ? 0 : 1 / det);
 		}
 		return result.getArrayMath();
 	}
@@ -826,13 +834,13 @@ public abstract class ArrayMath implements IArrayMath {
 	 * Update the array with element-wise inverse of its values, skip zero
 	 * values.
 	 * 
-	 * @return Array itself Created on 11/12/2008
+     * @return IArray itself 
 	 */
 	public IArrayMath eltInverseSkipZero() {
 		IArrayIterator oldIterator = getArray().getIterator();
 		while (oldIterator.hasNext()) {
 			double det = oldIterator.getDoubleNext();
-			oldIterator.setDoubleCurrent(det == 0 ? 0 : 1 / det);
+            oldIterator.setDoubleCurrent(det == 0 ? 0 : 1 / det);
 		}
 		getArray().setDirty(true);
 		return this;
@@ -842,11 +850,9 @@ public abstract class ArrayMath implements IArrayMath {
 	 * Calculate the vector dot production of two arrays. Both array must have
 	 * the same size.
 	 * 
-	 * @param array
-	 *            in Array type
-	 * @return Array with new storage
+     * @param array in IArray type
+     * @return IArray with new storage
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public double vecDot(IArray newArray) throws ShapeNotMatchException {
 		try {
@@ -861,7 +867,7 @@ public abstract class ArrayMath implements IArrayMath {
 	}
 
 	/**
-	 * Treat the array as a variance. Normalise the sum against the number of
+     * Treat the array as a variance. Normalize the sum against the number of
 	 * elements in the array.
 	 * 
 	 * @return double value
@@ -898,12 +904,9 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Element-wise multiply another array, and put the result in a given array.
 	 * 
-	 * @param array
-	 *            GDM Array object
-	 * @param result
-	 *            GDM Array object
+     * @param array CDMA IArray object
+     * @param result CDMA IArray object
 	 * @throws ShapeNotMatchException
-	 *             Created on 01/10/2008
 	 */
 	public void eltMultiplyWithEqualSize(IArray newArray, IArray result)
 			throws ShapeNotMatchException {
@@ -914,8 +917,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator iterator2 = newArray.getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (iterator1.hasNext()) {
-			newIterator.setDoubleNext(iterator1.getDoubleNext()
-					* iterator2.getDoubleNext());
+			newIterator.next().setDoubleCurrent(
+					iterator1.getDoubleNext() * iterator2.getDoubleNext());
 		}
 		getArray().setDirty(true);
 	}
@@ -939,8 +942,8 @@ public abstract class ArrayMath implements IArrayMath {
 		IArrayIterator iterator2 = newArray.getIterator();
 		IArrayIterator newIterator = result.getIterator();
 		while (iterator1.hasNext()) {
-			newIterator.setDoubleNext(iterator1.getDoubleNext()
-					% iterator2.getDoubleNext());
+			newIterator.next().setDoubleCurrent(
+					iterator1.getDoubleNext() % iterator2.getDoubleNext());
 		}
 		getArray().setDirty(true);
 	}
@@ -949,12 +952,9 @@ public abstract class ArrayMath implements IArrayMath {
 	 * Element-wise divided by another array, and put the result in a given
 	 * array.
 	 * 
-	 * @param array
-	 *            GDM Array object
-	 * @param result
-	 *            GDM Array object
+     * @param array CDMA IArray object
+     * @param result CDMA IArray object
 	 * @throws ShapeNotMatchException
-	 *             Created on 01/10/2008
 	 */
 	public void eltDivideWithEqualSize(IArray newArray, IArray result)
 			throws ShapeNotMatchException {
@@ -967,9 +967,10 @@ public abstract class ArrayMath implements IArrayMath {
 		while (iterator1.hasNext()) {
 			double newValue = iterator2.getDoubleNext();
 			if (newValue != 0) {
-				newIterator.setDoubleNext(iterator1.getDoubleNext() / newValue);
+				newIterator.next().setDoubleCurrent(
+						iterator1.getDoubleNext() / newValue);
 			} else {
-				newIterator.setDoubleNext(iterator1.getDoubleNext());
+				newIterator.next().setDoubleCurrent(iterator1.getDoubleNext());
 			}
 		}
 		getArray().setDirty(true);
@@ -983,8 +984,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Element wise divide the value by value from a given array.
 	 * 
-	 * @param array
-	 *            IArray object
+     * @param array IArray object
 	 * @return new array
 	 * @throws ShapeNotMatchException
 	 *             mismatching shape
@@ -1026,8 +1026,7 @@ public abstract class ArrayMath implements IArrayMath {
 	/**
 	 * Element wise divide the array1 value by value from given array2.
 	 * 
-	 * @param array
-	 *            IArray object
+     * @param array IArray object
 	 * @return this array1 after modification
 	 * @throws ShapeNotMatchException
 	 *             mismatching shape

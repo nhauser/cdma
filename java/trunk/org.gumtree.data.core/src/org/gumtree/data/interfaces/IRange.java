@@ -1,30 +1,39 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.interfaces;
 
 import org.gumtree.data.exception.InvalidRangeException;
 
 /**
- * Represents a set of integers. It can be used as an index for Arrays applied
- * to one particular dimension.
+ * @brief The IRange interface describes a dimension of a IIndex.
  * 
- * @author nxi Created on 24/03/2009
+ * Represents a set of integers that compound a particular dimension of a array.
+ * It defines for a that specific dimension:<br>
+ *  - its length (number of elements)<br>
+ *  - its first element offset<br>
+ *  - the offset to between two consecutive elements<br>
+ * The IRange interface is a canonical element that will do index calculation
+ * to access a particular cell in an array. 
+ * 
+ * @author nxi 
  */
 public interface IRange extends IModelObject {
 
 	/**
 	 * Create a new Range by composing a Range that is relative to this Range.
 	 * 
-	 * @param r
-	 *            range relative to base
+     * @param r range relative to base
 	 * @return combined Range, may be EMPTY
 	 * @throws InvalidRangeException
 	 *             elements must be nonnegative, 0 <= first <= last
@@ -44,8 +53,7 @@ public interface IRange extends IModelObject {
 	/**
 	 * Create a new Range shifting this range by a constant factor.
 	 * 
-	 * @param origin
-	 *            subtract this from first, last
+     * @param origin subtract this from first, last
 	 * @return shift range
 	 * @throws InvalidRangeException
 	 *             elements must be nonnegative, 0 <= first <= last
@@ -57,8 +65,7 @@ public interface IRange extends IModelObject {
 	 * this Range. NOTE: intersections when both Ranges have strides are not
 	 * supported.
 	 * 
-	 * @param r
-	 *            range to intersect
+     * @param r range to intersect
 	 * @return intersected Range, may be EMPTY
 	 * @throws InvalidRangeException
 	 *             elements must be nonnegative
@@ -69,8 +76,7 @@ public interface IRange extends IModelObject {
 	 * Determine if a given Range intersects this one. NOTE: we dont yet support
 	 * intersection when both Ranges have strides
 	 * 
-	 * @param r
-	 *            range to intersect
+     * @param r range to intersect
 	 * @return true if they intersect
 	 */
 	boolean intersects(IRange r);
@@ -79,8 +85,7 @@ public interface IRange extends IModelObject {
 	 * Create a new Range by making the union with a Range using same interval
 	 * as this Range. NOTE: no strides.
 	 * 
-	 * @param r
-	 *            range to add
+     * @param r range to add
 	 * @return intersected Range, may be EMPTY
 	 * @throws InvalidRangeException
 	 *             elements must be nonnegative
@@ -97,8 +102,7 @@ public interface IRange extends IModelObject {
 	/**
 	 * Get i-th element.
 	 * 
-	 * @param i
-	 *            index of the element
+     * @param i index of the element
 	 * @return the i-th element of a range.
 	 * @throws InvalidRangeException
 	 *             i must be: 0 <= i < length
@@ -108,8 +112,7 @@ public interface IRange extends IModelObject {
 	/**
 	 * Get the index for this element: inverse of element.
 	 * 
-	 * @param elem
-	 *            the element of the range
+     * @param elem the element of the range
 	 * @return index
 	 * @throws InvalidRangeException
 	 *             if illegal element
@@ -119,8 +122,7 @@ public interface IRange extends IModelObject {
 	/**
 	 * Is the ith element contained in this Range?
 	 * 
-	 * @param i
-	 *            index in the original Range
+     * @param i index in the original Range
 	 * @return true if the ith element would be returned by the Range iterator
 	 */
 	boolean contains(int i);
@@ -156,8 +158,7 @@ public interface IRange extends IModelObject {
 	 * <li>k = first + i * stride for some integer i.
 	 * </ul>
 	 * 
-	 * @param start
-	 *            starting index
+     * @param start starting index
 	 * @return first in interval, else -1 if there is no such element.
 	 */
 	int getFirstInInterval(int start);

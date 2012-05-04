@@ -43,7 +43,7 @@ public class LoadSoleilFileTest extends DataTestObject {
 		IArray data_01Array = data_01.getData();
 		assertEquals(1, data_01Array.getRank());
 		assertEquals(41, data_01Array.getShape()[0]);
-		assertEquals(4.04e-4, data_01Array.getFloat(data_01Array.getIndex().set0(0)), 1e-5);
+		assertEquals(4.04e-4, data_01Array.getDouble(data_01Array.getIndex().set0(0)), 1e-5);
 		
 		dataset.close();
 	}
@@ -74,7 +74,7 @@ public class LoadSoleilFileTest extends DataTestObject {
 		assertEquals(659, data_01.getShape()[2]);
 		
 		IArray data_01Array = data_01.getData();
-		assertEquals(25, data_01Array.getInt(data_01Array.getIndex().set0(0)));
+		assertEquals(25, data_01Array.getShort(data_01Array.getIndex().set0(0)));
 	}
 	
 }
