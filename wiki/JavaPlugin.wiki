@@ -338,14 +338,8 @@ Below an example of the mapping file:
     <item key="yBin"> 
         <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path> 
     </item> 
-    <item key="intensity"> 
-        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path> 
-    </item> 
     <item key="lambda"> 
         <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/Gain</path> 
-    </item> 
-    <item key="energy"> 
-        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/intensity</path> 
     </item> 
     <item key="x_position"> 
         <path>/{NXentry}/{NXdata}/Tx</path> 
@@ -471,7 +465,6 @@ Below an example of the view file:
         <group key="monitor"> 
             <item key="mi"/> 
             <item key="gain"/> 
-            <item key="intensity"/> 
         </group> 
         <group key="monochromator"> 
             <item key="lambda"/> 
