@@ -55,4 +55,25 @@ public class ArrayIteratorTest extends DataTestObject {
 		assertEquals(8, iterator.getIntNext());
 		assertEquals(10, iterator.getIntNext());
 	}
+	
+	@Test
+	public void test1DIntSetInterator() {
+		int[] rawArray = new int[] { 2, 4, 6, 8, 10 };
+		IArray array = getFactory().createArray(rawArray);
+		IArrayIterator iterator = array.getIterator();
+		
+		// Set the first 2 elements
+		iterator.getIntNext();
+		iterator.setIntCurrent(1);
+		iterator.getIntNext();
+		iterator.setIntCurrent(3);
+		
+		iterator = array.getIterator();
+		assertEquals(1, iterator.getIntNext());
+		assertEquals(3, iterator.getIntNext());
+		assertEquals(6, iterator.getIntNext());
+		assertEquals(8, iterator.getIntNext());
+		assertEquals(10, iterator.getIntNext());
+	}
+	
 }
