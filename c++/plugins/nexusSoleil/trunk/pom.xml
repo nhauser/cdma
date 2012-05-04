@@ -104,12 +104,12 @@
     <dependency>
       <groupId>fr.soleil.lib</groupId>
       <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
-      <version>1.13.4-SNAPSHOT</version>
+      <version>1.13.4</version>
     </dependency>
     <dependency>
       <groupId>fr.soleil.lib</groupId>
       <artifactId>YAT-${aol}-shared-${mode}</artifactId>
-      <version>1.7.8-SNAPSHOT</version>
+      <version>1.7.8</version>
     </dependency>
   </dependencies>
   
