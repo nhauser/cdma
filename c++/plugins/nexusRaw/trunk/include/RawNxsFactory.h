@@ -86,6 +86,32 @@ private:
 
 };
 
+//==============================================================================
+/// IDataSource implementation
+//==============================================================================
+class RawNxsDataSource : public IDataSource 
+{
+friend class RawNxsFactory;
+
+public:
+  RawNxsDataSource()  {};
+  ~RawNxsDataSource() {};
+
+  //@{ IDataSource methods ------------
+
+  bool isReadable(const yat::URI& destination) const;
+  bool isBrowsable(const yat::URI& destination) const;
+  bool isProducer(const yat::URI& destination) const;
+  bool isExperiment(const yat::URI& destination) const;
+  
+  //@}
+
+private:
+  RawNxsDataSource(RawNxsFactory *factory_ptr): m_factory_ptr(factory_ptr) {};
+
+  RawNxsFactory *m_factory_ptr;
+};
+
 } //namespace cdma
 
 #endif //__CDMA_RAW_NXSFACTORY_H__

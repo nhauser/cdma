@@ -17,6 +17,7 @@
 // Yat
 #include <yat/plugin/PlugInSymbols.h>
 #include <yat/utils/URI.h>
+#include <yat/file/FileName.h>
 
 // CDMA core
 #include <cdma/Common.h>
@@ -125,7 +126,7 @@ std::string RawNxsFactory::getPathSeparator()
 //----------------------------------------------------------------------------
 IDataSourcePtr RawNxsFactory::getPluginURIDetector()
 {
-  return IDataSourcePtr(NULL);
+  return new RawNxsDataSource();
 }
 
 //----------------------------------------------------------------------------
@@ -163,5 +164,60 @@ LogicalGroupPtr RawNxsDataset::getLogicalRoot()
 {
   return LogicalGroupPtr(NULL);
 }
+
+//==============================================================================
+// class RawNxsDataSource
+//==============================================================================
+//----------------------------------------------------------------------------
+// RawNxsDataSource::isReadable
+//----------------------------------------------------------------------------
+bool RawNxsDataSource::isReadable(const yat::URI& dataset_location) const
+{
+  // Get the path from URI
+  yat::String path = dataset_location.get( yat::URI::PATH );
+  
+  // Check file exists and is has a NeXus extension
+  yat::FileName file ( path );
+  
+  if( file.file_exist() )
+  {
+    try
+    {
+      // Will try to open the file and close it
+      m_factory_ptr->openDataset( dataset_location.get() );
+      return true;
+    }
+    catch( ... )
+    {
+      return false;
+    }
+  }
+  return false; 
+}
+
+//----------------------------------------------------------------------------
+// RawNxsDataSource::isBrowsable
+//----------------------------------------------------------------------------
+bool RawNxsDataSource::isBrowsable( const yat::URI& ) const
+{
+  return false;
+}
+
+//----------------------------------------------------------------------------
+// RawNxsDataSource::isProducer
+//----------------------------------------------------------------------------
+bool RawNxsDataSource::isProducer( const yat::URI& ) const
+{
+  return false;
+}
+
+//----------------------------------------------------------------------------
+// RawNxsDataSource::isExperiment
+//----------------------------------------------------------------------------
+bool RawNxsDataSource::isExperiment( const yat::URI& ) const
+{
+  return false;
+}
+
 
 } // namespace cdma
