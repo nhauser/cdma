@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.interfaces;
 
 import java.io.IOException;
@@ -19,9 +22,12 @@ import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
 
 /**
- * A Group is a logical collection of DataItems. The Groups in a Dataset form a
- * hierarchical tree, like directories on a disk. A Group has a name and
- * optionally a set of Attributes.
+ * @brief The IGroup interface in a IDataset forms a hierarchical tree, like directories on a disk.
+ * 
+ * The IGroup has a name, contains one or mode IDataItem and one or more IGroup.
+ * This can have optionally a set of IAttribute objects containing its metadata.
+ * <br>
+ * It used to browse the dataset following its physical structure.
  * 
  * @author nxi
  * 
@@ -31,301 +37,267 @@ public interface IGroup extends IContainer {
 	/**
 	 * Add a data item to the group.
 	 * 
-	 * @param v
-	 *            IDataItem object
+     * @param item IDataItem object
 	 */
-	void addDataItem(IDataItem v);
+    void addDataItem(IDataItem item);
 
 	/**
      * 
      */
-	Map<String, String> harvestMetadata(final String mdStandard)
-			throws IOException;
+    Map<String, String> harvestMetadata(final String mdStandard) throws IOException;
 
 	/**
-	 * Get its parent Group, or null if its the root group.
+     * Get its parent Group, or null if this is the root group.
 	 * 
-	 * @return GDM group object
+     * @return CDMA group object
 	 */
 	@Override
 	IGroup getParentGroup();
 
 	/**
-	 * Get the root group of the tree that holds the current Group.
+     * Get the root group of the IDataset that holds the current Group.
 	 * 
-	 * @return GDM Group Created on 18/06/2008
+     * @return CDMA Group 
 	 */
 	@Override
 	IGroup getRootGroup();
 
 	/**
-	 * Add a shared Dimension.
+     * Add a shared IDimension.
 	 * 
-	 * @param dimension
-	 *            GDM IDimension object
+     * @param dimension CDMA IDimension object
 	 */
 	void addOneDimension(IDimension dimension);
 
 	/**
 	 * Add a nested Group.
 	 * 
-	 * @param group
-	 *            GDM IGroup object
+     * @param group CDMA IGroup object
 	 */
 	void addSubgroup(IGroup group);
 
 	/**
-	 * Find the DataItem with the specified (short) name in this group.
+     * Get the IDataItem with the specified (short) name in this group.
 	 * 
-	 * @param shortName
-	 *            short name of DataItem within this group.
-	 * @return the Variable, or null if not found
+     * @param shortName short name of IDataItem within this group.
+     * @return the IDataItem, or null if not found
 	 */
 	IDataItem getDataItem(String shortName);
 
 	/**
-	 * Find the DataItem corresponding to the given key in the dictionary.
+     * Find the IDataItem corresponding to the given key in the dictionary.
 	 * 
-	 * @param key
-	 *            entry name of the dictionary
+     * @param key entry name of the dictionary
 	 * 
-	 * @return the first encountered DataItem that match the key
+     * @return the first encountered IDataItem that match the key
 	 */
 	IDataItem findDataItem(IKey key);
 
 	/**
-	 * Find the DataItem that has the specific attribute, with the name and
-	 * value given.
+     * Find the IDataItem that has the specific attribute, with given name and
+     * value.
 	 * 
-	 * @param name
-	 *            in String type
-	 * @param value
-	 *            in String type
-	 * @return DataItem object Created on 12/03/2008
+     * @param name in String type
+     * @param value in String type
+     * @return IDataItem object 
 	 */
 	IDataItem getDataItemWithAttribute(String name, String value);
 
 	/**
-	 * Find the DataItem corresponding to the given key in the dictionary. A
-	 * filter will be applied to determine the DataItem that is the most
-	 * relevant.
+     * Find the IDataItem corresponding to the given key in the dictionary. The
+     * data item will be filtered by the attribute's name and value it must have.
 	 * 
-	 * @param key
-	 *            key to look for in the dictionary
-	 * @param name
-	 *            name of the attribute the key should have
-	 * @param value
-	 *            the attribute value
-	 * @return DataItem object Created on 12/03/2008
+     * @param key key to look for in the dictionary
+     * @param name name of the attribute the key should have
+     * @param value the attribute value
+     * @return IDataItem object 
 	 */
-	IDataItem findDataItemWithAttribute(IKey key, String name, String attribute)
-			throws Exception;
+    IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) throws NoResultException;
 
 	/**
 	 * Find the Group corresponding to the given key in the dictionary. The
-	 * group must have given attribute name and value. A filter will be applied
-	 * to determine the Group that is the most relevant.
+     * group will be filtered by the attribute's name and value it must have.
 	 * 
-	 * @param key
-	 *            key to look for in the dictionary
-	 * @param name
-	 *            name of the attribute the group must have
-	 * @param value
-	 *            the attribute value
+     * @param key key to look for in the dictionary
+     * @param name name of the attribute the group must have
+     * @param value the attribute value
 	 */
 	IGroup findGroupWithAttribute(IKey key, String name, String value);
 
 	/**
-	 * Retrieve a Dimension using its (short) name. If it does not exist in this
+     * Retrieve a IDimension using its (short) name. If it does not exist in this
 	 * group, recursively look in parent groups.
 	 * 
-	 * @param name
-	 *            Dimension name.
-	 * @return the Dimension, or null if not found
+     * @param name dimension's name.
+     * @return the dimension, or null if not found
 	 */
 	IDimension getDimension(String name);
 
 	/**
-	 * Retrieve the IObject that has the given short name. The object can be
+     * Retrieve the IContainer that has the given short name. The object can be
 	 * either a group or a data item.
 	 * 
-	 * @param shortName
-	 *            as String object
-	 * @return GDM group or data item
+     * @param shortName as String object
+     * @return CDMA group or data item
 	 */
 	IContainer getContainer(String shortName);
 
 	/**
-	 * Retrieve the Group with the specified (short) name as a sub-group of the
+     * Get the IGroup with the specified (short) name as a sub-group of the
 	 * current group.
 	 * 
-	 * @param shortName
-	 *            short name of the nested group you are looking for.
-	 * @return the Group, or null if not found
+     * @param shortName short name of the nested group you are looking for.
+     * @return the IGroup, or null if not found
 	 */
 	IGroup getGroup(String shortName);
 
 	/**
-	 * Find the sub-Group that has the specific attribute, with the name and
+     * Get the IGroup that has the specific attribute, with the name and
 	 * value given.
 	 * 
-	 * @param attributeName
-	 *            String object
-	 * @param value
-	 *            in String type
-	 * @return Group object Created on 12/03/2008
+     * @param attributeName String object
+     * @param value in String type
+     * @return Group object 
 	 */
 	IGroup getGroupWithAttribute(String attributeName, String value);
 
 	/**
-	 * Get the DataItem by searching the path in the dictionary with the given
-	 * name. The target DataItem is not necessary to be under the current data
+     * Get the IDataItem by searching the path in the dictionary with the given
+     * name. The target IDataItem is not necessary to be under the current data
 	 * item. If there are more than one paths associated with the same key word,
 	 * use the order of their appearance in the dictionary to find the first not
 	 * null object. If there is an entry wildcard, it will return the data item
 	 * in the current entry.
 	 * 
-	 * @param shortName
-	 *            in String type
-	 * @return GDM DataItem Created on 18/06/2008
+     * @param shortName in String type
+     * @return CDMA IDataItem 
 	 */
 	IDataItem findDataItem(String shortName);
 
 	/**
-	 * Get the Variables contained directly in this group.
+     * Get a list of IDataItem contained directly in this group.
 	 * 
-	 * @return List of type Variable; may be empty, not null.
+     * @return List of type IDataItem; may be empty, not null.
 	 */
 	List<IDataItem> getDataItemList();
 
 	/**
-	 * Get the Dataset that hold the current Group.
+     * Get the Dataset that holds the current Group.
 	 * 
-	 * @return GDM Dataset Created on 18/06/2008
+     * @return CDMA IDataset 
 	 */
 	IDataset getDataset();
 
 	/**
-	 * Get the Dimensions contained directly in this group.
+     * Get the dimensions contained directly in this group.
 	 * 
-	 * @return List of type Dimension; may be empty, not null.
+     * @return List of IDimension; may be empty, not null.
 	 */
 	List<IDimension> getDimensionList();
 
 	/**
-	 * Get the Group by searching the path in the dictionary with the given
+     * Get the IGroup by searching the path in the dictionary with the given
 	 * name. The target Group is not necessary to be under the current Group. If
 	 * there are more than one paths associated with the key word, find the
 	 * first not null group in these paths.
 	 * 
-	 * @param shortName
-	 *            in String type
-	 * @return GDM Group Created on 18/06/2008
+     * @param shortName in String type
+     * @return CDMA Group 
 	 */
 	IGroup findGroup(String shortName);
 
 	/**
-	 * Find the Group corresponding to the given key in the dictionary.
+     * Find the IGroup corresponding to the given key in the dictionary.
 	 * 
-	 * @param key
-	 *            entry name of the dictionary
+     * @param key entry name of the dictionary
 	 */
 	IGroup findGroup(IKey key);
 
 	/**
-	 * Get the Groups contained directly in this Group.
+     * Get a list of IGroup contained directly in this Group.
 	 * 
-	 * @return List of type Group; may be empty, not null.
+     * @return List of IGroup; may be empty, not null.
 	 */
 	List<IGroup> getGroupList();
 
 	/**
-	 * Find the Object by searching the path in the dictionary with the given
-	 * name. The target Object is not necessary to be under the current Group.
-	 * The Object can be a GDM Group, GDM DataItem. If there are more than one
+     * Find the IContainer by searching the path in the dictionary with the given
+     * name. The targeted IContainer is not necessary to be under the current Group.
+     * It can be a IGroup or IDataItem. If there are more than one
 	 * paths associated with the same key word, use the order of their
 	 * appearance in the dictionary to find the first not null object. If there
 	 * is an entry wildcard, it will return the object in the current entry.
 	 * 
-	 * @param shortName
-	 *            in String type
-	 * @return IObject Created on 18/06/2008
+     * @param shortName in String type
+     * @return IContainer 
 	 */
 	IContainer findContainer(String shortName);
 
 	/**
-	 * Get the Object by searching the path in the root group. The target Object
-	 * is not necessary to be under the current Group. The Object can be a GDM
-	 * Group, GDM DataItem, or GDM Attribute
+     * Get the IContainer by searching the path in the root group. The target object
+     * is not necessary to be under the current IGroup. The Object can be a IGroup
+     * or a IDataItem.
 	 * 
-	 * @param path
-	 *            full path of the object in String type
-	 * @return GDM object Created on 13/10/2008
+     * @param path full path of the object in String type
+     * @return IContainer
 	 */
 	IContainer findContainerByPath(String path) throws NoResultException;
 
 	/**
-	 * Get all Object by searching the path from the root group. Targeted
-	 * Objects are not necessary to be directly under the current Group. Objects
-	 * can be a GDM Groups, GDM DataItems, or GDM Attributes
+     * Get all IContainer by searching the path from the root group. Targeted
+     * objects are not necessary to be directly under the current IGroup. Objects
+     * can be a IGroups, IDataItems.
 	 * 
-	 * @param path
-	 *            full path of objects in String type
-	 * @return GDM object Created on 29/03/2011
+     * @param path full path of objects in String type
+     * @return a list of CDMA IContainer 
 	 */
 	List<IContainer> findAllContainerByPath(String path) throws NoResultException;
 
 	/**
-	 * Remove a DataItem from the DataItem list.
+     * Remove a IDataItem from this IGroup children list.
 	 * 
-	 * @param item
-	 *            GDM DataItem
-	 * @return boolean type Created on 18/06/2008
+     * @param item IDataItem to be removed
+     * @return boolean true if item has been removed
 	 */
 	boolean removeDataItem(IDataItem item);
 
 	/**
-	 * remove a Variable using its (short) name, in this group only.
+     * Remove a IDataItem using its (short) name, in this group only.
 	 * 
-	 * @param varName
-	 *            Variable name.
-	 * @return true if Variable found and removed
+     * @param varName Variable name.
+     * @return true if IDataItem has been found and removed
 	 */
 	boolean removeDataItem(String varName);
 
 	/**
-	 * remove a Dimension using its name, in this group only.
+     * Remove a IDimension using its name, in this group only.
 	 * 
-	 * @param dimName
-	 *            Dimension name
-	 * @return true if dimension found and removed
+     * @param name Dimension name
+     * @return true if dimension has been found and removed
 	 */
-	boolean removeDimension(String dimName);
+    boolean removeDimension(String name);
 
 	/**
-	 * Remove a Group from the sub Group list.
+     * Remove a IGroup from the sub Group list.
 	 * 
-	 * @param group
-	 *            GDM Group
-	 * @return boolean type Created on 18/06/2008
+     * @param group CDMA IGroup
+     * @return boolean true if IGroup has been found and removed 
 	 */
 	boolean removeGroup(IGroup group);
 
 	/**
-	 * Remove the Group with a certain name in the sub Group list.
+     * Remove the IGroup with a certain name in the children list.
 	 * 
-	 * @param shortName
-	 *            in String type
-	 * @return boolean type Created on 18/06/2008
+     * @param name in String type
+     * @return boolean true if IGroup has been found and removed  
 	 */
-	boolean removeGroup(String shortName);
+    boolean removeGroup(String name);
 
 	/**
-	 * Remove a Dimension from the Dimension list.
+     * Remove a IDimension from the IDimension list.
 	 * 
-	 * @param dimension
-	 *            GDM Dimension
-	 * @return GDM Dimension type Created on 18/06/2008
+     * @param dimension CDMA IDimension
+     * @return boolean true if IDimension has been found and removed CDMA
 	 */
 	boolean removeDimension(IDimension dimension);
 
@@ -337,10 +309,8 @@ public interface IGroup extends IContainer {
 	 * the dictionary, or the parent path referred by the dictionary doesn't
 	 * exist, raise an exception.
 	 * 
-	 * @param key
-	 *            in String type
-	 * @param dataItem
-	 *            DataItem object Created on 17/03/2009
+     * @param key in String type
+     * @param dataItem IDataItem object 
 	 * @throws SignalNotAvailableException
 	 *             no signal exception
 	 */
@@ -350,8 +320,7 @@ public interface IGroup extends IContainer {
 	/**
 	 * Set a dictionary to the root group.
 	 * 
-	 * @param dictionary
-	 *            the dictionary to set
+     * @param dictionary the dictionary to set
 	 */
 	void setDictionary(IDictionary dictionary);
 
@@ -378,13 +347,12 @@ public interface IGroup extends IContainer {
 	boolean isEntry();
 
 	/**
-	 * The GDM dictionary allows multiple occurrences of a single key. This
-	 * method find all the objects referenced by the given key string. If there
+     * The CDMA dictionary allows multiple occurrences of a single key. This
+     * method finds all the objects referenced by the given key string. If there
 	 * is an entry wildcard, it will return the objects in the current entry.
 	 * 
-	 * @param key
-	 *            Key object
-	 * @return a list of GDM objects
+     * @param key Key object
+     * @return a list of CDMA IContainer
 	 */
 	List<IContainer> findAllContainers(IKey key) throws NoResultException;
 
@@ -393,9 +361,8 @@ public interface IGroup extends IContainer {
 	 * given key in the dictionary. Those occurrences are from the available
 	 * entries of the root group.
 	 * 
-	 * @param key
-	 *            Key object
-	 * @return a list of GDM objects
+     * @param key Key object
+     * @return a list of CDMA IContainer
 	 * @throws NoResultException 
 	 */
 	List<IContainer> findAllOccurrences(IKey key) throws NoResultException;
@@ -404,18 +371,17 @@ public interface IGroup extends IContainer {
 	 * Find the first occurrences of objects referenced by the given path. Those
 	 * occurrences are from the available entries of the root group.
 	 * 
-	 * @param path
-	 *            Path object
-	 * @return a list of GDM objects
+     * @param path Path object
+     * @return IContainer
 	 */
 	IContainer findObjectByPath(IPath path);
 	
 	/**
-	 * Return a clone of this Group object. The tree structure is new. However
+     * Returns a clone of this IGroup object. The tree structure is new. However
 	 * the data items are shallow copies that share the same storages with the
 	 * original ones.
 	 * 
-	 * @return new Group GDM group object Created on 18/09/2008
+     * @return new IGroup CDMA group object 
 	 */
 	@Override
 	IGroup clone();

@@ -68,8 +68,8 @@ public class DataTestUtils {
 		IArrayIterator iterArray2 = copy.getIterator();
 		long i = 0;
 		while (iterArray1.hasNext() || iterArray2.hasNext()) {
-			Object obj1 = iterArray1.next();
-			Object obj2 = iterArray2.next();
+			Object obj1 = iterArray1.getObjectNext();
+			Object obj2 = iterArray2.getObjectNext();
 			assertEquals(
 					"Invalid operation on compared content: original_cell[" + i
 							+ "] = " + obj1 + " compared to copy_cell[" + i

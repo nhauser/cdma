@@ -1,24 +1,27 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.interfaces;
 
 import org.gumtree.data.exception.InvalidRangeException;
 
-/**
- * Iterator for slicing an Array. 
- * This is a way to iterate over slices of arrays, and should eventually be
- * incorporated into the Gumtree Data Model rather than lying around here. Each
- * iteration returns an array of dimension dim, representing the last dim
- * dimensions of the input array. So for 3D data consisting of a set of 2D
- * arrays, each of the 2D arrays will be returned.
+/***
+ * @brief The ISliceIterator interface permits to access easily a to a sub-part of an array.
+ * 
+ * This is a way to iterate over slices of arrays. Each iteration returns 
+ * an array of dimension dim, representing the last dim dimensions of the 
+ * input array. So for 3D data consisting of a set of 2D arrays, each of 
+ * the 2D arrays will be returned.
  *
  * @author nxi
  * 
@@ -26,25 +29,23 @@ import org.gumtree.data.exception.InvalidRangeException;
 public interface ISliceIterator extends IModelObject {
 
 	/**
-	 * Check if there is next slice.
+     * Check if there is a next slice.
 	 * 
-	 * @return Boolean type Created on 10/11/2008
+     * @return Boolean type 
 	 */
 	boolean hasNext();
 
 	/**
 	 * Jump to the next slice.
 	 * 
-	 * Created on 10/11/2008
 	 */
 	void next();
 
 	/**
-	 * Get the next slice of Array.
+     * Get the next slice of IArray.
 	 * 
-	 * @return GDM Array
+     * @return CDMA IArray
 	 * @throws InvalidRangeException
-	 *             Created on 10/11/2008
 	 */
 	IArray getArrayNext() throws InvalidRangeException;
 
@@ -55,6 +56,7 @@ public interface ISliceIterator extends IModelObject {
 	 * @throws InvalidRangeException
 	 *             Created on 10/11/2008
 	 */
+	// [ANSTO][Tony][2012-05-02] This method is required by ANSTO code.
 	IArray getArrayCurrent() throws InvalidRangeException;
 
 	/**
@@ -73,5 +75,5 @@ public interface ISliceIterator extends IModelObject {
 	 * @return <code>int</code> array of the current position of the slice
 	 * @note rank of the returned position is the same as the IArray shape we are slicing 
 	 */
-	public int[] getSlicePosition();
+    int[] getSlicePosition();
 }

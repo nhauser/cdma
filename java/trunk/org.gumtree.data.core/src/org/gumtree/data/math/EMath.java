@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- *    Paul Hathaway
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.math;
 
 import org.gumtree.data.exception.DivideByZeroException;
@@ -25,7 +27,7 @@ import org.gumtree.data.utils.IArrayUtils;
  * The return types of the math calculation are mostly in EData type with result
  * and variance.
  * 
- * @see EData Created on 08/07/2008 (fixed 12/2008)
+ * @see EData  (fixed 12/2008)
  */
 public final class EMath {
 
@@ -57,17 +59,12 @@ public final class EMath {
 	 * IArray adding with uncertainty. The rank of array1 must be greater than
 	 * or equal to that of array2.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param arrB
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
-	 * @param varB
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param arrB in IArray type
+     * @param varA in IArray type
+     * @param varB in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008
 	 */
 	public static EData<IArray> add(final IArray arrA, final IArray arrB,
 			final IArray varA, final IArray varB) 
@@ -89,15 +86,11 @@ public final class EMath {
 	/**
 	 * Add a value with variance to an IArray element-wisely.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param valB
-	 *            a double value
-	 * @param varA
-	 *            in IArray type
-	 * @param varB
-	 *            a double value
-	 * @return EData with IArray type Created on 14/07/2008
+     * @param arrA in IArray type
+     * @param valB a double value
+     * @param varA in IArray type
+     * @param varB a double value
+     * @return EData with IArray type 
 	 */
 	public static EData<IArray> add(final IArray arrA, final double valB,
 			final IArray varA, final double varB) {
@@ -117,17 +110,12 @@ public final class EMath {
 	 * Do element-wise multiply on two IArray objects. The rank of array1 must
 	 * be greater than or equal to that of array2. Rij = Aij * Bij.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param arrB
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
-	 * @param varB
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param arrB in IArray type
+     * @param varA in IArray type
+     * @param varB in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> eltMultiply(final IArray arrA,
 			final IArray arrB, final IArray varA, final IArray varB)
@@ -160,14 +148,10 @@ public final class EMath {
 	/**
 	 * Multiply two double values with error propagation.
 	 * 
-	 * @param valX
-	 *            double value
-	 * @param valY
-	 *            double value
-	 * @param varX
-	 *            double value
-	 * @param varY
-	 *            double value
+     * @param valX double value
+     * @param valY double value
+     * @param varX double value
+     * @param varY double value
 	 * @return EData data wrapper
 	 */
 	public static EData<Double> scalarMultiply(final double valX,
@@ -180,14 +164,10 @@ public final class EMath {
 	/**
 	 * Add two double values with error propagation.
 	 * 
-	 * @param valX
-	 *            double value
-	 * @param valY
-	 *            double value
-	 * @param varX
-	 *            double value
-	 * @param varY
-	 *            double value
+     * @param valX double value
+     * @param valY double value
+     * @param varX double value
+     * @param varY double value
 	 * @return EData data wrapper
 	 */
 	public static EData<Double> scalarAdd(final double valX, final double valY,
@@ -200,14 +180,10 @@ public final class EMath {
 	/**
 	 * Divide a double value with a divisor with error propagation.
 	 * 
-	 * @param valX
-	 *            double value
-	 * @param valY
-	 *            double value
-	 * @param varX
-	 *            double value
-	 * @param varY
-	 *            double value
+     * @param valX double value
+     * @param valY double value
+     * @param varX double value
+     * @param varY double value
 	 * @return EData data wrapper
 	 */
 	public static EData<Double> scalarDivide(final double valX,
@@ -227,17 +203,12 @@ public final class EMath {
 	/**
 	 * Scale the array with a double value element-wisely.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param valB
-	 *            double value
-	 * @param varA
-	 *            in IArray type
-	 * @param varB
-	 *            a double value
+     * @param arrA in IArray type
+     * @param valB double value
+     * @param varA in IArray type
+     * @param varB a double value
 	 * @return EData type for IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> scale(final IArray arrA, final double valB,
 			final IArray varA, final double varB)
@@ -275,17 +246,12 @@ public final class EMath {
 	/**
 	 * Do a vector dot calculation for two IArray objects.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param arrB
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
-	 * @param varB
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param arrB in IArray type
+     * @param varA in IArray type
+     * @param varB in IArray type
 	 * @return EData with Double type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<Double> vecDot(final IArray arrA, final IArray arrB,
 			final IArray varA, final IArray varB)
@@ -310,13 +276,10 @@ public final class EMath {
 	 * Calculate an element-wise reciprocal on each IArray element Rij.. = 1 /
 	 * Aij.. A zero value in the array will throw a DivideByZeroException.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws DivideByZeroException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> eltInverse(final IArray arrA, final IArray varA)
 			throws DivideByZeroException, ShapeNotMatchException {
@@ -333,13 +296,10 @@ public final class EMath {
 	 * Calculate element-wise reciprocals for each IArray element except skip
 	 * zero values. If Aij.. = 0, Rij.. = 0 Otherwise Rij.. = 1 / Aij..
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> eltInverseSkipZero(final IArray arrA,
 			final IArray varA) throws ShapeNotMatchException {
@@ -358,15 +318,11 @@ public final class EMath {
 	 * Multiply two matrices (2D-IArray) The two matrices must abide by matrix
 	 * multiplication dimension requirements. X * @param array1 in IArray type
 	 * 
-	 * @param array2
-	 *            in IArray type
-	 * @param variance1
-	 *            in IArray type
-	 * @param variance2
-	 *            in IArray type
+     * @param array2 in IArray type
+     * @param variance1 in IArray type
+     * @param variance2 in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008 TODO: Warning: Error propagation
 	 *             incomplete
 	 */
 	public static EData<IArray> matMultiply(final IArray array1,
@@ -380,13 +336,10 @@ public final class EMath {
 
 	/**
 	 * @deprecated not implemented yet
-	 * @param array
-	 *            IArray object
-	 * @param variance
-	 *            IArray object
+     * @param array IArray object
+     * @param variance IArray object
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008 TODO: Warning: Error propagation
 	 *             incomplete
 	 */
 	public static EData<IArray> matInverse(final IArray array,
@@ -401,13 +354,10 @@ public final class EMath {
 	 * Calculate the square root of each element of an IArray. Create a new
 	 * object with the result of the calculation.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> sqrt(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -428,10 +378,8 @@ public final class EMath {
 	/**
 	 * Calculate the square root of a double value with error propagation.
 	 * 
-	 * @param value
-	 *            double value
-	 * @param variance
-	 *            double value
+     * @param value double value
+     * @param variance double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> sqrt(final double value, 
@@ -446,13 +394,10 @@ public final class EMath {
 	 * Calculate the e raised to the power of double values in the IArray
 	 * element-wisely.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008 (fixed 16/12/2008)
 	 */
 	public static EData<IArray> exp(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -469,10 +414,8 @@ public final class EMath {
 	/**
 	 * Calculate the exponential of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> exp(final double valA, final double varA) {
@@ -485,13 +428,10 @@ public final class EMath {
 	 * Calculate an element-wise natural logarithm (base e) of values of an
 	 * IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray
-	 * @param varA
-	 *            in IArray
+     * @param arrA in IArray
+     * @param varA in IArray
 	 * @return EData of IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> ln(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -512,10 +452,8 @@ public final class EMath {
 	/**
 	 * Calculate logarithm of a double value with a e base.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> ln(final double valA, final double varA) {
@@ -527,13 +465,10 @@ public final class EMath {
 	/**
 	 * Calculate an element-wise logarithm (base 10) of values of an IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008 (fixed 16/12/2008)
 	 */
 	public static EData<IArray> log10(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -559,10 +494,8 @@ public final class EMath {
 	/**
 	 * Calculate logarithm of a double value with a 10 base.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> log10(final double valA, final double varA) {
@@ -579,13 +512,10 @@ public final class EMath {
 	/**
 	 * Calculate the sine value of each element in the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> sin(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -606,10 +536,8 @@ public final class EMath {
 	/**
 	 * Calculate sine of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> sin(final double valA, final double varA) {
@@ -621,13 +549,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc sine value of each element in the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> asin(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -649,10 +574,8 @@ public final class EMath {
 	/**
 	 * Calculate arcsine of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> asin(final double valA, final double varA) {
@@ -664,13 +587,11 @@ public final class EMath {
 	/**
 	 * Calculate the cosine value of each element in the IArray.
 	 * 
-	 * @param arrA
-	 *            IArray object
-	 * @param varA
-	 *            IArray object
+     * @param arrA IArray object
+     * @param varA IArray object
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             shape not match Created on 14/07/2008
+     *             shape not match 
 	 */
 	public static EData<IArray> cos(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -691,10 +612,8 @@ public final class EMath {
 	/**
 	 * Calculate cosine of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> cos(final double valA, final double varA) {
@@ -706,13 +625,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc cosine value of each element in the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> acos(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -734,10 +650,8 @@ public final class EMath {
 	/**
 	 * Calculate arc cosine of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> acos(final double valA, final double varA) {
@@ -749,13 +663,10 @@ public final class EMath {
 	/**
 	 * Calculate the trigonometric value of each elements in the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type object
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> tan(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -776,10 +687,8 @@ public final class EMath {
 	/**
 	 * Calculate tangent of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> tan(final double valA, final double varA) {
@@ -791,13 +700,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc trigonometric value of each elements in the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param varA in IArray type
 	 * @return EData with IArray type object
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> atan(final IArray arrA, final IArray varA)
 			throws ShapeNotMatchException {
@@ -819,10 +725,8 @@ public final class EMath {
 	/**
 	 * Calculate arc trigonometric of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> atan(final double valA, final double varA) {
@@ -834,15 +738,11 @@ public final class EMath {
 	/**
 	 * Do an element-wise power calculation of the array. Yij = Xij ^ power.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param power
-	 *            a double value
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param power a double value
+     * @param varA in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008 Updated 12dec08
 	 */
 	public static EData<IArray> power(final IArray arrA, final double power,
 			final IArray varA) throws ShapeNotMatchException {
@@ -863,12 +763,9 @@ public final class EMath {
 	/**
 	 * Calculate the power of a double value with error propagation.
 	 * 
-	 * @param valA
-	 *            double value
-	 * @param power
-	 *            double value
-	 * @param varA
-	 *            double value
+     * @param valA double value
+     * @param power double value
+     * @param varA double value
 	 * @return EData wrapper
 	 */
 	public static EData<Double> power(final double valA, final double power,
@@ -884,21 +781,14 @@ public final class EMath {
 	 * of the array to a certain power, then do a sum on a certain dimension,
 	 * and put weight on the result.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param axis
-	 *            weight on the dimension
-	 * @param dimn
-	 *            the index of the dimension
-	 * @param power
-	 *            a double value
-	 * @param varA
-	 *            in IArray type
-	 * @param varAxis
-	 *            variance of the weight
+     * @param arrA in IArray type
+     * @param axis weight on the dimension
+     * @param dimn the index of the dimension
+     * @param power a double value
+     * @param varA in IArray type
+     * @param varAxis variance of the weight
 	 * @return EData with Double type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008
 	 */
 	public static EData<Double> powerSum(final IArray arrA, final IArray axis,
 			final int dimn, final double power, final IArray varA,
@@ -913,11 +803,9 @@ public final class EMath {
 	/**
 	 * Calculate the sum on the IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param varA
-	 *            in IArray type
-	 * @return EData with IArray type Created on 14/07/2008
+     * @param arrA in IArray type
+     * @param varA in IArray type
+     * @return EData with IArray type 
 	 */
 	public static EData<Double> sum(final IArray arrA, final IArray varA) {
         IArrayMath arrMath = arrA.getArrayMath();
@@ -933,15 +821,11 @@ public final class EMath {
 	 * Do sum calculation for every slice of the array on a dimension. The
 	 * result will be a one dimensional IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param dimension
-	 *            Integer value
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param dimension Integer value
+     * @param varA in IArray type
 	 * @return EData with IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> sumForDimension(final IArray arrA,
 			final int dimension, final IArray varA)
@@ -960,15 +844,11 @@ public final class EMath {
 	 * Do sum calculation for every slice of the array on a dimension. The
 	 * result will be a one dimensional IArray.
 	 * 
-	 * @param arrA
-	 *            in IArray type
-	 * @param dimension
-	 *            Integer value
-	 * @param varA
-	 *            in IArray type
+     * @param arrA in IArray type
+     * @param dimension Integer value
+     * @param varA in IArray type
 	 * @return EData with IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> enclosedSumForDimension(final IArray arrA,
 			final int dimension, final IArray varA)
@@ -987,15 +867,11 @@ public final class EMath {
 	 * Integrate on given dimension. The result array will be one dimensional
 	 * reduced from the given array.
 	 * 
-	 * @param arrA
-	 *            the signal in GDM IArray type
-	 * @param dimension
-	 *            a primary integer
-	 * @param varA
-	 *            the variance in GDM IArray type
+     * @param arrA the signal in CDMA IArray type
+     * @param dimension a primary integer
+     * @param varA the variance in CDMA IArray type
 	 * @return EData in IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 04/12/2008
 	 */
 	public static EData<IArray> integrateDimension(final IArray arrA,
 			final int dimension, final IArray varA)
@@ -1014,15 +890,11 @@ public final class EMath {
      * Integrate on given dimension. The result array will be one dimensional
      * reduced from the given array.
      * 
-     * @param dimension
-     *            integer value
-     * @param array
-     *            IArray object
-     * @param isVariance
-     *            true if the array serves as variance
+     * @param dimension integer value
+     * @param array IArray object
+     * @param isVariance true if the array serves as variance
      * @return new IArray object
      * @throws ShapeNotMatchException
-     *             Created on 30/09/2008
      */
     public static IArray integrateDimension(final IArray array,
             final int dimension, final boolean isVariance)
@@ -1035,15 +907,11 @@ public final class EMath {
 	 * Integrate on given dimension. The result array will be one dimensional
 	 * reduced from the given array.
 	 * 
-	 * @param arrA
-	 *            the signal in GDM IArray type
-	 * @param dimension
-	 *            a primary integer
-	 * @param varA
-	 *            the variance in GDM IArray type
+     * @param arrA the signal in CDMA IArray type
+     * @param dimension a primary integer
+     * @param varA the variance in CDMA IArray type
 	 * @return EData in IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 04/12/2008
 	 */
 	public static EData<IArray> enclosedIntegrateDimension(final IArray arrA,
 			final int dimension, final IArray varA)
@@ -1062,17 +930,12 @@ public final class EMath {
 	 * IArray adding with uncertainty. The rank of array1 must be greater than
 	 * or equal to that of array2.
 	 * 
-	 * @param array1
-	 *            in IArray type
-	 * @param array2
-	 *            in IArray type
-	 * @param variance1
-	 *            in IArray type
-	 * @param variance2
-	 *            in IArray type
+     * @param array1 in IArray type
+     * @param array2 in IArray type
+     * @param variance1 in IArray type
+     * @param variance2 in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008
 	 */
 	public static EData<IArray> toAdd(final IArray array1, final IArray array2,
 			final IArray variance1, final IArray variance2)
@@ -1096,15 +959,11 @@ public final class EMath {
 	 * arrays are not necessary to have the same size. It will finish at the
 	 * short length.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param value
-	 *            a double value
-	 * @param variance
-	 *            in IArray type
-	 * @param valueVariance
-	 *            a double value
-	 * @return EData with IArray type Created on 14/07/2008
+     * @param array in IArray type
+     * @param value a double value
+     * @param variance in IArray type
+     * @param valueVariance a double value
+     * @return EData with IArray type 
 	 */
 	public static EData<IArray> toAdd(final IArray array, final double value,
 			final IArray variance, final double valueVariance) {
@@ -1126,17 +985,12 @@ public final class EMath {
 	 * Do element-wise multiply on two IArray objects. Xij = Aij * Bij. The rank
 	 * of array1 must be greater than or equal to that of array2.
 	 * 
-	 * @param array1
-	 *            in IArray type
-	 * @param array2
-	 *            in IArray type
-	 * @param variance1
-	 *            in IArray type
-	 * @param variance2
-	 *            in IArray type
+     * @param array1 in IArray type
+     * @param array2 in IArray type
+     * @param variance1 in IArray type
+     * @param variance2 in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toEltMultiply(final IArray array1,
 			final IArray array2, final IArray variance1, final IArray variance2)
@@ -1160,17 +1014,12 @@ public final class EMath {
 	/**
 	 * Scale the array with a double value element-wisely.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param value
-	 *            double value
-	 * @param variance
-	 *            in IArray type
-	 * @param valueVariance
-	 *            a double value
+     * @param array in IArray type
+     * @param value double value
+     * @param variance in IArray type
+     * @param valueVariance a double value
 	 * @return EData type for IArray
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toScale(final IArray array, final double value,
 			final IArray variance, final double valueVariance)
@@ -1196,15 +1045,13 @@ public final class EMath {
 	 * Xij. If there is zero values in the array, it will throw
 	 * DivideByZeroException.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws DivideByZeroException
 	 *             divide by zero
 	 * @throws ShapeNotMatchException
-	 *             shape not match Created on 14/07/2008
+     *             shape not match 
 	 */
 	public static EData<IArray> toEltInverse(final IArray array,
 			final IArray variance) throws DivideByZeroException,
@@ -1223,13 +1070,10 @@ public final class EMath {
 	 * Do a element-wise inverse calculation that skip zero values. For example,
 	 * Yij = 1 / Xij.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toEltInverseSkipZero(final IArray array,
 			final IArray variance) throws ShapeNotMatchException {
@@ -1247,13 +1091,10 @@ public final class EMath {
 	 * Calculate the square root values of each element of an IArray. Create a
 	 * new plot object with the result of the calculation.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toSqrt(final IArray array, 
 			final IArray variance)
@@ -1271,13 +1112,10 @@ public final class EMath {
 	 * Calculate the e raised to the power of double values in the IArray
 	 * element-wisely.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toExp(final IArray array, final IArray variance)
 			throws ShapeNotMatchException {
@@ -1295,13 +1133,10 @@ public final class EMath {
 	 * Calculate an element-wise natural logarithm (base e) of values of an
 	 * IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toLn(final IArray array, final IArray variance)
 			throws ShapeNotMatchException {
@@ -1317,13 +1152,10 @@ public final class EMath {
 	/**
 	 * Calculate an element-wise logarithm (base 10) of values of an IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toLog10(final IArray array,
 			final IArray variance) throws ShapeNotMatchException {
@@ -1339,13 +1171,10 @@ public final class EMath {
 	/**
 	 * Calculate the sine value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toSin(final IArray array, final IArray variance)
 			throws ShapeNotMatchException {
@@ -1364,13 +1193,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc sine value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toAsin(final IArray array, 
 			final IArray variance)
@@ -1387,13 +1213,10 @@ public final class EMath {
 	/**
 	 * Calculate the cosine value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            IArray object
-	 * @param variance
-	 *            IArray object
+     * @param array IArray object
+     * @param variance IArray object
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toCos(final IArray array, final IArray variance)
 			throws ShapeNotMatchException {
@@ -1412,13 +1235,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc cosine value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toAcos(final IArray array, 
 			final IArray variance) throws ShapeNotMatchException {
@@ -1434,13 +1254,10 @@ public final class EMath {
 	/**
 	 * Calculate the trigonometric value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type object
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toTan(final IArray array, final IArray variance)
 			throws ShapeNotMatchException {
@@ -1456,13 +1273,10 @@ public final class EMath {
 	/**
 	 * Calculate the arc trigonometric value of each elements in the IArray.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param variance in IArray type
 	 * @return EData with IArray type object
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toAtan(final IArray array,
 			final IArray variance) throws ShapeNotMatchException {
@@ -1478,15 +1292,11 @@ public final class EMath {
 	/**
 	 * Do an element-wise power calculation of the array. Yij = Xij ^ power.
 	 * 
-	 * @param array
-	 *            in IArray type
-	 * @param power
-	 *            a double value
-	 * @param variance
-	 *            in IArray type
+     * @param array in IArray type
+     * @param power a double value
+     * @param variance in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 10/07/2008
 	 */
 	public static EData<IArray> toPower(final IArray array, final double power,
 			final IArray variance) throws ShapeNotMatchException {
@@ -1504,17 +1314,12 @@ public final class EMath {
 	 * divisor is 0, skip that element. The rank of array1 must be greater than
 	 * or equal to that of array2.
 	 * 
-	 * @param array1
-	 *            in IArray type
-	 * @param array2
-	 *            in IArray type
-	 * @param variance1
-	 *            in IArray type
-	 * @param variance2
-	 *            in IArray type
+     * @param array1 in IArray type
+     * @param array2 in IArray type
+     * @param variance1 in IArray type
+     * @param variance2 in IArray type
 	 * @return EData with IArray type
 	 * @throws ShapeNotMatchException
-	 *             Created on 14/07/2008
 	 */
 	public static EData<IArray> toEltDivideSkipZero(final IArray array1,
 			final IArray array2, final IArray variance1, final IArray variance2)

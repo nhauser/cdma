@@ -2,737 +2,705 @@ package org.gumtree.data.soleil.navigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.gumtree.data.engine.nexus.navigation.NexusDataItem;
+import org.gumtree.data.engine.nexus.navigation.NexusDimension;
 import org.gumtree.data.exception.BackupException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
-import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.IRange;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.soleil.array.NxsArray;
-import org.gumtree.data.soleil.array.NxsArrayMatrix;
 import org.gumtree.data.soleil.array.NxsIndex;
 import org.gumtree.data.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
-import fr.soleil.nexus4tango.DataItem;
-import fr.soleil.nexus4tango.DataItem.Data;
-import fr.soleil.nexus4tango.PathGroup;
+import fr.soleil.nexus.DataItem;
 
-public class NxsDataItem implements IDataItem {
+public final class NxsDataItem implements IDataItem, Cloneable {
 
     // Inner class
     // Associate a IDimension to an order of the array 
-    private class DimOrder {
+    private static class DimOrder {
         // Members
-        public int          m_order;        // order of the corresponding dimension in the NxsDataItem
-        public IDimension   m_dimension;    // dimension object
+        private int          mOrder;        // order of the corresponding dimension in the NxsDataItem
+        private IDimension   mDimension;    // dimension object
 
         public DimOrder(int order, IDimension dim) { 
-            m_order     = order;
-            m_dimension = dim;
+            mOrder     = order;
+            mDimension = dim;
+        }
+
+        public int order() { 
+            return mOrder;
+        }
+
+        public IDimension dimension() {
+            return mDimension;
         }
     }
-    
-    
-	/// Members
-    private NxsDataset           m_cdmDataset;       // CDM IDataset i.e. file handler
-    private IGroup               m_parent = null;    // parent group
-    private DataItem[]           m_n4tDataItems;     // NeXus dataitem support of the data
-    private IArray               m_array = null;     // CDM IArray supporting a view of the data
-    private ArrayList<DimOrder>  m_dimension;        // list of dimensions
 
-    
-	/// Constructors
-	public NxsDataItem(final NxsDataItem dataItem)
-	{
-        m_cdmDataset  = dataItem.m_cdmDataset;
-		m_n4tDataItems = dataItem.getN4TDataItem();
-        m_dimension   = new ArrayList<DimOrder> (dataItem.m_dimension);
-        m_parent      = dataItem.getParentGroup();
-        m_array       = null;
+
+    /// Members
+    private NxsDataset      mDataset;   // CDMA IDataset i.e. file handler
+    private IGroup          mParent;    // parent group
+    private NexusDataItem[] mDataItems; // NeXus dataitem support of the data
+    private IArray          mArray;     // CDMA IArray supporting a view of the data
+    private List<DimOrder>  mDimension; // list of dimensions
+
+
+    /// Constructors
+    public NxsDataItem(final NxsDataItem dataItem) {
+        mDataset   = dataItem.mDataset;
+        mDataItems = dataItem.mDataItems.clone();
+        mDimension = new ArrayList<DimOrder> (dataItem.mDimension);
+        mParent    = dataItem.getParentGroup();
+        mArray     = null;
         try {
-        	if( m_n4tDataItems.length == 1 ) {
-        		m_array = new NxsArray((NxsArray) dataItem.getData());
-        	}
-        	else {
-        		m_array = new NxsArrayMatrix((NxsArrayMatrix) dataItem.getData());
-        	}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public NxsDataItem(DataItem[] data, NxsDataset handler) {
-        m_cdmDataset  = handler;
-        m_n4tDataItems = data;
-        m_dimension   = new ArrayList<DimOrder>();
-        m_parent      = getParentGroup();
-        m_array       = null;
-	}
-	
-	public NxsDataItem(DataItem[] data, IGroup parent, NxsDataset handler) {
-        m_cdmDataset  = handler;
-        m_n4tDataItems = data;
-        m_dimension   = new ArrayList<DimOrder>();
-        m_parent      = parent;
-        m_array       = null;
-	}
-
-	public NxsDataItem(DataItem item, NxsDataset dataset) {
-    	this(new DataItem[] {item}, dataset);
+            if( mDataItems.length == 1 ) {
+                mArray = new NxsArray((NxsArray) dataItem.getData());
+            }
+            else {
+                mArray = new NxsArray((NxsArray) dataItem.getData());
+            }
+        } catch (IOException e) {
+        }
     }
 
-	/// Methods
-	@Override
-	public ModelType getModelType() {
-		return ModelType.DataItem;
-	}
-	
-	@Override
-	public List<IAttribute> getAttributeList()
-	{
-		HashMap<String, DataItem.Data<?>> inList;
-		List<IAttribute> outList = new ArrayList<IAttribute>();
-		NxsAttribute tmpAttr;
-		String sAttrName;
+    public NxsDataItem(NexusDataItem[] data, IGroup parent, NxsDataset handler) {
+        mDataset   = handler;
+        mDataItems = data.clone();
+        mDimension = new ArrayList<DimOrder>();
+        mParent    = parent;
+        mArray     = null;
+    }
 
-		inList = m_n4tDataItems[0].getAttributes();
+    public NxsDataItem(NexusDataItem item, IGroup parent, NxsDataset dataset) {
+        this(new NexusDataItem[] {item}, parent, dataset);
+    }
 
-		Iterator<String> iter = inList.keySet().iterator();
-        while( iter.hasNext() )
-        {
-        	sAttrName = iter.next();
-			tmpAttr   = new NxsAttribute(sAttrName, inList.get(sAttrName).getValue());
-			outList.add(tmpAttr);
-		}
-
-		return outList;
-	}
-
-	@Override
-	public IArray getData() throws IOException
-	{
-        if( m_array == null ) {
-        	if( m_n4tDataItems.length == 1 ) {
-        		m_array = new NxsArray(m_n4tDataItems[0]);
-        	}
-        	else {
-        		IArray[] arrays = new IArray[m_n4tDataItems.length];
-        		for( int i = 0; i < m_n4tDataItems.length; i++ ) {
-        			arrays[i] = new NxsArray( m_n4tDataItems[i] );
-        		}
-        		m_array = new NxsArrayMatrix(arrays);
-        	}
+    public NxsDataItem(NxsDataItem[] items, IGroup parent, NxsDataset dataset) {
+        ArrayList<NexusDataItem> list = new ArrayList<NexusDataItem>();
+        for( NxsDataItem cur : items ) {
+            for( NexusDataItem item : cur.mDataItems ) {
+                list.add(item);
+            }
         }
-		return m_array;
-	}
+        mDataItems = list.toArray( new NexusDataItem[list.size()] );
 
-	@Override
-	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException
-	{
+        mDataset   = dataset;
+        mDimension = new ArrayList<DimOrder>();
+        mParent    = parent;
+        mArray     = null;
+    }
+
+    /// Methods
+    @Override
+    public ModelType getModelType() {
+        return ModelType.DataItem;
+    }
+
+    @Override
+    public List<IAttribute> getAttributeList() {
+        //[soleil][clement][12/02/2011] TODO ensure method is correct: shall not we take all attributes of all nodes ?
+        return mDataItems[0].getAttributeList();
+    }
+
+    @Override
+    public IArray getData() throws IOException {
+        if( mArray == null && mDataItems.length > 0 ) {
+            IArray[] arrays = new IArray[mDataItems.length];
+            for( int i = 0; i < mDataItems.length; i++ ) {
+                arrays[i] = mDataItems[i].getData();
+            }
+            mArray = new NxsArray(arrays);
+        }
+        return mArray;
+    }
+
+    @Override
+    public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
         IArray array = getData().copy(false);
-        array.getIndex().setShape(shape);
-        array.getIndex().setOrigin(origin);
-		return array;
-	}
-
-	@Override
-	public IDataItem clone()
-	{
-		return new NxsDataItem(this);
-	}
-
-	@Override
-	public void addOneAttribute(IAttribute att) {
-        m_n4tDataItems[0].setAttribute(att.getName(), att.getValue().getStorage());
-	}
-
-	@Override
-	public void addStringAttribute(String name, String value) {
-	    m_n4tDataItems[0].setAttribute(name, value);
+        IIndex index = array.getIndex();
+        int str      = 1;
+        long[] stride = new long[array.getRank()];
+        for( int i = array.getRank() - 1; i >= 0; i-- ) {
+            stride[i] = str;
+            str *= shape[i];
+        }
+        index.setStride(stride);
+        index.setShape(shape);
+        index.setOrigin(origin);
+        array.setIndex(index);
+        return array;
     }
 
-	@Override
-	public IAttribute getAttribute(String name) {
-		HashMap<String, Data<?> > inList;
-		String sAttrName;
+    @Override
+    public IDataItem clone() {
+        return new NxsDataItem(this);
+    }
 
-		inList = m_n4tDataItems[0].getAttributes();
-		Iterator<String> iter = inList.keySet().iterator();
-        while( iter.hasNext() )
-        {
-        	sAttrName = iter.next();
-        	if( sAttrName.equals(name) )
-        		return new NxsAttribute(sAttrName, inList.get(sAttrName).getValue());
-		}
+    @Override
+    public void addOneAttribute(IAttribute att) {
+        mDataItems[0].addOneAttribute(att);
+    }
 
-		return null;
-	}
+    @Override
+    public void addStringAttribute(String name, String value) {
+        mDataItems[0].addStringAttribute(name, value);
+    }
 
-	@Override
-	public IAttribute findAttributeIgnoreCase(String name) {
-		HashMap<String, ?> inList;
-		String sAttrName;
+    @Override
+    public IAttribute getAttribute(String name) {
+        IAttribute result = null;
 
-		inList = m_n4tDataItems[0].getAttributes();
-		Iterator<String> iter = inList.keySet().iterator();
-        while( iter.hasNext() )
-        {
-        	sAttrName = iter.next();
-        	if( sAttrName.toUpperCase().equals(name.toUpperCase()) )
-        		return new NxsAttribute(sAttrName, inList.get(sAttrName));
-		}
-
-		return null;
-	}
-
-	@Override
-	public int findDimensionIndex(String name) {
-	    for( DimOrder dimord : m_dimension ) {
-	        if( dimord.m_dimension.getName().equals(name) )
-                return dimord.m_order;
-        }
-            
-        return -1;
-	}
-
-	@Override
-	public String getDescription() {
-		String sDesc = null;
-
-		sDesc = m_n4tDataItems[0].getAttribute("long_name");
-		if( sDesc == null )
-			sDesc = m_n4tDataItems[0].getAttribute("description");
-		if( sDesc == null )
-			sDesc = m_n4tDataItems[0].getAttribute("title");
-		if( sDesc == null )
-			sDesc = m_n4tDataItems[0].getAttribute("standard_name");
-        if( sDesc == null )
-            sDesc = m_n4tDataItems[0].getAttribute("name");
-
-		return sDesc;
-	}
-
-	@Override
-	public List<IDimension> getDimensions(int i) {
-        ArrayList<IDimension> list = new ArrayList<IDimension>();
-        
-        for( DimOrder dim : m_dimension ) {
-            if( dim.m_order == i ) {
-                list.add( m_dimension.get(i).m_dimension );
+        for( IDataItem item : mDataItems ) {
+            result = item.getAttribute(name);
+            if( result != null ) {
+                break;
             }
         }
-        
-        if( list.size() > 0 )    
-            return list;
-        else
-            return null;
-	}
 
-	@Override
-	public List<IDimension> getDimensionList() {
-        ArrayList<IDimension> list = new ArrayList<IDimension>();
-        
-        for( DimOrder dimOrder : m_dimension ) {
-            list.add(dimOrder.m_dimension);
+        return result;
+    }
+
+    @Override
+    public IAttribute findAttributeIgnoreCase(String name) {
+        IAttribute result = null;
+
+        for( IDataItem item : mDataItems ) {
+            result = item.findAttributeIgnoreCase(name);
+            if( result != null ) {
+                break;
+            }
         }
-        
-		return list;
-	}
 
-	@Override
-	public String getDimensionsString() {
-	    String dimList = "";
-        
+        return result;
+    }
+
+    @Override
+    public int findDimensionIndex(String name) {
+        int result = -1;
+        for( DimOrder dimord : mDimension ) {
+            if( dimord.mDimension.getName().equals(name) ) {
+                result = dimord.order();
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public String getDescription() {
+        String result = null;
+
+        for( IDataItem item : mDataItems ) {
+            result = item.getDescription();
+            if( result != null ) {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public List<IDimension> getDimensions(int i) {
+        ArrayList<IDimension> list = null;
+
+        if( i <= getRank() ) {
+            list = new ArrayList<IDimension>();
+            for( DimOrder dim : mDimension ) {
+                if( dim.order() == i ) {
+                    list.add( dim.dimension() );
+                }
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<IDimension> getDimensionList() {
+        ArrayList<IDimension> list = new ArrayList<IDimension>();
+
+        for( DimOrder dimOrder : mDimension ) {
+            list.add( dimOrder.dimension() );
+        }
+
+        return list;
+    }
+
+    @Override
+    public String getDimensionsString() {
+        StringBuffer dimList = new StringBuffer();
+
         int i = 0;
-        for( DimOrder dim : m_dimension ) {
+        for( DimOrder dim : mDimension ) {
             if( i++ != 0 ) {
-                dimList += " ";
+                dimList.append(" ");
             }
-            dimList += dim.m_dimension.getName();
+            dimList.append( dim.dimension().getName() );
         }
-        
-        return dimList;
-	}
 
-	@Override
-	public int getElementSize() {
-        switch( m_n4tDataItems[0].getType() ) {
-            case NexusFile.NX_BINARY:
-            case NexusFile.NX_BOOLEAN:
-            case NexusFile.NX_CHAR:
-                return 1;
-            case NexusFile.NX_INT16:
-                return 2;
-            case NexusFile.NX_FLOAT32:
-            case NexusFile.NX_INT32:
-                return 4;
-            case NexusFile.NX_FLOAT64:
-            case NexusFile.NX_INT64:
-                return 8;
-            default:
-                return 1;
-        }
-	}
+        return dimList.toString();
+    }
 
-	@Override
-	public String getName() {
-		/*
-        String name = m_n4tDataSet.getAttribute("name");
-        if( name == null )
-            name = m_n4tDataSet.getAttribute("long_name");
-        if( name == null )
-        	name = m_n4tDataSet.getNodeName();
-		return name;
-		*/
-		return m_n4tDataItems[0].getPath().toString(false);
-	}
+    @Override
+    public int getElementSize() {
+        return mDataItems[0].getElementSize();
+    }
 
-	@Override
-	public String getNameAndDimensions() {
+    @Override
+    public String getName() {
+        return mDataItems[0].getName();
+    }
+
+    @Override
+    public String getNameAndDimensions() {
         StringBuffer buf = new StringBuffer();
         getNameAndDimensions(buf, true, false);
-		return buf.toString();
-	}
+        return buf.toString();
+    }
 
-	@Override
-	public void getNameAndDimensions(StringBuffer buf, boolean useFullName,
-			boolean showDimLength) {
+    @Override
+    public void getNameAndDimensions(StringBuffer buf, boolean useFullName,
+            boolean showDimLength) {
         useFullName = useFullName && !showDimLength;
         String name = useFullName ? getName() : getShortName();
         buf.append(name);
 
-        if (getRank() > 0) buf.append("(");
-        for (int i = 0; i < m_dimension.size(); i++) {
-          DimOrder dim   = m_dimension.get(i);
-          IDimension myd = dim.m_dimension;
-          String dimName = myd.getName();
-          if ((dimName == null) || !showDimLength)
-            dimName = "";
-
-          if (i != 0) buf.append(", ");
-
-          if (myd.isVariableLength()) {
-            buf.append("*");
-          } else if (myd.isShared()) {
-            if (!showDimLength)
-              buf.append(dimName + "=" + myd.getLength());
-            else
-              buf.append(dimName);
-          } else {
-            if (dimName != null) {
-              buf.append(dimName);
+        if (getRank() > 0) {
+            buf.append("(");
+        }
+        for (int i = 0; i < mDimension.size(); i++) {
+            DimOrder dim   = mDimension.get(i);
+            IDimension myd = dim.dimension();
+            String dimName = myd.getName();
+            if ((dimName == null) || !showDimLength) {
+                dimName = "";
             }
-            buf.append(myd.getLength());
-          }
+
+            if (i != 0) {
+                buf.append(", ");
+            }
+
+            if (myd.isVariableLength()) {
+                buf.append("*");
+            }
+            else if (myd.isShared()) {
+                if (!showDimLength) {
+                    buf.append(dimName);
+                    buf.append("=");
+                    buf.append( myd.getLength() );
+                }
+                else {
+                    buf.append(dimName);
+                }
+            }
+            else {
+                if (dimName != null) {
+                    buf.append(dimName);
+                }
+                buf.append(myd.getLength());
+            }
         }
-
-        if (getRank() > 0) buf.append(")");
-	}
-
-	@Override
-	public IGroup getParentGroup()
-	{
-        if( m_parent == null )
-        {
-            PathGroup path = m_n4tDataItems[0].getPath().getParentPath();
-            try {
-				m_parent = (IGroup) m_cdmDataset.getRootGroup().findContainerByPath(path.getValue());
-			} catch (NoResultException e) {}
-            //m_parent = new NxsGroup(path, m_cdmDataset);
-            ((NxsGroup) m_parent).setChild(this);
+        if (getRank() > 0) {
+            buf.append(")");
         }
-		return m_parent;
-	}
+    }
 
-	@Override
-	public List<IRange> getRangeList() {
+    @Override
+    public IGroup getParentGroup()
+    {
+        return mParent;
+    }
+
+    @Override
+    public List<IRange> getRangeList() {
         List<IRange> list = null;
         try {
             list = new NxsIndex(getData().getShape()).getRangeList();
         } catch( IOException e ) {
-            e.printStackTrace();
         }
-		return list;
-	}
-    
+        return list;
+    }
+
     @Override
     public List<IRange> getSectionRanges() {
         List<IRange> list = null;
         try {
             list = ((NxsIndex) getData().getIndex()).getRangeList(); 
         } catch( IOException e ) {
-            e.printStackTrace();
         }
         return list;
     }
 
-	@Override
-	public int getRank() {
-		int[] shape = getShape();
-		if( m_n4tDataItems[0].getType() == NexusFile.NX_CHAR )
-			return 0;
-		else if( shape.length == 1 && shape[0] == 1 )
-			return 0;
-		else
-			return shape.length;
-	}
+    @Override
+    public int getRank() {
+        int result;
+        int[] shape = getShape();
+        if( mDataItems[0].getN4TDataItem().getType() == NexusFile.NX_CHAR ) {
+            result = 0;
+        }
+        else if( shape.length == 1 && shape[0] == 1 ) {
+            result = 0;
+        }      
+        else {
+            result = shape.length;
+        }
+        return result;
+    }
 
-	@Override
-	public IDataItem getSection(List<IRange> section)
-			throws InvalidRangeException {
+    @Override
+    public IDataItem getSection(List<IRange> section)
+            throws InvalidRangeException {
         NxsDataItem item = null;
         try {
             item = new NxsDataItem(this);
-            m_array = (NxsArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
+            mArray = (NxsArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
         } catch( IOException e ) {
-            e.printStackTrace();
-        }
-		return item;
-	}
-
-
-
-	@Override
-	public int[] getShape() {
-		try {
-			return getData().getShape();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return new int[] {-1};
-		}
-	}
-
-	@Override
-	public String getShortName() {
-		return m_n4tDataItems[0].getNodeName();
-	}
-
-	@Override
-	public long getSize() {
-        int[] shape = m_n4tDataItems[0].getSize();
-        int size    = shape[0];
-        for( int i = 1; i < shape.length; i++ ) {
-            size *= shape[i];
-        }
-        
-		return size;
-	}
-
-	@Override
-	public int getSizeToCache() {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-		return 0;
-	}
-
-	@Override
-	public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
-	    NxsDataItem item = new NxsDataItem(this);
-        try {
-            item.m_array = item.getData().getArrayUtils().slice(dim, value).getArray();
-        }
-        catch (Exception e) {
-        	item = null;
         }
         return item;
-	}
+    }
+
+
+
+    @Override
+    public int[] getShape() {
+        int[] shape;
+        try {
+            shape = getData().getShape();
+        } catch (IOException e) {
+            shape = new int[] {};
+        }
+        return shape;
+    }
+
+    @Override
+    public String getShortName() {
+        return mDataItems[0].getShortName();
+    }
+
+    @Override
+    public long getSize() {
+        int[] shape = getShape();
+        long  total = 1;
+        for( int size : shape ) {
+            total *= size;
+        }
+
+        return total;
+    }
+
+    @Override
+    public int getSizeToCache() {
+        // TODO Auto-generated method stub
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
+        return 0;
+    }
+
+    @Override
+    public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
+        NxsDataItem item = new NxsDataItem(this);
+        try {
+            item.mArray = item.getData().getArrayUtils().slice(dim, value).getArray();
+        }
+        catch (Exception e) {
+            item = null;
+        }
+        return item;
+    }
 
     @Override
     public IDataItem getASlice(int dimension, int value) throws InvalidRangeException {
         return getSlice(dimension, value);
     }
-    
-	@Override
-	public Class<?> getType() {
-		return m_n4tDataItems[0].getDataClass();
-	}
 
     @Override
-	public String getUnitsString() {
-        IAttribute attr = getAttribute("unit");
-        if( attr != null )
-            return attr.getStringValue();
-        else
-            return null;
-	}
+    public Class<?> getType() {
+        return mDataItems[0].getType();
+    }
 
-	@Override
+    @Override
+    public String getUnitsString() {
+        String value = null;
+        IAttribute attr = getAttribute("unit");
+        if( attr != null ) {
+            value = attr.getStringValue();
+        }
+        return value;
+    }
+
+    @Override
     public boolean hasAttribute(String name, String value) {
-    	IAttribute attr;
-    	List<IAttribute> listAttr = getAttributeList();
+        boolean result = false;
+        IAttribute attr;
+        List<IAttribute> listAttr = getAttributeList();
 
         Iterator<IAttribute> iter = listAttr.iterator();
         while( iter.hasNext() )
         {
-        	attr = iter.next();
-        	if( attr.getStringValue().equals(value) )
-        		return true;
-		}
+            attr = iter.next();
+            if( attr.getStringValue().equals(value) ) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public boolean hasCachedData() {
+        return mDataItems[0].hasCachedData();
+    }
+
+    @Override
+    public void invalidateCache() {
+        mDataItems[0].invalidateCache();
+    }
+
+    @Override
+    public boolean isCaching() {
+        return mDataItems[0].isCaching();
+    }
+
+    @Override
+    public boolean isMemberOfStructure() {
+        return mDataItems[0].isMemberOfStructure();
+    }
+
+    @Override
+    public boolean isMetadata() {
+        return ( getAttribute("signal") == null );
+    }
+
+    @Override
+    public boolean isScalar() {
+        int rank = 0;
+        try {
+            rank = getData().getRank();
+        } catch(IOException e) {
+        }
+        return (rank == 0);
+    }
+
+    @Override
+    public boolean isUnlimited() {
         return false;
     }
 
-	@Override
-	public boolean hasCachedData() {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-		return false;
-	}
+    @Override
+    public boolean isUnsigned() {
+        return mDataItems[0].isUnsigned(); 
+    }
 
-	@Override
-	public void invalidateCache() {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-	}
+    @Override
+    public byte readScalarByte() throws IOException {
+        return ((byte[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isCaching() {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-		return false;
-	}
+    @Override
+    public double readScalarDouble() throws IOException {
+        return ((double[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isMemberOfStructure() {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-		return false;
-	}
+    @Override
+    public float readScalarFloat() throws IOException {
+        return ((float[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isMetadata() {
-		return ( getAttribute("signal") == null );
-	}
+    @Override
+    public int readScalarInt() throws IOException {
+        return ((int[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isScalar() {
-        int rank = 0;
-		try {
-            rank = getData().getRank();
-        } catch(IOException e) {}
-        return (rank == 0);
-	}
+    @Override
+    public long readScalarLong() throws IOException {
+        return ((long[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isUnlimited() {
-		return false;
-	}
+    @Override
+    public short readScalarShort() throws IOException {
+        return ((short[]) mDataItems[0].getData().getStorage())[0];
+    }
 
-	@Override
-	public boolean isUnsigned() {
-        int type = m_n4tDataItems[0].getType(); 
-		if(
-		     type == NexusFile.NX_UINT16 ||
-             type == NexusFile.NX_UINT32 ||
-             type == NexusFile.NX_UINT64 ||
-             type == NexusFile.NX_UINT8
-           ) {
-		    return true;
+    @Override
+    public String readScalarString() throws IOException {
+        return (String) mDataItems[0].readScalarString();
+    }
+
+    @Override
+    public boolean removeAttribute(IAttribute attr) {
+        boolean result = false;
+        for( IDataItem item : mDataItems ) {
+            item.removeAttribute(attr);
         }
-        else {
-            return false;
+        result = true;
+        return result;
+    }
+
+    @Override
+    public void setCachedData(IArray cacheData, boolean isMetadata)
+            throws InvalidArrayTypeException {
+        for( IDataItem item : mDataItems ) {
+            item.setCachedData(cacheData, isMetadata);
         }
-	}
+    }
 
-	@Override
-	public byte readScalarByte() throws IOException {
-		return ((byte[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public double readScalarDouble() throws IOException {
-		return ((byte[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public float readScalarFloat() throws IOException {
-		return ((float[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public int readScalarInt() throws IOException {
-		return ((int[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public long readScalarLong() throws IOException {
-		return ((long[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public short readScalarShort() throws IOException {
-		return ((short[]) m_n4tDataItems[0].getData())[0];
-	}
-
-	@Override
-	public String readScalarString() throws IOException {
-		return (String) m_n4tDataItems[0].getData();
-	}
-
-	@Override
-	public boolean removeAttribute(IAttribute a) {
-        m_n4tDataItems[0].setAttribute(a.getName(), null);
-		return false;
-	}
-
-	@Override
-	public void setCachedData(IArray cacheData, boolean isMetadata)
-			throws InvalidArrayTypeException {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-
-	}
-
-	@Override
-	public void setCaching(boolean caching) {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-	}
-
-	@Override
-	public void setDataType(Class<?> dataType) {
-	    try {
-            throw new BackupException("Method not support in plug-in: setDataType(Class<?> dataType)!");
-        } catch(BackupException e) {
-            e.printStackTrace();
+    @Override
+    public void setCaching(boolean caching) {
+        for( IDataItem item : mDataItems ) {
+            item.setCaching(caching);
         }
-	}
+    }
 
-	@Override
-	public void setDimensions(String dimString) {
-        m_parent = getParentGroup();
+    @Override
+    public void setDataType(Class<?> dataType) {
+        for( IDataItem item : mDataItems ) {
+            item.setDataType(dataType);
+        }
+    }
+
+    @Override
+    public void setDimensions(String dimString) {
+        mParent = getParentGroup();
 
         List<String> dimNames = java.util.Arrays.asList(dimString.split(" "));
-        List<IDataItem> items = m_parent.getDataItemList();
-        
+        List<IDataItem> items = mParent.getDataItemList();
+
         for( IDataItem item : items ) {
             IAttribute attr = item.getAttribute("axis");
             if( attr != null ) {
                 if( "*".equals(dimString) ) {
-                    setDimension(new NxsDimension(item), attr.getNumericValue().intValue() );
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue() );
                 }
                 else if( dimNames.contains(attr.getName()) ) {
-                    setDimension(new NxsDimension(item), attr.getNumericValue().intValue() );
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue() );
                 }
             }
         }
-	}
-    
+    }
+
     @Override
     public void setDimension(IDimension dim, int ind) {
-        m_dimension.add( new DimOrder(ind, dim) );
+        mDimension.add( new DimOrder(ind, dim) );
     }
-    
-	@Override
-	public void setElementSize(int elementSize) {
-        try {
-            throw new BackupException("Method not support in plug-in: setElementSize(int elementSize)!");
-        } catch(BackupException e) {
-            e.printStackTrace();
-        }
-    }
-
-	@Override
-	public void setName(String name) {
-        m_n4tDataItems[0].setAttribute("name", name);
-	}
-
-	@Override
-	public void setParent(IGroup group) {
-        if( m_parent == null || ! m_parent.equals(group) )
-        {
-            m_parent = group;
-            group.addDataItem(this);
-        }
-	}
-
-	@Override
-	public void setSizeToCache(int sizeToCache) {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-
-	}
 
     @Override
-	public String toStringDebug() {
-        String strDebug = "" + getName();
-        if( strDebug != null && !strDebug.isEmpty() )
-            strDebug += "\n";
+    public void setElementSize(int elementSize) {
+        for( IDataItem item : mDataItems ) {
+            item.setElementSize(elementSize);
+        }
+    }
+
+    @Override
+    public void setName(String name) {
+        for( IDataItem item : mDataItems ) {
+            item.setName(name);
+        }
+    }
+
+    @Override
+    public void setParent(IGroup group) {
+        if( mParent == null || ! mParent.equals(group) ) {
+            mParent = group;
+            group.addDataItem(this);
+        }
+    }
+
+    @Override
+    public void setSizeToCache(int sizeToCache) {
+        for( IDataItem item : mDataItems ) {
+            item.setSizeToCache(sizeToCache);
+        }
+    }
+
+    @Override
+    public String toStringDebug() {
+        StringBuffer strDebug = new StringBuffer();
+        strDebug.append( getName() );
+        if( strDebug.length() > 0) {
+            strDebug.append("\n");
+        }
         try {
-            strDebug += "shape: " + getData().shapeToString() + "\n";
+            strDebug.append( "shape: " + getData().shapeToString() + "\n" );
         } catch( IOException e ) {
-            e.printStackTrace();
         }
         List<IDimension> dimensions = getDimensionList();
         for( IDimension dim : dimensions ) {
-            strDebug += dim.getCoordinateVariable().toString();
+            strDebug.append( dim.getCoordinateVariable().toString() );
         }
-        
+
         List<IAttribute> list = getAttributeList();
         if( list.size() > 0 ) {
-        	strDebug += "\nAttributes:\n";
+            strDebug.append( "\nAttributes:\n" );
         }
         for( IAttribute a : list ) {
-            strDebug += "- " + a.toString() + "\n";
+            strDebug.append( "- " + a.toString() + "\n" );
         }
-        
-		return strDebug;
-	}
 
-	@Override
-	public String writeCDL(String indent, boolean useFullName, boolean strict) {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-		return null;
-	}
+        return strDebug.toString();
+    }
 
-	@Override
-	public void setUnitsString(String units) {
-		// TODO Auto-generated method stub
-        new BackupException("Method not supported yet in this plug-in!").printStackTrace();
-	}
+    @Override
+    public String writeCDL(String indent, boolean useFullName, boolean strict) {
+        // TODO Auto-generated method stub
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
+        return null;
+    }
 
-	@Override
-	public IDataset getDataset() {
-		return m_parent.getDataset();
-	}
+    @Override
+    public void setUnitsString(String units) {
+        // TODO Auto-generated method stub
+        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
+    }
 
-	@Override
-	public String getLocation() {
-		return m_parent.getLocation();
-	}
+    @Override
+    public IDataset getDataset() {
+        return mDataset;
+    }
 
-	@Override
-	public IGroup getRootGroup() {
-		return m_parent.getRootGroup();
-	}
+    @Override
+    public String getLocation() {
+        return mParent.getLocation();
+    }
 
-	@Override
-	public void setShortName(String name) {
-		m_n4tDataItems[0].setNodeName(name);
-		
-	}
-    
-	@Override
-	public String getFactoryName() {
-		return NxsFactory.NAME;
-	}
-    // ------------------------------------------------------------------------
-    /// Protected methods
-    // ------------------------------------------------------------------------
-    protected DataItem[] getN4TDataItem()
-    {
-        return m_n4tDataItems;
+    @Override
+    public IGroup getRootGroup() {
+        return mParent.getRootGroup();
+    }
+
+    @Override
+    public void setShortName(String name) {
+        for( IDataItem item : mDataItems ) {
+            item.setShortName(name);
+        }
+    }
+
+    @Override
+    public String getFactoryName() {
+        return NxsFactory.NAME;
+    }
+
+    // specific methods
+    public DataItem[] getNexusItems() {
+        DataItem[] result = new DataItem[ mDataItems.length ];
+        int i = 0;
+        for( NexusDataItem item : mDataItems ) {
+            result[i] = item.getN4TDataItem();
+            i++;
+        }
+        return result;
     }
 }

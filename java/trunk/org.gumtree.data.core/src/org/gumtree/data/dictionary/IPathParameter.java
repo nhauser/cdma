@@ -1,14 +1,17 @@
-/****************************************************************************** 
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * 	  Clement Rodriguez - initial API and implementation
- *    Norman Xiong
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
+
 package org.gumtree.data.dictionary;
 
 import org.gumtree.data.interfaces.IModelObject;
@@ -16,6 +19,8 @@ import org.gumtree.data.utils.Utilities.ParameterType;
 
 
 /**
+ * @brief The IPathParameter interface is used to make a selective choice when browsing a IDataset.
+ * 
  * A IPathParameter represents conditions that permits identifying a specific node using the 
  * extended dictionary mechanism. 
  * When according to a given IPath several IContainer can be returned, the path parameter
@@ -27,6 +32,7 @@ import org.gumtree.data.utils.Utilities.ParameterType;
  * 
  * @see org.gumtree.data.utils.Utilities.ParameterType
  * @see org.gumtree.data.dictionary.IPath
+ * 
  * @author rodriguez
  *
  */

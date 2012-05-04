@@ -1,14 +1,16 @@
-/****************************************************************************** 
- * Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+/*******************************************************************************
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- * 	  Clement Rodriguez - initial API and implementation
- *    Norman Xiong
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.dictionary.impl;
 
 import org.gumtree.data.dictionary.IContext;
@@ -17,76 +19,81 @@ import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IKey;
 
-public class Context implements IContext {
-	private IDataset    m_dataset;
-	private IContainer  m_caller;
-	private IKey        m_key;
-	private IPath       m_path;
-	private Object[]    m_params;
+public final class Context implements IContext {
+    private IDataset    mDataset;
+    private IContainer  mCaller;
+    private IKey        mKey;
+    private IPath       mPath;
+    private Object[]    mParams;
 	
 	public Context(IDataset dataset) {
-		m_dataset = dataset;
+        mDataset = dataset;
+        mCaller  = null;
+        mKey     = null;
+        mPath    = null;
+        mParams  = null;
 	}
 	
 	public Context( IDataset dataset, IContainer caller, IKey key, IPath path ) {
-		m_dataset = dataset;
-		m_caller  = caller;
-		m_key     = key;
-		m_path    = path;
+        mDataset = dataset;
+        mCaller  = caller;
+        mKey     = key;
+        mPath    = path;
+        mParams  = null;
 	}
 	
 	@Override
 	public String getFactoryName() {
-		return m_dataset.getFactoryName();
+        return mDataset.getFactoryName();
 	}
 
 	@Override
 	public IDataset getDataset() {
-		return m_dataset;
+        return mDataset;
 	}
 
 	@Override
 	public void setDataset(IDataset dataset) {
-		m_dataset = dataset;
+        mDataset = dataset;
 	}
 
 	@Override
 	public IContainer getCaller() {
-		return m_caller;
+        return mCaller;
 	}
 
 	@Override
 	public void setCaller(IContainer caller) {
-		m_caller = caller;
+        mCaller = caller;
 	}
 
 	@Override
 	public IKey getKey() {
-		return m_key;
+        return mKey;
 	}
 
 	@Override
 	public void setKey(IKey key) {
-		m_key = key;
+        mKey = key;
 	}
 
 	@Override
 	public IPath getPath() {
-		return m_path;
+        return mPath;
 	}
 
 	@Override
 	public void setPath(IPath path) {
-		m_path = path;
+        mPath = path;
 	}
 
 	@Override
 	public Object[] getParams() {
-		return m_params;
+        return mParams.clone();
 	}
 
 	@Override
 	public void setParams(Object[] params) {
-		m_params = params;
+        mParams = params.clone();
 	}
 }

@@ -22,9 +22,10 @@ import java.util.Map;
 import org.gumtree.data.Factory;
 import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.exception.FileAccessException;
-import org.gumtree.data.exception.GDMWriterException;
 import org.gumtree.data.exception.InvalidArrayTypeException;
+import org.gumtree.data.exception.NoResultException;
 import org.gumtree.data.exception.SignalNotAvailableException;
+import org.gumtree.data.exception.WriterException;
 import org.gumtree.data.impl.NcFactory;
 import org.gumtree.data.impl.io.NcHdfWriter;
 import org.gumtree.data.interfaces.IArray;
@@ -884,13 +885,13 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	 * Save the Group in the target Dataset location. This method is not in the
 	 * IGroup interface, which means it is not called
 	 * 
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to write
 	 */
-	public void save() throws GDMWriterException {
+	public void save() throws WriterException {
 		String location = getLocation();
 		if (location == null || location.trim().length() == 0) {
-			throw new GDMWriterException("failed to write to null file");
+			throw new WriterException("failed to write to null file");
 		}
 		NcHdfWriter hdfWriter = new NcHdfWriter(new File(getLocation()));
 		hdfWriter.open();
@@ -1212,7 +1213,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	}
 
 	@Override
-	public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) throws Exception {
+	public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) throws NoResultException {
 //        IKeyFilter filter;
 //        filter = new NcKeyFilter(FilterLabel.ATTRIBUTE_NAME, name);
 //        key.pushFilter(filter);

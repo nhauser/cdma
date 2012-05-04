@@ -157,7 +157,7 @@ public class NcSliceIterator implements ISliceIterator {
 		}
 		// A more normal iteration
 		// Will have right shape as we did sectionNoReduce, aren't we clever
-		int[] currentLocation = higherDimIter.getCurrentCounter();
+		int[] currentLocation = higherDimIter.getCounter();
 		return wholeArray.getArrayUtils().section(currentLocation, targetShape).getArray();
 	}
 

@@ -21,8 +21,8 @@ import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 
-import org.gumtree.data.exception.GDMItemExistException;
-import org.gumtree.data.exception.GDMWriterException;
+import org.gumtree.data.exception.ItemExistException;
+import org.gumtree.data.exception.WriterException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataItem;
@@ -78,9 +78,9 @@ public class NcHdfWriter implements IWriter {
 		this.file = file;
 	}
 
-	public void open() throws GDMWriterException {
+	public void open() throws WriterException {
 		if (file == null) {
-			throw new GDMWriterException("can not open the file : null");
+			throw new WriterException("can not open the file : null");
 		}
 		// try {
 		// System.setProperty(H5.H5PATH_PROPERTY_KEY, "ncsa.hdf/jhdf5.dll");
@@ -117,10 +117,10 @@ public class NcHdfWriter implements IWriter {
 		} catch (Exception e) {
 			e.printStackTrace();
 			if (file.exists()) {
-				throw new GDMWriterException("can not open the file for "
+				throw new WriterException("can not open the file for "
 						+ "writing, please check if it is locked");
 			} else {
-				throw new GDMWriterException("can not create the file");
+				throw new WriterException("can not create the file");
 			}
 		}
 		isOpen = true;
@@ -157,7 +157,7 @@ public class NcHdfWriter implements IWriter {
 	 * 
 	 * @see org.gumtree.data.io.IWriter#writeToRoot(org.gumtree.data.IGroup)
 	 */
-	public void writeToRoot(final IGroup group) throws GDMWriterException {
+	public void writeToRoot(final IGroup group) throws WriterException {
 		if (group.isRoot()) {
 			for (IAttribute attribute : group.getAttributeList()) {
 				writeToRoot(attribute, true);
@@ -174,7 +174,7 @@ public class NcHdfWriter implements IWriter {
 	}
 
 	public void writeToRoot(final IGroup group, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		if (group.isRoot()) {
 			for (IAttribute attribute : group.getAttributeList()) {
 				writeToRoot(attribute, force);
@@ -191,35 +191,35 @@ public class NcHdfWriter implements IWriter {
 	}
 
 	public void writeToRoot(final IDataItem dataItem) 
-	throws GDMWriterException {
+	throws WriterException {
 		writeDataItem("/", dataItem);
 	}
 
 	public void writeToRoot(final IDataItem dataItem, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		writeDataItem("/", dataItem, force);
 	}
 
 	public void writeToRoot(final IAttribute attribute)
-			throws GDMWriterException {
+			throws WriterException {
 		writeAttribute("/", attribute);
 	}
 
 	public void writeToRoot(final IAttribute attribute, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		writeAttribute("/", attribute, force);
 	}
 
 	public void writeGroup(final String parentPath, final IGroup group)
-			throws GDMWriterException {
+			throws WriterException {
 		writeGroup(parentPath, group, false);
 	}
 
 	public void writeGroup(final String parentPath, final IGroup group,
-			final boolean force) throws GDMWriterException {
+			final boolean force) throws WriterException {
 		Group parentGroup = findHdfGroup(parentPath);
 		if (parentGroup == null) {
-			throw new GDMWriterException("the parent group does not exist: "
+			throw new WriterException("the parent group does not exist: "
 					+ parentPath);
 		}
 		writeGroup(parentGroup, group, force);
@@ -234,11 +234,11 @@ public class NcHdfWriter implements IWriter {
 	 *            GDM Group
 	 * @param force
 	 *            if to overwrite
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to write
 	 */
 	protected void writeGroup(final Group parent, final IGroup group,
-			final boolean force) throws GDMWriterException {
+			final boolean force) throws WriterException {
 		if (group == null) {
 			return;
 		}
@@ -249,7 +249,7 @@ public class NcHdfWriter implements IWriter {
 				newGroup = fileHandler
 						.createGroup(group.getShortName(), parent);
 			} catch (Exception e) {
-				throw new GDMWriterException("Can not create empty group", e);
+				throw new WriterException("Can not create empty group", e);
 			}
 		}
 		for (IAttribute attribute : group.getAttributeList()) {
@@ -264,16 +264,16 @@ public class NcHdfWriter implements IWriter {
 	}
 
 	public void writeDataItem(final String parentPath, final IDataItem dataItem)
-			throws GDMWriterException {
+			throws WriterException {
 		writeDataItem(parentPath, dataItem, false);
 	}
 
 	public void writeDataItem(final String parentPath,
 			final IDataItem dataItem, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		Group parent = findHdfGroup(parentPath);
 		if (parent == null) {
-			throw new GDMWriterException("the parent group does not exist: "
+			throw new WriterException("the parent group does not exist: "
 					+ parentPath);
 		}
 		writeDataItem(parent, dataItem, force);
@@ -286,11 +286,11 @@ public class NcHdfWriter implements IWriter {
 	 *            GDM DataItem object
 	 * @param force
 	 *            if overwrite
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to write
 	 */
 	protected void writeDataItem(final Group parent, final IDataItem dataItem,
-			final boolean force) throws GDMWriterException {
+			final boolean force) throws WriterException {
 		if (parent == null) {
 			return;
 		}
@@ -298,7 +298,7 @@ public class NcHdfWriter implements IWriter {
 			if (force) {
 				removeDataItem(parent, dataItem.getShortName());
 			} else {
-				throw new GDMItemExistException("the data item with the same "
+				throw new ItemExistException("the data item with the same "
 						+ "name already exists, can not overwrite");
 			}
 		}
@@ -314,25 +314,25 @@ public class NcHdfWriter implements IWriter {
 	 * @param dataItem
 	 *            GDM data item
 	 * @return NCSA dataset item
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to write
 	 */
 	protected Dataset writeHdfDataset(final Group parent,
-			final IDataItem dataItem) throws GDMWriterException {
+			final IDataItem dataItem) throws WriterException {
 		int[] dimension = dataItem.getShape();
 		Datatype dataType = null;
 		try {
 			dataType = getDataType(dataItem.getData());
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			throw new GDMWriterException("failed to read data from data item: "
+			throw new WriterException("failed to read data from data item: "
 					+ dataItem.getShortName(), e1);
 		}
 		Object data = null;
 		try {
 			data = getData(dataItem.getData());
 		} catch (IOException e) {
-			throw new GDMWriterException("failed to read data from data item: "
+			throw new WriterException("failed to read data from data item: "
 					+ dataItem.getShortName(), e);
 		}
 		return writerHdfDataset(parent, dimension, dataType, dataItem
@@ -372,11 +372,11 @@ public class NcHdfWriter implements IWriter {
 	 * @param array
 	 *            GDM Array
 	 * @return HDF DataType
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to access
 	 */
 	protected Datatype getDataType(final IArray array)
-			throws GDMWriterException {
+			throws WriterException {
 		Class<?> type = array.getElementType();
 		int typeInteger;
 		int dataSize;
@@ -410,7 +410,7 @@ public class NcHdfWriter implements IWriter {
 			return fileHandler.createDatatype(typeInteger, dataSize,
 					Datatype.NATIVE, Datatype.NATIVE);
 		} catch (Exception e) {
-			throw new GDMWriterException("can not create data type "
+			throw new WriterException("can not create data type "
 					+ type.getName());
 		}
 	}
@@ -429,12 +429,12 @@ public class NcHdfWriter implements IWriter {
 	 * @param o
 	 *            java array
 	 * @return HDF Dataset
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             Failed to write
 	 */
 	private Dataset writerHdfDataset(final Group parent, final int[] dimension,
 			final Datatype dtype, final String shortname, final Object o)
-			throws GDMWriterException {
+			throws WriterException {
 		int zipLevel = 0;
 		long size = 1;
 		long[] chunks = null;
@@ -472,26 +472,26 @@ public class NcHdfWriter implements IWriter {
 			newDataset = fileHandler.createScalarDS(shortname, parent, dtype,
 					longDimension, null, chunks, zipLevel, o);
 		} catch (Exception e) {
-			throw new GDMWriterException("failed to write data item "
+			throw new WriterException("failed to write data item "
 					+ shortname, e);
 		}
 		return newDataset;
 	}
 
 	public void writeAttribute(final String parentPath,
-			final IAttribute attribute) throws GDMWriterException {
+			final IAttribute attribute) throws WriterException {
 		writeAttribute(parentPath, attribute, false);
 	}
 
 	public void writeAttribute(final String parentPath,
 			final IAttribute attribute, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		HObject parent = findHdfGroup(parentPath);
 		if (parent == null) {
 			parent = findHdfDataset(parentPath);
 		}
 		if (parent == null) {
-			throw new GDMWriterException("the parent group does not exist: "
+			throw new WriterException("the parent group does not exist: "
 					+ parentPath);
 		}
 		// if (isAttributeExist(parent, attribute.getName())){
@@ -513,20 +513,20 @@ public class NcHdfWriter implements IWriter {
 	 *            GDM Attribute
 	 * @param force
 	 *            if to overwrite
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to write
 	 */
 	protected void writeAttribute(final HObject parent,
 			final IAttribute attribute, final boolean force)
-			throws GDMWriterException {
+			throws WriterException {
 		if (parent == null) {
-			throw new GDMWriterException("the parent group does not exist");
+			throw new WriterException("the parent group does not exist");
 		}
 		if (isAttributeExist(parent, attribute.getName())) {
 			if (force) {
 				removeAttribute(parent, attribute.getName());
 			} else {
-				throw new GDMItemExistException("an attribute already exis : "
+				throw new ItemExistException("an attribute already exis : "
 						+ attribute.getName());
 			}
 		}
@@ -551,7 +551,7 @@ public class NcHdfWriter implements IWriter {
 				data = getData(array);
 			}
 		} catch (Exception e) {
-			throw new GDMWriterException("failed to read data from attribute: "
+			throw new WriterException("failed to read data from attribute: "
 					+ attribute.getName(), e);
 		}
 		// Attribute newAttribute = new Attribute(attribute.getName(), datatype,
@@ -563,30 +563,30 @@ public class NcHdfWriter implements IWriter {
 			parent.writeMetadata(newAttribute);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GDMWriterException("failed to write data to "
+			throw new WriterException("failed to write data to "
 					+ parent.getName(), e);
 		}
 	}
 
 	public void writeEmptyGroup(final String xPath, final String groupName,
-			final boolean force) throws GDMWriterException {
+			final boolean force) throws WriterException {
 		Group parent = findHdfGroup(xPath);
 		if (parent == null) {
-			throw new GDMWriterException("the parent group does not exist: "
+			throw new WriterException("the parent group does not exist: "
 					+ xPath);
 		}
 		if (isGroupExist(parent, groupName)) {
 			if (force) {
 				removeGroup(parent, groupName);
 			} else {
-				throw new GDMItemExistException("the data item with the same "
+				throw new ItemExistException("the data item with the same "
 						+ "name already exists, can not overwrite");
 			}
 		}
 		try {
 			fileHandler.createGroup(groupName, parent);
 		} catch (Exception e) {
-			throw new GDMWriterException("Can not create empty group", e);
+			throw new WriterException("Can not create empty group", e);
 		}
 	}
 
@@ -623,11 +623,11 @@ public class NcHdfWriter implements IWriter {
 	 *            HDF group hdf library
 	 * @param dataItemName
 	 *            String value
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             faild to write
 	 */
 	protected void removeDataItem(final Group parent, final String dataItemName)
-			throws GDMWriterException {
+			throws WriterException {
 		if (parent != null) {
 			List<?> members = parent.getMemberList();
 			Dataset toRemove = null;
@@ -643,7 +643,7 @@ public class NcHdfWriter implements IWriter {
 				try {
 					fileHandler.delete(toRemove);
 				} catch (Exception e) {
-					throw new GDMWriterException(
+					throw new WriterException(
 							"failed to remove data item : " + dataItemName, e);
 				}
 				// parent.removeFromMemberList(toRemove);
@@ -653,13 +653,13 @@ public class NcHdfWriter implements IWriter {
 	}
 
 	public void removeDataItem(final String dataItemPath)
-			throws GDMWriterException {
+			throws WriterException {
 		Group parent = findHdfGroup(getParentPath(dataItemPath));
 		removeDataItem(parent, getShortName(dataItemPath));
 	}
 
 	public void removeAttribute(final String attributePath)
-			throws GDMWriterException {
+			throws WriterException {
 		String parentPath = getParentPath(attributePath);
 		HObject parent = findHdfGroup(parentPath);
 		if (parent == null) {
@@ -675,17 +675,17 @@ public class NcHdfWriter implements IWriter {
 	 *            HDF Hobject
 	 * @param attributeName
 	 *            String value
-	 * @throws GDMWriterException
+	 * @throws WriterException
 	 *             failed to remove.
 	 */
 	protected void removeAttribute(final HObject parent,
-			final String attributeName) throws GDMWriterException {
+			final String attributeName) throws WriterException {
 		if (parent != null) {
 			List<?> members = null;
 			try {
 				members = parent.getMetadata();
 			} catch (Exception e) {
-				throw new GDMWriterException("failed to access metadata field "
+				throw new WriterException("failed to access metadata field "
 						+ "of " + parent.getName(), e);
 			}
 			Attribute toRemove = null;
@@ -700,7 +700,7 @@ public class NcHdfWriter implements IWriter {
 				try {
 					parent.removeMetadata(toRemove);
 				} catch (Exception e) {
-					throw new GDMWriterException("failed to remove attribute "
+					throw new WriterException("failed to remove attribute "
 							+ attributeName, e);
 				}
 			}

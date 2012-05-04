@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.interfaces;
 
 import java.net.URI;
@@ -17,9 +20,12 @@ import org.gumtree.data.dictionary.IPath;
 import org.gumtree.data.exception.FileAccessException;
 
 /**
- * An interface for dictionary used in GDM Group model to reference a path with
- * a key in String type. The target object in the path can be either a Group or
- * a DataItem.
+ * @brief The IDictionary interface defines a direct association of a keyword and a path.
+ * 
+ * A dictionary interface for used in CDMA Standard Dictionary mechanism.
+ * The IGroup model references a path with a key in String type and should list
+ * all available node in the IDataset.
+ * The targeted object in the path can be either a IGroup or a IDataItem.
  * 
  * @author nxi
  * 
@@ -37,8 +43,7 @@ public interface IDictionary extends IModelObject, Cloneable {
 	 * Get the path referenced by the key. If there are more than one paths are
 	 * referenced by the path, get the default one.
 	 * 
-	 * @param key
-	 *            key object
+     * @param key key object
 	 * @return String object
 	 */
 	IPath getPath(IKey key);
@@ -46,8 +51,7 @@ public interface IDictionary extends IModelObject, Cloneable {
 	/**
 	 * Return all paths referenced by the key.
 	 * 
-	 * @param key
-	 *            key object
+     * @param key key object
 	 * @return a list of String objects
 	 */
 	List<IPath> getAllPaths(IKey key);
@@ -55,10 +59,8 @@ public interface IDictionary extends IModelObject, Cloneable {
 	/**
 	 * Add an entry of key and path.
 	 * 
-	 * @param key
-	 *            key object
-	 * @param path
-	 *            String object
+     * @param key key object
+     * @param path String object
 	 */
 	void addEntry(String key, String path);
 	
@@ -67,8 +69,7 @@ public interface IDictionary extends IModelObject, Cloneable {
 	/**
 	 * Read dictionary entries from a file.
 	 * 
-	 * @param uri
-	 *            URI object
+     * @param uri URI object
 	 * @throws FileAccessException
 	 *             I/O file access exception
 	 */
@@ -77,8 +78,7 @@ public interface IDictionary extends IModelObject, Cloneable {
 	/**
 	 * Read dictionary entries from a file.
 	 * 
-	 * @param path
-	 *            String object
+     * @param path String object
 	 * @throws FileAccessException
 	 *             I/O file access exception
 	 */
@@ -88,24 +88,20 @@ public interface IDictionary extends IModelObject, Cloneable {
 	 * Remove a path from an entry. If there is only one path associated with
 	 * the key, then remove the entry as well.
 	 * 
-	 * @param key
-	 *            key object
-	 * @param path
-	 *            String object
+     * @param key key object
+     * @param path String object
 	 */
 	void removeEntry(String key, String path);
 
 	/**
 	 * Remove an entry from the dictionary.
 	 * 
-	 * @param key
-	 *            key object
+     * @param key key object
 	 */
 	void removeEntry(String key);
 
 	/**
-	 * @param key
-	 *            key object
+     * @param key key object
 	 * @return true or false
 	 */
 	boolean containsKey(String key);

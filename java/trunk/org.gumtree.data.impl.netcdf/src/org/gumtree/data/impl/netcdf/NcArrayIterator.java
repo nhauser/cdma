@@ -39,43 +39,8 @@ public class NcArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public boolean getBooleanCurrent() {
-		return iterator.getBooleanCurrent();
-	}
-
-	@Override
-	public boolean getBooleanNext() {
-		return iterator.getBooleanNext();
-	}
-
-	@Override
-	public byte getByteCurrent() {
-		return iterator.getByteCurrent();
-	}
-
-	@Override
-	public byte getByteNext() {
-		return iterator.getByteNext();
-	}
-
-	@Override
-	public char getCharCurrent() {
-		return iterator.getCharCurrent();
-	}
-
-	@Override
-	public char getCharNext() {
-		return iterator.getCharNext();
-	}
-
-	@Override
-	public int[] getCurrentCounter() {
-		return iterator.getCurrentCounter();
-	}
-
-	@Override
-	public double getDoubleCurrent() {
-		return iterator.getDoubleCurrent();
+	public boolean hasNext() {
+		return iterator.hasNext();
 	}
 
 	@Override
@@ -84,8 +49,8 @@ public class NcArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public float getFloatCurrent() {
-		return iterator.getFloatCurrent();
+	public void setDoubleCurrent(double val) {
+		iterator.setDoubleCurrent(val);
 	}
 
 	@Override
@@ -94,18 +59,8 @@ public class NcArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public int getIntCurrent() {
-		return iterator.getIntCurrent();
-	}
-
-	@Override
-	public int getIntNext() {
-		return iterator.getIntNext();
-	}
-
-	@Override
-	public long getLongCurrent() {
-		return iterator.getLongCurrent();
+	public void setFloatCurrent(float val) {
+		iterator.setFloatCurrent(val);
 	}
 
 	@Override
@@ -114,18 +69,18 @@ public class NcArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public Object getObjectCurrent() {
-		return iterator.getObjectCurrent();
+	public void setLongCurrent(long val) {
+		iterator.setLongCurrent(val);
 	}
 
 	@Override
-	public Object getObjectNext() {
-		return iterator.getObjectNext();
+	public int getIntNext() {
+		return iterator.getIntNext();
 	}
 
 	@Override
-	public short getShortCurrent() {
-		return iterator.getShortCurrent();
+	public void setIntCurrent(int val) {
+		iterator.setIntCurrent(val);
 	}
 
 	@Override
@@ -134,114 +89,64 @@ public class NcArrayIterator implements IArrayIterator {
 	}
 
 	@Override
-	public boolean hasNext() {
-		return iterator.hasNext();
-	}
-
-	@Override
-	public Object next() {
-		return iterator.next();
-	}
-
-	@Override
-	public void setBooleanCurrent(final boolean val) {
-		iterator.setBooleanCurrent(val);
-	}
-
-	@Override
-	public void setBooleanNext(final boolean val) {
-		iterator.setBooleanNext(val);
-	}
-
-	@Override
-	public void setByteCurrent(final byte val) {
-		iterator.setByteCurrent(val);
-	}
-
-	@Override
-	public void setByteNext(final byte val) {
-		iterator.setByteNext(val);
-	}
-
-	@Override
-	public void setCharCurrent(final char val) {
-		iterator.setCharCurrent(val);
-	}
-
-	@Override
-	public void setCharNext(final char val) {
-		iterator.setCharNext(val);
-	}
-
-	@Override
-	public void setDoubleCurrent(final double val) {
-		iterator.setDoubleCurrent(val);
-	}
-
-	@Override
-	public void setDoubleNext(final double val) {
-		iterator.setDoubleNext(val);
-	}
-
-	@Override
-	public void setFloatCurrent(final float val) {
-		iterator.setFloatCurrent(val);
-	}
-
-	@Override
-	public void setFloatNext(final float val) {
-		iterator.setFloatNext(val);
-	}
-
-	@Override
-	public void setIntCurrent(final int val) {
-		iterator.setIntCurrent(val);
-	}
-
-	@Override
-	public void setIntNext(final int val) {
-		iterator.setIntNext(val);
-	}
-
-	@Override
-	public void setLongCurrent(final long val) {
-		iterator.setLongCurrent(val);
-	}
-
-	@Override
-	public void setLongNext(final long val) {
-		iterator.setLongNext(val);
-	}
-
-	@Override
-	public void setObjectCurrent(final Object val) {
-		iterator.setObjectCurrent(val);
-	}
-
-	@Override
-	public void setObjectNext(final Object val) {
-		iterator.setObjectNext(val);
-	}
-
-	@Override
-	public void setShortCurrent(final short val) {
+	public void setShortCurrent(short val) {
 		iterator.setShortCurrent(val);
 	}
 
 	@Override
-	public void setShortNext(final short val) {
-		iterator.setShortNext(val);
+	public byte getByteNext() {
+		return iterator.getByteNext();
+	}
+
+	@Override
+	public void setByteCurrent(byte val) {
+		iterator.setByteCurrent(val);
+	}
+
+	@Override
+	public char getCharNext() {
+		return iterator.getCharNext();
+	}
+
+	@Override
+	public void setCharCurrent(char val) {
+		iterator.setCharCurrent(val);
+	}
+
+	@Override
+	public boolean getBooleanNext() {
+		return iterator.getBooleanNext();
+	}
+
+	@Override
+	public void setBooleanCurrent(boolean val) {
+		iterator.setBooleanCurrent(val);
+	}
+
+	@Override
+	public Object getObjectNext() {
+		return iterator.getObjectNext();
+	}
+
+	@Override
+	public void setObjectCurrent(Object val) {
+		iterator.setObjectCurrent(val);
+	}
+
+	@Override
+	public IArrayIterator next() {
+		getObjectNext();
+		return this;
+	}
+	
+	@Override
+	public int[] getCounter() {
+		return iterator.getCurrentCounter();
 	}
 
 	@Override
 	public String getFactoryName() {
 		return NcFactory.NAME;
-	}
-
-	@Override
-	public boolean hasCurrent() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }

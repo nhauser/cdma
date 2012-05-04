@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.gumtree.data.dictionary.ILogicalGroup;
-import org.gumtree.data.exception.GDMWriterException;
+import org.gumtree.data.exception.WriterException;
 import org.gumtree.data.impl.NcFactory;
 import org.gumtree.data.impl.io.NcHdfWriter;
 import org.gumtree.data.interfaces.IAttribute;
@@ -214,17 +214,17 @@ public class NcDataset implements IDataset {
 	}
 
 	@Override
-	public void save() throws GDMWriterException {
+	public void save() throws WriterException {
 		try {
 			readAll(getRootGroup());
 			netcdfDataset.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GDMWriterException(e);
+			throw new WriterException(e);
 		}
 		if (location == null || location.trim().length() == 0) {
-			throw new GDMWriterException("failed to write to null file");
+			throw new WriterException("failed to write to null file");
 		}
 		NcHdfWriter hdfWriter = new NcHdfWriter(new File(location));
 		hdfWriter.open();
@@ -233,17 +233,17 @@ public class NcDataset implements IDataset {
 	}
 
 	@Override
-	public void saveTo(String location) throws GDMWriterException {
+	public void saveTo(String location) throws WriterException {
 		try {
 			readAll(getRootGroup());
 //			netcdfDataset.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GDMWriterException(e);
+			throw new WriterException(e);
 		}
 		if (location == null || location.trim().length() == 0) {
-			throw new GDMWriterException("failed to write to null file");
+			throw new WriterException("failed to write to null file");
 		}
 		NcHdfWriter hdfWriter = new NcHdfWriter(new File(location));
 		hdfWriter.open();
@@ -252,7 +252,7 @@ public class NcDataset implements IDataset {
 	}
 	
 	@Override
-	public void save(IContainer object) throws GDMWriterException {
+	public void save(IContainer object) throws WriterException {
 		try {
 			System.out.println("save called");
 			readAll(getRootGroup());
@@ -260,10 +260,10 @@ public class NcDataset implements IDataset {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GDMWriterException(e);
+			throw new WriterException(e);
 		}
 		if (location == null || location.trim().length() == 0) {
-			throw new GDMWriterException("failed to write to null file");
+			throw new WriterException("failed to write to null file");
 		}
 		NcHdfWriter hdfWriter = new NcHdfWriter(new File(getLocation()));
 		hdfWriter.open();
@@ -285,17 +285,17 @@ public class NcDataset implements IDataset {
 
 	@Override
 	public void save(String parentPath, IAttribute attribute) 
-	throws GDMWriterException {
+	throws WriterException {
 		try {
 			readAll(getRootGroup());
 			netcdfDataset.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GDMWriterException(e);
+			throw new WriterException(e);
 		}
 		if (location == null || location.trim().length() == 0) {
-			throw new GDMWriterException("failed to write to null file");
+			throw new WriterException("failed to write to null file");
 		}
 		NcHdfWriter hdfWriter = new NcHdfWriter(new File(getLocation()));
 		hdfWriter.open();

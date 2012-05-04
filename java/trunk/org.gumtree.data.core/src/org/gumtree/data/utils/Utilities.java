@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.utils;
 
 import java.io.IOException;
@@ -22,17 +25,17 @@ import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.interfaces.IArrayIterator;
 import org.gumtree.data.interfaces.IAttribute;
+import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IDimension;
 import org.gumtree.data.interfaces.IGroup;
-import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IKey;
 
 /**
- * GDM utilities.
- * @author nxi
+ * @brief This class defines main type used by the CDMA and some conversion methods. 
+ * 
  * 
  */
 public final class Utilities {
@@ -72,11 +75,10 @@ public final class Utilities {
     };
     
     /**
-     * Check the GDM type of the object.
+     * Check the CDMA type of the object.
      * 
-     * @param signal
-     *            Object type
-     * @return GDM DataType Created on 18/06/2008
+     * @param signal Object type
+     * @return CDMA DataType 
      */
     public static ModelType checkModelType(final Object signal) {
         if (signal != null) {
@@ -109,10 +111,8 @@ public final class Utilities {
 	/**
 	 * Retrieve the object that referenced by the URI.
 	 * 
-	 * @param uri
-	 *            URI object
-	 * @param dictionaryPath
-	 *            in String type
+     * @param uri URI object
+     * @param dictionaryPath in String type
 	 * @return Object type
 	 * @throws FileAccessException
 	 *             file access error
@@ -125,12 +125,9 @@ public final class Utilities {
 	/**
 	 * Retrieve the object that referenced by the URI.
 	 * 
-	 * @param uri
-	 *            URI object
-	 * @param dictionaryPath
-	 *            in String type
-	 * @param factory
-	 * 	          data model factory
+     * @param uri URI object
+     * @param dictionaryPath in String type
+     * @param factory data model factory
 	 * @return Object type
 	 * @throws FileAccessException
 	 *             file access error
@@ -138,13 +135,13 @@ public final class Utilities {
 	public static Object findObject(URI uri, String dictionaryPath,
 			IFactory factory) throws FileAccessException {
 		if (uri.getScheme().equals("file")) {
+			// [ANSTO][Tony][2012-05-03] Do we need this to check URI is valid?
 			String path = uri.getPath();
 			if (path == null) {
 				return null;
 			}
 			IGroup rootGroup = null;
 			IDataset dataset = null;
-//			IContainer container  = null;
 			try {
 				dataset = factory.createDatasetInstance(uri);
 //				dataset.open();
@@ -154,13 +151,6 @@ public final class Utilities {
 				throw new FileAccessException(e2);
 			}
 			rootGroup = dataset.getRootGroup();
-//			container = rootGroup.findContainerByPath(path);
-//			if (rootGroup == null || !(container instanceof IGroup) ) {
-//				return null;
-//			}
-//			else {
-//				rootGroup = (IGroup) container;
-//			}
 			if (dictionaryPath != null) {
 				IDictionary dictionary = factory.createDictionary();
 				dictionary.readEntries(dictionaryPath);
@@ -191,13 +181,10 @@ public final class Utilities {
 	/**
 	 * Check the data type in the location referenced by the URI.
 	 * 
-	 * @param uri
-	 *            URI object
-	 * @param dictionaryPath
-	 *            in String type
-	 * @return GDM DataType object
+     * @param uri URI object
+     * @param dictionaryPath in String type
+     * @return CDMA DataType object
 	 * @throws FileAccessException
-	 *             Created on 18/06/2008
 	 */
 	public static ModelType checkDataType(final URI uri,
 			final String dictionaryPath) throws FileAccessException {
@@ -209,6 +196,8 @@ public final class Utilities {
 			IContainer container = null;
 			try {
 				dataset = Factory.createDatasetInstance(uri);
+				// [ANSTO][Tony][2012-05-03][TODO] Check if we need to call open explicitly
+//                dataset.open();
 			} catch (IOException e1) {
 				throw new FileAccessException(e1);
 			} catch (Exception e2) {
@@ -261,9 +250,8 @@ public final class Utilities {
 	 * Parse a string and find the value of a path. The string parameter is in a
 	 * format of 'path=pathValue'.
 	 * 
-	 * @param query
-	 *            in String type
-	 * @return String object Created on 18/06/2008
+     * @param query in String type
+     * @return String object 
 	 */
 	private static String findPath(final String query) {
 		String[] pairs = query.split("&");
@@ -277,17 +265,14 @@ public final class Utilities {
 	}
 
 	/**
-	 * Create an new Array by reshaping an Array to a new shape. The total size
-	 * of the new Array must be same as the old Array. The new Array will use a
+     * Create an new IArray by reshaping an IArray to a new shape. The total size
+     * of the new IArray must be same as the old IArray. The new IArray will use a
 	 * new storage space.
 	 * 
-	 * @param array
-	 *            GDM Array type
-	 * @param shape
-	 *            java array of integer
-	 * @return GDM Array
+     * @param array CDMA IArray type
+     * @param shape java array of integer
+     * @return CDMA IArray
 	 * @throws InvalidArrayTypeException
-	 *             Created on 18/06/2008
 	 */
 	public static IArray reshapeArray(final IArray array, final int[] shape)
 			throws InvalidArrayTypeException {
@@ -298,6 +283,7 @@ public final class Utilities {
 		if (newLength != array.getSize()) {
 			throw new InvalidArrayTypeException("the shape is invalid");
 		}
+        //[SOLEIL][clement][12/08/2011] TODO potential bug here: should be Factory.getFactory(array.getFactoryName()).createArray...
 		return Factory.createArray(array.getElementType(), shape, array
 				.getStorage());
 	}
@@ -305,16 +291,15 @@ public final class Utilities {
 	/**
 	 * Copy the array to a new array with double type storage.
 	 * 
-	 * @param array
-	 *            new Array with new storage
-	 * @return new Array Created on 15/07/2008
+     * @param array new IArray with new storage
+     * @return new IArray 
 	 */
 	public static IArray copyToDoubleArray(final IArray array) {
 		IArray doubleArray = Factory.createArray(Double.TYPE, array.getShape());
 		IArrayIterator oldIterator = array.getIterator();
 		IArrayIterator newIterator = doubleArray.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(oldIterator.getDoubleNext());
+            newIterator.next().setDoubleCurrent(oldIterator.getDoubleNext());
 		}
 		return doubleArray;
 	}
@@ -322,16 +307,15 @@ public final class Utilities {
 	/**
 	 * Copy the array to a new array with double type storage.
 	 * 
-	 * @param array
-	 *            new Array with new storage
-	 * @return new Array Created on 15/07/2008
+     * @param array new IArray with new storage
+     * @return new IArray 
 	 */
 	public static IArray copyToPositiveDoubleArray(final IArray array) {
 		IArray doubleArray = Factory.createArray(Double.TYPE, array.getShape());
 		IArrayIterator oldIterator = array.getIterator();
 		IArrayIterator newIterator = doubleArray.getIterator();
 		while (oldIterator.hasNext()) {
-			newIterator.setDoubleNext(Math.abs(oldIterator.getDoubleNext()));
+            newIterator.next().setDoubleCurrent(Math.abs(oldIterator.getDoubleNext()));
 		}
 		return doubleArray;
 	}
@@ -345,20 +329,21 @@ public final class Utilities {
 	 * @param length an int value
 	 * @throws DimensionNotSupportedException
 	 */
-	public static void copyTo(final IArray array1, final IArray array2, int length) 
-	throws DimensionNotSupportedException {
+	public static void copyTo(final IArray array1, final IArray array2,
+			int length) throws DimensionNotSupportedException {
 		IArrayIterator iterator1 = array1.getIterator();
 		IArrayIterator iterator2 = array2.getIterator();
 		if (length < 0) {
 			while (iterator1.hasNext() && iterator2.hasNext()) {
-				iterator2.setObjectNext(iterator1.getObjectNext());
+				iterator2.next().setObjectCurrent(iterator1.getObjectNext());
 			}
 		} else {
 			int id = 0;
 			while (iterator1.hasNext() && iterator2.hasNext()) {
 				if (id < length) {
-					iterator2.setObjectNext(iterator1.getObjectNext());
-					id ++;
+					iterator2.next()
+							.setObjectCurrent(iterator1.getObjectNext());
+					id++;
 				} else {
 					break;
 				}
@@ -374,7 +359,6 @@ public final class Utilities {
 	 * @param group
 	 * @param shortName
 	 * @return
-	 * Created on 21/01/2009
 	 */
 	public static String getKeyFromValue(IGroup group, String shortName){
 		// [ANSTO][Tony] Please check if the following logic works as same as before

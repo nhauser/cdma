@@ -1,13 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
+ * Copyright (c) 2012 Australian Nuclear Science and Technology Organisation,
+ * Synchrotron SOLEIL and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors: 
- *    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ *     Norman XIONG (Bragg Institute) - initial API and implementation
+ *     Clément RODRIGUEZ (SOLEIL) - initial API and implementation
+ *     Tony LAM (Bragg Institute) - implementation
  ******************************************************************************/
+
 package org.gumtree.data.interfaces;
 
 import java.io.IOException;
@@ -18,18 +21,26 @@ import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
 
 /**
- * A DataItem is a logical container for data. It has a DataType, a set of 
- * Dimensions that define its array shape, and optionally a set of Attributes.
- * @author nxi
+ * @brief The IDataItem interface defines a IContainer that carries data. 
  * 
+ * A IDataItem is a logical container for data. It has a DataType, a set of 
+ * Dimensions that define its array shape, and optionally a set of Attributes.
+ * <br>
+ * The data item is a descriptor of the underlying IArray. The former comes 
+ * with all its metadata and location in data source. It associates the data
+ * and all its contextual informations. Handling a data item doesn't mandatory
+ * mean that the whole matrix it describes has been loaded.<br>
+ * For performance concerns there is a dissociation between the descriptor and
+ * the described data.
+ * 
+ * @author nxi
  */
-public interface IDataItem extends IContainer {
+public interface IDataItem extends IContainer, Cloneable {
 
 	/**
-	 * Find an Attribute by name, ignoring the case.
+     * Find an attribute by name, ignoring the case.
 	 * 
-	 * @param name
-	 *            the name of the attribute
+     * @param name of the requested attribute
 	 * @return the attribute, or null if not found
 	 */
 	IAttribute findAttributeIgnoreCase(String name);
@@ -37,24 +48,21 @@ public interface IDataItem extends IContainer {
 	/**
 	 * Find the index of the named Dimension in this DataItem.
 	 * 
-	 * @param name
-	 *            the name of the dimension
+     * @param name of the dimension
 	 * @return the index of the named Dimension, or -1 if not found.
 	 */
 	int findDimensionIndex(String name);
 
 	/**
-	 * Create a new DataItem that is a logical slice of this DataItem, by fixing
+     * Create a new IDataItem that is a logical slice of this IDataItem, by fixing
 	 * the specified dimension at the specified index value. This reduces rank
 	 * by 1. No data is read until a read method is called on it.
 	 * 
-	 * @param dimension
-	 *            which dimension to fix
-	 * @param value
-	 *            at what index value
-	 * @return a new DataItem which is a logical slice of this DataItem.
+     * @param dimension which dimension to fix
+     * @param value at what index value
+     * @return a new IDataItem which is a logical slice of this DataItem.
 	 * @throws InvalidRangeException
-	 *             Created on 13/03/2008
+     * @deprecated use {@link IDataItem#getSlice(int, int)}
 	 */
 	IDataItem getASlice(int dimension, int value) throws InvalidRangeException;
 
@@ -63,6 +71,7 @@ public interface IDataItem extends IContainer {
 	 * 
 	 * @return GDM group object
 	 */
+	// [ANSTO][Tony][2012-05-02] Required by ANSTO code
 	@Override
 	IGroup getParentGroup();
 
@@ -71,71 +80,55 @@ public interface IDataItem extends IContainer {
 	 * 
 	 * @return GDM Group Created on 18/06/2008
 	 */
+	// [ANSTO][Tony][2012-05-02] Required by ANSTO code
 	@Override
 	IGroup getRootGroup();
 
 	/**
-	 * Read all the data for this DataItem and return a memory resident Array.
-	 * The Array has the same element type and shape as the DataItem.
-	 * <p>
-	 * If the DataItem is a member of an array of Structures, this returns only
-	 * the variable's data in the first Structure, so that the Array shape is
-	 * the same as the DataItem. To read the data in all structures, use
-	 * readAllStructures().
-	 * 
-	 * @return the requested data in a memory-resident Array.
-	 * @throws IOException
-	 *             I/O exception
-	 */
+     * Read all the data for this IDataItem and return a memory resident IArray.
+     * The IArray has the same element type and shape as the IDataItem.
+     * 
+     * @return the requested data in a memory-resident IArray.
+     * @throws IOException I/O exception
+     */
 	IArray getData() throws IOException;
 
 	/**
-	 * Read a section of the data for this DataItem and return a memory resident
-	 * Array. The Array has the same element type as the DataItem. The size of
-	 * the Array will be either smaller or equal to the DataItem.
-	 * <p>
-	 * If the DataItem is a member of an array of Structures, this returns only
-	 * the variable's data in the first Structure, so that the Array shape is
-	 * the same as the DataItem. To read the data in all structures, use
-	 * readAllStructures().
+     * Read a section of the data for this IDataItem and return a memory resident
+     * IArray. The IArray has the same element type as the DataItem. The size of
+     * the IArray will be either smaller or equal to the DataItem.
 	 * 
-	 * @param origin
-	 *            array of int
-	 * @param shape
-	 *            array of int
-	 * @return the requested data in a memory-resident Array.
-	 * @throws IOException
-	 *             I/O exception
-	 * @throws InvalidRangeException
-	 *             invalid range
+     * @param origin of the section in each dimension
+     * @param shape of the section in each dimension
+     * @return the requested data in a memory-resident IArray.
+     * @throws IOException I/O exception
+     * @throws InvalidRangeException invalid range
 	 */
-	IArray getData(int[] origin, int[] shape) throws IOException,
-			InvalidRangeException;
+    IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException;
 
 	/**
-	 * Get the description of the DataItem. Default is to use "long_name"
-	 * attribute value. If not exist, look for "description", "title", or
-	 * "standard_name" attribute value (in that order).
+     * Get the description of the DataItem. Default is to use description
+     * attribute value.
 	 * 
-	 * @return description, or null if not found.
+     * @return description string, or null if not found.
 	 */
 	String getDescription();
 
 	/**
-	 * Get the ith dimensions (if several are available return a populated corresponding list).
+     * Get all dimensions (if several are available return a populated corresponding list)
+     * of the data item, that are applied on the axis 'index'.
 	 * 
-	 * @param i
-	 *            index of the dimension.
-	 * @return requested Dimensions, or null if i is out of bounds.
+     * @param index of the dimensions
+     * @return list of requested IDimension
 	 */
-	List<IDimension> getDimensions(int i);
+    List<IDimension> getDimensions(int index);
 	
 	/**
-	 * Get the list of all dimensions used by this variable. The most slowly varying
-	 * (leftmost for Java and C programmers) dimension is first. For scalar
-	 * variables, the list is empty.
+     * Get a list of all dimensions used by this IDataItem. The most slowly varying
+     * (leftmost for Java and C programmers) dimension is first, the faster varying
+     * is the last one. For scalar item, the list is empty.
 	 * 
-	 * @return List with objects of type ucar.nc2.Dimension
+     * @return list of IDimension
 	 */
 	List<IDimension> getDimensionList();
 
@@ -147,64 +140,54 @@ public interface IDataItem extends IContainer {
 	String getDimensionsString();
 
 	/**
-	 * Get the number of bytes for one element of this DataItem. For DataItems
-	 * of primitive type, this is equal to getDataType().getSize(). DataItems of
+     * Get the number of bytes for one element of this IDataItem. For DataItems
+     * of primitive type, this is equal to getDataType().getSize(). Data items of
 	 * String type does not know their size, so what they return is undefined.
-	 * DataItems of Structure type return the total number of bytes for all the
-	 * members of one Structure, plus possibly some extra padding, depending on
-	 * the underlying format. DataItems of Sequence type return the number of
-	 * bytes of one element.
 	 * 
-	 * @return total number of bytes for the DataItem
+     * @return total number of bytes for <b>one element</b> of the IDataItem
 	 */
 	int getElementSize();
 
 	/**
-	 * display name plus the dimensions.
+     * Display name of the IDataItem, plus the dimensions.
 	 * 
 	 * @return String object
 	 */
 	String getNameAndDimensions();
 
 	/**
-	 * display name plus the dimensions.
+     * Fill the given buffer with name plus the dimensions.
 	 * 
-	 * @param buf
-	 *            StringBuffer object
-	 * @param useFullName
-	 *            true or false value
-	 * @param showDimLength
-	 *            true or false value
+     * @param buf i/o StringBuffer 
+     * @param longName display the long name
+     * @param length display the length of each dimension
 	 */
-	void getNameAndDimensions(StringBuffer buf, boolean useFullName,
-			boolean showDimLength);
+    void getNameAndDimensions(StringBuffer buf, boolean longName, boolean length);
 
 	/**
-	 * Get shape as an array of Range objects.
+     * Get shape as a list of IRange objects.
 	 * 
-	 * @return array of Ranges, one for each Dimension.
+     * @return list of IRanges, one for each Dimension.
 	 */
 	List<IRange> getRangeList();
 
 	/**
-	 * Get the number of dimensions of the DataItem.
+     * Get the number of dimensions of the IDataItem.
 	 * 
 	 * @return integer value
 	 */
 	int getRank();
 
 	/**
-	 * Create a new DataItem that is a logical subsection of this DataItem. No
+     * Create a new IDataItem that is a logical subsection of this IDataItem. No
 	 * data is read until a read method is called on it.
 	 * 
-	 * @param section
-	 *            List of type Range, with size equal to getRank(). Each Range
-	 *            corresponds to a Dimension, and specifies the section of data
-	 *            to read in that Dimension. A Range object may be null, which
+     * @param section list of IRange, with size equal to getRank(). Each Range
+     *            corresponds to a dimension, and specifies the section of data
+     *            to read in that dimension. A Range object may be null, which
 	 *            means use the entire dimension.
-	 * @return a new DataItem which is a logical section of this DataItem.
-	 * @throws InvalidRangeException
-	 *             invalid range
+     * @return a new IDataItem which is a logical section of this DataItem.
+     * @throws InvalidRangeException invalid range
 	 */
 	IDataItem getSection(List<IRange> section) throws InvalidRangeException;
 
@@ -213,26 +196,25 @@ public interface IDataItem extends IContainer {
 	 * original variable. If this is a section, will reflect the index range
 	 * relative to the original variable. If its a slice, it will have a rank
 	 * different from this variable. Otherwise it will correspond to this
-	 * DataItem's shape, ie match getRanges().
+     * IDataItem's shape, ie match getRanges().
 	 * 
 	 * @return array of Ranges, one for each Dimension.
 	 */
 	List<IRange> getSectionRanges();
 
 	/**
-	 * Get the shape: length of DataItem in each dimension.
+     * Get the shape: length of the IDataItem in each dimension.
 	 * 
-	 * @return int array whose length is the rank of this and whose values equal
-	 *         the length of that Dimension.
+     * @return int array whose length is the rank of this and values are
+     *         the dimensions length.
 	 */
 	int[] getShape();
 
 	/**
-	 * Get the total number of elements in the DataItem. If this is an unlimited
-	 * DataItem, will return the current number of elements. If this is a
-	 * Sequence, will return 0.
+     * Get the total number of elements in the IDataItem. If this is an unlimited
+     * IDataItem, will return the current number of elements.
 	 * 
-	 * @return total number of elements in the DataItem.
+     * @return total number of elements in the IDataItem.
 	 */
 	long getSize();
 
@@ -244,29 +226,27 @@ public interface IDataItem extends IContainer {
 	int getSizeToCache();
 
 	/**
-	 * Create a new DataItem that is a logical slice of this DataItem, by fixing
+     * Create a new IDataItem that is a logical slice of this IDataItem, by fixing
 	 * the specified dimension at the specified index value. This reduces rank
 	 * by 1. No data is read until a read method is called on it.
 	 * 
-	 * @param dim
-	 *            which dimension to fix
-	 * @param value
-	 *            at what index value
-	 * @return a new DataItem which is a logical slice of this DataItem.
+     * @param dim which dimension to fix
+     * @param value at what index value
+     * @return a new IDataItem which is a logical slice of this DataItem.
 	 * @throws InvalidRangeException
 	 *             invalid range
 	 */
 	IDataItem getSlice(int dim, int value) throws InvalidRangeException;
 
 	/**
-	 * Get the java class of the DataItem data.
+     * Get the class of the IDataItem's elements.
 	 * 
 	 * @return Class object
 	 */
 	Class<?> getType();
 
 	/**
-	 * Get the Unit String for the DataItem. Default is to use "units" attribute
+     * Get the unit as a string for the DataItem. Default is to use "units" attribute
 	 * value
 	 * 
 	 * @return unit string, or null if not found.
@@ -274,7 +254,7 @@ public interface IDataItem extends IContainer {
 	String getUnitsString();
 
 	/**
-	 * Does this have its data read in and cached?
+     * Does this item have its data read and cached?
 	 * 
 	 * @return true or false
 	 */
@@ -293,7 +273,7 @@ public interface IDataItem extends IContainer {
 	void invalidateCache();
 
 	/**
-	 * Will this DataItem be cached when read. Set externally, or calculated
+     * Will this IDataItem be cached when read. Set externally, or calculated
 	 * based on total size < sizeToCache.
 	 * 
 	 * @return true is caching
@@ -308,30 +288,29 @@ public interface IDataItem extends IContainer {
 	boolean isMemberOfStructure();
 
 	/**
-	 * Is this variable metadata?. Yes, if needs to be included explicitly in
-	 * NcML output.
+     * Is this variable metadata?.
 	 * 
 	 * @return true or false
 	 */
 	boolean isMetadata();
 
 	/**
-	 * Whether this is a scalar DataItem (rank == 0).
+     * Whether this is a scalar IDataItem (rank == 0).
 	 * 
 	 * @return true or false
 	 */
 	boolean isScalar();
 
 	/**
-	 * Can this variable's size grow?. This is equivalent to saying at least one
+     * Can this variable's size grow by the time?. This is equivalent to saying at least one
 	 * of its dimensions is unlimited.
 	 * 
-	 * @return boolean true iff this variable can grow
+     * @return boolean true if this IDataItem can grow
 	 */
 	boolean isUnlimited();
 
 	/**
-	 * Is this DataItem unsigned?. Only meaningful for byte, short, int, long
+     * Is this IDataItem unsigned?. Only meaningful for byte, short, int, long
 	 * types.
 	 * 
 	 * @return true or false
@@ -339,81 +318,73 @@ public interface IDataItem extends IContainer {
 	boolean isUnsigned();
 
 	/**
-	 * Get the value as a byte for a scalar DataItem. May also be
+     * Get the value as a byte for a scalar IDataItem. May also be
 	 * one-dimensional of length 1.
 	 * 
 	 * @return byte object
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	byte readScalarByte() throws IOException;
 
 	/**
-	 * Get the value as a double for a scalar DataItem. May also be
+     * Get the value as a double for a scalar IDataItem. May also be
 	 * one-dimensional of length 1.
 	 * 
 	 * @return double value
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	double readScalarDouble() throws IOException;
 
 	/**
-	 * Get the value as a float for a scalar DataItem. May also be
+     * Get the value as a float for a scalar IDataItem. May also be
 	 * one-dimensional of length 1.
 	 * 
 	 * @return float value
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	float readScalarFloat() throws IOException;
 
 	/**
-	 * Get the value as a int for a scalar DataItem. May also be one-dimensional
+     * Get the value as a int for a scalar IDataItem. May also be one-dimensional
 	 * of length 1.
 	 * 
 	 * @return integer value
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	int readScalarInt() throws IOException;
 
 	/**
-	 * Get the value as a long for a scalar DataItem. May also be
+     * Get the value as a long for a scalar IDataItem. May also be
 	 * one-dimensional of length 1.
 	 * 
 	 * @return long value
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	long readScalarLong() throws IOException;
 
 	/**
-	 * Get the value as a short for a scalar DataItem. May also be
+     * Get the value as a short for a scalar IDataItem. May also be
 	 * one-dimensional of length 1.
 	 * 
 	 * @return short value
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	short readScalarShort() throws IOException;
 
 	/**
-	 * Get the value as a String for a scalar DataItem. May also be
+     * Get the value as a String for a scalar IDataItem. May also be
 	 * one-dimensional of length 1. May also be one-dimensional of type CHAR,
 	 * which will be turned into a scalar String.
 	 * 
 	 * @return String object
-	 * @throws IOException
-	 *             if there is an IO Error
+     * @throws IOException if there is an IO Error
 	 */
 	String readScalarString() throws IOException;
 
 	/**
-	 * Remove an Attribute : uses the attribute hashCode to find it.
+     * Remove the given IAttribute: uses the attribute hashCode to find it.
 	 * 
-	 * @param a
-	 *            IAttribute object
+     * @param a IAttribute object
 	 * @return true if was found and removed
 	 */
 	boolean removeAttribute(IAttribute a);
@@ -421,13 +392,9 @@ public interface IDataItem extends IContainer {
 	/**
 	 * Set the data cache.
 	 * 
-	 * @param cacheData
-	 *            IArray object
-	 * @param isMetadata
-	 *            : synthesised data, set true if must be saved in NcML output
-	 *            (i.e. data not actually in the file).
-	 * @throws InvalidArrayTypeException
-	 *             invalid type
+     * @param cacheData IArray object to cache
+     * @param isMetadata : synthesized data, set true if must be saved (i.e. data not actually in the file).
+     * @throws InvalidArrayTypeException invalid type
 	 */
 	void setCachedData(IArray cacheData, boolean isMetadata)
 			throws InvalidArrayTypeException;
@@ -437,29 +404,14 @@ public interface IDataItem extends IContainer {
 	 * stored, once read. Normally this is set automatically based on size of
 	 * data.
 	 * 
-	 * @param caching
-	 *            set if caching.
+     * @param caching set if caching.
 	 */
 	void setCaching(boolean caching);
 
 		/**
-	 * Create a DataItem. Also must call setDataType() and setDimensions()
-	 * 
-	 * @param ncfile
-	 *            the containing NetcdfFile.
-	 * @param group
-	 *            the containing group; if null, use rootGroup
-	 * @param parentStructure
-	 *            the containing structure; may be null
-	 * @param shortName
-	 *            variable shortName.
-	 */
-
-	/**
 	 * Set the data type.
 	 * 
-	 * @param dataType
-	 *            Class object
+     * @param dataType Class object
 	 */
 	void setDataType(Class<?> dataType);
 
@@ -467,8 +419,7 @@ public interface IDataItem extends IContainer {
 	 * Set the dimensions using the dimensions names. The dimension is searched
 	 * for recursively in the parent groups.
 	 * 
-	 * @param dimString
-	 *            : whitespace separated list of dimension names, or '*' for
+     * @param dimString : whitespace separated list of dimension names, or '*' for
 	 *            Dimension.UNKNOWN.
 	 */
 	void setDimensions(String dimString);
@@ -485,54 +436,51 @@ public interface IDataItem extends IContainer {
 	 * Set the element size. Usually elementSize is determined by the dataType,
 	 * use this only for exceptional cases.
 	 * 
-	 * @param elementSize
-	 *            integer value
+     * @param elementSize integer value
 	 */
 	void setElementSize(int elementSize);
 
 	/**
 	 * Set sizeToCache.
 	 * 
-	 * @param sizeToCache
-	 *            integer value
+     * @param sizeToCache integer value
 	 */
 	void setSizeToCache(int sizeToCache);
 
 	/**
-	 * Set the units of the DataItem.
+     * Set the units of the IDataItem.
 	 * 
-	 * @param units
-	 *            String object Created on 20/03/2008
+     * @param units as a String object 
 	 */
 	void setUnitsString(String units);
 
 	/**
-	 * String representation of DataItem and its attributes.
+     * String representation of IDataItem and its attributes.
 	 * 
 	 * @return String object
 	 */
 	String toStringDebug();
 
 	/**
-	 * String representation of a DataItem and its attributes.
+     * String representation of a IDataItem and its attributes.
 	 * 
-	 * @param indent
-	 *            start each line with this much space
-	 * @param useFullName
-	 *            use full name, else use short name
-	 * @param strict
-	 *            strictly comply with ncgen syntax
-	 * @return CDL representation of the DataItem.
+     * @param indent start each line with this much space
+     * @param useFullName use full name, else use short name
+     * @param strict strictly comply with ncgen syntax
+     * @return CDL representation of the IDataItem.
+     * @deprecated [SOLEIL][clement][2012-04-18] seems to be a plug-in dependent method 
 	 */
+    //[SOLEIL][clement][2012-04-18] seems to be a plug-in dependent method maybe I'm wrong. I think we should remove it from the Core or rename it like write(...)
+	//[ANSTO][Tony][2012-05-02] This is used by NetCDF internally, may be we can remove this because none of ANSTO code is relying on this.
 	String writeCDL(String indent, boolean useFullName, boolean strict);
 	
 	/**
-	 * Clone this data item. Return a new DataItem instance but share the same
-	 * Array data storage.
+     * Clone this data item. Return a new IDataItem instance but share the same
+     * IArray data storage.
 	 * 
-	 * @return new DataItem instance
+     * @return new IDataItem instance
 	 */
 	@Override
-    IDataItem clone();
+    IDataItem clone() throws CloneNotSupportedException;
     
 }
