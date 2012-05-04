@@ -63,7 +63,7 @@ IDataset dataset = Factory.openDataset( uri );
 
 The CDMA library offers two way of accessing data.
 
-== Standard (physical) way ==
+== Standard parsing (physical) way ==
 The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it or if you need to make a GUI data browser.
 
 {{{
@@ -88,6 +88,8 @@ IDataItem a_item = a_group.getDataItem("dataitem_name");
 // Get all sub data item
 List<IDataItem> list_groups = root.getgetDataItemList();
 }}}
+
+== Using the standard dictionary mechanism ==
 
 == Using the extended dictionary mechanism ==
 
