@@ -126,7 +126,7 @@ std::string SoleilNxsFactory::getPathSeparator()
 //----------------------------------------------------------------------------
 IDataSourcePtr SoleilNxsFactory::getPluginURIDetector()
 {
-  return new SoleilNxsDataSource();
+  return new SoleilNxsDataSource(this);
 }
 
 //----------------------------------------------------------------------------
