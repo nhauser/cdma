@@ -15,4 +15,11 @@ public class NxsArrayIteratorTest extends ArrayIteratorTest {
 	@Override
 	public void test1DIntInteration() {
 	}
+	
+	@Test
+	@Ignore("Not implmeneted")
+	@Override
+	public void test1DIntSetInterator() {
+	}
+	
 }
