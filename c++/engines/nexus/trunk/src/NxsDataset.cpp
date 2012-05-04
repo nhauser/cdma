@@ -46,6 +46,8 @@ NxsDataset::NxsDataset( const yat::URI& location, IFactory *factory_ptr )
   m_phy_root.reset( new NxsGroup( this ) );
   CDMA_TRACE( "open file: " + m_location.get(yat::URI::PATH) );
   m_file_handle.reset( new NexusFile( PSZ( m_location.get(yat::URI::PATH) ) ) );
+  // Constructor of NexusFile open the file, there is no need to let it opened
+  m_file_handle->Close();
 }
 
 //---------------------------------------------------------------------------
