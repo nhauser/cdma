@@ -17,7 +17,6 @@
  * [#Optional_modules_to_customize Optional modules to customize]
    * [#Customize_navigation Customize navigation]
    * [#Customize_Extended_Dictionary_mechanism Customize Extended Dictionary mechanism]
-   * [#Path_Parameters Path Parameters]
 
 
 
@@ -553,20 +552,6 @@ As the entire Extended Dictionary mechanism is manipulated using interfaces (eve
 
 Note: it is very important to not change the way view definition XML file are loaded. Particularly to respect the view file DTD.
 
-
-[#Content back to top]
-
-== Path Parameters ==
-
-`IPathParameter` need to be defined by the plug-in. It permit to modify at runtime the value of the path. Setting a parameter aims to distinguish two nodes when one path can lead to both them.
-It is instantiated by the plug-in factory as following:
-{{{
-public IPathParamResolver createPathParamResolver(IPath path);
-}}}
-The “path” parameter is the reference path of the requested key. Indeed `ILogicalGroup` internally will search all the node that correspond to the path. And then node by node it will ask the plug-in `IPathParamResolver` to give the parameter that permit to get the current node:
-{{{
-public IPathParameter resolvePathParameter(IContainer node);
-}}}
 
 
 [#Content back to top]
