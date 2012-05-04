@@ -10,4 +10,5 @@ Require-Bundle: org.junit;bundle-version="4.8.1";visibility:=reexport,
  org.gumtree.data.core;bundle-version="2.1.0";visibility:=reexport
 Export-Package: org.gumtree.data,
  org.gumtree.data.core.tests,
- org.gumtree.data.interfaces
+ org.gumtree.data.interfaces,
+ org.gumtree.data.utils
