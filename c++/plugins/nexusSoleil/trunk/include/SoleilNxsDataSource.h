@@ -32,18 +32,23 @@ namespace cdma
 //==============================================================================
 class SoleilNxsDataSource : public IDataSource 
 {
+friend class SoleilNxsFactory;
 public:
-  SoleilNxsDataSource()  {};
   ~SoleilNxsDataSource() {};
 
   //@{ IDataSource methods ------------
 
-  bool isReadable(const yat::URI& destination) const;
-  bool isBrowsable(const yat::URI& destination) const;
-  bool isProducer(const yat::URI& destination) const;
-  bool isExperiment(const yat::URI& destination) const;
+  bool isReadable(const yat::URI& dataset_location) const;
+  bool isBrowsable(const yat::URI& dataset_location) const;
+  bool isProducer(const yat::URI& dataset_location) const;
+  bool isExperiment(const yat::URI& dataset_location) const;
   
   //@}
+
+private:
+  SoleilNxsDataSource(SoleilNxsFactory *factory_ptr): m_factory_ptr(factory_ptr) {};
+
+  SoleilNxsFactory *m_factory_ptr;
 };
 
 } //namespace CDMACore
