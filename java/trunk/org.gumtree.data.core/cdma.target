@@ -21,9 +21,4 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20110523182458/repository/"/>
 </location>
 </locations>
-<environment>
-<os>win32</os>
-<ws>win32</ws>
-<arch>x86</arch>
-</environment>
 </target>
