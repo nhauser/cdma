@@ -16,14 +16,6 @@ public class ArrayIteratorTest extends DataTestObject {
 		IArray array = getFactory().createArray(rawArray);
 		IArrayIterator iterator = array.getIterator();
 
-		// Get current should be failed
-		try {
-			iterator.getIntCurrent();
-			fail();
-		} catch (Exception e) {
-		}
-		assertFalse(iterator.hasCurrent());
-
 		assertTrue(iterator.hasNext());
 		assertEquals(2, iterator.getIntNext());
 		assertEquals(4, iterator.getIntNext());
