@@ -5,6 +5,7 @@
  * [#Setting_up_The_CDMA_library Setting up The CDMA library]
  * [#Getting_access_to_a_dataset Getting access to a dataset]
  * [#Choosing_the_access_mode Choosing the access mode]
+ * [#Reading_data Reading data]
 
 = Requirements =
 
