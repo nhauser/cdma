@@ -89,7 +89,7 @@ IDataItem a_item = a_group.getDataItem("dataitem_name");
 List<IDataItem> list_groups = root.getgetDataItemList();
 }}}
 
-== Using the dictionary mechanism ==
+== Using the extended dictionary mechanism ==
 
 The other way of accessing data uses the dictionary mechanism. It allows writing applications with no need to know something about the data organization. Thus applications using this mechanism can access data regardless the way they are stored without need to change their source code.
 
