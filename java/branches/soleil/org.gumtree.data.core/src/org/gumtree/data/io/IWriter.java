@@ -15,6 +15,8 @@ import org.gumtree.data.interfaces.IAttribute;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IGroup;
 
+/// @cond clientAPI
+
 /**
  * @brief The IWriter interface provides methods of outputting CDMA object.
  * 
@@ -271,3 +273,5 @@ public interface IWriter {
      */
     void close();
 }
+
+/// @endcond clientAPI

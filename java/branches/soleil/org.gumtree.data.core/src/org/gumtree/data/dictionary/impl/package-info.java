@@ -9,6 +9,8 @@
 //    Clement Rodriguez - initial API and implementation
 //    Norman Xiong
 // ****************************************************************************
+
+/// @cond engineAPI
 /**
  * @brief Default implementation of the Extended Dictionary mechanism
  *
@@ -18,3 +20,5 @@
  */
 
 package org.gumtree.data.dictionary.impl;
+
+/// @endcond engineAPI

@@ -9,6 +9,8 @@
 //    Rodriguez Clément (clement.rodriguez@synchrotron-soleil.fr) - initial API and implementation
 // ****************************************************************************
 
+/// @cond internal
+
 /**
  * @brief The CDMA dictionary package describes the Extended Dictionary mechanism.
  *
@@ -32,3 +34,5 @@
  * The plug-in must only implements the IPathParamResolver interface to activate the Extended Dictionary mechanism.
  */
 package org.gumtree.data.dictionary;
+
+/// @endcond internal

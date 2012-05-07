@@ -13,6 +13,8 @@ package org.gumtree.data.dictionary;
 
 import java.util.List;
 
+/// @cond internal
+
 import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.interfaces.IDataItem;
 import org.gumtree.data.interfaces.IDataset;
@@ -22,7 +24,19 @@ import org.gumtree.data.utils.Utilities.ModelType;
 
 /**
  * @brief The ILogicalGroup interface is a purely <b>virtual</b> object that regroup several data.
- * 
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * <p>
  * Its existence is correlated to the IExtendedDictionary. A standard CDMA dictionary make 
  * a link between a key and a path. Now let's imagine a dictionary with keys having a tree
@@ -162,3 +176,5 @@ public interface ILogicalGroup extends IContainer {
      */
     public IExtendedDictionary findAndReadDictionary();
 }
+
+/// @endcond internal

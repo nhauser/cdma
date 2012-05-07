@@ -11,6 +11,29 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary.impl;
 
+/// @cond clientAPI
+
+/**
+ * @brief The IPath interface defines a destination that will be interpreted by the plug-in.
+ * 
+ * A IPath is describes how to reach a specific item in the IDataset. The way that path
+ * are written is format plug-in dependent. The more often it will be a <code>String</code>
+ * with a separator between nodes that are relevant for the plug-in.
+ * <p>
+ * The String representation will only be interpreted by the plug-in. But it can be modified
+ * using some parameters to make selective choice while browsing the nodes structure of the
+ * IDataset.
+ * <p>
+ * In other cases (for the extended dictionary mechanism) it can also be a call on a plug-in 
+ * specific method. It permits to conform to standardized way of returning a data item. For instance
+ * it can be returning a stack of spectrums that are split among several nodes. 
+ * 
+ * @author rodriguez
+ * @see org.gumtree.data.interfaces.IKey
+ * @see org.gumtree.data.dictionary.IPathParameter
+ * @see org.gumtree.data.dictionary.IPathMethod
+ */
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +72,9 @@ public class Path implements IPath {
         PATH_SEPARATOR = factory.getPathSeparator();
     }
 
+    /**
+     * Returns the String representation of the path.
+     */
     @Override
     public String toString() {
         return m_pathValue;
@@ -59,26 +85,56 @@ public class Path implements IPath {
         return null;
     }
 
+    /**
+     * Get the value of the path
+     * 
+     * @return string path value
+     */
     @Override
     public String getValue() {
         return m_pathValue;
     }
 
+    /**
+     * Getter on methods that should be invoked to get data.
+     * The returned list is unmodifiable.
+     *  
+     * @return unmodifiable list of methods
+     */
     @Override
     public List<IPathMethod> getMethods() {
         return Collections.unmodifiableList(new ArrayList<IPathMethod>(m_methods));
     }
 
+    /**
+     * Set methods that should be invoked to get data.
+     * The list contains PathMethod having method and array of Object for
+     * arguments.
+     * 
+     * @param list that will be copied to keep it unmodifiable
+     * @return unmodifiable map of methods
+     */
+    @Override
     public void setMethods(List<IPathMethod> methods) {
         m_methods = methods;
     }
 
+    /**
+     * Set the value of the path in string
+     * 
+     * @param path string representation of the targeted node in a IDataset
+     */
     @Override
     public void setValue(String path) {
         m_pathOrigin = path;
         m_pathValue  = path;
     }
 
+    /**
+     * Will modify the path to make given parameters efficient.
+     * 
+     * @param parameters list of parameters to be inserted
+     */
     @Override
     public void applyParameters(List<IPathParameter> params) {
         for( IPathParameter param : params ) {
@@ -86,16 +142,29 @@ public class Path implements IPath {
         }
     }
 
+    /**
+     * Will modify the path to remove all traces of parameters 
+     * that are not defined.
+     */
     @Override
     public void removeUnsetParameters() {
         m_pathValue = m_pathValue.replaceAll( PARAM_PATTERN , "");
     }
 
+    /**
+     * Will modify the path to unset all parameters that were defined
+     */
     @Override
     public void resetParameters() {
         m_pathValue = m_pathOrigin;
     }
 
+    /**
+     * Clone the path so it keep unmodified when updated while it
+     * has an occurrence in a dictionary
+     * 
+     * @return a clone this path
+     */
     @Override
     public Object clone() {
         try {
@@ -106,6 +175,17 @@ public class Path implements IPath {
         }
     }
 
+    /**
+     * Analyze the path to reach the first undefined parameter.
+     * Return the path parameter to open the node. The parameter has 
+     * a wildcard for value (i.e: all matching nodes can be opened) 
+     * 
+     * @param param output path that will be updated with the appropriate node's
+     *           type and name until to reach the first path parameter
+     * 
+     * @return IPathParameter 
+     *        having the right type and name and a wildcard for value (empty)
+     */
     @Override
     public IPathParameter getFirstPathParameter(StringBuffer output) {
         IPathParameter result = null;
@@ -134,3 +214,5 @@ public class Path implements IPath {
     }
 
 }
+
+/// @endcond clientAPI

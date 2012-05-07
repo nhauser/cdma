@@ -14,9 +14,21 @@ package org.gumtree.data.interfaces;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.internal.IModelObject;
 
-/***
+/**
  * @brief The ISliceIterator interface permits to access easily a to a sub-part of an array.
- * 
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the engine's implementation.
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * This is a way to iterate over slices of arrays. Each iteration returns 
  * an array of dimension dim, representing the last dim dimensions of the 
  * input array. So for 3D data consisting of a set of 2D arrays, each of 

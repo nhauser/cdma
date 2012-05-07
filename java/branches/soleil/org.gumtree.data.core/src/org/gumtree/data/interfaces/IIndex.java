@@ -15,7 +15,19 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IIndex interface defines a view on a IArray.
- * 
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * The IIndex fully describes the IArray's visible part. Whatever the storage is, it defines
  * the shape of the visible part of the storage, its origin, how two consecutive
  * cells should be considered. Manages the stride and the way the parsing will be done.
@@ -296,3 +308,4 @@ public interface IIndex extends IModelObject, Cloneable {
     IIndex clone() throws CloneNotSupportedException;
 
 }
+

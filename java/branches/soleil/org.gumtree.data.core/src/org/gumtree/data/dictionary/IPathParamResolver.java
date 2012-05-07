@@ -14,6 +14,7 @@ package org.gumtree.data.dictionary;
 import org.gumtree.data.interfaces.IContainer;
 import org.gumtree.data.internal.IModelObject;
 
+/// @cond internal
 
 /**
  * @brief The IPathParamResolver interface aims to define how a plug-in interprets a IPathParameter.
@@ -40,3 +41,5 @@ public interface IPathParamResolver extends IModelObject {
      */
     IPathParameter resolvePathParameter(IContainer node);
 }
+
+/// @endcond internal

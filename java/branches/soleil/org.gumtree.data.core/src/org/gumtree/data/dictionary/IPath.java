@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.gumtree.data.internal.IModelObject;
 
+/// @cond internal
 
 /**
  * @brief The IPath interface defines a destination that will be interpreted by the plug-in.
@@ -113,3 +114,5 @@ public interface IPath extends IModelObject, Cloneable {
      */
     IPathParameter getFirstPathParameter(StringBuffer output);
 }
+
+/// @endcond internal

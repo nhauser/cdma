@@ -11,6 +11,8 @@
 // ****************************************************************************
 package org.gumtree.data.math;
 
+/// @cond internal
+
 import org.gumtree.data.Factory;
 import org.gumtree.data.IFactory;
 import org.gumtree.data.exception.DivideByZeroException;
@@ -1086,3 +1088,5 @@ public abstract class ArrayMath implements IArrayMath {
         return min;
     }
 }
+
+/// @endcond internal

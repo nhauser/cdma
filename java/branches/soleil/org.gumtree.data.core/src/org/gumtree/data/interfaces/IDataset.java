@@ -19,7 +19,19 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IDataset interface is used to handle a data source.
- * 
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * A IDataset is a physical storage of CDMA objects, it holds a reference
  * of a root group, which is the root of a tree of IGroup and IDataItem. It is
  * the entry point to access the data structure it represents.<br>

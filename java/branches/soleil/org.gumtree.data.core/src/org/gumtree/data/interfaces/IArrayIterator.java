@@ -15,7 +15,19 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IArrayIterator interface permits to run through all values of the associated IArray.
- * 
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * This interface allows the user to iterate over a IArray's values. The way the
  * IArray is traveled depends on how it has been defined.
  * <br>

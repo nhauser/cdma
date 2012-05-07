@@ -20,7 +20,19 @@ import org.gumtree.data.utils.IArrayUtils;
 
 /**
  * @brief The IArray interface manages multiple types of data.
- * 
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * A IArray can be a matrix or a single scalar it carries the underlying data
  * and provide a standardized way to access it.<br/>
  * An array has:
@@ -56,6 +68,7 @@ import org.gumtree.data.utils.IArrayUtils;
  * 
  * @author nxi
  */
+
 public interface IArray extends IModelObject {
 
     /**

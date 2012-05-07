@@ -11,6 +11,8 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary;
 
+/// @cond internal
+
 /**
  * @brief The IPathMethod interface refers to a method that should be executed to obtain the requested data.
  * 
@@ -86,3 +88,5 @@ public interface IPathMethod {
     public void isExternal(boolean external);
 
 }
+
+/// @endcond internal

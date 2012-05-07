@@ -15,10 +15,21 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IAttribute interface describes a metadata of a IContainer.
- * 
- * CDMA Attribute, with name and value. The metadata is carried by data items and groups.
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
+ * CDMA attribute, with name and value. That metadata is carried by data items and groups.
  * Those data have a name, an element type, size and can be whether an IArray or a scalar.
- * 
  * 
  * @author nxi
  */

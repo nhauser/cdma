@@ -11,6 +11,17 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary.impl;
 
+/// @cond internal
+
+/**
+ * The IClassLoader aims to provide a mechanism permitting to dynamically
+ * load a class that is needed by the plug-in. And then invoke a method belonging
+ * to that class.
+ * Sometimes data need to be processed before returning it to the CDMA interfaces.
+ * Such data will be managed by an external class in a package. The implementing
+ * IClassLoader must be able to retrieve and execute that class which is plug-in dependent.
+ */
+
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,11 +37,6 @@ import org.gumtree.data.dictionary.IContext;
 import org.gumtree.data.exception.NoResultException;
 
 public final class ExternalClassLoader extends URLClassLoader implements IClassLoader {
-    private String mVersion; // plugin implementation version
-    private String mFactory; // plugin implementation factory
-
-    private Map<String, Class<?> > mLoaded; // Class name / Class already loaded
-
     public ExternalClassLoader(String factoryName, String version) {
         super(new URL[] {} );
         mFactory = factoryName;
@@ -40,11 +46,11 @@ public final class ExternalClassLoader extends URLClassLoader implements IClassL
 
     /**
      * Execute the method that is given using it's namespace. The corresponding
-     * class will be searched, loaded and instantiated, so the method can called.
+     * class will be searched, loaded and instantiated, so the method can be called.
      * 
-     * @param methodNameSpace full namespace of the method
-     * @param source the CDMA object that has requested this invocation
-     * @param args @return List of IObject that have been created using the called method.
+     * @param methodNameSpace full namespace of the method (package + class + method name)
+     * @param context of the CDMA status while invoking the so called method
+     * @return List of IObject that have been created using the called method.
      * @throws Exception in case of any trouble
      * 
      * @note the method's namespace must be that form: my.package.if.any.MyClass.MyMethod
@@ -114,4 +120,12 @@ public final class ExternalClassLoader extends URLClassLoader implements IClassL
     public String getFactoryName() {
         return mFactory;
     }
+    
+    // private members
+    private String mVersion; // plugin implementation version
+    private String mFactory; // plugin implementation factory
+
+    private Map<String, Class<?> > mLoaded; // Class name / Class already loaded
 }
+
+/// @endcond internal

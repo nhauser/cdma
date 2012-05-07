@@ -15,6 +15,7 @@ import org.gumtree.data.exception.FileAccessException;
 import org.gumtree.data.interfaces.IDictionary;
 import org.gumtree.data.interfaces.IKey;
 
+/// @cond internal
 
 /**
  * @brief IExtendedDictionary interface is the logical representation of a IDataset.
@@ -82,3 +83,5 @@ public interface IExtendedDictionary extends IDictionary {
      */
     public String getMappingFilePath();
 }
+
+/// @endcond internal

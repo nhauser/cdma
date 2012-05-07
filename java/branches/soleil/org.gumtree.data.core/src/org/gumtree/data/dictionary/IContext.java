@@ -16,6 +16,7 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.internal.IModelObject;
 
+/// @cond internal
 
 /**
  * @brief This IContext interface is used when invoking an external method.
@@ -61,3 +62,5 @@ public interface IContext extends IModelObject {
     public Object[] getParams();
     public void     setParams(Object[] params);
 }
+
+/// @cond internal

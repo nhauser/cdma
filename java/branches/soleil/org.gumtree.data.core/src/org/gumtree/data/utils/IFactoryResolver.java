@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.utils;
 
+/// @cond internal
+
 /**
  * @brief The IFactoryResolver is used to discover factories that will be used by the CDMA.
  * 
@@ -22,3 +24,5 @@ public interface IFactoryResolver {
     public void discoverFactories(IFactoryManager manager);
 
 }
+
+/// @endcond internal

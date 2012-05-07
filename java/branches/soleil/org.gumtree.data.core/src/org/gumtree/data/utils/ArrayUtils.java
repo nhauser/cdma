@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.utils;
 
+/// @cond internal
+
 import org.gumtree.data.Factory;
 import org.gumtree.data.exception.InvalidRangeException;
 import org.gumtree.data.exception.ShapeNotMatchException;
@@ -659,3 +661,5 @@ public abstract class ArrayUtils implements IArrayUtils {
     public abstract IArrayUtils createArrayUtils(IArray array);
 
 }
+
+/// @endcond internal

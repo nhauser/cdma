@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.utils;
 
+/// @cond internal
+
 import java.util.Map;
 
 /**
@@ -31,3 +33,5 @@ public interface IFactoryManager {
     public Map<String, IFactory> getFactoryRegistry();
 
 }
+
+/// @endcond internal

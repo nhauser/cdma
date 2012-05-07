@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.internal;
 
+/// @cond internal
+
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -38,3 +40,5 @@ public class Activator implements BundleActivator {
     }
 
 }
+
+/// @endcond internal
