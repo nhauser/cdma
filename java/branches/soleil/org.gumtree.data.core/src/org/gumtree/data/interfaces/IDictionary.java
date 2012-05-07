@@ -19,14 +19,25 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IDictionary interface defines a direct association of a keyword and a path.
- * 
- * A dictionary interface for used in CDMA Standard Dictionary mechanism.
- * The IGroup model references a path with a key in String type and should list
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
+ * A dictionary interface used in CDMA Standard Dictionary mechanism.
+ * The IGroup references a path with a key in String type and should list
  * all available node in the IDataset.
  * The targeted object in the path can be either a IGroup or a IDataItem.
  * 
  * @author nxi
- * 
  */
 public interface IDictionary extends IModelObject, Cloneable {
 

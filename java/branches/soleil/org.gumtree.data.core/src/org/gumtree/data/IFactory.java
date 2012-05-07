@@ -28,6 +28,9 @@ import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.interfaces.IKey;
 import org.gumtree.data.utils.Utilities.ParameterType;
 
+/// @cond pluginAPIclientAPI
+
+
 /**
  * @brief The plug-in factory is the entry point of the CDMA plug-in.
  * 
@@ -277,3 +280,5 @@ public interface IFactory {
      */
     public IDictionary createDictionary();
 }
+
+/// @endcond pluginAPIclientAPI

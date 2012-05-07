@@ -30,6 +30,8 @@ import org.gumtree.data.interfaces.IDataset;
 import org.gumtree.data.interfaces.IGroup;
 import org.gumtree.data.io.IWriter;
 
+/// @cond clientAPI
+
 /**
  * @brief A register class for CDMA Arrays.
  * 
@@ -43,7 +45,12 @@ import org.gumtree.data.io.IWriter;
  * @version 0.9 Beta (still under construction, not fully performing yet)
  */
 public class Register {
+    public interface RegisterListener {
+        public void arrayAdded();
 
+        public void groupAdded();
+    }
+    
     private final static Map<Long, WeakReference<IArray>> ARRAY_REGISTRY = new HashMap<Long, WeakReference<IArray>>();
     private final static Map<Long, WeakReference<IGroup>> GROUP_REGISTRY = new HashMap<Long, WeakReference<IGroup>>();
 
@@ -154,12 +161,6 @@ public class Register {
             listener.groupAdded();
     }
 
-    public interface RegisterListener {
-        public void arrayAdded();
-
-        public void groupAdded();
-    }
-
     public static long getMemorySize(IArray array) {
         long size = array.getSize();
         Class<?> type = array.getElementType();
@@ -249,3 +250,5 @@ public class Register {
         return memorymbean.getHeapMemoryUsage();
     }
 }
+
+/// @encond clientAPI

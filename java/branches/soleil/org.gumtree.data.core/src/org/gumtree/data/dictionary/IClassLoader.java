@@ -13,6 +13,8 @@ package org.gumtree.data.dictionary;
 
 import org.gumtree.data.internal.IModelObject;
 
+/// @cond internal
+
 /**
  * The IClassLoader aims to provide a mechanism permitting to dynamically
  * load a class that is needed by the plug-in. And then invoke a method belonging
@@ -35,3 +37,5 @@ public interface IClassLoader extends IModelObject {
      */
     public Object invoke( String methodNameSpace, IContext context ) throws Exception;
 }
+
+/// @endcond internal

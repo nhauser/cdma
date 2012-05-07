@@ -18,7 +18,29 @@ import org.gumtree.data.internal.IModelObject;
 
 /**
  * @brief The IKey is used by group to interrogate the dictionary.
- * 
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the engine's implementation.
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/// @cond engineAPI
+
+/**
+ * @note When developing a data consider using the default implementation in the dictionary.impl package.
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond engineAPI
+
+/**
  * The key's name corresponds to an entry in the dictionary. This entry 
  * targets a path in the currently explored document. The group will open it.
  * <p>

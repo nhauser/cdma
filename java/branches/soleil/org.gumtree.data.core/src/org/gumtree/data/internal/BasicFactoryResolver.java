@@ -10,6 +10,7 @@
 // ****************************************************************************
 package org.gumtree.data.internal;
 
+/// @cond internal
 import java.util.ServiceLoader;
 
 import org.gumtree.data.IFactory;
@@ -26,3 +27,5 @@ public class BasicFactoryResolver implements IFactoryResolver {
     }
 
 }
+
+/// @endcond internal

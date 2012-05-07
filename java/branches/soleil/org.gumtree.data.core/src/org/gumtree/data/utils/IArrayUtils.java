@@ -20,7 +20,30 @@ import org.gumtree.data.interfaces.IRange;
 
 /**
  * @brief The IArrayUtils interface defines commons need of operations to be perform on a IArray.
- * 
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the engine's implementation.
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/// @cond engineAPI
+
+/**
+ * @note When developing a data consider using the default implementation.
+ * You should <b>redefine this interface implementation</b>, if you need to gain efficiency. Indeed
+ * all methods in default implementation use CDMA calls and do not directly access the storage.
+ * <p>
+ */
+
+/// @endcond engineAPI
+
+/**
  * The IArrayUtils aims to provide array's manipulation methods. Essentially 
  * shape, memory copy or section reduction operations of the array.
  */

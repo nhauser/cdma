@@ -10,8 +10,23 @@
 // ****************************************************************************
 package org.gumtree.data.internal;
 
+/// @cond internal
+
+/**
+ * @brief The IModelObject interface constraints all CDMA plug-in objects to define the plug-in they belong to.
+ * 
+ * @author rodriguez
+ *
+ */
+
 public interface IModelObject {
-
+    /**
+     * Returns the name of the factory (belonging to a plug-in) that 
+     * has instantiated this object.
+     * @return name of the factory
+     */
     String getFactoryName();
-
 }
+
+
+/// @endcond internal

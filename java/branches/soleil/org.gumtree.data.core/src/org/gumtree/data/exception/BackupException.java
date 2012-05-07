@@ -15,14 +15,9 @@ package org.gumtree.data.exception;
  */
 public class BackupException extends Exception {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 7330785160459932029L;
 
-    /**
-     * 
-     */
+
     public BackupException() {
     }
 

@@ -21,14 +21,25 @@ import org.gumtree.data.exception.SignalNotAvailableException;
 
 /**
  * @brief The IGroup interface in a IDataset forms a hierarchical tree, like directories on a disk.
- * 
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * The IGroup has a name, contains one or mode IDataItem and one or more IGroup.
  * This can have optionally a set of IAttribute objects containing its metadata.
  * <br>
  * It used to browse the dataset following its physical structure.
  * 
  * @author nxi
- * 
  */
 public interface IGroup extends IContainer {
 

@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.math;
 
+/// @cond clientAPI
+
 /**
  * The data wrapper for error propagation mathematics.
  * 
@@ -56,3 +58,5 @@ public class EData<T> {
         return variance;
     }
 }
+
+/// @endcond clientAPI

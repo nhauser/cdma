@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.utils;
 
+/// @cond internal
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
@@ -82,3 +84,5 @@ public class FactoryManager implements IFactoryManager {
     }
 
 }
+
+/// @endcond internal

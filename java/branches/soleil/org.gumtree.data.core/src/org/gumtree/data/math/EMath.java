@@ -11,16 +11,20 @@
 // ****************************************************************************
 package org.gumtree.data.math;
 
+/// @cond clientAPI
+
 import org.gumtree.data.exception.DivideByZeroException;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
 import org.gumtree.data.utils.IArrayUtils;
 
 /**
- * EMath is the Error Propagation Math Library. It acts upon GMD IArray
- * structures for data and associated variance, and carries the uncertainty
- * through IArray calculations. This library operates under the presumption of
- * independent random variables, that is, all covariance are zero.
+ * @brief The EMath  is the Error Propagation Math Librar
+ * 
+ * It acts upon GMD IArray structures for data and associated variance, 
+ * and carries the uncertainty through IArray calculations. 
+ * This library operates under the presumption of independent random 
+ * variables, that is, all covariance are zero.
  * <p>
  * The return types of the math calculation are mostly in EData type with result
  * and variance.
@@ -1349,3 +1353,6 @@ public final class EMath {
         return new EData<IArray>(result, rVariance);
     }
 }
+
+
+/// @endcond clientAPI

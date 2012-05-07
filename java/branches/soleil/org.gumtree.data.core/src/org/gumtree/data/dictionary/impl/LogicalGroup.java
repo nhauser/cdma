@@ -11,6 +11,26 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary.impl;
 
+
+/**
+ * @brief The LogicalGroup class is a purely <b>virtual</b> object that regroup several data.
+ * 
+ * <p>
+ * Its existence is correlated to the ExtendedDictionary. A standard CDMA dictionary make 
+ * a link between a key and a path. Now let's imagine a dictionary with keys having a tree
+ * structure. This structure hierarchically organized might now have a meaning regardless
+ * their physical organization. So the keys are now simple notions that can have a human
+ * friendly meaning.
+ * <p>
+ * The LogicalGroup permits to browse simply through those different levels
+ * of key. More over the key used can be filtered according to some criteria.
+ * The aim is to find a really specific node by doing a search that get narrower
+ * while iterating over queries.
+ * 
+ * @author rodriguez
+ */
+
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,10 +167,9 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
     }
 
     /**
-     * Get the dictionary belonging to the root group.
+     * Get the dictionary belonging to this ILogicalGroup.
      * 
-     * @return IDictionary
-     *            the dictionary currently applied to this group
+     * @return IDictionary the dictionary currently applied to this group
      */
     @Override
     public IExtendedDictionary getDictionary() {
@@ -161,7 +180,7 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
     }
 
     /**
-     * Set a dictionary to the root group.
+     * Set a dictionary to this ILogicalGroup.
      * 
      * @param dictionary the dictionary to set
      */
@@ -178,7 +197,13 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
     boolean isRoot() {
         return (mParent == null && mKey == null);
     }
-
+    
+    /**
+     * Find the IDataItem corresponding to the given key in the dictionary.
+     *  
+     * @param key entry of the dictionary (can carry filters)
+     * @return the first encountered IDataItem that match the key, else null
+     */
     @Override
     public IDataItem getDataItem(IKey key) {
         IDataItem item = null;
@@ -194,6 +219,13 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return item;
     }
 
+    /**
+     * Find the IDataItem corresponding to the given key in the dictionary.
+     *  
+     * @param keyPath separated entries of the dictionary (can't carry filters) 
+     * @return the first encountered IDataItem that match the key, else null
+     * @note keyPath can contain several keys concatenated with a plug-in's separator
+     */
     @Override
     public IDataItem getDataItem(String keyPath) {
         String[] keys = keyPath.split(KEY_PATH_SEPARATOR);
@@ -215,6 +247,12 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return result;
     }
 
+    /**
+     * Find all IDataItems corresponding to the given key in the dictionary.
+     *  
+     * @param key entry of the dictionary (can carry filters)
+     * @return a list of IDataItem that match the key
+     */
     @Override
     public List<IDataItem> getDataItemList(IKey key) {
         List<IDataItem> result = new ArrayList<IDataItem>();
@@ -229,6 +267,13 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return result;
     }
 
+    /**
+     * Find all IDataItems corresponding to the given path of key in the dictionary.
+     *  
+     * @param keyPath separated entries of the dictionary (can't carry filters)
+     * @return a list of IDataItem that match the key
+     * @note keyPath can contain several keys concatenated with a plug-in's separator
+     */
     @Override
     public List<IDataItem> getDataItemList(String keyPath) {
         String[] keys = keyPath.split(KEY_PATH_SEPARATOR);
@@ -248,6 +293,12 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return result;
     }
 
+    /**
+     * Find the Group corresponding to the given key in the dictionary.
+     *  
+     * @param key entry name of the dictionary
+     * @return the first encountered ILogicalGroup that matches the key, else null
+     */
     public ILogicalGroup getGroup(IKey key) {
         ILogicalGroup item = null;
 
@@ -263,6 +314,13 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return item;
     }
 
+    /**
+     * Find the Group corresponding to the given key in the dictionary.
+     *  
+     * @param keyPath separated entries of the dictionary (can't carry filters)
+     * @return the first encountered ILogicalGroup that matches the key, else null
+     * @note keyPath can contain several keys concatenated with a plug-in's separator
+     */
     @Override
     public ILogicalGroup getGroup(String keyPath) {
         String[] keys = keyPath.split(KEY_PATH_SEPARATOR);
@@ -280,6 +338,17 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return result;
     }
 
+    /**
+     * Return the list of parameters we can set on the given key that will
+     * have an occurrence in the dataset.
+     * 
+     * @param key IKey for which we want the parameters values
+     * @return List<IPathParameter> that can be directly applied on the key
+     * @note <b>EXPERIMENTAL METHOD</b> do note use/implements
+     * @note if the path that matches the key hold several different parameters 
+     * the method will return the FIRST undefined parameter. To know deeper parameters,
+     * user has to set some IPathParameter on the key and call again this method
+     */
     @Override
     public List<IPathParameter> getParameterValues(IKey key) {
         List<IPathParameter> result = new ArrayList<IPathParameter>();
@@ -313,17 +382,35 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return result;
     }
 
+    /**
+     * Get the IDataset that hold the current Group.
+     * 
+     * @return CDMA IDataset 
+     */
     @Override
     public IDataset getDataset() {
         return mDataset;
     }
 
+    /**
+     * Return the list of key that match the given model type.
+     * 
+     * @param model which kind of keys (ie: IDataItem, Group, ILogical, Attribute...)
+     * @return List of type Group; may be empty, not null.
+     */
     @Override
     public List<String> getKeyNames(ModelType model) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    /**
+     * Bind the given key with the given name, so the key can be accessed by the bind
+     * 
+     * @param bind value with which we can get the key
+     * @param key key object to be mapped by the bind value 
+     * @return the given key
+     */
     @Override
     public IKey bindKey(String bind, IKey key) {
         // TODO Auto-generated method stub
@@ -357,6 +444,11 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         new NotImplementedException().printStackTrace();
     }
 
+    /**
+     * Set the given logical group as parent of this logical group
+     * 
+     * @param group ILogicalGroup
+     */
     @Override
     public void setParent(IGroup group) {
         new NotImplementedException().printStackTrace();
@@ -389,6 +481,17 @@ public class LogicalGroup implements ILogicalGroup, Cloneable {
         return null;
     }
 
+    /**
+     * This method defines the way the IExtendedDictionary will be loaded.
+     * It must manage the do the detection and loading of the key file, 
+     * and the corresponding mapping file that belongs to the plug-in.
+     * Once the dictionary has its paths targeting both key and mapping
+     * files set, the detection work is done. It just remains the loading 
+     * of those files using the IExtendedDictionary.
+     * 
+     * @return IExtendeddictionary instance, that has already loaded keys and paths
+     * @note IExtendedDictionary.readEntries() is already implemented in the core 
+     */
     @Override
     public IExtendedDictionary findAndReadDictionary() {
         if( mDictionary == null ) {

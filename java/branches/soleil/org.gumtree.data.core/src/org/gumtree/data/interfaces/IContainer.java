@@ -18,7 +18,28 @@ import org.gumtree.data.utils.Utilities.ModelType;
 
 /**
  * @brief The IContainer interface is shared IGroup and IDataItem.
- * 
+ */
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/// @cond engineAPI
+
+/**
+ * @note When developing a data format engine do not implement this interface. It is inherited yet by IDataItem and IGroup interfaces. 
+ * <p>
+ */
+
+/// @endcond engineAPI
+
+/**
  * The IContainer contains behaviors a node, in a tree of data, should
  * respect.
  * 

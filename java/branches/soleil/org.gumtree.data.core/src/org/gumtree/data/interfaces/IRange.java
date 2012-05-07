@@ -13,6 +13,8 @@ package org.gumtree.data.interfaces;
 
 import org.gumtree.data.exception.InvalidRangeException;
 
+/// @cond engineAPI
+
 /**
  * @brief The IRange interface describes a dimension of a IIndex.
  * 
@@ -162,3 +164,5 @@ public interface IRange {
     int getFirstInInterval(int start);
 
 }
+
+/// @endcond engineAPI

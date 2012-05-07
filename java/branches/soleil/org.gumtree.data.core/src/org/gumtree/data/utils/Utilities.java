@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.utils;
 
+/// @cond clientAPI
+
 import java.io.IOException;
 import java.net.URI;
 
@@ -391,3 +393,5 @@ public final class Utilities {
 
 
 }
+
+/// @endcond clientAPI 

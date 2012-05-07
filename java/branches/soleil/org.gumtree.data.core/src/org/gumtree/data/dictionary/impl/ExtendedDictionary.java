@@ -37,11 +37,19 @@ import org.jdom.input.SAXBuilder;
 
 
 /**
- * @note This class is just a test and is not representative of how the real implementation should work.
- * Behaviors and algorithms of this class do not apply to the CDMA dictionary's behaviour!
- * @author rodriguez
- *
+ * @brief IExtendedDictionary interface is the logical representation of a IDataset.
+ * 
+ * It defines how data is logically structured and permits a standardized browsing what
+ * ever the plug-in, the data source format or its structure is.
+ * <br/>
+ * The dictionary is compound of two element a key file that defines the representation
+ * of the dataset and a mapping file that associates 
+ * Association of objects is the following:
+ * <br/> - IKey and IPath for a IDataItem, 
+ * <br/> - IKey and IExtendedDictionary for a ILogicalGroup.  
  */
+
+
 public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
     private IFactory            mFactory;     // Name of the plug-in's factory that created this object 
     private String              mExperiment;  // Experiment matching that dictionary
@@ -153,6 +161,9 @@ public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
         readMappingDictionary();
     }
 
+    /**
+     * Read all keys stored in the XML dictionary file
+     */
     @Override
     public void readEntries() throws FileAccessException {
         readEntries((String) null);
@@ -188,6 +199,11 @@ public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
         return dict;
     }
 
+    /**
+     * Get a sub part of this dictionary that corresponds to a key.
+     * @param IKey object
+     * @return IExtendedDictionary matching the key
+     */
     @Override
     public ExtendedDictionary getDictionary(IKey key) {
         String keyID = mKeyMap.get(key);
@@ -200,16 +216,36 @@ public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
         return subDict;
     }
 
+    /**
+     * Get the version number (in 3 digits default implementation) that is plug-in
+     * dependent. This version corresponds of the dictionary defining the path. It  
+     * permits to distinguish various generation of IDataset for a same institutes.
+     * Moreover it's required to select the right class when using a IClassLoader
+     * invocation.
+     * 
+     * @return the string representation of the plug-in's version number
+     */
     @Override
     public String getVersionNum() {
         return mVersion;
     }
 
+    /**
+     * Get the view name matching this dictionary
+     * 
+     * @return the name of the experimental view
+     */
     @Override
     public String getView() {
         return mExperiment;
     }
 
+    /**
+     * Get the plug-in implementation of a IClassLoader so invocations of external
+     * code are made possible.
+     * 
+     * @return the plug-in's class loader
+     */
     @Override
     public ExternalClassLoader getClassLoader() {
         if( mClassLoader == null ) {
@@ -228,11 +264,21 @@ public final class ExtendedDictionary implements IExtendedDictionary, Cloneable{
         return mFactory.getName();
     }
 
+    /**
+     * Return the path to reach the key dictionary file
+     * 
+     * @return the path of the dictionary key file
+     */
     @Override
     public String getKeyFilePath() {
         return mKeyFile;
     }
 
+    /**
+     * Return the path to reach the mapping dictionary file
+     * 
+     * @return the path of the plug-in's dictionary mapping file
+     */
     @Override
     public String getMappingFilePath() {
         return mMapFile;

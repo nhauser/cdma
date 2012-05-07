@@ -11,9 +11,10 @@
 // ****************************************************************************
 package org.gumtree.data.dictionary;
 
+/// @cond internal
+
 import org.gumtree.data.internal.IModelObject;
 import org.gumtree.data.utils.Utilities.ParameterType;
-
 
 /**
  * @brief The IPathParameter interface is used to make a selective choice when browsing a IDataset.
@@ -88,4 +89,4 @@ public interface IPathParameter extends IModelObject, Cloneable {
     public IPathParameter clone();
 }
 
-
+/// @endcond internal

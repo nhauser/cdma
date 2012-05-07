@@ -10,8 +10,9 @@
 //******************************************************************************
 package org.gumtree.data;
 
-import java.nio.ByteBuffer;
+/// @cond internal
 
+import java.nio.ByteBuffer;
 /**
  * Data types for IArray.
  * 
@@ -263,3 +264,5 @@ public enum DataType {
     }
 
 }
+
+/// @endcond internal

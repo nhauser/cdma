@@ -19,8 +19,20 @@ import org.gumtree.data.exception.InvalidArrayTypeException;
 import org.gumtree.data.exception.InvalidRangeException;
 
 /**
- * @brief The IDataItem interface defines a IContainer that carries data. 
- * 
+ * @brief The IDataItem interface defines a IContainer that carries data.
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
  * A IDataItem is a logical container for data. It has a DataType, a set of 
  * Dimensions that define its array shape, and optionally a set of Attributes.
  * <br>

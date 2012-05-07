@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.math;
 
+/// @cond clientAPI
+
 import org.gumtree.data.exception.DivideByZeroException;
 import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.interfaces.IArray;
@@ -376,3 +378,5 @@ public final class GMath {
     }
 
 }
+
+/// @endcond clientAPI

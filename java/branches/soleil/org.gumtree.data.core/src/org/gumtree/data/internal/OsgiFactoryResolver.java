@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.gumtree.data.internal;
 
+/// @cond internal
+
 import org.gumtree.data.IFactory;
 import org.gumtree.data.utils.IFactoryManager;
 import org.gumtree.data.utils.IFactoryResolver;
@@ -35,3 +37,5 @@ public class OsgiFactoryResolver implements IFactoryResolver {
     }
 
 }
+
+/// @endcond internal

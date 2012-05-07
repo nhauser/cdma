@@ -14,6 +14,8 @@ import java.net.URI;
 
 import org.gumtree.data.internal.IModelObject;
 
+/// @cond pluginAPIclientAPI
+
 /**
  * @brief IDatasource is used by the main Factory to detect plug-in compatibility.
  * 
@@ -79,3 +81,5 @@ public interface IDatasource extends IModelObject
      */
     boolean isExperiment( URI target );
 }
+
+/// @endcond pluginAPIclientAPI

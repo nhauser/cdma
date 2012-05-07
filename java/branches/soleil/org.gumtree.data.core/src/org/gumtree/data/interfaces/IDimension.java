@@ -15,9 +15,24 @@ import org.gumtree.data.exception.ShapeNotMatchException;
 import org.gumtree.data.internal.IModelObject;
 
 /**
- * A Dimension is used to define the array shape of a DataItem. It may be shared
- * among DataItems, which provides a simple yet powerful way of associating
- * DataItems.
+ * @brief The IDimension interface is used to describe values of an axis of a data item's array.
+ */ 
+
+/// @cond pluginAPI
+
+/**
+ * @note When developing a plug-in consider using the data format engine's implementation. 
+ * You should <b>redefine this interface implementation</b>, only in case of <b>very specific needs.</b>
+ * <p>
+ */
+
+/// @endcond pluginAPI
+
+/**
+ * A dimension is used to define the array axis values for a data item. The shape of an array
+ * can be due, for example, to a motor movement the dimension will describe its position along that axis.
+ * It may be shared among data items, which provides a simple yet powerful way of associating
+ * data items.
  * 
  * @author nxi
  * 
