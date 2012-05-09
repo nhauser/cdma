@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GumTree Data Core
+Bundle-SymbolicName: org.gumtree.data.CDMA.Core
+Bundle-Version: 3.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.gumtree.data,
+ org.gumtree.data.dictionary,
+ org.gumtree.data.dictionary.impl,
+ org.gumtree.data.exception,
+ org.gumtree.data.interfaces,
+ org.gumtree.data.io,
+ org.gumtree.data.math,
+ org.gumtree.data.utils
+Import-Package: org.jdom;resolution:=optional,
+ org.jdom.input;resolution:=optional,
+ org.osgi.framework;resolution:=optional
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.gumtree.data.internal.Activator
+Eclipse-BundleShape: jar
