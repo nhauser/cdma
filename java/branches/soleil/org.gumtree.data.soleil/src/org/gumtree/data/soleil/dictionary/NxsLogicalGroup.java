@@ -40,7 +40,7 @@ public class NxsLogicalGroup extends LogicalGroup {
 
             keyFile = Factory.getKeyDictionaryPath();
             mapFile = Factory.getMappingDictionaryFolder( factory ) + NxsDictionary.detectDictionaryFile( (NxsDataset) getDataset() );
-            dictionary = new ExtendedDictionary( NxsFactory.getInstance(), keyFile, mapFile );
+            dictionary = new ExtendedDictionary( factory, keyFile, mapFile );
             dictionary.readEntries();
         } catch (FileAccessException e) {
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<\n"+keyFile +"\n" + mapFile + ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<\n");
