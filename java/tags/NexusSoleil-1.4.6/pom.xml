@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
             <groupId>org.gumtree.data.CDMA</groupId>
-            <artifactId>nexus</artifactId>
+            <artifactId>jnexus</artifactId>
             <version>0.0.4</version>
         </dependency>
     </dependencies>
