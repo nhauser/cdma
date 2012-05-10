@@ -1,0 +1,16 @@
+#summary JAVA API reference guide.
+
+= API Reference guide =
+
+The API reference is generated with DOxygen from the CDMA source code. It is split in 3 parts:
+
+For client application developers:
+[http://cdma.googlecode.com/svn/java/branches/soleil/doc/clientAPI/html/index.html Client reference API]
+
+For data format engines developers:
+[http://cdma.googlecode.com/svn/java/branches/soleil/doc/engineAPI/html/index.html Engine reference API]
+
+For plug-ins developpers:
+[http://cdma.googlecode.com/svn/java/branches/soleil/doc/pluginAPI/html/index.html Plug-ins reference API]
+
+The current documentation is related to the version 3.1.0 which is Soleil's development branch.
