@@ -11,6 +11,7 @@ import org.gumtree.data.interfaces.IIndex;
 import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.utils.IArrayUtils;
+import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
 
@@ -18,7 +19,7 @@ import fr.soleil.nexus.DataItem;
 public final class NexusArray implements IArray {
     private IIndex    mIndex;        // IIndex corresponding to this IArray (dimension sizes defining the viewable part of the array)
     private Object    mData;         // It's an array of values
-    private boolean    mIsRawArray;   // True if the stored array has a rank of 1 (independently of its shape)
+    private boolean   mIsRawArray;   // True if the stored array has a rank of 1 (independently of its shape)
     private boolean   mIsDirty;      // Is the array synchronized with the handled file
     private DataItem  mN4TDataItem;  // IArray of dataitem that are used to store the storage backing
     private int[]     mShape;        // Shape of the array (dimension sizes of the storage backing)
@@ -67,12 +68,17 @@ public final class NexusArray implements IArray {
 
     public NexusArray(String factoryName, DataItem ds) {
 	mFactory     = factoryName;
-	mIndex       = new NexusIndex(mFactory, ds);
 	mData        = null;
 	mShape       = ds.getSize();
 	mIsRawArray  = ds.isSingleRawArray();
 	mIsDirty     = false;
 	mN4TDataItem = ds;
+	if( ds.getType() == NexusFile.NX_CHAR ) {
+	    mIndex   = new NexusIndex(mFactory, new int[] {1});
+	}
+	else {
+	    mIndex   = new NexusIndex(mFactory, ds);
+	}
     }
 
     // ---------------------------------------------------------
@@ -622,7 +628,12 @@ public final class NexusArray implements IArray {
     private Object getData() {
 	Object result = mData;
 	if( result == null && mN4TDataItem != null ) {
-	    result = mN4TDataItem.getData(((NexusIndex) mIndex).getProjectionOrigin(), ((NexusIndex) mIndex).getProjectionShape());
+	    if( mN4TDataItem.getType() == NexusFile.NX_CHAR ) {
+		result = mN4TDataItem.getData();
+	    }
+	    else {
+		result = mN4TDataItem.getData(((NexusIndex) mIndex).getProjectionOrigin(), ((NexusIndex) mIndex).getProjectionShape());
+	    }
 	}
 	return result;
     }
@@ -706,44 +717,3 @@ public final class NexusArray implements IArray {
 
     }
 }
-/*
-@SuppressWarnings("unused")
-  private <T> T get(IIndex index, T output) {
-     Object oCurObj = null;
-     NexusIndex idx = null;
-     if( index instanceof NexusIndex ) {
-       idx = (NexusIndex) index;
-     }
-     else {
-       idx = new NexusIndex(mFactory, index.getShape(), new int[index.getRank()], index.getShape());
-       idx.set(index.getCurrentCounter());
-     }
-
-     Object oData = getData();
-
-     // If it's a string then no array 
-     if( output instanceof String )
-     {
-       output = (T) oData;
-     }
-     // If it's a scalar value then we return it
-     else if( ! oData.getClass().isArray() )
-     {
-       output = (T) oData;
-     }
-     // If it's a single raw array, then we compute indexes to have the corresponding cell number
-     else if( output instanceof Object ) {
-       int lPos = (int) idx.currentElement();
-       Object data = java.lang.reflect.Array.get(oData, lPos);
-         output = (T) data;
-     }
-     else
-       //if( mIsRawArray )
-     {
-       int lPos = (int) idx.currentElement();
-         output = ((T[]) oData)[lPos];
-     }
-
-     return output;
- }
- */

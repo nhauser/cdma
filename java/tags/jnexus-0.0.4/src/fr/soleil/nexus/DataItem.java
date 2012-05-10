@@ -33,8 +33,8 @@ public class DataItem implements Cloneable
     private String    mNodeName;  // DataItem 's node name
     private boolean   mSingleRaw; // Is the data stored in memory a single raw
     private PathData  mPath;      // Path were the DataItem has been READ (not used when writing)
-    private int     mPrevSlabStart;
-    private int     mPrevSlabLength;
+    private int       mPrevSlabStart;
+    private int       mPrevSlabLength;
     private SoftReference<Object>  mPrevSlab;
 
     private HashMap<String, Data<?> >  mAttribs;  // Map containing all node's attributes having name as key associated to value
