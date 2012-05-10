@@ -507,37 +507,37 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public byte readScalarByte() throws IOException {
-        return ((byte[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarByte();
     }
 
     @Override
     public double readScalarDouble() throws IOException {
-        return ((double[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarDouble();
     }
 
     @Override
     public float readScalarFloat() throws IOException {
-        return ((float[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarFloat();
     }
 
     @Override
     public int readScalarInt() throws IOException {
-        return ((int[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarInt();
     }
 
     @Override
     public long readScalarLong() throws IOException {
-        return ((long[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarLong();
     }
 
     @Override
     public short readScalarShort() throws IOException {
-        return ((short[]) mDataItems[0].getData().getStorage())[0];
+        return mDataItems[0].readScalarShort();
     }
 
     @Override
     public String readScalarString() throws IOException {
-        return (String) mDataItems[0].readScalarString();
+        return mDataItems[0].readScalarString();
     }
 
     @Override

@@ -134,7 +134,7 @@ public class NexusFileReader extends NexusFileBrowser {
 	dsData.setNodeName(getCurrentRealPath().getDataItemName());
 	dsData.setPath(getCurrentRealPath().clone());
 	dsData.isSingleRawArray(m_bResultAsSingleRaw);
-
+	
 	// Initialize DataItem's attributes
 	getDataItemAttribute(dsData);
 
@@ -149,14 +149,15 @@ public class NexusFileReader extends NexusFileBrowser {
 	int[] length = { 1 };
 	int[] iStart;
 
-	if (iRank < 0)
+	if (iRank < 0) {
 	    iRank = iDataInf[0];
-	if (iRank > iDataInf[0])
+	}
+	if (iRank > iDataInf[0]) {
 	    throw new NexusException(
 		    "Requested DataItem rank is too high: requested rank "
 			    + iRank + " available of the DataItem is "
 			    + iDataInf[0]);
-
+	}
 	iStart = new int[iRank];
 	for (int iDim = (iDataInf[0] - iRank); iDim < iDataInf[0]; iDim++) {
 	    iStart[(iDim + iRank) - iDataInf[0]] = 0;
