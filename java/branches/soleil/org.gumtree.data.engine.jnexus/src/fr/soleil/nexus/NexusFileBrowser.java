@@ -696,7 +696,6 @@ public class NexusFileBrowser extends NexusFileInstance {
 	// Get all its direct descendants
 	TreeMap<String, String> hmNodeMap = listGroupChild();
 	nnNodes = new ArrayList<NexusNode>(hmNodeMap.size());
-	int index = 0;
 
 	// Parse children
 	Entry<String, String> entry;
@@ -708,7 +707,6 @@ public class NexusFileBrowser extends NexusFileInstance {
 	    boolean bRealGroup = !(sNodeClass.equals("SDS") || sNodeClass
 		    .equals("NXtechnical_data"));
 	    nnNodes.add(new NexusNode(sNodeName, sNodeClass, bRealGroup));
-	    index++;
 	}
 
 	return nnNodes;

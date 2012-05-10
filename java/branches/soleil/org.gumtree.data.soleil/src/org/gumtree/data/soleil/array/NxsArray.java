@@ -14,6 +14,7 @@ import org.gumtree.data.interfaces.ISliceIterator;
 import org.gumtree.data.math.IArrayMath;
 import org.gumtree.data.soleil.NxsFactory;
 import org.gumtree.data.utils.IArrayUtils;
+import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
 
@@ -227,13 +228,23 @@ public final class NxsArray implements IArray {
             Long nbMatrixCells  = matrixIndex.getSize() == 0 ? 1 : matrixIndex.getSize();
             Long nbStorageCells = mIndex.getIndexStorage().getSize();
 
-            int[] shape = { nbMatrixCells.intValue(), nbStorageCells.intValue() };
+            int[] shape = new int[] { nbMatrixCells.intValue(), nbStorageCells.intValue() };
             result = java.lang.reflect.Array.newInstance(getElementType(), shape);
-
-            for( int i = 0; i < nbMatrixCells; i++ ) {
-                java.lang.reflect.Array.set(result, i, mArrays[(int) matrixIndex.currentElement()].getStorage());
-                NexusArrayIterator.incrementIndex(matrixIndex);
+            
+            if( mArrays[0].getElementType().equals(String.class) ) {
+                for( int i = 0; i < nbMatrixCells; i++ ) {
+                    java.lang.reflect.Array.set(result, i, new String[] { (String) mArrays[(int) matrixIndex.currentElement()].getStorage() } );
+                    NexusArrayIterator.incrementIndex(matrixIndex);
+                }
             }
+            else {
+                for( int i = 0; i < nbMatrixCells; i++ ) {
+                    java.lang.reflect.Array.set(result, i, mArrays[(int) matrixIndex.currentElement()].getStorage() );
+                    NexusArrayIterator.incrementIndex(matrixIndex);
+                }
+            }
+
+
         }
 
         return result;
