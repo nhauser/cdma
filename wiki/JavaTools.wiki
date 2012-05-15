@@ -5,15 +5,21 @@
 The CDMA Utilities project aims to provide some tools to ease development of CDMA projects. It can use directly the API, give utilities for plug-in development, plug-in deployment or for the client side.
 
 It is compound of the following categories:
-  * client API
-  * deployment
-  * configuration
-  * performance
+  * [Client_API client API]
+  * [Deployment deployment]
+  * [Configuration configuration]
+  * [Performance performance]
 
 
-= Details =
+= Client API =
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
   * Headings, paragraphs, and lists
   * Automatic links to other wiki pages
+
+= Deployment =
+
+= Configuration =
+
+= Performance =
