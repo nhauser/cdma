@@ -75,7 +75,7 @@ Now we can ask the configuration to deliver it's parameters. *The configuration 
   String model = conf.getParameter("MODEL", dataset);
 }}}
 
-Note: getParameter method returns String, so a boolean is returns "true" or "false".
+Note: getParameter method returns String, so a boolean parameter should return "true" or "false".
 
 == Criteria section ==
 
