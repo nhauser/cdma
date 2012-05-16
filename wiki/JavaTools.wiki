@@ -73,6 +73,9 @@ Each parameter is named and its value is whether the result of simple processing
       <parameter name="BEAMLINE">
         <value type="name" target="/{NXentry}/{NXinstrument}" />
       </parameter>
+      <parameter name="IMAGES">
+        <value type="exist" target="/{NXentry}/images{NXdata}" value="true"/>
+      </parameter>
       <parameter name="MODEL">
         <value type="value" target="/{NXentry}/acquisition_model" />
       </parameter>
@@ -86,11 +89,17 @@ Each parameter is named and its value is whether the result of simple processing
 
 
 The available types (_type_ attribute) of evaluation for a parameter are the following:
- * exist returns true if the targeted path exists
+ * exist returns true if the targeted path exists according the attribute _value_ that is true or false
  * name returns the name of the targeted item
  * value returns the content of the targeted item
  * constant returns the value of the _constant_ attribute
- * equal returns true if the content of the target is equal to _constant_ attribute's value
+ * equal returns true if the content of the target is equal to _constant_ attribute's value according the attribute _value_ that is true or false
+
+The above example is compound of 4 parameters:
+ * _BEAMLINE_ returns the name of the node "/{NXentry}/{NXinstrument}" in the data source
+ * _IMAGES_ returns true if the node "/{NXentry}/images{NXdata}" exists
+ * _MODEL_ returns the value contained in the node "/{NXentry}/acquisition_model"
+ * _MAPPING_ returns string that is "scanserver"
 
 
 === Global section ===
