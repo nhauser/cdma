@@ -10,17 +10,17 @@ It is compound of the following categories:
   * [#Configuration configuration package]
   * [#Performance performance package]
 
-----
+
 = Client API =
-
-
 ----
+
+
 = Deployment =
-
-
 ----
-= Configuration =
 
+
+= Configuration =
+----
 The _configuration_ package *should be used only when developing a plug-in*. It aims to provide a centralized and flexible mechanism of configuring a plug-in. It permits for a particular dataset to define some values. They can be constant or determined by the content of the dataset. A plug-in can have several different configurations according its datasets. 
 
 For example two different datasets from a same institute can have different data models. It's the case at Soleil: data are not stored the same way according the beamline they come from. So the configuration mechanism is used to determine which mapping file is relevant for a particular data source file.
@@ -153,8 +153,8 @@ In the _resources_ folder of the project is provided:
   * An empty XML configuration file the user should copy and edit
 
 
-----
 = Performance =
+----
 
 The performance package is compound of objects that should be used while developing to reach good performances:
  * _CubeData_ is an object that pre-fetch loading of portions of an array
