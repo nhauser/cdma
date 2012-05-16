@@ -91,7 +91,7 @@ The available types (_type_ attribute) of evaluation for a parameter are the fol
  * value returns the content of the targeted item
  * constant returns the value of the _constant_ attribute
  * equal returns true if the content of the target is equal to _constant_ attribute's value
- * not_equal returns true if the content of the target is not equal to _constant_ attribute's value
+
 
 === Global section ===
 
