@@ -29,9 +29,46 @@ The _ConfigManager_ retrieves which _ConfigDataset_ is associated to a particula
 
 == Configuration file ==
 
-The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _configuration_file.dtd_ , that is provided in the _resources_
+The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _configuration_file.dtd_, that is provided in the _resources_.
+
+The XML file can store as many configurations as requested by the plug-in. Configurations are tested sequentially to determine which one should be applied. Each configuration (markup _dataset_model_) can be cut in 3 sections:
+ * criteria that permits to determine if that configuration fits the dataset
+ * parameters that permits to resolve dynamically parameters by analysing the data file
+ * plugin that are named constant 
+
+=== Criteria section ===
+
+The criteria section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: *each test must be validated*.
+
+{
+  <dataset_model name="sample_config">
+    <criteria>
+      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if equal="scanserver" target="/{NXentry}/acquisition_model" />
+    </criteria>
+    ...
+  </dataset_model>
+}
+
+The _target_ attribute corresponds to a path in the data source that *will be only interpreted by the plug-in*.
+
+Each test must have a target attribute so the mechanism can know what to test. Possible type of tests in the criteria section:
+ * _exist_ attribute having for value _true_ or _false_
+ * _equal_ attribute having a string value that the content of the target path must be equal to
+ * _not_equal_ attribute having a string value that the content of the target path must not be equal to
+
+
+
+=== Parameters section ===
+
+=== Global section ===
+
+The global section is applied to all configurations but it can be override if needed by a particular one. All parameters here are named constants.
 
 == How to use ==
 
+{
+
+}
 
 = Performance =
