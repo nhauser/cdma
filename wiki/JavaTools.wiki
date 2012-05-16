@@ -160,6 +160,7 @@ The performance package is compound of objects that should be used while develop
  * _CubeData_ is an object that pre-fetch loading of portions of an array
  * _Benchmarker_ is a object that gives simple runtime informations on an executed section code
 
+
 == CubeData class ==
 
 The CubeData class is a tool based on the CDMA API. It aims to slice a given IArray and to load data by packet. It facilitates the access to a particular slice of the array.
@@ -170,23 +171,20 @@ The new IArray will correspond to latest dimension of the whole array (i.e. fast
 
 The aim is to load data with an optimized size whatever the requested array size is and to reduce number of access to the data source.
 
-For example: instead of loading 1 spectrum 300 times, it will permit to load 30 spectrum 10 times, whereas the user ask 300 spectrum.
-
-
-Example: we have a data item that is a 2 scan of images and we want to process each image
+Example: we have a data item that is a 2 scan of spectrums and we want to process each spectrum
 
 {{{
   // Get the array: 2D scan of images (so a matrix of rank 4)
-  IArray images = item.getData();
+  IArray spectrums = item.getData();
 
   // define the length on X and Y of scan
-  int x = images.getShape()[0];
-  int y = images.getShape()[1];
+  int x = spectrums.getShape()[0];
+  int y = spectrums.getShape()[1];
 
-  // Initialize the cube with the IArray and the required slice rank
-  CubeData cube = new CubeData(array, 2);
+  // Initialize the cube with the IArray and the required slice rank (1 for spectrum)
+  CubeData cube = new CubeData(spectrums, 1);
 
-  IArray image;
+  IArray spectrum;
 
   // Parse the entire 2D stack
   for( int i = 0; i < x; i++ )
@@ -194,9 +192,9 @@ Example: we have a data item that is a 2 scan of images and we want to process e
     for( int j = 0; j < y; j++ )
     {
       // Get the image at position {i, j}
-      image = cube.getData( i, j);
+      spectrum = cube.getData( i, j);
 
-      // process the image
+      // process the spectrum
       ...
     }
   }
