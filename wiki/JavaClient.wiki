@@ -7,6 +7,8 @@
  * [#Choosing_the_access_mode Choosing the access mode]
  * [#Reading_data Reading data]
 
+
+----
 = Requirements =
 
 == Mandatory ==
@@ -27,6 +29,7 @@ To use the Extended Dictionary mechanism, two things are required:
 [http://cdma.googlecode.com/svn/wiki/images/java_deploy_folder.png]
 
 
+----
 = Setting up The CDMA library =
 
 CDMA classes are accessible through the core packages. The main class a Java client uses is {{{org.gumtree.data.Factory}}}. This is the entry point for using the CDMA, it is a singleton static object. It will be used to instantiate a plug-in.
@@ -59,6 +62,8 @@ IDataset dataset = Factory.openDataset( uri );
 
 }}}
 
+
+----
 = Choosing the access mode =
 
 The CDMA library offers two way of accessing data.
@@ -113,6 +118,8 @@ ILogicalGroup root = dataset.getLogicalRoot();
 IDataItem a_item = root.getDataItem("a_key_name");
 }}}
 
+
+----
 = Reading data =
 
 Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through IArray objects. An array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
