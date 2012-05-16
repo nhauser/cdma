@@ -40,7 +40,7 @@ The XML file can store as many configurations as requested by the plug-in. Confi
 
 The criteria section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: *each test must be validated*.
 
-{
+{{{
   <dataset_model name="sample_config">
     <criteria>
       <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1" />
@@ -48,7 +48,7 @@ The criteria section is a composition of some tests (_if_ markup) to succeed so 
     </criteria>
     ...
   </dataset_model>
-}
+}}}
 
 The _target_ attribute corresponds to a path in the data source that *will be only interpreted by the plug-in*.
 
