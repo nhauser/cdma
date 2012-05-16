@@ -38,7 +38,7 @@ The XML file can store as many configurations as requested by the plug-in. Confi
 
 === Criteria section ===
 
-The criteria section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: *each test must be validated*.
+The _criteria_ section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: *each test must be validated*.
 
 {{{
   <dataset_model name="sample_config">
@@ -57,9 +57,41 @@ Each test must have a target attribute so the mechanism can know what to test. P
  * _equal_ attribute having a string value that the content of the target path must be equal to
  * _not_equal_ attribute having a string value that the content of the target path must not be equal to
 
-
+The above sample code shows a configuration that will be applied only if the dataset respect the following:
+ * a node exists in the path defined by "/{NXentry}/scan_data{NXdata}/time_1"
+ * the content of the path "/{NXentry}/acquisition_model" is equal to "scanserver"
 
 === Parameters section ===
+
+The _parameters_ section is compound of several parameter (_parameter_ markup) that are resolved at run-tine by analysing the data source.
+Each parameter is named and its value is whether the result of simple processing or a constant.
+
+{{{
+  <dataset_model name="sample_config">
+    ...
+    <parameters>
+      <parameter name="BEAMLINE">
+        <value type="name" target="/{NXentry}/{NXinstrument}" />
+      </parameter>
+      <parameter name="MODEL">
+        <value type="value" target="/{NXentry}/acquisition_model" />
+      </parameter>
+      <parameter name="MAPPING">
+        <value type="constant" value="scanserver" />
+      </parameter>
+    </parameters>
+    ...
+  </dataset_model>
+}}}
+
+
+The available types (_type_ attribute) of evaluation for a parameter are the following:
+ * exist returns true if the targeted path exists
+ * name returns the name of the targeted item
+ * value returns the content of the targeted item
+ * constant returns the value of the _constant_ attribute
+ * equal returns true if the content of the target is equal to _constant_ attribute's value
+ * not_equal returns true if the content of the target is not equal to _constant_ attribute's value
 
 === Global section ===
 
@@ -67,8 +99,8 @@ The global section is applied to all configurations but it can be override if ne
 
 == How to use ==
 
-{
+{{{
 
-}
+}}}
 
 = Performance =
