@@ -10,11 +10,15 @@ It is compound of the following categories:
   * [#Configuration configuration]
   * [#Performance performance]
 
-
+----
 = Client API =
 
+
+----
 = Deployment =
 
+
+----
 = Configuration =
 
 The _configuration_ package *should be used only when developing a plug-in*. It aims to provide a centralized and flexible mechanism of configuring a plug-in. Indeed a plug-in can have several different configurations according its datasets. 
@@ -73,7 +77,7 @@ Now we can ask the configuration to deliver it's parameters. *The configuration 
 
 Note: getParameter method returns String, so a boolean is returns "true" or "false".
 
-=== Criteria section ===
+== Criteria section ==
 
 The _criteria_ section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: *each test must be validated*.
 
@@ -99,7 +103,7 @@ The above sample code shows a configuration that will be applied only if the dat
  * the content of the path "/{NXentry}/acquisition_model" is equal to "scanserver"
 
 
-=== Parameters section ===
+== Parameters section ==
 
 The _parameters_ section is compound of several parameter (_parameter_ markup) that are resolved at run-tine by analysing the data source.
 Each parameter is named and its value is whether the result of simple processing or a constant.
@@ -140,9 +144,9 @@ The above example is compound of 4 parameters:
  * _MAPPING_ returns string that is "scanserver"
 
 
-=== Global section ===
+== Global section ==
 
 The global section is applied to all configurations but it can be override if needed by a particular one. All parameters here are named constants.
 
-
+----
 = Performance =
