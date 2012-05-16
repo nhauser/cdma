@@ -7,8 +7,8 @@ The CDMA Utilities project aims to provide some tools to ease development of CDM
 It is compound of the following categories:
   * [#Client_API client API]
   * [#Deployment deployment]
-  * [#Configuration configuration]
-  * [#Performance performance]
+  * [#Configuration configuration package]
+  * [#Performance performance package]
 
 ----
 = Client API =
@@ -148,5 +148,37 @@ The above example is compound of 4 parameters:
 
 The global section is applied to all configurations but it can be override if needed by a particular one. All parameters here are named constants.
 
+== Resources folder ==
+
+In the _resources_ folder of the project is provided:
+  * The DTD file a configuration should refer to and respect
+  * An empty XML configuration file the user should copy and edit
+
+
 ----
 = Performance =
+
+The performance package is compound of objects that should be used while developing to reach good performances:
+ * _CubeData_ is an object that pre-fetch loading of portions of an array
+ * _Benchmarker_ is a object that gives simple runtime informations on an executed section code
+
+== CubeData class ==
+
+
+== Benchmarker class ==
+
+The benchmarker class is a static singleton and a thread safe timer. Each section of code that is being watched is named and can be easily identified. It allows thread code reentrance and multiple calls.
+
+When printed it gives the following informations for each section:
+ * execution time for that section
+ * number of execution
+ * number of reentrant thread at a same time
+
+Usage:
+
+{{{
+   
+
+   
+
+}}}
