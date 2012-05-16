@@ -13,13 +13,25 @@ It is compound of the following categories:
 
 = Client API =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
-
 = Deployment =
 
 = Configuration =
+
+The _configuration_ package *should be used only when developing a plug-in*. It aims to provide a centralized and flexible mechanism of configuring a plug-in. Indeed a plug-in can have several different configurations according its datasets. 
+
+For example two different datasets from a same institute can have different data models. It's the case at Soleil: data are not stored the same way according the beamline they come from.
+
+It permits for a particular dataset to define some values. They can be constant or determined by the content of the dataset.
+
+The _ConfigDataset_ is used to resolve parameters according a data source. For example it can be getting a parameter called 'OptimalBufferSize' for a specific data source, or a parameter 'DataModelName' that should permits describing a particular mapping file to use. A parameter that is what ever the plug-in needs, at run-time, constantly defined or dynamically determined.
+
+The _ConfigManager_ retrieves which _ConfigDataset_ is associated to a particular dataset. It can manage several configurations at a same time.
+
+== Configuration file ==
+
+The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _configuration_file.dtd_ , that is provided in the _resources_
+
+== How to use ==
+
 
 = Performance =
