@@ -182,3 +182,24 @@ Usage:
    
 
 }}}
+
+Label timers are cumulative. When used in a threaded context, it doesn't manage context switch. It means that if a _start_ timer is done and the context switches it will continue running until the _stop_ more exactly until the context switches back. So times when used in multithread cases could not be the real spent time of the process duration.
+
+At the end of the process when asked, it displays the following:
+{{{
+Displaying structure: displaying nodes: 4.77 s               nb calls: 2254      max thread: 6      
+Displaying structure: listing nodes: 25.762 s                nb calls: 2254      max thread: 10     
+Displaying structure: method process: 30.062 s               nb calls: 1127      max thread: 37     
+File close: 0.195 s                                          nb calls: 14374     max thread: 10     
+File open: 12.135 s                                          nb calls: 14374     max thread: 10 
+}}}
+
+The first above example was executed using 15 simultaneous threads, below the same process executed sequentially (i.e only one thread):
+
+{{{
+Displaying structure: displaying nodes: 0.155 s              nb calls: 2254      max thread: 1      
+Displaying structure: listing nodes: 13.834 s                nb calls: 2254      max thread: 1      
+Displaying structure: method process: 14.028 s               nb calls: 1127      max thread: 5      
+File close: 0.23 s                                           nb calls: 15940     max thread: 14     
+File open: 6.691 s                                           nb calls: 14456     max thread: 1      
+}}}
