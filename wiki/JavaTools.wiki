@@ -21,11 +21,9 @@ It is compound of the following categories:
 ----
 = Configuration =
 
-The _configuration_ package *should be used only when developing a plug-in*. It aims to provide a centralized and flexible mechanism of configuring a plug-in. Indeed a plug-in can have several different configurations according its datasets. 
+The _configuration_ package *should be used only when developing a plug-in*. It aims to provide a centralized and flexible mechanism of configuring a plug-in. It permits for a particular dataset to define some values. They can be constant or determined by the content of the dataset. A plug-in can have several different configurations according its datasets. 
 
-For example two different datasets from a same institute can have different data models. It's the case at Soleil: data are not stored the same way according the beamline they come from.
-
-It permits for a particular dataset to define some values. They can be constant or determined by the content of the dataset.
+For example two different datasets from a same institute can have different data models. It's the case at Soleil: data are not stored the same way according the beamline they come from. So the configuration mechanism is used to determine which mapping file is relevant for a particular data source file.
 
 The _ConfigDataset_ is used to resolve parameters according a data source. For example it can be getting a parameter called 'OptimalBufferSize' for a specific data source, or a parameter 'DataModelName' that should permits describing a particular mapping file to use. A parameter that is what ever the plug-in needs, at run-time, constantly defined or dynamically determined.
 
@@ -163,6 +161,46 @@ The performance package is compound of objects that should be used while develop
  * _Benchmarker_ is a object that gives simple runtime informations on an executed section code
 
 == CubeData class ==
+
+The CubeData class is a tool based on the CDMA API. It aims to slice a given IArray and to load data by packet. It facilitates the access to a particular slice of the array.
+
+Constructed with a IArray and an integer that correspond to the wanted slice's rank. It will use that rank to construct a new IArray that is a portion of the first one.
+
+The new IArray will correspond to latest dimension of the whole array (i.e. fastest varying dimensions) starting at the given position. As IArray should load data at the query, the CubeData will ask to have access to the underlying data according a buffer size. 
+
+The aim is to load data with an optimized size whatever the requested array size is and to reduce number of access to the data source.
+
+For example: instead of loading 1 spectrum 300 times, it will permit to load 30 spectrum 10 times, whereas the user ask 300 spectrum.
+
+
+Example: we have a data item that is a 2 scan of images and we want to process each image
+
+{{{
+  // Get the array: 2D scan of images (so a matrix of rank 4)
+  IArray images = item.getData();
+
+  // define the length on X and Y of scan
+  int x = images.getShape()[0];
+  int y = images.getShape()[1];
+
+  // Initialize the cube with the IArray and the required slice rank
+  CubeData cube = new CubeData(array, 2);
+
+  IArray image;
+
+  // Parse the entire 2D stack
+  for( int i = 0; i < x; i++ )
+  {
+    for( int j = 0; j < y; j++ )
+    {
+      // Get the image at position {i, j}
+      image = cube.getData( i, j);
+
+      // process the image
+      ...
+    }
+  }
+}}}
 
 
 == Benchmarker class ==
