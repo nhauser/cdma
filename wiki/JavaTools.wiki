@@ -27,6 +27,7 @@ The _ConfigDataset_ is used to resolve parameters according a data source. For e
 
 The _ConfigManager_ retrieves which _ConfigDataset_ is associated to a particular dataset. It can manage several configurations at a same time.
 
+
 == Configuration file ==
 
 The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _configuration_file.dtd_, that is provided in the _resources_.
@@ -34,7 +35,43 @@ The configuration is stored in a *XML file* that must be deployed in the plug-in
 The XML file can store as many configurations as requested by the plug-in. Configurations are tested sequentially to determine which one should be applied. Each configuration (markup _dataset_model_) can be cut in 3 sections:
  * criteria that permits to determine if that configuration fits the dataset
  * parameters that permits to resolve dynamically parameters by analysing the data file
- * plugin that are named constant 
+ * plugin that contains named constant 
+
+
+== Usage ==
+
+The configuration mechanism is for plug-in internal uses only. It shouldn't be exposed to higher application. The CDMA API doesn't give such methods.
+
+In a first step the _ConfigManager_ must be initialized by the user with its plug-in and the name the of the config file to be loaded:
+
+{{{
+  // Let's define the configuration file name
+  String fileName = "plugin_conf_file.xml";
+
+  // Instantiate the plug-in factory
+  IFactory pluginFactory = new MyPluginFactory();
+
+  // Get the ConfigManager it is a singleton
+  ConfigManager manager = ConfigManager.getInstance( pluginFactory, fileName );
+}}}
+
+
+Therefore, all available configurations are loaded, it remains to associate the current _dataset_ (IDataset implementation) of the plug-in to the right configuration:
+
+{{{
+  // Get the configuration that matches the given dataset
+  ConfigDataset conf = manager.getConfig( dataset );
+}}}
+
+Now we can ask the configuration to deliver it's parameters. *The configuration isn't bind to a dataset* (i.e: a configuration can match several datasets that won't have similar dynamic parameters). So it's mandatory to remind a configuration the dataset it should use:
+
+{{{
+  // Ask for beamline and datamodel parameters
+  String beamline = conf.getParameter("BEAMLINE", dataset);
+  String model = conf.getParameter("MODEL", dataset);
+}}}
+
+Note: getParameter method returns String, so a boolean is returns "true" or "false".
 
 === Criteria section ===
 
@@ -61,6 +98,7 @@ The above sample code shows a configuration that will be applied only if the dat
  * a node exists in the path defined by "/{NXentry}/scan_data{NXdata}/time_1"
  * the content of the path "/{NXentry}/acquisition_model" is equal to "scanserver"
 
+
 === Parameters section ===
 
 The _parameters_ section is compound of several parameter (_parameter_ markup) that are resolved at run-tine by analysing the data source.
@@ -74,7 +112,7 @@ Each parameter is named and its value is whether the result of simple processing
         <value type="name" target="/{NXentry}/{NXinstrument}" />
       </parameter>
       <parameter name="IMAGES">
-        <value type="exist" target="/{NXentry}/images{NXdata}" value="true"/>
+        <value type="exist" target="/{NXentry}/images{NXdata}" value="false"/>
       </parameter>
       <parameter name="MODEL">
         <value type="value" target="/{NXentry}/acquisition_model" />
@@ -97,7 +135,7 @@ The available types (_type_ attribute) of evaluation for a parameter are the fol
 
 The above example is compound of 4 parameters:
  * _BEAMLINE_ returns the name of the node "/{NXentry}/{NXinstrument}" in the data source
- * _IMAGES_ returns true if the node "/{NXentry}/images{NXdata}" exists
+ * _IMAGES_ returns true if the node "/{NXentry}/images{NXdata}" does not exist
  * _MODEL_ returns the value contained in the node "/{NXentry}/acquisition_model"
  * _MAPPING_ returns string that is "scanserver"
 
@@ -106,10 +144,5 @@ The above example is compound of 4 parameters:
 
 The global section is applied to all configurations but it can be override if needed by a particular one. All parameters here are named constants.
 
-== How to use ==
-
-{{{
-
-}}}
 
 = Performance =
