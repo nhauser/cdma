@@ -12,5 +12,5 @@
 		<relativePath>../org.gumtree.data.parent</relativePath>
 	</parent>
 	
-	<name>GumTree Data Core Tests Bundle</name>
+	<name>Gumtree Data Core Tests Bundle</name>
 </project>

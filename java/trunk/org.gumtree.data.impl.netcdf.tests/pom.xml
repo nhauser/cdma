@@ -12,5 +12,5 @@
 		<relativePath>../org.gumtree.data.parent</relativePath>
 	</parent>
 
-	<name>GumTree Data NetCDF Implementation Tests Fragment</name>
+	<name>Gumtree Data NetCDF Implementation Tests Fragment</name>
 </project>
