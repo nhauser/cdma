@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GumTree Data NetCDF Implementation Tests
+Bundle-Name: Gumtree Data NetCDF Implementation Tests
 Bundle-SymbolicName: org.gumtree.data.impl.netcdf.tests
 Bundle-Version: 3.0.0.qualifier
 Fragment-Host: org.gumtree.data.impl.netcdf;bundle-version="3.0.0"
