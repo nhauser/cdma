@@ -104,7 +104,8 @@ The above sample code shows a configuration that will be applied only if the dat
 == Parameters section ==
 
 The _parameters_ section is compound of several parameter (_parameter_ markup) that are resolved at run-tine by analysing the data source.
-Each parameter is named and its value is whether the result of simple processing or a constant.
+Each parameter is named and its value is whether the result of simple processing or a constant. 
+Below is an example, of the dynamic parameters section (using a NeXus based plug-in):
 
 {{{
   <dataset_model name="sample_config">
