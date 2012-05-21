@@ -132,8 +132,9 @@ The available types (_type_ attribute) of evaluation for a parameter are the fol
  * exist returns true if the targeted path exists according the attribute _value_ that is true or false
  * name returns the name of the targeted item
  * value returns the content of the targeted item
- * constant returns the value of the _constant_ attribute
- * equal returns true if the content of the target is equal to _constant_ attribute's value according the attribute _value_ that is true or false
+ * constant returns the value of the _value_ attribute
+ * equal returns true if the content of the target is equal to the attribute _value_
+ * not_equal returns true if the content of the target is not equal to the attribute _value_
 
 The above example is compound of 4 parameters:
  * _BEAMLINE_ returns the name of the node "/{NXentry}/{NXinstrument}" in the data source
