@@ -122,6 +122,9 @@ Each parameter is named and its value is whether the result of simple processing
       <parameter name="MAPPING">
         <value type="constant" constant="scanserver" />
       </parameter>
+      <parameter name="VALID_ENERGY">
+        <value type="equal" target="/{NXentry}/{NXinstrument}/{NXmonochromator}/energy" constant="400" test="false" />
+      </parameter>
     </parameters>
     ...
   </dataset_model>
@@ -135,11 +138,12 @@ The available types (_type_ attribute) of evaluation for a parameter are the fol
  * constant returns the value of the _constant_ attribute's value
  * equal returns true if the content of the target is equal to the attribute _constant_ attribute's value according the attribute _test_ value that is true or false
 
-The above example is compound of 4 parameters:
+The above example is compound of 5 dynamic parameters:
  * _BEAMLINE_ returns the name of the node "/{NXentry}/{NXinstrument}" in the data source
  * _IMAGES_ returns true if the node "/{NXentry}/images{NXdata}" does not exist
  * _MODEL_ returns the value contained in the node "/{NXentry}/acquisition_model"
  * _MAPPING_ returns string that is "scanserver"
+ * _VALID_ENERGY_ returns true if the node "/{NXentry}/{NXinstrument}/{NXmonochromator}/energy" do not have 400 for value
 
 
 == Global section ==
