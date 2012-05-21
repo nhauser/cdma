@@ -114,13 +114,13 @@ Each parameter is named and its value is whether the result of simple processing
         <value type="name" target="/{NXentry}/{NXinstrument}" />
       </parameter>
       <parameter name="IMAGES">
-        <value type="exist" target="/{NXentry}/images{NXdata}" value="false"/>
+        <value type="exist" target="/{NXentry}/images{NXdata}" test="false"/>
       </parameter>
       <parameter name="MODEL">
         <value type="value" target="/{NXentry}/acquisition_model" />
       </parameter>
       <parameter name="MAPPING">
-        <value type="constant" value="scanserver" />
+        <value type="constant" constant="scanserver" />
       </parameter>
     </parameters>
     ...
