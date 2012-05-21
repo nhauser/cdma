@@ -36,6 +36,8 @@ This Java implementation uses several modules:
  * [#Engines engines libraries]
  * [#Plug-ins data plug-ins]
 
+In addition some [JavaTools tools are provided too].
+
 == Core ==
 
 The core library contains:
