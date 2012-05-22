@@ -174,9 +174,9 @@
 			<url>http://download.eclipse.org/releases/indigo</url>
 		</repository>
 		<repository>
-			<id>eclipse_orbit</id>
+			<id>gumtree_bundles</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20110523182458/repository</url>
+			<url>http://dist.codehaus.org/gumtree/sites/bundles</url>
 		</repository>
 		<repository>
 			<id>codehaus.snapshots</id>
