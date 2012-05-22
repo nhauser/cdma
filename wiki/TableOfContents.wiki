@@ -37,3 +37,4 @@
      * [JavaPlugIns Java]
      * [CppPlugIns C++]
  * [Developers Corner]
+   * [Proposal_1 Eugen's proposal]
