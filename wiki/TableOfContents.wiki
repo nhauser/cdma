@@ -36,5 +36,5 @@
    * [PlugIns Plug-ins]
      * [JavaPlugIns Java]
      * [CppPlugIns C++]
- * [Developers Corner]
-   * [Proposal_1 Eugen's proposal]
+ * [Discussion Developers Corner]
+   * [Discussion1 Eugen's proposal]
