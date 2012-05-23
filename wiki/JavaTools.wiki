@@ -17,7 +17,42 @@ It is compound of the following categories:
 
 = Deployment =
 ----
+The deployment part is managed by a single class: _org.gumtree.data.util.*CDMATool*_
 
+The main goal of this class is to help CDMA application developpers to manage their dictionaries. For example, with this class, you can ensure always using the right dictionnary folder, and copy your dictionnary from project ressources to dictionnary folder.
+
+Here is a use case example:
+{{{
+// Setup dictionnary folder
+cdmaTool = new CDMATool(myDictionnaryFolderPath);
+// Set current dictionnary to application dictionnary
+cdmaTool.switchDictionary(myDictionnaryView);
+// Create dictionnary if it does not already exist
+if (!CDMATool.hasDictionary()) {
+    try {
+        CDMATool.createDictionary(getClass().getResource(myPackageUsingSlashAsSeparator + myDictionnaryView).openStream());
+    }
+    catch (IOException e) {
+        // It should not happen, but you can log this exception
+    }
+}
+// You can then use your dictionnary as you wish
+}}}
+To avoid concurrent modifications of dictionnary folder, or to avoid crashes of not thread safe plugins, you should use _org.gumtree.data.util.*AccessController*_, which is just a  shared Semaphore
+
+In which case, your code should look like:
+{{{
+cdmaTool = new CDMATool(myDictionnaryFolderPath);
+AccessController.takeAccess(); // grab Semaphore
+cdmaTool.switchDictionary(myDictionnaryView);
+[...]
+IDataset reader = factory.createDatasetInstance(_myURI_);
+reader.open();
+ILogicalGroup logicalRoot = reader.getLogicalRoot();
+[...] // use your dictionnary as you want
+reader.close();
+AccessController.releaseAccess(); // release Semaphore
+}}}
 
 = Configuration =
 ----
