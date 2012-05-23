@@ -11,7 +11,7 @@
 
   <groupId>org.gumtree.data.CDMA</groupId>
   <artifactId>CDMAUtilities</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
 
   <name>CDMA Utilities</name>
   <description>
