@@ -17,7 +17,7 @@ Thus, the components of an engine reading `SPEC` files would reside below `cdma:
 
 = Packaging = 
 
-The success of a project not only depends on how well the code works but also on how easy it is to get it installed. In other words installation packages should be provided for those operating system platforms we want to support. Packaging is already a tedious job with well designed code but it can become a real pain if the developers of the software did not spend  a minute on how their software will be installed on a system.
+The success of a project not only depends on how well the code works but also on how easy it is to get it installed. In other words installation packages should be provided for those operating system platforms we want to support. Packaging is already a tedious job with well designed code but it can become a real pain if the developers of the software did not spend  a minute on thinking how their software will be installed on a system.
 It is thus a good idea to configure the build system in a way that makes life for package-maintainers as easy as possible.  
 
 == Installation directories ==
