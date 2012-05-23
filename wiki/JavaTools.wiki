@@ -38,7 +38,7 @@ if (!CDMATool.hasDictionary()) {
 }
 // You can then use your dictionnary as you wish
 }}}
-To avoid concurrent modifications of dictionnary folder, or to avoid crashes of not thread safe plugins, you should the shared Semaphore: _org.gumtree.data.util.*AccessController*_
+To avoid concurrent modifications of dictionnary folder, or to avoid crashes of not thread safe plugins, you should use the shared Semaphore: _org.gumtree.data.util.*AccessController*_
 
 In which case, your code should look like:
 {{{
