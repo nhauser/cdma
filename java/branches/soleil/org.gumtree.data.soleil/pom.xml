@@ -10,7 +10,7 @@
 
     <groupId>org.gumtree.data.CDMA</groupId>
     <artifactId>NexusSoleil</artifactId>
-    <version>1.4.6-SNAPSHOT</version>
+    <version>1.4.7-SNAPSHOT</version>
     <name>CDMA NeXus Soleil Plugin</name>
 
     <description>
