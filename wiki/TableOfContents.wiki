@@ -37,4 +37,4 @@
      * [JavaPlugIns Java]
      * [CppPlugIns C++]
  * [Discussion Developers Corner]
-   * [Discussion1 Eugen's proposal]
+   * [Namespace]
