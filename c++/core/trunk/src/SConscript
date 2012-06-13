@@ -12,7 +12,7 @@ coresrc.extend(Glob("dictionary/*.cpp"))
 coresrc.extend(Glob("math/*.cpp"))
 coresrc.extend(Glob("utils/*.cpp"))
 
-core_env.Append(LIBS=["yat"])
+core_env.Append(LIBS=["yat","xml2"])
 
 #build the shared library
 libcore_shared = core_env.SharedLibrary(core_env["LIBNAME"]+"tmp",coresrc)
