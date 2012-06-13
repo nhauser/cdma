@@ -3,7 +3,9 @@
 *Content*
  * [#Introduction Introduction]
  * [#The_data_model The data model]
- * [#The_plug-in_mechanism The plug-in mechanism]
+ * [#Accessing_the_data Accessing the data ]
+   * [#The_engines_mechanism The engines mechanism]
+   * [#The_plug-in_mechanism The plug-ins mechanism]
  * [#The_dictionary_mechanism The dictionary mechanism]
 
 = Introduction =
@@ -39,12 +41,30 @@ Many data container will fit well such an organization, for example:
  * CIF files fit this model with data blocks and data items
  * A control system like Tango fit this model too if we consider a tango data base as a a CDMA dataset, a device as a CDMA group and an device attribute as a CDMA data item.
 
-= The plug-in mechanism =
+= Accessing the data =
 ----
 
-Using the CDMA library, data analysis developer don't have to care about data file format. Accessing data is done by a plug-in mechanism. Institutes producing data have to develop the plug-ins able to offering access to their data through the CDMA.
+Using the CDMA library, the data analysis developers don't have to care about data file format. The data access is done by a dual mechanism involving data format engines and plug-ins.
+Actually, there are two things to consider when offering a generic data access mechanism:
+- raw data access
+- data organization
 
-Client applications developers don't have to care about existing plug-in while developing data analysis applications. The CDMA is able to automatically detect which plug-in to use accordingly to a data set.
+The raw data access is only related to a data format. It allows to read (or write) data items stored in specific files for a particular format (spec, tif, NeXus/hdf, ...)
+
+The data organization depends of the way an institute had decided to store data. For example Soleil can decide, for one specific beamline, to split the experimental data from each acquisition into a set of NeXus files; this set of files represent a so called 'dataset', from the cdma point of view. Desy may also use NeXus/hdf as physical data format but (surely) choosing another way of organize data.
+
+Client applications only have to deal with plug-ins because each plug-in must be based on one (or more) data format engine.
+
+== The engines mechanism ==
+A data format engine is a library giving raw access to the data for a specific physical data format. This is done through the implementation of the cdma interface in order to offer an unified way of accessing data regardless the format.
+Engines are not directly used by client applications, but plug-ins (see below) use engines in order to allowing client applications to access the data.
+
+== The plug-ins mechanism ==
+When a data analysis developer uses the CDMA library, he don't has to care about data file format. The data is accessed through a plug-ins mechanism.
+The CDMA library is also able to automatically choose the correct plug-in according to the dataset that the user want to read.
+
+The institutes who produce data have to develop the plug-ins able to offering access to their data through the CDMA.
+Each plug-in should be based on one (or more) data format engines. The plug-ins developers should focus only on data organization and the dictionary methods (see [#Keywords_mapping Keywords mapping] sub-section below) they must implement.
 
 Also this mechanism allows an user to open files acquired in different institutes, in the same session.
 
@@ -102,7 +122,7 @@ a mapping definition may looks like this:
 </data-def>
 }}}
 
-In the example above, the _beamline_energy_ keyword refer to a _wavelength_ data item following by a _call_ tag. The CDMA provide a mechanism allowing on the fly data transformation if the stored data does not match keyword definition.
+In most case (I guess) each keyword will be mapped to a data item through its path in the physical file structure. But in some cases it's not possible. In the example above, the _beamline_energy_ keyword refer to a _wavelength_ data item following by a _call_ tag. The CDMA provide a mechanism, called _*dictionary methods*_, allowing on the fly data transformation if the stored data does not match keyword definition.
 
 == Responsibilities ==
 Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.
