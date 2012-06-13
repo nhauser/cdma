@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.gumtree.data.util.performance.Benchmarker;
-
 import fr.soleil.nexus.NexusNode.NameCollator;
 
 public class BufferNode {

@@ -3,8 +3,6 @@ package fr.soleil.nexus;
 import java.text.Collator;
 import java.util.Comparator;
 
-import org.gumtree.data.util.performance.Benchmarker;
-
 public class NexusNode implements Cloneable {
     // Private definitions
     private static final String CLASS_SEPARATOR_START  = "<";
