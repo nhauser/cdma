@@ -113,7 +113,6 @@ public class NexusFileInstance {
 
     protected void openFile(String sFilePath, int iAccessMode) throws NexusException {
         boolean openFile = false;
-        Benchmarker.start("N4T: open file");
         // Try to open file
         m_sFilePath = sFilePath;
         g_mutex.lock();
@@ -154,7 +153,6 @@ public class NexusFileInstance {
             g_mutex.unlock();
             throw e;
         }
-        Benchmarker.stop("N4T: open file");
     }
 
     private void open(String sFilePath, int iAccessMode) throws NexusException {
@@ -182,7 +180,6 @@ public class NexusFileInstance {
      * it again.
      */
     public void closeFile() throws NexusException {
-        Benchmarker.start("N4T: close file");
         try {
             if (m_nfFile != null) {
                 m_nfFile.close();
@@ -212,7 +209,6 @@ public class NexusFileInstance {
 
             g_mutex.unlock();
         }
-        Benchmarker.start("N4T: close file");
     }
 
     // ---------------------------------------------------------

@@ -95,7 +95,6 @@ public class BufferNode {
      * class for the current path
      */
     protected Collection<NexusNode> getNodeInPath(PathNexus path) {
-        Benchmarker.start("method getNodeInPath");
         Integer value = m_hPathUsageWeigth.get(path.toString());
         if (value == null) {
             value = 1;
@@ -108,11 +107,9 @@ public class BufferNode {
         
         if( m_tNodeInPath.containsKey(path.toString()) ) {
             Collection<NexusNode> result = m_tNodeInPath.get(path.toString()).values();
-            Benchmarker.stop("method getNodeInPath");
             return result;
         }
         else {
-            Benchmarker.stop("method getNodeInPath");
             return null;
         }
     }

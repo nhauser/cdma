@@ -152,7 +152,6 @@ public class NexusFileBrowser extends NexusFileInstance {
      *            The path string
      */
     public void openPath(PathNexus pnPath) throws NexusException {
-        Benchmarker.start("N4T: method open path");
         if (!pnPath.isRelative())
             closeAll();
 
@@ -177,7 +176,6 @@ public class NexusFileBrowser extends NexusFileInstance {
                 throw new NexusException("Path invalid path in file: " + pnPath.toString() + "\nfailed at: " + m_pVirtualPath.toString());
             }
         }
-        Benchmarker.stop("N4T: method open path");
     }
 
     /**
@@ -663,29 +661,8 @@ public class NexusFileBrowser extends NexusFileInstance {
      * @throws NexusException
      */
     public ArrayList<NexusNode> listChildren() throws NexusException {
-        Benchmarker.start("N4T: method listChildren");
-
         ArrayList<NexusNode> nodes = new ArrayList<NexusNode>();
         nodes.addAll(listGroupChild());
-/*        ArrayList<NexusNode> nnNodes;
-        String sNodeName;
-        String sNodeClass;
-
-        // Get all its direct descendants
-        TreeMap<String, String> hmNodeMap = listGroupChild();
-        nnNodes = new ArrayList<NexusNode>(hmNodeMap.size());
-
-        // Parse children
-        Entry<String, String> entry;
-        for (Iterator<Entry<String, String>> iter = hmNodeMap.entrySet().iterator(); iter.hasNext();) {
-            entry = iter.next();
-            sNodeName = entry.getKey();
-            sNodeClass = entry.getValue();
-            boolean bRealGroup = !(sNodeClass.equals("SDS") || sNodeClass.equals("NXtechnical_data"));
-            nnNodes.add(new NexusNode(sNodeName, sNodeClass, bRealGroup));
-        }
-        */
-        Benchmarker.stop("N4T: method listChildren");
         return nodes;
     }
 
@@ -829,7 +806,6 @@ public class NexusFileBrowser extends NexusFileInstance {
      */
     @SuppressWarnings("unchecked")
     private ArrayList<NexusNode> listGroupChild() throws NexusException {
-        Benchmarker.start("listGroupChild");
         if (!isListGroupChildUpToDate()) {
             // Case we are in a DataItem
             if (m_pRealPath.getGroupsName() == null) {

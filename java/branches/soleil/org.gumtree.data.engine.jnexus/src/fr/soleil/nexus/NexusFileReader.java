@@ -329,7 +329,6 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     protected DataItem getDataItem(int[] iStartPos, int[] iShape) throws NexusException {
-        Benchmarker.start("getDataItem");
         DataItem dsData = readDataInfo();
 
         NexusNode nnNode = getCurrentRealPath().getCurrentNode();
@@ -376,7 +375,6 @@ public class NexusFileReader extends NexusFileBrowser {
             dsData.setData(new SoftReference<Object>(oOutput));
         }
         dsData.isSingleRawArray(m_bResultAsSingleRaw);
-        Benchmarker.stop("getDataItem");
         return dsData;
     }
 
