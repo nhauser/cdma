@@ -28,7 +28,7 @@ Let us assume that all the code will be installed below a directory provided by 
 || `PREFIX/include/cdma/engines/<enginenname>` || header files for the engine `enginename` ||
 || `PREFIX/include/cdma/plugins/<pluginname>` || header files for the plugin `pluginname` || 
 || `PREFIX/lib` || shared objects of the core library and shared objects of the engines || 
-|| `PREFIX/lib/plugins` || loadable modules for plugins ||
+|| `PREFIX/lib/cdma/plugins` || loadable modules for plugins ||
 || `/etc/cdma` || runtime configuration on Linux. On Windows systems this might be done via the Windows registry or the information can be stored below `PREFIX/etc/cdma` ||
 It is important to note that this scheme must not only be kept by CDMA core developers but also by each engine or plugin developer. 
 
