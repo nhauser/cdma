@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.gumtree.data.util.performance.Benchmarker;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 

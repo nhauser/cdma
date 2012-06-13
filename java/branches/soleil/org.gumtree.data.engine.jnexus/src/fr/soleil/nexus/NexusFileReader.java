@@ -7,7 +7,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.gumtree.data.util.performance.Benchmarker;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;

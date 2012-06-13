@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import ncsa.hdf.hdflib.HDFNativeData;
 
-import org.gumtree.data.util.performance.Benchmarker;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NXlink;
 import org.nexusformat.NexusException;
