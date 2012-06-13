@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.TreeSet;
 
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NXlink;
@@ -37,13 +38,13 @@ public class NexusFileWriter extends NexusFileReader {
      * @param paPath path (PathAbstract object) to create in the NexusFile
      * @param bKeepOpen keep path opened after creation
      */
-    protected void createPath(PathNexus paPath)           throws NexusException { createPath(paPath, false); }
+    protected void createPath(PathNexus paPath) throws NexusException { createPath(paPath, false); }
     protected void createPath(PathNexus paPath, boolean bKeepOpen)  throws NexusException
     {
-	String sCurClass  = "";    // Class name of the group we are processing
+	String sCurClass  = "";     // Class name of the group we are processing
 	String sCurName    = "";    // Name of the group we are processing
-	NexusNode nCurStep  = null;    // Currently opened node name in the NexusFile
-	int    iCurDepth  = 0;    // Current depth in the path
+	NexusNode nCurStep  = null; // Currently opened node name in the NexusFile
+	int    iCurDepth  = 0;      // Current depth in the path
 	int    iPathDepth  = paPath.getDepth();
 
 	// Return to root node
@@ -76,7 +77,7 @@ public class NexusFileWriter extends NexusFileReader {
 		    getNexusFile().makegroup(sCurName, sCurClass);
 
 		    // Force the buffer node list to be updated
-		    pushNodeInPath(sCurName, sCurClass);
+		    pushNodeInBuffer(sCurName, sCurClass);
 
 		    // Open created group
 		    openGroup(sCurName, sCurClass);
@@ -171,7 +172,7 @@ public class NexusFileWriter extends NexusFileReader {
 	}
 
 	// Update the buffer node list
-	pushNodeInPath(sDataName, "SDS");
+	pushNodeInBuffer(sDataName, "SDS");
 
 	// Init DataItem of type NX_CHAR
 	if( iType == NexusFile.NX_CHAR )
@@ -380,7 +381,6 @@ public class NexusFileWriter extends NexusFileReader {
 	PathNexus pnSrcPath = nfrSource.getCurrentRealPath().clone();
 	PathNexus pnTgtPath = getCurrentRealPath().clone();
 	NexusNode nnCurNode = pnSrcPath.getCurrentNode();
-	NexusNode tmpNode;
 
 	if( getCurrentRealPath().getCurrentNode() != null && ! getCurrentRealPath().getCurrentNode().isRealGroup() )
 	    throw new NexusException("Invalid destination path: only a group can contain nodes!\n" + getCurrentRealPath());
@@ -396,13 +396,11 @@ public class NexusFileWriter extends NexusFileReader {
 	    copyAllAttr(nfrSource);
 
 	    // Copy all its descendants
-	    ArrayList<NexusNode> listNode = nfrSource.listChildren();
-	    for ( int i = 0; i < listNode.size(); i++ )
-	    {
-		tmpNode = listNode.get(i);
-		nfrSource.openNode(tmpNode);
-		copyNode(nfrSource);
-	    }
+            ArrayList<NexusNode> nodes = nfrSource.listChildren();
+            for (NexusNode node : nodes) {
+                nfrSource.openNode(node);
+                copyNode(nfrSource);
+            }
 	}
 	else
 	{
@@ -495,6 +493,6 @@ public class NexusFileWriter extends NexusFileReader {
 
 	// Update node list buffer
 	NexusNode nnNode = pdDestNode.getCurrentNode();
-	pushNodeInPath(nnNode.getNodeName(), nnNode.getClassName());
+	pushNodeInBuffer(nnNode.getNodeName(), nnNode.getClassName());
     }
 }
