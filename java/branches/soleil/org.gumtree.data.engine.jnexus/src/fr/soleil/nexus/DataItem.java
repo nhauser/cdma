@@ -451,23 +451,18 @@ public class DataItem implements Cloneable {
     }
 
     private void loadData() {
-        Benchmarker.start("N4T: load data");
         NexusFileReader nfrFile = new NexusFileReader(mPath.getFilePath());
         nfrFile.isSingleRawResult(mSingleRaw);
         try {
             nfrFile.openFile(NexusFile.NXACC_READ);
             if (mStart == null) {
-                Benchmarker.start("N4T: load data: full");
                 mData = new SoftReference<Object>(nfrFile.readData(mPath).getRawData());
                 mPrevStart = new int[mDimSize.length];
                 mPrevShape = mDimSize;
-                Benchmarker.stop("N4T: load data: full");
             } else {
-                Benchmarker.start("N4T: load data: slab");
                 mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData).getRawData());
                 mPrevStart = mStart;
                 mPrevShape = mDimData;
-                Benchmarker.stop("N4T: load data: slab");
             }
 
             nfrFile.closeFile();
@@ -479,7 +474,6 @@ public class DataItem implements Cloneable {
                 e.printStackTrace();
             }
         }
-        Benchmarker.stop("N4T: load data");
     }
 
     private boolean alreadyLoaded(int[] pos, int[] shape) {

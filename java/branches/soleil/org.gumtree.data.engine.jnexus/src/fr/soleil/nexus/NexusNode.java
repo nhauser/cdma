@@ -19,19 +19,15 @@ public class NexusNode implements Cloneable {
     }
 
     public NexusNode(String sNodeName, String sClassName) {
-        Benchmarker.start("NexusNode");
         m_sNodeName = sNodeName;
         m_sClassName = sClassName;
         m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName));
-        Benchmarker.stop("NexusNode");
     }
 
     public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) {
-        Benchmarker.start("NexusNode");
         m_sNodeName = sNodeName;
         m_sClassName = sClassName;
         m_bIsGroup = bIsGroup;
-        Benchmarker.stop("NexusNode");
     }
 
     public void setNodeName(String sNodeName) {
