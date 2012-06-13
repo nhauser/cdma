@@ -57,7 +57,7 @@ vars.Add("LIBNAME","Name of the core library","")
 vars.Add("DOCDIR","Installation directory of documentation","")
 vars.Add("LIBDIR","Installation directory of the libraray","")
 vars.Add("INCDIR","Installation directory of the header files","")
-vars.Add("PREFIX","Installation prefix","/usr")
+vars.Add("PREFIX","Installation prefix","/usr/local")
 
 
 #=====================create the basic build environment=======================
