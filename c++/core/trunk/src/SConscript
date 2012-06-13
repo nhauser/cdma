@@ -12,10 +12,11 @@ coresrc.extend(Glob("dictionary/*.cpp"))
 coresrc.extend(Glob("math/*.cpp"))
 coresrc.extend(Glob("utils/*.cpp"))
 
-core_env.Append(LIBS=["yat","xml2"])
+core_env.Append(LIBS=["yat"])
 
 #build the shared library
-libcore_shared = core_env.SharedLibrary(core_env["LIBNAME"]+"tmp",coresrc)
+libcore_shared = core_env.SharedLibrary(core_env["LIBNAME"]+"tmp",coresrc,
+                 CPPPATH=["${CPPPATH}","../include"])
 
 if os.name == "posix":
     #rename the library binary and change permissions
@@ -34,15 +35,22 @@ if os.name == "posix":
     #add everything to the all target
     core_env.Alias("all",[shared_library,shared_library_link,shared_library_so])
 
+#=====================assemble pkg-config file=================================
+pkg_config_file = core_env.Substfile(source=["cdmacore.pc.in"],
+				 SUBST_DICT={"@PREFIX@":"$PREFIX","@LIBNAME@":"$LIBNAME",
+				             "@VERSION@":"$VERSION",
+                             "@INCDIR@":"$INCDIR", 
+                             "@INCPATHS@":"${_CPPINCFLAGS}",
+                             "@LIBPATHS@":"${_LIBFLAGS}"})
+pkg_config_file = core_env.Install("${LIBDIR}/pkg-config",[pkg_config_file])
 
 #==================install the library=========================================
-hdr_inst_path = os.path.join("$INCDIR","../include/cdma")
-
 shared_library_install = core_env.Install("$LIBDIR",[shared_library])
 shared_library_link_install = core_env.Command("${SOURCE.dir}/$LIBLINKNAME",
                                                 shared_library_install,
              "cd ${TARGET.dir}; ln -sf ${SOURCE.file} ${TARGET.file}")
-shared_library_so_install = core_env.Command("${SOURCE.dir}/$LIBSONAME",shared_library_install,
+shared_library_so_install = core_env.Command("${SOURCE.dir}/$LIBSONAME",
+                                             shared_library_install,
              "cd ${TARGET.dir}; ln -sf ${SOURCE.file} ${TARGET.file}")
 
 
@@ -51,6 +59,6 @@ header_inst = core_env.Install("$INCDIR","../include/cdma")
 core_env.Alias("install",[shared_library_install,
                            shared_library_link_install,
                            shared_library_so_install,
-                           header_inst])
+                           header_inst,pkg_config_file])
 
 

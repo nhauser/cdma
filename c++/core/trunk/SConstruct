@@ -50,8 +50,6 @@ vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
          PathVariable.PathAccept))
 vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
          PathVariable.PathAccept))
-vars.Add(PathVariable("XMLINC","libxml include directory",
-         "/usr/include/libxml2",PathVariable.PathAccept))
 
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
@@ -64,7 +62,8 @@ vars.Add("PREFIX","Installation prefix","/usr")
 
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
-env.Append(CPPPATH=[env["YATINC"],"include",env["XMLINC"]])
+env.ParseConfig('pkg-config --libs --cflags libxml-2.0')
+env.Append(CPPPATH=[env["YATINC"]])
 env.Append(LIBPATH=[env["YATLIB"]])
 
 #===================create and export the core environment=====================
@@ -73,7 +72,6 @@ core_env = env.Clone()
 create_full_libname(core_env)
 create_so_libname(core_env)
 create_link_libname(core_env)
-core_env.Append(CPPPATH=["#include/"])
 
 if os.name == "posix":
     #add special link flag to ensure that the soname of the library is 
