@@ -124,7 +124,7 @@ a data definition may looks like this (in XML form):
 This is a list of keywords which should be the result of a consensus among the users community. keywords can also be grouped together, but
 However, a keywords synonyms mechanism allows data analysis application developers to can not wait until this kind of consensus exists.
 
-== Keywords mapping ==
+== Mapping document ==
 The second document is the mapping between keywords and physical data organization.
 It needs a strong knowledge of the physical data organisation to be written. This is therefore the responsibility of the institute producing data to write this document.
 
