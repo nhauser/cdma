@@ -46,8 +46,8 @@ Many data container will fit well such an organization, for example:
 
 Using the CDMA library, the data analysis developers don't have to care about data file format. The data access is done by a dual mechanism involving data format engines and plug-ins.
 Actually, there are two things to consider when offering a generic data access mechanism:
-- raw data access
-- data organization
+  * raw data access
+  * data organization
 
 The raw data access is only related to a data format. It allows to read (or write) data items stored in specific files for a particular format (spec, tif, NeXus/hdf, ...)
 
@@ -73,7 +73,34 @@ Also this mechanism allows an user to open files acquired in different institute
 
 The point is: the way the data is organized into data files is no longer a issue on the data analysis software side.
 
-The dictionary mechanism rely on two XML documents.
+Data analysis application programmers should never adapt their source code to a particular data file structure.
+Actually, data should be always accessed by their names, regardless the data file organization. This is possible through the CDMA dictionary mechanism.
+
+This mechanism introduce two notions:
+  * Keywords
+  * Keywords mapping
+
+== Keywords ==
+
+The keywords are names for measured and/or physical values. The client applications use only the keywords to access the data.
+Of course each keyword must have a unique definition. However, a definition may be named by more than an unique keyword: this is the synonyms mechanism (currently in development) introduced with the dictionary mechanism.
+A keyword can be very specific: _sample_chemical_formula_ can be related to the studied sample.
+It can be also very generic: _images_ can designate the images contained in a dataset, regardless the detector used to produce them.
+
+Specific keywords can be approved be a committee, this should be a good thing indeed, but we think that waiting for a committee to agreed for keywords before starting any development is not a good thing. So let's start with less specific keywords, even very generic.
+
+== Keywords mapping ==
+
+On the CDMA library side, we must link the keywords and the physical data structure.
+Each keyword should be linked with a data item inside the dataset. However institutes can record values with different physical units or with a specific data organization.
+
+Two simples examples:
+-  _energy_  and _wavelength_ can be related to the same physical value, (the synchrotron beam)  in a synchrotron facility and it is indeed very easy to convert them.
+- the triplet value _h_, _k_, _l_ for position in a diffractometer can be three distinct data items or a matrix of dimension [1, 3].
+
+The CDMA dictionary mechanism handles such cases through dictionary methods: a keyword can be linked to a special _function_ if it can't be linked to a data item in the physical structure. This _function_ may convert a _energy_ to a _wavelength_ if the client application asks for a wavelength rather than the _energy_ which is the value stored in the dataset.
+
+In practical terms the dictionary mechanism relies on two types of documents:
 
 == Data definitions ==
 The first document is a set a keywords matching scientific or technical data items. For instance a key named _source_current_ should refer to the effective current in a storage ring at acquisition time. These keywords may be just listed by this document or organized through a tree hierarchy. In this last case, this document describe a particular a view on the data, like a NeXus application definition.
@@ -82,7 +109,7 @@ There are (at least) two ways of writing this document:
  * it may be written for a specific data analysis software which is already existent and adapted to use the CDMA,
  * or it may be written independently of any software like the NeXus application definitions.
 
-a data definition may looks like this:
+a data definition may looks like this (in XML form):
 
 {{{
 <data-def name="data_definition_name">
