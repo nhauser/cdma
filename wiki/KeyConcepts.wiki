@@ -13,7 +13,7 @@
 
 The CDMA is made of:
  * a client layer API for writing data reduction and analysis applications.
- * a developer API to build data access engines and plug-ins.
+ * a developer API to build data access engines and plug-ins (see [#Accessing_the_data]).
 
 Using the client API, data reduction applications developer don't have to know anything about the file formats because it uses an abstract data access layer that hide data files specifications.
 The data files specifications are embedded through a plug-in mechanism. Therefore it's the institutes responsibility to develop their own data access plug-in in order to give the possibility to open datasets acquired in their institutes through the CDMA.
