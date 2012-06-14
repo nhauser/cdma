@@ -96,7 +96,7 @@ Each keyword should be linked with a data item inside the dataset. However insti
 
 Two simples examples:
   *  _energy_  and _wavelength_ can be related to the same physical value, (the synchrotron beam)  in a synchrotron facility and it is indeed very easy to convert them.
-  * the triplet values _h_, _k_, _l_ for positions in a diffractometer can be three distinct data items or a matrix of dimension [1, 3].
+  * the triplet values _h_, _k_, _l_ for positions in a diffractometer can be either three distinct data items or a matrix of dimension [1, 3].
 
 The CDMA dictionary mechanism handles such cases through dictionary methods: a keyword can be linked to a special _function_ if it can't be linked to a data item in the physical structure. This _function_ may convert a _energy_ to a _wavelength_ if the client application asks for a wavelength rather than the _energy_ which is the value stored in the dataset.
 
