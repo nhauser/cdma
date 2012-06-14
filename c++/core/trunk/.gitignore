@@ -4,3 +4,5 @@
 *.so.*
 *.swp
 *.pc
+config.log
+.sconf_temp

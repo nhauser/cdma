@@ -94,6 +94,14 @@ if env["DOCDIR"]:
 else:
     core_env.Append(DOCDIR=os.path.join(env["PREFIX"],"share/doc/libcdmacore"))
 
+#===================start here with configuration==============================
+conf = Configure(core_env)
+
+if not conf.CheckLib("yat",language="C++"):
+    print "YAT library not installed!"
+    Exit(1)
+
+core_env = conf.Finish()
 
 Export("core_env")
 
