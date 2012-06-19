@@ -62,12 +62,16 @@ All the methods defined in these interfaces have to be implemented in the engine
 
 == IArrayStorage ==
 
-CDMA array classes allows engines/plugins developers to implement their own array data management.
+CDMA array classes allows engines developers to implement their own array data management.
 This can be done through the {{{IArrayStorage}}} interface.
 
-Actually the {{{Array}}} class, which is used by client applications, is a front end to an {{{IArrayStorage}}} implementation. Calls to {{{getValue}}} and {{{setValue}}} methods are re-directed to those in the IArrayStorage implementation.
-The {{{Array}}} class also manages a View object, which allows to focus on an region of interest (ROI).
+Because the {{{Array}}} class manages a {{{View}}} object, it allows to focus on an region of interest (ROI) by defining a set of coordinates. But {{{Array}}} object do not directly access the memory.
 
-The CDMA core library provides a default implementation of {{{IArrayStorage}}}: {{{DefaultArrayStorage}}}. In this implementation, array data is made of a continuous memory bloc. In most cases this default implementation will be sufficient and engines as well as plugins developers may don't have to care about.
+Actually the {{{Array}}} class, which is used by client applications, is a front end to an {{{IArrayStorage}}} implementation. Access to the underlying memory is done by the {{{IArrayStorage}}} implementation who does cells index computations. 
+
+Indeed only the {{{IArrayStorage}}} implementation owns the data and knows how to access values.
+So calls to {{{getValue}}} and {{{setValue}}} methods are redirected to that interface. The memory offset computing is done according to the above {{{Array}}}'s {{{View}}} object.
+
+The CDMA core library provides a default implementation of {{{IArrayStorage}}}: {{{DefaultArrayStorage}}}. In this implementation, array data is made of a contiguous memory bloc. In most cases this default implementation will be sufficient and engines as well as plugins developers may don't have to care about.
 
 [http://cdma.googlecode.com/svn/wiki/images/array_1.png]
