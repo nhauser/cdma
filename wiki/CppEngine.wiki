@@ -60,10 +60,9 @@ All the methods defined in these interfaces have to be implemented in the engine
 
 = Data management =
 
-== IArrayStorage ==
+== `IArrayStorage` ==
 
-CDMA array classes allows engines developers to implement their own array data management.
-This can be done through the {{{IArrayStorage}}} interface.
+CDMA array classes can be use use as it is by engines developers. But in case of specific needs (e.g. non contiguous memory or non-standard memory arrangement) they can implement their own array data management. This can be done through the {{{IArrayStorage}}} interface.
 
 Because the {{{Array}}} class manages a {{{View}}} object, it allows to focus on an region of interest (ROI) by defining a set of coordinates. But {{{Array}}} object do not directly access the memory.
 
