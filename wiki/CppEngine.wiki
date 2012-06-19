@@ -58,6 +58,8 @@ All the methods defined in these interfaces have to be implemented in the engine
 
 ...
 
+= Data management =
+
 == IArrayStorage ==
 
 CDMA array classes allows plugins developpers to implement their own array management.
@@ -68,3 +70,4 @@ The {{{Array}}} class also manages a View object, which allows to focus on an re
 
 The CDMA core library provides a default implementation of {{{IArrayStorage}}}: {{{DefaultArrayStorage}}}. In this implementation, array data is made of a continuous memory bloc.
 
+[http://cdma.googlecode.com/svn/wiki/images/array_1.png]
