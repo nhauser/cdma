@@ -62,7 +62,7 @@ All the methods defined in these interfaces have to be implemented in the engine
 
 == IArrayStorage ==
 
-CDMA array classes allows plugins developpers to implement their own array management.
+CDMA array classes allows engines/plugins developers to implement their own array data management.
 This can be done through the {{{IArrayStorage}}} interface.
 
 Actually the {{{Array}}} class, which is used by client applications, is a front end to an {{{IArrayStorage}}} implementation. Calls to {{{getValue}}} and {{{setValue}}} methods are re-directed to those in the IArrayStorage implementation.
