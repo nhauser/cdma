@@ -75,4 +75,5 @@ So calls to {{{getValue}}} and {{{setValue}}} methods are redirected to that int
 The CDMA core library provides a default implementation of {{{IArrayStorage}}}: {{{DefaultArrayStorage}}}. In this implementation, array data is made of a contiguous memory bloc. In most cases this default implementation will be sufficient and engines as well as plugins developers may don't have to care about.
 
 Below is an UML class diagram of {{{Array}}} related classes:
+
 [http://cdma.googlecode.com/svn/wiki/images/array_1.png]
