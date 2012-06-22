@@ -20,7 +20,7 @@ In order to avoid name conflicts and to guarantee an uniform way for class namin
 
 The name of a CMDA interface implementation must be the same as the interface name without the prefix `I`:
 {{{
-class Dataset : public cdma::Dataset
+class Dataset : public cdma::IDataset
 {
 ...
 };
