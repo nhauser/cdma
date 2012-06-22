@@ -5,9 +5,28 @@ Here are the main source code writing rules adopted for the CDMA project.
 = Naming conventions =
 ----
 
-== Type names ==
+== Namespaces ==
 
-Names representing types must be in mixed case starting with upper case.
+Never use the directive `using namespace`. It may the source of conflicts when using simultaneously objects of different libraries.
+
+The namespace of the CDMA core library is `cdma`.
+
+In order to avoid name conflicts and to guarantee an uniform way for class naming when developing engines and plugins, the CDMA project uses the following convention:
+
+  * The namespace for each engine is: `cdma::<engine_name>` (ex: `cdma::nexus`, `cdma::spec`)
+  * The namespace for each plugin is: `cdma::<institute_name>::<plugin_name>` (ex: `cdma::soleil::nexus`, `cdma::desy::spec`)
+
+== Class names ==
+
+The name of a CMDA interface implementation must be the same as the interface name without the prefix `I`:
+{{{
+class Dataset : public cdma::Dataset
+{
+...
+};
+}}}
+
+More generally, names representing types must be in mixed case starting with upper case.
 {{{
 LogicalGroup, BadArrayTypeException
 }}}
