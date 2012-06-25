@@ -20,14 +20,21 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 // Soleil NeXus plug-in
-#define SOLEIL_NXS_FACTORY_NAME "SoleilNxsFactory"
+#define SOLEIL_NXS_FACTORY_NAME "Factory"
+
+// Debug macro helper
+#define FUNCTION_TRACE(x) CDMA_FUNCTION_TRACE(std::string("cdma::soleil::nexus::") + std::string(x))
 
 //==============================================================================
 /// Plugin info class
 //==============================================================================
-class SoleilNxsFactoryInfo : public yat::IPlugInInfo
+class FactoryInfo : public yat::IPlugInInfo
 {
 public:
   virtual std::string get_plugin_id(void) const;
@@ -38,11 +45,11 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class SoleilNxsFactory : public cdma::IFactory 
+class Factory : public cdma::IFactory 
 {
 public:
-  SoleilNxsFactory();
-  ~SoleilNxsFactory();
+  Factory();
+  ~Factory();
 
   //@{ IFactory methods
 
@@ -62,6 +69,10 @@ public:
   inline static std::string version_number() { return "1.0.0"; }
 
 };
-} //namespace soleil_nexus
+
+} //namespace nexus
+} //namespace soleil
+} //namespace cdma
+
 #endif //__CDMA_IFACTORY_H__
 

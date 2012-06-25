@@ -25,6 +25,10 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 //==============================================================================
 // DictionaryDetector aims to detect the correct dictionary mapping file name
@@ -35,7 +39,7 @@ class DictionaryDetector
 {
   public:
     DictionaryDetector();
-    DictionaryDetector(const NexusFilePtr& handle);
+    DictionaryDetector(const cdma::nexus::NexusFilePtr& handle);
     ~DictionaryDetector();
     yat::String getDictionaryName() throw ( cdma::Exception );
 
@@ -50,13 +54,15 @@ class DictionaryDetector
   private:
     yat::String  m_beamline;     ///< beamline model
     yat::String  m_model;        ///< beamline's structure data model
-    NexusFilePtr m_ptrNxFile;    ///< handle on file
+    cdma::nexus::NexusFilePtr m_ptrNxFile;    ///< handle on file
 
   private:
     bool isFlyScan();
     bool isScanServer();
 };
 
-} // namespace
+} // namespace nexus
+} // namespace soleil
+} // namespace cdma
 
 #endif // __CDMA_DICTIONARYDETECTOR_H__

@@ -29,114 +29,122 @@
 #include <SoleilNxsDataSource.h>
 #include <SoleilNxsDataset.h>
 
-EXPORT_SINGLECLASS_PLUGIN(cdma::SoleilNxsFactory, \
-                          cdma::SoleilNxsFactoryInfo);
+// Plugin declaration
+EXPORT_SINGLECLASS_PLUGIN(cdma::soleil::nexus::Factory, \
+                          cdma::soleil::nexus::FactoryInfo);
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactoryInfo::get_plugin_id
+// FactoryInfo::get_plugin_id
 //----------------------------------------------------------------------------
-std::string SoleilNxsFactoryInfo::get_plugin_id() const
+std::string FactoryInfo::get_plugin_id() const
 {
-  return SoleilNxsFactory::plugin_id();
+  return Factory::plugin_id();
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactoryInfo::get_interface_name
+// FactoryInfo::get_interface_name
 //----------------------------------------------------------------------------
-std::string SoleilNxsFactoryInfo::get_interface_name() const
+std::string FactoryInfo::get_interface_name() const
 {
-  return SoleilNxsFactory::interface_name();
+  FUNCTION_TRACE("Factory::get_interface_name");
+  return Factory::interface_name();
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactoryInfo::get_version_number
+// FactoryInfo::get_version_number
 //----------------------------------------------------------------------------
-std::string SoleilNxsFactoryInfo::get_version_number() const
+std::string FactoryInfo::get_version_number() const
 {
-  return SoleilNxsFactory::version_number();
+  return Factory::version_number();
 }
 //==============================================================================
-// class SoleilNxsFactory
+// class Factory
 //==============================================================================
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::SoleilNxsFactory
+// Factory::Factory
 //----------------------------------------------------------------------------
-SoleilNxsFactory::SoleilNxsFactory()
+Factory::Factory()
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::SoleilNxsFactory");
+  FUNCTION_TRACE("Factory::Factory");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::~SoleilNxsFactory
+// Factory::~Factory
 //----------------------------------------------------------------------------
-SoleilNxsFactory::~SoleilNxsFactory()
+Factory::~Factory()
 {
-  CDMA_TRACE("SoleilNxsFactory::~SoleilNxsFactory");
+  FUNCTION_TRACE("Factory::~Factory");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::openDataset
+// Factory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::openDataset(const std::string& location_string)
+cdma::IDatasetPtr Factory::openDataset(const std::string& location_string)
 throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::openDataset");
-  return new SoleilNxsDataset( yat::URI(location_string), this );
+  FUNCTION_TRACE("Factory::openDataset");
+  return new Dataset( yat::URI(location_string), this );
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::openDictionary
+// Factory::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr SoleilNxsFactory::openDictionary(const std::string&)
+DictionaryPtr Factory::openDictionary(const std::string&)
 throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::openDictionary");
+  THROW_NOT_IMPLEMENTED("Factory::openDictionary");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::createDatasetInstance
+// Factory::createDatasetInstance
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::createDatasetInstance(const std::string&) throw ( cdma::Exception )
+cdma::IDatasetPtr Factory::createDatasetInstance(const std::string&) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createDatasetInstance");
+  THROW_NOT_IMPLEMENTED("Factory::createDatasetInstance");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::createEmptyDatasetInstance
+// Factory::createEmptyDatasetInstance
 //----------------------------------------------------------------------------
-IDatasetPtr SoleilNxsFactory::createEmptyDatasetInstance() throw ( cdma::Exception )
+cdma::IDatasetPtr Factory::createEmptyDatasetInstance() throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsFactory::createEmptyDatasetInstance");
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::createEmptyDatasetInstance");
+  FUNCTION_TRACE("Factory::createEmptyDatasetInstance");
+  THROW_NOT_IMPLEMENTED("Factory::createEmptyDatasetInstance");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::getPathSeparator
+// Factory::getPathSeparator
 //----------------------------------------------------------------------------
-std::string SoleilNxsFactory::getPathSeparator()
+std::string Factory::getPathSeparator()
 {
-  THROW_NOT_IMPLEMENTED("SoleilNxsFactory::getPathSeparator");
+  THROW_NOT_IMPLEMENTED("Factory::getPathSeparator");
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::getPluginURIDetector
+// Factory::getPluginURIDetector
 //----------------------------------------------------------------------------
-IDataSourcePtr SoleilNxsFactory::getPluginURIDetector()
+IDataSourcePtr Factory::getPluginURIDetector()
 {
-  return new SoleilNxsDataSource(this);
+  return new DataSource(this);
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsFactory::getPluginMethodsList
+// Factory::getPluginMethodsList
 //----------------------------------------------------------------------------
-std::list<std::string> SoleilNxsFactory::getPluginMethodsList()
+std::list<std::string> Factory::getPluginMethodsList()
 {
   std::list<std::string> methods;
   methods.push_back("TestMethod");
   return methods;
 }
 
+} // namespace nexus
+} // namespace soleil
 } // namespace cdma

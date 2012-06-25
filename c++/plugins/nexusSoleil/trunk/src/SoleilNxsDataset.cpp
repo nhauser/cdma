@@ -31,29 +31,33 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 //---------------------------------------------------------------------------
-// SoleilNxsDataset::SoleilNxsDataset
+// Dataset::Dataset
 //---------------------------------------------------------------------------
-SoleilNxsDataset::SoleilNxsDataset( const yat::URI& location, SoleilNxsFactory *factory_ptr )
-: NxsDataset( location, factory_ptr )
+Dataset::Dataset( const yat::URI& location, Factory *factory_ptr )
+: cdma::nexus::Dataset( location, factory_ptr )
 {
 }
 
 //---------------------------------------------------------------------------
-// SoleilNxsDataset::SoleilNxsDataset
+// Dataset::Dataset
 //---------------------------------------------------------------------------
-SoleilNxsDataset::SoleilNxsDataset()
-: NxsDataset()
+Dataset::Dataset()
+: cdma::nexus::Dataset()
 {
 }
 
 //---------------------------------------------------------------------------
-// SoleilNxsDataset::getLogicalRoot
+// Dataset::getLogicalRoot
 //---------------------------------------------------------------------------
-LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
+cdma::LogicalGroupPtr Dataset::getLogicalRoot()
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsDataset::getLogicalRoot");
+  FUNCTION_TRACE("Dataset::getLogicalRoot");
 
   if( m_log_root.is_null() )
   {
@@ -64,13 +68,13 @@ LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
     DictionaryDetector detector ( m_file_handle );
     CDMA_TRACE("Getting mapping file");
     yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" +\
-                        SoleilNxsFactory::plugin_id() + "/" +\
+                        Factory::plugin_id() + "/" +\
                         detector.getDictionaryName());
 
     yat::FileName mapFile ( file );
 
     CDMA_TRACE("Creating dictionary");
-    DictionaryPtr dictionary ( new cdma::Dictionary(SoleilNxsFactory::plugin_id()) );
+    cdma::DictionaryPtr dictionary ( new cdma::Dictionary(Factory::plugin_id()) );
     dictionary->setKeyFilePath( keyFile );
     dictionary->setMappingFilePath( mapFile.full_name() );
 
@@ -78,10 +82,12 @@ LogicalGroupPtr SoleilNxsDataset::getLogicalRoot()
     dictionary->readEntries();
 
     CDMA_TRACE("Creating logical root");
-    LogicalGroup* ptrRoot = new cdma::LogicalGroup( this, NULL, KeyPtr(NULL), dictionary );
+    cdma::LogicalGroup* ptrRoot = new cdma::LogicalGroup( this, NULL, KeyPtr(NULL), dictionary );
     m_log_root.reset( ptrRoot );
   }
   return m_log_root;
 }
 
+} // namespace nexus
+} // namespace soleil
 } // namespace cdma

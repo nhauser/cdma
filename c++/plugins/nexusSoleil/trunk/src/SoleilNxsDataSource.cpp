@@ -29,15 +29,19 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 std::string CREATOR = "Synchrotron SOLEIL";
 int         NB_BEAMLINES = 27;
 std::string BEAMLINES [] = {"contacq", "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING"};
 
 //----------------------------------------------------------------------------
-// SoleilNxsDataSource::isReadable
+// DataSource::isReadable
 //----------------------------------------------------------------------------
-bool SoleilNxsDataSource::isReadable(const yat::URI& dataset_location) const
+bool DataSource::isReadable(const yat::URI& dataset_location) const
 {
   // Get the path from URI
   yat::String path = dataset_location.get( yat::URI::PATH );
@@ -62,28 +66,28 @@ bool SoleilNxsDataSource::isReadable(const yat::URI& dataset_location) const
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsDataSource::isBrowsable
+// DataSource::isBrowsable
 //----------------------------------------------------------------------------
-bool SoleilNxsDataSource::isBrowsable(const yat::URI&) const
+bool DataSource::isBrowsable(const yat::URI&) const
 {
   return false;
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsDataSource::isProducer
+// DataSource::isProducer
 //----------------------------------------------------------------------------
-bool SoleilNxsDataSource::isProducer(const yat::URI& dataset_location) const
+bool DataSource::isProducer(const yat::URI& dataset_location) const
 {
-  CDMA_FUNCTION_TRACE("SoleilNxsDataSource::isProducer");
+  FUNCTION_TRACE("DataSource::isProducer");
   bool result = false;
   if( isReadable( dataset_location ) )
   {
     // Get the path from URI
     yat::String path = dataset_location.get();
-    SoleilNxsFactory plug_factory;
-    IDatasetPtr dataset = plug_factory.openDataset( path );
+    Factory plug_factory;
+    cdma::IDatasetPtr dataset = plug_factory.openDataset( path );
     // seek at root for 'creator' attribute
-    IGroupPtr group = dataset->getRootGroup();
+    cdma::IGroupPtr group = dataset->getRootGroup();
     if( group->hasAttribute("creator") && group->getAttribute("creator")->getStringValue() == CREATOR )
     {
       result = true;
@@ -115,11 +119,13 @@ bool SoleilNxsDataSource::isProducer(const yat::URI& dataset_location) const
 }
 
 //----------------------------------------------------------------------------
-// SoleilNxsDataSource::isExperiment
+// DataSource::isExperiment
 //----------------------------------------------------------------------------
-bool SoleilNxsDataSource::isExperiment(const yat::URI& dataset_location) const
+bool DataSource::isExperiment(const yat::URI& dataset_location) const
 {
   return isProducer(dataset_location);
 }
 
+} // namespace nexus
+} // namespace soleil
 } // namespace cdma
