@@ -40,33 +40,54 @@
     <url>http://cdma.googlecode.com/svn/c++/plugins/nexusRaw/trunk</url>
   </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.freehep</groupId>
-                <artifactId>freehep-nar-plugin</artifactId>
-                <configuration>
-                    <cpp>
-                       <defines>
-                          <!--define>CDMA_DEBUG</define-->
-                       </defines>
-                        <sourceDirectory>src</sourceDirectory>
-                        <includePaths>
-                            <includePath>include</includePath>
-                            <includePath>src</includePath>
-                        </includePaths>
-                    </cpp>
-                    <libraries>
-                        <library>
-                            <type>shared</type>
-                        </library>
-                    </libraries>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.freehep</groupId>
+        <artifactId>freehep-nar-plugin</artifactId>
+        <configuration>
+          <cpp>
+            <sourceDirectory>src</sourceDirectory>
+            <includePaths>
+              <includePath>include</includePath>
+              <includePath>src</includePath>
+            </includePaths>
+            <defines>
+              <!--define>CDMA_DEBUG</define-->
+            </defines>
+          </cpp>
+          <libraries>
+            <library>
+              <type>shared</type>
+            </library>
+          </libraries>
+          <specificConfigurations>
+            <specificConfiguration>
+              <id>CDMANeXus Linux</id>
+              <activation>
+                <os>Linux</os>
+              </activation>
+            </specificConfiguration>
+            <specificConfiguration>
+              <id>CDMANeXus Windows</id>
+              <activation>
+                <os>Windows</os>
+              </activation>
+              <cpp>
+                <defines>
+                  <define>CDMA_NEXUS_DLL</define>
+                  <define>CDMA_DLL</define>
+                  <define>YAT_DLL</define>
+                </defines>
+              </cpp>
+            </specificConfiguration>
+          </specificConfigurations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
-    <dependencies>
+  <dependencies>
         <dependency>
             <groupId>org.cdma.engines</groupId>
             <artifactId>CdmaNexusEngine-${aol}-shared-${mode}</artifactId>
