@@ -24,10 +24,16 @@
 namespace cdma
 {
 
+namespace soleil
+{
+
+namespace rawnexus
+{
+
 //==============================================================================
 /// Plugin info class
 //==============================================================================
-class CDMA_DECL RawNxsFactoryInfo : public yat::IPlugInInfo
+class FactoryInfo : public yat::IPlugInInfo
 {
 public:
   virtual std::string get_plugin_id(void) const;
@@ -38,11 +44,11 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class CDMA_DECL RawNxsFactory : public IFactory 
+class Factory : public cdma::IFactory 
 {
 public:
-  RawNxsFactory();
-  ~RawNxsFactory();
+  Factory();
+  ~Factory();
 
   //@{ IFactory methods
 
@@ -66,36 +72,36 @@ public:
 /// Dataset class based on the NeXus engine implementation
 /// See cdma::IDataset definition for more explanations
 //==============================================================================
-class CDMA_DECL RawNxsDataset : public NxsDataset
+class Dataset : public cdma::nexus::Dataset
 {
-friend class RawNxsFactory;
+friend class Factory;
 
 public:
 
   //@{ IDataset methods
 
-   LogicalGroupPtr getLogicalRoot();
+   cdma::LogicalGroupPtr getLogicalRoot();
   
   //@}
 
 private:
 
   // Constructor
-  RawNxsDataset( const yat::URI& location, RawNxsFactory* factory_ptr );
-  RawNxsDataset();
+  Dataset( const yat::URI& location, Factory* factory_ptr );
+  Dataset();
 
 };
 
 //==============================================================================
 /// IDataSource implementation
 //==============================================================================
-class RawNxsDataSource : public IDataSource 
+class DataSource : public cdma::IDataSource 
 {
-friend class RawNxsFactory;
+friend class Factory;
 
 public:
-  RawNxsDataSource()  {};
-  ~RawNxsDataSource() {};
+  DataSource()  {};
+  ~DataSource() {};
 
   //@{ IDataSource methods ------------
 
@@ -107,12 +113,14 @@ public:
   //@}
 
 private:
-  RawNxsDataSource(RawNxsFactory *factory_ptr): m_factory_ptr(factory_ptr) {};
+  DataSource(Factory *factory_ptr): m_factory_ptr(factory_ptr) {};
 
-  RawNxsFactory *m_factory_ptr;
+  Factory *m_factory_ptr;
 };
 
-} //namespace cdma
+} // namespace rawnexus
+} // namespace soleil
+} // namespace cdma
 
 #endif //__CDMA_RAW_NXSFACTORY_H__
 

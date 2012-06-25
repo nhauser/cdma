@@ -29,150 +29,156 @@
 // Raw plugin
 #include <RawNxsFactory.h>
 
-EXPORT_SINGLECLASS_PLUGIN(cdma::RawNxsFactory, \
-                          cdma::RawNxsFactoryInfo);
+EXPORT_SINGLECLASS_PLUGIN(cdma::soleil::rawnexus::Factory, \
+                          cdma::soleil::rawnexus::FactoryInfo);
 
 namespace cdma
 {
 
-//----------------------------------------------------------------------------
-// RawNxsFactoryInfo::get_plugin_id
-//----------------------------------------------------------------------------
-std::string RawNxsFactoryInfo::get_plugin_id() const
+namespace soleil
 {
-  return RawNxsFactory::plugin_id();
+
+namespace rawnexus
+{
+
+//----------------------------------------------------------------------------
+// FactoryInfo::get_plugin_id
+//----------------------------------------------------------------------------
+std::string FactoryInfo::get_plugin_id() const
+{
+  return Factory::plugin_id();
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactoryInfo::get_interface_name
+// FactoryInfo::get_interface_name
 //----------------------------------------------------------------------------
-std::string RawNxsFactoryInfo::get_interface_name() const
+std::string FactoryInfo::get_interface_name() const
 {
-  return RawNxsFactory::interface_name();
+  return Factory::interface_name();
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactoryInfo::get_version_number
+// FactoryInfo::get_version_number
 //----------------------------------------------------------------------------
-std::string RawNxsFactoryInfo::get_version_number() const
+std::string FactoryInfo::get_version_number() const
 {
-  return RawNxsFactory::version_number();
+  return Factory::version_number();
 }
 
 //==============================================================================
-// class RawNxsFactory
+// class Factory
 //==============================================================================
 //----------------------------------------------------------------------------
-// RawNxsFactory::RawNxsFactory
+// Factory::Factory
 //----------------------------------------------------------------------------
-RawNxsFactory::RawNxsFactory()
+Factory::Factory()
 {
-  CDMA_FUNCTION_TRACE("RawNxsFactory::RawNxsFactory");
+  CDMA_FUNCTION_TRACE("cdma::soleil::rawnexus::Factory::Factory");
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::~RawNxsFactory
+// Factory::~Factory
 //----------------------------------------------------------------------------
-RawNxsFactory::~RawNxsFactory()
+Factory::~Factory()
 {
-  CDMA_TRACE("RawNxsFactory::~RawNxsFactory");
+  CDMA_TRACE("cdma::soleil::rawnexus::Factory::~Factory");
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::openDataset
+// Factory::openDataset
 //----------------------------------------------------------------------------
-IDatasetPtr RawNxsFactory::openDataset(const std::string& location)
+cdma::IDatasetPtr Factory::openDataset(const std::string& location)
 throw ( cdma::Exception )
 {
-  return new RawNxsDataset( yat::URI(location), this );
+  return new Dataset( yat::URI(location), this );
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::openDictionary
+// Factory::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr RawNxsFactory::openDictionary(const std::string&)
+cdma::DictionaryPtr Factory::openDictionary(const std::string&)
 throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("RawNxsFactory::openDictionary");
+  THROW_NOT_IMPLEMENTED("cdma::soleil::rawnexus::Factory::openDictionary");
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::createDatasetInstance
+// Factory::createDatasetInstance
 //----------------------------------------------------------------------------
-IDatasetPtr RawNxsFactory::createDatasetInstance(const std::string&) throw ( cdma::Exception )
+cdma::IDatasetPtr Factory::createDatasetInstance(const std::string&) throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("RawNxsFactory::createDatasetInstance");
+  THROW_NOT_IMPLEMENTED("cdma::soleil::rawnexus::Factory::createDatasetInstance");
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::createEmptyDatasetInstance
+// Factory::createEmptyDatasetInstance
 //----------------------------------------------------------------------------
-IDatasetPtr RawNxsFactory::createEmptyDatasetInstance() throw ( cdma::Exception )
+cdma::IDatasetPtr Factory::createEmptyDatasetInstance() throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("RawNxsFactory::createEmptyDatasetInstance");
-  THROW_NOT_IMPLEMENTED("RawNxsFactory::createEmptyDatasetInstance");
+  CDMA_FUNCTION_TRACE("cdma::soleil::rawnexus::Factory::createEmptyDatasetInstance");
+  THROW_NOT_IMPLEMENTED("cdma::soleil::rawnexus::Factory::createEmptyDatasetInstance");
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::getPathSeparator
+// Factory::getPathSeparator
 //----------------------------------------------------------------------------
-std::string RawNxsFactory::getPathSeparator()
+std::string Factory::getPathSeparator()
 {
   return std::string();
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::getPluginURIDetector
+// Factory::getPluginURIDetector
 //----------------------------------------------------------------------------
-IDataSourcePtr RawNxsFactory::getPluginURIDetector()
+cdma::IDataSourcePtr Factory::getPluginURIDetector()
 {
-  return new RawNxsDataSource();
+  return new DataSource(this);
 }
 
 //----------------------------------------------------------------------------
-// RawNxsFactory::getPluginMethodsList
+// Factory::getPluginMethodsList
 //----------------------------------------------------------------------------
-std::list<std::string> RawNxsFactory::getPluginMethodsList()
+std::list<std::string> Factory::getPluginMethodsList()
 {
   return std::list<std::string>();
 }
 
 //==============================================================================
-// class RawNxsDataset
+// class Dataset
 //==============================================================================
 //---------------------------------------------------------------------------
-// RawNxsDataset::RawNxsDataset
+// Dataset::Dataset
 //---------------------------------------------------------------------------
-RawNxsDataset::RawNxsDataset( const yat::URI& location, 
-                              RawNxsFactory* factory_ptr )
-: NxsDataset( location, factory_ptr )
+Dataset::Dataset( const yat::URI& location, Factory* factory_ptr )
+: cdma::nexus::Dataset( location, factory_ptr )
 {
 }
 
 //---------------------------------------------------------------------------
-// RawNxsDataset::RawNxsDataset
+// Dataset::Dataset
 //---------------------------------------------------------------------------
-RawNxsDataset::RawNxsDataset()
-: NxsDataset()
+Dataset::Dataset()
+: cdma::nexus::Dataset()
 {
 }
 
 //---------------------------------------------------------------------------
-// RawNxsDataset::getLogicalRoot
+// Dataset::getLogicalRoot
 //---------------------------------------------------------------------------
-LogicalGroupPtr RawNxsDataset::getLogicalRoot()
+cdma::LogicalGroupPtr Dataset::getLogicalRoot()
 {
-  return LogicalGroupPtr(NULL);
+  return cdma::LogicalGroupPtr(NULL);
 }
 
 //==============================================================================
-// class RawNxsDataSource
+// class DataSource
 //==============================================================================
 //----------------------------------------------------------------------------
-// RawNxsDataSource::isReadable
+// DataSource::isReadable
 //----------------------------------------------------------------------------
-bool RawNxsDataSource::isReadable(const yat::URI& dataset_location) const
+bool DataSource::isReadable(const yat::URI& dataset_location) const
 {
+  CDMA_FUNCTION_TRACE("cdma::soleil::rawnexus::DataSource::isReadable");
   // Get the path from URI
   yat::String path = dataset_location.get( yat::URI::PATH );
   
@@ -184,40 +190,45 @@ bool RawNxsDataSource::isReadable(const yat::URI& dataset_location) const
     try
     {
       // Will try to open the file and close it
+      CDMA_TRACE("try to open dataset " << dataset_location.get());
       m_factory_ptr->openDataset( dataset_location.get() );
+      CDMA_TRACE("return true");
       return true;
     }
     catch( ... )
     {
+      CDMA_TRACE("return false");
       return false;
     }
   }
+  CDMA_TRACE("return false");
   return false; 
 }
 
 //----------------------------------------------------------------------------
-// RawNxsDataSource::isBrowsable
+// DataSource::isBrowsable
 //----------------------------------------------------------------------------
-bool RawNxsDataSource::isBrowsable( const yat::URI& ) const
+bool DataSource::isBrowsable( const yat::URI& ) const
 {
   return false;
 }
 
 //----------------------------------------------------------------------------
-// RawNxsDataSource::isProducer
+// DataSource::isProducer
 //----------------------------------------------------------------------------
-bool RawNxsDataSource::isProducer( const yat::URI& ) const
+bool DataSource::isProducer( const yat::URI& ) const
 {
   return false;
 }
 
 //----------------------------------------------------------------------------
-// RawNxsDataSource::isExperiment
+// DataSource::isExperiment
 //----------------------------------------------------------------------------
-bool RawNxsDataSource::isExperiment( const yat::URI& ) const
+bool DataSource::isExperiment( const yat::URI& ) const
 {
   return false;
 }
 
-
+} // namespace rawnexus
+} // namespace soleil
 } // namespace cdma
