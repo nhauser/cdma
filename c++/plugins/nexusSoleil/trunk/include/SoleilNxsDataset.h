@@ -24,31 +24,37 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 //==============================================================================
 /// Dataset class based on the NeXus engine implementation
 /// See cdma::IDataset definition for more explanations
 //==============================================================================
-class SoleilNxsDataset : public NxsDataset
+class Dataset : public cdma::nexus::Dataset
 {
-friend class SoleilNxsFactory;
+friend class Factory;
 
 public:
 
   //@{ IDataset methods
 
-    LogicalGroupPtr getLogicalRoot();
+  cdma::LogicalGroupPtr getLogicalRoot();
   
   //@}
 
 private:
 
   // Constructor
-  SoleilNxsDataset(const yat::URI& location, SoleilNxsFactory* factory_ptr);
-  SoleilNxsDataset();
+  Dataset(const yat::URI& location, Factory* factory_ptr);
+  Dataset();
 
 };
 
+} //namespace nexus
+} //namespace soleil
 } //namespace cdma
 
 #endif //__CDMA_IFACTORY_H__

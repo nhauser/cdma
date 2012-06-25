@@ -26,7 +26,11 @@
 
 namespace cdma
 {
-  
+namespace soleil
+{
+namespace nexus
+{
+
 //-----------------------------------------------------------------------------
 // DictionaryDetector::DictionaryDetector
 //-----------------------------------------------------------------------------
@@ -37,7 +41,7 @@ DictionaryDetector::DictionaryDetector()
 //-----------------------------------------------------------------------------
 // DictionaryDetector::DictionaryDetector
 //-----------------------------------------------------------------------------
-DictionaryDetector::DictionaryDetector(const NexusFilePtr& handle)
+DictionaryDetector::DictionaryDetector(const cdma::nexus::NexusFilePtr& handle)
 {
   m_ptrNxFile = handle;
 }
@@ -69,7 +73,7 @@ yat::String DictionaryDetector::getDictionaryName() throw ( cdma::Exception )
 void DictionaryDetector::detectBeamline()
 {
   yat::String path = "/<NXentry>/<NXinstrument>";
-  NexusFileAccess auto_open( m_ptrNxFile );
+  cdma::nexus::NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->OpenGroupPath(PSZ(path), false) )
   {
     m_beamline = std::string(m_ptrNxFile->CurrentGroupName());
@@ -92,7 +96,7 @@ void DictionaryDetector::detectDataModel()
     if( m_model == "UNKNOWN" )
     {
       yat::String pathGrp = "/<NXentry>/";
-      NexusFileAccess auto_open( m_ptrNxFile );
+      cdma::nexus::NexusFileAccess auto_open( m_ptrNxFile );
       if( m_ptrNxFile->OpenGroupPath(PSZ(pathGrp), false) )
       {
         if( m_ptrNxFile->OpenDataSet( "acquisition_model", false ) )
@@ -131,7 +135,7 @@ bool DictionaryDetector::isFlyScan()
   yat::String testClass = "NXdata";
   yat::String testName = "scan_data";
   std::vector<std::string> res;
-  NexusFileAccess auto_open( m_ptrNxFile );
+  cdma::nexus::NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
     if( ! m_ptrNxFile->OpenDataSet( "time_1", false ) )
@@ -152,7 +156,7 @@ bool DictionaryDetector::isScanServer()
   yat::String testClass = "NXdata";
   yat::String testName = "scan_data";
   std::vector<std::string> res;
-  NexusFileAccess auto_open( m_ptrNxFile );
+  cdma::nexus::NexusFileAccess auto_open( m_ptrNxFile );
   if( m_ptrNxFile->SearchGroup(PSZ(testName), PSZ(testClass), &res, PSZ(pathGrp) ) == NX_OK )
   {
     if( m_ptrNxFile->OpenDataSet( "time_1", false ) )
@@ -163,4 +167,6 @@ bool DictionaryDetector::isScanServer()
   return result;
 }
 
-} // namespace
+} // namespace nexus
+} // namespace soleil
+} // namespace cdma

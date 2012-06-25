@@ -28,6 +28,10 @@
 
 namespace cdma
 {
+namespace soleil
+{
+namespace nexus
+{
 
 //==============================================================================
 /// Test method
@@ -37,13 +41,13 @@ class TestMethod : public cdma::IPluginMethod
 public:
   ~TestMethod() 
   {
-    CDMA_TRACE("TestMethod::~TestMethod");
+    FUNCTION_TRACE("TestMethod::~TestMethod");
   }
 
   void execute(Context& context) throw (cdma::Exception);
 };
 
-// Export the method
+// Exports the method
 EXPORT_PLUGIN_METHOD(TestMethod);
 
 //==============================================================================
@@ -51,7 +55,7 @@ EXPORT_PLUGIN_METHOD(TestMethod);
 //==============================================================================
 void TestMethod::execute(Context& ctx) throw (cdma::Exception)
 {
-  CDMA_FUNCTION_TRACE("TestMethod::execute");
+  FUNCTION_TRACE("TestMethod::execute");
 
   IDataItemPtr dataitem_ptr = ctx.getTopDataItem();
   double value = dataitem_ptr->readScalarDouble();
@@ -64,5 +68,6 @@ void TestMethod::execute(Context& ctx) throw (cdma::Exception)
   ctx.pushDataItem(new_data_item_ptr);
 }
 
-
+} // namespace nexus
+} // namespace soleil
 } // namespace cdma

@@ -23,18 +23,21 @@
 // Soleil NeXus plugin
 #include <SoleilNxsFactory.h>
 
-
 namespace cdma
+{
+namespace soleil
+{
+namespace nexus
 {
 
 //==============================================================================
 /// IDataSource implementation
 //==============================================================================
-class SoleilNxsDataSource : public IDataSource 
+class DataSource : public cdma::IDataSource 
 {
-friend class SoleilNxsFactory;
+friend class Factory;
 public:
-  ~SoleilNxsDataSource() {};
+  ~DataSource() {};
 
   //@{ IDataSource methods ------------
 
@@ -46,11 +49,14 @@ public:
   //@}
 
 private:
-  SoleilNxsDataSource(SoleilNxsFactory *factory_ptr): m_factory_ptr(factory_ptr) {};
+  DataSource(Factory* factory_ptr): m_factory_ptr(factory_ptr) {};
 
-  SoleilNxsFactory *m_factory_ptr;
+  Factory *m_factory_ptr;
 };
 
-} //namespace CDMACore
+} //namespace nexus
+} //namespace soleil
+} //namespace cdma
+
 #endif //__CDMA_NXSDATASOURCE_H__
 
