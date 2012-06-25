@@ -88,10 +88,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         <systemIncludePaths>
           <systemIncludePath>/usr/include/libxml2</systemIncludePath>
         </systemIncludePaths>
+        <defines>
+          <!--define>CDMA_DEBUG</define-->
+        </defines>
       </cpp>
-      <defines>
-        <!--define>CDMA_DEBUG</define-->
-      </defines>
       <libraries>
         <library>
           <type>shared</type>
