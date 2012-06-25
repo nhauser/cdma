@@ -12,9 +12,6 @@
 
 #include <typeinfo>
 
-#include <yat/utils/String.h>
-#include <yat/memory/SharedPtr.h>
-
 #include <cdma/array/Array.h>
 #include <cdma/Common.h>
 

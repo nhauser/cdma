@@ -10,14 +10,7 @@
 #ifndef __CDMA_IFACTORY_H__
 #define __CDMA_IFACTORY_H__
 
-#include <vector>
-#include <string>
-#include <list>
-#include <typeinfo>
-
-#include <yat/memory/SharedPtr.h>
 #include <yat/plugin/IPlugInObject.h>
-#include <yat/utils/URI.h>
 
 #include <cdma/Common.h>
 #include <cdma/IDataSource.h>

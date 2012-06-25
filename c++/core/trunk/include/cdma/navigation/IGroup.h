@@ -11,14 +11,6 @@
 #ifndef __CDMA_IGROUP_H__
 #define __CDMA_IGROUP_H__
 
-#include <list>
-#include <map>
-#include <string>
-
-#include <yat/memory/SharedPtr.h>
-#include <yat/threading/Mutex.h>
-#include <yat/any/Any.h>
-
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataItem.h>

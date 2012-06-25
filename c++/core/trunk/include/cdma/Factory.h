@@ -16,7 +16,6 @@
 #include <typeinfo>
 
 // yat
-#include <yat/utils/String.h>
 #include <yat/system/SysUtils.h>
 #include <yat/plugin/PlugInManager.h>
 #include <yat/plugin/IPlugInInfo.h>
@@ -68,6 +67,7 @@ public:
   typedef std::map<std::string, Plugin> PluginMap;
   typedef std::map<std::string, IFactoryPtr> PluginFactoryPtrMap;
   typedef std::pair<yat::IPlugInInfo*, yat::IPlugInFactory*> PluginInfoPair;
+  typedef std::pair<IDatasetPtr, IFactoryPtr> DatasetFactoryPair;
 
 private:
   static std::string s_cdma_view;
@@ -151,7 +151,7 @@ public:
   /// @return     pair having first: IDataset and second: IFactory
   /// @throw      Exception
   ///
-  static std::pair<IDatasetPtr, IFactoryPtr> openDataset(const yat::URI& uri) throw ( Exception );
+  static DatasetFactoryPair openDataset(const yat::URI& uri) throw ( Exception );
 
   /// Open a dictionary document
   ///

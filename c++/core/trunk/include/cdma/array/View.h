@@ -16,10 +16,6 @@
 #ifndef __CDMA_VIEW_H__
 #define __CDMA_VIEW_H__
 
-#include <string>
-#include <vector>
-#include <list>
-
 #include <cdma/array/Range.h>
 
 /// @cond clientAPI

@@ -10,14 +10,7 @@
 #ifndef __CDMA_IDATASOURCE_H__
 #define __CDMA_IDATASOURCE_H__
 
-// Standard includes
-#include <list>
-#include <vector>
-#include <typeinfo>
-
-#include <yat/utils/String.h>
-#include <yat/threading/Mutex.h>
-#include <yat/memory/SharedPtr.h>
+#include <yat/utils/URI.h>
 
 // CDMA includes
 #include <cdma/Common.h>

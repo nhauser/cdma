@@ -12,7 +12,6 @@
 
 #include <string>
 #include <map>
-#include <yat/memory/SharedPtr.h>
 
 // Include CDMA
 #include <cdma/Common.h>
