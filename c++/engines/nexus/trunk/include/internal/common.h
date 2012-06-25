@@ -22,11 +22,15 @@
 #  endif
 #endif
 
+
 namespace cdma
 {
-DECLARE_CLASS_SHARED_WEAK_PTR(NxsGroup);
-DECLARE_CLASS_SHARED_WEAK_PTR(NxsDataset);
+namespace nexus
+{
+DECLARE_CLASS_SHARED_WEAK_PTR(Group);
+DECLARE_CLASS_SHARED_WEAK_PTR(Dataset);
 DECLARE_SHARED_PTR(NexusFile);
+}
 }
 
 #endif

@@ -13,25 +13,27 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 // ****************************************************************************
-#ifndef __CDMA_NXSDATASET_H__
-#define __CDMA_NXSDATASET_H__
+#ifndef __CDMA_NEXUS_DATASET_H__
+#define __CDMA_NEXUS_DATASET_H__
 
-#include <internal/common.h>
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/IFactory.h>
+#include <internal/common.h>
 
 #include "nxfile.h"
 
 namespace cdma
+{
+namespace nexus
 {
 
 //==============================================================================
 /// IDataset implementation for NeXus engine
 /// See IDataset definition for more explanation
 //==============================================================================
-class CDMA_NEXUS_DECL NxsDataset : public IDataset
+class CDMA_NEXUS_DECL Dataset : public IDataset
 {
 protected:
   yat::URI                              m_location;     ///< uniform resource indentifier to the dataset
@@ -47,14 +49,14 @@ protected:
   void close();
 
   /// Default constructor
-  NxsDataset();
+  Dataset();
 
   /// Constructor
   ///
   /// @param location dataset location in URI form
   /// @param factory_ptr C-style pointer on the plugin factory creating this object
   ///
-  NxsDataset( const yat::URI& location, IFactory *factory_ptr );
+  Dataset( const yat::URI& location, IFactory *factory_ptr );
 
 public:
 
@@ -67,13 +69,13 @@ public:
   const NexusFilePtr& getHandle() { return m_file_handle; };
 
   /// Returns a C-style pointer on the plugin factory who created this dataset
-  cdma::IFactory* getPluginFactory() const { return m_factory_ptr; };
+  IFactory* getPluginFactory() const { return m_factory_ptr; };
 
   //@}
   
   //@{ IDataset interface -------------
   
-  virtual ~NxsDataset();
+  virtual ~Dataset();
   IGroupPtr getRootGroup();
   LogicalGroupPtr getLogicalRoot();
   std::string getLocation();
@@ -81,11 +83,11 @@ public:
   void setLocation(const std::string& location);
   void setLocation(const yat::URI& location);
   void setTitle(const std::string& title);
-  bool sync() throw ( cdma::Exception );
-  void save() throw ( cdma::Exception );
-  void saveTo(const std::string& location) throw ( cdma::Exception );
-  void save(const IContainer& container) throw ( cdma::Exception );
-  void save(const std::string& parentPath, const IAttributePtr& attribute) throw ( cdma::Exception );
+  bool sync() throw ( Exception );
+  void save() throw ( Exception );
+  void saveTo(const std::string& location) throw ( Exception );
+  void save(const IContainer& container) throw ( Exception );
+  void save(const std::string& parentPath, const IAttributePtr& attribute) throw ( Exception );
   IGroupPtr    getGroupFromPath(const std::string &fullPath);
   IDataItemPtr getItemFromPath(const std::string &fullPath);
   IDataItemPtr getItemFromPath(const yat::String &path, const yat::String& name);
@@ -93,7 +95,7 @@ public:
   //@} IDataset interface
 };
 
-typedef yat::SharedPtr<NxsDataset, yat::Mutex> NxsDatasetPtr;
+typedef yat::SharedPtr<Dataset, yat::Mutex> DatasetPtr;
 
 //==============================================================================
 /// Convenient class
@@ -107,6 +109,7 @@ public:
   ~NexusFileAccess();
 };
 
-} // namespace
+} // namespace nexus
+} // namespace cdma
 #endif
 

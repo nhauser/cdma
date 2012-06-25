@@ -27,21 +27,23 @@
 
 namespace cdma
 {
+namespace nexus
+{
 
 //=============================================================================
 /// IDimension implementation
 //=============================================================================
-class NxsDimension : public IDimension
+class CDMA_NEXUS_DECL Dimension : public IDimension
 {
 typedef std::map<std::string, IAttributePtr> AttributeMap;
 
 private:
-  NxsDataItemPtr m_item;   // NxsDataItem of the dimension
-  bool           m_shared; // Is this dimension shared
+  DataItemPtr m_item;   // DataItem of the dimension
+  bool        m_shared; // Is this dimension shared
 
 public:
   // Constructors
-    NxsDimension( NxsDataItemPtr item );
+    Dimension( DataItemPtr item );
     
   //@{ IDimension interface
     std::string getName();
@@ -57,11 +59,14 @@ public:
     void setShared(bool b);
     void setLength(int n);
     void setName(const std::string& name);
-    void setCoordinateVariable(const ArrayPtr& array) throw ( cdma::Exception );
+    void setCoordinateVariable(const ArrayPtr& array) throw ( Exception );
     void setDimensionAxis(int index);
     void setDisplayOrder(int order);
     std::string getUnitsString();
   //@}
  };
-}
+
+} // namespace nexus
+} // namespace cdma
+
 #endif

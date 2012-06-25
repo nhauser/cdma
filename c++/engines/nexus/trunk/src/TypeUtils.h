@@ -8,6 +8,8 @@
 
 namespace cdma
 {
+namespace nexus
+{
 
 //==============================================================================
 /// TypeUtils
@@ -130,6 +132,7 @@ inline NexusDataType TypeUtils::toNeXusDataType()
   throw cdma::Exception("UNRECOGNIZED TYPE", "Unable to map <TYPE> to Nexus type", "TypeUtils::toNeXusDataType");
 }
 
-} // namespace
+} // namespace nexus
+} // namespace cdma
 
 #endif // __CDMA_TypeUtils_H__

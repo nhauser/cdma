@@ -16,10 +16,6 @@
 #ifndef __CDMA_NXSGROUP_H__
 #define __CDMA_NXSGROUP_H__
 
-#include <list>
-#include <map>
-#include <string>
-
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IGroup.h>
@@ -30,28 +26,31 @@
 
 namespace cdma
 {
-typedef std::map<yat::String, cdma::IGroupPtr> MapStringGroup;
-typedef std::map<yat::String, cdma::IDataItemPtr> MapStringDataItem;
-typedef std::map<yat::String, cdma::IAttributePtr> MapStringAttribute;
+namespace nexus
+{
+
+typedef std::map<yat::String, IGroupPtr> MapStringGroup;
+typedef std::map<yat::String, IDataItemPtr> MapStringDataItem;
+typedef std::map<yat::String, IAttributePtr> MapStringAttribute;
 typedef std::map<std::string, IDimensionPtr> MapStringDimension;
 
 //==============================================================================
 /// IGroup implementation for NeXus engine
 /// See IGroup definition for more explanation
 //==============================================================================
-class CDMA_NEXUS_DECL NxsGroup : public cdma::IGroup
+class CDMA_NEXUS_DECL Group : public IGroup
 {
 private:
-  NxsDataset*           m_dataset_ptr;       // C-style pointer to the parent dataset
-  NxsGroup*             m_root_ptr;          // TODO appeler celui du Dataset
-  yat::String           m_path;              // Group path inside the Nexus File
-  bool                  m_bChildren;         // true if childs are enumerated
-  bool                  m_attributes_loaded; // 'true' when the attributes are loaded from the data source
+  Dataset*            m_dataset_ptr;       // C-style pointer to the parent dataset
+  Group*              m_root_ptr;          // TODO appeler celui du Dataset
+  yat::String         m_path;              // Group path inside the Nexus File
+  bool                m_bChildren;         // true if childs are enumerated
+  bool                m_attributes_loaded; // 'true' when the attributes are loaded from the data source
 
-  MapStringGroup        m_mapGroups;         // Group map: map[group_name]= group child
-  MapStringDataItem     m_mapDataItems;      // DataItem map : map[name]=attribute
-  MapStringDimension    m_mapDimensions;     // Dimension map: map[dim_name] = dimension
-  MapStringAttribute    m_attributes_map;    // Attribute map : map[name]=attribute
+  MapStringGroup      m_mapGroups;         // Group map: map[group_name]= group child
+  MapStringDataItem   m_mapDataItems;      // DataItem map : map[name]=attribute
+  MapStringDimension  m_mapDimensions;     // Dimension map: map[dim_name] = dimension
+  MapStringAttribute  m_attributes_map;    // Attribute map : map[name]=attribute
 
   void PrivEnumChildren();
   void PrivEnumAttributes();
@@ -60,10 +59,10 @@ public:
 
   //@{ Constructors
 
-    NxsGroup(NxsDataset* dataset_ptr);
-    NxsGroup(NxsDataset* dataset_ptr, const yat::String& parent_path, const yat::String& name);
-    NxsGroup(NxsDataset* dataset_ptr, const yat::String& full_path);
-    ~NxsGroup();
+    Group(Dataset* dataset_ptr);
+    Group(Dataset* dataset_ptr, const yat::String& parent_path, const yat::String& name);
+    Group(Dataset* dataset_ptr, const yat::String& full_path);
+    ~Group();
 
   //@} --------------------------------
 
@@ -78,35 +77,35 @@ public:
   
   bool isRoot() const;
   bool isEntry() const;
-  cdma::IGroupPtr getRoot() const;
-  cdma::IGroupPtr getParent() const;
-  cdma::IDataItemPtr getDataItem(const std::string& short_name) throw ( cdma::Exception );
-  cdma::IDataItemPtr getDataItemWithAttribute(const std::string& name, const std::string& value);
-  cdma::IDimensionPtr getDimension(const std::string& name);
-  cdma::IAttributePtr getAttribute(const std::string&);
-  cdma::IGroupPtr getGroup(const std::string& short_name);
-  cdma::IGroupPtr getGroupWithAttribute(const std::string& attributeName, const std::string& value);
-  std::list<cdma::IAttributePtr> getAttributeList();
-  std::list<cdma::IDataItemPtr> getDataItemList();
-  std::list<cdma::IDimensionPtr> getDimensionList();
-  std::list<cdma::IGroupPtr> getGroupList();
-  cdma::IDataItemPtr addDataItem(const std::string& short_name);
-  cdma::IDimensionPtr addDimension(const cdma::IDimensionPtr& dim);
-  cdma::IGroupPtr addSubgroup(const std::string& short_name);
-  bool removeDataItem(const cdma::IDataItemPtr& item);
+  IGroupPtr getRoot() const;
+  IGroupPtr getParent() const;
+  IDataItemPtr getDataItem(const std::string& short_name) throw ( Exception );
+  IDataItemPtr getDataItemWithAttribute(const std::string& name, const std::string& value);
+  IDimensionPtr getDimension(const std::string& name);
+  IAttributePtr getAttribute(const std::string&);
+  IGroupPtr getGroup(const std::string& short_name);
+  IGroupPtr getGroupWithAttribute(const std::string& attributeName, const std::string& value);
+  std::list<IAttributePtr> getAttributeList();
+  std::list<IDataItemPtr> getDataItemList();
+  std::list<IDimensionPtr> getDimensionList();
+  std::list<IGroupPtr> getGroupList();
+  IDataItemPtr addDataItem(const std::string& short_name);
+  IDimensionPtr addDimension(const IDimensionPtr& dim);
+  IGroupPtr addSubgroup(const std::string& short_name);
+  bool removeDataItem(const IDataItemPtr& item);
   bool removeDataItem(const std::string& varName);
   bool removeDimension(const std::string& dimName);
-  bool removeGroup(const cdma::IGroupPtr& group);
+  bool removeGroup(const IGroupPtr& group);
   bool removeGroup(const std::string& short_name);
-  bool removeDimension(const cdma::IDimensionPtr& dimension);
-  void setParent(const cdma::IGroupPtr&);
+  bool removeDimension(const IDimensionPtr& dimension);
+  void setParent(const IGroupPtr&);
 
   //@} --------------------------------
   
   //@{ IContainer
 
-  //  cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
-    void addAttribute(const cdma::IAttributePtr& attr);
+  //  IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
+    void addAttribute(const IAttributePtr& attr);
     std::string getLocation() const;
     std::string getName() const;
     std::string getShortName() const;
@@ -114,12 +113,14 @@ public:
     bool removeAttribute(const IAttributePtr&);
     void setName(const std::string&);
     void setShortName(const std::string&);
-    cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_GROUP; }
+    IContainer::Type getContainerType() const { return IContainer::DATA_GROUP; }
 
   //@} --------------------------------
 };
 
-typedef yat::SharedPtr<NxsGroup, yat::Mutex> NxsGroupPtr;
+typedef yat::SharedPtr<Group, yat::Mutex> GroupPtr;
 
-}
+} // namespace nexus
+} // namespace cdma
+
 #endif

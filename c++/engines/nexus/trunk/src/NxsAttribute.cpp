@@ -18,18 +18,20 @@
 
 namespace cdma
 {
+namespace nexus
+{
 
 //---------------------------------------------------------------------------
-// NxsAttribute::NxsAttribute
+// Attribute::Attribute
 //---------------------------------------------------------------------------
-  NxsAttribute::NxsAttribute()
+Attribute::Attribute()
 {
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::NxsAttribute
+// Attribute::Attribute
 //---------------------------------------------------------------------------
-NxsAttribute::NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info )
+Attribute::Attribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info )
 {
   // Allocate requested memory
   int attr_bytes = info.Len() + 1;
@@ -48,86 +50,86 @@ NxsAttribute::NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& i
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getName
+// Attribute::getName
 //---------------------------------------------------------------------------
-std::string NxsAttribute::getName()
+std::string Attribute::getName()
 {
   return m_name;
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getType
+// Attribute::getType
 //---------------------------------------------------------------------------
-const std::type_info& NxsAttribute::getType()
+const std::type_info& Attribute::getType()
 {
   return TypeUtils::toCType(m_datatype);
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::isString
+// Attribute::isString
 //---------------------------------------------------------------------------
-bool NxsAttribute::isString()
+bool Attribute::isString()
 {
   return ( m_datatype == NX_CHAR );
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::isArray
+// Attribute::isArray
 //---------------------------------------------------------------------------
-bool NxsAttribute::isArray()
+bool Attribute::isArray()
 {
   return false;
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getLength
+// Attribute::getLength
 //---------------------------------------------------------------------------
-int NxsAttribute::getLength()
+int Attribute::getLength()
 {
   return 1;
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getStringValue
+// Attribute::getStringValue
 //---------------------------------------------------------------------------
-std::string NxsAttribute::getStringValue()
+std::string Attribute::getStringValue()
 {
-  CDMA_FUNCTION_TRACE("NxsAttribute::getStringValue");
+  CDMA_FUNCTION_TRACE("cdma::nexus::Attribute::getStringValue");
   if( isString() )
   {
     return yat::String( (char*)(m_value_buf.buf()) );
   }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getStringValue");
+  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getStringValue");
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getIntValue
+// Attribute::getIntValue
 //---------------------------------------------------------------------------
-long NxsAttribute::getIntValue()
+long Attribute::getIntValue()
 {
   if( !isString() )
   {
     return TypeUtils::valueToType<long>( m_value_buf.buf(), getType() );
   }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getIntValue");
+  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getIntValue");
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::getFloatValue
+// Attribute::getFloatValue
 //---------------------------------------------------------------------------
-double NxsAttribute::getFloatValue()
+double Attribute::getFloatValue()
 {
   if( !isString() )
   {
     return TypeUtils::valueToType<double>( m_value_buf.buf(), getType() );
   }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "NxsAttribute::getFloatValue");
+  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getFloatValue");
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::toString
+// Attribute::toString
 //---------------------------------------------------------------------------
-std::string NxsAttribute::toString()
+std::string Attribute::toString()
 {
   if( this->isString() )
   {
@@ -142,36 +144,37 @@ std::string NxsAttribute::toString()
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::setStringValue
+// Attribute::setStringValue
 //---------------------------------------------------------------------------
-void NxsAttribute::setStringValue(const std::string&)
+void Attribute::setStringValue(const std::string&)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setStringValue");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setStringValue");
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::setName
+// Attribute::setName
 //---------------------------------------------------------------------------
-void NxsAttribute::setName(const std::string& name)
+void Attribute::setName(const std::string& name)
 {
   m_name = name;
 }
 
 //---------------------------------------------------------------------------
-// NxsAttribute::setDisplayOrder
+// Attribute::setDisplayOrder
 //---------------------------------------------------------------------------
-void NxsAttribute::setIntValue(int)
+void Attribute::setIntValue(int)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setIntValue");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setIntValue");
 }
   
 //---------------------------------------------------------------------------
-// NxsAttribute::setDisplayOrder
+// Attribute::setDisplayOrder
 //---------------------------------------------------------------------------
-void NxsAttribute::setFloatValue(float)
+void Attribute::setFloatValue(float)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setFloatValue");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setFloatValue");
 }
 
 
-}
+} // namespace nexus
+} // namespace cdma

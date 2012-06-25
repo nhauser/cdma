@@ -13,19 +13,13 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 // ****************************************************************************
-#ifndef __CDMA_NXSDATAITEM_H__
-#define __CDMA_NXSDATAITEM_H__
+#ifndef __CDMA_NEXUS_DATAITEM_H__
+#define __CDMA_NEXUS_DATAITEM_H__
 
 #ifndef __TYPEINFO_INCLUDED__
  #include <typeinfo>
  #define __TYPEINFO_INCLUDED__
 #endif
-
-// Tools lib
-#include <list>
-#include <vector>
-#include <yat/utils/String.h>
-#include <yat/memory/SharedPtr.h>
 
 // CDMA Core
 #include <cdma/Common.h>
@@ -40,12 +34,14 @@
 
 namespace cdma
 {
+namespace nexus
+{
 
 //==============================================================================
 /// IDataItem implementation for NeXus engine
 /// See IDataItem definition for more explanation
 //==============================================================================
-class CDMA_NEXUS_DECL NxsDataItem : public IDataItem
+class CDMA_NEXUS_DECL DataItem : public IDataItem
 {
 public:
   typedef std::map<std::string, IAttributePtr> AttributeMap;
@@ -55,7 +51,7 @@ private:
   AttributeMap      m_attr_map;     // Attribute map: map[attr_name] = IAttributePtr
 //  DimOrderMap       m_order_map;    // Dimension order map: map[dim_name] = order of the dimension
   
-  NxsDataset*       m_dataset_ptr;  // C-style pointer in order to solve the circular reference
+  Dataset*          m_dataset_ptr;  // C-style pointer in order to solve the circular reference
   yat::String       m_name;         // Name of the dataitem (ie: attribute long_name else node's name)
   yat::String       m_shortName;    // Short name of the node (ie: the key name when using the dictionary)
   yat::String       m_nodeName;     // physical name in NeXus file
@@ -69,10 +65,10 @@ public:
 
   //@{ Constructors & Destructor
 
-    NxsDataItem(NxsDataset* dataset_ptr, const std::string& path);
-    NxsDataItem(NxsDataset* dataset_ptr, const IGroupPtr& parent, const std::string& name );
-    NxsDataItem(NxsDataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path);
-    ~NxsDataItem();
+    DataItem(Dataset* dataset_ptr, const std::string& path);
+    DataItem(Dataset* dataset_ptr, const IGroupPtr& parent, const std::string& name );
+    DataItem(Dataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path);
+    ~DataItem();
 
   //@} --------------------------------
 
@@ -82,8 +78,8 @@ public:
     int findDimensionView(const std::string& name);
     IGroupPtr getParent();
     IGroupPtr getRoot();
-    ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
-    ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
+    ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception );
+    ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( Exception );
     std::string getDescription();
     std::list<IDimensionPtr> getDimensions(int i);
     std::list<IDimensionPtr> getDimensionList();
@@ -92,7 +88,7 @@ public:
     int getRank();
     std::vector<int> getShape();
     long getSize();
-    IDataItemPtr getSlice(int dim, int value) throw ( cdma::Exception );
+    IDataItemPtr getSlice(int dim, int value) throw ( Exception );
     const std::type_info& getType();
     std::string getUnitsString();
     bool isMemberOfStructure();
@@ -100,17 +96,17 @@ public:
     bool isScalar();
     bool isUnlimited();
     bool isUnsigned();
-    unsigned char readScalarByte() throw ( cdma::Exception );
-    double readScalarDouble() throw ( cdma::Exception );
-    float readScalarFloat() throw ( cdma::Exception );
-    int readScalarInt() throw ( cdma::Exception );
-    long readScalarLong() throw ( cdma::Exception );
-    short readScalarShort() throw ( cdma::Exception );
-    std::string readString() throw ( cdma::Exception );
+    unsigned char readScalarByte() throw ( Exception );
+    double readScalarDouble() throw ( Exception );
+    float readScalarFloat() throw ( Exception );
+    int readScalarInt() throw ( Exception );
+    long readScalarLong() throw ( Exception );
+    short readScalarShort() throw ( Exception );
+    std::string readString() throw ( Exception );
     void setDataType(const std::type_info& dataType);
-    void setData(const cdma::ArrayPtr&);
+    void setData(const ArrayPtr&);
     void setDimensions(const std::string& dimString);
-    void setDimension(const IDimensionPtr& dim, int ind) throw ( cdma::Exception );
+    void setDimension(const IDimensionPtr& dim, int ind) throw ( Exception );
     void setUnitsString(const std::string& units);
     IAttributePtr getAttribute(const std::string&);
     AttributeList getAttributeList();
@@ -121,7 +117,7 @@ public:
   //@{ IContainer
 
     //cdma::IAttributePtr addAttribute(const std::string& short_name, yat::Any &value);
-    void addAttribute(const cdma::IAttributePtr& attr);
+    void addAttribute(const IAttributePtr& attr);
     std::string getLocation() const;
     std::string getName() const;
     std::string getShortName() const;
@@ -129,7 +125,7 @@ public:
     bool removeAttribute(const IAttributePtr&);
     void setName(const std::string&);
     void setShortName(const std::string&);
-    cdma::IContainer::Type getContainerType() const { return cdma::IContainer::DATA_ITEM; }
+    IContainer::Type getContainerType() const { return IContainer::DATA_ITEM; }
 
   //@} --------------------------------
 
@@ -140,7 +136,7 @@ public:
   //@} --------------------------------
 
 protected:
-  void init(NxsDataset* dataset_ptr, const std::string& path, bool init_from_file = true);
+  void init(Dataset* dataset_ptr, const std::string& path, bool init_from_file = true);
 
 private:
   void loadArray();
@@ -149,6 +145,8 @@ private:
   void open(bool openNode = true );
 };
 
-typedef yat::SharedPtr<NxsDataItem, yat::Mutex> NxsDataItemPtr;
-}
+typedef yat::SharedPtr<DataItem, yat::Mutex> DataItemPtr;
+
+} // namespace nexus
+} // namespace cdma
 #endif
