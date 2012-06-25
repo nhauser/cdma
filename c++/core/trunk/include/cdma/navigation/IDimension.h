@@ -10,10 +10,6 @@
 #ifndef __CDMA_IDIMENSION_H__
 #define __CDMA_IDIMENSION_H__
 
-#include <yat/utils/String.h>
-#include <yat/memory/SharedPtr.h>
-#include <yat/threading/Mutex.h>
-
 #include <cdma/Common.h>
 #include <cdma/array/Array.h>
 #include <cdma/exception/Exception.h>

@@ -10,14 +10,9 @@
 #ifndef __CDMA_ICONTAINER_H__
 #define __CDMA_ICONTAINER_H__
 
-#include <list>
-#include <string>
-#include <yat/any/Any.h>
-
 #include <cdma/Common.h>
 #include <cdma/array/Range.h>
 #include <cdma/navigation/IAttribute.h>
-
 
 namespace cdma
 {

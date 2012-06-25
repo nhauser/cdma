@@ -10,12 +10,6 @@
 #ifndef __CDMA_LOGICALGROUP_H__
 #define __CDMA_LOGICALGROUP_H__
 
-#include <list>
-#include <string>
-#include <map>
-
-#include <yat/memory/SharedPtr.h>
-
 #include <cdma/Common.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataset.h>

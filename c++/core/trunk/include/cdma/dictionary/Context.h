@@ -12,9 +12,6 @@
 
 #include <vector>
 
-// YAT library
-#include <yat/memory/SharedPtr.h>
-
 // Include CDMA
 #include <cdma/Common.h>
 #include <cdma/navigation/IContainer.h>

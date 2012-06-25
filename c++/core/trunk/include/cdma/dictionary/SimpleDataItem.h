@@ -15,11 +15,6 @@
  #define __TYPEINFO_INCLUDED__
 #endif
 
-// Tools lib
-#include <list>
-#include <vector>
-#include <yat/utils/String.h>
-
 // CDMA Core
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>

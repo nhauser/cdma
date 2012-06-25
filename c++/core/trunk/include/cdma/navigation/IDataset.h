@@ -10,10 +10,7 @@
 #ifndef __CDMA_IDATASET_H__
 #define __CDMA_IDATASET_H__
 
-#include <yat/utils/String.h>
 #include <yat/utils/URI.h>
-#include <yat/memory/SharedPtr.h>
-#include <yat/threading/Mutex.h>
 
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IGroup.h>

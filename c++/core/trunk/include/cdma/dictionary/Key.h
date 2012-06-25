@@ -10,12 +10,6 @@
 #ifndef __CDMA_KEY_H__
 #define __CDMA_KEY_H__
 
-#include <list>
-#include <string>
-
-#include <yat/memory/SharedPtr.h>
-#include <yat/threading/Mutex.h>
-
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/dictionary/PluginMethods.h>

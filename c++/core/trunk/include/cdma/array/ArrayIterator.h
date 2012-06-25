@@ -18,8 +18,6 @@
 
 #include <vector>
 
-#include <yat/any/Any.h>
-
 #include <cdma/Common.h>
 
 /// @cond clientAPI
