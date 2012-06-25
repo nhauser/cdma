@@ -23,13 +23,19 @@
 
 namespace cdma
 {
-NxsDimension::NxsDimension(NxsDataItemPtr dataitem)
+namespace nexus
+{
+
+//----------------------------------------------------------------------------
+// Dimension::Dimension
+//----------------------------------------------------------------------------
+Dimension::Dimension(DataItemPtr dataitem)
 {
   m_item = dataitem;
   m_shared = false;
 }
 /*
-NxsDimension::NxsDimension(NxsDataset* datasetPtr, const NexusDataSetInfo& item, const std::string& path)
+Dimension::Dimension(NxsDataset* datasetPtr, const NexusDataSetInfo& item, const std::string& path)
 {
   m_dataset_ptr = datasetPtr;
   m_item = item;
@@ -38,101 +44,101 @@ NxsDimension::NxsDimension(NxsDataset* datasetPtr, const NexusDataSetInfo& item,
 }
 */
 //----------------------------------------------------------------------------
-// NxsDimension::getName
+// Dimension::getName
 //----------------------------------------------------------------------------
-std::string NxsDimension::getName()
+std::string Dimension::getName()
 {
   return m_item->getName();
 }
 //----------------------------------------------------------------------------
-// NxsDimension::getLength
+// Dimension::getLength
 //----------------------------------------------------------------------------
-int NxsDimension::getLength()
+int Dimension::getLength()
 {
   return m_item->getSize();
 }
 //----------------------------------------------------------------------------
-// NxsDimension::isUnlimited
+// Dimension::isUnlimited
 //----------------------------------------------------------------------------
-bool NxsDimension::isUnlimited()
+bool Dimension::isUnlimited()
 {
   return false;
 }
 //----------------------------------------------------------------------------
-// NxsDimension::isVariableLength
+// Dimension::isVariableLength
 //----------------------------------------------------------------------------
-bool NxsDimension::isVariableLength()
+bool Dimension::isVariableLength()
 {
   return false;
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::isShared
+// Dimension::isShared
 //----------------------------------------------------------------------------
-bool NxsDimension::isShared()
+bool Dimension::isShared()
 {
   return m_shared;
 }
 //----------------------------------------------------------------------------
-// NxsDimension::getCoordinateVariable
+// Dimension::getCoordinateVariable
 //----------------------------------------------------------------------------
-cdma::ArrayPtr NxsDimension::getCoordinateVariable()
+ArrayPtr Dimension::getCoordinateVariable()
 {
   return m_item->getData();
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setUnlimited
+// Dimension::setUnlimited
 //----------------------------------------------------------------------------
-void NxsDimension::setUnlimited(bool)
+void Dimension::setUnlimited(bool)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setUnlimited");
+  THROW_NOT_IMPLEMENTED("cdma_nexus::Dimension::setUnlimited");
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setVariableLength
+// Dimension::setVariableLength
 //----------------------------------------------------------------------------
-void NxsDimension::setVariableLength(bool)
+void Dimension::setVariableLength(bool)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setVariableLength");
+  THROW_NOT_IMPLEMENTED("cdma_nexus::Dimension::setVariableLength");
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setShared
+// Dimension::setShared
 //----------------------------------------------------------------------------
-void NxsDimension::setShared(bool value)
+void Dimension::setShared(bool value)
 {
   m_shared = value;
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setLength
+// Dimension::setLength
 //----------------------------------------------------------------------------
-void NxsDimension::setLength(int)
+void Dimension::setLength(int)
 {
-  THROW_NOT_IMPLEMENTED("NxsDimension::setLength");
+  THROW_NOT_IMPLEMENTED("cdma_nexus::Dimension::setLength");
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setName
+// Dimension::setName
 //----------------------------------------------------------------------------
-void NxsDimension::setName(const std::string& name)
+void Dimension::setName(const std::string& name)
 {
   m_item->setName(name);
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::setCoordinateVariable
+// Dimension::setCoordinateVariable
 //----------------------------------------------------------------------------
-void NxsDimension::setCoordinateVariable(const cdma::ArrayPtr& array) throw ( cdma::Exception )
+void Dimension::setCoordinateVariable(const cdma::ArrayPtr& array) throw ( cdma::Exception )
 {
   m_item->setData(array);
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::getDimensionAxis
+// Dimension::getDimensionAxis
 //----------------------------------------------------------------------------
-int NxsDimension::getDimensionAxis()
+int Dimension::getDimensionAxis()
 {
   IAttributePtr attr = m_item->getAttribute("axis");
   if( attr )
@@ -146,9 +152,9 @@ int NxsDimension::getDimensionAxis()
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::getDisplayOrder
+// Dimension::getDisplayOrder
 //----------------------------------------------------------------------------
-int NxsDimension::getDisplayOrder()
+int Dimension::getDisplayOrder()
 {
   IAttributePtr attr = m_item->getAttribute("primary");
   if( attr )
@@ -162,17 +168,17 @@ int NxsDimension::getDisplayOrder()
 }
 
 //----------------------------------------------------------------------------
-// NxsDimension::getUnitsString
+// Dimension::getUnitsString
 //----------------------------------------------------------------------------
-std::string NxsDimension::getUnitsString()
+std::string Dimension::getUnitsString()
 {
   return m_item->getUnitsString();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setDimensionAxis
+// DataItem::setDimensionAxis
 //---------------------------------------------------------------------------
-void NxsDimension::setDimensionAxis(int index)
+void Dimension::setDimensionAxis(int index)
 {
   IAttributePtr attr = m_item->getAttribute("axis");
   if( attr )
@@ -182,14 +188,16 @@ void NxsDimension::setDimensionAxis(int index)
 }
 
 //---------------------------------------------------------------------------
-// NxsDimension::setDisplayOrder
+// Dimension::setDisplayOrder
 //---------------------------------------------------------------------------
-void NxsDimension::setDisplayOrder(int order)
+void Dimension::setDisplayOrder(int order)
 {
   IAttributePtr attr = m_item->getAttribute("primary");
   if( attr )
   {
     attr->setIntValue(order);
   }
+}
+
 }
 }

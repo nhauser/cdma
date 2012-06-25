@@ -13,13 +13,11 @@
 // FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 //
 // *****************************************************************************
-#ifndef __CDMA_NXSATTRIBUTE_H__
-#define __CDMA_NXSATTRIBUTE_H__
+#ifndef __CDMA_NEXUS_ATTRIBUTE_H__
+#define __CDMA_NEXUS_ATTRIBUTE_H__
 
 /// CDMA Attribute, with name and value. The metadata for data items and groups.
 
-#include <string>
-#include <yat/utils/String.h>
 #include <yat/memory/MemBuf.h>
 
 #include <nxfile.h>
@@ -29,12 +27,14 @@
 
 namespace cdma
 {
+namespace nexus
+{
 
 //==============================================================================
 /// IAttribute implementation for NeXus engine
 /// See IAttribute definition for more explanation
 //==============================================================================
-class CDMA_NEXUS_DECL NxsAttribute : public IAttribute
+  class CDMA_NEXUS_DECL Attribute : public IAttribute
 {
 private:
   std::string    m_name;
@@ -42,10 +42,10 @@ private:
   yat::MemBuf    m_value_buf;
 
 public:
-  NxsAttribute();
-  NxsAttribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info );
+  Attribute();
+  Attribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info );
 
-  //NxsAttribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
+  //Attribute( const string& name, const string value ) { m_name = name; m_value = new string(value); };
 
   std::string getName();
   const std::type_info& getType();
@@ -61,5 +61,8 @@ public:
   void setIntValue(int value);
   void setFloatValue(float value);
   };
-}
+
+} // namespace nexus
+} // namespace cdma
+
 #endif

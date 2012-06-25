@@ -21,6 +21,8 @@
 
 namespace cdma
 {
+namespace nexus
+{
 //-----------------------------------------------------------------------------
 // TypeUtils::toCType
 //-----------------------------------------------------------------------------
@@ -132,4 +134,5 @@ int TypeUtils::sizeOf(NexusDataType type)
   }
 }
 
-} // namespace
+} // namespace nexus
+} // namespace cdma

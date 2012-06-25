@@ -18,48 +18,48 @@
 #include <TypeUtils.h>
 #include <cdma/utils/ArrayUtils.h>
 
-/// A DataItem is a logical container for data. It has a DataType, a set of
-/// Dimensions that define its array shape, and optionally a set of Attributes.
 namespace cdma
+{
+namespace nexus
 {
 
 //=============================================================================
 //
-// NxsDataItem
+// DataItem
 //
 //=============================================================================
 //---------------------------------------------------------------------------
-// NxsDataItem::NxsDataItem
+// DataItem::DataItem
 //---------------------------------------------------------------------------
-NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const std::string& path)
+DataItem::DataItem(Dataset* dataset_ptr, const std::string& path)
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::DataItem");
   init(dataset_ptr, path);
 }
-NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const IGroupPtr& parent, const std::string& name )
+DataItem::DataItem(Dataset* dataset_ptr, const IGroupPtr& parent, const std::string& name )
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::DataItem");
   init( dataset_ptr, parent->getLocation() + "/" + name );
 }
-NxsDataItem::NxsDataItem(NxsDataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path)
+DataItem::DataItem(Dataset* dataset_ptr, const NexusDataSetInfo& item, const std::string& path)
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::NxsDataItem");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::DataItem");
   init( dataset_ptr, yat::String(path) );
   m_item = item;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::~NxsDataItem
+// DataItem::~DataItem
 //---------------------------------------------------------------------------
-NxsDataItem::~NxsDataItem()
+DataItem::~DataItem()
 {
-  CDMA_TRACE("NxsDataItem::~NxsDataItem");
+  CDMA_TRACE("cdma::nexus::DataItem::~DataItem");
 };
 
 //---------------------------------------------------------------------------
-// NxsDataItem::init
+// DataItem::init
 //---------------------------------------------------------------------------
-void NxsDataItem::init(NxsDataset* dataset_ptr, const std::string& path, bool init_from_file)
+void DataItem::init(Dataset* dataset_ptr, const std::string& path, bool init_from_file)
 {
   // Resolve dataitem name and path
   std::vector<yat::String> nodes;
@@ -105,9 +105,9 @@ void NxsDataItem::init(NxsDataset* dataset_ptr, const std::string& path, bool in
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::findAttributeIgnoreCase
+// DataItem::findAttributeIgnoreCase
 //---------------------------------------------------------------------------
-cdma::IAttributePtr NxsDataItem::findAttributeIgnoreCase(const std::string& attrName)
+cdma::IAttributePtr DataItem::findAttributeIgnoreCase(const std::string& attrName)
 {
   IAttributePtr attr (NULL);
   yat::String referent (attrName);
@@ -123,9 +123,9 @@ cdma::IAttributePtr NxsDataItem::findAttributeIgnoreCase(const std::string& attr
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::findDimensionView
+// DataItem::findDimensionView
 //---------------------------------------------------------------------------
-int NxsDataItem::findDimensionView(const std::string& dimName)
+int DataItem::findDimensionView(const std::string& dimName)
 {
   int order = -1;
   IGroupPtr parent = getParent();
@@ -144,31 +144,31 @@ int NxsDataItem::findDimensionView(const std::string& dimName)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getParent
+// DataItem::getParent
 //---------------------------------------------------------------------------
-cdma::IGroupPtr NxsDataItem::getParent()
+cdma::IGroupPtr DataItem::getParent()
 {
   if( m_dataset_ptr )
     return m_dataset_ptr->getGroupFromPath( m_path );
-  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
+  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "cdma::nexus::DataItem::getParent");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getRoot
+// DataItem::getRoot
 //---------------------------------------------------------------------------
-cdma::IGroupPtr NxsDataItem::getRoot()
+cdma::IGroupPtr DataItem::getRoot()
 {
   if( m_dataset_ptr )
     return m_dataset_ptr->getRootGroup();
-  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "NxsDataItem::getParent");
+  THROW_INVALID_POINTER("Pointer to Dataset object is no longer valid", "cdma::nexus::DataItem::getParent");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getData
+// DataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
+cdma::ArrayPtr DataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> position)");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::getData(vector<int> position)");
   int node_rank = m_item.Rank();
   
   std::vector<int> origin;
@@ -192,11 +192,11 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> position) throw ( cdma::Exc
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getData
+// DataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
+cdma::ArrayPtr DataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::getData(vector<int> origin, vector<int> shape)");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::getData(vector<int> origin, vector<int> shape)");
 
   checkArray();
   int rank = m_array_ptr->getRank();
@@ -213,9 +213,9 @@ cdma::ArrayPtr NxsDataItem::getData(std::vector<int> origin, std::vector<int> sh
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getDescription
+// DataItem::getDescription
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getDescription()
+std::string DataItem::getDescription()
 {
   if( hasAttribute("description") )
   {
@@ -225,9 +225,9 @@ std::string NxsDataItem::getDescription()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getDimensions
+// DataItem::getDimensions
 //---------------------------------------------------------------------------
-std::list<cdma::IDimensionPtr> NxsDataItem::getDimensions(int order)
+std::list<cdma::IDimensionPtr> DataItem::getDimensions(int order)
 {
   std::list<cdma::IDimensionPtr> result;
   IGroupPtr parent = getParent();
@@ -246,17 +246,17 @@ std::list<cdma::IDimensionPtr> NxsDataItem::getDimensions(int order)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getDimensionList
+// DataItem::getDimensionList
 //---------------------------------------------------------------------------
-std::list<cdma::IDimensionPtr> NxsDataItem::getDimensionList()
+std::list<cdma::IDimensionPtr> DataItem::getDimensionList()
 {
   return getParent()->getDimensionList();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getDimensionsString
+// DataItem::getDimensionsString
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getDimensionsString()
+std::string DataItem::getDimensionsString()
 {
   std::stringstream res;
   std::list<cdma::IDimensionPtr> dim_list = getDimensionList();
@@ -270,25 +270,25 @@ std::string NxsDataItem::getDimensionsString()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getElementSize
+// DataItem::getElementSize
 //---------------------------------------------------------------------------
-int NxsDataItem::getElementSize()
+int DataItem::getElementSize()
 {
   return m_item.DatumSize();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getRank
+// DataItem::getRank
 //---------------------------------------------------------------------------
-int NxsDataItem::getRank()
+int DataItem::getRank()
 {
   return m_item.Rank();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getShape
+// DataItem::getShape
 //---------------------------------------------------------------------------
-std::vector<int> NxsDataItem::getShape()
+std::vector<int> DataItem::getShape()
 {
   if( m_shape.empty() )
   {
@@ -302,17 +302,17 @@ std::vector<int> NxsDataItem::getShape()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getSize
+// DataItem::getSize
 //---------------------------------------------------------------------------
-long NxsDataItem::getSize()
+long DataItem::getSize()
 {
   return m_item.Size();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getSlice
+// DataItem::getSlice
 //---------------------------------------------------------------------------
-cdma::IDataItemPtr NxsDataItem::getSlice(int dim, int value) throw ( cdma::Exception )
+cdma::IDataItemPtr DataItem::getSlice(int dim, int value) throw ( cdma::Exception )
 {
   int* shape = m_item.TotalDimArray();
   int* start = m_item.StartArray();
@@ -321,7 +321,7 @@ cdma::IDataItemPtr NxsDataItem::getSlice(int dim, int value) throw ( cdma::Excep
   // Check requested values are not out of range
   if( dim >= getRank() || value >= shape[dim] )
   {
-    THROW_INVALID_RANGE("Requested slice is out of range!", "NxsDataItem::getSlice" );
+    THROW_INVALID_RANGE("Requested slice is out of range!", "cdma::nexus::DataItem::getSlice" );
   } 
 
   cdma::IDataItemPtr result (NULL);
@@ -358,7 +358,7 @@ cdma::IDataItemPtr NxsDataItem::getSlice(int dim, int value) throw ( cdma::Excep
 
   // Create the corresponding item
   NexusDataSet* nexusItem = new NexusDataSet(m_item.DataType(), NULL, rank, piDim, piStart);
-  NxsDataItem* dataItem = new NxsDataItem( m_dataset_ptr, *nexusItem, m_path);
+  DataItem* dataItem = new DataItem( m_dataset_ptr, *nexusItem, m_path);
 
   if( array ) 
   {
@@ -376,17 +376,17 @@ cdma::IDataItemPtr NxsDataItem::getSlice(int dim, int value) throw ( cdma::Excep
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getType
+// DataItem::getType
 //---------------------------------------------------------------------------
-const std::type_info& NxsDataItem::getType()
+const std::type_info& DataItem::getType()
 {
   return TypeUtils::toCType(m_item.DataType());
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getUnitsString
+// DataItem::getUnitsString
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getUnitsString()
+std::string DataItem::getUnitsString()
 {
   if( hasAttribute("units") )
     return getAttribute("units")->getStringValue();
@@ -394,25 +394,25 @@ std::string NxsDataItem::getUnitsString()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::isMemberOfStructure
+// DataItem::isMemberOfStructure
 //---------------------------------------------------------------------------
-bool NxsDataItem::isMemberOfStructure()
+bool DataItem::isMemberOfStructure()
 {
   return false;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::isMetadata
+// DataItem::isMetadata
 //---------------------------------------------------------------------------
-bool NxsDataItem::isMetadata()
+bool DataItem::isMetadata()
 {
   return hasAttribute("signal");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::isScalar
+// DataItem::isScalar
 //---------------------------------------------------------------------------
-bool NxsDataItem::isScalar()
+bool DataItem::isScalar()
 {
   if( m_shape.empty() || (m_shape.size() == 1 && m_shape[0] == 1) )
   {
@@ -425,18 +425,18 @@ bool NxsDataItem::isScalar()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::isUnlimited
+// DataItem::isUnlimited
 //---------------------------------------------------------------------------
-bool NxsDataItem::isUnlimited()
+bool DataItem::isUnlimited()
 {
   // For now, that shouldn't happen until a while
   return false;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::isUnsigned
+// DataItem::isUnsigned
 //---------------------------------------------------------------------------
-bool NxsDataItem::isUnsigned()
+bool DataItem::isUnsigned()
 {
   switch( m_item.DataType() )
   {
@@ -451,71 +451,71 @@ bool NxsDataItem::isUnsigned()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarByte
+// DataItem::readScalarByte
 //---------------------------------------------------------------------------
-unsigned char NxsDataItem::readScalarByte() throw ( cdma::Exception )
+unsigned char DataItem::readScalarByte() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<unsigned char>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarDouble
+// DataItem::readScalarDouble
 //---------------------------------------------------------------------------
-double NxsDataItem::readScalarDouble() throw ( cdma::Exception )
+double DataItem::readScalarDouble() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<double>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarFloat
+// DataItem::readScalarFloat
 //---------------------------------------------------------------------------
-float NxsDataItem::readScalarFloat() throw ( cdma::Exception )
+float DataItem::readScalarFloat() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<float>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarInt
+// DataItem::readScalarInt
 //---------------------------------------------------------------------------
-int NxsDataItem::readScalarInt() throw ( cdma::Exception )
+int DataItem::readScalarInt() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<int>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarLong
+// DataItem::readScalarLong
 //---------------------------------------------------------------------------
-long NxsDataItem::readScalarLong() throw ( cdma::Exception )
+long DataItem::readScalarLong() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<long>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readScalarShort
+// DataItem::readScalarShort
 //---------------------------------------------------------------------------
-short NxsDataItem::readScalarShort() throw ( cdma::Exception )
+short DataItem::readScalarShort() throw ( cdma::Exception )
 {
   checkArray();
   return m_array_ptr->getValue<short>();
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::readString
+// DataItem::readString
 //---------------------------------------------------------------------------
-std::string NxsDataItem::readString() throw ( cdma::Exception )
+std::string DataItem::readString() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::readString");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::DataItem::readString");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::removeAttribute
+// DataItem::removeAttribute
 //---------------------------------------------------------------------------
-bool NxsDataItem::removeAttribute(const cdma::IAttributePtr& attr)
+bool DataItem::removeAttribute(const cdma::IAttributePtr& attr)
 {
   AttributeMap::iterator iter = m_attr_map.find( attr->getName() );
   if( iter != m_attr_map.end() )
@@ -527,34 +527,34 @@ bool NxsDataItem::removeAttribute(const cdma::IAttributePtr& attr)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setDataType
+// DataItem::setDataType
 //---------------------------------------------------------------------------
-void NxsDataItem::setDataType(const std::type_info& type)
+void DataItem::setDataType(const std::type_info& type)
 {
   NexusDataType dataType = TypeUtils::toNexusDataType( type );
   m_item.SetInfo( dataType, m_item.Rank() );
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setData
+// DataItem::setData
 //---------------------------------------------------------------------------
-void NxsDataItem::setData(const cdma::ArrayPtr& array)
+void DataItem::setData(const cdma::ArrayPtr& array)
 {
   m_array_ptr = array;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setDimensions
+// DataItem::setDimensions
 //---------------------------------------------------------------------------
-void NxsDataItem::setDimensions(const std::string&)
+void DataItem::setDimensions(const std::string&)
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::setDimensions");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::DataItem::setDimensions");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setDimension
+// DataItem::setDimension
 //---------------------------------------------------------------------------
-void NxsDataItem::setDimension(const cdma::IDimensionPtr& dim, int order) throw ( cdma::Exception )
+void DataItem::setDimension(const cdma::IDimensionPtr& dim, int order) throw ( cdma::Exception )
 {
   IGroupPtr parent = getParent();
   
@@ -566,23 +566,23 @@ void NxsDataItem::setDimension(const cdma::IDimensionPtr& dim, int order) throw 
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setUnitsString
+// DataItem::setUnitsString
 //---------------------------------------------------------------------------
-void NxsDataItem::setUnitsString(const std::string& unit)
+void DataItem::setUnitsString(const std::string& unit)
 {
-  NxsAttribute* attr = new NxsAttribute( );
+  Attribute* attr = new Attribute( );
   attr->setName("units");
   attr->setStringValue(unit);
   addAttribute( attr );
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::addAttribute
+// DataItem::addAttribute
 //---------------------------------------------------------------------------
-void NxsDataItem::addAttribute(const cdma::IAttributePtr& attr)
+void DataItem::addAttribute(const cdma::IAttributePtr& attr)
 {
 /*
-  NxsAttribute* attr = new NxsAttribute();
+  Attribute* attr = new Attribute();
   IAttributePtr attribute = attr;
   attr->setName( name );
   attr->setValue( value );
@@ -593,9 +593,9 @@ void NxsDataItem::addAttribute(const cdma::IAttributePtr& attr)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getAttribute
+// DataItem::getAttribute
 //---------------------------------------------------------------------------
-IAttributePtr NxsDataItem::getAttribute( const std::string& attr_name )
+IAttributePtr DataItem::getAttribute( const std::string& attr_name )
 {
   AttributeMap::iterator it = m_attr_map.find(attr_name);
   if( it != m_attr_map.end() )
@@ -605,9 +605,9 @@ IAttributePtr NxsDataItem::getAttribute( const std::string& attr_name )
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getAttributeList
+// DataItem::getAttributeList
 //---------------------------------------------------------------------------
-AttributeList NxsDataItem::getAttributeList()
+AttributeList DataItem::getAttributeList()
 {
   AttributeList attr_list;
   for( AttributeMap::iterator it = m_attr_map.begin(); it != m_attr_map.end(); it++ )
@@ -616,17 +616,17 @@ AttributeList NxsDataItem::getAttributeList()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getLocation
+// DataItem::getLocation
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getLocation() const
+std::string DataItem::getLocation() const
 {
-  return NxsDataset::concatPath(m_path, m_nodeName);
+  return Dataset::concatPath(m_path, m_nodeName);
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setLocation
+// DataItem::setLocation
 //---------------------------------------------------------------------------
-void NxsDataItem::setLocation(const std::string& path)
+void DataItem::setLocation(const std::string& path)
 {
   std::vector<yat::String> nodes;
   yat::String tmp (path);
@@ -645,25 +645,25 @@ void NxsDataItem::setLocation(const std::string& path)
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getName
+// DataItem::getName
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getName() const
+std::string DataItem::getName() const
 {
   return m_name;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::getShortName
+// DataItem::getShortName
 //---------------------------------------------------------------------------
-std::string NxsDataItem::getShortName() const
+std::string DataItem::getShortName() const
 {
   return m_shortName;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::hasAttribute
+// DataItem::hasAttribute
 //---------------------------------------------------------------------------
-bool NxsDataItem::hasAttribute( const std::string& attr_name )
+bool DataItem::hasAttribute( const std::string& attr_name )
 {
   if( m_attr_map.find(attr_name) != m_attr_map.end() )
   {
@@ -676,33 +676,33 @@ bool NxsDataItem::hasAttribute( const std::string& attr_name )
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setName
+// DataItem::setName
 //---------------------------------------------------------------------------
-void NxsDataItem::setName(const std::string& name)
+void DataItem::setName(const std::string& name)
 {
   m_name = name;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setShortName
+// DataItem::setShortName
 //---------------------------------------------------------------------------
-void NxsDataItem::setShortName(const std::string& name)
+void DataItem::setShortName(const std::string& name)
 {
   m_shortName = name;
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::setParent
+// DataItem::setParent
 //---------------------------------------------------------------------------
-void NxsDataItem::setParent(const cdma::IGroupPtr&)
+void DataItem::setParent(const cdma::IGroupPtr&)
 {
-  THROW_NOT_IMPLEMENTED("NxsDataItem::setParent");
+  THROW_NOT_IMPLEMENTED("cdma::nexus::DataItem::setParent");
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::checkArray
+// DataItem::checkArray
 //---------------------------------------------------------------------------
-void NxsDataItem::checkArray()
+void DataItem::checkArray()
 {
   if( !m_array_ptr )
   {
@@ -711,11 +711,11 @@ void NxsDataItem::checkArray()
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::loadArray
+// DataItem::loadArray
 //---------------------------------------------------------------------------
-void NxsDataItem::loadArray()
+void DataItem::loadArray()
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::loadArray");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::loadArray");
   
   if( m_dataset_ptr )
   {
@@ -750,16 +750,16 @@ void NxsDataItem::loadArray()
   }
   else
   {
-    THROW_FILE_ACCESS("Unable to read data: file is closed!", "NxsDataItem::loadArray");
+    THROW_FILE_ACCESS("Unable to read data: file is closed!", "cdma::nexus::DataItem::loadArray");
   }
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::initAttr
+// DataItem::initAttr
 //---------------------------------------------------------------------------
-void NxsDataItem::initAttr()
+void DataItem::initAttr()
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::initAttr");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::initAttr");
   // Clear previously loaded attr
   m_attr_map.clear();
   
@@ -779,18 +779,18 @@ void NxsDataItem::initAttr()
          NX_OK == rc; 
          rc = file->GetNextAttribute(&attr_info) )
     {
-      // Create NxsAttribute
-      m_attr_map[attr_info.AttrName()] = new NxsAttribute( file, attr_info );
+      // Create Attribute
+      m_attr_map[attr_info.AttrName()] = new Attribute( file, attr_info );
     }
   }
 }
 
 //---------------------------------------------------------------------------
-// NxsDataItem::open
+// DataItem::open
 //---------------------------------------------------------------------------
-void NxsDataItem::open( bool openNode )
+void DataItem::open( bool openNode )
 {
-  CDMA_FUNCTION_TRACE("NxsDataItem::open");
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::open");
   
   // Open parent node
   NexusFilePtr file = m_dataset_ptr->getHandle();
@@ -801,7 +801,7 @@ void NxsDataItem::open( bool openNode )
     {
       if( ! file->OpenGroupPath(m_path.data() ) )
       {
-        THROW_FILE_ACCESS("Unable to open path!\nPath: " + m_path, "NxsDataItem::NxsDataItem");
+        THROW_FILE_ACCESS("Unable to open path!\nPath: " + m_path, "cdma::nexus::DataItem::DataItem");
       }
     }
     
@@ -810,10 +810,11 @@ void NxsDataItem::open( bool openNode )
     {
       if( ! file->OpenDataSet( m_nodeName.data(), false ) )
       {
-        THROW_FILE_ACCESS("Unable to open node!\nName: " +  m_shortName, "NxsDataItem::NxsDataItem");
+        THROW_FILE_ACCESS("Unable to open node!\nName: " +  m_shortName, "cdma::nexus::DataItem::DataItem");
       }
     }
   }
 }
 
-} // namespace
+} // namespace nexus
+} // namespace cdma
