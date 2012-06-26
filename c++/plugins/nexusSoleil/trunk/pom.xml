@@ -75,11 +75,8 @@
               </activation>
               <cpp>
                 <defines>
-                  <define>CDMA_NEXUS_SOLEIL_DLL</define>
-                  <define>CDMA_NEXUS_SOLEIL_BUILD</define>
                   <define>CDMA_NEXUS_DLL</define>
                   <define>CDMA_DLL</define>
-                  <define>NEXUSCPP_DLL</define>
                   <define>YAT_DLL</define>
                 </defines>
               </cpp>
