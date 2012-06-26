@@ -63,8 +63,7 @@ vars.Add("PREFIX","Installation prefix","/usr/local")
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
 env.ParseConfig('pkg-config --libs --cflags libxml-2.0')
-env.Append(CPPPATH=[env["YATINC"]])
-env.Append(LIBPATH=[env["YATLIB"]])
+env.ParseConfig('pkg-config --libs --cflags yat')
 
 #===================create and export the core environment=====================
 core_env = env.Clone()
