@@ -37,10 +37,10 @@ object DataItemWrapper::__getitem__(object selection) const
     }
     else
     {
+        
         //read data from the dataset
         ArrayPtr aptr = ptr()->getData();
-        object array = cdma2numpy_array(ptr()->getData());
-        copy_data_from_cdma2numpy(aptr,array);
+        object array = cdma2numpy_array(aptr,true);
         return array;
     }
     
