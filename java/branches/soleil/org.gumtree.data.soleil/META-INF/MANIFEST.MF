@@ -5,25 +5,25 @@ Bundle-SymbolicName: org.gumtree.data.CDMA.NexusSoleil
 Bundle-Version: 2.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: fr.soleil.nexus,
- org.gumtree.data,
- org.gumtree.data.dictionary,
- org.gumtree.data.engine.nexus.array,
- org.gumtree.data.engine.nexus.navigation,
- org.gumtree.data.exception,
- org.gumtree.data.interfaces,
- org.gumtree.data.math,
- org.gumtree.data.utils,
+ org.cdma,
+ org.cdma.dictionary,
+ org.cdma.engine.nexus.array,
+ org.cdma.engine.nexus.navigation,
+ org.cdma.exception,
+ org.cdma.interfaces,
+ org.cdma.math,
+ org.cdma.utils,
  org.jdom,
  org.jdom.filter,
  org.jdom.input,
  org.nexusformat
 Service-Component: OSGI-INF/factory.xml
-Export-Package: org.gumtree.data.soleil,
- org.gumtree.data.soleil.array,
- org.gumtree.data.soleil.dictionary,
- org.gumtree.data.soleil.external,
- org.gumtree.data.soleil.navigation,
- org.gumtree.data.soleil.utils
+Export-Package: org.cdma.plugin.soleil,
+ org.cdma.plugin.soleil.array,
+ org.cdma.plugin.soleil.dictionary,
+ org.cdma.plugin.soleil.external,
+ org.cdma.plugin.soleil.navigation,
+ org.cdma.plugin.soleil.utils
 Eclipse-BundleShape: jar
 Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
  org.nexusformat

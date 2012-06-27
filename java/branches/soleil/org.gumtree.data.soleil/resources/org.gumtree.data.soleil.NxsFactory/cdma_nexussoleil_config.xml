@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE configuration SYSTEM "configuration_file.dtd">
 <configuration name="SOLEIL's NeXus plug-in configuration file">
 <!-- ============================================
 ==  CONFIG 1: detection by file information    ==
@@ -7,7 +9,7 @@
       <if exist="true" target="/{NXentry}/{NXinstrument}" />
       <if exist="true" target="/{NXentry}/acquisition_model" />
     </criteria>
-   
+
     <parameters> 
       <parameter name="BEAMLINE">
         <value type="name" target="/{NXentry}/{NXinstrument}" />
@@ -15,7 +17,6 @@
       <parameter name="MODEL">
         <value type="value" target="/{NXentry}/acquisition_model" />
       </parameter>
-<!--      <parameter name="MODEL2" value="quick"/> -->
     </parameters>
 
     <plugin>
@@ -67,7 +68,9 @@
       <parameter name="BEAMLINE">
         <value type="name" target="/{NXentry}/{NXinstrument}"/>
       </parameter>
-      <parameter name="MODEL" value="scanserver" />
+      <parameter name="MODEL">
+        <value type="constant" constant="scanserver" />
+      </parameter>
     </parameters>
 
     <plugin>
@@ -161,5 +164,78 @@
       </java>
     </plugin>
   </dataset_model>
+
+<!-- ============================================
+==  CONFIG 6: test files                       ==
+============================================= -->
+  <dataset_model name="contacq_passerelle">
+    <criteria>
+      <if exist="false" target="/{NXentry}/{NXinstrument}" />
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
+      <if exist="false" target="/{NXentry}/acquisition_model" />
+      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1" />
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE">
+        <value type="constant" constant="contacq" />
+      </parameter>
+      <parameter name="MODEL">
+        <value type="constant" constant="flyscan" />
+      </parameter>
+    </parameters>
+    
+    <plugin>
+      <java>
+        <set name="log_debug" value="true" />
+        <set name="N4T_buffer_size" value="300" />
+        <set name="OPTIMAL_DATA_SIZE" value="3000000" />
+      </java>
+    </plugin>
+  </dataset_model>
+
+
+<!-- ============================================
+==  CONFIG test: test files                    ==
+============================================= -->
+<!--
+  <dataset_model name="test">
+    <criteria>
+      <if exist="true" target="/{NXentry}/" />
+    </criteria>
+   
+    <parameters> 
+      <parameter name="test1">
+        <value type="exist" target="/{NXentry}/{NXinstrument}" test="true"/>
+      </parameter>
+      <parameter name="test2">
+        <value type="exist" target="/{NXentry}/{NXinstrument}" test="false"/>
+      </parameter>
+      <parameter name="test3">
+        <value type="name" target="/{NXentry}/{NXinstrument}" />
+      </parameter>
+      <parameter name="test4">
+        <value type="constant" constant="a_constant_value_for" />
+      </parameter>
+      <parameter name="test5">
+        <value type="value" target="/{NXentry}/title" />
+      </parameter>
+      <parameter name="test6">
+        <value type="equal" target="/{NXentry}/{NXinstrument}/Monochromator/exitSlitAperture" constant="29.94893023930332" test="true"/>
+      </parameter>
+      <parameter name="test7">
+        <value type="equal" target="/{NXentry}/{NXinstrument}/Monochromator/exitSlitAperture" constant="29.94893023930332" test="false"/>
+      </parameter>
+    
+    
+      <parameter name="BEAMLINE">
+        <value type="name" target="/{NXentry}/{NXinstrument}" />
+      </parameter>
+      <parameter name="MODEL">
+        <value type="constant" value="scanserver" />
+      </parameter>
+    </parameters>
   
+  </dataset_model>
+-->    
 </configuration>

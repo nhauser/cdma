@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;

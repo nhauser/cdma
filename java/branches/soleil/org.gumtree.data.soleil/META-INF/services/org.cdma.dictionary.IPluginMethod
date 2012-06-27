@@ -1,0 +1,4 @@
+org.cdma.plugin.soleil.external.AttributeFilter
+org.cdma.plugin.soleil.external.DataItemSlice1D
+org.cdma.plugin.soleil.external.DataItemStacker
+org.cdma.plugin.soleil.external.NodeName
