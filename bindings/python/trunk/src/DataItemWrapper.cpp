@@ -1,49 +1,7 @@
 #include "DataItemWrapper.hpp"
 
-void init_array() { import_array(); }
 
 //======================wrapper methods implementation=========================
-std::string DataItemWrapper::_get_type_id(const std::type_info &tid) const
-{
-    if(tid.name() == typeid(int8_t).name()) return "int8";
-    if(tid.name() == typeid(uint8_t).name()) return "uint8t";
-    if(tid.name() == typeid(int16_t).name()) return "int16";
-    if(tid.name() == typeid(uint16_t).name()) return "uint16";
-    if(tid.name() == typeid(int32_t).name()) return "int32";
-    if(tid.name() == typeid(uint32_t).name()) return "uint32";
-    if(tid.name() == typeid(int64_t).name()) return "int64";
-    if(tid.name() == typeid(uint64_t).name()) return "uint64";
-
-    if(tid.name() == typeid(float).name()) return "float32";
-    if(tid.name() == typeid(double).name()) return "float64";
-    if(tid.name() == typeid(char).name()) return "string";
-
-    //THROW AN EXCEPTION HERE
-    std::cerr<<"Data type unsupported"<<std::endl;
-    std::cerr<<tid.name()<<std::endl;
-}
-
-//-----------------------------------------------------------------------------
-int DataItemWrapper::_get_type_num(const std::type_info &tid) const
-{
-    if(tid.name() == typeid(int8_t).name()) return NPY_BYTE;
-    if(tid.name() == typeid(uint8_t).name()) return NPY_UBYTE;
-    if(tid.name() == typeid(int16_t).name()) return NPY_SHORT;
-    if(tid.name() == typeid(uint16_t).name()) return NPY_USHORT;
-    if(tid.name() == typeid(int32_t).name()) return NPY_INT;
-    if(tid.name() == typeid(uint32_t).name()) return NPY_UINT;
-    if(tid.name() == typeid(int64_t).name()) return NPY_LONG;
-    if(tid.name() == typeid(uint64_t).name()) return NPY_ULONG;
-
-    if(tid.name() == typeid(float).name()) return NPY_FLOAT;
-    if(tid.name() == typeid(double).name()) return NPY_DOUBLE;
-
-    //THROW AN EXCEPTION HERE
-    std::cerr<<"Data type unsupported"<<std::endl;
-    std::cerr<<tid.name()<<std::endl;
-}
-
-//-----------------------------------------------------------------------------
 tuple DataItemWrapper::shape() const
 {
     list l;
@@ -57,18 +15,13 @@ tuple DataItemWrapper::shape() const
 object DataItemWrapper::__getitem__(object selection) const
 {
     //determine the data type of the object
-    std::string tid = _get_type_id(ptr()->getType());
-    init_array();
+    std::string tid = get_type_string(ptr()->getType());
+    init_numpy();
 
     if(ptr()->isScalar())
     {
-        std::cout<<"Reading scalar data ..."<<std::endl;
         if(tid=="string") 
-        {
-            std::cout<<"Reading scalar string data ..."<<std::endl;
-            std::cout<<(ptr()->readString())<<std::endl;
             return object(new std::string(ptr()->readString()));   
-        }
 
         if((tid=="int8")||(tid=="uint8"))
             return object(ptr()->readScalarByte());
@@ -85,33 +38,13 @@ object DataItemWrapper::__getitem__(object selection) const
     else
     {
         //read data from the dataset
-        std::cout<<"Reading data from file ..."<<std::endl;
         ArrayPtr aptr = ptr()->getData();
-        //read image data
-        npy_intp *dims = new npy_intp[aptr->getRank()]; //allocate memory for dimensions
-        for(size_t i=0;i<aptr->getRank();i++) dims[i] = aptr->getShape()[i];
-
-        std::cout<<"creating new numpy array ..."<<std::endl;
-        //create the new numpy array
-        PyObject *array = nullptr;
-        std::cout<<_get_type_num(aptr->getValueType())<<std::endl;
-        array = PyArray_SimpleNew(aptr->getRank(),
-                                  dims,
-                                  _get_type_num(aptr->getValueType()));
-        std::cout<<"creating new numpy array ..."<<std::endl;
-        if(!array)
-        {
-            std::cerr<<"Error creating new numpy array!"<<std::endl;
-        }
-        std::cout<<"creating object handler ..."<<std::endl;
-        delete dims;
-        handle<> h(array);
-
-        std::cout<<"Create object ..."<<std::endl;
-        return object(h);
+        object array = cdma2numpy_array(ptr()->getData());
+        copy_data_from_cdma2numpy(aptr,array);
+        return array;
     }
-
-    return object(new std::string("hello world"));
+    
+    //THROW EXCEPTION HERE
 }
 //===============helper function creating the python class=====================
 void wrap_dataitem()
