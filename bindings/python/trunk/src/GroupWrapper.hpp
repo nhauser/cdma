@@ -8,17 +8,20 @@ using namespace boost::python;
 using namespace cdma;
 
 #include "Container.hpp"
+#include "AttributeManager.hpp"
 
 class GroupWrapper:public ContainerWrapper<IGroupPtr>
 {
     public:
+        //=====================public members==================================
+        AttributeManager<IGroupPtr> attrs;
         //==================constructors and destructor========================
         //! default constructor
-        GroupWrapper():ContainerWrapper<IGroupPtr>() {}
+        GroupWrapper():ContainerWrapper<IGroupPtr>(),attrs() {}
 
         //---------------------------------------------------------------------
         //! standard constructor
-        GroupWrapper(IGroupPtr g):ContainerWrapper<IGroupPtr>(g) {}
+        GroupWrapper(IGroupPtr g):ContainerWrapper<IGroupPtr>(g),attrs(g) {}
 
         //---------------------------------------------------------------------
         //! destructor
@@ -29,6 +32,7 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         {
             if(this == &g) return *this;
             ContainerWrapper<IGroupPtr>::operator=(g);
+            attrs = g.attrs;
             return *this;
         }
 

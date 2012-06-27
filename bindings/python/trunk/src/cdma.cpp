@@ -24,6 +24,7 @@ extern void wrap_group();
 extern void wrap_dataset();
 extern void wrap_dataitem();
 extern void exception_registration();
+extern void wrap_attribute();
 
 
 //=================implementation of the python extension======================
@@ -39,6 +40,7 @@ BOOST_PYTHON_MODULE(cdmacore)
     wrap_dataset();
     wrap_group();
     wrap_dataitem();
+    wrap_attribute();
     exception_registration();
 
 }

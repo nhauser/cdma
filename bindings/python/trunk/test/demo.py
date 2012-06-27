@@ -12,6 +12,8 @@ dataset = cdma.open_dataset("file:demo.nxs")
 
 print "scan group..."
 scan_group = dataset["D1A_016_D1A"]
+print scan_group.attrs["NX_class"]
+print len(scan_group.attrs)
 
 print "read data ..."
 print scan_group["duration"][...]
