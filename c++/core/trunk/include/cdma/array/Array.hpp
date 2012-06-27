@@ -73,7 +73,7 @@ Array::Array(T scalar_value)
 }
 
 //----------------------------------------------------------------------------
-// Array::set
+// Array::setValue
 //----------------------------------------------------------------------------
 template<typename T> void Array::setValue(const ArrayIterator& target, T value)
 {
@@ -81,7 +81,7 @@ template<typename T> void Array::setValue(const ArrayIterator& target, T value)
 }
 
 //----------------------------------------------------------------------------
-// Array::set
+// Array::setValue
 //----------------------------------------------------------------------------
 template<typename T> void Array::setValue(const ViewPtr& view, std::vector<int> position, T value)
 {
@@ -89,7 +89,7 @@ template<typename T> void Array::setValue(const ViewPtr& view, std::vector<int> 
 }
 
 //----------------------------------------------------------------------------
-// Array::set
+// Array::setValue
 //----------------------------------------------------------------------------
 template<typename T> void Array::setValue(std::vector<int> position, T value)
 {
@@ -97,7 +97,7 @@ template<typename T> void Array::setValue(std::vector<int> position, T value)
 }
 
 //----------------------------------------------------------------------------
-// Array::set
+// Array::setValue
 //----------------------------------------------------------------------------
 template<typename T> void Array::setValue(T value)
 {
@@ -105,7 +105,7 @@ template<typename T> void Array::setValue(T value)
 }
 
 //----------------------------------------------------------------------------
-// Array::get
+// Array::getValue
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( std::vector<int> position )
 {
@@ -113,7 +113,7 @@ template<typename T> T Array::getValue( std::vector<int> position )
 }
 
 //----------------------------------------------------------------------------
-// Array::get
+// Array::getValue
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( void )
 {
@@ -121,7 +121,7 @@ template<typename T> T Array::getValue( void )
 }
 
 //----------------------------------------------------------------------------
-// Array::get
+// Array::getValue<T>
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> position )
 {
@@ -152,6 +152,18 @@ template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> po
   else if( m_data_impl->getType() == typeid(unsigned int) )
     return T( *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
 
+  else
+    throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
+                          "Array::getValue");
+}
+
+//----------------------------------------------------------------------------
+// Array::getValue<std::string>
+//----------------------------------------------------------------------------
+template<> inline std::string Array::getValue<std::string>( const ViewPtr& view, std::vector<int> position )
+{
+  if( m_data_impl->getType() == typeid(char) )
+    return std::string( (char *)(m_data_impl->getValue( view, position ) ) );
   else
     throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
                           "Array::getValue");
