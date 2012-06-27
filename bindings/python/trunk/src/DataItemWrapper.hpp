@@ -21,7 +21,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         //! return a numpy id string from typeinfo
         std::string _get_type_id(const std::type_info &) const;
         //! return a numerical numpy ID of the type
-        NPY_TYPES _get_type_num(const std::type_info &) const;
+        int _get_type_num(const std::type_info &) const;
     public:
         //================constructors and destructor==========================
         //! default constructor

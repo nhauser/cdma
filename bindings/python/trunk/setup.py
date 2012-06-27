@@ -19,48 +19,17 @@ def pkgconfig(*packages, **kw):
     kw["libraries"].append("boost_python")
     return kw
 
-#setup(
-#    name = "myPackage",
-#    ext_modules=[
-#        Extension("extension", ["extension_main.c"], ),
-#    ],
-#)
 
 #add here some options to handle additional compiler parameters
 cliopts =[]
-cliopts.append(("h5libdir=",None,"HDF5 library path"))
-cliopts.append(("h5incdir=",None,"HDF5 include path"))
-cliopts.append(("h5libname=",None,"HDF5 library name"))
-cliopts.append(("nxlibdir=",None,"PNI NX library path"))
-cliopts.append(("nxincdir=",None,"PNI NX include path"))
-cliopts.append(("utlibdir=",None,"PNI utilities library path"))
-cliopts.append(("utincdir=",None,"PNI utilities include path"))
-cliopts.append(("numpyincdir=",None,"Numpy include path"))
 cliopts.append(("noforeach",None,"Set noforeach option for C++"))
 
 op = FancyGetopt(option_table=cliopts)
 args,opts = op.getopt()
 
-include_dirs = ["/usr/include/pni/hdf5"]
+include_dirs = []
 library_dirs = []
 
-try: include_dirs.append(opts.h5incdir)
-except: pass
-
-try: include_dirs.append(opts.nxincdir)
-except: pass
-
-try: include_dirs.append(opts.utincdir)
-except: pass
-
-try: library_dirs.append(opts.h5libdir)
-except: pass
-
-try: library_dirs.append(opts.nxlibdir)
-except: pass
-
-try: library_dirs.append(opts.utlibdir)
-except: pass
 
 try: include_dirs.append(opts.numpyincdir)
 except:pass
@@ -92,8 +61,6 @@ except:
     print "no support for foreach loops!"
     compile_args.append("-DNOFOREACH")
 
-libs = ["boost_python","pniutils","pninx","pnihdf5"]
-
 
 files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
          "src/DatasetWrapper.cpp","src/DataItemWrapper.cpp",
@@ -102,9 +69,6 @@ files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
 cdma = Extension("cdmacore",files,
                  extra_compile_args = compile_args,
                  **pkgconfig('cdmacore'))
-#                 libraries=libs,
-#                 library_dirs=library_dirs,
-#                 include_dirs=include_dirs)
 
 setup(name="cmda-python",
         author="Eugen Wintersberger",
@@ -114,7 +78,5 @@ setup(name="cmda-python",
         ext_package="cdma",
         ext_modules=[cdma],
         packages = ["cdma"],
-        #url="https://sourceforge.net/projects/libpninxpython/",
-        #script_args = args
         )
 

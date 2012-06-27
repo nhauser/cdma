@@ -1,3 +1,4 @@
 *.nxs
 *.o
+*.swp
 build/
