@@ -72,7 +72,7 @@ size_t get_type_size(const std::type_info &t)
 }
 
 //-----------------------------------------------------------------------------
-object cdma2numpy_array(const ArrayPtr aptr)
+object cdma2numpy_array(const ArrayPtr aptr,bool copyflag)
 {
     init_numpy();
     //set the dimension of the new array
@@ -82,9 +82,19 @@ object cdma2numpy_array(const ArrayPtr aptr)
 
     //create the new numpy array
     PyObject *array = nullptr;
-    array = PyArray_SimpleNew(aptr->getRank(),
-                              dims,
-                              get_type_code(aptr->getValueType()));
+    if(copyflag)
+    {
+        array = PyArray_SimpleNewFromData(aptr->getRank(),
+                                  dims,
+                                  get_type_code(aptr->getValueType()),
+                                  aptr->getStorage()->getStorage());
+    }
+    else
+    {
+        array = PyArray_SimpleNew(aptr->getRank(),
+                dims,get_type_code(aptr->getValueType()));
+    }
+
     if(dims) delete [] dims;
     if(!array)
     {

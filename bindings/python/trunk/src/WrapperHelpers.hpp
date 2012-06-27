@@ -59,7 +59,7 @@ Takes a CDMA ArrayPtr and constructs a numpy array of equal shape and data type.
 \param aptr pointer to a CDMA array
 \return o Python object holding the numpy array
 */
-object cdma2numpy_array(const ArrayPtr aptr);
+object cdma2numpy_array(const ArrayPtr aptr,bool copyflag=false);
 
 //------------------------------------------------------------------------------
 /*!

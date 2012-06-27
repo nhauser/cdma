@@ -5,6 +5,7 @@ import h5py
 
 h5 = h5py.File("demo.nxs")
 h5data = h5["/D1A_016_D1A/image#20/data"][...]
+print h5data.dtype
 h5.close()
 
 dataset = cdma.open_dataset("file:demo.nxs")
@@ -22,6 +23,7 @@ print "data item ..."
 data= image_group["data"]
 print data.shape
 print data
+print data.type
 
 pyplot.subplot(121)
 pyplot.imshow(numpy.log10(data[...]))
