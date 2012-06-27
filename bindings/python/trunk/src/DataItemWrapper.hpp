@@ -2,26 +2,13 @@
 #define __DATAITEMWRAPPER_HPP__
 
 #include<cdma/navigation/IDataItem.h>
-#include<boost/python.hpp>
-#include<typeinfo>
-
-extern "C"{
-#include<Python.h>
-#include<numpy/arrayobject.h>
-}
-
-using namespace cdma;
-using namespace boost::python;
 
 #include "Container.hpp"
+#include "WrapperHelpers.hpp"
+
 
 class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 {
-    private:
-        //! return a numpy id string from typeinfo
-        std::string _get_type_id(const std::type_info &) const;
-        //! return a numerical numpy ID of the type
-        int _get_type_num(const std::type_info &) const;
     public:
         //================constructors and destructor==========================
         //! default constructor
@@ -69,7 +56,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 
         std::string unit() const { return ptr()->getUnitsString(); }
 
-        std::string type() const { return _get_type_id(ptr()->getType()); } 
+        std::string type() const { return get_type_string(ptr()->getType()); } 
 
         //---------------------------------------------------------------------
         object __getitem__(object selection) const;

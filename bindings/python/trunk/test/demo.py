@@ -1,30 +1,30 @@
 from matplotlib import pyplot
+import numpy
 import cdma
+import h5py
+
+h5 = h5py.File("demo.nxs")
+h5data = h5["/D1A_016_D1A/image#20/data"][...]
+h5.close()
 
 dataset = cdma.open_dataset("file:demo.nxs")
 
 print "scan group..."
 scan_group = dataset["D1A_016_D1A"]
-print scan_group.parent.location
-print scan_group.location
-print scan_group.name
 
 print "read data ..."
 print scan_group["duration"][...]
 
 print "image group ..."
-image_group = scan_group["image#50"]
-print image_group.location
-print image_group.name
-print image_group.childs
+image_group = scan_group["image#20"]
 
 print "data item ..."
-field = image_group["data"]
-print field.location
-print field.is_group
-print field.unit
-print field.type
-print field.shape
-print field.size
-data = field[...]
+data= image_group["data"]
+print data.shape
 print data
+
+pyplot.subplot(121)
+pyplot.imshow(numpy.log10(data[...]))
+pyplot.subplot(122)
+pyplot.imshow(numpy.log10(h5data))
+pyplot.show()
