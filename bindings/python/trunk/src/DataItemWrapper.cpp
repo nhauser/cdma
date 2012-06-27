@@ -11,11 +11,12 @@ tuple DataItemWrapper::shape() const
     return tuple(l);
 }
 
+
 //-----------------------------------------------------------------------------
 object DataItemWrapper::__getitem__(object selection) const
 {
     //determine the data type of the object
-    std::string tid = get_type_string(ptr()->getType());
+    std::string tid = get_type_string(ptr());
     init_numpy();
 
     if(ptr()->isScalar())
@@ -37,11 +38,23 @@ object DataItemWrapper::__getitem__(object selection) const
     }
     else
     {
-        
-        //read data from the dataset
-        ArrayPtr aptr = ptr()->getData();
-        object array = cdma2numpy_array(aptr,true);
-        return array;
+        std::vector<int> origin,shape;
+
+        /*
+        if(create_cdma_selection(selection,origin,shape))
+        {
+            //if returns true we have a point selection and thus return a scalar
+            ArrayPtr aptr = ptr()->getData(origin);
+            if((tid=="int8")||
+
+        }
+        else
+        {*/
+            //read data from the dataset
+            ArrayPtr aptr = ptr()->getData();
+            object array = cdma2numpy_array(aptr,true);
+            return array;
+        //}
     }
     
     //THROW EXCEPTION HERE
