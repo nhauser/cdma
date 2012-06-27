@@ -1,0 +1,76 @@
+Installation instructions for the CDMA core library
+===================================================
+
+
+1.) Building the source code with SCONS
+    -----------------------------------
+
+This section describes how to compile the CDMA core library with SCONS under
+Linux.
+
+1.1) Required libraries and tools 
+     ----------------------------
+
+The following tools are required:
+-) scons (http://www.scons.org/) - the build system used
+-) pkg-config (http://www.freedesktop.org/wiki/Software/pkg-config) - a build 
+   configuration tool 
+
+The following libraries are required:
+-) yat - a utility library used by SOLEIL
+-) libxml2 - an XML parsing library
+
+All these tools and libraries (except YAT) should be available from the package
+repositories of your distribution (if not see the 
+
+1.2) Building the code:
+     ------------------
+
+If pkg-config is configured correctly the following command in the root of the
+source tree will build the code
+
+$> scons
+
+YAT does not support pkg-config yet. So if your YAT library is not installed at
+a default installation you can add its header and binary installation paths
+using build variables
+
+$> scons YATLIB=/opt/yat/lib YATINC=/opt/yat/include 
+
+to inform SCONS where to look for YAT headers and binaries. 
+
+1.3) Install the library
+     -------------------
+
+In the most simplest case installation can be done with 
+
+$> scons install
+
+In this case (by default) everything will be installed under /usr/local (runtime
+binaries under /usr/local/lib, headers in /usr/local/include, and the
+documentation in /usr/local/share/doc/libcdmacore). To change the installation
+prefix use the PREFIX build variable like this
+
+$> scons PREFIX=/opt/cdma/ install
+
+in which case everything will be installed below /opt/cdma. 
+You can further tweak the installation locations using the following build
+variables
+   LIBDIR - installation path of the library's binaries
+   DOCDIR - installation path of the documentation
+   INCDIR - installation path for headers
+Using one of these three build variables will override the PREFIX settings 
+for binaries, headers, or documentation respectively. 
+A pkc-config file (cdmacore.pc) will be created during the build and is
+installed under the same directory as the library binaries in a subdirectory
+named pkgconfig. If you want to use pkg-config to build code that uses the CDMA
+core library you have to add this directory to you PKG_CONFIG_PATH environment
+variable. For instance in the example above one has to type 
+
+$> export PKG_CONFIG_PATH=/opt/cdma/lib/pkgconfig:$PKG_CONFIG_PATH
+
+on a terminal or add this line to your local .bashrc to make CDMA accessible for
+pkg-config. 
+
+
+
