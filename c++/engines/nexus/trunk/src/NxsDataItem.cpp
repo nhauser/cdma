@@ -509,7 +509,8 @@ short DataItem::readScalarShort() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 std::string DataItem::readString() throw ( cdma::Exception )
 {
-  THROW_NOT_IMPLEMENTED("cdma::nexus::DataItem::readString");
+  checkArray();
+  return m_array_ptr->getValue<std::string>();
 }
 
 //---------------------------------------------------------------------------
