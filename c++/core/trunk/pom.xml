@@ -12,7 +12,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 
 <groupId>org.cdma</groupId>
 <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
-<name>cdmacore</name>
+<name>CdmaCore</name>
 <version>1.0.0-SNAPSHOT</version>
 <packaging>nar</packaging>
 
