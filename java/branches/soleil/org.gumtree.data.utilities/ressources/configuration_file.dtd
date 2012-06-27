@@ -63,11 +63,11 @@ parameters
     value CDATA #IMPLIED
 >
 
-
 <!ELEMENT value EMPTY>
 <!ATTLIST value 
     type ( exist | name | value | constant | equal ) #REQUIRED
     target CDATA #IMPLIED
+    test ( true | false ) #IMPLIED
     constant CDATA #IMPLIED
 >
 

@@ -4,6 +4,7 @@ package fr.soleil.nexus;
 import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 

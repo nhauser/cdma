@@ -4,11 +4,13 @@ package fr.soleil.nexus;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
 import ncsa.hdf.hdflib.HDFNativeData;
 
+import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NXlink;
 import org.nexusformat.NexusException;
@@ -26,13 +28,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     private boolean m_bUpdatePath = true;  // True when m_pVisiblePath will be updated while browsing file
 
     // members concerning nodes' buffer
-//    private int m_iBufferSize; // Maximum size of the buffer (number of available slots)
-//    private TreeMap<String, String> m_tNodeTab; // TreeMap of all node belonging to last listed group's children (node name => node class)
     private ArrayList<NexusNode> m_tNodeTab; // TreeMap of all node belonging to last listed group's children (node name => node class)
-//    private final TreeMap<String, TreeMap<String, String>> m_tNodeInPath; // TreeMap containing all node for a specific path (path in file => [node name => node class])
-//    private final HashMap<String, Integer> m_hPathUsageWeigth; // TreeMap containing path usage count (used to remove less used path when cleaning buffer)
-
-//    private BufferNode mBuffer;
     
     // members concerning nodes' attributes buffer
     private String m_sAttrPath; // Path in string format of the last read attribute
@@ -44,21 +40,13 @@ public class NexusFileBrowser extends NexusFileInstance {
         m_pVirtualPath = new PathNexus();
         m_pRealPath = new PathNexus();
         m_tNodeTab = new ArrayList<NexusNode>();
-//        m_tNodeInPath = new TreeMap<String, TreeMap<String, String>>(new PathCollator());
-//        m_hPathUsageWeigth = new HashMap<String, Integer>();
-//        m_iBufferSize = 100;
-//        mBuffer = new BufferNode(100);
     }
 
     public NexusFileBrowser(String sFilePath) {
         super(sFilePath);
         initPath(sFilePath);
         m_tNodeTab = new ArrayList<NexusNode>();
-//        m_tNodeInPath = new TreeMap<String, TreeMap<String, String>>(new PathCollator());
-//        m_hPathUsageWeigth = new HashMap<String, Integer>();
         m_bFileChanged = false;
-//        m_iBufferSize = 100;
-//        mBuffer = new BufferNode(100);
     }
 
 
@@ -473,7 +461,7 @@ public class NexusFileBrowser extends NexusFileInstance {
                 try {
                     closeData();
                 } catch (NexusException ne) {
-                    /* Nothing to do: no DataItem were opened */
+                    // Nothing to do: no DataItem were opened
                 }
 
                 // Closes groups until the path is empty, i.e. reaching NeXus
@@ -484,7 +472,8 @@ public class NexusFileBrowser extends NexusFileInstance {
             }
         }
         // No file opened!
-        catch (NexusException ne) {/* Nothing to do: we are at document root */
+        catch (NexusException ne) {
+            // Nothing to do: we are at document root
         }
 
         // Clearing current path
@@ -516,15 +505,6 @@ public class NexusFileBrowser extends NexusFileInstance {
                 return node.getClassName();
             }
         }
-/*
-        for (Iterator<String> iter = m_tNodeTab.keySet().iterator(); iter.hasNext();) {
-            // Check if names are equals
-            sCurName = iter.next();
-            if (sItemName.equals(sCurName.toUpperCase())) {
-                return m_tNodeTab.get(sCurName);
-            }
-        }
-*/
         throw new NexusException("NexusNode not found: " + sNodeName);
     }
 
@@ -552,19 +532,6 @@ public class NexusFileBrowser extends NexusFileInstance {
                 return node;
             }
         }
-        
-/*
-        for (Iterator<String> iter = m_tNodeTab.keySet().iterator(); iter.hasNext();) {
-            // Check if names are equals
-            sCurName = iter.next();
-            sCurClass = m_tNodeTab.get(sCurName);
-            sCurFullName = NexusNode.getNodeFullName(sCurName, sCurClass).toUpperCase();
-            if (sItemName.equals(sCurFullName) || sItemName.equals(sCurName.toUpperCase())
-                    || (sItemClass.equals(sCurClass.toUpperCase()) && sItemName.equals(""))) {
-                return new NexusNode(sCurName, sCurClass, !(sCurClass.equals("SDS") || sCurClass.equals("NXtechnical_data")));
-            }
-        }
-*/
         throw new NexusException("NexusNode not found: " + sNodeName);
     }
 
@@ -660,8 +627,10 @@ public class NexusFileBrowser extends NexusFileInstance {
      * @throws NexusException
      */
     public ArrayList<NexusNode> listChildren() throws NexusException {
+
         ArrayList<NexusNode> nodes = new ArrayList<NexusNode>();
         nodes.addAll(listGroupChild());
+
         return nodes;
     }
 
@@ -772,26 +741,13 @@ public class NexusFileBrowser extends NexusFileInstance {
         listGroupChild();
 
         String sItemName = sNodeName;
-/*
-        String sReqName = sNodeName.toUpperCase();
-        String sCurName;
-*/
         for( NexusNode node : listChildren() ) {
             if( sNodeName.equalsIgnoreCase( node.getNodeName() )) {
                 sItemName = node.getNodeName();
                 break;
             }
         }
-        
-/*        
-        for (Iterator<String> iter = m_tNodeTab.keySet().iterator(); iter.hasNext();) {
-            sCurName = iter.next();
-            if (sReqName.equals(sCurName.toUpperCase())) {
-                sItemName = sCurName;
-                break;
-            }
-        }
-*/
+
         return sItemName;
     }
 
@@ -828,31 +784,6 @@ public class NexusFileBrowser extends NexusFileInstance {
         }
         return m_tNodeTab;
     }
-    
-/*
-    protected TreeMap<String, String> listGroupChild() throws NexusException {
-        if (!isListGroupChildUpToDate()) {
-            TreeMap<String, String> hmNodeList;
-
-            // Case we are in a DataItem
-            if (m_pRealPath.getGroupsName() == null) {
-                m_tNodeTab.clear();
-            }
-            // Case we are in a group
-            else {
-                Long time = System.currentTimeMillis();
-
-                hmNodeList = new TreeMap<String, String>(new NameCollator());
-                hmNodeList.putAll(getNexusFile().groupdir());
-                time = System.currentTimeMillis() - time;
-                m_tNodeTab = hmNodeList;
-                getBuffer().putNodeInPath(m_pRealPath, (TreeMap<String, String>) m_tNodeTab.clone(), time.intValue());
-            }
-        } else
-            m_tNodeTab = (TreeMap<String, String>) getBuffer().getNodeInPath(m_pRealPath).clone();
-        return m_tNodeTab;
-    }
-*/
 
     /**
      * isListGroupChildUpToDate return true if the children buffer node list has

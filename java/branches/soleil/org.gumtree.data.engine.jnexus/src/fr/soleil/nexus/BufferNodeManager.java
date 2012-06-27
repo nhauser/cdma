@@ -3,6 +3,19 @@ package fr.soleil.nexus;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @brief The BufferNodeManager centralize navigation buffers to their file handler.
+ * 
+ * The BufferNodeManager associate a BufferNode (that is the navigation buffer) to its
+ * corresponding a NexusFileBrowser.
+ * <p>
+ * It permits to share in navigation buffers of a same file between several NexusFileBrowser
+ * that handle it.
+ * 
+ * @author rodriguez
+ *
+ */
+
 public class BufferNodeManager {
     private Map<String, BufferNode> mBuffers;
     private static BufferNodeManager mManager;
@@ -30,3 +43,4 @@ public class BufferNodeManager {
         mBuffers = new HashMap<String, BufferNode>();
     }
 }
+
