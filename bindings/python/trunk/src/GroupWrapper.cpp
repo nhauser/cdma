@@ -60,9 +60,12 @@ tuple GroupWrapper::items() const
 //====================helper function to create python class==================
 void wrap_group()
 {
+
     wrap_container<IGroupPtr>("GroupContainer");
+    wrap_attribute_manager<IGroupPtr>("GroupAttributeManager");
 
     class_<GroupWrapper,bases<ContainerWrapper<IGroupPtr>> >("Group")
+        .def_readwrite("attrs",&GroupWrapper::attrs)
         .add_property("parent",&GroupWrapper::parent)
         .add_property("root",&GroupWrapper::root)
         .add_property("childs",&GroupWrapper::childs)

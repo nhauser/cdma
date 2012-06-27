@@ -54,6 +54,8 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         //---------------------------------------------------------------------
         size_t size() const { return ptr()->getSize(); }
 
+        
+
         std::string unit() const { return ptr()->getUnitsString(); }
 
         std::string type() const { return get_type_string(ptr()); } 
