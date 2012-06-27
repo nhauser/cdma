@@ -56,7 +56,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 
         std::string unit() const { return ptr()->getUnitsString(); }
 
-        std::string type() const { return get_type_string(ptr()->getType()); } 
+        std::string type() const { return get_type_string(ptr()); } 
 
         //---------------------------------------------------------------------
         object __getitem__(object selection) const;

@@ -4,6 +4,7 @@
 #include<boost/python.hpp>
 #include<cdma/array/Array.h>
 #include<typeinfo>
+#include<map>
 
 extern "C"{
 #include<Python.h>
@@ -13,6 +14,42 @@ extern "C"{
 
 using namespace cdma;
 using namespace boost::python;
+
+//map from compiler type names to numpy type codes
+static std::map<std::string,int> typename2numpytc = 
+         {{typeid(int8_t).name(),NPY_BYTE},
+         {typeid(uint8_t).name(),NPY_UBYTE},
+         {typeid(int16_t).name(),NPY_SHORT},
+         {typeid(uint16_t).name(),NPY_USHORT},
+         {typeid(int32_t).name(),NPY_INT},
+         {typeid(uint32_t).name(),NPY_UINT},
+         {typeid(int64_t).name(),NPY_LONG},
+         {typeid(uint64_t).name(),NPY_ULONG},
+         {typeid(float).name(),NPY_FLOAT},
+         {typeid(double).name(),NPY_DOUBLE}};
+
+//map from numpy type codes to numpy type strings
+static std::map<int,std::string> numpytc2numpystr = 
+         {{NPY_BYTE,"int8"},{NPY_UBYTE,"uint8"},
+         {NPY_SHORT,"int16"},
+         {NPY_USHORT,"uint16"},
+         {NPY_INT,"int32"},{NPY_UINT,"uint32"},
+         {NPY_LONG,"int64"},
+         {NPY_ULONG,"uint64"},
+         {NPY_FLOAT,"float32"},
+         {NPY_DOUBLE,"float64"}};
+
+static std::map<int,size_t> numpytc2size = 
+        {{NPY_BYTE,sizeof(int8_t)},
+        {NPY_UBYTE,sizeof(uint8_t)},
+        {NPY_SHORT,sizeof(int16_t)},
+        {NPY_USHORT,sizeof(uint16_t)},
+        {NPY_INT,sizeof(int32_t)},
+        {NPY_UINT,sizeof(uint32_t)},
+        {NPY_LONG,sizeof(int64_t)},
+        {NPY_ULONG,sizeof(uint64_t)},
+        {NPY_FLOAT,sizeof(float)},
+        {NPY_DOUBLE,sizeof(double)}};
 
 
 /*! 
@@ -28,7 +65,12 @@ Converts the type_info object to a numpy type string.
 \args o instance of type_info
 \return numpy type string
 */
-std::string get_type_string(const std::type_info &o);
+template<typename CDMAPTRT> std::string get_type_string(CDMAPTRT ptr)
+{
+    return numpytc2numpystr[typename2numpytc[ptr->getType().name()]];
+}
+
+std::string get_type_string(ArrayPtr ptr);
 
 //-----------------------------------------------------------------------------
 /*!
@@ -39,7 +81,12 @@ represented by o.
 \param o instance of type_info
 \return numpy type code
 */
-int get_type_code(const std::type_info &o);
+template<typename CDMAPTRT> int get_type_code(CDMAPTRT ptr)
+{
+    return typename2numpytc[ptr->getType().name()];
+}
+
+int get_type_code(ArrayPtr ptr);
 
 //-----------------------------------------------------------------------------
 /*! 
@@ -49,8 +96,13 @@ Get the size of a type described by a type_info instance.
 \param t type_info instance
 \return size of type in bytes
 */
-size_t get_type_size(const std::type_info &t);
 
+template<typename CDMAPTRT> size_t get_type_size(CDMAPTRT ptr)
+{
+    return numpytc2size[typename2numpytc[ptr->getType().name()]];
+}
+
+size_t get_type_size(ArrayPtr ptr);
 //-----------------------------------------------------------------------------
 /*!
 \brief create a numpy array from a CDMA array

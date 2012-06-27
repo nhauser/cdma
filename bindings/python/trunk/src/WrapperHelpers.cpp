@@ -13,62 +13,21 @@ void init_numpy()
 }
 
 //-----------------------------------------------------------------------------
-std::string get_type_string(const std::type_info &tid) 
+std::string get_type_string(ArrayPtr ptr) 
 {
-    switch(get_type_code(tid))
-    {
-        case NPY_BYTE: return "int8"; 
-        case NPY_UBYTE: return "uint8";
-        case NPY_SHORT: return "int16";
-        case NPY_USHORT: return "uint16";
-        case NPY_INT: return "int32";
-        case NPY_UINT: return "uint32";
-        case NPY_LONG: return "int64";
-        case NPY_ULONG: return "uint64";
-        case NPY_FLOAT: return "float32";
-        case NPY_DOUBLE: return "float64";
-        default:
-            throw_PyTypeError("No type string available for this type!");
-    };
-
+    return numpytc2numpystr[typename2numpytc[ptr->getValueType().name()]];
 }
 
 //-----------------------------------------------------------------------------
-int get_type_code(const std::type_info &tid) 
+int get_type_code(ArrayPtr ptr) 
 {
-    if(tid.name() == typeid(int8_t).name()) return NPY_BYTE;
-    if(tid.name() == typeid(uint8_t).name()) return NPY_UBYTE;
-    if(tid.name() == typeid(int16_t).name()) return NPY_SHORT;
-    if(tid.name() == typeid(uint16_t).name()) return NPY_USHORT;
-    if(tid.name() == typeid(int32_t).name()) return NPY_INT;
-    if(tid.name() == typeid(uint32_t).name()) return NPY_UINT;
-    if(tid.name() == typeid(int64_t).name()) return NPY_LONG;
-    if(tid.name() == typeid(uint64_t).name()) return NPY_ULONG;
-
-    if(tid.name() == typeid(float).name()) return NPY_FLOAT;
-    if(tid.name() == typeid(double).name()) return NPY_DOUBLE;
-
-    throw_PyTypeError("Data is of unknown type!");
+    return typename2numpytc[ptr->getValueType().name()];
 }
 
 //-----------------------------------------------------------------------------
-size_t get_type_size(const std::type_info &t)
+size_t get_type_size(ArrayPtr ptr)
 {
-    switch(get_type_code(t))
-    {
-        case NPY_BYTE: return sizeof(int8_t); 
-        case NPY_UBYTE: return sizeof(uint8_t);
-        case NPY_SHORT: return sizeof(int16_t);
-        case NPY_USHORT: return sizeof(uint16_t);
-        case NPY_INT: return sizeof(int32_t);
-        case NPY_UINT: return sizeof(uint32_t);
-        case NPY_LONG: return sizeof(int64_t);
-        case NPY_ULONG: return sizeof(uint64_t);
-        case NPY_FLOAT: return sizeof(float);
-        case NPY_DOUBLE: return sizeof(double);
-        default:
-            throw_PyTypeError("Cannot determine size of this type!");
-    };
+    return numpytc2size[typename2numpytc[ptr->getValueType().name()]];
 }
 
 //-----------------------------------------------------------------------------
@@ -86,13 +45,12 @@ object cdma2numpy_array(const ArrayPtr aptr,bool copyflag)
     {
         array = PyArray_SimpleNewFromData(aptr->getRank(),
                                   dims,
-                                  get_type_code(aptr->getValueType()),
+                                  get_type_code(aptr),
                                   aptr->getStorage()->getStorage());
     }
     else
     {
-        array = PyArray_SimpleNew(aptr->getRank(),
-                dims,get_type_code(aptr->getValueType()));
+        array = PyArray_SimpleNew(aptr->getRank(),dims,get_type_code(aptr));
     }
 
     if(dims) delete [] dims;
@@ -113,7 +71,7 @@ void copy_data_from_cdma2numpy(const ArrayPtr aptr,object &nparray)
     init_numpy();
     char *cdma_ptr = (char *)aptr->getStorage()->getStorage();
     char *nump_ptr = PyArray_BYTES(nparray.ptr());
-    size_t esize = get_type_size(aptr->getValueType());
+    size_t esize = get_type_size(aptr);
 
     for(size_t i=0;i<aptr->getSize();i++)
         nump_ptr[i*esize] = cdma_ptr[i*esize];
