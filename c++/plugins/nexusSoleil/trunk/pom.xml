@@ -11,12 +11,12 @@
   </parent>
 
   <groupId>org.cdma.plugins</groupId>
-  <artifactId>SoleilNeXus-${aol}-shared-${mode}</artifactId>
+  <artifactId>CdmaSoleilNeXus-${aol}-shared-${mode}</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 
   <packaging>nar</packaging>
 
-  <name>cdmasoleilnexus</name>
+  <name>CdmaSoleilNeXus</name>
   <description>CDMA Soleil NeXus plugin</description>
 
   <developers>
