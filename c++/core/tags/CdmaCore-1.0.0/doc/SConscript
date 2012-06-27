@@ -1,0 +1,42 @@
+import os.path as path
+
+Import("core_env")
+
+
+doxygen_dict = {"@VERSION@":"${VERSION}"}
+
+doxyfile_client = core_env.Substfile(target="Doxyfile_client_scons",
+                                      source="Doxyfile_client_scons.in",
+                                      SUBST_DICT=doxygen_dict,
+                                      SUBSTFILESUFFIX="")   
+
+doxyfile_engine = core_env.Substfile(target="Doxyfile_engine_scons",
+                                     source="Doxyfile_engine_scons.in",
+                                     SUBST_DICT=doxygen_dict,
+                                     SUBSTFILESUFFIX="")
+
+doxyfile_plugin = core_env.Substfile(target="Doxyfile_plugin_scons",
+                                     source="Doxyfile_plugin_scons.in",
+                                     SUBST_DICT=doxygen_dict,
+                                     SUBSTFILESUFFIX="")
+         
+doxygen_client_doc = core_env.Command(["api/client"],doxyfile_client,
+                                    "cd doc; doxygen $SOURCE.file")
+doxygen_engine_doc = core_env.Command(["api/engine"],doxyfile_engine,
+                                    "cd doc; doxygen $SOURCE.file")
+doxygen_plugin_doc = core_env.Command(["api/plugin"],doxyfile_plugin,
+                                    "cd doc; doxygen $SOURCE.file")
+
+Clean(doxygen_client_doc,"api/client")
+Clean(doxygen_engine_doc,"api/engine")
+Clean(doxygen_plugin_doc,"api/plugin")
+
+api_html_doc_install = core_env.Install("${DOCDIR}/",[doxygen_client_doc,
+                                                      doxygen_engine_doc,
+                                                      doxygen_plugin_doc])
+
+#===================alias targets for building documentation===================
+core_env.Alias("doc",[doxygen_client_doc,doxygen_engine_doc,doxygen_plugin_doc])
+core_env.Alias("all",[doxygen_client_doc,doxygen_engine_doc,doxygen_plugin_doc])
+core_env.Alias("install",[api_html_doc_install])
+
