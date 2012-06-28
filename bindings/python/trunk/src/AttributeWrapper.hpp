@@ -49,7 +49,8 @@ class AttributeWrapper
 
         //---------------------------------------------------------------------
         //! return the name of the attribute
-        std::string name() const { return _ptr->getName(); }
+        std::string name() const { return _ptr->getName(); 
+        }
 
         //---------------------------------------------------------------------
         //! return attribute data

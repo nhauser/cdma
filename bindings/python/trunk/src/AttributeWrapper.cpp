@@ -16,16 +16,19 @@ std::vector<size_t> AttributeWrapper::shape() const
     return shape;
 }
 
+//------------------------------------------------------------------------------
 template<> float AttributeWrapper::get<float>() const
 {
     return _ptr->getFloatValue();
 }
 
+//------------------------------------------------------------------------------
 template<> int AttributeWrapper::get<int>() const
 {
     return _ptr->getIntValue();
 }
 
+//------------------------------------------------------------------------------
 template<> std::string AttributeWrapper::get<std::string>() const
 {
     return _ptr->getStringValue();
@@ -37,5 +40,7 @@ void wrap_attribute()
     class_<AttributeWrapper>("Attribute")
         .add_property("size",&AttributeWrapper::size)
         .add_property("name",&AttributeWrapper::name)
+        .add_property("type",&__type__<AttributeWrapper>)
+        .def("__getitem__",&__getitem__<AttributeWrapper>)
         ;
 }

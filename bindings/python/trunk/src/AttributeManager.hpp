@@ -17,7 +17,8 @@ template<typename CPTR> class AttributeManager
 
         //---------------------------------------------------------------------
         //! copy constructor
-        AttributeManager(const AttributeManager<CPTR> &m):_ptr(m._ptr) {}
+        AttributeManager(const AttributeManager<CPTR> &m):_ptr(m._ptr) 
+        { } 
 
         //---------------------------------------------------------------------
         //! default constructor
@@ -39,6 +40,13 @@ template<typename CPTR> class AttributeManager
         //====================attribute related methods========================
         AttributeWrapper __getitem__str(const std::string &name) const 
         {
+            IAttributePtr ptr = nullptr;
+            ptr = this->_ptr->getAttribute(name);
+            if(!ptr)
+            {
+                //THROW EXCEPTION HERE
+                std::cerr<<"Attribute ["<<name<<"] not found!"<<std::endl;
+            }
             return AttributeWrapper(this->_ptr->getAttribute(name));
         }
 
