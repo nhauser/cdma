@@ -16,7 +16,7 @@
 
     <packaging>nar</packaging>
 
-    <name>cdmanexusengine</name>
+    <name>CdmaNexusEngine</name>
     <description>NeXus engine library for the CDMA project</description>
 
     <developers>
@@ -93,7 +93,7 @@
         <dependency>
             <groupId>org.cdma</groupId>
             <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
