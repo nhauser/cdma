@@ -220,4 +220,34 @@ Throw the TypeError Python exception.
 */
 void throw_PyTypeError(const std::string &message);
 
+//------------------------------------------------------------------------------
+template<typename WTYPE> std::string __type__(WTYPE &self)
+{
+    return typeid2numpystr[self.type()];
+}
+
+//------------------------------------------------------------------------------
+template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
+{
+    return read_scalar_data(o);
+}
+
+template<typename WTYPE> object read_scalar_data(WTYPE &o)
+{
+    switch(o.type())
+    {
+        case TypeID::BYTE: return object(o.template get<int8_t>());
+        case TypeID::UBYTE: return object(o.template get<uint8_t>());
+        case TypeID::SHORT: return object(o.template get<int16_t>());
+        case TypeID::USHORT: return object(o.template get<uint16_t>());
+        case TypeID::INT: return object(o.template get<int32_t>());
+        case TypeID::UINT: return object(o.template get<uint32_t>());
+        case TypeID::LONG: return object(o.template get<int64_t>());
+        case TypeID::ULONG: return object(o.template get<uint64_t>());
+        case TypeID::FLOAT: return object(o.template get<float>());
+        case TypeID::DOUBLE: return object(o.template get<double>());
+        case TypeID::STRING: return object(o.template get<std::string>());
+    };
+}
+
 #endif
