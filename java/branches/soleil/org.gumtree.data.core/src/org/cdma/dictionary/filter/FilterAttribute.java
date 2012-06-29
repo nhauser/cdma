@@ -40,5 +40,29 @@ public class FilterAttribute implements IFilter {
     public String toString() {
         return "FilterAttribute: " + mName + " = " + mValue;
     }
+    
+    @Override
+    public boolean equals(Object filter) {
+        boolean result = false;
+        
+        if( filter instanceof FilterAttribute ) {
+            if( mName == null ) {
+                result =  ( ((FilterAttribute) filter).mName == null );
+            }
+            else {
+                result = ( mName.equals( ((FilterAttribute) filter).mName ) );
+            }
+            
+            if( result ) {
+                if( mValue == null ) {
+                    result =  ( ((FilterAttribute) filter).mValue == null );
+                }
+                else {
+                    result = ( mValue.equals( ((FilterAttribute) filter).mValue ) );
+                }
+            }
+        }
+        return result;
+    }
 
 }

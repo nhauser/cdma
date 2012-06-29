@@ -32,4 +32,6 @@ import org.cdma.interfaces.IContainer;
 public interface IFilter {
     boolean matches(IContainer item);
     
+    public boolean equals(Object filter);
+    
 }

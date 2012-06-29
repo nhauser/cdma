@@ -60,6 +60,15 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     private String         mFactory;
 
     /// Constructors
+    public NexusDataItem( String factoryName ) {
+        mFactory = factoryName;
+        mCDMDataset = null;
+        mn4tDataItem = new DataItem();
+        mDimensions = new ArrayList<DimOrder>();
+        mParent = null;
+        mArray = null;
+    }
+    
     public NexusDataItem(final NexusDataItem dataItem) {
         mFactory = dataItem.mFactory;
         mCDMDataset = dataItem.mCDMDataset;
@@ -293,7 +302,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public String getName() {
-        return mParent.getName() + "/" + getShortName();
+        return (mParent == null ? "" : mParent.getName() + "/" ) + getShortName();
     }
 
     @Override
@@ -712,7 +721,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public IGroup getRootGroup() {
-        return mParent.getRootGroup();
+        return mCDMDataset.getRootGroup();
     }
 
     @Override

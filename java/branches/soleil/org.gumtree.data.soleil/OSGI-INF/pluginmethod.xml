@@ -4,6 +4,8 @@
    <implementation class="org.cdma.plugin.soleil.external.DatAItemSlice1D"/>
    <implementation class="org.cdma.plugin.soleil.external.DataItemStacker"/>
    <implementation class="org.cdma.plugin.soleil.external.NodeName"/>
+   <implementation class="org.cdma.plugin.soleil.external.HarvestEquipmentAttributes"/>
+   <implementation class="org.cdma.plugin.soleil.external.CreateVirtualitem"/>
    <service>
       <provide interface="org.cdma.dictionary.IPluginMethod"/>
    </service>
