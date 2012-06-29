@@ -17,6 +17,47 @@ TypeID DataItemWrapper::type() const
     return typename2typeid[ptr()->getType().name()];
 }
 
+//================overloaded scalar get template===============================
+template<> uint8_t DataItemWrapper::get<uint8_t>() const
+{
+    return ptr()->readScalarByte();
+}
+
+//-----------------------------------------------------------------------------
+template<> int16_t DataItemWrapper::get<int16_t>() const
+{
+    return ptr()->readScalarShort();
+}
+
+//-----------------------------------------------------------------------------
+template<> int32_t DataItemWrapper::get<int32_t>() const
+{
+    return ptr()->readScalarInt();
+}
+
+//-----------------------------------------------------------------------------
+template<> int64_t DataItemWrapper::get<int64_t>() const
+{
+    return ptr()->readScalarLong();
+}
+
+//-----------------------------------------------------------------------------
+template<> float DataItemWrapper::get<float>() const
+{
+    return ptr()->readScalarFloat();
+}
+
+//-----------------------------------------------------------------------------
+template<> double DataItemWrapper::get<double>() const
+{
+    return ptr()->readScalarDouble();
+}
+
+//-----------------------------------------------------------------------------
+template<> std::string DataItemWrapper::get<std::string>() const
+{
+    return ptr()->readString();
+}
 
 //-----------------------------------------------------------------------------
 /*
@@ -77,6 +118,7 @@ void wrap_dataitem()
         .add_property("size",&DataItemWrapper::size)
         .add_property("unit",&DataItemWrapper::unit)
         .add_property("type",&__type__<DataItemWrapper>)
+        .add_property("__getitem__",&__getitem__<DataItemWrapper>)
         ;
         
 }
