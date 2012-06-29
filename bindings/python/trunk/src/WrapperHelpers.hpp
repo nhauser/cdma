@@ -15,6 +15,7 @@ extern "C"{
 using namespace cdma;
 using namespace boost::python;
 
+
 //! enum class with type IDs.
 enum class TypeID { BYTE,   //!< signded char (8Bit)
                     UBYTE,  //!< unsigned char (8Bit)
@@ -67,98 +68,19 @@ static std::map<TypeID,std::string> typeid2numpystr = {
         {TypeID::STRING,"string"}};
 
 
-//map from compiler type names to numpy type codes
-static std::map<std::string,int> typename2numpytc = 
-         {{typeid(int8_t).name(),NPY_BYTE},
-         {typeid(uint8_t).name(),NPY_UBYTE},
-         {typeid(int16_t).name(),NPY_SHORT},
-         {typeid(uint16_t).name(),NPY_USHORT},
-         {typeid(int32_t).name(),NPY_INT},
-         {typeid(uint32_t).name(),NPY_UINT},
-         {typeid(int64_t).name(),NPY_LONG},
-         {typeid(uint64_t).name(),NPY_ULONG},
-         {typeid(float).name(),NPY_FLOAT},
-         {typeid(double).name(),NPY_DOUBLE}};
-
-//map from numpy type codes to numpy type strings
-static std::map<int,std::string> numpytc2numpystr = 
-         {{NPY_BYTE,"int8"},{NPY_UBYTE,"uint8"},
-         {NPY_SHORT,"int16"},
-         {NPY_USHORT,"uint16"},
-         {NPY_INT,"int32"},{NPY_UINT,"uint32"},
-         {NPY_LONG,"int64"},
-         {NPY_ULONG,"uint64"},
-         {NPY_FLOAT,"float32"},
-         {NPY_DOUBLE,"float64"}};
-
-//map from numpy type codes to type sizes
-static std::map<int,size_t> numpytc2size = 
-        {{NPY_BYTE,sizeof(int8_t)},
-        {NPY_UBYTE,sizeof(uint8_t)},
-        {NPY_SHORT,sizeof(int16_t)},
-        {NPY_USHORT,sizeof(uint16_t)},
-        {NPY_INT,sizeof(int32_t)},
-        {NPY_UINT,sizeof(uint32_t)},
-        {NPY_LONG,sizeof(int64_t)},
-        {NPY_ULONG,sizeof(uint64_t)},
-        {NPY_FLOAT,sizeof(float)},
-        {NPY_DOUBLE,sizeof(double)}};
-
 
 /*! 
 \brief setup numpy module
 */
 void init_numpy();
 
-//-----------------------------------------------------------------------------
-/*! 
-\brief get numpy type string
-
-Converts the type_info object to a numpy type string.
-\args o instance of type_info
-\return numpy type string
-*/
-template<typename CDMAPTRT> std::string get_type_string(CDMAPTRT ptr)
-{
-    return numpytc2numpystr[typename2numpytc[ptr->getType().name()]];
-}
-
 //specialization for ArrayPtr
 std::string get_type_string(ArrayPtr ptr);
-
-//-----------------------------------------------------------------------------
-/*!
-\brief get numpy type code
-
-Return the numerical type code of a numpy type equivalent to the type
-represented by o. 
-\param o instance of type_info
-\return numpy type code
-*/
-template<typename CDMAPTRT> int get_type_code(CDMAPTRT ptr)
-{
-    return typename2numpytc[ptr->getType().name()];
-}
 
 //specialization for ArrayPtr
 int get_type_code(ArrayPtr ptr);
 
-//-----------------------------------------------------------------------------
-/*! 
-\brief return type size
 
-Get the size of a type described by a type_info instance.
-\param t type_info instance
-\return size of type in bytes
-*/
-
-template<typename CDMAPTRT> size_t get_type_size(CDMAPTRT ptr)
-{
-    return numpytc2size[typename2numpytc[ptr->getType().name()]];
-}
-
-//specialization for ArrayPtr
-size_t get_type_size(ArrayPtr ptr);
 
 //-----------------------------------------------------------------------------
 /*! 
@@ -209,16 +131,6 @@ Takes a CDMA ArrayPtr and constructs a numpy array of equal shape and data type.
 */
 object cdma2numpy_array(const ArrayPtr aptr,bool copyflag=false);
 
-//------------------------------------------------------------------------------
-/*!
-\brief copy data form a cdma array to a numpy array
-
-Function copies data from a CDMA array to a numpy array. The function assumes
-that the tow arrays are of same size and data type. 
-\param aptr pointer to the CDMA array
-\param nparray numpy array where to store the data
-*/
-void copy_data_from_cdma2numpy(const ArrayPtr aptr,object &nparray);
 
 //------------------------------------------------------------------------------
 /*! 
@@ -259,10 +171,26 @@ template<typename WTYPE> tuple __shape__(WTYPE &self)
 //------------------------------------------------------------------------------
 template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
-    return read_scalar_data(o);
+    //if the data object itself is scalar we can only return a scalar value
+    if(o.shape().size()==0) return read_scalar_data(o);
+
+    //ok - we have a multidimensional data object. Now it depends on the 
+    //selection object of what will be returned. The selection object can either
+    //be a list or tuple or a single python object from which the selection must
+    //be assembled. 
+    //
 }
 
 //------------------------------------------------------------------------------
+/*! 
+\brief template reading scalar data 
+
+This template reads scalar data from an object that provides the IOObject
+interface. 
+\throws TypError native python exception if data type not supported
+\param o instance of WTYPE
+\return python object with the scalar data
+*/
 template<typename WTYPE> object read_scalar_data(WTYPE &o)
 {
     switch(o.type())
@@ -278,7 +206,13 @@ template<typename WTYPE> object read_scalar_data(WTYPE &o)
         case TypeID::FLOAT: return object(o.template get<float>());
         case TypeID::DOUBLE: return object(o.template get<double>());
         case TypeID::STRING: return object(o.template get<std::string>());
+        default:
+            throw_PyTypeError("Data type not supported!");
+
     };
+
+    return object(); //return value only to avoid compiler warnings 
+                     //this code will never be reached.
 }
 
 #endif

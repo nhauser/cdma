@@ -78,6 +78,9 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         */
         TypeID type() const;
 
+        //---------------------------------------------------------------------
+        template<typename T> T get() const {} 
+
         
         
 };
