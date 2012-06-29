@@ -15,22 +15,24 @@ scan_group = dataset["D1A_016_D1A"]
 print "attribute size: ",scan_group.attrs["name"].size
 print "attribute name: ",scan_group.attrs["name"].name
 print "attribute type: ",scan_group.attrs["name"].type
+print "attribute shape: ",scan_group.attrs["name"].shape
 print "attribute data: ",scan_group.attrs["name"][...]
 
 print "read data ..."
-print scan_group["duration"][...]
+#print scan_group["duration"][...]
 
 print "image group ..."
 image_group = scan_group["image#20"]
 
 print "data item ..."
 data= image_group["data"]
-print data.shape
+print "dataitem type: ",data.type
+print "dataitem rank: ",data.rank
+print "dataitem shape: ",data.shape
 print data
-print data.type
 
-pyplot.subplot(121)
-pyplot.imshow(numpy.log10(data[...]))
-pyplot.subplot(122)
-pyplot.imshow(numpy.log10(h5data))
-pyplot.show()
+#pyplot.subplot(121)
+#pyplot.imshow(numpy.log10(data[...]))
+#pyplot.subplot(122)
+#pyplot.imshow(numpy.log10(h5data))
+#pyplot.show()

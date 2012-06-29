@@ -40,6 +40,7 @@ void wrap_attribute()
     class_<AttributeWrapper>("Attribute")
         .add_property("size",&AttributeWrapper::size)
         .add_property("name",&AttributeWrapper::name)
+        .add_property("shape",&__shape__<AttributeWrapper>)
         .add_property("type",&__type__<AttributeWrapper>)
         .def("__getitem__",&__getitem__<AttributeWrapper>)
         ;

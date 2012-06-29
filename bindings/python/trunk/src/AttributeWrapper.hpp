@@ -6,10 +6,17 @@
 
 using namespace cdma;
 
+/*! 
+\brief Wrapps a CDAM attribute
+
+This class wrapps a pointer to a CDMA attribute. It provides the IOObject
+interface. 
+
+*/
 class AttributeWrapper
 {
     private:
-        IAttributePtr _ptr;
+        IAttributePtr _ptr; //!< pointer to the attribute
     public:
         //!================public constructors=================================
         //! default constructor
@@ -28,6 +35,7 @@ class AttributeWrapper
         ~AttributeWrapper() {}
 
         //===================assignment operators==============================
+        //! copy assignment operator
         AttributeWrapper &operator=(const AttributeWrapper &a)
         {
             if(this == &a) return *this;
@@ -49,8 +57,7 @@ class AttributeWrapper
 
         //---------------------------------------------------------------------
         //! return the name of the attribute
-        std::string name() const { return _ptr->getName(); 
-        }
+        std::string name() const { return _ptr->getName(); }
 
         //---------------------------------------------------------------------
         //! return attribute data
