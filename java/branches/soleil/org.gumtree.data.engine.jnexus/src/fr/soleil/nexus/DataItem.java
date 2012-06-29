@@ -50,11 +50,11 @@ public class DataItem implements Cloneable {
     public DataItem() {
         mSingleRaw = true;
         mAttribs = new HashMap<String, Data<?>>();
-        mPath = null;
+        mPath = new PathData(new NexusNode[] {}, "");
         mData = null;
-        mDimData = null;
-        mDimSize = null;
-        mStart = null;
+        mDimData = new int[] {};
+        mDimSize = new int[] {};
+        mStart = new int[] {};
     }
 
     public DataItem(Object oArray) throws NexusException {

@@ -33,9 +33,12 @@ public class PluginMethodManager {
     private Map<String, Map<String, IPluginMethod> > methodRegistry;
 
     public static PluginMethodManager instantiate() {
-        synchronized (PluginMethodManager.class ) {
-            if (manager == null) {
-                manager = new PluginMethodManager();
+        if (manager == null) {
+            synchronized (PluginMethodManager.class) {
+                if (manager == null) {
+                    manager = new PluginMethodManager();
+                    manager.discoverPluginMethods();
+                }
             }
         }
         return manager;
@@ -101,7 +104,6 @@ public class PluginMethodManager {
     
     private PluginMethodManager() {
         methodRegistry = new TreeMap<String, Map<String, IPluginMethod> >();
-        discoverPluginMethods();
     }
 
 }

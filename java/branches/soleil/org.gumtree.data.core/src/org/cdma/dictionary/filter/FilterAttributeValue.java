@@ -53,4 +53,19 @@ public class FilterAttributeValue implements IFilter {
     public String toString() {
         return "FilterAttributeValue: " + mValue;
     }
+    
+    @Override
+    public boolean equals(Object filter) {
+        boolean result = false;
+        
+        if( filter instanceof FilterAttributeValue ) {
+            if( mValue == null ) {
+                result =  ( ((FilterAttributeValue) filter).mValue == null );
+            }
+            else {
+                result = ( mValue.equals( ((FilterAttributeValue) filter).mValue ) );
+            }
+        }
+        return result;
+    }
 }

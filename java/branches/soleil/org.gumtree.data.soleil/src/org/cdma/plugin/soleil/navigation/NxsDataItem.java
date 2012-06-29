@@ -1,15 +1,17 @@
 package org.cdma.plugin.soleil.navigation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusDimension;
 import org.cdma.exception.BackupException;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -61,6 +63,14 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
 
     /// Constructors
+    public NxsDataItem() {
+        mDataset   = null;
+        mDataItems = new NexusDataItem[] { new NexusDataItem( NxsFactory.NAME ) };
+        mDimension = new ArrayList<DimOrder>();
+        mParent    = null;
+        mArray     = null;
+    }
+    
     public NxsDataItem(final NxsDataItem dataItem) {
         mDataset   = dataItem.mDataset;
         mDataItems = dataItem.mDataItems.clone();
@@ -80,7 +90,9 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     public NxsDataItem(NexusDataItem[] data, IGroup parent, NxsDataset handler) {
         mDataset   = handler;
-        mDataItems = data.clone();
+        if( data != null ) {
+            mDataItems = data.clone();
+        }
         mDimension = new ArrayList<DimOrder>();
         mParent    = parent;
         mArray     = null;
@@ -671,6 +683,19 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     @Override
     public IDataset getDataset() {
         return mDataset;
+    }
+    
+    public void setDataset( IDataset dataset ) {
+        if( dataset instanceof NxsDataset ) {
+            mDataset = (NxsDataset) dataset;
+        }
+        else {
+                try {
+                    mDataset = NxsDataset.instanciate( new File(dataset.getLocation()) );
+                } catch (NoResultException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.nexus.navigation.NexusDataset;
 import org.cdma.engine.nexus.navigation.NexusGroup;
+import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -52,7 +53,7 @@ public final class NxsDataset implements IDataset {
     private NxsLogicalGroup    mRootLogical;  // Logical root of the document
     private boolean            mOpen;         // is the dataset open 
 
-    public static NxsDataset instanciate(File destination) throws IOException, NoResultException {
+    public static NxsDataset instanciate(File destination) throws NoResultException {
         return new NxsDataset(destination);
     }
 
@@ -64,7 +65,8 @@ public final class NxsDataset implements IDataset {
     @Override
     public LogicalGroup getLogicalRoot() {
         if( mRootLogical == null ) {
-            boolean debug = Boolean.parseBoolean( mConfig.getParameter(NxsFactory.DEBUG_INF, this) );
+            String param = getConfiguration().getParameter(NxsFactory.DEBUG_INF, this);
+            boolean debug = Boolean.parseBoolean( param );
             mRootLogical = new NxsLogicalGroup(null, null, this, debug);
 
         }
