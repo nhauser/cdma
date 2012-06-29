@@ -38,7 +38,8 @@ static std::map<std::string,TypeID> typename2typeid = {
         {typeid(int32_t).name(),TypeID::INT},
         {typeid(uint32_t).name(),TypeID::UINT},
         {typeid(float).name(),TypeID::FLOAT},
-        {typeid(double).name(),TypeID::DOUBLE}};
+        {typeid(double).name(),TypeID::DOUBLE},
+        {typeid(std::string).name(),TypeID::STRING}};
 
 //conversion map from Type IDs to type sizes
 static std::map<TypeID,size_t> typeid2size = {
@@ -169,10 +170,7 @@ Function converting a standard c++ container to a Python tuple
 */
 template<typename CTYPE> tuple cont2tuple(const CTYPE &c)
 {
-    list l(0);
-
-    for(auto v: c) l.append(v);
-    return tuple(l);
+    return tuple(cont2list(c));
 }
 
 //-----------------------------------------------------------------------------
@@ -185,9 +183,19 @@ Function converting a standard C++ container to a Python list.
 */
 template<typename CTYPE> list cont2list(const CTYPE &c)
 {
-    list l(0);
+    list l;
 
-    for(auto v: c) l.append(v);
+#ifdef NOFOREACH
+    for(auto iter=c.begin();iter!=c.end();iter++)
+    {
+        const typename CTYPE::value_type &v = *iter;
+#else
+    for(auto v: c)
+    {
+#endif
+        l.append(v);
+    }
+
     return l;
 }
 
@@ -221,9 +229,31 @@ Throw the TypeError Python exception.
 void throw_PyTypeError(const std::string &message);
 
 //------------------------------------------------------------------------------
+/*!
+\brief converts a type to string
+
+Template function converting a type id to a numpy type string. 
+This function is intended to be used as a class method for wrapper objects that
+implement the IOObject interface. 
+\param self object of type implementing IOObject
+\return string with numpy type string
+*/
 template<typename WTYPE> std::string __type__(WTYPE &self)
 {
     return typeid2numpystr[self.type()];
+}
+
+//------------------------------------------------------------------------------
+/*!
+\brief converst list to tuple as shape
+
+Template method converting a std::vector<int> to a tuple which is used as a
+shape property of an object. This function is inteded to be used as a class
+method for wrappers implementing the IOobject interface.
+*/
+template<typename WTYPE> tuple __shape__(WTYPE &self)
+{
+    return cont2tuple(self.shape());
 }
 
 //------------------------------------------------------------------------------
@@ -232,6 +262,7 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
     return read_scalar_data(o);
 }
 
+//------------------------------------------------------------------------------
 template<typename WTYPE> object read_scalar_data(WTYPE &o)
 {
     switch(o.type())

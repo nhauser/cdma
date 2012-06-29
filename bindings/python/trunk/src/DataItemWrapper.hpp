@@ -49,19 +49,35 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         the number of elements along this particular dimension.
         \return Python list with number of elements
         */
-        tuple shape() const;
+        std::vector<size_t> shape() const;
 
         //---------------------------------------------------------------------
+        /*! 
+        \brief return number of elements
+
+        Return the numbner of elements stored in the data item.
+        \return number of elements
+        */
         size_t size() const { return ptr()->getSize(); }
 
-        
+        //---------------------------------------------------------------------
+        /*! 
+        \brief return unit
 
+        Return the unit of the data stored in this item as string.
+        \return unit 
+        */
         std::string unit() const { return ptr()->getUnitsString(); }
 
-        std::string type() const { return get_type_string(ptr()); } 
-
         //---------------------------------------------------------------------
-        object __getitem__(object selection) const;
+        /*!
+        \brief return type id
+
+        Return the ID of the data type used to store data.
+        \return type id
+        */
+        TypeID type() const;
+
         
         
 };

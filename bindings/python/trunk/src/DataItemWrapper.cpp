@@ -2,17 +2,24 @@
 
 
 //======================wrapper methods implementation=========================
-tuple DataItemWrapper::shape() const
+std::vector<size_t> DataItemWrapper::shape() const
 {
-    list l;
+    std::vector<size_t> shape;
 
-    for(auto v: ptr()->getShape()) l.append(v);
+    for(auto v: ptr()->getShape()) shape.push_back(v);
 
-    return tuple(l);
+    return shape;
+}
+
+//-----------------------------------------------------------------------------
+TypeID DataItemWrapper::type() const
+{
+    return typename2typeid[ptr()->getType().name()];
 }
 
 
 //-----------------------------------------------------------------------------
+/*
 object DataItemWrapper::__getitem__(object selection) const
 {
     //determine the data type of the object
@@ -40,7 +47,6 @@ object DataItemWrapper::__getitem__(object selection) const
     {
         std::vector<int> origin,shape;
 
-        /*
         if(create_cdma_selection(selection,origin,shape))
         {
             //if returns true we have a point selection and thus return a scalar
@@ -49,7 +55,7 @@ object DataItemWrapper::__getitem__(object selection) const
 
         }
         else
-        {*/
+        {
             //read data from the dataset
             ArrayPtr aptr = ptr()->getData();
             object array = cdma2numpy_array(aptr,true);
@@ -59,6 +65,7 @@ object DataItemWrapper::__getitem__(object selection) const
     
     //THROW EXCEPTION HERE
 }
+*/
 //===============helper function creating the python class=====================
 void wrap_dataitem()
 {
@@ -66,11 +73,10 @@ void wrap_dataitem()
 
     class_<DataItemWrapper,bases<ContainerWrapper<IDataItemPtr>> >("DataItem")
         .add_property("rank",&DataItemWrapper::rank)
-        .add_property("shape",&DataItemWrapper::shape)
+        .add_property("shape",&__shape__<DataItemWrapper>)
         .add_property("size",&DataItemWrapper::size)
         .add_property("unit",&DataItemWrapper::unit)
-        .add_property("type",&DataItemWrapper::type)
-        .def("__getitem__",&DataItemWrapper::__getitem__)
+        .add_property("type",&__type__<DataItemWrapper>)
         ;
         
 }
