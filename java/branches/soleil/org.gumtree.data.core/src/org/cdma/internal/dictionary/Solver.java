@@ -57,6 +57,9 @@ public class Solver {
     public List<IContainer> solve(Context context) {
         List<IContainer> result = null;
         
+        // Update context with currently executed solver 
+        context.addSolver(this);
+        
         // If the solver is a path
         if( mPath != null ) {
             // Clear the context of previously found nodes
@@ -96,8 +99,6 @@ public class Solver {
             result = new ArrayList<IContainer>();
         }
         
-        // Update context with last executed solver 
-        context.addSolver(this);
         return result;
     }
     

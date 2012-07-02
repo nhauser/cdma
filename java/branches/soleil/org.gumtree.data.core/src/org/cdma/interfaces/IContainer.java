@@ -40,8 +40,7 @@ import org.cdma.utils.Utilities.ModelType;
 /// @endcond engineAPI
 
 /**
- * The IContainer contains behaviors a node, in a tree of data, should
- * respect.
+ * The IContainer contains behaviors a node, in a tree of data, should respect.
  * 
  * @author nxi
  * 
@@ -58,7 +57,7 @@ public interface IContainer extends IModelObject, Cloneable {
     /**
      * Add an Attribute to the Group.
      * 
-     * @param attribute CDMA Attribute 
+     * @param attribute CDMA Attribute
      */
     void addOneAttribute(IAttribute attribute);
 
@@ -66,7 +65,7 @@ public interface IContainer extends IModelObject, Cloneable {
      * A convenience method of adding a String type attribute.
      * 
      * @param name String type object
-     * @param value String type object 
+     * @param value String type object
      */
     void addStringAttribute(String name, String value);
 
@@ -88,21 +87,21 @@ public interface IContainer extends IModelObject, Cloneable {
     /**
      * Get the Dataset that hold the current Group.
      * 
-     * @return CDMA Dataset 
+     * @return CDMA Dataset
      */
     IDataset getDataset();
 
     /**
      * Get the location referenced by the Dataset.
      * 
-     * @return String type 
+     * @return String type
      */
     String getLocation();
 
     /**
      * Get the (long) name of the IObject, which contains the path information.
      * 
-     * @return String type object 
+     * @return String type object
      */
     String getName();
 
@@ -116,7 +115,7 @@ public interface IContainer extends IModelObject, Cloneable {
     /**
      * Get the root group of the tree that holds the current Group.
      * 
-     * @return CDMA Group 
+     * @return CDMA Group
      */
     IContainer getRootGroup();
 
@@ -132,7 +131,7 @@ public interface IContainer extends IModelObject, Cloneable {
      * 
      * @param name in String type
      * @param value in String type
-     * @return boolean type 
+     * @return boolean type
      */
     boolean hasAttribute(String name, String value);
 
@@ -140,7 +139,7 @@ public interface IContainer extends IModelObject, Cloneable {
      * Remove an Attribute from the Attribute list.
      * 
      * @param attribute CDMA Attribute
-     * @return boolean type 
+     * @return boolean type
      */
     boolean removeAttribute(IAttribute attribute);
 
@@ -154,7 +153,7 @@ public interface IContainer extends IModelObject, Cloneable {
     /**
      * Set the IObject's (short) name.
      * 
-     * @param name in String type 
+     * @param name in String type
      */
     void setShortName(String name);
 
@@ -165,12 +164,11 @@ public interface IContainer extends IModelObject, Cloneable {
      */
     void setParent(IGroup group);
 
-
     /**
      * Clone this IContainer.
      * 
      * @return new IDataItem instance
      */
-    IContainer clone() throws CloneNotSupportedException;
+    IContainer clone();
 
 }
