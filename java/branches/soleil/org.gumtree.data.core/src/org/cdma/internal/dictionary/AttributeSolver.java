@@ -57,7 +57,7 @@ public class AttributeSolver {
         List<IContainer> list = null;
         
         // Give this attribute solver as a parameter of the context
-        context.setParams( new AttributeSolver[] {this} );
+        //context.setParams( new AttributeSolver[] {this} );
         
         // Get IContainer matching to this solver to seek the named attribute
         for( Solver solver : mSolver ) {
