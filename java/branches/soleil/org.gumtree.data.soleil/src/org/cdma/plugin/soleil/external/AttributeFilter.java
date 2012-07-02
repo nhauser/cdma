@@ -8,6 +8,7 @@ import org.cdma.dictionary.IPluginMethod;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.CDMAException;
+import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IGroup;
@@ -20,11 +21,21 @@ import org.cdma.plugin.soleil.navigation.NxsGroup;
 import fr.soleil.nexus.NexusNode;
 import fr.soleil.nexus.PathNexus;
 
+/**
+ * Analyze the path previously entered, to extract the specified attribute
+ * path is under the form: "/node1/node2@attribute_name=value"
+ *
+ * Only nodes with that particular attribute are returned.
+ * 
+ * @note: the character '*' is a wildcard for text completion both in name and value of attribute 
+ * 
+ * @author rodriguez
+ */
 public final class AttributeFilter implements IPluginMethod {
     
     @Override
     public void execute(Context context) throws CDMAException {
-        List<IContainer> result = filterOnLongName(context);
+        List<IContainer> result = filterOnAttribute(context);
         context.setContainers(result);
         
     }
@@ -38,12 +49,12 @@ public final class AttributeFilter implements IPluginMethod {
      * Stack all found data items to construct an aggregated NxsDataItem
      * @param context @return
      */
-    public List<IContainer> filterOnLongName(Context context) {
+    public List<IContainer> filterOnAttribute(Context context) {
         LogicalGroup group = (LogicalGroup) context.getCaller();
         List<Solver> solvers = context.getSolver();
         
         // The last Solver was a Path
-        Path path = solvers.get( solvers.size() - 1 ).getPath();
+        Path path = solvers.get( solvers.size() - 2 ).getPath();
         String addr = path.toString();
 
         // Extract the subpart corresponding to attribute and value
@@ -58,9 +69,12 @@ public final class AttributeFilter implements IPluginMethod {
         List<IContainer> items = new ArrayList<IContainer>();
         String expected = attr[1].replace("*", ".*");
         for( NxsDataItem item : list ) {
-            String value = item.getAttribute(attr[0]).getStringValue();
-            if( value != null && value.matches(expected) ) {
-                items.add( item );
+            IAttribute attribute = item.getAttribute( attr[0] );
+            if( attribute != null  ) {
+                String value = attribute.getStringValue();
+                if( value != null && value.matches(expected) ) {
+                    items.add( item );
+                }
             }
         }
         return items;
