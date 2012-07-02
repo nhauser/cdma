@@ -25,16 +25,16 @@ import org.cdma.utils.Utilities.ModelType;
 import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
-import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.DataItem.Data;
+import fr.soleil.nexus.PathGroup;
 
 public final class NexusDataItem implements IDataItem, Cloneable {
 
     // Inner class
-    // Associate a IDimension to an order of the array 
+    // Associate a IDimension to an order of the array
     private static class DimOrder {
         // Members
-        private int        mOrder;     // order of the corresponding dimension in the NxsDataItem
+        private int mOrder; // order of the corresponding dimension in the NxsDataItem
         private IDimension mDimension; // dimension object
 
         public DimOrder(int order, IDimension dim) {
@@ -49,18 +49,18 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         public IDimension dimension() {
             return mDimension;
         }
-    }  
+    }
 
-    /// Members
-    private NexusDataset   mCDMDataset;    // CDMA IDataset i.e. file handler
-    private IGroup         mParent = null; // parent group
-    private DataItem       mn4tDataItem;   // NeXus dataitem support of the data
-    private IArray         mArray = null;  // CDMA IArray supporting a view of the data
-    private List<DimOrder> mDimensions;    // list of dimensions
-    private String         mFactory;
+    // / Members
+    private NexusDataset mCDMDataset; // CDMA IDataset i.e. file handler
+    private IGroup mParent = null; // parent group
+    private DataItem mn4tDataItem; // NeXus dataitem support of the data
+    private IArray mArray = null; // CDMA IArray supporting a view of the data
+    private List<DimOrder> mDimensions; // list of dimensions
+    private String mFactory;
 
-    /// Constructors
-    public NexusDataItem( String factoryName ) {
+    // / Constructors
+    public NexusDataItem(String factoryName) {
         mFactory = factoryName;
         mCDMDataset = null;
         mn4tDataItem = new DataItem();
@@ -68,7 +68,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         mParent = null;
         mArray = null;
     }
-    
+
     public NexusDataItem(final NexusDataItem dataItem) {
         mFactory = dataItem.mFactory;
         mCDMDataset = dataItem.mCDMDataset;
@@ -78,7 +78,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         mArray = null;
         try {
             mArray = new NexusArray((NexusArray) dataItem.getData());
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
     }
 
@@ -234,7 +235,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
         if (list.size() > 0) {
             return list;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -269,40 +271,40 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     public int getElementSize() {
         int result;
         switch (mn4tDataItem.getType()) {
-        case NexusFile.NX_BINARY:
-            result = 1;
-            break;
-        case NexusFile.NX_BOOLEAN:
-            result = 1;
-            break;
-        case NexusFile.NX_CHAR:
-            result = 1;
-            break;
-        case NexusFile.NX_INT16:
-            result = 2;
-            break;
-        case NexusFile.NX_FLOAT32:
-            result = 2;
-            break;
-        case NexusFile.NX_INT32:
-            result = 4;
-            break;
-        case NexusFile.NX_FLOAT64:
-            result = 4;
-            break;
-        case NexusFile.NX_INT64:
-            result = 8;
-            break;
-        default:
-            result = 1;
-            break;
+            case NexusFile.NX_BINARY:
+                result = 1;
+                break;
+            case NexusFile.NX_BOOLEAN:
+                result = 1;
+                break;
+            case NexusFile.NX_CHAR:
+                result = 1;
+                break;
+            case NexusFile.NX_INT16:
+                result = 2;
+                break;
+            case NexusFile.NX_FLOAT32:
+                result = 2;
+                break;
+            case NexusFile.NX_INT32:
+                result = 4;
+                break;
+            case NexusFile.NX_FLOAT64:
+                result = 4;
+                break;
+            case NexusFile.NX_INT64:
+                result = 8;
+                break;
+            default:
+                result = 1;
+                break;
         }
         return result;
     }
 
     @Override
     public String getName() {
-        return (mParent == null ? "" : mParent.getName() + "/" ) + getShortName();
+        return (mParent == null ? "" : mParent.getName() + "/") + getShortName();
     }
 
     @Override
@@ -337,7 +339,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
                     buf.append("=");
                     if (myd.isVariableLength()) {
                         buf.append("*");
-                    } else {
+                    }
+                    else {
                         buf.append(myd.getLength());
                     }
                 }
@@ -356,7 +359,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
             try {
                 mParent = (IGroup) mCDMDataset.getRootGroup().findContainerByPath(path.getValue());
                 ((NexusGroup) mParent).setChild(this);
-            } catch (NoResultException e) {
+            }
+            catch (NoResultException e) {
             }
         }
         return mParent;
@@ -367,7 +371,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         List<IRange> list = null;
         try {
             list = new NexusIndex(mFactory, getData().getShape()).getRangeList();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
         return list;
     }
@@ -377,7 +382,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         List<IRange> list = null;
         try {
             list = ((NexusIndex) getData().getIndex()).getRangeList();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
         return list;
     }
@@ -388,9 +394,11 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         int rank;
         if (mn4tDataItem.getType() == NexusFile.NX_CHAR) {
             rank = 0;
-        } else if (shape.length == 1 && shape[0] == 1) {
+        }
+        else if (shape.length == 1 && shape[0] == 1) {
             rank = 0;
-        } else {
+        }
+        else {
             rank = shape.length;
         }
         return rank;
@@ -401,20 +409,21 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         NexusDataItem item = null;
         try {
             item = new NexusDataItem(this);
-            mArray = (NexusArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
-        } catch (IOException e) {
+            mArray = (NexusArray) item.getData().getArrayUtils().sectionNoReduce(section)
+                    .getArray();
+        }
+        catch (IOException e) {
         }
         return item;
     }
-
-
 
     @Override
     public int[] getShape() {
         int[] shape;
         try {
             shape = getData().getShape();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             shape = new int[] { -1 };
         }
         return shape;
@@ -448,7 +457,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         NexusDataItem item = new NexusDataItem(this);
         try {
             item.mArray = item.getData().getArrayUtils().slice(dim, value).getArray();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             item = null;
         }
         return item;
@@ -526,7 +536,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         int rank = 0;
         try {
             rank = getData().getRank();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
         return (rank == 0);
     }
@@ -539,9 +550,11 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public boolean isUnsigned() {
         int type = mn4tDataItem.getType();
-        if (type == NexusFile.NX_UINT16 || type == NexusFile.NX_UINT32 || type == NexusFile.NX_UINT64 || type == NexusFile.NX_UINT8) {
+        if (type == NexusFile.NX_UINT16 || type == NexusFile.NX_UINT32
+                || type == NexusFile.NX_UINT64 || type == NexusFile.NX_UINT8) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -553,7 +566,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public double readScalarDouble() throws IOException {
-        return ((byte[]) mn4tDataItem.getData())[0];
+        return ((double[]) mn4tDataItem.getData())[0];
     }
 
     @Override
@@ -588,7 +601,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
+    public void setCachedData(IArray cacheData, boolean isMetadata)
+            throws InvalidArrayTypeException {
         // TODO Auto-generated method stub
         new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
     }
@@ -604,7 +618,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         try {
             // TODO
             throw new BackupException(NexusDataset.ERR_NOT_SUPPORTED);
-        } catch (BackupException e) {
+        }
+        catch (BackupException e) {
             e.printStackTrace();
         }
     }
@@ -620,9 +635,12 @@ public final class NexusDataItem implements IDataItem, Cloneable {
             IAttribute attr = item.getAttribute("axis");
             if (attr != null) {
                 if ("*".equals(dimString)) {
-                    setDimension(new NexusDimension(mFactory, item), attr.getNumericValue().intValue());
-                } else if (dimNames.contains(attr.getName())) {
-                    setDimension(new NexusDimension(mFactory, item), attr.getNumericValue().intValue());
+                    setDimension(new NexusDimension(mFactory, item), attr.getNumericValue()
+                            .intValue());
+                }
+                else if (dimNames.contains(attr.getName())) {
+                    setDimension(new NexusDimension(mFactory, item), attr.getNumericValue()
+                            .intValue());
                 }
             }
         }
@@ -637,8 +655,10 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     public void setElementSize(int elementSize) {
         try {
             // TODO
-            throw new BackupException("Method not support in plug-in: setElementSize(int elementSize)!");
-        } catch (BackupException e) {
+            throw new BackupException(
+                    "Method not support in plug-in: setElementSize(int elementSize)!");
+        }
+        catch (BackupException e) {
             e.printStackTrace();
         }
     }
@@ -664,11 +684,11 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public String toString() {
-        if( mn4tDataItem != null )
+        if (mn4tDataItem != null)
             return mn4tDataItem.toString();
         return super.toString();
     }
-    
+
     @Override
     public String toStringDebug() {
         StringBuffer strDebug = new StringBuffer();
@@ -690,7 +710,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
             for (IAttribute a : list) {
                 strDebug.append("- ").append(a.toString()).append("\n");
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
         }
 
         return strDebug.toString();
@@ -738,6 +759,6 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         return mn4tDataItem;
     }
     // ------------------------------------------------------------------------
-    /// Protected methods
+    // / Protected methods
     // ------------------------------------------------------------------------
 }
