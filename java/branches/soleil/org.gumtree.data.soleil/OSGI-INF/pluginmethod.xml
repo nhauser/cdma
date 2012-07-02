@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.gumtree.data.soleil.pluginmethod">
-   <implementation class="org.cdma.plugin.soleil.external.AttributeFilter"/>
-   <implementation class="org.cdma.plugin.soleil.external.DatAItemSlice1D"/>
-   <implementation class="org.cdma.plugin.soleil.external.DataItemStacker"/>
-   <implementation class="org.cdma.plugin.soleil.external.NodeName"/>
-   <implementation class="org.cdma.plugin.soleil.external.HarvestEquipmentAttributes"/>
-   <implementation class="org.cdma.plugin.soleil.external.CreateVirtualitem"/>
-   <service>
-      <provide interface="org.cdma.dictionary.IPluginMethod"/>
-   </service>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.gumtree.data.soleil.pluginmethod" >
+  <implementation class="org.cdma.plugin.soleil.external.AttributeFilter" />
+  <implementation class="org.cdma.plugin.soleil.external.CreateVirtualItem" />
+  <implementation class="org.cdma.plugin.soleil.external.DataItemSlice1D" />
+  <implementation class="org.cdma.plugin.soleil.external.DataItemStacker" />
+  <implementation class="org.cdma.plugin.soleil.external.DataItemStackerByName" />
+  <implementation class="org.cdma.plugin.soleil.external.HarvestEquipmentAttributes" />
+  <implementation class="org.cdma.plugin.soleil.external.HarvestSignalAttributes" />
+  <implementation class="org.cdma.plugin.soleil.external.SelectNodeByRegionAttribute" />
+  <service>
+    <provide interface="org.cdma.dictionary.IPluginMethod" />
+  </service>
 </scr:component>

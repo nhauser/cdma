@@ -13,6 +13,9 @@ import org.cdma.plugin.soleil.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.utils.Utilities.ModelType;
 
+/**
+ * Stack all found data items to construct an aggregated NxsDataItem
+ */
 public final class DataItemStacker implements IPluginMethod {
 
     @Override
@@ -30,10 +33,6 @@ public final class DataItemStacker implements IPluginMethod {
         return NxsFactory.NAME;
     }
     
-    /**
-     * Stack all found data items to construct an aggregated NxsDataItem
-     * @param context @return
-     */
     public IDataItem stackDataItems(Context context) {
         IDataItem item = null;
         

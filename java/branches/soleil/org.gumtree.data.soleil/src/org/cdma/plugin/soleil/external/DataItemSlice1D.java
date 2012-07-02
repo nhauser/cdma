@@ -21,6 +21,11 @@ import org.cdma.plugin.soleil.navigation.NxsGroup;
 import fr.soleil.nexus.NexusNode;
 import fr.soleil.nexus.PathNexus;
 
+/**
+ * Stack all found data items to construct an aggregated IDataItem
+ * then returns the first slice of that stack
+ * @param context @return
+ */
 public final class DataItemSlice1D implements IPluginMethod {
     
     @Override
@@ -38,17 +43,12 @@ public final class DataItemSlice1D implements IPluginMethod {
         return NxsFactory.NAME;
     }
     
-    /**
-     * Stack all found data items to construct an aggregated IDataItem
-     * then returns the first slice of that stack
-     * @param context @return
-     */
     public IDataItem getFirstSlice(Context context) {
         LogicalGroup group = (LogicalGroup) context.getCaller();
         List<Solver> solvers = context.getSolver();
         
         // The last Solver was a Path
-        Path path = solvers.get( solvers.size() - 1 ).getPath();
+        Path path = solvers.get( solvers.size() - 2 ).getPath();
         String addr = path.toString();
 
         // Extract the subpart corresponding to attribute and value

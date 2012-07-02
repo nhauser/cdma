@@ -12,6 +12,8 @@ import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.navigation.NxsDataItem;
 import org.cdma.utils.Utilities.ModelType;
 
+import fr.soleil.nexus.PathNexus;
+
 /**
  * Create a list of IDataItem that are empty from a IGroup list. Created items have no data linked.
  * 
@@ -30,24 +32,26 @@ public class CreateVirtualItem implements IPluginMethod {
     public void execute(Context context) throws CDMAException {
         List<IContainer> inList = context.getContainers();
         List<IContainer> outList = new ArrayList<IContainer>();
-        
+
         NxsDataItem item;
-        for( IContainer container : inList ) {
-            if( container.getModelType().equals( ModelType.Group ) ) {
+        for (IContainer container : inList) {
+            if (container.getModelType().equals(ModelType.Group)) {
                 item = new NxsDataItem();
-                item.setName( container.getName() );
-                item.setShortName( container.getShortName() );
-                item.setDataset( container.getDataset() );
-                for( IAttribute attr : container.getAttributeList() ) {
+                item.setName(container.getName());
+                item.setShortName(container.getShortName());
+                item.setDataset(container.getDataset());
+                item.getNexusItems()[0].setPath(new PathNexus(PathNexus.splitStringToNode(container
+                        .getLocation())));
+                for (IAttribute attr : container.getAttributeList()) {
                     item.addOneAttribute(attr);
                 }
                 outList.add(item);
             }
             else {
-                outList.add( container );
+                outList.add(container);
             }
         }
-        
+
         // Update context
         context.setContainers(outList);
     }

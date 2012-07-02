@@ -10,9 +10,7 @@ import java.util.Map.Entry;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
-import org.cdma.dictionary.Key;
 import org.cdma.dictionary.Path;
-import org.cdma.engine.nexus.navigation.NexusAttribute;
 import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusGroup;
 import org.cdma.exception.FileAccessException;
@@ -37,61 +35,62 @@ public final class NxsGroup implements IGroup, Cloneable {
     // ****************************************************
     // Members
     // ****************************************************
-    private NxsDataset       mDataset;       // Dataset to which this group belongs to
-    private IGroup[]         mGroups;        // Groups having a similar path from different files
-    private IGroup           mParent;        // Parent group folder (mandatory)
-    private List<IContainer> mChildren;      // All containers that are below (physically) this one
-    private boolean          mIsChildUpdate; // is the children list up to date
-    private boolean          mIsMultigroup;  // is this group managing aggregation of group
+    private NxsDataset mDataset; // Dataset to which this group belongs to
+    private IGroup[] mGroups; // Groups having a similar path from different files
+    private IGroup mParent; // Parent group folder (mandatory)
+    private List<IContainer> mChildren; // All containers that are below (physically) this one
+    private boolean mIsChildUpdate; // is the children list up to date
+    private boolean mIsMultigroup; // is this group managing aggregation of group
 
     // ****************************************************
     // Constructors
     // ****************************************************
     private NxsGroup() {
-        mGroups   = null; 
-        mParent   = null;
-        mDataset  = null;
+        mGroups = null;
+        mParent = null;
+        mDataset = null;
         mChildren = null;
         mIsChildUpdate = false;
     }
 
     public NxsGroup(IGroup[] groups, IGroup parent, NxsDataset dataset) {
-        mGroups   = groups.clone(); 
-        mParent   = parent;
-        mDataset  = dataset;
+        mGroups = groups.clone();
+        mParent = parent;
+        mDataset = dataset;
         mChildren = null;
         mIsChildUpdate = false;
     }
 
-    public NxsGroup( NxsGroup original ) {
+    public NxsGroup(NxsGroup original) {
         mGroups = new IGroup[original.mGroups.length];
         int i = 0;
-        for( IGroup group : original.mGroups ) {
+        for (IGroup group : original.mGroups) {
             mGroups[i++] = group;
         }
-        mParent      = original.mParent;
-        mDataset     = original.mDataset;
-        mChildren    = null;
+        mParent = original.mParent;
+        mDataset = original.mDataset;
+        mChildren = null;
         mIsChildUpdate = false;
-        mIsMultigroup  = mGroups.length > 1;
+        mIsMultigroup = mGroups.length > 1;
     }
 
     public NxsGroup(IGroup parent, PathNexus path, NxsDataset dataset) {
         try {
             List<IContainer> list = dataset.getRootGroup().findAllContainerByPath(path.getValue());
             List<IGroup> groups = new ArrayList<IGroup>();
-            for( IContainer container : list ) {
-                if( container.getModelType() == ModelType.Group ) {
-                    groups.add( (IGroup) container );
+            for (IContainer container : list) {
+                if (container.getModelType() == ModelType.Group) {
+                    groups.add((IGroup) container);
                 }
             }
             IGroup[] array = new IGroup[groups.size()];
-            mGroups  = groups.toArray( array );
-        } catch (NoResultException e) {
+            mGroups = groups.toArray(array);
         }
-        mParent      = parent;
-        mDataset     = dataset;
-        mChildren    = null;
+        catch (NoResultException e) {
+        }
+        mParent = parent;
+        mDataset = dataset;
+        mChildren = null;
         mIsChildUpdate = false;
     }
 
@@ -100,15 +99,15 @@ public final class NxsGroup implements IGroup, Cloneable {
     // ****************************************************
     /**
      * Return a clone of this IGroup object.
+     * 
      * @return new IGroup
      */
     @Override
-    public NxsGroup clone()
-    {
+    public NxsGroup clone() {
         NxsGroup clone = new NxsGroup();
         clone.mGroups = new IGroup[mGroups.length];
         int i = 0;
-        for( IGroup group : mGroups ) {
+        for (IGroup group : mGroups) {
             mGroups[i++] = group.clone();
         }
         clone.mParent = mParent.clone();
@@ -125,9 +124,9 @@ public final class NxsGroup implements IGroup, Cloneable {
     @Override
     public IAttribute getAttribute(String name) {
         IAttribute attr = null;
-        for( IGroup group : mGroups ) {
+        for (IGroup group : mGroups) {
             attr = group.getAttribute(name);
-            if( attr != null ) {
+            if (attr != null) {
                 break;
             }
         }
@@ -137,31 +136,32 @@ public final class NxsGroup implements IGroup, Cloneable {
     @Override
     public List<IAttribute> getAttributeList() {
         List<IAttribute> result = new ArrayList<IAttribute>();
-        for( IGroup group : mGroups ) {
-            result.addAll( group.getAttributeList() );
+        for (IGroup group : mGroups) {
+            result.addAll(group.getAttributeList());
         }
         return result;
     }
 
     @Override
     public String getLocation() {
-        return mParent.getLocation() + "/" + getShortName();
+        // return mParent.getLocation() + "/" + getShortName();
+        PathNexus path = getPathNexus();
+        return String.valueOf(path == null ? path : path.toString(false));
     }
 
     @Override
     public String getName() {
         String name = "";
-        if( mGroups.length > 0 ) {
+        if (mGroups.length > 0) {
             name = mGroups[0].getName();
         }
         return name;
     }
 
     @Override
-    public String getShortName()
-    {
+    public String getShortName() {
         String name = "";
-        if( mGroups.length > 0 ) {
+        if (mGroups.length > 0) {
             name = mGroups[0].getShortName();
         }
         return name;
@@ -169,8 +169,8 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean hasAttribute(String name, String value) {
-        for( IGroup group : mGroups ) {
-            if( group.hasAttribute(name, value) ) {
+        for (IGroup group : mGroups) {
+            if (group.hasAttribute(name, value)) {
                 return true;
             }
         }
@@ -179,14 +179,14 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void setName(String name) {
-        for( IGroup group : mGroups ) {
+        for (IGroup group : mGroups) {
             group.setName(name);
         }
     }
 
     @Override
     public void setShortName(String name) {
-        for( IGroup group : mGroups ) {
+        for (IGroup group : mGroups) {
             group.setShortName(name);
         }
     }
@@ -202,8 +202,7 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public Map<String, String> harvestMetadata(String mdStandard)
-            throws IOException {
+    public Map<String, String> harvestMetadata(String mdStandard) throws IOException {
         return null;
     }
 
@@ -224,10 +223,10 @@ public final class NxsGroup implements IGroup, Cloneable {
         NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
         NexusNode groupName;
         NexusNode[] nodes;
-        for( IDataItem item : list ) {
+        for (IDataItem item : list) {
             nodes = PathNexus.splitStringToNode(item.getName());
             groupName = nodes[nodes.length - 1];
-            if( groupName.matchesNode(nodeName) ) {
+            if (groupName.matchesNode(nodeName)) {
                 result = item;
                 break;
             }
@@ -241,10 +240,12 @@ public final class NxsGroup implements IGroup, Cloneable {
         List<IContainer> list = new ArrayList<IContainer>();
         try {
             list = findAllOccurrences(key);
-        } catch (NoResultException e) {  }
+        }
+        catch (NoResultException e) {
+        }
 
-        for( IContainer object : list ) {
-            if( object.getModelType().equals(ModelType.DataItem) ) {
+        for (IContainer object : list) {
+            if (object.getModelType().equals(ModelType.DataItem)) {
                 item = (IDataItem) object;
                 break;
             }
@@ -264,8 +265,8 @@ public final class NxsGroup implements IGroup, Cloneable {
     public IDataItem getDataItemWithAttribute(String name, String value) {
         List<IDataItem> list = getDataItemList();
         IDataItem result = null;
-        for( IDataItem item : list ) {
-            if( item.hasAttribute(name, value) ) {
+        for (IDataItem item : list) {
+            if (item.hasAttribute(name, value)) {
                 result = item;
                 break;
             }
@@ -275,12 +276,12 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IDataItem findDataItemWithAttribute(IKey key, String name,
-            String attribute) throws NoResultException {
+    public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute)
+            throws NoResultException {
         List<IContainer> list = findAllContainers(key);
         IDataItem result = null;
-        for( IContainer item : list ) {
-            if( item.getModelType() == ModelType.DataItem && item.hasAttribute(name, attribute) ) {
+        for (IContainer item : list) {
+            if (item.getModelType() == ModelType.DataItem && item.hasAttribute(name, attribute)) {
                 result = (IDataItem) item;
                 break;
             }
@@ -295,12 +296,12 @@ public final class NxsGroup implements IGroup, Cloneable {
         try {
             list = findAllContainers(key);
         }
-        catch(NoResultException e) {
+        catch (NoResultException e) {
             list = new ArrayList<IContainer>();
         }
         IGroup result = null;
-        for( IContainer item : list ) {
-            if( item.getModelType() == ModelType.Group && item.hasAttribute(name, value) ) {
+        for (IContainer item : list) {
+            if (item.getModelType() == ModelType.Group && item.hasAttribute(name, value)) {
                 result = (IGroup) item;
                 break;
             }
@@ -314,8 +315,8 @@ public final class NxsGroup implements IGroup, Cloneable {
         List<IContainer> list = listChildren();
         IContainer result = null;
 
-        for( IContainer container : list ) {
-            if( container.getShortName().equals( shortName ) ) {
+        for (IContainer container : list) {
+            if (container.getShortName().equals(shortName)) {
                 result = container;
                 break;
             }
@@ -331,10 +332,10 @@ public final class NxsGroup implements IGroup, Cloneable {
         NexusNode nodeName = PathNexus.splitStringToNode(shortName)[0];
         NexusNode groupName;
         NexusNode[] nodes;
-        for( IGroup group : list ) {
+        for (IGroup group : list) {
             nodes = PathNexus.splitStringToNode(group.getName());
             groupName = nodes[nodes.length - 1];
-            if( groupName.matchesNode(nodeName) ) {
+            if (groupName.matchesNode(nodeName)) {
                 result = group;
                 break;
             }
@@ -346,8 +347,8 @@ public final class NxsGroup implements IGroup, Cloneable {
     public IGroup getGroupWithAttribute(String attributeName, String attributeValue) {
         List<IGroup> list = getGroupList();
         IGroup result = null;
-        for( IGroup item : list ) {
-            if( item.hasAttribute(attributeName, attributeValue) ) {
+        for (IGroup item : list) {
+            if (item.hasAttribute(attributeName, attributeValue)) {
                 result = item;
                 break;
             }
@@ -361,9 +362,9 @@ public final class NxsGroup implements IGroup, Cloneable {
         listChildren();
 
         ArrayList<IDataItem> list = new ArrayList<IDataItem>();
-        for( IContainer container : mChildren ) {
-            if( container.getModelType() == ModelType.DataItem ) {
-                list.add( (IDataItem) container);
+        for (IContainer container : mChildren) {
+            if (container.getModelType() == ModelType.DataItem) {
+                list.add((IDataItem) container);
             }
         }
 
@@ -381,10 +382,12 @@ public final class NxsGroup implements IGroup, Cloneable {
         List<IContainer> list = new ArrayList<IContainer>();
         try {
             list = findAllOccurrences(key);
-        } catch (NoResultException e) {  }
+        }
+        catch (NoResultException e) {
+        }
 
-        for( IContainer object : list ) {
-            if( object.getModelType().equals(ModelType.Group) ) {
+        for (IContainer object : list) {
+            if (object.getModelType().equals(ModelType.Group)) {
                 item = (IGroup) object;
                 break;
             }
@@ -405,9 +408,9 @@ public final class NxsGroup implements IGroup, Cloneable {
         listChildren();
 
         ArrayList<IGroup> list = new ArrayList<IGroup>();
-        for( IContainer container : mChildren ) {
-            if( container.getModelType() == ModelType.Group ) {
-                list.add( (IGroup) container);
+        for (IContainer container : mChildren) {
+            if (container.getModelType() == ModelType.Group) {
+                list.add((IGroup) container);
             }
         }
 
@@ -420,16 +423,16 @@ public final class NxsGroup implements IGroup, Cloneable {
         IContainer result;
         try {
             List<IContainer> list = findAllOccurrences(key);
-            if( list.size() > 0) {
+            if (list.size() > 0) {
                 result = list.get(0);
             }
             else {
                 result = null;
             }
-        } catch (NoResultException e) {
+        }
+        catch (NoResultException e) {
             result = null;
         }
-
 
         return result;
     }
@@ -439,7 +442,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         List<IContainer> containers = findAllContainerByPath(path);
         IContainer result = null;
 
-        if( containers.size() > 0 ) {
+        if (containers.size() > 0) {
             result = containers.get(0);
         }
 
@@ -447,67 +450,55 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public List<IContainer> findAllContainerByPath(String path)  throws NoResultException {
+    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
         List<IContainer> list = new ArrayList<IContainer>();
         List<IContainer> tmp = null;
         String location;
 
-        // Store in a map all different containers from all m_groups 
-        Map< String, ArrayList<IContainer> > items = new HashMap<String, ArrayList<IContainer> >();
+        // Store in a map all different containers from all m_groups
+        Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
         List<String> sortGrp = new ArrayList<String>();
-        for( IGroup group : mGroups ) {
+        for (IGroup group : mGroups) {
             try {
                 tmp = group.findAllContainerByPath(path);
-                for( IContainer item : tmp ) {
+                for (IContainer item : tmp) {
                     location = item.getLocation();
-                    if( items.containsKey( location ) ) {
-                        items.get( location ).add( item );
+                    if (items.containsKey(location)) {
+                        items.get(location).add(item);
                     }
                     else {
                         ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
-                        tmpList.add( item );
-                        items.put( location, tmpList );
-                        sortGrp.add( location );
+                        tmpList.add(item);
+                        items.put(location, tmpList);
+                        sortGrp.add(location);
                     }
                 }
             }
-            catch(NoResultException e) { 
-                // Nothing to do 
+            catch (NoResultException e) {
+                // Nothing to do
             }
         }
 
         // Construct that were found
-        for( String entry : sortGrp ) {
-            
-        //for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
-            tmp = items.get( entry );
+        for (String entry : sortGrp) {
+
+            // for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
+            tmp = items.get(entry);
             // If a Group list then construct a new Group folder
-            if( tmp.get(0).getModelType() == ModelType.Group ) {
-                list.add(
-                        new NxsGroup(
-                                tmp.toArray( new IGroup[tmp.size()] ),
-                                this,
-                                mDataset
-                                )
-                        );
+            if (tmp.get(0).getModelType() == ModelType.Group) {
+                list.add(new NxsGroup(tmp.toArray(new IGroup[tmp.size()]), this, mDataset));
             }
-            // If a IDataItem list then construct a new compound NxsDataItem 
+            // If a IDataItem list then construct a new compound NxsDataItem
             else {
                 ArrayList<NexusDataItem> dataItems = new ArrayList<NexusDataItem>();
-                for( IContainer item : tmp ) {
-                    if( item.getModelType() == ModelType.DataItem ) {
-                        dataItems.add( (NexusDataItem) item );
+                for (IContainer item : tmp) {
+                    if (item.getModelType() == ModelType.DataItem) {
+                        dataItems.add((NexusDataItem) item);
                     }
                 }
                 NexusDataItem[] array = new NexusDataItem[dataItems.size()];
                 dataItems.toArray(array);
-                list.add(
-                        new NxsDataItem(
-                                array,
-                                this,
-                                mDataset
-                                )
-                        );
+                list.add(new NxsDataItem(array, this, mDataset));
             }
         }
 
@@ -516,14 +507,14 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean removeDataItem(IDataItem item) {
-        return removeDataItem( item.getShortName() );
+        return removeDataItem(item.getShortName());
     }
 
     @Override
     public boolean removeDataItem(String varName) {
         boolean succeed = false;
-        for( IGroup group : mGroups ) {
-            if( group.removeDataItem( varName ) ) {
+        for (IGroup group : mGroups) {
+            if (group.removeDataItem(varName)) {
                 succeed = true;
             }
         }
@@ -532,14 +523,14 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean removeGroup(IGroup group) {
-        return removeGroup( group.getShortName() );
+        return removeGroup(group.getShortName());
     }
 
     @Override
     public boolean removeGroup(String shortName) {
         boolean succeed = false;
-        for( IGroup group : mGroups ) {
-            if( group.removeGroup( shortName ) ) {
+        for (IGroup group : mGroups) {
+            if (group.removeGroup(shortName)) {
                 succeed = true;
             }
         }
@@ -548,24 +539,26 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void setDictionary(IDictionary dictionary) {
-        if( mGroups.length > 0 ) {
-            mGroups[0].setDictionary( dictionary );
+        if (mGroups.length > 0) {
+            mGroups[0].setDictionary(dictionary);
         }
     }
 
     @Override
     public IDictionary findDictionary() {
         IDictionary dictionary = null;
-        if( mGroups.length > 0 ) {
+        if (mGroups.length > 0) {
             IFactory factory = NxsFactory.getInstance();
             dictionary = new NxsDictionary();
             try {
-                dictionary.readEntries( Factory.getPathMappingDictionaryFolder( factory ) + NxsDictionary.detectDictionaryFile( (NxsDataset) getDataset() ) );
-            } catch (FileAccessException e) {
+                dictionary.readEntries(Factory.getPathMappingDictionaryFolder(factory)
+                        + NxsDictionary.detectDictionaryFile((NxsDataset) getDataset()));
+            }
+            catch (FileAccessException e) {
                 dictionary = null;
                 e.printStackTrace();
             }
-            //dictionary = mGroups[0].findDictionary();
+            // dictionary = mGroups[0].findDictionary();
         }
         return dictionary;
     }
@@ -577,7 +570,7 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean isEntry() {
-        return ( mParent.getParentGroup().getParentGroup() == null );
+        return (mParent.getParentGroup().getParentGroup() == null);
     }
 
     @Override
@@ -598,7 +591,8 @@ public final class NxsGroup implements IGroup, Cloneable {
 
         try {
             result = findContainerByPath(path.getValue());
-        } catch (NoResultException e) {
+        }
+        catch (NoResultException e) {
         }
 
         return result;
@@ -606,14 +600,14 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        if( mGroups != null && mGroups.length > 0 ) {
+        if (mGroups != null && mGroups.length > 0) {
             mGroups[0].addOneAttribute(attribute);
         }
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
-        if( mGroups != null && mGroups.length > 0 ) {
+        if (mGroups != null && mGroups.length > 0) {
             mGroups[0].addStringAttribute(name, value);
         }
     }
@@ -667,26 +661,26 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public void updateDataItem(String key, IDataItem dataItem)
-            throws SignalNotAvailableException {
+    public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
         // TODO Auto-generated method stub
 
     }
 
     // ------------------------------------------------------------------------
-    /// Protected methods
+    // / Protected methods
     // ------------------------------------------------------------------------
     protected void setChild(IContainer node) {
-        if( ! mChildren.contains(node) ) {
+        if (!mChildren.contains(node)) {
             mChildren.add(node);
         }
     }
+
     // ****************************************************
     // private methods
     // ****************************************************
     private List<IContainer> listChildren() {
         List<IContainer> result;
-        if( mIsMultigroup ) {
+        if (mIsMultigroup) {
             result = listChildrenMultiGroup();
         }
         else {
@@ -696,80 +690,67 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     private List<IContainer> listChildrenMultiGroup() {
-        if( ! mIsChildUpdate ) 
-        {
+        if (!mIsChildUpdate) {
             List<IContainer> tmp = null;
             mChildren = new ArrayList<IContainer>();
             String tmpName;
 
-            // Store in a map all different containers from all m_groups 
-            Map< String, ArrayList<IContainer> > items = new HashMap<String, ArrayList<IContainer> >();
-            for( IGroup group : mGroups ) {
+            // Store in a map all different containers from all m_groups
+            Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
+            for (IGroup group : mGroups) {
                 tmp = new ArrayList<IContainer>();
-                tmp.addAll( group.getDataItemList() );
-                tmp.addAll( group.getGroupList() );
-                for( IContainer item : tmp ) {
+                tmp.addAll(group.getDataItemList());
+                tmp.addAll(group.getGroupList());
+                for (IContainer item : tmp) {
                     tmpName = item.getShortName();
-                    if( items.containsKey( tmpName ) ) {
-                        items.get( tmpName ).add( item );
+                    if (items.containsKey(tmpName)) {
+                        items.get(tmpName).add(item);
                     }
                     else {
                         ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
-                        tmpList.add( item );
-                        items.put( tmpName, tmpList );
+                        tmpList.add(item);
+                        items.put(tmpName, tmpList);
                     }
                 }
             }
 
             // Construct what were found
-            for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
+            for (Entry<String, ArrayList<IContainer>> entry : items.entrySet()) {
                 tmp = entry.getValue();
                 // If a Group list then construct a new Group folder
-                if( tmp.get(0).getModelType() == ModelType.Group ) {
-                    mChildren.add(
-                            new NxsGroup(
-                                    tmp.toArray( new IGroup[tmp.size()] ),
-                                    this, 
-                                    mDataset
-                                    )
-                            );
+                if (tmp.get(0).getModelType() == ModelType.Group) {
+                    mChildren
+                            .add(new NxsGroup(tmp.toArray(new IGroup[tmp.size()]), this, mDataset));
                 }
-                // If a IDataItem list then construct a new compound NxsDataItem 
+                // If a IDataItem list then construct a new compound NxsDataItem
                 else {
                     ArrayList<NexusDataItem> nxsDataItems = new ArrayList<NexusDataItem>();
-                    for( IContainer item : tmp ) {
-                        if( item.getModelType() == ModelType.DataItem ) {
-                            nxsDataItems.add( (NexusDataItem) item );
+                    for (IContainer item : tmp) {
+                        if (item.getModelType() == ModelType.DataItem) {
+                            nxsDataItems.add((NexusDataItem) item);
                         }
                     }
                     NexusDataItem[] array = new NexusDataItem[nxsDataItems.size()];
                     nxsDataItems.toArray(array);
-                    mChildren.add(
-                            new NxsDataItem(
-                                    array,
-                                    this,
-                                    mDataset
-                                    )
-                            );
+                    mChildren.add(new NxsDataItem(array, this, mDataset));
                 }
             }
             mIsChildUpdate = true;
         }
-        return mChildren;  
+        return mChildren;
     }
 
     private List<IContainer> listChildrenMonoGroup() {
-        if( ! mIsChildUpdate )
-        {
+        if (!mIsChildUpdate) {
             mChildren = new ArrayList<IContainer>();
 
-            // Store in a list all different containers from all m_groups 
-            for( IDataItem item : mGroups[0].getDataItemList() ) {
-                mChildren.add( new NxsDataItem( (NexusDataItem) item, this, mDataset ) );
+            // Store in a list all different containers from all m_groups
+            for (IDataItem item : mGroups[0].getDataItemList()) {
+                mChildren.add(new NxsDataItem((NexusDataItem) item, this, mDataset));
             }
 
-            for( IGroup group : mGroups[0].getGroupList() ) {
-                mChildren.add( new NxsGroup( new IGroup[] {group}, this, mDataset) );
+            for (IGroup group : mGroups[0].getGroupList()) {
+                mChildren.add(new NxsGroup(new IGroup[] { group }, this, mDataset));
             }
             mIsChildUpdate = true;
         }
