@@ -7,7 +7,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
@@ -40,12 +39,10 @@ public class NexusFileReader extends NexusFileBrowser {
     /**
      * readData Read datas to the given path
      * 
-     * @param oData
-     *            datas to be stored
-     * @param sPath
-     *            path to set datas in current file
+     * @param oData datas to be stored
+     * @param sPath path to set datas in current file
      */
-    public DataItem readData(PathData pdPath) throws NexusException {
+    public DataItem readData(PathNexus pdPath) throws NexusException {
         DataItem oOutput;
 
         // Open target DataItem
@@ -60,16 +57,16 @@ public class NexusFileReader extends NexusFileBrowser {
         return oOutput;
     }
 
-    public DataItem readDataSlab(PathData pPath, int[] iStart, int[] iShape) throws NexusException {
+    public DataItem readDataSlab(PathNexus pPath, int[] iStart, int[] iShape) throws NexusException {
         DataItem oOutput;
 
         // Open target DataItem
         try {
-        openPath(pPath);
-        }catch(NexusException e) {
+            openPath(pPath);
+        }
+        catch (NexusException e) {
             throw e;
         }
-        
 
         // Read data from DataItem
         oOutput = getDataItem(iStart, iShape);
@@ -83,10 +80,8 @@ public class NexusFileReader extends NexusFileBrowser {
     /**
      * readAttr Read DataItem's named attribute to the given path
      * 
-     * @param sName
-     *            attribut's name of the DataItem to be read
-     * @param sPath
-     *            path to DataItem in current file
+     * @param sName attribut's name of the DataItem to be read
+     * @param sPath path to DataItem in current file
      */
     public Object readAttr(String sName, PathNexus pnPath) throws NexusException {
         Object oOutput = null;
@@ -112,9 +107,8 @@ public class NexusFileReader extends NexusFileBrowser {
     // / Node reading value
     // ---------------------------------------------------------
     /**
-     * readDataInfo Return the DataItem fitting the opened DataItem, without
-     * main data. The DataItem is initialized with dimsize, type... but the
-     * DataItem isn't read.
+     * readDataInfo Return the DataItem fitting the opened DataItem, without main data. The DataItem
+     * is initialized with dimsize, type... but the DataItem isn't read.
      * 
      */
     public DataItem readDataInfo() throws NexusException {
@@ -162,7 +156,8 @@ public class NexusFileReader extends NexusFileBrowser {
             iRank = iDataInf[0];
         }
         if (iRank > iDataInf[0]) {
-            throw new NexusException("Requested DataItem rank is too high: requested rank " + iRank + " available of the DataItem is " + iDataInf[0]);
+            throw new NexusException("Requested DataItem rank is too high: requested rank " + iRank
+                    + " available of the DataItem is " + iDataInf[0]);
         }
         iStart = new int[iRank];
         for (int iDim = (iDataInf[0] - iRank); iDim < iDataInf[0]; iDim++) {
@@ -179,7 +174,8 @@ public class NexusFileReader extends NexusFileBrowser {
 
         if (m_bResultAsSingleRaw) {
             oOutput = oInput;
-        } else {
+        }
+        else {
             // Changing the array into matrix (having iDimSize dimensions'
             // sizes) instead of single row
             oOutput = defineArrayObject(iDataInf[1], iDimSize);
@@ -200,22 +196,22 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * readDataItem Return all datas and attributes of the currently opened
-     * DataItem
+     * readDataItem Return all datas and attributes of the currently opened DataItem
      * 
-     * @param iDataRank
-     *            rank of the required data (1 spectrum, 2 images...) (optional)
-     * @note if no rank is given, value of the DataItem will be return
-     *       integrally: all slabs will be taken as one entire data
+     * @param iDataRank rank of the required data (1 spectrum, 2 images...) (optional)
+     * @note if no rank is given, value of the DataItem will be return integrally: all slabs will be
+     *       taken as one entire data
      */
     private DataItem readDataItem(int iDataRank) throws NexusException {
         DataItem dsData = readDataInfo();
 
-        Object data = readNodeValue(new int[] { dsData.getSize().length, dsData.getType() }, dsData.getSize(), iDataRank);
+        Object data = readNodeValue(new int[] { dsData.getSize().length, dsData.getType() },
+                dsData.getSize(), iDataRank);
 
         if (dsData.getType() == NexusFile.NX_CHAR) {
             dsData.setData(data);
-        } else {
+        }
+        else {
             dsData.setData(new SoftReference<Object>(data));
         }
 
@@ -225,40 +221,33 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * reshapeArray Call the readSlabDataRec to reshape the oInput
-     * mono-dimensional array into a multi-dimensional array.
+     * reshapeArray Call the readSlabDataRec to reshape the oInput mono-dimensional array into a
+     * multi-dimensional array.
      * 
-     * @param iStart
-     *            starting position of the slab to project into oOutput
-     * @param iDimSize
-     *            dimensions' size of the DataItem
-     * @param oInput
-     *            input array (as a single row) containing data to reshape
-     * @param oOutput
-     *            output array having the proper shape for resize
+     * @param iStart starting position of the slab to project into oOutput
+     * @param iDimSize dimensions' size of the DataItem
+     * @param oInput input array (as a single row) containing data to reshape
+     * @param oOutput output array having the proper shape for resize
      * @throws NexusException
      */
-    protected void reshapeArray(int[] iStart, int[] iDimSize, Object oInput, Object oOutput) throws NexusException {
+    protected void reshapeArray(int[] iStart, int[] iDimSize, Object oInput, Object oOutput)
+            throws NexusException {
         reshapeArray(0, iStart, iDimSize, oInput, oOutput);
     }
 
     /**
-     * reshapeArray recursive method reshaping a filled mono-dimensional array
-     * into a multi-dimensional array.
+     * reshapeArray recursive method reshaping a filled mono-dimensional array into a
+     * multi-dimensional array.
      * 
-     * @param iCurDim
-     *            reshape all dimensions greater than this one
-     * @param iStart
-     *            starting position of the slab to project into oOutput
-     * @param iDimSize
-     *            dimensions' size of the DataItem
-     * @param oInput
-     *            input array (as a single row) containing data to reshape
-     * @param oOutput
-     *            output array having the proper shape for resize
+     * @param iCurDim reshape all dimensions greater than this one
+     * @param iStart starting position of the slab to project into oOutput
+     * @param iDimSize dimensions' size of the DataItem
+     * @param oInput input array (as a single row) containing data to reshape
+     * @param oOutput output array having the proper shape for resize
      * @throws NexusException
      */
-    private void reshapeArray(int iCurDim, int[] iStart, int[] iDimSize, Object oInput, Object oOutput) throws NexusException {
+    private void reshapeArray(int iCurDim, int[] iStart, int[] iDimSize, Object oInput,
+            Object oOutput) throws NexusException {
         int lStartRaw;
         int lLinearStart;
         if (iCurDim != iDimSize.length - 1) {
@@ -319,12 +308,14 @@ public class NexusFileReader extends NexusFileBrowser {
                 openData("description");
                 dataItem.setDesc(readDataItem(iRank).getData().toString());
                 closeData();
-            } catch (NexusException ne) {
+            }
+            catch (NexusException ne) {
             }
             dataItem.setPath(getCurrentRealPath().clone());
 
             return dataItem;
-        } else
+        }
+        else
             return null;
     }
 
@@ -350,13 +341,14 @@ public class NexusFileReader extends NexusFileBrowser {
             // Prepare an array data
             Object oOutput;
             Object oInput = defineArrayObject(iDataInf[1], length);
-            
+
             // Set data into temporary array having a single raw shape
             getNexusFile().getslab(iStartPos, iShape, oInput);
 
             if (m_bResultAsSingleRaw) {
                 oOutput = oInput;
-            } else {
+            }
+            else {
                 // Changing the array into matrix (having iDimSize dimensions'
                 // sizes) instead of single row
                 oOutput = defineArrayObject(iDataInf[1], iShape);
@@ -379,9 +371,8 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * getChildrenDatas Scan currently opened group, to get all direct
-     * descendants' DataItem and instrument informations (such as
-     * NXtechnical_data). Then return a list of DataItem.
+     * getChildrenDatas Scan currently opened group, to get all direct descendants' DataItem and
+     * instrument informations (such as NXtechnical_data). Then return a list of DataItem.
      * 
      * @throws NexusException
      */
@@ -407,8 +398,7 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * getDescendantsDatas Read all DataItems that are descendants of the
-     * currently opened group
+     * getDescendantsDatas Read all DataItems that are descendants of the currently opened group
      */
     protected Stack<DataItem> getDescendantsDatas() throws NexusException {
         Stack<DataItem> sDatas = new Stack<DataItem>();
@@ -418,9 +408,9 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Get all direct descendants group
         ArrayList<NexusNode> nodes = listChildren();
-        
+
         // Start recursion
-        for (NexusNode node : nodes ) {
+        for (NexusNode node : nodes) {
             if (node.isGroup()) {
                 openNode(node);
                 sDatas.addAll(getDescendantsDatas());
@@ -435,16 +425,13 @@ public class NexusFileReader extends NexusFileBrowser {
     // / Node reading attribute
     // ---------------------------------------------------------
     /**
-     * getAttributeValue Return the value of the named attribute from the
-     * currently opened DataItem
+     * getAttributeValue Return the value of the named attribute from the currently opened DataItem
      * 
-     * @param sAttrName
-     *            attribute's name from which value is requested
-     * @param hAttr
-     *            hashtable<string, string> containing list of attributes name
-     *            and their infos (first element type, second element length)
-     * @return an array object containing attributes value (in case of string
-     *         the string is directly returned)
+     * @param sAttrName attribute's name from which value is requested
+     * @param hAttr hashtable<string, string> containing list of attributes name and their infos
+     *            (first element type, second element length)
+     * @return an array object containing attributes value (in case of string the string is directly
+     *         returned)
      */
     protected Object getAttributeValue(String sAttrName) throws NexusException {
         // Check that a file is opened
@@ -456,7 +443,8 @@ public class NexusFileReader extends NexusFileBrowser {
 
         try {
             oTmpOut = getAttribute(sAttrName);
-        } catch (NexusException ne) {
+        }
+        catch (NexusException ne) {
             return null;
         }
 
@@ -465,18 +453,19 @@ public class NexusFileReader extends NexusFileBrowser {
         if (oTmpOut != null && !(oTmpOut instanceof String) && oTmpOut.getClass().isArray()) {
             if (java.lang.reflect.Array.getLength(oTmpOut) == 1)
                 oOutput = java.lang.reflect.Array.get(oTmpOut, 0);
-        } else
+        }
+        else
             oOutput = oTmpOut;
 
         return oOutput;
     }
 
     /**
-     * getDataItemAttribute Get attributs from a DataItem. Those can be: name,
-     * description, unit and timestamp
+     * getDataItemAttribute Get attributs from a DataItem. Those can be: name, description, unit and
+     * timestamp
      * 
      * @param dsData
-     *            @throws NexusException
+     * @throws NexusException
      */
     protected void getDataItemAttribute(DataItem dsData) throws NexusException {
         // Get a map of DataItem's attributs
@@ -498,11 +487,8 @@ public class NexusFileReader extends NexusFileBrowser {
     /**
      * checkData Check if given data fits the currently opened DataItem
      * 
-     * @param dsData
-     *            DataItem properly initiated containing data to compare with
-     *            current node
-     * @throws NexusException
-     *             if node and data aren't compatible
+     * @param dsData DataItem properly initiated containing data to compare with current node
+     * @throws NexusException if node and data aren't compatible
      */
     protected void checkDataMatch(DataItem dsData) throws NexusException {
         // Get infos on DataItem (data type, rank, dimsize)
@@ -529,19 +515,18 @@ public class NexusFileReader extends NexusFileBrowser {
             int iDim = (iDataInf[0] - iDimSize.length);
             for (; iDim < iDataInf[0]; iDim++) {
                 if (iDimSize[iDim + iDimSize.length - iDataInf[0]] != iNodSize[iDim])
-                    throw new NexusException("Datas and target node do not have compatible dimension sizes!");
+                    throw new NexusException(
+                            "Datas and target node do not have compatible dimension sizes!");
             }
         }
     }
 
     /**
-     * generateDataName Generate a name that doesn't exist yet, it uses the
-     * given base name to increment it.
+     * generateDataName Generate a name that doesn't exist yet, it uses the given base name to
+     * increment it.
      * 
-     * @param pgPath
-     *            path to search a proper name in
-     * @param sNameBase
-     *            base name to be incremented until it isn't used
+     * @param pgPath path to search a proper name in
+     * @param sNameBase base name to be incremented until it isn't used
      */
     protected String generateDataName(PathGroup pgPath, String sNameBase) throws NexusException {
         String sName;
@@ -551,7 +536,8 @@ public class NexusFileReader extends NexusFileBrowser {
         // Open the requested path in current file
         try {
             openPath(pgPath);
-        } catch (NexusException n) {
+        }
+        catch (NexusException n) {
             // Close all nodes
             closeAll();
 
@@ -592,8 +578,7 @@ public class NexusFileReader extends NexusFileBrowser {
     /**
      * defineNexusFromType Return Nexus type according to the given data
      * 
-     * @param oData
-     *            data from which Nexus type will be detected
+     * @param oData data from which Nexus type will be detected
      */
     protected static int defineNexusFromType(Object oData) throws NexusException {
         // Check data existence
@@ -607,116 +592,117 @@ public class NexusFileReader extends NexusFileBrowser {
 
         if (sClassName.startsWith("Ljava.lang.Byte") || sClassName.equals("B")) {
             iType = NexusFile.NX_BINARY;
-        } else if (sClassName.startsWith("Ljava.lang.Integer") || sClassName.equals("I")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Integer") || sClassName.equals("I")) {
             iType = NexusFile.NX_INT32;
-        } else if (sClassName.startsWith("Ljava.lang.Short") || sClassName.equals("S")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Short") || sClassName.equals("S")) {
             iType = NexusFile.NX_INT16;
-        } else if (sClassName.startsWith("Ljava.lang.Float") || sClassName.equals("F")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Float") || sClassName.equals("F")) {
             iType = NexusFile.NX_FLOAT32;
-        } else if (sClassName.startsWith("Ljava.lang.Double") || sClassName.equals("D")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Double") || sClassName.equals("D")) {
             iType = NexusFile.NX_FLOAT64;
-        } else if (sClassName.startsWith("Ljava.lang.Long") || sClassName.equals("J")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Long") || sClassName.equals("J")) {
             iType = NexusFile.NX_INT64;
-        } else if (sClassName.startsWith("Ljava.lang.Character") || sClassName.equals("C") || sClassName.startsWith("java.lang.String")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Character") || sClassName.equals("C")
+                || sClassName.startsWith("java.lang.String")) {
             iType = NexusFile.NX_CHAR;
-        } else if (sClassName.startsWith("Ljava.lang.Boolean") || sClassName.equals("Z")) {
+        }
+        else if (sClassName.startsWith("Ljava.lang.Boolean") || sClassName.equals("Z")) {
             iType = NexusFile.NX_BOOLEAN;
-        } else {
+        }
+        else {
             throw new NexusException("Unable to determine type of object!  '" + sClassName);
         }
         return iType;
     }
 
     /**
-     * defineNexusType This method returns the class corresponding to a
-     * NexusFile data type
+     * defineNexusType This method returns the class corresponding to a NexusFile data type
      * 
-     * @param iType
-     *            NexusFile data type (NX_INT16, NX_CHAR...)
-     * @throws NexusException
-     *             when the type is unknown
+     * @param iType NexusFile data type (NX_INT16, NX_CHAR...)
+     * @throws NexusException when the type is unknown
      */
     protected static Class<?> defineTypeFromNexus(int iType) throws NexusException {
         Class<?> cObject;
         switch (iType) {
-        case NexusFile.NX_INT16:
-        case NexusFile.NX_UINT16:
-            cObject = Short.TYPE;
-            break;
-        case NexusFile.NX_INT32:
-        case NexusFile.NX_UINT32:
-            cObject = Integer.TYPE;
-            break;
-        case NexusFile.NX_INT64:
-        case NexusFile.NX_UINT64:
-            cObject = Long.TYPE;
-            break;
-        case NexusFile.NX_FLOAT32:
-            cObject = Float.TYPE;
-            break;
-        case NexusFile.NX_FLOAT64:
-            cObject = Double.TYPE;
-            break;
-        case NexusFile.NX_CHAR:
-        case NexusFile.NX_UINT8:
-        case NexusFile.NX_INT8:
-            cObject = Byte.TYPE;
-            break;
-        default:
-            throw new NexusException("Unknown data type!");
+            case NexusFile.NX_INT16:
+            case NexusFile.NX_UINT16:
+                cObject = Short.TYPE;
+                break;
+            case NexusFile.NX_INT32:
+            case NexusFile.NX_UINT32:
+                cObject = Integer.TYPE;
+                break;
+            case NexusFile.NX_INT64:
+            case NexusFile.NX_UINT64:
+                cObject = Long.TYPE;
+                break;
+            case NexusFile.NX_FLOAT32:
+                cObject = Float.TYPE;
+                break;
+            case NexusFile.NX_FLOAT64:
+                cObject = Double.TYPE;
+                break;
+            case NexusFile.NX_CHAR:
+            case NexusFile.NX_UINT8:
+            case NexusFile.NX_INT8:
+                cObject = Byte.TYPE;
+                break;
+            default:
+                throw new NexusException("Unknown data type!");
         }
         return cObject;
     }
 
     /**
-     * initTypeFromNexus This method returns the class 0 value corresponding to
-     * a NexusFile data type
+     * initTypeFromNexus This method returns the class 0 value corresponding to a NexusFile data
+     * type
      * 
-     * @param iType
-     *            NexusFile data type (NX_INT16, NX_CHAR...)
-     * @throws NexusException
-     *             when the type is unknown
+     * @param iType NexusFile data type (NX_INT16, NX_CHAR...)
+     * @throws NexusException when the type is unknown
      */
     protected static Object initTypeFromNexus(int iType) throws NexusException {
         Object cObject;
         switch (iType) {
-        case NexusFile.NX_INT16:
-        case NexusFile.NX_UINT16:
-            cObject = Short.valueOf((short) 0);
-            break;
-        case NexusFile.NX_INT32:
-        case NexusFile.NX_UINT32:
-            cObject = Integer.valueOf(0);
-            break;
-        case NexusFile.NX_INT64:
-        case NexusFile.NX_UINT64:
-            cObject = Long.valueOf(0L);
-            break;
-        case NexusFile.NX_FLOAT32:
-            cObject = Float.valueOf(0);
-            break;
-        case NexusFile.NX_FLOAT64:
-            cObject = Double.valueOf(0);
-            break;
-        case NexusFile.NX_CHAR:
-        case NexusFile.NX_UINT8:
-        case NexusFile.NX_INT8:
-            cObject = Byte.valueOf((byte) 0);
-            break;
-        default:
-            throw new NexusException("Unknown data type!");
+            case NexusFile.NX_INT16:
+            case NexusFile.NX_UINT16:
+                cObject = Short.valueOf((short) 0);
+                break;
+            case NexusFile.NX_INT32:
+            case NexusFile.NX_UINT32:
+                cObject = Integer.valueOf(0);
+                break;
+            case NexusFile.NX_INT64:
+            case NexusFile.NX_UINT64:
+                cObject = Long.valueOf(0L);
+                break;
+            case NexusFile.NX_FLOAT32:
+                cObject = Float.valueOf(0);
+                break;
+            case NexusFile.NX_FLOAT64:
+                cObject = Double.valueOf(0);
+                break;
+            case NexusFile.NX_CHAR:
+            case NexusFile.NX_UINT8:
+            case NexusFile.NX_INT8:
+                cObject = Byte.valueOf((byte) 0);
+                break;
+            default:
+                throw new NexusException("Unknown data type!");
         }
         return cObject;
     }
 
     /**
-     * defineArrayObject Returns an array of the corresponding type and
-     * dimension sizes
+     * defineArrayObject Returns an array of the corresponding type and dimension sizes
      * 
-     * @param iType
-     *            integer corresponding to a Nexus data type
-     * @param iDimSize
-     *            array of sizes for each dimension
+     * @param iType integer corresponding to a Nexus data type
+     * @param iDimSize array of sizes for each dimension
      * @throws NexusException
      */
     protected static Object defineArrayObject(int iType, int[] iDimSize) throws NexusException {
@@ -727,13 +713,12 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * convertArray Returns an array of values corresponding to writable type by
-     * the HDF library. It converts automatically the data type into its
-     * corresponding type. i.e: if dsData is a boolean array it converts it into
-     * byte array, if it's a byte array it converts it into a bool array...
+     * convertArray Returns an array of values corresponding to writable type by the HDF library. It
+     * converts automatically the data type into its corresponding type. i.e: if dsData is a boolean
+     * array it converts it into byte array, if it's a byte array it converts it into a bool
+     * array...
      * 
-     * @param dsData
-     *            the data to be converted into
+     * @param dsData the data to be converted into
      * @throws NexusException
      * 
      * @note: conversions are the following: bool => byte, byte => bool
@@ -768,11 +753,9 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * detectArrayShape Returns the shape of the given array. i.e each
-     * dimension's size of the array
+     * detectArrayShape Returns the shape of the given array. i.e each dimension's size of the array
      * 
-     * @param oArray
-     *            input array which we want the shape detection
+     * @param oArray input array which we want the shape detection
      * @note if givzen Object isn't an array returns int[1] = {1}
      */
     protected int[] detectArrayShape(Object oArray) {
@@ -801,15 +784,13 @@ public class NexusFileReader extends NexusFileBrowser {
     }
 
     /**
-     * checkLinkTarget open the target file and check if pointed data is a
-     * DataItem. Returns a string array of two elements. The first is the
-     * attribute to distinguish if a DataItem or nxgroup is pointed, the seconds
-     * is the full sibling path (completed by missing class or names).
+     * checkLinkTarget open the target file and check if pointed data is a DataItem. Returns a
+     * string array of two elements. The first is the attribute to distinguish if a DataItem or
+     * nxgroup is pointed, the seconds is the full sibling path (completed by missing class or
+     * names).
      * 
-     * @param prTgtPath
-     *            pointed node by the link
-     * @param paSrcPath
-     *            path of the starting node for the relative link
+     * @param prTgtPath pointed node by the link
+     * @param paSrcPath path of the starting node for the relative link
      * @return the corresponding absolute path if found, else return null
      */
     protected PathNexus checkRelativeLinkTarget(PathNexus prTgtPath, PathData paSrcPath) {
@@ -832,7 +813,8 @@ public class NexusFileReader extends NexusFileBrowser {
             pnTarget = getCurrentRealPath().clone();
             closeAll();
             return pnTarget;
-        } catch (NexusException ne) {
+        }
+        catch (NexusException ne) {
             return null;
         }
     }
@@ -847,14 +829,11 @@ public class NexusFileReader extends NexusFileBrowser {
     // / Conversion methods
     // ---------------------------------------------------------
     /**
-     * convertArray Fills the oOutput array with oInput's values converted into
-     * (oOutput's) type. The value conversion is given by the convertValue()
-     * method
+     * convertArray Fills the oOutput array with oInput's values converted into (oOutput's) type.
+     * The value conversion is given by the convertValue() method
      * 
-     * @param oOutput
-     *            an array having same dimension sizes than oInput
-     * @param oInput
-     *            an array of original values to be converted
+     * @param oOutput an array having same dimension sizes than oInput
+     * @param oInput an array of original values to be converted
      */
     private Object convertArray(Object oOutput, Object oInput) {
         // Convert boolean into short
@@ -866,11 +845,13 @@ public class NexusFileReader extends NexusFileBrowser {
                 if (o.getClass().isArray()) {
                     Object oTmpOut = java.lang.reflect.Array.get(oOutput, j);
                     java.lang.reflect.Array.set(oOutput, j, convertArray(oTmpOut, o));
-                } else {
+                }
+                else {
                     java.lang.reflect.Array.set(oOutput, j, convertValue(o));
                 }
             }
-        } else
+        }
+        else
             java.lang.reflect.Array.set(oOutput, 0, convertValue(oInput));
 
         return oOutput;

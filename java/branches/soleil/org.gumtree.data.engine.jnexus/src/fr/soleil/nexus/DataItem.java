@@ -11,7 +11,7 @@ import org.nexusformat.NexusFile;
 
 public class DataItem implements Cloneable {
     public class Data<T> {
-        private T        m_tValue;
+        private T m_tValue;
         private Class<T> m_cType;
 
         @SuppressWarnings("unchecked")
@@ -30,21 +30,22 @@ public class DataItem implements Cloneable {
     }
 
     // / Members
-    private int                      mType;          // Data type (see NexusFile class)
-    private int[]                    mDimSize;       // DataItem (node) dimension's sizes
-    private int[]                    mDimData;       // Data slab dimension's sizes
-    private int[]                    mStart;         // Data slab start position
-    private int[]                    mPrevStart;     // Previously loaded origin
-    private int[]                    mPrevShape;     // Previously loaded shape
-    private Object                   mData;          // Data it's an array of values belonging to a DataItem
-    private String                   mNodeName;      // DataItem 's node name
-    private boolean                  mSingleRaw;     // Is the data stored in memory a single raw
-    private PathData                 mPath;          // Path were the DataItem has been READ (not used when writing)
-    private int                      mPrevSlabStart;
-    private int                      mPrevSlabLength;
-    private SoftReference<Object>    mPrevSlab;
+    private int mType; // Data type (see NexusFile class)
+    private int[] mDimSize; // DataItem (node) dimension's sizes
+    private int[] mDimData; // Data slab dimension's sizes
+    private int[] mStart; // Data slab start position
+    private int[] mPrevStart; // Previously loaded origin
+    private int[] mPrevShape; // Previously loaded shape
+    private Object mData; // Data it's an array of values belonging to a DataItem
+    private String mNodeName; // DataItem 's node name
+    private boolean mSingleRaw; // Is the data stored in memory a single raw
+    private PathNexus mPath; // Path were the DataItem has been READ (not used when writing)
+    private int mPrevSlabStart;
+    private int mPrevSlabLength;
+    private SoftReference<Object> mPrevSlab;
 
-    private HashMap<String, Data<?>> mAttribs;       // Map containing all node's attributes having name as key associated to value
+    private HashMap<String, Data<?>> mAttribs; // Map containing all node's attributes having name
+                                               // as key associated to value
 
     // Constructors
     public DataItem() {
@@ -102,7 +103,7 @@ public class DataItem implements Cloneable {
         return mStart;
     }
 
-    public PathData getPath() {
+    public PathNexus getPath() {
         return mPath;
     }
 
@@ -127,11 +128,7 @@ public class DataItem implements Cloneable {
     }
 
     public void setPath(PathNexus pnPath) {
-        if (pnPath instanceof PathData) {
-            mPath = (PathData) pnPath;
-        } else {
-            mPath = PathData.Convert(pnPath);
-        }
+        mPath = pnPath;
     }
 
     // Attribute accessors
@@ -229,11 +226,10 @@ public class DataItem implements Cloneable {
     // / Public methods
     // ---------------------------------------------------------
     /**
-     * InitFromObject Initialization an empty DataItem with datas and infos
-     * guessed from a data object. i.e: type, rank, dimsize...
+     * InitFromObject Initialization an empty DataItem with datas and infos guessed from a data
+     * object. i.e: type, rank, dimsize...
      * 
-     * @param oData
-     *            datas permitting detection of type
+     * @param oData datas permitting detection of type
      */
     public void initFromData(Object oData) throws NexusException {
         Class<?> cDataClass = oData.getClass();
@@ -247,7 +243,8 @@ public class DataItem implements Cloneable {
             mStart = new int[] { 0 };
             mPrevShape = mDimData;
             mPrevStart = mStart;
-        } else if (oData instanceof PathNexus) {
+        }
+        else if (oData instanceof PathNexus) {
             mType = NexusFile.NX_BINARY;
             mDimSize = new int[] { 0 };
             mData = new SoftReference<Object>(oData);
@@ -278,8 +275,7 @@ public class DataItem implements Cloneable {
     }
 
     /**
-     * toString Give a string representation of the DataItem with its principal
-     * infos
+     * toString Give a string representation of the DataItem with its principal infos
      */
     @Override
     public String toString() {
@@ -329,31 +325,30 @@ public class DataItem implements Cloneable {
     }
 
     /**
-     * getDataClass return the primitive type of the owned data according to the
-     * NexusFile.Type
+     * getDataClass return the primitive type of the owned data according to the NexusFile.Type
      */
     public Class<?> getDataClass() {
         switch (mType) {
-        case NexusFile.NX_UINT32:
-        case NexusFile.NX_INT32:
-            return Integer.TYPE;
-        case NexusFile.NX_UINT16:
-        case NexusFile.NX_INT16:
-            return Short.TYPE;
-        case NexusFile.NX_FLOAT32:
-            return Float.TYPE;
-        case NexusFile.NX_FLOAT64:
-            return Double.TYPE;
-        case NexusFile.NX_UINT64:
-        case NexusFile.NX_INT64:
-            return Long.TYPE;
-        case NexusFile.NX_CHAR:
-            return String.class;
-        case NexusFile.NX_BOOLEAN:
-            return Boolean.TYPE;
-        case NexusFile.NX_BINARY:
-        default:
-            return Byte.TYPE;
+            case NexusFile.NX_UINT32:
+            case NexusFile.NX_INT32:
+                return Integer.TYPE;
+            case NexusFile.NX_UINT16:
+            case NexusFile.NX_INT16:
+                return Short.TYPE;
+            case NexusFile.NX_FLOAT32:
+                return Float.TYPE;
+            case NexusFile.NX_FLOAT64:
+                return Double.TYPE;
+            case NexusFile.NX_UINT64:
+            case NexusFile.NX_INT64:
+                return Long.TYPE;
+            case NexusFile.NX_CHAR:
+                return String.class;
+            case NexusFile.NX_BOOLEAN:
+                return Boolean.TYPE;
+            case NexusFile.NX_BINARY:
+            default:
+                return Byte.TYPE;
 
         }
     }
@@ -376,7 +371,8 @@ public class DataItem implements Cloneable {
             mPrevSlabLength = -1;
             mPrevSlab = null;
         }
-        boolean slabData = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(mStart, pos));
+        boolean slabData = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(
+                mStart, pos));
         if (slabData) {
             int start = 0;
             int length = 1;
@@ -391,7 +387,8 @@ public class DataItem implements Cloneable {
                 mPrevSlabStart = start;
                 mPrevSlabLength = length;
                 mPrevSlab = new SoftReference<Object>(data);
-            } else {
+            }
+            else {
                 data = mPrevSlab.get();
             }
         }
@@ -411,8 +408,8 @@ public class DataItem implements Cloneable {
     // / Private methods
     // ---------------------------------------------------------
     /**
-     * InitDimSize Initialize member dimension sizes 'm_iDimS' according to
-     * defined member data 'm_oData'
+     * InitDimSize Initialize member dimension sizes 'm_iDimS' according to defined member data
+     * 'm_oData'
      */
     private void initDimSize() throws NexusException {
         Object oArray = getRawData();
@@ -458,18 +455,22 @@ public class DataItem implements Cloneable {
                 mData = new SoftReference<Object>(nfrFile.readData(mPath).getRawData());
                 mPrevStart = new int[mDimSize.length];
                 mPrevShape = mDimSize;
-            } else {
-                mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData).getRawData());
+            }
+            else {
+                mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData)
+                        .getRawData());
                 mPrevStart = mStart;
                 mPrevShape = mDimData;
             }
 
             nfrFile.closeFile();
-        } catch (NexusException ne) {
+        }
+        catch (NexusException ne) {
             mData = new SoftReference<Object>(null);
             try {
                 nfrFile.closeFile();
-            } catch (NexusException e) {
+            }
+            catch (NexusException e) {
                 e.printStackTrace();
             }
         }
@@ -499,7 +500,8 @@ public class DataItem implements Cloneable {
         if (mData != null) {
             if (mData instanceof SoftReference) {
                 result = ((SoftReference<Object>) mData).get();
-            } else {
+            }
+            else {
                 result = mData;
             }
         }
@@ -510,34 +512,34 @@ public class DataItem implements Cloneable {
     private Object copy(Object data, int start, int length) {
         Object result = null;
         switch (mType) {
-        case NexusFile.NX_UINT32:
-        case NexusFile.NX_INT32:
-            result = Arrays.copyOfRange((int[]) data, start, start + length);
-            break;
-        case NexusFile.NX_UINT16:
-        case NexusFile.NX_INT16:
-            result = Arrays.copyOfRange((short[]) data, start, start + length);
-            break;
-        case NexusFile.NX_FLOAT32:
-            result = Arrays.copyOfRange((float[]) data, start, start + length);
-            break;
-        case NexusFile.NX_FLOAT64:
-            result = Arrays.copyOfRange((double[]) data, start, start + length);
-            break;
-        case NexusFile.NX_UINT64:
-        case NexusFile.NX_INT64:
-            result = Arrays.copyOfRange((long[]) data, start, start + length);
-            break;
-        case NexusFile.NX_CHAR:
-            result = Arrays.copyOfRange((String[]) data, start, start + length);
-            break;
-        case NexusFile.NX_BOOLEAN:
-            result = Arrays.copyOfRange((boolean[]) data, start, start + length);
-            break;
-        case NexusFile.NX_BINARY:
-        default:
-            result = Arrays.copyOfRange((byte[]) data, start, start + length);
-            break;
+            case NexusFile.NX_UINT32:
+            case NexusFile.NX_INT32:
+                result = Arrays.copyOfRange((int[]) data, start, start + length);
+                break;
+            case NexusFile.NX_UINT16:
+            case NexusFile.NX_INT16:
+                result = Arrays.copyOfRange((short[]) data, start, start + length);
+                break;
+            case NexusFile.NX_FLOAT32:
+                result = Arrays.copyOfRange((float[]) data, start, start + length);
+                break;
+            case NexusFile.NX_FLOAT64:
+                result = Arrays.copyOfRange((double[]) data, start, start + length);
+                break;
+            case NexusFile.NX_UINT64:
+            case NexusFile.NX_INT64:
+                result = Arrays.copyOfRange((long[]) data, start, start + length);
+                break;
+            case NexusFile.NX_CHAR:
+                result = Arrays.copyOfRange((String[]) data, start, start + length);
+                break;
+            case NexusFile.NX_BOOLEAN:
+                result = Arrays.copyOfRange((boolean[]) data, start, start + length);
+                break;
+            case NexusFile.NX_BINARY:
+            default:
+                result = Arrays.copyOfRange((byte[]) data, start, start + length);
+                break;
 
         }
         return result;
