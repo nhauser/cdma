@@ -187,13 +187,14 @@ public class ItemSolver {
      */
     private boolean isValidContainer(IKey key, IContainer container) {
         boolean result = true;
-        for (IFilter filter : key.getFilterList()) {
-            if (!filter.matches(container)) {
-                result = false;
-                break;
+        if (container != null) {
+            for (IFilter filter : key.getFilterList()) {
+                if ((filter!=null) && (!filter.matches(container))) {
+                    result = false;
+                    break;
+                }
             }
         }
-
         return result;
     }
 }
