@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import org.cdma.Factory;
-import org.cdma.dictionary.LogicalGroup;
-import org.cdma.interfaces.IKey;
 
 /**
  * A class used to access data by using CDMA. This class also gives some basic file methods
@@ -134,32 +131,32 @@ public class CDMATool {
      *         empty or <code>null</code>, or if <code>group</code> or <code>key</code> is
      *         <code>null</code>.
      */
-/*
-    public static List<PathParameter> getFirstAccessParameterValues(String parameterName,
-            LogicalGroup group, IKey key) {
-        List<PathParameter> result = null;
-        if ((parameterName != null) && (!parameterName.trim().isEmpty()) && (group != null)
-                && (key != null)) {
-            result = group.getParameterValues(key);
-            boolean found = result.isEmpty();
-            while (!found) {
-                List<PathParameter> temp = result;
-                for (PathParameter parameter : temp) {
-                    if (parameterName.equals(parameter.getName())) {
-                        found = true;
+    /*
+        public static List<PathParameter> getFirstAccessParameterValues(String parameterName,
+                LogicalGroup group, IKey key) {
+            List<PathParameter> result = null;
+            if ((parameterName != null) && (!parameterName.trim().isEmpty()) && (group != null)
+                    && (key != null)) {
+                result = group.getParameterValues(key);
+                boolean found = result.isEmpty();
+                while (!found) {
+                    List<PathParameter> temp = result;
+                    for (PathParameter parameter : temp) {
+                        if (parameterName.equals(parameter.getName())) {
+                            found = true;
+                        }
+                        else {
+                            key.pushParameter(parameter);
+                            result = group.getParameterValues(key);
+                            found = result.isEmpty();
+                        }
+                        break;
                     }
-                    else {
-                        key.pushParameter(parameter);
-                        result = group.getParameterValues(key);
-                        found = result.isEmpty();
-                    }
-                    break;
                 }
             }
+            return result;
         }
-        return result;
-    }
-*/
+    */
     /**
      * Duplicates a {@link File}.
      * 
