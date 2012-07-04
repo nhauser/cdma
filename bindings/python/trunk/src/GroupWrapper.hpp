@@ -59,6 +59,15 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         //! return the root group
         GroupWrapper root() const;
 
+        //---------------------------------------------------------------------
+        /*!
+        \brief return dimension list
+
+        Returns a list of IDimensionPtr dimension pointers.
+        \return dimension pointers
+        */
+        std::list<IDimensionPtr> dimensions() const;
+
 
 
 

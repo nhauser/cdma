@@ -85,9 +85,17 @@ void exception_registration()
 
 }
 
+//-----------------------------------------------------------------------------
 void throw_PyTypeError(const std::string &message)
 {
     PyErr_SetString(PyExc_TypeError,message.c_str());
+    throw error_already_set();
+}
+
+//-----------------------------------------------------------------------------
+void throw_PyIndexError(const std::string &message)
+{
+    PyErr_SetString(PyExc_IndexError,message.c_str());
     throw error_already_set();
 }
 

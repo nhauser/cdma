@@ -15,6 +15,7 @@ extern "C"{
 #include "Exceptions.hpp"
 #include "Selection.hpp"
 #include "ArrayWrapper.hpp"
+#include "DimensionWrapper.hpp"
 
 
 using namespace cdma;
@@ -174,6 +175,23 @@ template<typename WTYPE> object read_scalar_data(WTYPE &o)
 
     return object(); //return value only to avoid compiler warnings 
                      //this code will never be reached.
+}
+
+//-----------------------------------------------------------------------------
+/*! 
+\brief returns a list of dimensions
+
+Converts a vector of IDimensionPtr entries to a tuple of DimensionWrapper 
+objects.
+
+*/
+template<typename WTYPE> tuple __dimensions__(WTYPE &o)
+{
+    list l;
+
+    for(auto v: o.dimensions()) l.append(DimensionWrapper(v));
+
+    return tuple(l);
 }
 
 #endif
