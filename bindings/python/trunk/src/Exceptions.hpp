@@ -17,6 +17,10 @@ void throw_PyTypeError(const std::string &message);
 void throw_PyIndexError(const std::string &message);
 
 //------------------------------------------------------------------------------
+//! throw Python KeyError exception
+void throw_PyKeyError(const std::string &message);
+
+//------------------------------------------------------------------------------
 template<typename ETYPE> void throw_cdma_exception(
         const std::string desc,
         const std::string origin)
