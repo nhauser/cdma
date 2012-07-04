@@ -4,6 +4,7 @@
 #include<cdma/navigation/IDataItem.h>
 
 #include "Container.hpp"
+#include "ArrayWrapper.hpp"
 #include "WrapperHelpers.hpp"
 
 
@@ -80,6 +81,10 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 
         //---------------------------------------------------------------------
         template<typename T> T get() const {} 
+
+        ArrayWrapper get(const std::vector<size_t> &offset,const
+                std::vector<size_t> &
+                shape);
 
         
         

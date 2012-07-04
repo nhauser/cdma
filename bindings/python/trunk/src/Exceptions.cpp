@@ -12,6 +12,8 @@ using namespace boost::python;
 #include<cdma/exception/Exception.h>
 using namespace cdma;
 
+#include "Exceptions.hpp"
+
 #define ERR_TRANSLATOR_NAME(CDMAETYPE) CDMAETYPE ## _translator
 #define ERR_PTR_NAME(CDMAETYPE) Py ## CDMAETYPE ## Ptr
 #define ERR_OBJ_NAME(CDMAETYPE) Py ## CDMAETYPE
@@ -83,5 +85,10 @@ void exception_registration()
 
 }
 
+void throw_PyTypeError(const std::string &message)
+{
+    PyErr_SetString(PyExc_TypeError,message.c_str());
+    throw error_already_set();
+}
 
 

@@ -1,10 +1,5 @@
 #include "WrapperHelpers.hpp"
 
-void throw_PyTypeError(const std::string &message)
-{
-    PyErr_SetString(PyExc_TypeError,message.c_str());
-    throw error_already_set();
-}
 
 //-----------------------------------------------------------------------------
 void init_numpy()
@@ -15,38 +10,36 @@ void init_numpy()
 
 
 //-----------------------------------------------------------------------------
-object cdma2numpy_array(const ArrayPtr aptr,bool copyflag)
+object cdma2numpy_array(const ArrayWrapper &array,bool copyflag)
 {
     init_numpy();
-    //get the type ID of the array
-    TypeID tid = typename2typeid[aptr->getValueType().name()];
+    
     //set the dimension of the new array
-    npy_intp *dims = new npy_intp[aptr->getRank()]; 
-    for(size_t i=0;i<aptr->getRank();i++) 
-        dims[i] = aptr->getShape()[aptr->getRank()-1-i];
+    npy_intp *dims = new npy_intp[array.rank()]; 
+    for(size_t i=0;i<array.rank();i++) dims[i] = array.shape()[i];
 
     //create the new numpy array
-    PyObject *array = nullptr;
+    PyObject *nparray = nullptr;
     if(copyflag)
     {
-        array = PyArray_SimpleNewFromData(aptr->getRank(),
+        nparray = PyArray_SimpleNewFromData(array.rank(),
                                   dims,
-                                  typeid2numpytc[tid],
-                                  aptr->getStorage()->getStorage());
+                                  typeid2numpytc[array.type()],
+                                  const_cast<void *>(array.ptr()));
     }
     else
     {
-        array = PyArray_SimpleNew(aptr->getRank(),dims,typeid2numpytc[tid]);
+        nparray = PyArray_SimpleNew(array.rank(),dims,typeid2numpytc[array.type()]);
     }
 
     if(dims) delete [] dims;
-    if(!array)
+    if(!nparray)
     {
         //THROW EXCEPTION HERE
         std::cerr<<"Error creating new numpy array!"<<std::endl;
     }
 
-    handle<> h(array);
+    handle<> h(nparray);
 
     return object(h);
 }
