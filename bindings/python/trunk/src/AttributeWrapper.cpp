@@ -17,6 +17,12 @@ std::vector<size_t> AttributeWrapper::shape() const
 }
 
 //------------------------------------------------------------------------------
+size_t AttributeWrapper::rank() const
+{
+    return shape().size();
+}
+
+//------------------------------------------------------------------------------
 template<> float AttributeWrapper::get<float>() const
 {
     return _ptr->getFloatValue();

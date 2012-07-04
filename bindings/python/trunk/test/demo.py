@@ -29,10 +29,10 @@ data= image_group["data"]
 print "dataitem type: ",data.type
 print "dataitem rank: ",data.rank
 print "dataitem shape: ",data.shape
-print data
+print data[0:100:2,50:1000:20]
 
-#pyplot.subplot(121)
-#pyplot.imshow(numpy.log10(data[...]))
-#pyplot.subplot(122)
-#pyplot.imshow(numpy.log10(h5data))
-#pyplot.show()
+pyplot.subplot(121)
+pyplot.imshow(numpy.log10(data[...]))
+pyplot.subplot(122)
+pyplot.imshow(numpy.log10(h5data))
+pyplot.show()

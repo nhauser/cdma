@@ -52,6 +52,10 @@ class AttributeWrapper
         std::vector<size_t> shape() const;
 
         //---------------------------------------------------------------------
+        //! return the rank of an attribute
+        size_t rank() const;
+
+        //---------------------------------------------------------------------
         //! return the size of the attribute
         size_t size() const { return _ptr->getLength(); }
 
@@ -62,6 +66,9 @@ class AttributeWrapper
         //---------------------------------------------------------------------
         //! return attribute data
         template<typename T> T get() const {}
+
+        ArrayWrapper get(const std::vector<size_t> &offset,
+                         const std::vector<size_t> &shape) {}
 
 };
 

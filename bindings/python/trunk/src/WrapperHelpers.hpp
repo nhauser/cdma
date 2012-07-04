@@ -11,61 +11,16 @@ extern "C"{
 #include<numpy/arrayobject.h>
 }
 
+#include "Types.hpp"
+#include "Exceptions.hpp"
+#include "Selection.hpp"
+#include "ArrayWrapper.hpp"
+
 
 using namespace cdma;
 using namespace boost::python;
 
 
-//! enum class with type IDs.
-enum class TypeID { BYTE,   //!< signded char (8Bit)
-                    UBYTE,  //!< unsigned char (8Bit)
-                    SHORT,  //!< signed short (16Bit)
-                    USHORT, //!< unsigned short (16Bit)
-                    INT,    //!< integer (32Bit)
-                    UINT,   //!< unsigned integer (32Bit)
-                    LONG,   //!< long (64Bit)
-                    ULONG,  //!< unsigned long (64Bit)
-                    FLOAT,  //!< IEEE floating point (32Bit)
-                    DOUBLE, //!< IEEE floating point (64Bit)
-                    STRING  //!< String type
-                  };
-
-//conversion map from names of numerical native types to TypeID
-static std::map<std::string,TypeID> typename2typeid = {
-        {typeid(int8_t).name(),TypeID::BYTE},
-        {typeid(uint8_t).name(),TypeID::UBYTE},
-        {typeid(int16_t).name(),TypeID::SHORT},
-        {typeid(uint16_t).name(),TypeID::USHORT},
-        {typeid(int32_t).name(),TypeID::INT},
-        {typeid(uint32_t).name(),TypeID::UINT},
-        {typeid(float).name(),TypeID::FLOAT},
-        {typeid(double).name(),TypeID::DOUBLE},
-        {typeid(std::string).name(),TypeID::STRING}};
-
-//conversion map from Type IDs to type sizes
-static std::map<TypeID,size_t> typeid2size = {
-        {TypeID::BYTE,sizeof(int8_t)}, {TypeID::UBYTE,sizeof(uint8_t)},
-        {TypeID::SHORT,sizeof(int16_t)}, {TypeID::USHORT,sizeof(uint16_t)},
-        {TypeID::INT,sizeof(int32_t)}, {TypeID::UINT,sizeof(uint32_t)},
-        {TypeID::FLOAT,sizeof(float)}, {TypeID::DOUBLE,sizeof(double)},
-        {TypeID::STRING,sizeof(char)}};
-
-//conversion map from Type IDs to numpy type codes
-static std::map<TypeID,int> typeid2numpytc = {
-        {TypeID::BYTE,NPY_BYTE}, {TypeID::UBYTE,NPY_UBYTE},
-        {TypeID::SHORT,NPY_SHORT}, {TypeID::USHORT,NPY_USHORT},
-        {TypeID::INT,NPY_INT}, {TypeID::UINT,NPY_UINT},
-        {TypeID::LONG,NPY_LONG}, {TypeID::ULONG,NPY_ULONG},
-        {TypeID::FLOAT,NPY_FLOAT}, {TypeID::DOUBLE,NPY_DOUBLE}};
-
-//conversion map from Type IDs to numpy type strings
-static std::map<TypeID,std::string> typeid2numpystr = {
-        {TypeID::BYTE,"int8"}, {TypeID::UBYTE,"uint8"},
-        {TypeID::SHORT,"int16"}, {TypeID::USHORT,"uint16"},
-        {TypeID::INT,"int32"}, {TypeID::UINT,"uint32"},
-        {TypeID::LONG,"int64"}, {TypeID::ULONG,"uint64"},
-        {TypeID::FLOAT,"float32"}, {TypeID::DOUBLE,"float64"},
-        {TypeID::STRING,"string"}};
 
 
 
@@ -74,11 +29,6 @@ static std::map<TypeID,std::string> typeid2numpystr = {
 */
 void init_numpy();
 
-//specialization for ArrayPtr
-std::string get_type_string(ArrayPtr ptr);
-
-//specialization for ArrayPtr
-int get_type_code(ArrayPtr ptr);
 
 
 
@@ -129,16 +79,8 @@ Takes a CDMA ArrayPtr and constructs a numpy array of equal shape and data type.
 \param aptr pointer to a CDMA array
 \return o Python object holding the numpy array
 */
-object cdma2numpy_array(const ArrayPtr aptr,bool copyflag=false);
+object cdma2numpy_array(const ArrayWrapper &array,bool copyflag=false);
 
-
-//------------------------------------------------------------------------------
-/*! 
-\brief throw Python TypeError exception
-
-Throw the TypeError Python exception.
-*/
-void throw_PyTypeError(const std::string &message);
 
 //------------------------------------------------------------------------------
 /*!
@@ -172,13 +114,32 @@ template<typename WTYPE> tuple __shape__(WTYPE &self)
 template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
     //if the data object itself is scalar we can only return a scalar value
+    //in this case we ignore all arguments to __getitem__
     if(o.shape().size()==0) return read_scalar_data(o);
 
     //ok - we have a multidimensional data object. Now it depends on the 
     //selection object of what will be returned. The selection object can either
     //be a list or tuple or a single python object from which the selection must
     //be assembled. 
-    //
+
+    Selection sel;
+    if(PyTuple_Check(selection.ptr()))
+        sel = create_selection(o,tuple(selection));
+    else
+        sel = create_selection(o,make_tuple<object>(selection));
+
+    //now we have the selection we need to read data - as CDMA actually does not
+    //support strides others than 1 we have to fix this here
+    std::vector<size_t> offset(sel.offset());
+    std::vector<size_t> shape(sel.shape());
+    for(size_t i=0;i<sel.rank();i++)
+        shape[i] *= sel.stride()[i];
+
+    //read data
+    ArrayWrapper array = o.get(offset,shape);
+
+    //now we need to convert the array to a numpy array
+    return cdma2numpy_array(array,true);
 }
 
 //------------------------------------------------------------------------------

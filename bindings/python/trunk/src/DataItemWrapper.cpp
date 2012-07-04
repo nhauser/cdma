@@ -60,6 +60,19 @@ template<> std::string DataItemWrapper::get<std::string>() const
 }
 
 //-----------------------------------------------------------------------------
+ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
+                                  const std::vector<size_t> & shape)
+{
+    std::vector<int> _offset(offset.size());
+    std::vector<int> _shape(shape.size());
+    size_t index = 0;
+    for(auto &v: offset) _offset[index++] = v;
+    index = 0;
+    for(auto &v: shape) _shape[index++] = v;
+    return ArrayWrapper(ptr()->getData(_offset,_shape));
+}
+
+//-----------------------------------------------------------------------------
 /*
 object DataItemWrapper::__getitem__(object selection) const
 {
@@ -118,7 +131,7 @@ void wrap_dataitem()
         .add_property("size",&DataItemWrapper::size)
         .add_property("unit",&DataItemWrapper::unit)
         .add_property("type",&__type__<DataItemWrapper>)
-        .add_property("__getitem__",&__getitem__<DataItemWrapper>)
+        .def("__getitem__",&__getitem__<DataItemWrapper>)
         ;
         
 }
