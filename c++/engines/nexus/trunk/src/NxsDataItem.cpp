@@ -740,7 +740,7 @@ void DataItem::loadArray()
     file_ptr->GetData( &data, m_nodeName.data() );
   
     // Init Array
-    cdma::Array *array_ptr = new cdma::Array( TypeUtils::toCType(m_item.DataType()),
+    cdma::Array *array_ptr = new cdma::Array( TypeUtils::toRawCType(m_item.DataType()),
                                               shape, data.Data() );
 
     // remove ownership of the NexusDataSet
