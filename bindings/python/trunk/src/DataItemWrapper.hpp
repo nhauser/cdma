@@ -72,6 +72,15 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 
         //---------------------------------------------------------------------
         /*!
+        \brief get description
+
+        Return the description of the data item. 
+        \return description string
+        */
+        std::string description() const { return ptr()->getDescription(); }
+
+        //---------------------------------------------------------------------
+        /*!
         \brief return type id
 
         Return the ID of the data type used to store data.
@@ -80,7 +89,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         TypeID type() const;
 
         //---------------------------------------------------------------------
-        template<typename T> T get() const {} 
+        template<typename T> T get() const { return 0; } 
 
         ArrayWrapper get(const std::vector<size_t> &offset,const
                 std::vector<size_t> &
