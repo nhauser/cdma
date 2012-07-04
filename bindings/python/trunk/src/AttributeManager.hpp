@@ -43,10 +43,8 @@ template<typename CPTR> class AttributeManager
             IAttributePtr ptr = nullptr;
             ptr = this->_ptr->getAttribute(name);
             if(!ptr)
-            {
-                //THROW EXCEPTION HERE
-                std::cerr<<"Attribute ["<<name<<"] not found!"<<std::endl;
-            }
+                throw_PyKeyError("Attribute ["+name+"] not found!");
+
             return AttributeWrapper(this->_ptr->getAttribute(name));
         }
 
