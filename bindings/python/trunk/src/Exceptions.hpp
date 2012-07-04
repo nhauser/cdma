@@ -11,6 +11,12 @@ Throw the TypeError Python exception.
 void throw_PyTypeError(const std::string &message);
 
 //------------------------------------------------------------------------------
+/*! 
+\brief throw Python IndexError exception
+*/
+void throw_PyIndexError(const std::string &message);
+
+//------------------------------------------------------------------------------
 template<typename ETYPE> void throw_cdma_exception(
         const std::string desc,
         const std::string origin)

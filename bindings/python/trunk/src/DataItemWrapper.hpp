@@ -6,18 +6,23 @@
 #include "Container.hpp"
 #include "ArrayWrapper.hpp"
 #include "WrapperHelpers.hpp"
+#include "DimensionManager.hpp"
 
 
 class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 {
     public:
+        //=======================public members================================
+        DimensionManager dim; //!< dimension manager for this data item
         //================constructors and destructor==========================
         //! default constructor
-        DataItemWrapper():ContainerWrapper<IDataItemPtr>() {}
+        DataItemWrapper():ContainerWrapper<IDataItemPtr>(),dim() {}
 
         //---------------------------------------------------------------------
         //! standard constructor
-        DataItemWrapper(IDataItemPtr item):ContainerWrapper<IDataItemPtr>(item)
+        DataItemWrapper(IDataItemPtr item):
+            ContainerWrapper<IDataItemPtr>(item),
+            dim(item)
         {}
 
         //---------------------------------------------------------------------
@@ -30,6 +35,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         {
             if(this == &item) return *this;
             ContainerWrapper<IDataItemPtr>::operator=(item);
+            dim = item.dim;
             return *this;
         }
         
@@ -87,6 +93,16 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         \return type id
         */
         TypeID type() const;
+
+        //---------------------------------------------------------------------
+        /*!
+        \brief returns a list of dimensions
+
+        Returns a list of all dimensions associated with this data item. 
+        \return list of dimensions
+        */
+        std::list<IDimensionPtr> dimensions() const;
+
 
         //---------------------------------------------------------------------
         template<typename T> T get() const { return 0; } 

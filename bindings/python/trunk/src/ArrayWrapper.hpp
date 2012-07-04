@@ -1,7 +1,10 @@
 #ifndef __ARRAYWRAPPER_HPP__
 #define __ARRAYWRAPPER_HPP__
 
+#include<cdma/array/Array.h>
 #include "Types.hpp"
+
+using namespace cdma;
 
 class ArrayWrapper
 {

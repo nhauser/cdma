@@ -1,5 +1,6 @@
 #include "GroupWrapper.hpp"
 #include "DataItemWrapper.hpp"
+#include "WrapperHelpers.hpp"
 
 #include <cdma/navigation/IContainer.h>
 
@@ -57,6 +58,12 @@ tuple GroupWrapper::items() const
     return tuple(l);
 }
 
+//----------------------------------------------------------------------------
+std::list<IDimensionPtr> GroupWrapper::dimensions() const
+{
+    return ptr()->getDimensionList();
+}
+
 //====================helper function to create python class==================
 void wrap_group()
 {
@@ -71,6 +78,7 @@ void wrap_group()
         .add_property("childs",&GroupWrapper::childs)
         .add_property("items",&GroupWrapper::items)
         .add_property("gruops",&GroupWrapper::groups)
+        .add_property("dims",&__dimensions__<GroupWrapper>)
         .def("__getitem__",&GroupWrapper::__getitem__)
         ;
 }

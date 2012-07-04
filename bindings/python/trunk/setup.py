@@ -65,7 +65,8 @@ except:
 files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
          "src/DatasetWrapper.cpp","src/DataItemWrapper.cpp",
          "src/Exceptions.cpp","src/WrapperHelpers.cpp",
-         "src/AttributeWrapper.cpp","src/Selection.cpp"]
+         "src/AttributeWrapper.cpp","src/Selection.cpp",
+         "src/DimensionWrapper.cpp","src/DimensionManager.cpp"]
 
 cdma = Extension("cdmacore",files,
                  extra_compile_args = compile_args,
