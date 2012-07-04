@@ -24,7 +24,7 @@ namespace cdma
 namespace nexus
 {
 //-----------------------------------------------------------------------------
-// TypeUtils::toCType
+// TypeUtils::toNexusDataType
 //-----------------------------------------------------------------------------
 NexusDataType TypeUtils::toNexusDataType( const std::type_info& type )
 {
@@ -71,30 +71,45 @@ const std::type_info& TypeUtils::toCType( NexusDataType type )
   switch( type )
   {
     case NX_INT16:
+    case NX_UINT16:
+    case NX_UINT32:
+    case NX_INT32:
+    case NX_FLOAT32:
+    case NX_INT64:
+    case NX_UINT64:
+    case NX_FLOAT64:
+      return toRawCType(type);
+    case NX_CHAR:
+      return typeid(std::string);
+    default:  // NX_INT8, NX_UINT8
+      return typeid(char);
+  }
+}
+
+//-----------------------------------------------------------------------------
+// TypeUtils::toRawCType
+//-----------------------------------------------------------------------------
+const std::type_info& TypeUtils::toRawCType( NexusDataType type )
+{
+  switch( type )
+  {
+    case NX_INT16:
       return typeid(short);
-      break;
     case NX_UINT16:
       return typeid(unsigned short);
-      break;
     case NX_UINT32:
       return typeid(unsigned long);
-      break;
     case NX_INT32:
       return typeid(long);
-      break;
     case NX_FLOAT32:
       return typeid(float);
-      break;
     case NX_INT64:
       return typeid(yat::int64);
-      break;
     case NX_UINT64:
       return typeid(unsigned long);
-      break;
     case NX_FLOAT64:
       return typeid(double);
-      break;
-    default:  // CHAR, NX_INT8, NX_UINT8
+    default:  // NX_CHAR, NX_INT8, NX_UINT8
       return typeid(char);
   }
 }
