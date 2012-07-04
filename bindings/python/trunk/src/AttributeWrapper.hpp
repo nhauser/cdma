@@ -65,10 +65,11 @@ class AttributeWrapper
 
         //---------------------------------------------------------------------
         //! return attribute data
-        template<typename T> T get() const {}
+        template<typename T> T get() const { return 0;}
 
         ArrayWrapper get(const std::vector<size_t> &offset,
-                         const std::vector<size_t> &shape) {}
+                         const std::vector<size_t> &shape) 
+        { return ArrayWrapper();}
 
 };
 
