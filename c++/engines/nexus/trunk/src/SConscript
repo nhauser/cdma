@@ -1,0 +1,13 @@
+Import("env")
+
+sources = []
+sources.append(Glob("src/*.cpp"))
+engine_temp = env.SharedLibrary(env["SONAME"]+"temp",sources,SHLIBPREFIX="")
+engine = env.Command(env["SONAME"]+env["SHLIBSUFFIX"],engine_temp,
+                     [Move("$TARGET","$SOURCE"),Chmod("$TARGET",0644)])
+
+
+env.Alias("all",[engine])
+engine_install = env.Install("$SODIR",[engine])
+env.Alias("install",engine_install)
+Default("all")
