@@ -3,5 +3,5 @@ VERSION="0.1.0" #library version - release version
 
 SOVERSION="1"   #library SOVERSION (needed for debian and RPM packages) - should
                 #be consistent for each release for all binary packages.
-SONAME="nexus" #name of the shared library
+LIBNAME="cdmaengine_nexus" #name of the shared library
 

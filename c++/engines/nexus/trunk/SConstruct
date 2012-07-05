@@ -1,6 +1,47 @@
 from os import path
 import os
 
+###================================================================================
+# The names under which a library can be used depend heavily on the operating 
+# system. Unix provides the most detailed naming scheme depending on three 
+# parameters:
+#  libname ............. the name of the library
+#  version ............. the API version of the library
+#  soversion ........... the ABI version of the library
+#
+# On Linux a shared object is available under three names following the
+# following naming convention
+# lib<libname>.so.<soversion>.<version>
+# lib<libname>.so.<soversion>
+# lib<libname>.so
+#
+# The functions defined in this section create the appropriate names for the 
+# library target and add them to the build environment.
+#
+
+def create_full_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]+"."+env["VERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+"."+env["VERSION"]+env["SHLIBSUFFIX"]
+    env.Append(LIBFULLNAME = rstr) 
+
+def create_so_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+env["SHLIBSUFFIX"]
+
+    env.Append(LIBSONAME = rstr)
+
+def create_link_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]+env["SHLIBSUFFIX"]
+    env.Append(LIBLINKNAME = rstr)
+        
+    
+#==================================================================================
 
 
 #===================set build variables========================================
@@ -32,8 +73,9 @@ vars.Add(PathVariable("ZINC","ZLIB include directory","/usr/include",
 
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
-vars.Add("SONAME","Name of the shared object","")
-vars.Add("SODIR","Installation directory of the libraray","lib/cdma/engines")
+vars.Add("LIBNAME","Name of the shared library","")
+vars.Add("LIBDIR","Installation directory of the libraray","")
+vars.Add("INCDIR","Installation directory for the header files","")
 vars.Add("PREFIX","Installation prefix","/usr")
 
 
@@ -120,7 +162,20 @@ if os.name == "posix":
     env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
 
 #manage installation paths
-env.Replace(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
+if env["LIBDIR"]:
+    env.Replace(LIBDIR=env["LIBDIR"])
+else:
+    env.Replace(LIBDIR=os.path.join(env["PREFIX"],"lib"))
+
+if env["INCDIR"]:
+    env.Replace(INCDIR=env["INCDIR"])
+else:
+    env.Replace(INCDIR=os.path.join(env["PREFIX"],"include/cdma/engines/nexus"))
+
+#set library name environment variables
+create_full_libname(env)
+create_so_libname(env)
+create_link_libname(env)
 
 Export("env")
 
