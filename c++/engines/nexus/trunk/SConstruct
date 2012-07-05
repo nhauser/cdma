@@ -46,30 +46,10 @@ def create_link_libname(env):
 
 #===================set build variables========================================
 vars = Variables("BuildConfig.py")
-vars.Add(PathVariable("NEXUSINC","NEXUS include directory","/usr/include",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSLIB","NEXUS library directory","/usr/lib",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSCPPINC","NEXUS Soleil C++ interface include directory","/usr/include",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSCPPLIB","NEXUS Soleil C++ interface library directory","/usr/lib",
-         PathVariable.PathAccept))
 vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
          PathVariable.PathAccept))
 vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
          PathVariable.PathAccept))
-vars.Add(PathVariable("H5LIB","HDF5 library directory","/usr/lib",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("H5INC","HDF5 include directory","/usr/include",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("CDMACORELIB","CDMA core library directory","/usr/lib",
-                      PathVariable.PathAccept))
-vars.Add(PathVariable("CDMACOREINC","CMDA core include directory","/usr/include",
-                      PathVariable.PathAccept))
-vars.Add(PathVariable("ZLIB","ZLIB library directory","/usr/lib",
-                      PathVariable.PathAccept))
-vars.Add(PathVariable("ZINC","ZLIB include directory","/usr/include",
-                      PathVariable.PathAccept))
 
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
@@ -81,10 +61,10 @@ vars.Add("PREFIX","Installation prefix","/usr")
 
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
-env.AppendUnique(CPPPATH=[env["YATINC"],"include",env["NEXUSINC"],env["H5INC"],
-                    env["ZINC"],env["CDMACOREINC"],env["NEXUSCPPINC"]])
-env.AppendUnique(LIBPATH=[env["YATLIB"],env["H5LIB"],env["NEXUSLIB"],
-                    env["NEXUSCPPLIB"],env["CDMACORELIB"],env["ZLIB"]])
+env.ParseConfig('pkg-config --libs --cflags cdmacore')
+env.ParseConfig('pkg-config --libs --cflags nexuscpp')
+env.AppendUnique(CPPPATH=[env["YATINC"]])
+env.AppendUnique(LIBPATH=[env["YATLIB"]])
 
 
 #=====================here we need some autoconfiguration======================
@@ -154,8 +134,6 @@ if not conf.CheckLib("cdmacore"):
 env = conf.Finish()
 
 #===================create and export the build environment=====================
-env.Append(CPPPATH=["#include/","#src/"])
-
 if os.name == "posix":
     #add special link flag to ensure that the soname of the library is 
     #entioned in the ELF header
