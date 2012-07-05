@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GumTree Data Core
+Bundle-SymbolicName: org.gumtree.data.CDMA.Core
+Bundle-Version: 3.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.cdma,
+ org.cdma.dictionary,
+ org.cdma.exception,
+ org.cdma.interfaces,
+ org.cdma.io,
+ org.cdma.math,
+ org.cdma.utils
+Import-Package: org.osgi.framework;resolution:=optional
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.cdma.internal.Activator
+Eclipse-BundleShape: jar
+

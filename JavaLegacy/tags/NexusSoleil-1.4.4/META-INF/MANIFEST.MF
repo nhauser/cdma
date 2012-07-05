@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CDMA NeXus Soleil Plug-in
+Bundle-SymbolicName: org.gumtree.data.CDMA.NexusSoleil
+Bundle-Version: 2.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: fr.soleil.nexus4tango,
+ org.gumtree.data,
+ org.gumtree.data.dictionary,
+ org.gumtree.data.exception,
+ org.gumtree.data.interfaces,
+ org.gumtree.data.math,
+ org.gumtree.data.utils,
+ org.jdom,
+ org.jdom.filter,
+ org.jdom.input,
+ org.nexusformat
+Service-Component: OSGI-INF/factory.xml
+Export-Package: org.gumtree.data.soleil
+Eclipse-BundleShape: jar
+Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
+ fr.soleil.nexus4tango;visibility:=reexport
