@@ -7,5 +7,5 @@ Name: @LIBNAME@
 Description: CDMA Nexus Engine
 Version: @VERSION@
 Cflags: -I${includedir} @INCPATHS@
-Requires: cdmacore, nexuscpp
+Requires: cdmacore, nexuscpp, yat
 Libs: -L${libdir} -l@LIBNAME@ @LIBPATHS@
