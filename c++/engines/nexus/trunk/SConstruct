@@ -111,7 +111,7 @@ if not conf.CheckLib("cdmacore"):
 
 env = conf.Finish()
 
-#===================create and export the core environment=====================
+#===================create and export the build environment=====================
 env.Append(CPPPATH=["#include/","#src/"])
 
 if os.name == "posix":
@@ -122,17 +122,8 @@ if os.name == "posix":
 #manage installation paths
 env.Replace(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
 
+Export("env")
 
 #=======================build the plugin==================================
-sources = []
-sources.append(Glob("src/*.cpp"))
-engine_temp = env.SharedLibrary(env["SONAME"]+"temp",sources,SHLIBPREFIX="")
-engine = env.Command(env["SONAME"]+env["SHLIBSUFFIX"],engine_temp,
-                     [Move("$TARGET","$SOURCE"),Chmod("$TARGET",0644)])
-
-
-env.Alias("all",[engine])
-engine_install = env.Install("$SODIR",[engine])
-env.Alias("install",engine_install)
-Default("all")
+SConscript(["src/SConscript"])
 
