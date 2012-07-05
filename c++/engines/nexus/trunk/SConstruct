@@ -126,7 +126,10 @@ env.Replace(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
 #=======================build the plugin==================================
 sources = []
 sources.append(Glob("src/*.cpp"))
-engine = env.SharedLibrary(env["SONAME"],sources,SHLIBPREFIX="")
+engine_temp = env.SharedLibrary(env["SONAME"]+"temp",sources,SHLIBPREFIX="")
+engine = env.Command(env["SONAME"]+env["SHLIBSUFFIX"],engine_temp,
+                     [Move("$TARGET","$SOURCE"),Chmod("$TARGET",0644)])
+
 
 env.Alias("all",[engine])
 engine_install = env.Install("$SODIR",[engine])
