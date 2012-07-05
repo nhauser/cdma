@@ -5,3 +5,4 @@ config.log
 *.o
 *.so
 *.swp
+*.so.*
