@@ -4,7 +4,8 @@ Import("env")
 
 sources = []
 sources.append(Glob("*.cpp"))
-engine_temp = env.SharedLibrary(env["LIBNAME"]+"temp",sources,SHLIBPREFIX="")
+engine_temp = env.SharedLibrary(env["LIBNAME"]+"temp",sources,SHLIBPREFIX="",
+                  CPPPATH=["${CPPPATH}","../include","."])
 
 if os.name == "posix":
     #rename the library binary and change permissions
@@ -23,10 +24,18 @@ if os.name == "posix":
     #add everything to the all target
     env.Alias("all",[shared_library,shared_library_link,shared_library_so])
 
-
+#=====================assemble pkg-config file=================================
+pkg_config_file = env.Substfile(source=["cdmaengine_nexus.pc.in"],
+				 SUBST_DICT={"@PREFIX@":"$PREFIX","@LIBNAME@":"$LIBNAME",
+				             "@VERSION@":"$VERSION",
+                             "@INCDIR@":"$INCDIR", 
+                             "@INCPATHS@":"${_CPPINCFLAGS}",
+                             "@LIBPATHS@":"${_LIBFLAGS}"})
+pkg_config_file_install = env.Install("${LIBDIR}/pkgconfig",[pkg_config_file])
+env.Alias("all",[pkg_config_file])
+env.Alias("install",[pkg_config_file_install])
 
 #=================manage installation of library files=========================
-
 shared_library_install = env.Install("$LIBDIR",[shared_library])
 shared_library_link_install = env.Command("${SOURCE.dir}/$LIBLINKNAME",
                                           shared_library_install,

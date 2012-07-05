@@ -63,8 +63,8 @@ vars.Add("PREFIX","Installation prefix","/usr")
 env = Environment(variables=vars,tools=["default","textfile"])
 env.ParseConfig('pkg-config --libs --cflags cdmacore')
 env.ParseConfig('pkg-config --libs --cflags nexuscpp')
-env.AppendUnique(CPPPATH=[env["YATINC"]])
-env.AppendUnique(LIBPATH=[env["YATLIB"]])
+#env.AppendUnique(CPPPATH=[env["YATINC"]])
+#env.AppendUnique(LIBPATH=[env["YATLIB"]])
 
 
 #=====================here we need some autoconfiguration======================

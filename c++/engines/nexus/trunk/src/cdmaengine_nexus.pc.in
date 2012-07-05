@@ -1,0 +1,11 @@
+prefix = @PREFIX@ 
+exec_prefix = ${prefix}
+includedir = @INCDIR@
+libdir = ${prefix}/lib
+
+Name: @LIBNAME@
+Description: CDMA Nexus Engine
+Version: @VERSION@
+Cflags: -I${includedir} @INCPATHS@
+Requires: cdmacore, nexuscpp
+Libs: -L${libdir} -l@LIBNAME@ @LIBPATHS@
