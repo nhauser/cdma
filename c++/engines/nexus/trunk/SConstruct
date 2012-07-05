@@ -33,7 +33,6 @@ vars.Add(PathVariable("ZINC","ZLIB include directory","/usr/include",
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
 vars.Add("SONAME","Name of the shared object","")
-vars.Add("DOCDIR","Installation directory of documentation","")
 vars.Add("SODIR","Installation directory of the libraray","lib/cdma/engines")
 vars.Add("PREFIX","Installation prefix","/usr")
 
@@ -110,10 +109,16 @@ if os.name == "posix":
     env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
 
 #manage installation paths
-env.Append(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
+env.Replace(SODIR=os.path.join(env["PREFIX"],env["SODIR"]))
 
 
 #=======================build the plugin==================================
 sources = []
 sources.append(Glob("src/*.cpp"))
-plugin = env.SharedLibrary(env["SONAME"],sources,SHLIBPREFIX="")
+engine = env.SharedLibrary(env["SONAME"],sources,SHLIBPREFIX="")
+
+env.Alias("all",[engine])
+engine_install = env.Install("$SODIR",[engine])
+env.Alias("install",engine_install)
+Default("all")
+
