@@ -132,7 +132,11 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="images">
-    <path>/{NXentry}/{NXdata}/data_04</path>
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXentry}/{NXdata}/data_*@long_name=*scienta/data</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
     <!-- create a meta dataitem of all found node having the path above -->
     <call>DataItemStacker</call>
     <call>HarvestEquipmentAttributes</call>
