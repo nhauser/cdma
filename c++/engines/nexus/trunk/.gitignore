@@ -6,3 +6,4 @@ config.log
 *.so
 *.swp
 *.so.*
+*.pc
