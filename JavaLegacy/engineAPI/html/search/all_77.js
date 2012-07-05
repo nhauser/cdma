@@ -1,8 +1,0 @@
-var searchData=
-[
-  ['writecdl',['writeCDL',['../interfaceorg_1_1gumtree_1_1data_1_1interfaces_1_1_i_data_item.html#af9966520e8a86b17d1fc64d8e3b0bff0',1,'org::gumtree::data::interfaces::IDataItem.writeCDL()'],['../interfaceorg_1_1gumtree_1_1data_1_1interfaces_1_1_i_dimension.html#a5ca2a0845d287e5f2e1f938e76b6d75f',1,'org::gumtree::data::interfaces::IDimension.writeCDL()']]],
-  ['writencml',['writeNcML',['../interfaceorg_1_1gumtree_1_1data_1_1interfaces_1_1_i_dataset.html#ae4538889758b5f11abb5c8eb53b662bc',1,'org::gumtree::data::interfaces::IDataset']]],
-  ['writerexception',['WriterException',['../classorg_1_1gumtree_1_1data_1_1exception_1_1_writer_exception.html#ae06dcf4cca6f474dfbce49533234776d',1,'org::gumtree::data::exception::WriterException.WriterException()'],['../classorg_1_1gumtree_1_1data_1_1exception_1_1_writer_exception.html#a9d6d9dcc3c8873fa539b5ca3f4ab3e41',1,'org::gumtree::data::exception::WriterException.WriterException(final String arg0)'],['../classorg_1_1gumtree_1_1data_1_1exception_1_1_writer_exception.html#ab007688347fe3c64b13fb02a983fe7ee',1,'org::gumtree::data::exception::WriterException.WriterException(final Throwable arg0)'],['../classorg_1_1gumtree_1_1data_1_1exception_1_1_writer_exception.html#a3de1594ebdfc84a63c4b1a16f7a9d33d',1,'org::gumtree::data::exception::WriterException.WriterException(final String arg0, final Throwable arg1)']]],
-  ['writerexception',['WriterException',['../classorg_1_1gumtree_1_1data_1_1exception_1_1_writer_exception.html',1,'org::gumtree::data::exception']]],
-  ['writerexception_2ejava',['WriterException.java',['../_writer_exception_8java.html',1,'']]]
-];
