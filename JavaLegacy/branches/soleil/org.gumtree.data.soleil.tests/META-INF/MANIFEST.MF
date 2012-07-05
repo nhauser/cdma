@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: GDM Test
+Bundle-SymbolicName: org.gumtree.data.soleil.test
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Version: 1.0.0
+Bundle-Vendor: SOLEIL
+Bundle-Localization: plugin
+Require-Bundle: org.gumtree.data.core;version:="2.1.0.qualifier";visibility:=reexport,
+ org.gumtree.data.soleil;version:="2.1.0.qualifier"
+
+

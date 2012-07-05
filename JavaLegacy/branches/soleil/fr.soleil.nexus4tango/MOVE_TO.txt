@@ -1,0 +1,2 @@
+Code was moved to:
+http://cdma.googlecode.com/svn/branches/soleil/org.gumtree.data.engine.jnexus/fr/soleil/nexus
