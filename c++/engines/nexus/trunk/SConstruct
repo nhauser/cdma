@@ -88,7 +88,18 @@ if not conf.CheckLib("yat"):
     print "No YAT library found!"
     Exit(1)
 
-if not conf.CheckCXXHeader("cdma/Factory.h"):
+
+if not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/array/Array.h") or \
+   not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/utils/ArrayUtils.h") or \
+   not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
+   not conf.CheckCXXHeader("cdma/navigation/IAttribute.h") or \
+   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+   not conf.CheckCXXHeader("cdma/Factory.h"):
     print "No CDMA core header files found!"
     Exit(1)
 
