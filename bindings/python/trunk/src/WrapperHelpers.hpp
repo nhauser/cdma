@@ -135,7 +135,8 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
     //if the data object itself is scalar we can only return a scalar value
     //in this case we ignore all arguments to __getitem__
-    if(o.shape().size()==0) return read_scalar_data(o);
+    if((o.shape().size()==0)||(o.type() == TypeID::STRING))
+            return read_scalar_data(o);
 
     //ok - we have a multidimensional data object. Now it depends on the 
     //selection object of what will be returned. The selection object can either
