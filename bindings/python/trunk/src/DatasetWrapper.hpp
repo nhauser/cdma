@@ -39,6 +39,15 @@ using namespace cdma;
 
 #include "GroupWrapper.hpp"
 
+/*! 
+\brief dataset wrapper
+
+Wraps a IDatasetPtr pointer and the factory pointer belonging to it.
+Like a group object this object behaves like kind of container. In order to keep
+the behavior of all objects the same the __getitem__ call is deferred to the
+root group. Thus the key can only be the name of a direct child object of the
+root group.
+*/
 class DatasetWrapper
 {
     private:
@@ -67,6 +76,7 @@ class DatasetWrapper
         ~DatasetWrapper() {} 
 
         //==============assignment operators===================================
+        //! copy assignment operator
         DatasetWrapper &operator=(const DatasetWrapper &ds)
         {
             if(this == &ds) return *this;
@@ -95,7 +105,6 @@ class DatasetWrapper
         {
             return _root_group.__getitem__(path);
         }
-
 
 };
 

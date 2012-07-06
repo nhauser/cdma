@@ -36,10 +36,18 @@ using namespace cdma;
 This type provides an interface to the attribute attached to an object
 satisfying the IContainer interface. 
 Each type implementing the IContainer interface has a public member variable
-of type AttributeManager. 
+of type AttributeManager. The type implements basic sequence interface for
+Python. Thus, one can iterate over such an attribute in python with
 \code
-
-\encode
+item = ....
+for attr in item.attrs:
+    print attr
+\endcode
+An individual attribute can be picked using the [] operator
+\code
+print item.attrs["temperatur"]
+\endcode
+If the attribute does not exist a KeyError exception is thrown. 
 */
 template<typename CPTR> class AttributeManager
 {
@@ -47,7 +55,7 @@ template<typename CPTR> class AttributeManager
         CPTR _ptr; //!< pointer to the container object
     public:
         //===================public types======================================
-        typedef AttributeWrapper value_type;
+        typedef AttributeWrapper value_type; //!< value type of the container
         //===================public constructors===============================
         //! default constructor
         AttributeManager():_ptr(nullptr) {}
@@ -75,7 +83,14 @@ template<typename CPTR> class AttributeManager
         }
 
         //====================attribute related methods========================
-        //! retrieve attribute by name
+        /*! 
+        \brief retrieve attribute by name
+
+        Return an attribute by name. If the attribute does not exist a KeyError
+        is thrown in Python. 
+        \param name the attributes name
+        \return requested attribute
+        */
         AttributeWrapper __getitem__str(const std::string &name) const 
         {
             IAttributePtr ptr = nullptr;
@@ -87,7 +102,14 @@ template<typename CPTR> class AttributeManager
         }
 
         //---------------------------------------------------------------------
-        //! create a list
+        /*!
+        \brief return attribute by index
+
+        Return an attribute by its index. This method will not be exposed to
+        Python. It is used to satisfy the interface required by the PyIterator
+        template. 
+        \return instance of AttributeWrapper
+        */
         AttributeWrapper operator[](size_t i) const
         {
             size_t cnt=0;
@@ -112,6 +134,14 @@ template<typename CPTR> class AttributeManager
             return this->_ptr->getAttributeList().size();
         }
 
+        //----------------------------------------------------------------------
+        /*!
+        \brief return iterator
+
+        Returns an interator over the attributes managed by this instance of
+        AttributeManager. 
+        \return iterator
+        */
         PyIterator<AttributeManager> create_iterator() const
         {
             return PyIterator<AttributeManager>(*this,0);
@@ -121,10 +151,18 @@ template<typename CPTR> class AttributeManager
 };
 
 //===================implementation of template methods========================
+/*! 
+\brief wrapper function for an attribute manager
+
+Creates a wrapper for an AttributeManager.
+\param name the name under which the class will appear in Python
+*/
 template<typename CPTR> void wrap_attribute_manager(const char *name)
 {
+    //create iterator type for this attribute manager type
     wrap_pyiterator<AttributeManager<CPTR> >(std::string(name)+"Iterator");
 
+    //create the attribute manager type
     class_<AttributeManager<CPTR>>(name)
         .def("__getitem__",&AttributeManager<CPTR>::__getitem__str)
         .def("__len__",&AttributeManager<CPTR>::size)

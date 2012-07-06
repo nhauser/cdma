@@ -44,9 +44,6 @@ using namespace cdma;
 using namespace boost::python;
 
 
-
-
-
 /*! 
 \brief setup numpy module
 */
@@ -150,6 +147,8 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
         sel = create_selection(o,tuple(selection));
     else
         sel = create_selection(o,make_tuple<object>(selection));
+
+    std::cout<<sel<<std::endl;
 
     //now we have the selection we need to read data - as CDMA actually does not
     //support strides others than 1 we have to fix this here

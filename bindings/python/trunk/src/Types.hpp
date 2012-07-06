@@ -62,7 +62,7 @@ static std::map<TypeID,size_t> typeid2size = {
         {TypeID::SHORT,sizeof(int16_t)}, {TypeID::USHORT,sizeof(uint16_t)},
         {TypeID::INT,sizeof(int32_t)}, {TypeID::UINT,sizeof(uint32_t)},
         {TypeID::FLOAT,sizeof(float)}, {TypeID::DOUBLE,sizeof(double)},
-        {TypeID::STRING,sizeof(char)}};
+        {TypeID::STRING,sizeof(std::string)}};
 
 //conversion map from Type IDs to numpy type codes
 static std::map<TypeID,int> typeid2numpytc = {

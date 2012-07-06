@@ -22,13 +22,17 @@
  */
 
 #include "DataItemWrapper.hpp"
+#include "AttributeManager.hpp"
 
 //======================wrapper methods implementation=========================
 std::vector<size_t> DataItemWrapper::shape() const
 {
     std::vector<size_t> shape;
 
-    for(auto v: ptr()->getShape()) shape.push_back(v);
+    for(auto v: ptr()->getShape())
+    {
+        shape.push_back(v);
+    }
 
     return shape;
 }
@@ -40,44 +44,9 @@ TypeID DataItemWrapper::type() const
 }
 
 //================overloaded scalar get template===============================
-template<> uint8_t DataItemWrapper::get<uint8_t>() const
-{
-    return ptr()->readScalarByte();
-}
-
-//-----------------------------------------------------------------------------
-template<> int16_t DataItemWrapper::get<int16_t>() const
-{
-    return ptr()->readScalarShort();
-}
-
-//-----------------------------------------------------------------------------
-template<> int32_t DataItemWrapper::get<int32_t>() const
-{
-    return ptr()->readScalarInt();
-}
-
-//-----------------------------------------------------------------------------
-template<> int64_t DataItemWrapper::get<int64_t>() const
-{
-    return ptr()->readScalarLong();
-}
-
-//-----------------------------------------------------------------------------
-template<> float DataItemWrapper::get<float>() const
-{
-    return ptr()->readScalarFloat();
-}
-
-//-----------------------------------------------------------------------------
-template<> double DataItemWrapper::get<double>() const
-{
-    return ptr()->readScalarDouble();
-}
-
-//-----------------------------------------------------------------------------
 template<> std::string DataItemWrapper::get<std::string>() const
 {
+    std::cout<<"Calling get string method ..."<<std::endl;
     return ptr()->readString();
 }
 
@@ -93,10 +62,16 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
 {
     std::vector<int> _offset(offset.size());
     std::vector<int> _shape(shape.size());
-    size_t index = 0;
-    for(auto &v: offset) _offset[index++] = v;
-    index = 0;
-    for(auto &v: shape) _shape[index++] = v;
+    for(size_t i=0;i<offset.size();i++)
+    {
+        _offset[i] = offset[i];
+        _shape[i]  = shape[i];
+    }
+    for(auto v: _offset) std::cout<<v<<" ";
+    std::cout<<std::endl;
+    for(auto v: _shape) std::cout<<v<<" ";
+    std::cout<<std::endl;
+    
     return ArrayWrapper(ptr()->getData(_offset,_shape));
 }
 
@@ -104,6 +79,7 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
 void wrap_dataitem()
 {
     wrap_container<IDataItemPtr>("DataItemContainer");
+    wrap_attribute_manager<IDataItemPtr>("DataItemAttributeManager");
     wrap_dimensionmanager();
 
     class_<DataItemWrapper,bases<ContainerWrapper<IDataItemPtr>> >("DataItem")

@@ -30,6 +30,7 @@
 using namespace cdma;
 
 /*! 
+\subpage developer_doc
 \brief Wrapps a CDAM attribute
 
 This class wrapps a pointer to a CDMA attribute. It provides the IOObject
@@ -87,9 +88,28 @@ class AttributeWrapper
         std::string name() const { return _ptr->getName(); }
 
         //---------------------------------------------------------------------
-        //! return attribute data
+        /*! 
+        \brief get scalar data
+
+        Return scalar data from an attribute. If the shape of the attribute is
+        an enmpty vector the attribute is scalar. In such a case this method can
+        be used to retrieve the attributes data. This template is overloaded for
+        all methods provideded by the IAttribute interface to obtain data. 
+        \return value of type T
+        */
         template<typename T> T get() const { return 0;}
 
+        //---------------------------------------------------------------------
+        /*! 
+        \brief get array data
+
+        Return data in the case of a non-scalar attribute. This method returns
+        actually a dummy attribute as this functionallity is currently not
+        provided by CDMA. 
+        \param offset starting indices for the data
+        \param shape number of elements along each dimension
+        \return instance of ArrayWrapper with data
+        */
         ArrayWrapper get(const std::vector<size_t> &offset,
                          const std::vector<size_t> &shape) 
         { return ArrayWrapper();}

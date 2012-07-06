@@ -31,7 +31,11 @@
 #include "WrapperHelpers.hpp"
 #include "DimensionManager.hpp"
 
+/*! 
+\brief wraps IDataItemPtr
 
+Wrapper type for IDataItemPtr.
+*/
 class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 {
     public:
@@ -126,13 +130,32 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         */
         std::list<IDimensionPtr> dimensions() const;
 
+        //---------------------------------------------------------------------
+        /*! 
+        \brief read scalar data
+
+        Reads data for a scalar data item. The return type is determined by the
+        template parameter.
+        \return object of type T
+        */
+        template<typename T> T get() const
+        {
+            return ptr()->getData()->getValue<T>();
+        }
 
         //---------------------------------------------------------------------
-        template<typename T> T get() const { return 0; } 
+        /*!
+        \brief read array data
 
-        ArrayWrapper get(const std::vector<size_t> &offset,const
-                std::vector<size_t> &
-                shape);
+        Reads data in cases where the data item is non-scalar. The offset
+        determines the index offset from where to start reading and shape gives
+        the number of elements along each dimension.
+        \param offset index offset
+        \param shape number of elements along each dimension
+        \return instance of ArrayWrapper with data
+        */
+        ArrayWrapper get(const std::vector<size_t> &offset,
+                         const std::vector<size_t> & shape);
 
         
         

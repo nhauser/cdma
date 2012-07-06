@@ -29,6 +29,13 @@
 
 using namespace cdma;
 
+/*! 
+\brief ArrayWrapper class
+
+This class wraps around an ArrayPtr type. This class is not intended to be
+exposed to Python but is within the process of harmonizing the interface between
+ data holdgin types (like attributes and datasets)
+*/
 class ArrayWrapper
 {
     private:
@@ -51,6 +58,7 @@ class ArrayWrapper
         ~ArrayWrapper() {}
 
         //========================assignment operators=========================
+        //! copy assignment operator
         ArrayWrapper &operator=(const ArrayWrapper &a)
         {
             if(this == &a) return *this;

@@ -127,4 +127,10 @@ void throw_PyKeyError(const std::string &message)
     throw error_already_set();
 }
 
+//-----------------------------------------------------------------------------
+void throw_PyStopIteration(const std::string &message)
+{
+    PyErr_SetString(PyExc_StopIteration,"stop iteration");
+    throw error_already_set();
+}
 

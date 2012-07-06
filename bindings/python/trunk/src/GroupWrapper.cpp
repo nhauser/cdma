@@ -24,11 +24,12 @@
 #include "GroupWrapper.hpp"
 #include "DataItemWrapper.hpp"
 #include "WrapperHelpers.hpp"
+#include "Exceptions.hpp"
 
 #include <cdma/navigation/IContainer.h>
 
 //================implementation of class methods==============================
-object GroupWrapper::__getitem__(const std::string &path) const
+object GroupWrapper::__getitem__(const std::string &name) const
 {
     //check groups
     for(auto v: ptr()->getGroupList())
@@ -40,6 +41,8 @@ object GroupWrapper::__getitem__(const std::string &path) const
 
 
     //throw an exception here
+    throw_PyKeyError("Cannot find object ["+name+"] in group ["+
+                     name()+"]!");
 }
 
 //----------------------------------------------------------------------------
@@ -88,20 +91,27 @@ std::list<IDimensionPtr> GroupWrapper::dimensions() const
 }
 
 //====================helper function to create python class==================
+static const char __group_doc_parent[] = "reference to the parent group";
+static const char __group_doc_root[]   = "reference to the root group";
+static const char __group_doc_childs[] = "list of child objects";
+static const char __group_doc_groups[] = "list of child groups";
+static const char __group_doc_dims[]   = "list of dimensions";
+static const char __group_doc_items[]  = "list of data items;
 void wrap_group()
 {
-
+    //create the wrapper for the group container class
     wrap_container<IGroupPtr>("GroupContainer");
+    //create the wrapper for the attribute manager of the group 
     wrap_attribute_manager<IGroupPtr>("GroupAttributeManager");
 
+    
     class_<GroupWrapper,bases<ContainerWrapper<IGroupPtr>> >("Group")
-        .def_readwrite("attrs",&GroupWrapper::attrs)
-        .add_property("parent",&GroupWrapper::parent)
-        .add_property("root",&GroupWrapper::root)
-        .add_property("childs",&GroupWrapper::childs)
-        .add_property("items",&GroupWrapper::items)
-        .add_property("gruops",&GroupWrapper::groups)
-        .add_property("dims",&__dimensions__<GroupWrapper>)
+        .add_property("parent",&GroupWrapper::parent,__group_doc_parent)
+        .add_property("root",&GroupWrapper::root,__group_doc_root)
+        .add_property("childs",&GroupWrapper::childs,__group_doc_childs)
+        .add_property("items",&GroupWrapper::items,__group_doc_items)
+        .add_property("groups",&GroupWrapper::groups,__group_doc_groups)
+        .add_property("dims",&__dimensions__<GroupWrapper>,__group_doc_dims)
         .def("__getitem__",&GroupWrapper::__getitem__)
         ;
 }

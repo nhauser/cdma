@@ -33,24 +33,28 @@ using namespace cdma;
 #include "Container.hpp"
 #include "AttributeManager.hpp"
 
+/*! 
+\brief wrapper for IGroupPtr
+
+Wraps IGroupPtr. 
+*/
 class GroupWrapper:public ContainerWrapper<IGroupPtr>
 {
     public:
-        //=====================public members==================================
-        AttributeManager<IGroupPtr> attrs;
         //==================constructors and destructor========================
         //! default constructor
-        GroupWrapper():ContainerWrapper<IGroupPtr>(),attrs() {}
+        GroupWrapper():ContainerWrapper<IGroupPtr>() {}
 
         //---------------------------------------------------------------------
         //! standard constructor
-        GroupWrapper(IGroupPtr g):ContainerWrapper<IGroupPtr>(g),attrs(g) {}
+        GroupWrapper(IGroupPtr g):ContainerWrapper<IGroupPtr>(g) {}
 
         //---------------------------------------------------------------------
         //! destructor
         ~GroupWrapper() {}
 
         //==================assignment operators===============================
+        //! copy assignment operator
         GroupWrapper &operator=(const GroupWrapper &g)
         {
             if(this == &g) return *this;
@@ -60,7 +64,15 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         }
 
         //===================data access methods===============================
-        object __getitem__(const std::string &path) const;
+        /*! 
+        \brief return child object
+        
+        Returns a child object of the group determined by name. If the object
+        cannot be found the Python KeyError exception is thrown.
+        \param name the child objects name
+        \return instance of the child object as Python object
+        */
+        object __getitem__(const std::string &name) const;
 
         //---------------------------------------------------------------------
         //! returns a tuple of all childs of a group
@@ -90,10 +102,6 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         \return dimension pointers
         */
         std::list<IDimensionPtr> dimensions() const;
-
-
-
-
 };
         
 
