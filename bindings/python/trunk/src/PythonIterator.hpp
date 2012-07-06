@@ -16,10 +16,9 @@ template<typename ITERABLE> class PyIterator
 {
     private:
         const ITERABLE *_container; //!< parent object of the interator
-        size_t     _state;  //!< actual index 
-                            //!< interator referes
+        size_t     _state;          //!< position of the iterator
     public:
-        typedef typename ITERABLE::value_type value_type;    //!< type of the elements 
+        typedef typename ITERABLE::value_type value_type;//!< type of the elements 
         typedef ITERABLE iterable_type; //!< type of the iterable
         //=======================constructors and destructor====================
         //! default constructor
@@ -38,9 +37,8 @@ template<typename ITERABLE> class PyIterator
         //---------------------------------------------------------------------
         /*! \brief construction from an ITERABLE instance
 
-        \param g iterable object 
-        \param start_index index of the first element the iterator should point
-        to
+        \param i iterable object 
+        \param state initial state of the iterator
         */
         explicit PyIterator(const ITERABLE &i,size_t state=0):
             _container(&i),
@@ -69,8 +67,9 @@ template<typename ITERABLE> class PyIterator
         //---------------------------------------------------------------------
         /*! \brief return next element
 
-        This method returns the next element of the container. 
-        \return instance of ItemT with the next element
+        This method returns the next element of the container and increments the
+        internal state of the iterator.
+        \return object at actual iterator position
         */
         value_type next()
         {
@@ -99,10 +98,12 @@ template<typename ITERABLE> class PyIterator
 };
 
 //-----------------------------------------------------------------------------
-/*! \brief AttributeIterator wrapper generator
+/*! 
+\brief PyIterator wrapper function
 
-This function creates the Python code for AttributeIterator objects. 
-\param class_name name of the created Python class
+Templates function creates the Python type for an iterator for a particular
+iterable type.
+\param class_name name of the iterator class
 */
 template<typename ITERABLE> void wrap_pyiterator(const std::string &class_name)
 {

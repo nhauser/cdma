@@ -76,13 +76,24 @@ std::string AttributeWrapper::__str__() const
 }
 
 //========================wrap attribute objects===============================
+static const char __attribute_doc_class [] = 
+"The attribute class represents a CDMA attribute";
+static const char __attribute_doc_size [] = 
+"the size of the attribute (number of elements)";
+static const char __attribute_doc_name [] = 
+"the attributes name";
+static const char __attribute_doc_shape [] = 
+"shape of the attribute as tuple";
+static const char __attribute_doc_type [] = 
+"the data type of the attribute as numpy type code";
+
 void wrap_attribute()
 {
-    class_<AttributeWrapper>("Attribute")
-        .add_property("size",&AttributeWrapper::size)
-        .add_property("name",&AttributeWrapper::name)
-        .add_property("shape",&__shape__<AttributeWrapper>)
-        .add_property("type",&__type__<AttributeWrapper>)
+    class_<AttributeWrapper>("Attribute",__attribute_doc_class)
+        .add_property("size",&AttributeWrapper::size,__attribute_doc_size)
+        .add_property("name",&AttributeWrapper::name,__attribute_doc_name)
+        .add_property("shape",&__shape__<AttributeWrapper>,__attribute_doc_shape)
+        .add_property("type",&__type__<AttributeWrapper>,__attribute_doc_type)
         .def("__getitem__",&__getitem__<AttributeWrapper>)
         .def("__str__",&AttributeWrapper::__str__)
         ;

@@ -29,6 +29,13 @@
 using namespace boost::python;
 using namespace cdma;
 
+#include "AttributeManager.hpp"
+
+/*! 
+\brief wrapper for IContainer interface
+
+Wraps objects that satisfy the IContainer interface. 
+*/
 template<typename TPTR> class ContainerWrapper
 {
     private:
@@ -36,7 +43,7 @@ template<typename TPTR> class ContainerWrapper
     protected:
         //==================protected constructors=============================
         //! standard constructor
-        ContainerWrapper(TPTR ptr):_ptr(ptr) {}         
+        ContainerWrapper(TPTR ptr):_ptr(ptr),attrs(ptr) {}         
         
         //=============protected assignment operators==========================
         //! copy assignment operator
@@ -44,39 +51,67 @@ template<typename TPTR> class ContainerWrapper
         {
             if(this == &c) return *this;
             this->_ptr = c._ptr;
+            this->attrs = c.attrs;
             return *this;
         }
 
         //===============protected members for child classes===================
+        //! get a pointer to the container
         TPTR ptr() { return _ptr; }
 
+        //! get a const pointer to the container
         const TPTR ptr() const { return _ptr; }
 
     public:
+        //=================public members======================================
+        AttributeManager<TPTR> attrs; //!< attribute manager
+
         //============public constructors and destructor=======================
         //! default constructor
-        ContainerWrapper():_ptr(nullptr) {}
+        ContainerWrapper():_ptr(nullptr),attrs(nullptr) {}
 
         //---------------------------------------------------------------------
         //! destructor
         virtual ~ContainerWrapper() {}
 
         //==============member functions=======================================
+        /*! 
+        \brief returns object location
+
+        This returns the path of the parent group of an object.
+        \return path of the parent node
+        */
         std::string location() const 
         { 
             return this->_ptr->getLocation(); 
         }
 
+        //---------------------------------------------------------------------
+        /*! 
+        \brief full object name
+
+        Returns the full path to the object.
+        \return full path
+        */
         std::string name() const 
         { 
             return this->_ptr->getName(); 
         }
 
+        //---------------------------------------------------------------------
+        /*! 
+        \brief object name
+
+        Returns the name of an object.
+        \return object name
+        */
         std::string short_name() const 
         { 
             return this->_ptr->getShortName(); 
         }
 
+        //---------------------------------------------------------------------
+        //! returns true if object is a group
         bool is_group() const
         {
             if(_ptr->getContainerType() == IContainer::DATA_GROUP) 
@@ -87,9 +122,12 @@ template<typename TPTR> class ContainerWrapper
 
 };
 
+//=============================================================================
+
 template<typename TPTR> void wrap_container(const char* name)
 {
     class_<ContainerWrapper<TPTR>>(name)
+        .def_readwrite("attrs",&ContainerWrapper<TPTR>::attrs)
         .add_property("location",&ContainerWrapper<TPTR>::location)
         .add_property("name",&ContainerWrapper<TPTR>::name)
         .add_property("short_name",&ContainerWrapper<TPTR>::short_name)

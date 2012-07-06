@@ -35,6 +35,11 @@
 using namespace cdma;
 using namespace boost::python;
 
+/*! 
+\brief selection type
+
+Provides a information about a selection in a multidimensional array.
+*/
 class Selection
 {
     private:
@@ -142,6 +147,7 @@ void set_selection_parameters_from_index(size_t i,const extract<size_t> &index,
                                          std::vector<size_t> &stride,
                                          std::vector<size_t> &shape);
 
+//-----------------------------------------------------------------------------
 template<typename WTYPE>
 void set_selection_parameters_from_slice(size_t i,const extract<slice> &slice,
                                          const WTYPE &o,
@@ -172,6 +178,7 @@ void set_selection_parameters_from_slice(size_t i,const extract<slice> &slice,
 }
 
 
+//-----------------------------------------------------------------------------
 /*! 
 \brief create a selection from a python object
 

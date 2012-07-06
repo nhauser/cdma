@@ -44,6 +44,10 @@ void throw_PyIndexError(const std::string &message);
 void throw_PyKeyError(const std::string &message);
 
 //------------------------------------------------------------------------------
+//! throw stop exception for iterators
+void throw_PyStopIteration(const std::string &message);
+
+//------------------------------------------------------------------------------
 template<typename ETYPE> void throw_cdma_exception(
         const std::string desc,
         const std::string origin)

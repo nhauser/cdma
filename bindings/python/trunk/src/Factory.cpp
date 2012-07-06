@@ -37,22 +37,56 @@ using namespace cdma;
 
 #include "DatasetWrapper.hpp"
 
+/*! 
+\brief CDMA factory class
+
+Wraps the Factory singleton. This class must be used to initialize and cleanup
+the entire CDMA stack. This class will never be used by the user but is for
+internal use of the module only.
+*/
 class FactoryWrapper
 {
     public:
+        //---------------------------------------------------------------------
+        /*!
+        \brief initialize CDMA library
+
+        Initialization method for the entire CDMA library. 
+        \param path path to plugins
+        */
         static void init(const std::string &path) { Factory::init(path); } 
+
+        //---------------------------------------------------------------------
+        /*! 
+        \brief cleanup library
+
+        Cleanup the library - this must be called before the module gets
+        unloaded (in other words when the interpreter exits).
+        */
         static void cleanup() { Factory::cleanup(); }
+
+        //---------------------------------------------------------------------
+        /*! 
+        \brief open a new dataset
+
+        Opens a new dataset. The plugin to be used is determined automatically. 
+        \param path the path to the dataset to open
+        \return dataset instance
+        */
         static DatasetWrapper open_dataset(const std::string &path) 
         {
-            std::cout<<"opening dataset ..."<<std::endl;
             std::pair<IDatasetPtr,IFactoryPtr> p =
                 Factory::openDataset(yat::URI(path)); 
-            std::cout<<"look at data ..."<<std::endl;
             IDatasetPtr dataset = p.first;
             return DatasetWrapper(p.first,p.second);
         }
 };
 
+//=============================================================================
+
+/*! 
+\brief create factory Python type
+*/
 void wrap_factory()
 {
     class_<FactoryWrapper,boost::noncopyable>("_factory",no_init)
