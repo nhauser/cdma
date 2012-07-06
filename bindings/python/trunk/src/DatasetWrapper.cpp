@@ -35,8 +35,7 @@ void wrap_dataset()
         .def(init<>())
         .add_property("title",&DatasetWrapper::getTitle)
         .add_property("location",&DatasetWrapper::getLocation)
-        .add_property("childs",&DatasetWrapper::childs)
-        .def("__getitem__",&DatasetWrapper::__getitem__)
+        .add_property("root_group",&DatasetWrapper::getRoot)
         ;
 }
 

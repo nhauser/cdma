@@ -89,22 +89,26 @@ class DatasetWrapper
 
         //=================implement dataset interface=========================
         //! get dataset title
-        std::string getTitle() const { return _dataset->getTitle(); }
+        std::string getTitle() const 
+        { 
+            return _dataset->getTitle(); 
+        }
 
         //---------------------------------------------------------------------
         //! get dataset location
-        std::string getLocation() const { return _dataset->getLocation(); }
-
-        //---------------------------------------------------------------------
-        //! get list of childs
-        tuple childs() const { return _root_group.childs(); }
-
-        //---------------------------------------------------------------------
-        //! get an object from the dataset
-        object __getitem__(const std::string &path) const
-        {
-            return _root_group.__getitem__(path);
+        std::string getLocation() const 
+        { 
+            return _dataset->getLocation(); 
         }
+
+        //---------------------------------------------------------------------
+        //! get root group
+        GroupWrapper getRoot() const 
+        { 
+            return GroupWrapper(_dataset->getRootGroup()); 
+        }
+
+
 
 };
 
