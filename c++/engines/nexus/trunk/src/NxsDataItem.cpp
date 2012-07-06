@@ -199,15 +199,9 @@ cdma::ArrayPtr DataItem::getData(std::vector<int> origin, std::vector<int> shape
   CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::getData(vector<int> origin, vector<int> shape)");
 
   checkArray();
-  int rank = m_array_ptr->getRank();
-  int* iShape = new int[rank];
-  int* iStart = new int[rank];
-  for( int i = 0; i < rank; i++ )
-  {
-    iStart[i] = origin[i];
-    iShape[i]  = shape[i];
-  }
-  cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
+  std::vector<int> stride = m_array_ptr->getView()->getStride();
+
+  cdma::ViewPtr view = new cdma::View( shape, origin, stride );
   cdma::ArrayPtr array_ptr = new cdma::Array( *m_array_ptr, view );
   return array_ptr;
 }

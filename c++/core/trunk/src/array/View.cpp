@@ -137,7 +137,7 @@ View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stri
     m_ranges[i].set(
       "",
       start[i] * abs(stride[i]),
-      (start[i] * abs(stride[i]) ) + ( shape[i] + delta) * stride[i],
+      ( start[i] * abs(stride[i]) ) + ( shape[i] + delta) * stride[i],
       stride[i]
     );
   }
@@ -463,6 +463,7 @@ void View::setStride(std::vector<int> stride)
   m_upToDate = false;
   yat::uint16 i = 0;
   yat::uint16 j = 0;
+
   while( i < stride.size() )
   {
     // Only consider not reduced ranges
