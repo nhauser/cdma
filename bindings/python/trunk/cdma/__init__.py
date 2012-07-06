@@ -22,6 +22,10 @@
 #
 
 from cdmacore import _factory
+from cdmacore import Group
+from cdmacore import Dataset
+from cdmacore import DataItem
+from cdmacore import Dimension
 
 #here we need most probably a more sophisticated configuration facility
 _factory.init("/usr/lib/cdma/plugins")

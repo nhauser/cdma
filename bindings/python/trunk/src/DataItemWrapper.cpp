@@ -57,6 +57,18 @@ std::list<IDimensionPtr> DataItemWrapper::dimensions() const
 }
 
 //-----------------------------------------------------------------------------
+std::string DataItemWrapper::__str__() const
+{
+    std::stringstream ss;
+
+    ss<<"DataItem ["<<this->name()<<"] type="<<typeid2numpystr[this->type()];
+    ss<<" shape=( ";
+    for(auto v: this->shape()) ss<<v<<" ";
+    ss<<")";
+    return ss.str();
+}
+
+//-----------------------------------------------------------------------------
 ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
                                   const std::vector<size_t> & shape)
 {
@@ -75,6 +87,7 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
     return ArrayWrapper(ptr()->getData(_offset,_shape));
 }
 
+
 //===============helper function creating the python class=====================
 void wrap_dataitem()
 {
@@ -92,6 +105,7 @@ void wrap_dataitem()
         .add_property("description",&DataItemWrapper::description)
         .add_property("dims",&__dimensions__<DataItemWrapper>)
         .def("__getitem__",&__getitem__<DataItemWrapper>)
+        .def("__str__",&DataItemWrapper::__str__)
         ;
         
 }
