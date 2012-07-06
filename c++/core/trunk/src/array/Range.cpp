@@ -81,6 +81,7 @@ void Range::set(std::string name, long first, long last, long stride, bool reduc
   m_first    = first;
   m_stride   = stride;
   m_name     = name;
+    
   if( m_last < m_first )
   {
     m_length = ((m_last - m_first) / m_stride) - 1;
@@ -89,7 +90,6 @@ void Range::set(std::string name, long first, long last, long stride, bool reduc
   {
     m_length = ((m_last - m_first) / m_stride) + 1;
   }
-  
   m_reduced  = reduced;
 }
 
