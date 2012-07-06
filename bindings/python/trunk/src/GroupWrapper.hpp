@@ -102,6 +102,10 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         \return dimension pointers
         */
         std::list<IDimensionPtr> dimensions() const;
+
+        //---------------------------------------------------------------------
+        //! string representation for Python
+        std::string __str__() const;
 };
         
 

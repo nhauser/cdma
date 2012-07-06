@@ -21,6 +21,8 @@
  *     Author: Eugen Wintersberger <eugen.wintersberger@desy.de>
  */
 
+#include <sstream>
+
 #include "GroupWrapper.hpp"
 #include "DataItemWrapper.hpp"
 #include "WrapperHelpers.hpp"
@@ -33,16 +35,16 @@ object GroupWrapper::__getitem__(const std::string &name) const
 {
     //check groups
     for(auto v: ptr()->getGroupList())
-        if(path == v->getShortName()) return object(new GroupWrapper(v));
+        if(name == v->getShortName()) return object(new GroupWrapper(v));
 
     //check data items
     for(auto v: ptr()->getDataItemList())
-        if(path == v->getShortName()) return object(new DataItemWrapper(v));
+        if(name == v->getShortName()) return object(new DataItemWrapper(v));
 
 
     //throw an exception here
     throw_PyKeyError("Cannot find object ["+name+"] in group ["+
-                     name()+"]!");
+                     this->name()+"]!");
 }
 
 //----------------------------------------------------------------------------
@@ -55,6 +57,14 @@ GroupWrapper GroupWrapper::parent() const
 GroupWrapper GroupWrapper::root() const
 {
     return GroupWrapper(ptr()->getRoot());
+}
+
+//----------------------------------------------------------------------------
+std::string GroupWrapper::__str__() const
+{
+    std::stringstream ss;
+    ss<<"Group ["<<this->location()<<"]";
+    return ss.str();
 }
 
 //----------------------------------------------------------------------------
@@ -96,7 +106,7 @@ static const char __group_doc_root[]   = "reference to the root group";
 static const char __group_doc_childs[] = "list of child objects";
 static const char __group_doc_groups[] = "list of child groups";
 static const char __group_doc_dims[]   = "list of dimensions";
-static const char __group_doc_items[]  = "list of data items;
+static const char __group_doc_items[]  = "list of data items";
 void wrap_group()
 {
     //create the wrapper for the group container class
@@ -113,6 +123,7 @@ void wrap_group()
         .add_property("groups",&GroupWrapper::groups,__group_doc_groups)
         .add_property("dims",&__dimensions__<GroupWrapper>,__group_doc_dims)
         .def("__getitem__",&GroupWrapper::__getitem__)
+        .def("__str__",&GroupWrapper::__str__)
         ;
 }
 
