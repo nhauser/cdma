@@ -1,4 +1,5 @@
 *.nxs
 *.o
 *.swp
+*.pyc
 build/

@@ -1,24 +1,34 @@
 from matplotlib import pyplot
 import numpy
 import cdma
-import h5py
 
-h5 = h5py.File("demo.nxs")
-h5data = h5["/D1A_016_D1A/image#20/data"][...]
-print h5data.dtype
-h5.close()
+def print_attribute(attr):
+    ostr = "attribute ["+attr.name + "]:"
+    ostr += " size=%i," %(attr.size)
+    ostr += " type=%s," %(attr.type)
+    ostr += " shape=%s," %(attr.shape.__str__())
+    ostr += " value=%s" %(attr[...].__str__())
 
-dataset = cdma.open_dataset("file:demo.nxs")
+    print ostr 
+
+def print_item(item):
+    ostr = "dataitem ["+item.name+"]:"
+    ostr += " type=%s," %(item.type)
+    ostr += " rank=%i," %(item.rank)
+    ostr += " shape=%s," %(item.shape.__str__())
+    ostr += "\ndata = \n%s" %(item[...].__str__())
+
+    print ostr
+
+dataset = cdma.open_dataset("file:../data/demo.nxs")
 
 print "scan group..."
 scan_group = dataset["D1A_016_D1A"]
-#start_time = dataset["start_time"][...]
-#print start_time
-print "attribute size: ",scan_group.attrs["name"].size
-print "attribute name: ",scan_group.attrs["name"].name
-print "attribute type: ",scan_group.attrs["name"].type
-print "attribute shape: ",scan_group.attrs["name"].shape
-print "attribute data: ",scan_group.attrs["name"][...]
+for i in scan_group.items:
+    print i.name,i.type,i.size
+
+print_attribute(scan_group.attrs["name"])
+
 print scan_group.dims
 
 print "read data ..."
@@ -29,16 +39,16 @@ image_group = scan_group["image#20"]
 
 print "data item ..."
 data= image_group["data"]
-print data.dims
-print len(data.dim)
-print data.dim[3]
-print "dataitem type: ",data.type
-print "dataitem rank: ",data.rank
-print "dataitem shape: ",data.shape
-print data[0:100:2,50:1000:20]
+print_item(data)
+#print data[0:100:2,50:1000:20]
 
-pyplot.subplot(121)
+for a in data.attrs:
+    print a
+
+pyplot.figure()
 pyplot.imshow(numpy.log10(data[...]))
-pyplot.subplot(122)
-pyplot.imshow(numpy.log10(h5data))
+pyplot.figure()
+pyplot.imshow(numpy.log10(data[:,512:]))
+pyplot.figure()
+pyplot.imshow(numpy.log10(data[:,:512]))
 pyplot.show()

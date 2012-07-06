@@ -131,6 +131,10 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         std::list<IDimensionPtr> dimensions() const;
 
         //---------------------------------------------------------------------
+        //! string representation for Python
+        std::string __str__() const;
+
+        //---------------------------------------------------------------------
         /*! 
         \brief read scalar data
 
