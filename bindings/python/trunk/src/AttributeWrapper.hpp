@@ -94,6 +94,10 @@ class AttributeWrapper
                          const std::vector<size_t> &shape) 
         { return ArrayWrapper();}
 
+        //---------------------------------------------------------------------
+        //! plot string representation
+        std::string __str__() const;
+
 };
 
 //========================implementation of template methods===================

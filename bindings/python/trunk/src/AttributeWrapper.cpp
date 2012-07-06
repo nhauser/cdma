@@ -21,6 +21,7 @@
  *     Author: Eugen Wintersberger <eugen.wintersberger@desy.de>
  */
 
+#include <sstream>
 #include "AttributeWrapper.hpp"
 
 //-----------------------------------------------------------------------------
@@ -63,6 +64,17 @@ template<> std::string AttributeWrapper::get<std::string>() const
     return _ptr->getStringValue();
 }
 
+//-----------------------------------------------------------------------------
+std::string AttributeWrapper::__str__() const
+{
+    std::stringstream ss;
+    ss<<"Attribute ["<<name()<<"] type="<<typeid2numpystr[type()];
+    ss<<" shape=( ";
+    for(auto v: shape()) ss<<v<<" ";
+    ss<<")";
+    return ss.str();
+}
+
 //========================wrap attribute objects===============================
 void wrap_attribute()
 {
@@ -72,5 +84,6 @@ void wrap_attribute()
         .add_property("shape",&__shape__<AttributeWrapper>)
         .add_property("type",&__type__<AttributeWrapper>)
         .def("__getitem__",&__getitem__<AttributeWrapper>)
+        .def("__str__",&AttributeWrapper::__str__)
         ;
 }
