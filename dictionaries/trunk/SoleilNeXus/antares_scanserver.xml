@@ -191,6 +191,11 @@
     <path>/{NXentry}/{NXdata}/data_*@long_name=*/eventsinrun*</path>
     <call>AttributeFilter</call>
     <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXentry}/{NXinstrument}/Xia*{NXdetector}</path>
+      <call>CreateVirtualItem</call>
+      <call>HarvestEquipmentAttributes</call>
+    </attribute>
   </item>
   <item key="beamEnergy">
     <path>/{NXentry}/{NXdata}/actuator_*@long_name=*/energy*</path>
