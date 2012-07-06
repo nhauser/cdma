@@ -26,14 +26,28 @@
 
 #include<cdma/navigation/IContainer.h>
 #include "AttributeWrapper.hpp"
+#include "PythonIterator.hpp"
 
 using namespace cdma;
 
+/*! 
+\brief manages attributes of an object
+
+This type provides an interface to the attribute attached to an object
+satisfying the IContainer interface. 
+Each type implementing the IContainer interface has a public member variable
+of type AttributeManager. 
+\code
+
+\encode
+*/
 template<typename CPTR> class AttributeManager
 {
     private:
         CPTR _ptr; //!< pointer to the container object
     public:
+        //===================public types======================================
+        typedef AttributeWrapper value_type;
         //===================public constructors===============================
         //! default constructor
         AttributeManager():_ptr(nullptr) {}
@@ -61,6 +75,7 @@ template<typename CPTR> class AttributeManager
         }
 
         //====================attribute related methods========================
+        //! retrieve attribute by name
         AttributeWrapper __getitem__str(const std::string &name) const 
         {
             IAttributePtr ptr = nullptr;
@@ -72,20 +87,48 @@ template<typename CPTR> class AttributeManager
         }
 
         //---------------------------------------------------------------------
-        size_t __len__() const
+        //! create a list
+        AttributeWrapper operator[](size_t i) const
+        {
+            size_t cnt=0;
+            for(auto v: this->_ptr->getAttributeList())
+            {
+                if(cnt == i) return AttributeWrapper(v);
+                cnt++;
+            }
+
+        }
+
+        //---------------------------------------------------------------------
+        /*!
+        \brief number of attributes
+
+        Returns the number of attributes managed by this instance of
+        AttributeManager. 
+        \return number of attributes
+        */
+        size_t size() const
         {
             return this->_ptr->getAttributeList().size();
         }
 
-        
+        PyIterator<AttributeManager> create_iterator() const
+        {
+            return PyIterator<AttributeManager>(*this,0);
+        }
+
+
 };
 
 //===================implementation of template methods========================
 template<typename CPTR> void wrap_attribute_manager(const char *name)
 {
+    wrap_pyiterator<AttributeManager<CPTR> >(std::string(name)+"Iterator");
+
     class_<AttributeManager<CPTR>>(name)
         .def("__getitem__",&AttributeManager<CPTR>::__getitem__str)
-        .def("__len__",&AttributeManager<CPTR>::__len__)
+        .def("__len__",&AttributeManager<CPTR>::size)
+        .def("__iter__",&AttributeManager<CPTR>::create_iterator)
         ;
 }
 
