@@ -15,8 +15,8 @@
 	<version>3.2.0-SNAPSHOT</version>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.core</connection>
-		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.core</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/core/org.cdma.core/branches/soleil</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/core/org.cdma.core/branches/soleil</developerConnection>
 	</scm>
 
 	<build>
