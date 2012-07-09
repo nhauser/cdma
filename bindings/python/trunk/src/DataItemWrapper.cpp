@@ -89,6 +89,20 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
 
 
 //===============helper function creating the python class=====================
+static const char __dataitem_doc_dim [] = 
+"Dimension manager attribute of the data item";
+static const char __dataitem_doc_rank [] = 
+"number of dimensions (rank) of the dataitem";
+static const char __dataitem_doc_shape [] =
+"number of elements along each dimension (shape) of the data item";
+static const char __dataitem_doc_size [] = 
+"total number of elements in the data item";
+static const char __dataitem_doc_unit [] = 
+"string representing the physical unit of the data stored in the item";
+static const char __dataitem_doc_type [] = 
+"string with the numpy type used to store the data";
+static const char __dataitem_doc_description [] = 
+"description of the dataitem";
 void wrap_dataitem()
 {
     wrap_container<IDataItemPtr>("DataItemContainer");
@@ -96,13 +110,14 @@ void wrap_dataitem()
     wrap_dimensionmanager();
 
     class_<DataItemWrapper,bases<ContainerWrapper<IDataItemPtr>> >("DataItem")
-        .def_readwrite("dim",&DataItemWrapper::dim)
-        .add_property("rank",&DataItemWrapper::rank)
-        .add_property("shape",&__shape__<DataItemWrapper>)
-        .add_property("size",&DataItemWrapper::size)
-        .add_property("unit",&DataItemWrapper::unit)
-        .add_property("type",&__type__<DataItemWrapper>)
-        .add_property("description",&DataItemWrapper::description)
+        .def_readwrite("dim",&DataItemWrapper::dim,__dataitem_doc_dim)
+        .add_property("rank",&DataItemWrapper::rank,__dataitem_doc_rank)
+        .add_property("shape",&__shape__<DataItemWrapper>,__dataitem_doc_shape)
+        .add_property("size",&DataItemWrapper::size,__dataitem_doc_size)
+        .add_property("unit",&DataItemWrapper::unit,__dataitem_doc_unit)
+        .add_property("type",&__type__<DataItemWrapper>,__dataitem_doc_type)
+        .add_property("description",&DataItemWrapper::description,
+                      __dataitem_doc_description)
         .add_property("dims",&__dimensions__<DataItemWrapper>)
         .def("__getitem__",&__getitem__<DataItemWrapper>)
         .def("__str__",&DataItemWrapper::__str__)
