@@ -30,9 +30,7 @@ for a in data.attrs:
     print a
 
 pyplot.figure()
-pyplot.imshow(numpy.log10(data[...]))
+pyplot.contourf(numpy.log10(data[...]),40)
 pyplot.figure()
-pyplot.contourf(numpy.log10(data[:,512:]))
-pyplot.figure()
-pyplot.contourf(numpy.log10(data[:,:256]))
+pyplot.contourf(numpy.log10(data[512:,:512]),40)
 pyplot.show()
