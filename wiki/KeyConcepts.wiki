@@ -91,12 +91,12 @@ A concept in the CDMA describes a measure or a physical notion. _The concept *sh
 Indeed the concept defines for a measure: its description, units, highly recommended attributes and the various synonyms that can be used to access it.
 
 For instance a concept for a monochromator energy concept could be compound of the following:
-- description: "The value of the energy of the monochromator"
-- units: "eV"
-- attributes: 
-   - equipment: name of the equipment it belongs too
-   - scan_sequence: name of the scan acquisition
-- synonyms: mono_energy, energy_mono, monochromator_energy
+  * description: "The value of the energy of the monochromator"
+  * units: "eV"
+  * attributes: 
+    * equipment: name of the equipment it belongs too
+    * scan_sequence: name of the scan acquisition
+  * synonyms: mono_energy, energy_mono, monochromator_energy
 ...
 
 *Concepts do not determine the way data should be stored*, but only what the plug-in should be able to return for that data. Doing so will permit application programmers to only care about the data itself.
