@@ -74,19 +74,38 @@ Engines are not directly used by client applications. But plug-ins (see below) u
 = The dictionary mechanism =
 ----
 
-The point is: the way the data is organized into data files is no longer an issue on the data analysis software side.
+The point is: the way data are organized, into data files, is no longer an issue on the data analysis software side.
 
 Data analysis application programmers should never adapt their source code to a particular data file structure.
-Actually, data should be always accessed by their names, regardless the data file organization. This is possible through the CDMA dictionary mechanism.
+Actually, data should be always accessed by their names, regardless the data file organization. This is possible through the CDMA Extended Dictionary Mechanism.
 
-This mechanism introduce two notions:
+This mechanism introduce tree notions:
+  * Concepts
   * Keywords
   * Keywords mapping
 
+== Concepts ==
+
+A concept in the CDMA describes a measure or a physical notion. _The concept *should* be defined by scientists_. It is a kind of agreement on what is expected when asking for it.
+
+Indeed the concept defines for a measure: its description, units, highly recommended attributes and the various synonyms that can be used to access it.
+
+For instance a concept for a monochromator energy concept could be compound of the following:
+- description: "The value of the energy of the monochromator"
+- units: "eV"
+- attributes: 
+   - equipment: name of the equipment it belongs too
+   - scan_sequence: name of the scan acquisition
+- synonyms: mono_energy, energy_mono, monochromator_energy
+...
+
+*Concepts do not determine the way data should be stored*, but only what the plug-in should be able to return for that data. Doing so will permit application programmers to only care about the data itself.
+
+
 == Keywords ==
 
-The keywords are names for measured and/or physical values. Client applications use only the keywords to access the data.
-Of course each keyword must have a unique definition. However, a definition may be named by more than an unique keyword: this is the synonyms mechanism (currently in development) introduced with the dictionary mechanism.
+The keywords are names for measures and/or physical values. Client applications use only the keywords to access the data.
+Of course each keyword must have a unique definition (see concept). However, a definition may be named by more than an unique keyword: this is the synonyms mechanism introduced with the Extended Dictionary Mechanism.
 A keyword can be very specific: _sample_chemical_formula_ can be related to the studied sample.
 It can be also very generic: _images_ can designate the images contained in a dataset, regardless the detector used to produce them.
 
