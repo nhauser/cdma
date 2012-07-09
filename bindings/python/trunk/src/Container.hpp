@@ -123,15 +123,30 @@ template<typename TPTR> class ContainerWrapper
 };
 
 //=============================================================================
+static const char __container_doc_attrs [] =
+"Reference to the attribute manager of this container type";
+static const char __container_doc_location [] = 
+"location of this container in the tree";
+static const char __container_doc_name [] = 
+"name of the container type";
+static const char __container_doc_short_name [] = 
+"short name of the container";
+static const char __container_doc_is_group [] = 
+"attribute which is true of the container object is a container, false otherwise";
 
 template<typename TPTR> void wrap_container(const char* name)
 {
     class_<ContainerWrapper<TPTR>>(name)
-        .def_readwrite("attrs",&ContainerWrapper<TPTR>::attrs)
-        .add_property("location",&ContainerWrapper<TPTR>::location)
-        .add_property("name",&ContainerWrapper<TPTR>::name)
-        .add_property("short_name",&ContainerWrapper<TPTR>::short_name)
-        .add_property("is_group",&ContainerWrapper<TPTR>::is_group)
+        .def_readwrite("attrs",&ContainerWrapper<TPTR>::attrs,
+                       __container_doc_attrs)
+        .add_property("location",&ContainerWrapper<TPTR>::location,
+                      __container_doc_location)
+        .add_property("name",&ContainerWrapper<TPTR>::name,
+                      __container_doc_name)
+        .add_property("short_name",&ContainerWrapper<TPTR>::short_name,
+                      __container_doc_short_name)
+        .add_property("is_group",&ContainerWrapper<TPTR>::is_group,
+                      __container_doc_is_group)
         ;
 }
 
