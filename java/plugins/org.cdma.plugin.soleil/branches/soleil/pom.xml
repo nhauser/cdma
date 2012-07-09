@@ -17,8 +17,8 @@
     This project is Soleil's NeXus plugin for the CDMA
   </description>
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.soleil</connection>
-		<developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.soleil</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/branches/soleil</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/branches/soleil/</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>
