@@ -46,8 +46,11 @@ TypeID DataItemWrapper::type() const
 //================overloaded scalar get template===============================
 template<> std::string DataItemWrapper::get<std::string>() const
 {
-    std::cout<<"Calling get string method ..."<<std::endl;
-    return ptr()->readString();
+    std::string s = ptr()->readString();
+    //this is a workaround which should be removed - I do not know where this
+    //error comes from
+    size_t ds = s.size()-this->size();
+    return std::string(s.begin(),s.end()-ds);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,10 +82,6 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
         _offset[i] = offset[i];
         _shape[i]  = shape[i];
     }
-    for(auto v: _offset) std::cout<<v<<" ";
-    std::cout<<std::endl;
-    for(auto v: _shape) std::cout<<v<<" ";
-    std::cout<<std::endl;
 
     return ArrayWrapper(ptr()->getData(_offset,_shape)->deepCopy());
 }

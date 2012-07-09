@@ -112,9 +112,9 @@ implement the IOObject interface.
 \param self object of type implementing IOObject
 \return string with numpy type string
 */
-template<typename WTYPE> std::string __type__(WTYPE &self)
+template<typename WTYPE> std::string __type__(WTYPE &o)
 {
-    return typeid2numpystr[self.type()];
+    return typeid2numpystr[o.type()];
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
     //if the data object itself is scalar we can only return a scalar value
     //in this case we ignore all arguments to __getitem__
-    if((o.shape().size()==0)||(o.type() == TypeID::STRING))
+    if((o.shape().size()==1)||(o.type() == TypeID::STRING))
             return read_scalar_data(o);
 
     //ok - we have a multidimensional data object. Now it depends on the 
@@ -149,7 +149,7 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
     else
         sel = create_selection(o,make_tuple<object>(selection));
 
-    std::cout<<sel<<std::endl;
+    //std::cout<<sel<<std::endl;
 
     //now we have the selection we need to read data - as CDMA actually does not
     //support strides others than 1 we have to fix this here

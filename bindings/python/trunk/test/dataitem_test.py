@@ -18,3 +18,13 @@ class dataitem_test(unittest.TestCase):
         for d in self.g.items:
             print d
 
+        #open a data group
+        g = d["image#20"]
+
+
+    def test_read_data(self):
+        pass
+
+
+
+
