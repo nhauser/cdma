@@ -83,8 +83,8 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
     std::cout<<std::endl;
     for(auto v: _shape) std::cout<<v<<" ";
     std::cout<<std::endl;
-    
-    return ArrayWrapper(ptr()->getData(_offset,_shape));
+
+    return ArrayWrapper(ptr()->getData(_offset,_shape)->deepCopy());
 }
 
 
