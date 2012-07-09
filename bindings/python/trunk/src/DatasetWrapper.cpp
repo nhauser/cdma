@@ -29,13 +29,19 @@
 
 
 //==============help function creating the python class=======================
+static const char __dataset_doc_title [] = "title of the dataset";
+static const char __dataset_doc_location [] = "location of the dataset";
+static const char __dataset_doc_root_group [] = "the root group of the dataset";
+
 void wrap_dataset()
 {
     class_<DatasetWrapper>("Dataset")
         .def(init<>())
-        .add_property("title",&DatasetWrapper::getTitle)
-        .add_property("location",&DatasetWrapper::getLocation)
-        .add_property("root_group",&DatasetWrapper::getRoot)
+        .add_property("title",&DatasetWrapper::getTitle,__dataset_doc_title)
+        .add_property("location",&DatasetWrapper::getLocation,
+                      __dataset_doc_location)
+        .add_property("root_group",&DatasetWrapper::getRoot,
+                      __dataset_doc_root_group)
         ;
 }
 
