@@ -252,50 +252,12 @@
   </dataset_model>
 
 <!-- ============================================
-==  CONFIG test: test files                    ==
+==  Global section                             ==
 ============================================= -->
-<!--
-  <dataset_model name="test">
-    <criteria>
-      <if exist="true" target="/{NXentry}/" />
-    </criteria>
-   
-    <parameters> 
-      <parameter name="test1">
-        <value type="exist" target="/{NXentry}/{NXinstrument}" test="true"/>
-      </parameter>
-      <parameter name="test2">
-        <value type="exist" target="/{NXentry}/{NXinstrument}" test="false"/>
-      </parameter>
-      <parameter name="test3">
-        <value type="name" target="/{NXentry}/{NXinstrument}" />
-      </parameter>
-      <parameter name="test4">
-        <value type="constant" constant="a_constant_value_for" />
-      </parameter>
-      <parameter name="test5">
-        <value type="value" target="/{NXentry}/title" />
-      </parameter>
-      <parameter name="test6">
-        <value type="equal" target="/{NXentry}/{NXinstrument}/Monochromator/exitSlitAperture" constant="29.94893023930332" test="true"/>
-      </parameter>
-      <parameter name="test7">
-        <value type="equal" target="/{NXentry}/{NXinstrument}/Monochromator/exitSlitAperture" constant="29.94893023930332" test="false"/>
-      </parameter>
-    
-    
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}" />
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" value="scanserver" />
-      </parameter>
-    </parameters>
-  
-  </dataset_model>
--->    
   <global>
+    <java>
      <set name="CDMA_DEBUG" value="true"/>
+    </java>
   </global>
 </configuration>
 
