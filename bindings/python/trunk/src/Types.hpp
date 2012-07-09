@@ -24,6 +24,8 @@
 #ifndef __TYPES_HPP__
 #define __TYPES_HPP__
 
+#include<iostream>
+#include<typeinfo>
 #include<map>
 
 extern "C"{
@@ -44,6 +46,10 @@ enum class TypeID { BYTE,   //!< signded char (8Bit)
                     STRING  //!< String type
                   };
 
+//! output operator
+std::ostream &operator<<(std::ostream &o,const TypeID &tid);
+
+
 //conversion map from names of numerical native types to TypeID
 static std::map<std::string,TypeID> typename2typeid = {
         {typeid(int8_t).name(),TypeID::BYTE},
@@ -52,6 +58,8 @@ static std::map<std::string,TypeID> typename2typeid = {
         {typeid(uint16_t).name(),TypeID::USHORT},
         {typeid(int32_t).name(),TypeID::INT},
         {typeid(uint32_t).name(),TypeID::UINT},
+        {typeid(int64_t).name(),TypeID::LONG},
+        {typeid(uint64_t).name(),TypeID::ULONG},
         {typeid(float).name(),TypeID::FLOAT},
         {typeid(double).name(),TypeID::DOUBLE},
         {typeid(std::string).name(),TypeID::STRING}};
@@ -61,6 +69,7 @@ static std::map<TypeID,size_t> typeid2size = {
         {TypeID::BYTE,sizeof(int8_t)}, {TypeID::UBYTE,sizeof(uint8_t)},
         {TypeID::SHORT,sizeof(int16_t)}, {TypeID::USHORT,sizeof(uint16_t)},
         {TypeID::INT,sizeof(int32_t)}, {TypeID::UINT,sizeof(uint32_t)},
+        {TypeID::LONG,sizeof(int64_t)},{TypeID::ULONG,sizeof(uint64_t)},
         {TypeID::FLOAT,sizeof(float)}, {TypeID::DOUBLE,sizeof(double)},
         {TypeID::STRING,sizeof(std::string)}};
 
