@@ -51,7 +51,7 @@ Actually, there are two things to consider when offering a generic data access m
 
 The raw data access is only related to a data format. It allows to read (or write) data items stored in specific files for a particular format (spec, tif, NeXus/hdf, ...)
 
-The data organization depends of the way an institute had decided to store data. For example Soleil can decide, for one specific beamline, to split the experimental data from each acquisition into a set of NeXus files; this set of files represent a so called 'dataset', from the cdma point of view. Desy may also use NeXus/hdf as physical data format but (surely) choosing another way of organize data.
+The data organization depends of the way an institute had decided to store data. For example Soleil can decide, for one specific beamline, to split the experimental data from each acquisition into a set of NeXus files; this set of files represent a so called 'dataset', from the cdma point of view. Desy may also use NeXus/hdf as physical data format but (surely) choosing another way of organizing data.
 
 Client applications only have to deal with CDMA's interfaces from the core library. Those interfaces are implemented through a plug-ins mechanism.
 
