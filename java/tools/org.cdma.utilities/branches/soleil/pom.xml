@@ -19,8 +19,8 @@
   </description>
 
   <scm>
-    <connection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.utilities</connection>
-    <developerConnection>scm:svn:http://cdma.googlecode.com/svn/java/branches/soleil/org.gumtree.data.utilities</developerConnection>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/branches/soleil</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/branches/soleil</developerConnection>
   </scm>
 
   <developers>
