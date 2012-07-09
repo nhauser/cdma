@@ -107,9 +107,6 @@ class DatasetWrapper
         { 
             return GroupWrapper(_dataset->getRootGroup()); 
         }
-
-
-
 };
 
 #endif
