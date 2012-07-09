@@ -1,0 +1,40 @@
+/*! 
+\mainpage CDMA Python manual
+
+This Python module provides bindings to the CDMA C++ library. 
+The documentation consists into two parts: 
+ - \ref developer_doc
+ - and \ref user_doc
+
+The former one is only interesting for you if you plan to contribute code to
+this Python binding. If you only want to use the binding from Python read the
+user documentation.
+
+\section installation Installation
+
+\subsection installation_sources Installing from sources
+The module follows the standard Python installation procedure using distutils. 
+To build the code run 
+\verbatim
+$> python setup.py build 
+\endverbatim
+in the root of the modules source directory. Installation starts with 
+\verbatim
+$> python setup.py install
+\endverbatim
+which installs the module in the default location of your Python installation.
+In most cases this would require you to have administrative permissions on the
+system you want to install the module. 
+If you want the module installed in your local home directory (without admin
+permissions required) you can use 
+\verbatim
+$> python setup.py install --home=<PATH TO YOUR LOCAL DIRECTORY> 
+\endverbatim
+which will install the module to a user defined location. 
+In the later case you may need to add the installation path to the PYTHONPATH
+environment variable to make the module available to your Python interpreter. 
+*/
+
+
+
+
