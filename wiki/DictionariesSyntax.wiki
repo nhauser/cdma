@@ -10,10 +10,9 @@ The Extended Dictionary Mechanism is provided by the Core. It is a non-customisa
 
 The dictionary describes how data should be presented, its main properties and how to get it. 
 A CDMA dictionary is compound of 3 parts:
-  * the [#Concept_file concepts file] which presents physical measurements and what to expect when getting it
-  * the [#View_file view file] which structurates the data tree that the application will use
-  * the [#Mapping_file mapping file] which describes how a particular plug-in will access and construct its data
-
+  * the [ConceptDefSyntax concepts document] which presents physical measurements and what to expect when getting it
+  * the [KeyDefSyntax view documents] which structurates the data tree that the application will use
+  * the [MapDefSyntax mapping documents] which describes how a particular plug-in will access and construct its data
 
 = Concepts file =
 
