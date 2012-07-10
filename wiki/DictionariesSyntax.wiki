@@ -26,8 +26,11 @@ Those parts are used internally by the mechanism, they are visible for the appli
 Both view and mapping documents are mandatory when using the dictionary. The former one informs on what is searchable from the application. The latter one defines where and how to find data in the underlying data source.
 
 The most often, the application developper will define its view of the data source according a particular data format. So he will use keywords from that plug-in. As the mapping document is dependent of that plug-in, there will be a direct association between view keywords and mapping ones.
-So its application will work fine with that specific plug-in. If he wants to make it '_public_' and available for other data formats he has no guarantee that same keywords are availables with them.
+So its application will work fine with that specific plug-in. If he wants to make it '_public_' and available for other data formats he has no guarantee that same keywords are available with them.
+
+[http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction1.png]
 
 The concept file will permit to avoid that difficulty. One of its main goal is to allow applications to switch plug-ins. The *concept file defines synonyms* for a keyword. 
 When found that document becomes the mediator between view and mapping. Both *keywords from view and mapping are linked to the corresponding concept using the synonym*. Therefore, while searching a data using a keyword, the user gets the data translated in the corresponding plug-in.
 
+[http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction2.png]
