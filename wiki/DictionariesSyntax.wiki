@@ -21,7 +21,7 @@ They all works with keywords:
 
 Those parts are used internally by the mechanism, they are visible for the application developper. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
 
-= Interactions =
+= General informations =
 
 Both view and mapping documents are mandatory when using the dictionary. The former one informs on what is searchable from the application. The latter one defines where and how to find data in the underlying data source.
 
