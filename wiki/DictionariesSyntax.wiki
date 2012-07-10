@@ -2,11 +2,25 @@
 
 Welcome to the dictionaries general documentation. It describes how CDMA dictionaries works and their major interactions.
 
-The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the extended dictionary mechanism.
+The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the Extended Dictionary Mechanism.
 
 = Introduction =
 
-The Extended Dictionary Mechanism is provided by the Core. It is a non-customisable service: the behaviour is the same what ever the plug-in is.
+The Extended Dictionary Mechanism is provided by the Core. It is a non-customisable service (i.e. interfaces to implement): the behaviour is the same what ever the plug-in is. It permits to have a virtual view, that is independant and quite different, of the underlying data format.
+
+The dictionary describes how data should be presented, its main properties and how to get it. 
+A CDMA dictionary is compound of 3 parts:
+  * the [#Concept_file concepts file] which presents physical measurements and what to expect when getting it
+  * the [#View_file view file] which structurates the data tree that the application will use
+  * the [#Mapping_file mapping file] which describes how a particular plug-in will access and construct its data
 
 
-= Content =
+= Concepts file =
+
+
+
+= View file =
+
+
+
+= Mapping file =
