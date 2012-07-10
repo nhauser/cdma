@@ -11,5 +11,23 @@ The Extended Dictionary Mechanism is provided by the Core. It is a non-customisa
 The dictionary describes how data should be presented, its main properties and how to get it. 
 A CDMA dictionary is compound of 3 parts:
   * the [ConceptDefSyntax concepts document] which presents physical measurements and what to expect when getting it
-  * the [KeyDefSyntax view documents] which structurates the data tree that the application will use
+  * the [KeyDefSyntax view documents] which organize the data tree that the application will use
   * the [MapDefSyntax mapping documents] which describes how a particular plug-in will access and construct its data
+
+They all works with keywords:
+  * the concept defines a meaning for a keyword
+  * the view defines how keywords are organized together
+  * the mappging defines how to construct data for that keyword
+
+Those parts are used internally by the mechanism, they are visible for the application developper. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
+
+= Interactions =
+
+Both view and mapping documents are mandatory when using the dictionary. The former one informs on what is searchable from the application. The latter one defines where and how to find data in the underlying data source.
+
+The most often, the application developper will define its view of the data source according a particular data format. So he will use keywords from that plug-in. As the mapping document is dependent of that plug-in, there will be a direct association between view keywords and mapping ones.
+So its application will work fine with that specific plug-in. If he wants to make it '_public_' and available for other data formats he has no guarantee that same keywords are availables with them.
+
+The concept file will permit to avoid that difficulty. One of its main goal is to allow applications to switch plug-ins. The *concept file defines synonyms* for a keyword. 
+When found that document becomes the mediator between view and mapping. Both *keywords from view and mapping are linked to the corresponding concept using the synonym*. Therefore, while searching a data using a keyword, the user gets the data translated in the corresponding plug-in.
+
