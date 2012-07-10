@@ -3,8 +3,9 @@
 = CDMA Documentation =
 
   * [DictionariesSyntax Dictionaries]
-    * [DataDefSyntax Data definition documents]
-    * [MapDefSynatx Mapping documents]
+    * [ConceptDefSyntax Data definition documents]
+    * [MapDefSyntax Mapping documents]
+    * [KeyDefSyntax View documents]
   * [CppImpl C++]
     * [CppClient Client application development]
     * [CppGuideLines Programmation guidelines]
