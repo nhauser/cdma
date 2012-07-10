@@ -1,0 +1,17 @@
+#summary Dictionaries general documentation
+
+Welcome to the dictionaries general documentation. It describes how CDMA dictionaries works and their major interactions.
+
+The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the extended dictionary mechanism.
+
+= Introduction =
+
+The Extended Dictionary Mechanism is provided by the Core. It is a non-customisable service: the behaviour is the same what ever the plug-in is.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
