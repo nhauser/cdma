@@ -13,13 +13,3 @@ A CDMA dictionary is compound of 3 parts:
   * the [ConceptDefSyntax concepts document] which presents physical measurements and what to expect when getting it
   * the [KeyDefSyntax view documents] which structurates the data tree that the application will use
   * the [MapDefSyntax mapping documents] which describes how a particular plug-in will access and construct its data
-
-= Concepts file =
-
-
-
-= View file =
-
-
-
-= Mapping file =
