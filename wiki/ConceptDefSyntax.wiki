@@ -20,9 +20,14 @@ A concept is compound of the following things:
   * a list of synonym keywords (that come from institutes mapping)
 
 Instead of thinking in therms of path in a data source, the user will be able to think in physic therms. Indeed the intellectual process while programing becomes something like: 
+
 "I want the aperture size of the Scienta detector for my algorithm" 
+
 and not any more: 
-"I need the data located here: '/NXentry/NXinstrument/Scienta{NXdetector}/Aperture_Size{NXtechnical_data}/data'".
+
+"I need the data located here: 
+
+'/NXentry/NXinstrument/Scienta{NXdetector}/Aperture_Size{NXtechnical_data}/data'".
 
 = Concept documents =
 
