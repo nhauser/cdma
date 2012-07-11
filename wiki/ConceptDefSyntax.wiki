@@ -1,13 +1,15 @@
-#summary presents physical measurements and what to expect when getting it.
+#summary concept document presents physical measurements and what to expect when getting it.
 
 = Introduction =
 
-Add your content here.
+The concept document aims to present measurements' properties what ever the data format is. It defines what is expected by the information system for a particular physical measurement.
+
+A concept dictionary is the key to permit interoperability of a software application between different data formats of a similar experiment from various institutes.
+
+= Concept's elements =
 
 
-= Details =
+= Concept documents =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+
+= Concept in action =
