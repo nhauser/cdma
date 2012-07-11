@@ -34,3 +34,12 @@ The concept file will permit to avoid that difficulty. One of its main goal is t
 When found that document becomes the mediator between view and mapping. Both *keywords from view and mapping are linked to the corresponding concept using the synonym*. Therefore, while searching a data using a keyword, the user gets the data translated in the corresponding plug-in.
 
 [http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction2.png]
+
+
+= Extended Dictionary mechanism =
+
+This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
+That "service" is provided in “Core” see package org.cdma.data.dictionary.
+
+The association key/path is done by `ExtendedDictionary`. The `LogicalGroup` will instantiate an `ExtendedDictionary` and give it all necessary informations to reach key and mapping files.
+
