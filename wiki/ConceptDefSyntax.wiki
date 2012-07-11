@@ -14,11 +14,11 @@ Each plug-in should apply its keywords and mapping in order to fit a concept doc
 = Concept's elements =
 
 A concept is compound of the following things:
-- a label that should be human friendly
-- a description explaining the physical measurement behind it
-- a unit that is expected
-- an attribute list (name and description) so software applications can rely on
-- a list of synonym keywords (that come from institutes mapping)
+  * a label that should be human friendly
+  * a description explaining the physical measurement behind it
+  * a unit that is expected
+  * an attribute list (name and description) so software applications can rely on
+  * a list of synonym keywords (that come from institutes mapping)
 
 
 = Concept documents =
