@@ -21,18 +21,58 @@ A concept is compound of the following things:
 
 = Concept documents =
 
-The concept document is the list of all available ones. 
+The concepts document is the list of all available concept. They are listed with no particular order.
 
-It is compound of 2 xml files, one that is global and the other one that is dependent from the selected view ( Factory.getView() )
+The fullest list of concept is compound of 2 concept files. One that manages general / generic physical measurements: [http://code.google.com/p/cdma/source/browse/dictionaries/trunk/concepts.xml concepts.xml] .
+The other one that is linked to the view that the application has set ( Factory.setView(String) ), indeed the view can specify a particular concept file to complete the global one.
+
+A concepts document is a XML file as following:
+
+{{{
+
+<!DOCTYPE dictionary SYSTEM "concepts_file.dtd">
+<dictionary name="common" version="1.0.0">
+
+	<concept label="concept_label">
+		<definition>
+			<description>Description of the physical measurement.</description>
+			<unit>Unit used to describ the measurement</unit>
+		</definition>
+
+		<attributes>
+			<attribute name="attribute_1">Description of the attribute 1</attribute>
+			<attribute name="attribute_2">Description of the attribute 2</attribute>
+		</attributes>
+
+		<synonyms>
+			<key>key_word_from_plugin_1</key>
+			<key>key_word_from_plugin_2</key>
+			<key>key_word_from_plugin_3</key>
+			<key>key_word_from_plugin_4</key>
+		</synonyms>
+	</concept>
+
+	<concept>
+...
+	</concept>
+
+</dictionary>
+
+}}}
 
 = Main idea and usage =
 
 Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk dictionaries part of the SVN repository].
 
+== Software developer ==
+
+While using the CDMA Extended Dictionary Mechanism, the developer should construct his view according a concept file. And consider items obtained using keywords as conform to the matching concept he choose.
+
+Such an approach will permits to abstract data format and have a functionality interoperability between various plug-ins.
+
 
 == Plug-in developer ==
 
-Attributes are not mandatory (no verification is done if plug-in respect it) but are highly recommended. It will permit to 
+Attributes specified in a concept are not mandatory (no verification is done if plug-in respect it) but are highly recommended. Indeed application developer will rely on them to make selection on data relevance. 
 
-
-== Software developer ==
+This is the plug-in developer responsibility to fit the maximum he can to a defined concept when writing his mapping. Then, when he publishes his work, he should also pick keywords from his mapping file and submit them as synonyms of the right concept.
