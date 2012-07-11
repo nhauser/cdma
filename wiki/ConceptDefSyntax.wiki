@@ -27,7 +27,7 @@ and not any more:
 
 "I need the data located here: 
 
-'/NXentry/NXinstrument/Scienta{NXdetector}/Aperture_Size{NXtechnical_data}/data'
+'/NXentry/NXinstrument/Scienta{NXdetector}/aperture_size{NXtechnical_data}/data'
 
 and seek for attributes and properties somewhere else."
 
