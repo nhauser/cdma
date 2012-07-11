@@ -2,14 +2,27 @@
 
 = Introduction =
 
-The concept document aims to present measurements' properties what ever the data format is. It defines what is expected by the information system for a particular physical measurement.
+A similar experiment, performed by various institutes, will store, almost the same physical measurements, in really different data formats. The concept dictionary is the key to permit software applications to have interoperability between different data formats.
 
-A concept dictionary is the key to permit interoperability of a software application between different data formats of a similar experiment from various institutes.
+The concept document aims to present each measurement's properties, whatever the data format is. For a particular physical measurement, it defines what is expected by the information system.
+
+When a data reduction application uses it (through the extended dictionary mechanism), it knows what to expect from various keywords it will.
+
+Each plug-in should apply its keywords and mapping in order to fit a concept document. The latter should be the referent for both plug-in developer (that right plug-ins' mapping) and application developer in order to have generic algorithm. Doing so will allow institutes to exchange and pool software applications.
+
 
 = Concept's elements =
+
+A concept is compound of the following things:
+- a label that should be human friendly
+- a description explaining the physical measurement behind it
+- a unit that is expected
+- an attribute list (name and description) so software applications can rely on
+- a list of synonym keywords (that come from institutes mapping)
 
 
 = Concept documents =
 
+The concept document is the list of all available ones. 
 
 = Concept in action =
