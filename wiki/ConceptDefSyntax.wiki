@@ -79,7 +79,7 @@ A concepts document is a XML file as following:
 
 Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk dictionaries part of the SVN repository].
 
-If no concepts document is found, specified or the view only refers keywords not listed in concept, synonyms mechanism will be disabled. The extended dictionary mechanism will still work but in a degraded mode: only a direct matching between view and mapping will be considered.
+If no concepts document is found, specified or the view only refers keywords not listed in concepts; then synonyms mechanism will be disabled. The extended dictionary mechanism will still work but in a degraded mode: only a direct matching between view and mapping will be considered.
 
 == Software developer ==
 
