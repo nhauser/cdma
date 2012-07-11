@@ -10,7 +10,6 @@ When a data reduction application uses it (through the extended dictionary mecha
 
 Each plug-in should apply its keywords and mapping in order to fit a concept document. The latter should be the referent for both plug-in developer (that right plug-ins' mapping) and application developer in order to have generic algorithm. Doing so will allow institutes to exchange and pool software applications.
 
-
 = Concept's elements =
 
 A concept is compound of the following things:
@@ -20,9 +19,20 @@ A concept is compound of the following things:
   * an attribute list (name and description) so software applications can rely on
   * a list of synonym keywords (that come from institutes mapping)
 
-
 = Concept documents =
 
 The concept document is the list of all available ones. 
 
-= Concept in action =
+It is compound of 2 xml files, one that is global and the other one that is dependent from the selected view ( Factory.getView() )
+
+= Main idea and usage =
+
+Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk dictionaries part of the SVN repository].
+
+
+== Plug-in developer ==
+
+Attributes are not mandatory (no verification is done if plug-in respect it) but are highly recommended. It will permit to 
+
+
+== Software developer ==
