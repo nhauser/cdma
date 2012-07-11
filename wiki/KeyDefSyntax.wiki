@@ -2,13 +2,15 @@
 
 = Introduction =
 
-Add your content here.
+The view file is defined at runtime by the higher application. It aims to:
+  * list accessible data for a data source
+  * organize data into a structure (that is human friendly or according the needs of the software)
 
-
-= Details =
+Only keywords listed in the view will be available to the application. It restrict the number of keywords usable. Indeed the full list of keywords for a particular mapping, or all the ones defined in a concepts file would make a legion. Therefore method listing available data items of data source would be useless.
 
 Below an example of the view file:
 {{{
+<!DOCTYPE data-def SYSTEM "view_file.dtd">
 <data-def name="DATA_REDUCTION"> 
     <group key="detectors"> 
         <group key="detector"> 
