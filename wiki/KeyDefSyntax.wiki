@@ -2,7 +2,9 @@
 
 = Introduction =
 
-The view file is defined at runtime by the higher application. It aims to:
+The view file is defined at runtime by the higher application. There is only one view active at a time.
+
+It aims to:
   * list accessible data for a data source
   * organize data into a structure (that is human friendly or according the needs of the software)
 
