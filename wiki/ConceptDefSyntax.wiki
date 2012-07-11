@@ -19,6 +19,11 @@ A concept is compound of the following things:
   * an attribute list (name and description) so software applications can rely on
   * a list of synonym keywords (that come from institutes mapping)
 
+Instead of thinking in therms of path in a data source, the user will be able to think in physic therms. Indeed the intellectual process while programing becomes something like: 
+"I want the aperture size of the Scienta detector for my algorithm" 
+and not any more: 
+"I need the data located here: '/NXentry/NXinstrument/Scienta{NXdetector}/Aperture_Size{NXtechnical_data}/data'".
+
 = Concept documents =
 
 The concepts document is the list of all available concept. They are listed with no particular order.
@@ -63,6 +68,8 @@ A concepts document is a XML file as following:
 = Main idea and usage =
 
 Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk dictionaries part of the SVN repository].
+
+If no concepts document is found, specified or the view only refers keywords not listed in concept, synonyms mechanism will be disabled. The extended dictionary mechanism will still work but in a degraded mode: only a direct matching between view and mapping will be considered.
 
 == Software developer ==
 
