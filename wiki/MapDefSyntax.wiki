@@ -2,10 +2,11 @@
 
 = Introduction =
 
-The *mapping document for a data source belongs to a plug-in*. It is its specific way of getting and constructing a data item. Each data source's physical measurement should have a mapping entry.
+The *mapping document for a data source belongs to a plug-in*. It is its specific way of getting and constructing a data item. Each data source's physical measurement should have a mapping entry. Each mapping entry should subscribe to a concept (whether in the global concepts document or in the one dedicated to an experiment). Therefore the resulting data item should conform to the concept it corresponds.
 
-A plug-in managing various experiment of different data source structure can have various mapping file (see [JavaPlugin#Customize_Extended_Dictionary_mechanism developing a plug-in]
+The fact that *mapping conforms to concepts* is under the *plug-in's responsibility*.
 
+A plug-in managing various experiment of different data source structure can have various mapping file (see [JavaPlugin#Customize_Extended_Dictionary_mechanism developing a plug-in] ).
 
 
 = Mapping syntax =
