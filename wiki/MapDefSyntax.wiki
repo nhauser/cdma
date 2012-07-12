@@ -41,16 +41,40 @@ The case of _comments_, here we only need to return the content of the node and 
   </item>
 }}}
 
+The case of a _total_image_, here we want to set an attribute containing the acquisition sequence's duration name (that is situated on another node):
+{{{
+  <item key="total_image">
+    <path>/{NXentry}/Scienta_Total{NXdata}/total_data</path>
+    <attribute name="duration">
+        <path>/{NXentry}/duration</path>
+    </attribute>
+  </item>
+}}}
 
-The case of _spectrums_xia_ mapping:
+The _samplePhi_ case, the measurement have been split among several nodes, so here we will call a method which aims to stack them into a virtual single one, according their names:
+{{{
+  <item key="samplePhi">
+    <path>/{NXentry}/{NXdata}/phi*</path>
+    <call>DataItemStackerByName</call>
+  </item>
+}}}
+
+The case of _spectrums_xia_ mapping. It is the most complicated we have. Indeed we want to return a data item, with some attributes _equipement_, region_of_equipment_. But all those informations do not belong to the node containing data. More over data is split among several nodes in the data source. So here we have to gather data into a big data item, harvest attributes using a generic method, and finally add a node by hand called _equipment_ that is also constructed by code execution. 
 {{{
   <item key="spectrums_xia">
+    <!-- open the path -->
     <path>/{NXentry}/{NXdata}/channel*</path>
+    <!-- stack  all previously found nodes into a big one -->
     <call>DataItemStackerByName</call>
+    <!-- set attributes of region and some other ones -->
     <call>HarvestSignalAttributes</call>
+    <!-- add manually an attribute called equipment -->
     <attribute name="equipment">
+      <!-- equipment name is based on the Xia detector and its region -->
       <path>/{NXentry}/{NXinstrument}/Xia*{NXdetector}</path>
+      <!-- for each Xia detector we add its region and equipment attribute -->
       <call>HarvestEquipmentAttributes</call>
+      <!-- we link created attributes to created nodes according their region -->
       <call>SelectNodeByRegionAttribute</call>
     </attribute>
   </item>
