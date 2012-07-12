@@ -106,7 +106,6 @@ For instance a concept for a monochromator energy concept could be compound of t
   * units: "eV"
   * attributes: 
     * equipment: name of the equipment it belongs too
-    * scan_sequence: name of the scan acquisition
   * synonyms: mono_energy, energy_mono, monochromator_energy
 ...
 
