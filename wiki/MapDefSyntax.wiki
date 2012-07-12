@@ -8,13 +8,24 @@ The fact that *mapping conforms to concepts* is under the *plug-in's responsibil
 
 A plug-in managing various experiment of different data source structure can have various mapping file (see [JavaPlugin#Customize_Extended_Dictionary_mechanism developing a plug-in] ).
 
+A plug-in's mapping file should be (but not inevitably) the same one for a Java or a C++ plug-in of the same data source.
+
+All mappings files for a specific plug-in are searched in [http://code.google.com/p/cdma/source/browse/dictionaries/trunk dictionaries folder] under the institute's plug-in ID.
+
+= Mapping principles =
+
+The mapping document is an XML file, analysed by the _ExtendedDictionary_ at its loading. That's why it must respect a given DTD ( see [http://code.google.com/p/cdma/source/browse/dictionaries/trunk/concepts_file.dtd concepts_file.dtd] ).
+
+In the mapping file, the plug-in developer specifies things to do for each entry. The aim is to construct a data item fitting the concept it corresponds to.
+
+For each entry, to obtain the data item, there are mainly 2 steps:
+  * the construction of the data item (name, shape, type, location, matrix...)
+  * the construction of its attributes
+
+For each step of the item construction, there are 2 commands (declared using a XML mark-up) available in mapping (that can be repeated as many times as requested):
+  * the opening of a _path_ in the data source
+  * the execution at runtime of a specific method (see [JavaPlugin#Customize_runtime_code_execution runtime code execution])
+
+While constructing the item, the result of each executed command is re-injected as in the context of the next execution.
 
 = Mapping syntax =
-
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
