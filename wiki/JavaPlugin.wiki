@@ -17,6 +17,7 @@
  * [#Optional_modules_to_customize Optional modules to customize]
    * [#Customize_navigation Customize navigation]
    * [#Customize_Extended_Dictionary_mechanism Customize Extended Dictionary mechanism]
+   * [#Customize_runtime_code_execution Customize runtime code execution]
 
 
 
@@ -553,5 +554,8 @@ As the entire Extended Dictionary mechanism is manipulated using interfaces (eve
 Note: it is very important to not change the way view definition XML file are loaded. Particularly to respect the view file DTD.
 
 
+[#Content back to top]
+
+== Customize runtime code execution ==
 
 [#Content back to top]
