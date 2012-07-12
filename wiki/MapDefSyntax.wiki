@@ -2,7 +2,13 @@
 
 = Introduction =
 
-Add your content here.
+The *mapping document for a data source belongs to a plug-in*. It is its specific way of getting and constructing a data item. Each data source's physical measurement should have a mapping entry.
+
+A plug-in managing various experiment of different data source structure can have various mapping file (see [JavaPlugin#Customize_Extended_Dictionary_mechanism developing a plug-in]
+
+
+
+= Mapping syntax =
 
 
 = Details =
