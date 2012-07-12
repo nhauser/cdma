@@ -73,6 +73,14 @@ Engines are not directly used by client applications. But plug-ins (see below) u
 
 == Whole working chain ==
 
+The schema below summarize the data access components:
+
+[http://cdma.googlecode.com/svn/wiki/images/cdma_schema2.png]
+
+In this schema we suppose the following things:
+  * the DESY institute produces TIFF as well as NeXus files, so the DESY plug-in should use both TIFF & NeXus format engines
+  * ANSTO produces NetCdf files only
+  * SOLEIL produces NeXus files only
 
 = The dictionary mechanism =
 ----
