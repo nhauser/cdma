@@ -14,7 +14,7 @@ The namespace of the CDMA core library is `cdma`.
 In order to avoid name conflicts and to guarantee an uniform way for class naming when developing engines and plugins, the CDMA project uses the following convention:
 
   * The namespace for each engine is: `cdma::<engine_name>` (ex: `cdma::nexus`, `cdma::spec`)
-  * The namespace for each plugin is: `cdma::<institute_name>::<plugin_name>` (ex: `cdma::soleil::nexus`, `cdma::desy::spec`)
+  * The namespace for each plugin is: `cdma::<institute_name>::<plugin_name>` (ex: `cdma::soleil::nexus`, `cdma::desy::spec`) or `cdma::<institute_name>` (ex: `cdma::soleil`, `cdma::desy`) if the access to data produced by an institute in managed through a single plug-in.
 
 == Class names ==
 
