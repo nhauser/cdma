@@ -2,11 +2,11 @@
 
 Welcome to the dictionaries general documentation. It describes how CDMA dictionaries works and their major interactions.
 
-The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the Extended Dictionary Mechanism.
+The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the _dictionary mechanism_.
 
 = Introduction =
 
-The Extended Dictionary Mechanism is provided by the Core. It is a non-customisable service (i.e. interfaces to implement): the behaviour is the same what ever the plug-in is. It permits to have a virtual view, that is independant and quite different, of the underlying data format.
+The _dictionary mechanism_ is provided by the Core. It is a non-customisable service (i.e. interfaces to implement): the behaviour is the same what ever the plug-in is. It permits to have a virtual view, that is independent and quite different, of the underlying data format.
 
 The dictionary describes how data should be presented, its main properties and how to get it. 
 A CDMA dictionary is compound of 3 parts:
@@ -17,7 +17,7 @@ A CDMA dictionary is compound of 3 parts:
 They all works with keywords:
   * the concept defines a meaning for a keyword
   * the view defines how keywords are organized together
-  * the mappging defines how to construct data for that keyword
+  * the mapping defines how to construct data for that keyword
 
 Those parts are used internally by the mechanism, they are visible for the application developper. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
 
@@ -25,7 +25,7 @@ Those parts are used internally by the mechanism, they are visible for the appli
 
 Both view and mapping documents are mandatory when using the dictionary. The former one informs on what is searchable from the application. The latter one defines where and how to find data in the underlying data source.
 
-The most often, the application developper will define its view of the data source according a particular data format. So he will use keywords from that plug-in. As the mapping document is dependent of that plug-in, there will be a direct association between view keywords and mapping ones.
+The most often, the application developer will define its view of the data source according a particular data format. So he will use keywords from that plug-in. As the mapping document is dependent of that plug-in, there will be a direct association between view keywords and mapping ones.
 So its application will work fine with that specific plug-in. If he wants to make it '_public_' and available for other data formats he has no guarantee that same keywords are available with them.
 
 [http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction1.png]
@@ -35,9 +35,7 @@ When found that document becomes the mediator between view and mapping. Both *ke
 
 [http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction2.png]
 
-
-
-This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
-That "service" is provided in “Core” see package org.cdma.data.dictionary.
+This mechanism consists in binding a key to a physical organization, usually a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
+That "service" is provided in “Core” (see package org.cdma.data.dictionary for Java developers).
 
 The association key/path is done by dictionaries object. The `LogicalGroup` will instantiate one and give it all necessary informations to reach key and mapping files.
