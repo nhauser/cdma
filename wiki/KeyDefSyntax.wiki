@@ -72,7 +72,7 @@ It is also possible to have exactly the same list of available data items, but i
 </data-def>
 }}}
 
-In the first view the _distance_ item will accessible using with the following calls in Java:
+In the first view the _distance_ item will be accessible using with the following calls in Java:
 
 {{{
 LogicalGroup group = dataset.getLogicalRoot();
