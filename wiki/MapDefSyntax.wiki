@@ -29,3 +29,19 @@ For each step of the item construction, there are 2 commands (declared using a X
 While constructing the item, the result of each executed command is re-injected as in the context of the next execution.
 
 = Mapping syntax =
+
+Below are some samples of the mapping syntax in the case of nexus SOLEIL's plug-in.
+
+The case of _spectrums_xia_ mapping:
+{{{
+  <item key="spectrums_xia">
+    <path>/{NXentry}/{NXdata}/channel*</path>
+    <call>DataItemStackerByName</call>
+    <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXentry}/{NXinstrument}/Xia*{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+      <call>SelectNodeByRegionAttribute</call>
+    </attribute>
+  </item>
+}}}
