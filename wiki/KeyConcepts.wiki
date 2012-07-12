@@ -59,13 +59,16 @@ Client applications only have to deal with CDMA's interfaces from the core libra
 When a data analysis developer uses the CDMA library, he don't has to care about data file format. The data is accessed through a plug-ins mechanism.
 The CDMA library is also able to automatically choose the correct plug-in according to the dataset that the user want to read.
 
-The institutes who produce data have to develop the plug-ins able to offering access to their data through the CDMA.
+The institute who produces data, have to develop the plug-ins able of offering access to their data through the CDMA.
 Each plug-in should be based on one (or more) data format engines. The plug-ins developers should focus only on data organization and the dictionary methods (see [#Keywords_mapping Keywords mapping] sub-section below) they must implement.
 
 Also this mechanism allows an user to open files acquired in different institutes, in the same session.
 
 == The engines mechanism ==
-A data format engine is a library giving a raw access to the data for a specific physical data format. This is done through the implementation of the CDMA's interfaces in order to offer an unified way of accessing data regardless the format.
+A data format engine is a library giving a raw access to the data for a specific physical data format. It should only be able to browse physically a data format for instance a NeXus engine must be able to open a path, to read a node and to list its children: it doesn't have to know where data stored.
+
+The minimum service of an engine is done through the implementation of the CDMA's interfaces. This will permit to offer an unified way of accessing data regardless the format.
+
 Engines are not directly used by client applications. But plug-ins (see below) use engines in order to allowing client applications to access the data.
 
 == Whole working chain ==
