@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
-<!ELEMENT configuration (global? | dataset_model*)>
-<!ATTLIST configuration 
+<!ELEMENT plugin-config  (global? | dataset_model*)>
+<!ATTLIST plugin-config 
     name CDATA #REQUIRED
 >
 
@@ -23,8 +23,8 @@ global
 dataset_model
 ========================== 
 -->
-<!ELEMENT dataset_model (criteria? , parameters? , plugin? )>
-<!ATTLIST dataset_model 
+<!ELEMENT dataset-model (criteria? , parameters? , plugin? )>
+<!ATTLIST dataset-model 
     name CDATA #REQUIRED
 >
     
