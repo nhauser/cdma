@@ -3,6 +3,7 @@
 <!ATTLIST data-def
     name CDATA #REQUIRED
     version CDATA #REQUIRED
+    concept CDATA #IMPLIED
 >
 
 <!-- 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF8"?>
-<!DOCTYPE configuration SYSTEM "../configuration_file.dtd">
-<configuration name="SOLEIL's NeXus plug-in configuration file">
+<!DOCTYPE plugin-config SYSTEM "../plugin_config_file.dtd">
+<plugin-config name="SOLEIL's NeXus plug-in configuration file">
 <!-- ============================================
 ==  CONFIG 1: detection by file information    ==
 ============================================= -->
-  <dataset_model name="fully_defined_conf">
+  <dataset-model name="fully_defined_conf">
     <criteria>
       <if exist="true" target="/{NXentry}/{NXinstrument}" />
       <if exist="true" target="/{NXentry}/acquisition_model" />
@@ -25,12 +25,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 2: all beamlines quickexafs         ==
 ============================================= -->
-  <dataset_model name="generic_quickexafs">
+  <dataset-model name="generic_quickexafs">
     <criteria>
       <if exist="true" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
       <if exist="false" target="/{NXentry}/acquisition_model" />
@@ -51,12 +51,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 3: all beamlines scanserver         ==
 ============================================= -->
-  <dataset_model name="generic_scanserver">
+  <dataset-model name="generic_scanserver">
     <criteria>
       <if exist="true" target="/{NXentry}/{NXinstrument}" />
       <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
@@ -79,12 +79,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 5: all beamlines passerelle         ==
 ============================================= -->
-  <dataset_model name="ANTARES_passerelle">
+  <dataset-model name="ANTARES_passerelle">
     <criteria>
       <if exist="true" target="/{NXentry}/ANTARES" />
       <if exist="false" target="/{NXentry}/acquisition_model" />
@@ -109,12 +109,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 4: all beamlines flyscan            ==
 ============================================= -->
-  <dataset_model name="generic_flyscan">
+  <dataset-model name="generic_flyscan">
     <criteria>
       <if exist="true" target="/{NXentry}/{NXinstrument}" />
       <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
@@ -137,12 +137,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 5: all beamlines passerelle         ==
 ============================================= -->
-  <dataset_model name="generic_passerelle">
+  <dataset-model name="generic_passerelle">
     <criteria>
       <if exist="true" target="/{NXentry}/{NXinstrument}" />
       <if exist="false" target="/{NXentry}/ANTARES" />
@@ -166,12 +166,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 5: test files                       ==
 ============================================= -->
-  <dataset_model name="contacq_flyscan">
+  <dataset-model name="contacq_flyscan">
     <criteria>
       <if exist="true" target="/{NXentry}/contacq{NXinstrument}" />
       <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
@@ -194,12 +194,12 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 6: test files                       ==
 ============================================= -->
-  <dataset_model name="contacq_passerelle">
+  <dataset-model name="contacq_passerelle">
     <criteria>
       <if exist="false" target="/{NXentry}/{NXinstrument}" />
       <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
@@ -223,12 +223,12 @@
         <set name="OPTIMAL_DATA_SIZE" value="3000000" />
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  CONFIG 5: test files                       ==
 ============================================= -->
-  <dataset_model name="test_flyscan">
+  <dataset-model name="test_flyscan">
     <criteria>
       <if exist="false" target="/{NXentry}/{NXinstrument}" />
       <if exist="true" target="/{NXentry}/scan_data{NXdata}/" />
@@ -249,7 +249,7 @@
         <set name="N4T_buffer_size" value="300"/>
       </java>
     </plugin>
-  </dataset_model>
+  </dataset-model>
 
 <!-- ============================================
 ==  Global section                             ==
@@ -259,5 +259,5 @@
      <set name="CDMA_DEBUG" value="true"/>
     </java>
   </global>
-</configuration>
+</plugin-config>
 
