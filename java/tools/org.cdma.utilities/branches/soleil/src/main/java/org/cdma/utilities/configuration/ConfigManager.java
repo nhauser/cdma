@@ -197,7 +197,7 @@ public class ConfigManager {
             List<ConfigParameter> params = loadGlobalSection(root);
 
             // Load each data model configuration
-            List<?> nodes = root.getChildren("dataset_model");
+            List<?> nodes = root.getChildren("dataset-model");
             Element elem;
             Vector<ConfigDataset> configurations = new Vector<ConfigDataset>();
             ConfigDataset conf;
