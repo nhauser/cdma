@@ -8,7 +8,7 @@
 		<version>RELEASE</version>
 	</parent>
 
-	<groupId>org.gumtree.data.CDMA</groupId>
+	<groupId>org.cdma.engines</groupId>
 	<artifactId>nexus</artifactId>
 	<version>0.0.5-SNAPSHOT</version>
 	<name>CDMA Engine Nexus</name>
@@ -25,13 +25,13 @@
 			<artifactId>jnexus</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.gumtree.data.CDMA</groupId>
+			<groupId>org.cdma</groupId>
 			<artifactId>Core</artifactId>
 			<version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		      <dependency>
-            <groupId>org.gumtree.data.CDMA</groupId>
-            <artifactId>CDMAUtilities</artifactId>
+            <groupId>org.cdma</groupId>
+            <artifactId>utilities</artifactId>
             <version>0.0.4-SNAPSHOT</version>
         </dependency>
 		<dependency>

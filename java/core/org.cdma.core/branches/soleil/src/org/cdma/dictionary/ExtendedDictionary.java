@@ -35,7 +35,7 @@ import org.jdom2.input.sax.XMLReaders;
 
 
 /**
- * @brief IExtendedDictionary interface is the logical representation of a IDataset.
+ * @brief ExtendedDictionary class is the logical representation of a IDataset.
  * 
  * It defines how data is logically structured and permits a standardized browsing what
  * ever the plug-in, the data source format or its structure is.
@@ -43,8 +43,8 @@ import org.jdom2.input.sax.XMLReaders;
  * The dictionary is compound of two element a key file that defines the representation
  * of the dataset and a mapping file that associates 
  * Association of objects is the following:
- * <br/> - IKey and IPath for a IDataItem, 
- * <br/> - IKey and IExtendedDictionary for a ILogicalGroup.  
+ * <br/> - IKey and Path for a IDataItem, 
+ * <br/> - IKey and ExtendedDictionary for a LogicalGroup.  
  */
 
 
