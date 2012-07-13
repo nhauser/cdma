@@ -8,31 +8,31 @@
 		<version>RELEASE</version>
 	</parent>
 
-	<groupId>org.gumtree.data.CDMA</groupId>
+	<groupId>org.cdma.plugins</groupId>
 	<artifactId>NexusSoleil</artifactId>
 	<version>1.4.7-SNAPSHOT</version>
 	<name>CDMA NeXus Soleil Plugin</name>
 
 	<description>
     This project is Soleil's NeXus plugin for the CDMA
-  </description>
+    </description>
 	<scm>
 		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/branches/soleil</connection>
 		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/branches/soleil/</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>
-			<groupId>org.gumtree.data.CDMA</groupId>
+			<groupId>org.cdma</groupId>
 			<artifactId>Core</artifactId>
 			<version>3.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.gumtree.data.CDMA</groupId>
-			<artifactId>CDMAUtilities</artifactId>
+			<groupId>org.cdma</groupId>
+			<artifactId>utilities</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.gumtree.data.CDMA</groupId>
+			<groupId>org.cdma.engines</groupId>
 			<artifactId>nexus</artifactId>
 			<version>0.0.5-SNAPSHOT</version>
 		</dependency>

@@ -30,8 +30,20 @@ import org.cdma.interfaces.IContainer;
  */
 
 public interface IFilter {
+    /**
+     * Verify if the given container matches this filter.
+     * 
+     * @param item to test properties
+     * @return true if the IContainer has the properties the filter expects
+     */
     boolean matches(IContainer item);
     
+    /**
+     * Equality test of to filters implementation.
+     * 
+     * @param filter to be compared to this one
+     * @return true if both IFilter implementation have same type and filtering properties 
+     */
     public boolean equals(Object filter);
     
 }

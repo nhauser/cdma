@@ -11,7 +11,7 @@
 // ****************************************************************************
 
 /**
- * @brief The CDMA dictionary filter package provides some filter that can be used on IKey.
+ * @brief The CDMA dictionary filter package provides some filters that can be used on IKey.
  *
  * A filter is applied on an IKey and represents conditions that permits identifying a 
  * specific node using the <i>Extended Dictionary Mechanism</i>.
@@ -20,7 +20,7 @@
  * will make possible to define which one is relevant.
  * <p>
  * As the end user (application programmer) does not know what institute's plug-in is 
- * in used, plug-in shouldn't define its own IFilter implementation. Indeed they won't
+ * used, plug-in shouldn't define its own IFilter implementation. Indeed they won't
  * be applied by the application. 
  * <p>
  * Instead the plug-in developer should submit IFilter implementations to the community.

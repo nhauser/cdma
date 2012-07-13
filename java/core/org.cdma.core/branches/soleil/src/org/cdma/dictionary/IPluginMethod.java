@@ -39,7 +39,7 @@ import org.cdma.internal.IModelObject;
  * @see org.cdma.dictionary.Context
  * 
  * @note <b/Important:</b> As those methods are loaded dynamically using OSGI service or basic 
- * loading service the plug-in must describes it:
+ * loading service the plug-in must describe it:
  * <br/> - for OSGI: in OSGI-INF/ declare the service providers
  * <br/> - for basic service loader: in META-INF/services/org.cdma.dictionary.IPluginMethod declare
  * the class in its namespace.
