@@ -27,6 +27,7 @@
 #include<cdma/navigation/IContainer.h>
 #include "AttributeWrapper.hpp"
 #include "PythonIterator.hpp"
+#include "TupleIterator.hpp"
 
 using namespace cdma;
 
@@ -142,9 +143,13 @@ template<typename CPTR> class AttributeManager
         AttributeManager. 
         \return iterator
         */
-        PyIterator<AttributeManager> create_iterator() const
+        TupleIterator create_iterator() const
         {
-            return PyIterator<AttributeManager>(*this,0);
+            list l;
+            for(auto v: this->_ptr->getAttributeList())
+                l.append(AttributeWrapper(v));
+
+            return TupleIterator(tuple(l),0);
         }
 
 
