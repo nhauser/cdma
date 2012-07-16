@@ -26,7 +26,6 @@
 
 #include<cdma/navigation/IContainer.h>
 #include "AttributeWrapper.hpp"
-#include "PythonIterator.hpp"
 #include "TupleIterator.hpp"
 
 using namespace cdma;
@@ -164,9 +163,6 @@ Creates a wrapper for an AttributeManager.
 */
 template<typename CPTR> void wrap_attribute_manager(const char *name)
 {
-    //create iterator type for this attribute manager type
-    wrap_pyiterator<AttributeManager<CPTR> >(std::string(name)+"Iterator");
-
     //create the attribute manager type
     class_<AttributeManager<CPTR>>(name)
         .def("__getitem__",&AttributeManager<CPTR>::__getitem__str)
