@@ -1,4 +1,73 @@
 /*!
 \page user_doc User documentation
 
+This is the part of the documentation you should read if you only want to use
+CDMA from within Python. One of the design goals was to keep the interface to
+CDMA as simple and \it pythonic as possible. A good example for wrapping a
+complex C interface into a very simple and intuitive interface is the h5py
+interface for HDF5 in Python. 
+For sake of simplicity most of CDMA set/get attribute are represented as
+properties in the Python classes. 
+
+\section udoc_classes Python types overview
+
+The CDMA Python bindings provides types  
+    \li \c Dataset entry level object
+    \li \c Group the basic data holding container
+    \li \c Dimension describes a CDMA dimension
+    \li \c DataItem the data holding object
+    \li and \c Attribute which represents a CDMA attribute.
+
+
+
+\section udoc_basics Baisc usage
+
+To use CDMA from python the \c cdma module must be loaded with
+\code
+import cdma
+\endcode
+CDMA organizes data in so called datasets. To open a dataset use
+\code
+dataset = cdma.open_dataset("file:/path/to/file")
+\endcode
+\c open_dataset takes one argument which is the URL to the dataset. In this case
+the dataset is a single file. A dataset itself acts as a container for groups,
+data-items, and dimensions. All objects can be accessed via the root group of a
+dataset which itself is a read-only attribute of the dataset object
+\code
+dataset.root_group
+\endcode
+Groups are the fundamental container types in the CDMA world. 
+
+\subsection udoc_groups Group objects
+
+Group objects are the primary containers in the CDMA world
+
+\subsection udoc_dataitesm DataItem objects
+
+
+
+
+
+\section udoc_examples Examples
+
+In this section we will discuss the examples shipped with the source
+distribution. 
+
+\subsection udoc_ex1 ex1.py
+
+This examples shows basic navigation and iteration over all entities in a CDMA
+tree.
+\includelineno ex1.py
+
+Line 4 imports the CDMA Python bindings. In Line 7 a handler to a dataset is
+opened using the \c open_dataset function. The dataset has a read-only attribute
+referring to is root group. 
+
+\subsection udoc_ex2 ex2.py
+\includelineno ex2.py
+
+\subsection udoc_ex3 ex3.py
+\includelineno ex3.py
+
 */

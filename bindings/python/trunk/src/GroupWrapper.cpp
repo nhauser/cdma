@@ -74,39 +74,17 @@ tuple GroupWrapper::childs() const
     
     for(auto v: ptr()->getGroupList()) l.append(GroupWrapper(v));
     for(auto v: ptr()->getDataItemList()) l.append(DataItemWrapper(v));
+    for(auto v: ptr()->getDimensionList()) l.append(DimensionWrapper(v));
 
     return tuple(l);
 }
 
-//----------------------------------------------------------------------------
-tuple GroupWrapper::groups() const
-{
-    list l;
-    for(auto v:ptr()->getGroupList()) l.append(GroupWrapper(v));
-    return tuple(l);
-}
 
-//----------------------------------------------------------------------------
-tuple GroupWrapper::items() const
-{
-    list l;
-    for(auto v:ptr()->getDataItemList()) l.append(DataItemWrapper(v));
-    return tuple(l);
-}
-
-//----------------------------------------------------------------------------
-std::list<IDimensionPtr> GroupWrapper::dimensions() const
-{
-    return ptr()->getDimensionList();
-}
 
 //====================helper function to create python class==================
 static const char __group_doc_parent[] = "reference to the parent group";
 static const char __group_doc_root[]   = "reference to the root group";
 static const char __group_doc_childs[] = "list of child objects";
-static const char __group_doc_groups[] = "list of child groups";
-static const char __group_doc_dims[]   = "list of dimensions";
-static const char __group_doc_items[]  = "list of data items";
 void wrap_group()
 {
     //create the wrapper for the group container class
@@ -119,9 +97,6 @@ void wrap_group()
         .add_property("parent",&GroupWrapper::parent,__group_doc_parent)
         .add_property("root",&GroupWrapper::root,__group_doc_root)
         .add_property("childs",&GroupWrapper::childs,__group_doc_childs)
-        .add_property("items",&GroupWrapper::items,__group_doc_items)
-        .add_property("groups",&GroupWrapper::groups,__group_doc_groups)
-        .add_property("dims",&__dimensions__<GroupWrapper>,__group_doc_dims)
         .def("__getitem__",&GroupWrapper::__getitem__)
         .def("__str__",&GroupWrapper::__str__)
         ;

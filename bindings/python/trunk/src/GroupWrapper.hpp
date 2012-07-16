@@ -78,13 +78,6 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         //! returns a tuple of all childs of a group
         tuple childs() const;
 
-        //---------------------------------------------------------------------
-        //! returns a tuple of all groups below this group
-        tuple groups() const;
-
-        //---------------------------------------------------------------------
-        //! returns a tuple of all data items below this group
-        tuple items() const;
 
         //---------------------------------------------------------------------
         //! return the parent group 
@@ -94,14 +87,6 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         //! return the root group
         GroupWrapper root() const;
 
-        //---------------------------------------------------------------------
-        /*!
-        \brief return dimension list
-
-        Returns a list of IDimensionPtr dimension pointers.
-        \return dimension pointers
-        */
-        std::list<IDimensionPtr> dimensions() const;
 
         //---------------------------------------------------------------------
         //! string representation for Python

@@ -27,13 +27,13 @@ class group_test(unittest.TestCase):
         self.assertTrue(g.root.short_name == "")
 
         #iterate over data items
-        for d in g.items:
+        for d in cdma.get_dataitems(g):
             self.assertTrue(isinstance(d,cdma.DataItem))
 
-        for g in g.groups:
+        for g in cdma.get_groups(g):
             self.assertTrue(isinstance(g,cdma.Group))
 
-        for d in g.dims:
+        for d in cdma.get_dimensions(g):
             self.assertTrue(isinstance(d,cdma.Dimension))
 
 
