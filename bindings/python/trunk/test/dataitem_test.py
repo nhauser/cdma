@@ -15,7 +15,7 @@ class dataitem_test(unittest.TestCase):
 
     def test_open(self):
         
-        for d in self.g.items:
+        for d in cdma.get_dataitems(self.g):
             print d
 
         #open a data group

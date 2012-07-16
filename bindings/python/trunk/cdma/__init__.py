@@ -26,6 +26,9 @@ from cdmacore import Group
 from cdmacore import Dataset
 from cdmacore import DataItem
 from cdmacore import Dimension
+from cdmautil import get_dimensions
+from cdmautil import get_groups
+from cdmautil import get_dataitems
 
 #here we need most probably a more sophisticated configuration facility
 _factory.init("/usr/lib/cdma/plugins")
