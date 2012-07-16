@@ -32,6 +32,7 @@ using namespace cdma;
 
 #include "Container.hpp"
 #include "AttributeManager.hpp"
+#include "TupleIterator.hpp"
 
 /*! 
 \brief wrapper for IGroupPtr
@@ -86,6 +87,10 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         //---------------------------------------------------------------------
         //! return the root group
         GroupWrapper root() const;
+
+        //---------------------------------------------------------------------
+        //! create iterator
+        TupleIterator create_iterator() ;
 
 
         //---------------------------------------------------------------------
