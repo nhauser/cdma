@@ -1,0 +1,39 @@
+CDMA C++ python bindings
+========================
+
+This package contains the source distribution of the Python bindings for the 
+CDMA C++ framework. If you are not familiar with building Python packages from
+sources you should may look for binary packages available for your platform. 
+
+1.)Installation:
+   ------------
+
+In order to build the source distribution the following additional packages
+are required: 
+-> CDMA C++ framework
+-> BOOT Python 
+-> Python development files
+-> Numpy - python numerical array package with development files
+
+
+1.1.) Installation on Linux
+      ---------------------
+
+On Linux type the following command line 
+
+$>python setup.py install 
+
+will install the python package to the default location of your Python
+installation. In most cases this requires you to have administrative permissions
+on your system. You can install the package locally to some location where you
+have write permissions with
+
+$> python setup.py install --home=<INSTALLATION PATH>
+
+where <INSTALLATION PATH> denotes the location on the file system where the
+package should be installed.
+
+1.2.) INstallation on Windows
+      -----------------------
+
+
