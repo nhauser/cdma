@@ -38,7 +38,7 @@ def get_dimensions(group):
 
     l = []
 
-    for c in group.childs:
+    for c in group:
         if isinstance(c,cdmacore.Dimension): l.append(c)
 
     return l
@@ -57,7 +57,7 @@ def get_groups(group):
 
     l = []
 
-    for g in group.childs:
+    for g in group:
         if isinstance(g,cdmacore.Group): l.append(g)
 
     return l
@@ -76,7 +76,7 @@ def get_dataitems(group):
 
     l = []
 
-    for d in group.childs:
+    for d in group:
         if isinstance(d,cdmacore.DataItem): l.append(d)
 
     return l

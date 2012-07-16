@@ -17,50 +17,25 @@
  * along with cmda-python.  If not, see <http://www.gnu.org/licenses/>.
  *************************************************************************
  *
- * Created on: Jun 26, 2011
+ * Created on: Jul 16, 2012
  *     Author: Eugen Wintersberger <eugen.wintersberger@desy.de>
  */
 
-extern "C"{
-#include<Python.h>
-#include<numpy/arrayobject.h>
-}
+#include "TupleIterator.hpp"
 
-#include <boost/python.hpp>
-#include <iostream>
-#include <sstream>
+/*! 
+\brief PyIterator wrapper function
 
-using namespace boost::python;
-
-
-//! \endcond
-
-extern void wrap_factory();
-extern void wrap_group();
-extern void wrap_dataset();
-extern void wrap_dataitem();
-extern void exception_registration();
-extern void wrap_attribute();
-extern void wrap_dimension();
-extern void wrap_tupleiterator();
-
-
-//=================implementation of the python extension======================
-BOOST_PYTHON_MODULE(cdmacore)
+Templates function creates the Python type for an iterator for a particular
+iterable type.
+\param class_name name of the iterator class
+*/
+void wrap_tupleiterator()
 {
-    
-    //this is absolutely necessary - otherwise the nympy API functions do not
-    //work.
-    import_array();
-
-    //call wrappers
-    wrap_factory();
-    wrap_dataset();
-    wrap_group();
-    wrap_dataitem();
-    wrap_attribute();
-    wrap_dimension();
-    wrap_tupleiterator();
-    exception_registration();
-
+    class_<TupleIterator>("TupleIterator")
+        .def(init<>())
+        .def("next",&TupleIterator::next)
+        .def("__iter__",&TupleIterator::__iter__)
+        ;
 }
+

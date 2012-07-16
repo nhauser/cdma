@@ -90,7 +90,7 @@ files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
          "src/Exceptions.cpp","src/WrapperHelpers.cpp",
          "src/AttributeWrapper.cpp","src/Selection.cpp",
          "src/DimensionWrapper.cpp","src/DimensionManager.cpp",
-         "src/Types.cpp"]
+         "src/Types.cpp","src/TupleIterator.cpp"]
 
 cdma = Extension("cdmacore",files,
                  extra_compile_args = compile_args,

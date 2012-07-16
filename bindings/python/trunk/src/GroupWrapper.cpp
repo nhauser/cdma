@@ -45,6 +45,9 @@ object GroupWrapper::__getitem__(const std::string &name) const
     //throw an exception here
     throw_PyKeyError("Cannot find object ["+name+"] in group ["+
                      this->name()+"]!");
+
+    //need this to make the compiler happy - this code will never be reached.
+    return object();
 }
 
 //----------------------------------------------------------------------------
@@ -79,12 +82,17 @@ tuple GroupWrapper::childs() const
     return tuple(l);
 }
 
+//----------------------------------------------------------------------------
+TupleIterator GroupWrapper::create_iterator() 
+{
+    return TupleIterator(childs(),0);
+}
+
 
 
 //====================helper function to create python class==================
 static const char __group_doc_parent[] = "reference to the parent group";
 static const char __group_doc_root[]   = "reference to the root group";
-static const char __group_doc_childs[] = "list of child objects";
 void wrap_group()
 {
     //create the wrapper for the group container class
@@ -96,9 +104,9 @@ void wrap_group()
     class_<GroupWrapper,bases<ContainerWrapper<IGroupPtr>> >("Group")
         .add_property("parent",&GroupWrapper::parent,__group_doc_parent)
         .add_property("root",&GroupWrapper::root,__group_doc_root)
-        .add_property("childs",&GroupWrapper::childs,__group_doc_childs)
         .def("__getitem__",&GroupWrapper::__getitem__)
         .def("__str__",&GroupWrapper::__str__)
+        .def("__iter__",&GroupWrapper::create_iterator)
         ;
 }
 
