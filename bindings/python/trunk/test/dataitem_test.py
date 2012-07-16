@@ -19,7 +19,9 @@ class dataitem_test(unittest.TestCase):
             print d
 
         #open a data group
-        g = d["image#20"]
+        d = self.g["image#20"]["data"]
+        for a in d.attrs:
+            print a
 
 
     def test_read_data(self):
