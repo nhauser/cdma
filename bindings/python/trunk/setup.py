@@ -66,7 +66,7 @@ try:
 except:
     print "Environment variable CC not found!"
 
-compile_args = ["-std=c++0x","-g","-O0"]
+compile_args = ["-std=c++0x","-g","-O2"]
 #now we try to compile the test code
 try:
     print "run compiler test for nullptr ..."
@@ -100,9 +100,14 @@ setup(name="cmda-python",
         author="Eugen Wintersberger",
         author_email="eugen.wintersberger@desy.de",
         description="Python bindings for CDMA ",
+        long_description="""Python bindings for the CDMA C++ framework. Supports"
+        actually only raw data access. Support for dictionaries will follow
+        later.""",
         version = "0.1.0",
         ext_package="cdma",
         ext_modules=[cdma],
         packages = ["cdma"],
+        license="GPL V2",
+
         )
 
