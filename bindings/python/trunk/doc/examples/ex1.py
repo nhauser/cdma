@@ -7,18 +7,18 @@ import cdma
 ds = cdma.open_dataset("file:demo.nxs")
 
 #iterate over all group below the root group
-for g in ds.root_group.groups:
+for g in ds.root_group:
 
     #iterate over all groups
-    for group in g.groups:
+    for group in cdma.get_groups(g):
         print group
 
     #iterate over all items
-    for item in g.items:
+    for item in cdma.get_dataitems(g):
         print item
 
     #iterate over all dimensions
-    for dimension in g.dims:
+    for dimension in cdma.get_dimensions(g):
         print dimension
 
 #get some basic information about the recorded data

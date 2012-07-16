@@ -1,22 +1,43 @@
 /*!
 \page user_doc User documentation
 
-This is the part of the documentation you should read if you only want to use
-CDMA from within Python. One of the design goals was to keep the interface to
-CDMA as simple and \it pythonic as possible. A good example for wrapping a
-complex C interface into a very simple and intuitive interface is the h5py
-interface for HDF5 in Python. 
-For sake of simplicity most of CDMA set/get attribute are represented as
-properties in the Python classes. 
+Welcome to the users documentation of the CDMA Python bindings. If you only want
+to use CDMA in your Python code you are at the right place. If you have already
+had a look on the C++ and Java API documentation you may find that the Python
+bindings look entirely different from what you have seen there. There is a
+single reason why that is so: the primary design goal of the Python binding was
+to keep the interface as simple and pythonic as possible. Consequently I have
+stripped down the C++ API to a very simple Python API which considers most of
+the objects in CDMA as containers. If you find that some things look quite
+similar to h5py (a Python interface to HDf5) then you are entirely right: h5py
+was quite an inspiration for this binding. 
 
-\section udoc_classes Python types overview
+\image html tree.svg CDMA data tree.
+Lets start with a quick introduction to CDMA. CDMA maps files and the data
+stored in them on a tree consisting of Groups, DataItems, Dimensions, and
+Attributes as shown in the image above. For users acquainted with HDF5 this
+picture fill look quite familiar. Indeed, except for \c Dimensions, CDMA
+reproduces more or less the data organization provided by HDF5. 
+Groups and DataItems can additionally hold attributes with additional meta-data. 
+CDMA provides two ways to access data
+    \li \it raw access - is just what you see in the figure above
+    \li a dictionary based approach 
 
-The CDMA Python bindings provides types  
-    \li \c Dataset entry level object
-    \li \c Group the basic data holding container
-    \li \c Dimension describes a CDMA dimension
-    \li \c DataItem the data holding object
-    \li and \c Attribute which represents a CDMA attribute.
+As the Python bindings do not support accessing data via dictionaries I will
+leave this for the moment and focus on the raw access to data. In this mode data
+is accessed by directly traversing through the data tree. 
+
+To represent such a tree in Python cdma-python provides the following (obvious)
+classes \c Group, \c Dimension, \c Attribute, \c DataItem, and \c Dataset. 
+Except for the later one all of these classes are already shown in the figure
+above. There is nothing mystical with \c Dataset, this type provides just an
+entry level object. It provides you with the root-group of your data tree. 
+So except for opening a dataset you will hardly ever use an instance of \c
+Dataset. 
+
+Now 
+
+
 
 
 
