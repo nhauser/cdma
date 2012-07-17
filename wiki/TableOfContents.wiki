@@ -28,7 +28,7 @@
      * [JavaPlugin Plug-in development]
      * [JavaReference API Reference guide]
      * [JavaTools CDMA Utilities]
-   * [PyImpl Python]
+   * [http://cdma.googlecode.com/svn/wiki/pydoc/index.html Python]
      * [PyClient Client application development]
      * [PyReference API Reference guide]
    * [DataFormatEngines Data format engines]
