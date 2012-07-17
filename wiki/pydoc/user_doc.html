@@ -146,9 +146,33 @@ item.size        #total number of elements stored in the item
 item.unit        #physical unit of the data stored in the item
 item.type        #data type as numpy type <span class="keywordtype">string</span>
 item.description #description of the item as <span class="keywordtype">string</span>
-</pre></div><h3><a class="anchor" id="udoc_attributes"></a>
+</pre></div><p> To obtain all data from an object use the <code></code>[...] like in this example </p>
+<div class="fragment"><pre class="fragment">item = group[<span class="stringliteral">&quot;itemname&quot;</span>]
+
+data = item[...]
+</pre></div><p> In the case of a string item the returned value will be a string. Scalar numeric items return data as single instances of a native Python data type. Multidimensional data is returned as numpy array which makes it easy to use the data. For numerical multidimensional data more sophisticated slicing operations can be used. The following code for instance reads only a portion of the total data </p>
+<div class="fragment"><pre class="fragment">item = group[<span class="stringliteral">&quot;itemname&quot;</span>]
+
+data = item[256:512,1]
+</pre></div><p> All slicing operations that can be done with numpy arrays can be used.</p>
+<h3><a class="anchor" id="udoc_attributes"></a>
 Managing attributes</h3>
-<h3><a class="anchor" id="udoc_dimensions"></a>
+<p>Group and data item objects have an attribute <code>attrs</code> attribute. This is an instance to an <code><a class="el" href="classAttributeManager.html" title="manages attributes of an object">AttributeManager</a></code> object. It is used to retrieve attributes attached to a group or data-item. The usage of this attribute is fairly simple you can either iterate over all attributes </p>
+<div class="fragment"><pre class="fragment">g = dataset.root_group(<span class="stringliteral">&quot;datagroup&quot;</span>)
+
+<span class="keywordflow">for</span> a in g.attrs:
+    print a
+</pre></div><p> or access attributes directly by there name </p>
+<div class="fragment"><pre class="fragment">g = dataset.root_group(<span class="stringliteral">&quot;datagroup&quot;</span>)
+a = g.attrs[<span class="stringliteral">&quot;attrname&quot;</span>]
+</pre></div><p> In either case attributes are returned as instances of type <code>Attribute</code>. Obtaining the data from such an object is like reading the data from a data item (see above). Each instance of <code>Attribute</code> provides some attributes which hold further information about the attribute </p>
+<div class="fragment"><pre class="fragment">a = g.attrs[<span class="stringliteral">&quot;attrname&quot;</span>]
+
+a.size      #the total number of elements in the attribute
+a.shape     #number of dimensions along each dimension of the attribute
+a.type      #data type as numpy type <span class="keywordtype">string</span>
+a.name      #name of the attribute           
+</pre></div><h3><a class="anchor" id="udoc_dimensions"></a>
 Dimensions</h3>
 <p>TO DO</p>
 <h2><a class="anchor" id="udoc_examples"></a>
@@ -261,7 +285,7 @@ ex3.py</h3>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 17 2012 16:06:21 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Jul 17 2012 16:25:58 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
