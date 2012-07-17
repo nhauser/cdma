@@ -6,17 +6,13 @@
 ============================================= -->
   <dataset-model name="fully_defined_conf">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}" />
-      <if exist="true" target="/{NXentry}/acquisition_model" />
+      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="true" target="/{NXentry}/acquisition_model"/>
     </criteria>
 
     <parameters> 
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}" />
-      </parameter>
-      <parameter name="MODEL">
-        <value type="value" target="/{NXentry}/acquisition_model" />
-      </parameter>
+      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="MODEL" type="value" target="/{NXentry}/acquisition_model"/>
     </parameters>
 
     <plugin>
@@ -32,17 +28,13 @@
 ============================================= -->
   <dataset-model name="generic_quickexafs">
     <criteria>
-      <if exist="true" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
+      <if exist="true" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="quickexafs" />
-      </parameter>
+      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="MODEL" type="constant" constant="quickexafs"/>
     </parameters>
 
     <plugin>
@@ -58,19 +50,15 @@
 ============================================= -->
   <dataset-model name="generic_scanserver">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="scanserver" />
-      </parameter>
+      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="MODEL" type="constant" constant="scanserver"/>
     </parameters>
 
     <plugin>
@@ -86,17 +74,14 @@
 ============================================= -->
   <dataset-model name="ANTARES_passerelle">
     <criteria>
-      <if exist="true" target="/{NXentry}/ANTARES" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="true" target="/{NXentry}/ANTARES"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
 <!-- 
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="constant" constant="antares"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="passerelle" />
+      <parameter name="BEAMLINE" type="constant" constant="antares"/>
+      <parameter name="MODEL" type="constant" constant="passerelle" />
       </parameter>
     </parameters>
 -->
@@ -116,19 +101,15 @@
 ============================================= -->
   <dataset-model name="generic_flyscan">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="flyscan" />
-      </parameter>
+      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="MODEL" type="constant" constant="flyscan"/>
     </parameters>
     
     <plugin>
@@ -144,20 +125,16 @@
 ============================================= -->
   <dataset-model name="generic_passerelle">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/ANTARES" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/ANTARES"/>
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="name" target="/{NXentry}/{NXinstrument}"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="passerelle" />
-      </parameter>
+      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="MODEL" type="constant" constant="passerelle"/>
     </parameters>
 
     <plugin>
@@ -173,19 +150,15 @@
 ============================================= -->
   <dataset-model name="contacq_flyscan">
     <criteria>
-      <if exist="true" target="/{NXentry}/contacq{NXinstrument}" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="true" target="/{NXentry}/contacq{NXinstrument}"/>
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="constant" constant="contacq"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="flyscan" />
-      </parameter>
+      <parameter name="BEAMLINE" type="constant" constant="contacq"/>
+      <parameter name="MODEL" type="constant" constant="flyscan" />
     </parameters>
     
     <plugin>
@@ -201,19 +174,15 @@
 ============================================= -->
   <dataset-model name="contacq_passerelle">
     <criteria>
-      <if exist="false" target="/{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/{NXentry}/acquisition_model" />
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if exist="false" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="false" target="/{NXentry}/acquisition_model"/>
+      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="constant" constant="contacq" />
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="passerelle" />
-      </parameter>
+      <parameter name="BEAMLINE" type="constant" constant="contacq"/>
+      <parameter name="MODEL" type="constant" constant="passerelle"/>
     </parameters>
     
     <plugin>
@@ -230,17 +199,13 @@
 ============================================= -->
   <dataset-model name="test_flyscan">
     <criteria>
-      <if exist="false" target="/{NXentry}/{NXinstrument}" />
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/" />
+      <if exist="false" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="true" target="/{NXentry}/scan_data{NXdata}/"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE">
-        <value type="constant" constant="contacq"/>
-      </parameter>
-      <parameter name="MODEL">
-        <value type="constant" constant="flyscan" />
-      </parameter>
+      <parameter name="BEAMLINE" type="constant" constant="contacq"/>
+      <parameter name="MODEL" type="constant" constant="flyscan" />
     </parameters>
     
     <plugin>
