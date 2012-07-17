@@ -57,17 +57,12 @@ parameters
 ========================== 
 -->
 <!ELEMENT parameters (parameter*)>
-<!ELEMENT parameter (value?)>
+<!ELEMENT parameter EMPTY>
 <!ATTLIST parameter
     name CDATA #REQUIRED
-    value CDATA #IMPLIED
->
-
-<!ELEMENT value EMPTY>
-<!ATTLIST value 
     type ( exist | name | value | constant | equal ) #REQUIRED
-    target CDATA #IMPLIED
     test ( true | false ) #IMPLIED
+    target CDATA #IMPLIED
     constant CDATA #IMPLIED
 >
 
