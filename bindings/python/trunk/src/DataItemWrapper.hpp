@@ -32,6 +32,7 @@
 #include "DimensionManager.hpp"
 
 /*! 
+\ingroup wrapper_classes
 \brief wraps IDataItemPtr
 
 Wrapper type for IDataItemPtr.

@@ -31,6 +31,7 @@
 using namespace cdma;
 
 /*! 
+\ingroup utility_classes
 \brief manages attributes of an object
 
 This type provides an interface to the attribute attached to an object

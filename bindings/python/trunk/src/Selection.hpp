@@ -36,6 +36,7 @@ using namespace cdma;
 using namespace boost::python;
 
 /*! 
+\ingroup utility_classes
 \brief selection type
 
 Provides a information about a selection in a multidimensional array.

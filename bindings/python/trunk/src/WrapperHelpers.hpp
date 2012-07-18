@@ -45,6 +45,7 @@ using namespace boost::python;
 
 
 /*! 
+\ingroup utility_classes
 \brief setup numpy module
 */
 void init_numpy();
@@ -54,6 +55,7 @@ void init_numpy();
 
 //-----------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief convert container to tuple
 
 Function converting a standard c++ container to a Python tuple
@@ -67,6 +69,7 @@ template<typename CTYPE> tuple cont2tuple(const CTYPE &c)
 
 //-----------------------------------------------------------------------------
 /*!
+\ingroup utility_classes
 \brief convert container to list
 
 Function converting a standard C++ container to a Python list.
@@ -93,6 +96,7 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
 
 //-----------------------------------------------------------------------------
 /*!
+\ingroup utility_classes
 \brief create a numpy array from a CDMA array
 
 Takes a CDMA ArrayPtr and constructs a numpy array of equal shape and data type.
@@ -104,6 +108,7 @@ object cdma2numpy_array(const ArrayWrapper &array,bool copyflag=false);
 
 //------------------------------------------------------------------------------
 /*!
+\ingroup utiltiy_classes
 \brief converts a type to string
 
 Template function converting a type id to a numpy type string. 
@@ -119,6 +124,7 @@ template<typename WTYPE> std::string __type__(WTYPE &o)
 
 //------------------------------------------------------------------------------
 /*!
+\ingroup utility_classes
 \brief converst list to tuple as shape
 
 Template method converting a std::vector<int> to a tuple which is used as a
@@ -131,6 +137,11 @@ template<typename WTYPE> tuple __shape__(WTYPE &self)
 }
 
 //------------------------------------------------------------------------------
+/*! 
+\ingroup utility_classes
+\brief get item function
+
+*/
 template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
     //if the data object itself is scalar we can only return a scalar value
@@ -167,6 +178,7 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 
 //------------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief template reading scalar data 
 
 This template reads scalar data from an object that provides the IOObject
@@ -201,6 +213,7 @@ template<typename WTYPE> object read_scalar_data(WTYPE &o)
 
 //-----------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief returns a list of dimensions
 
 Converts a vector of IDimensionPtr entries to a tuple of DimensionWrapper 

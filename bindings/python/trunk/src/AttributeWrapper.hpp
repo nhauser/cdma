@@ -30,7 +30,7 @@
 using namespace cdma;
 
 /*! 
-\subpage developer_doc
+\ingroup wrapper_classes
 \brief Wrapps a CDAM attribute
 
 This class wrapps a pointer to a CDMA attribute. It provides the IOObject

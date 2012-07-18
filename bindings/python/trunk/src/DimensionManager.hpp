@@ -32,6 +32,7 @@
 using namespace cdma;
 
 /*! 
+\ingroup utility_classes
 \brief DimensionManager class
 
 Every DataItemWrapper has a public instance of DimensionManager attached to it.
