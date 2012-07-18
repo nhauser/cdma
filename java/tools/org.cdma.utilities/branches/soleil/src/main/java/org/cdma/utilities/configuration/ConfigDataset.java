@@ -146,7 +146,7 @@ public class ConfigDataset {
             mCriteria.add( section );
         }
 
-        // Managing plugin parameters
+        // Managing plug-in parameters (static ones)
         section = config_dataset.getChild("plugin");
         if( section != null ) {
             Element javaSection = section.getChild("java");
@@ -166,17 +166,19 @@ public class ConfigDataset {
         section = config_dataset.getChild("parameters");
         if( section != null ) {
             nodes = section.getChildren("parameter");
+            String type;
             for( Object node : nodes ) {
-                elem  = (Element) node;
-                name  = elem.getAttributeValue("name");
-                value = elem.getAttributeValue("value");
+                elem = (Element) node;
+                name = elem.getAttributeValue("name");
+                type = elem.getAttributeValue("type");
 
                 // Dynamic parameter
-                if( value == null ) {
+                if( ! type.equals("constant") ) {
                     parameter = new ConfigParameterDynamic(elem);
                 }
                 // Static parameter (constant)
                 else {
+                    value = elem.getAttributeValue("constant");
                     parameter = new ConfigParameterStatic(name, value);
                 }
                 mParams.put(name, parameter);
