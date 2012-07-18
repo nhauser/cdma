@@ -35,6 +35,7 @@ using namespace cdma;
 #include "TupleIterator.hpp"
 
 /*! 
+\ingroup wrapper_classes
 \brief wrapper for IGroupPtr
 
 Wraps IGroupPtr. 

@@ -30,6 +30,7 @@
 using namespace cdma;
 
 /*! 
+\ingroup wrapper_classes
 \brief ArrayWrapper class
 
 This class wraps around an ArrayPtr type. This class is not intended to be

@@ -32,7 +32,10 @@ extern "C"{
 #include<Python.h>
 #include<numpy/arrayobject.h>
 }
-//! enum class with type IDs.
+/*! 
+\ingroup utility_classes
+\brief enum class with type IDs.
+*/
 enum class TypeID { BYTE,   //!< signded char (8Bit)
                     UBYTE,  //!< unsigned char (8Bit)
                     SHORT,  //!< signed short (16Bit)

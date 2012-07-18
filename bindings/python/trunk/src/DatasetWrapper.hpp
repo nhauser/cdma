@@ -40,6 +40,7 @@ using namespace cdma;
 #include "GroupWrapper.hpp"
 
 /*! 
+\ingroup wrapper_classes
 \brief dataset wrapper
 
 Wraps a IDatasetPtr pointer and the factory pointer belonging to it.

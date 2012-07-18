@@ -27,6 +27,7 @@
 
 //------------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief throw Python TypeError exception
 
 Throw the TypeError Python exception.
@@ -35,19 +36,31 @@ void throw_PyTypeError(const std::string &message);
 
 //------------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief throw Python IndexError exception
 */
 void throw_PyIndexError(const std::string &message);
 
 //------------------------------------------------------------------------------
-//! throw Python KeyError exception
+/*! 
+\ingroup utility_classes
+\brief throw Python KeyError exception
+
+*/
 void throw_PyKeyError(const std::string &message);
 
 //------------------------------------------------------------------------------
-//! throw stop exception for iterators
+/*! 
+\ingroup utility_classes
+\brief throw stop exception for iterators
+*/
 void throw_PyStopIteration(const std::string &message);
 
 //------------------------------------------------------------------------------
+/*! 
+\ingroup utility_classes
+\brief throw an exception
+*/
 template<typename ETYPE> void throw_cdma_exception(
         const std::string desc,
         const std::string origin)

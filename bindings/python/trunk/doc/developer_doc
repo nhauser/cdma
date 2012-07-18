@@ -1,6 +1,12 @@
 /*! 
 \page developer_doc Developmer documentation
 
+\defgroup utility_classes Utility Classes
+\defgroup wrapper_classes Wrapper Classes
+
+\ref utility_classes
+\ref wrapper_classes
+
 \section design_overview Design overview
 
 

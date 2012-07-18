@@ -32,6 +32,7 @@ using namespace cdma;
 #include "AttributeManager.hpp"
 
 /*! 
+\ingroup wrapper_classes
 \brief wrapper for IContainer interface
 
 Wraps objects that satisfy the IContainer interface. 

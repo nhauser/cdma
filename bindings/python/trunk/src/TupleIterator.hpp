@@ -31,6 +31,10 @@
 
 using namespace boost::python;
 
+/*!
+\ingroup utility_classes
+\brief iterates over a tuple
+*/
 class TupleIterator
 {
     private:
