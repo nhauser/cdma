@@ -123,6 +123,7 @@ std::ostream &operator<<(std::ostream &o,const Selection &s);
 
 //-----------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief compute the size of a selection
 
 The size of the selection is the number of elements included in the selection. 
@@ -133,6 +134,7 @@ size_t size(const Selection &sel);
 
 //-----------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief compute the span of a selection
 
 The span of a selection is the number of elements the selection covers in the
@@ -143,12 +145,35 @@ original data.
 size_t span(const Selection &sel);
     
 //-----------------------------------------------------------------------------
+/*!
+\ingroup utility_classes
+\brief create selection parameters for dimension i
+
+Creates selection parameters for a single index selection for dimension i.
+\param i dimension index where to store in the parameter vectors
+\param index the array index for which to compute the parameters
+\param offset vector with offset values
+\param stride vector with stride values
+\param shape vector with stride values
+*/
 void set_selection_parameters_from_index(size_t i,const extract<size_t> &index,
                                          std::vector<size_t> &offset,
                                          std::vector<size_t> &stride,
                                          std::vector<size_t> &shape);
 
 //-----------------------------------------------------------------------------
+/*! 
+\ingroup utility_classes
+\brief create selection parameters for dimension i
+
+Create selection parameters for dimension i from a slice object.
+\param i dimension index
+\param slice the slice object for which to compute selection parameters
+\param o offset for which to create the selection parameters
+\param offset vector with offset values
+\param stride vector with stride values
+\param shape vector with shape values
+*/
 template<typename WTYPE>
 void set_selection_parameters_from_slice(size_t i,const extract<slice> &slice,
                                          const WTYPE &o,
@@ -181,6 +206,7 @@ void set_selection_parameters_from_slice(size_t i,const extract<slice> &slice,
 
 //-----------------------------------------------------------------------------
 /*! 
+\ingroup utility_classes
 \brief create a selection from a python object
 
 Create a selection object from the python argument passed to __getitem__ or

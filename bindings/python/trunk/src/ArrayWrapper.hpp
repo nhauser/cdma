@@ -24,6 +24,7 @@
 #ifndef __ARRAYWRAPPER_HPP__
 #define __ARRAYWRAPPER_HPP__
 
+#include <algorithm>
 #include<cdma/array/Array.h>
 #include "Types.hpp"
 
@@ -92,7 +93,13 @@ class ArrayWrapper
         Return a vector with the number of elements along each dimension. 
         \return shape vector
         */
-        std::vector<int> shape() const { return _ptr->getShape(); }
+        std::vector<size_t> shape() const 
+        {   
+            std::vector<size_t> s;
+
+            std::copy(_ptr->getShape().begin(),_ptr->getShape().end(),s.begin());
+            return s;
+        }
 
         //----------------------------------------------------------------------
         /*! 
@@ -107,17 +114,46 @@ class ArrayWrapper
         }
 
         //----------------------------------------------------------------------
-        //! read scalar data
+        /*! 
+        \brief read scalar data
+
+        Read scalar data if the array stores only a single value. 
+        \return scalar data value
+        */
         template<typename T> T get() const
         {
             return _ptr->getValue<T>();
         }
 
         //---------------------------------------------------------------------
-        //! read from position
+        /*! 
+        \brief read from position
+        
+        Read data from a particular array index pos. 
+        \param pos array index from which to read data
+        \return data at index
+        */
         template<typename T> T get(const std::vector<size_t> &pos) const
         {
             return _ptr->getValue<T>(pos);
+        }
+
+        //---------------------------------------------------------------------
+        /*! 
+        \brief read part of the array
+
+        */
+        ArrayWrapper get(const std::vector<size_t> offset,
+                         const std::vector<size_t> shape) const
+        {
+            std::vector<int> _offset;
+            std::vector<int> _shape;
+
+            std::copy(offset.begin(),offset.end(),_offset.begin());
+            std::copy(shape.begin(),shape.end(),_shape.begin());
+
+            ArrayWrapper a(_ptr->getRegion(_offset,_shape));
+            return a;
         }
 
         //---------------------------------------------------------------------

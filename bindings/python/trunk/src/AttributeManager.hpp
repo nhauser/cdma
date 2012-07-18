@@ -157,6 +157,7 @@ template<typename CPTR> class AttributeManager
 
 //===================implementation of template methods========================
 /*! 
+\ingroup wrapper_classes
 \brief wrapper function for an attribute manager
 
 Creates a wrapper for an AttributeManager.

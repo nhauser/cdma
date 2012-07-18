@@ -31,6 +31,7 @@ using namespace cdma;
 using namespace boost::python;
 
 /*! 
+\ingroup wrapper_classes
 \brief wraps IDimensionPtr
 
 Wraps a pointer of type IDimensionPtr.

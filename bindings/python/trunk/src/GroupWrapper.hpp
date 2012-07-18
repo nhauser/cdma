@@ -80,7 +80,6 @@ class GroupWrapper:public ContainerWrapper<IGroupPtr>
         //! returns a tuple of all childs of a group
         tuple childs() const;
 
-
         //---------------------------------------------------------------------
         //! return the parent group 
         GroupWrapper parent() const;
