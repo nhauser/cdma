@@ -100,7 +100,10 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
 \brief create a numpy array from a CDMA array
 
 Takes a CDMA ArrayPtr and constructs a numpy array of equal shape and data type.
-\param aptr pointer to a CDMA array
+If the copyflag argument is true, the data from the original array will be
+copied to the numpy array.
+\param array reference to the array 
+\param copyflag decide if data should be copied
 \return o Python object holding the numpy array
 */
 object cdma2numpy_array(const ArrayWrapper &array,bool copyflag=false);

@@ -31,7 +31,7 @@ quite similar to HDF5. Groups and DataItems can additionally hold attributes
 with additional meta-data. Access to data is provided in two different ways
 
 <ul>
-<li> \it raw access - is just what you see in the figure above</li>
+<li> \a raw access - is just what you see in the figure above</li>
 <li> a dictionary based approach </li>
 </ul>
 

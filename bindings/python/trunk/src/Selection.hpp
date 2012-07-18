@@ -127,7 +127,7 @@ std::ostream &operator<<(std::ostream &o,const Selection &s);
 \brief compute the size of a selection
 
 The size of the selection is the number of elements included in the selection. 
-\param s selection object
+\param sel selection object
 \return number of elements in the selection
 */
 size_t size(const Selection &sel);
@@ -139,7 +139,7 @@ size_t size(const Selection &sel);
 
 The span of a selection is the number of elements the selection covers in the
 original data.
-\param s selection object
+\param sel selection object
 \return number of elements spanned in the original array
 */
 size_t span(const Selection &sel);
@@ -212,6 +212,8 @@ void set_selection_parameters_from_slice(size_t i,const extract<slice> &slice,
 Create a selection object from the python argument passed to __getitem__ or
 __setitem__. This argument can be either a single value or a tuple in the case
 of a multidimensional array.
+\tparam WTYPE object type
+\param o object for which the selection should be created
 \param t python tuple with indices, slices and ellipsis
 \return a selection object for the wrapper classes
 */
