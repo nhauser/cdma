@@ -156,22 +156,21 @@ public final class ConfigParameterDynamic implements ConfigParameter {
         if( dom.getName().equals("parameter") )
         {
             mName = dom.getAttributeValue("name");
-            Element valueNode = dom.getChild("value");
-            mPath = valueNode.getAttributeValue("target");
+            mPath = dom.getAttributeValue("target");
             
             Attribute attribute;
             String test;
     
-            attribute = valueNode.getAttribute("type");
+            attribute = dom.getAttribute("type");
             if( attribute != null )
             {
                 mType  = CriterionType.valueOf(attribute.getValue().toUpperCase());
-                String value = valueNode.getAttributeValue("constant");
+                String value = dom.getAttributeValue("constant");
                 if( value != null ) {
                     mValue = value;
                 }
     
-                test = valueNode.getAttributeValue("test");
+                test = dom.getAttributeValue("test");
                 if( test != null ) {
                     mTest = CriterionValue.valueOf(test.toUpperCase());
                 }
