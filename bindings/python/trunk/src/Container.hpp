@@ -35,7 +35,8 @@ using namespace cdma;
 \ingroup wrapper_classes
 \brief wrapper for IContainer interface
 
-Wraps objects that satisfy the IContainer interface. 
+Wraps objects that satisfy the IContainer interface. This type can then be used
+as a base class for types derived form IContainer.
 */
 template<typename TPTR> class ContainerWrapper
 {
@@ -135,6 +136,15 @@ static const char __container_doc_short_name [] =
 static const char __container_doc_is_group [] = 
 "attribute which is true of the container object is a container, false otherwise";
 
+/*! 
+\ingroup wrapper_classes
+\brief container wrapper creator
+
+This template fucntion creates the wrapper for ContainerType for a particular
+container pointer type. 
+\tparam TPTR container pointer type
+\param name  name of the wrapper class in python
+*/
 template<typename TPTR> void wrap_container(const char* name)
 {
     class_<ContainerWrapper<TPTR>>(name)

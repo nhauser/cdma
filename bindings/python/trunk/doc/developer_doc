@@ -1,13 +1,41 @@
+/*!
+\defgroup utility_classes Utility Classes
+*/
+
+/*! 
+\defgroup wrapper_classes Wrapper Classes
+*/
+
 /*! 
 \page developer_doc Developmer documentation
 
-\defgroup utility_classes Utility Classes
-\defgroup wrapper_classes Wrapper Classes
 
 \ref utility_classes
 \ref wrapper_classes
 
 \section design_overview Design overview
+
+Common interface for all data holding objects (Array, Attributes, and DataItems)
+\code
+class DataInterface
+{
+    public:
+    size rank() const;
+    size size() const;
+    TypeID type() const;
+    std::vector<size_t> shape() const;
+
+    //read scalar data 
+    template<typename T> T get() const;
+    //read data from position
+    template<typename T> T get(const std::vecotr<size_t> &pos) const; 
+    //read region 
+    ArrayWrapper get(const std::vector<size_t> offset,
+                     const std::vector<size_t> shape) const;
+      
+
+};
+\endcode
 
 
 */

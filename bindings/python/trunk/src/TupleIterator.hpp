@@ -34,12 +34,15 @@ using namespace boost::python;
 /*!
 \ingroup utility_classes
 \brief iterates over a tuple
+
+The interesing aspect of this iterator is that it does not hold the reference to
+a container object but the object itself. 
 */
 class TupleIterator
 {
     private:
         tuple _container; //!< parent object of the interator
-        ssize_t     _state;          //!< position of the iterator
+        ssize_t   _state;          //!< position of the iterator
     public:
         //=======================constructors and destructor====================
         //! default constructor

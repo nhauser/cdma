@@ -150,6 +150,24 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
 
         //---------------------------------------------------------------------
         /*!
+        \brief get data at position pos
+
+        Returns the data value stored at position pos.
+        \tparam T type of the variable to read
+        \param pos index of data
+        \return data value
+        */
+        template<typename T> T get(const std::vector<size_t> &pos) const
+        {
+            std::vector<int> _pos;
+            std::copy(pos.begin(),pos.end(),_pos.begin());
+
+            ArrayWrapper a(ptr()->getData(_pos));
+            return a.get<T>();
+        }
+
+        //---------------------------------------------------------------------
+        /*!
         \brief read array data
 
         Reads data in cases where the data item is non-scalar. The offset

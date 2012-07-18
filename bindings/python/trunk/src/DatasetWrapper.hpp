@@ -43,11 +43,9 @@ using namespace cdma;
 \ingroup wrapper_classes
 \brief dataset wrapper
 
-Wraps a IDatasetPtr pointer and the factory pointer belonging to it.
-Like a group object this object behaves like kind of container. In order to keep
-the behavior of all objects the same the __getitem__ call is deferred to the
-root group. Thus the key can only be the name of a direct child object of the
-root group.
+Wraps a IDatasetPtr pointer and the factory pointer belonging to it. The dataset
+object is considered as an entry level object. Thus only a view methods are
+accessible to the Python world.
 */
 class DatasetWrapper
 {
