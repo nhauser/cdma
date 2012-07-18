@@ -99,7 +99,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
             String attrValue = root.getGroup(nodes[0].getNodeName())
                                    .getGroup(nodes[1].getNodeName())
                                    .getGroup(nodes[2].getNodeName())
-                                   .getShortName();
+                    .getShortName();
             container.addStringAttribute(attrName, attrValue);
         }
 
@@ -112,7 +112,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                     container.addStringAttribute("region", region);
                 }
                 // If Xia
-                else {
+                else if (node.getNodeName().toLowerCase().matches("xia")) {
                     // We are on sub-node of the XIA the region is contained in the name
                     if (nodes.length >= 4) {
                         node = nodes[4];
@@ -146,6 +146,9 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                         }
 
                     }
+                }
+                else {
+                    container.addStringAttribute("region", "0");
                 }
             }
         }
