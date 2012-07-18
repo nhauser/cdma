@@ -48,6 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -112,70 +113,70 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00031"></a>00031 
 <a name="l00032"></a>00032 <span class="keyword">using namespace </span>boost::python;
 <a name="l00033"></a>00033 
-<a name="l00034"></a><a class="code" href="classTupleIterator.html">00034</a> <span class="keyword">class </span><a class="code" href="classTupleIterator.html">TupleIterator</a>
-<a name="l00035"></a>00035 {
-<a name="l00036"></a>00036     <span class="keyword">private</span>:
-<a name="l00037"></a>00037         tuple _container; 
-<a name="l00038"></a>00038         ssize_t     _state;          
-<a name="l00039"></a>00039     <span class="keyword">public</span>:
-<a name="l00040"></a>00040         <span class="comment">//=======================constructors and destructor====================</span>
-<a name="l00042"></a><a class="code" href="classTupleIterator.html#a2eb89c317570accea7a1532d2e75e650">00042</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html#a2eb89c317570accea7a1532d2e75e650" title="default constructor">TupleIterator</a>(): _container(), _state(0) {}   
-<a name="l00043"></a>00043         
-<a name="l00044"></a>00044         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00046"></a><a class="code" href="classTupleIterator.html#af8e3f79c644585a4ed8642715e2cfae4">00046</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html">TupleIterator</a>(<span class="keyword">const</span> <a class="code" href="classTupleIterator.html">TupleIterator</a> &amp;i): 
-<a name="l00047"></a>00047             _container(i._container), 
-<a name="l00048"></a>00048             _state(i._state) 
-<a name="l00049"></a>00049         {}
-<a name="l00050"></a>00050 
+<a name="l00041"></a><a class="code" href="classTupleIterator.html">00041</a> <span class="keyword">class </span><a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a>
+<a name="l00042"></a>00042 {
+<a name="l00043"></a>00043     <span class="keyword">private</span>:
+<a name="l00044"></a>00044         tuple _container; 
+<a name="l00045"></a>00045         ssize_t   _state;          
+<a name="l00046"></a>00046     <span class="keyword">public</span>:
+<a name="l00047"></a>00047         <span class="comment">//=======================constructors and destructor====================</span>
+<a name="l00049"></a><a class="code" href="classTupleIterator.html#a2eb89c317570accea7a1532d2e75e650">00049</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html#a2eb89c317570accea7a1532d2e75e650" title="default constructor">TupleIterator</a>(): _container(), _state(0) {}   
+<a name="l00050"></a>00050         
 <a name="l00051"></a>00051         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00057"></a><a class="code" href="classTupleIterator.html#a09f3e356759a393090ed76a08356dff1">00057</a> <span class="comment"></span>        <span class="keyword">explicit</span> <a class="code" href="classTupleIterator.html">TupleIterator</a>(<span class="keyword">const</span> tuple &amp;i,<span class="keywordtype">size_t</span> state=0):
-<a name="l00058"></a>00058             _container(i),
-<a name="l00059"></a>00059             _state(state)
-<a name="l00060"></a>00060         { }
-<a name="l00061"></a>00061 
-<a name="l00062"></a>00062         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00064"></a><a class="code" href="classTupleIterator.html#a0424a0048872a73841422642746f6abb">00064</a> <span class="comment"></span>        ~<a class="code" href="classTupleIterator.html">TupleIterator</a>()
-<a name="l00065"></a>00065         {
-<a name="l00066"></a>00066             _state  = 0;
-<a name="l00067"></a>00067         }
+<a name="l00053"></a><a class="code" href="classTupleIterator.html#af8e3f79c644585a4ed8642715e2cfae4">00053</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a>(<span class="keyword">const</span> <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a> &amp;i): 
+<a name="l00054"></a>00054             _container(i._container), 
+<a name="l00055"></a>00055             _state(i._state) 
+<a name="l00056"></a>00056         {}
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00064"></a><a class="code" href="classTupleIterator.html#a09f3e356759a393090ed76a08356dff1">00064</a> <span class="comment"></span>        <span class="keyword">explicit</span> <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a>(<span class="keyword">const</span> tuple &amp;i,<span class="keywordtype">size_t</span> state=0):
+<a name="l00065"></a>00065             _container(i),
+<a name="l00066"></a>00066             _state(state)
+<a name="l00067"></a>00067         { }
 <a name="l00068"></a>00068 
-<a name="l00069"></a>00069         <span class="comment">//=======================assignment operators==========================</span>
-<a name="l00071"></a><a class="code" href="classTupleIterator.html#aaa302cb29bfb98b9b3f8b16286f9bad5">00071</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html">TupleIterator</a> &amp; operator=(<span class="keyword">const</span> <a class="code" href="classTupleIterator.html">TupleIterator</a> &amp;i)
+<a name="l00069"></a>00069         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00071"></a><a class="code" href="classTupleIterator.html#a0424a0048872a73841422642746f6abb">00071</a> <span class="comment"></span>        ~<a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a>()
 <a name="l00072"></a>00072         {
-<a name="l00073"></a>00073             <span class="keywordflow">if</span>(<span class="keyword">this</span> != &amp;i){
-<a name="l00074"></a>00074                 _container = i._container;
-<a name="l00075"></a>00075                 _state   = i._state;
-<a name="l00076"></a>00076             }
-<a name="l00077"></a>00077             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00078"></a>00078         }
-<a name="l00079"></a>00079 
-<a name="l00080"></a>00080         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00087"></a><a class="code" href="classTupleIterator.html#ae23aeacf6050591798980aa326e22fbe">00087</a> <span class="comment"></span>        <span class="keywordtype">object</span> next() 
-<a name="l00088"></a>00088         {
-<a name="l00089"></a>00089             <span class="comment">//check if iteration is still possible</span>
-<a name="l00090"></a>00090             <span class="keywordflow">if</span>(_state == len(_container))
-<a name="l00091"></a>00091             {
-<a name="l00092"></a>00092                 throw_PyStopIteration(<span class="stringliteral">&quot;iteration finished&quot;</span>);
-<a name="l00093"></a>00093                 <span class="keywordflow">return</span>(<span class="keywordtype">object</span>());
-<a name="l00094"></a>00094             }
-<a name="l00095"></a>00095 
-<a name="l00096"></a>00096             <span class="comment">//return the current object </span>
-<a name="l00097"></a>00097             <span class="keywordtype">object</span> item = _container[this-&gt;_state];
-<a name="l00098"></a>00098             <span class="comment">//increment the iterator</span>
-<a name="l00099"></a>00099             this-&gt;_state++;
-<a name="l00100"></a>00100 
-<a name="l00101"></a>00101             <span class="keywordflow">return</span> item;
-<a name="l00102"></a>00102         }
-<a name="l00103"></a>00103 
-<a name="l00104"></a>00104         <span class="comment">//----------------------------------------------------------------------</span>
-<a name="l00106"></a><a class="code" href="classTupleIterator.html#a3254073f2275901e54ad013cc22a3a50">00106</a> <span class="comment"></span>        <span class="keywordtype">object</span> __iter__()
-<a name="l00107"></a>00107         {
-<a name="l00108"></a>00108             <span class="keywordflow">return</span> object(<span class="keyword">this</span>);
+<a name="l00073"></a>00073             _state  = 0;
+<a name="l00074"></a>00074         }
+<a name="l00075"></a>00075 
+<a name="l00076"></a>00076         <span class="comment">//=======================assignment operators==========================</span>
+<a name="l00078"></a><a class="code" href="classTupleIterator.html#aaa302cb29bfb98b9b3f8b16286f9bad5">00078</a> <span class="comment"></span>        <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a> &amp; operator=(<span class="keyword">const</span> <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a> &amp;i)
+<a name="l00079"></a>00079         {
+<a name="l00080"></a>00080             <span class="keywordflow">if</span>(<span class="keyword">this</span> != &amp;i){
+<a name="l00081"></a>00081                 _container = i._container;
+<a name="l00082"></a>00082                 _state   = i._state;
+<a name="l00083"></a>00083             }
+<a name="l00084"></a>00084             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00085"></a>00085         }
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00094"></a><a class="code" href="classTupleIterator.html#ae23aeacf6050591798980aa326e22fbe">00094</a> <span class="comment"></span>        <span class="keywordtype">object</span> next() 
+<a name="l00095"></a>00095         {
+<a name="l00096"></a>00096             <span class="comment">//check if iteration is still possible</span>
+<a name="l00097"></a>00097             <span class="keywordflow">if</span>(_state == len(_container))
+<a name="l00098"></a>00098             {
+<a name="l00099"></a>00099                 <a class="code" href="group__utility__classes.html#ga37bc36899377938d429c5204245189c3" title="throw stop exception for iterators">throw_PyStopIteration</a>(<span class="stringliteral">&quot;iteration finished&quot;</span>);
+<a name="l00100"></a>00100                 <span class="keywordflow">return</span>(<span class="keywordtype">object</span>());
+<a name="l00101"></a>00101             }
+<a name="l00102"></a>00102 
+<a name="l00103"></a>00103             <span class="comment">//return the current object </span>
+<a name="l00104"></a>00104             <span class="keywordtype">object</span> item = _container[this-&gt;_state];
+<a name="l00105"></a>00105             <span class="comment">//increment the iterator</span>
+<a name="l00106"></a>00106             this-&gt;_state++;
+<a name="l00107"></a>00107 
+<a name="l00108"></a>00108             <span class="keywordflow">return</span> item;
 <a name="l00109"></a>00109         }
 <a name="l00110"></a>00110 
-<a name="l00111"></a>00111 };
-<a name="l00112"></a>00112 
-<a name="l00113"></a>00113 <span class="preprocessor">#endif</span>
+<a name="l00111"></a>00111         <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00113"></a><a class="code" href="classTupleIterator.html#a3254073f2275901e54ad013cc22a3a50">00113</a> <span class="comment"></span>        <span class="keywordtype">object</span> __iter__()
+<a name="l00114"></a>00114         {
+<a name="l00115"></a>00115             <span class="keywordflow">return</span> object(<span class="keyword">this</span>);
+<a name="l00116"></a>00116         }
+<a name="l00117"></a>00117 
+<a name="l00118"></a>00118 };
+<a name="l00119"></a>00119 
+<a name="l00120"></a>00120 <span class="preprocessor">#endif</span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -194,7 +195,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 17 2012 16:25:58 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 18 2012 11:57:36 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

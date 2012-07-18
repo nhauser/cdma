@@ -48,6 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -115,33 +116,32 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00034"></a>00034 <span class="preprocessor">#include &quot;AttributeManager.hpp&quot;</span>
 <a name="l00035"></a>00035 <span class="preprocessor">#include &quot;TupleIterator.hpp&quot;</span>
 <a name="l00036"></a>00036 
-<a name="l00042"></a><a class="code" href="classGroupWrapper.html">00042</a> <span class="keyword">class </span><a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a>:<span class="keyword">public</span> <a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;
-<a name="l00043"></a>00043 {
-<a name="l00044"></a>00044     <span class="keyword">public</span>:
-<a name="l00045"></a>00045         <span class="comment">//==================constructors and destructor========================</span>
-<a name="l00047"></a><a class="code" href="classGroupWrapper.html#a3a7aba1bbb8e0981869558836ed66ce1">00047</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#a3a7aba1bbb8e0981869558836ed66ce1" title="default constructor">GroupWrapper</a>():<a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;() {}
-<a name="l00048"></a>00048 
-<a name="l00049"></a>00049         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00051"></a><a class="code" href="classGroupWrapper.html#ad8006e725b585d6eadee9997aa24a260">00051</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#ad8006e725b585d6eadee9997aa24a260" title="standard constructor">GroupWrapper</a>(IGroupPtr g):<a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;(g) {}
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00055"></a><a class="code" href="classGroupWrapper.html#aeaba36000eaed8e75b096d86c6416915">00055</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#aeaba36000eaed8e75b096d86c6416915" title="destructor">~GroupWrapper</a>() {}
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057         <span class="comment">//==================assignment operators===============================</span>
-<a name="l00059"></a><a class="code" href="classGroupWrapper.html#aef713dc9bf2f0a1e609579e916880bdc">00059</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> &amp;operator=(<span class="keyword">const</span> <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> &amp;g)
-<a name="l00060"></a>00060         {
-<a name="l00061"></a>00061             <span class="keywordflow">if</span>(<span class="keyword">this</span> == &amp;g) <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00062"></a>00062             <a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper&lt;IGroupPtr&gt;::operator=</a>(g);
-<a name="l00063"></a>00063             attrs = g.<a class="code" href="classContainerWrapper.html#a6e9c16cf7fe218dde25c490b787f51a9" title="attribute manager">attrs</a>;
-<a name="l00064"></a>00064             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00065"></a>00065         }
-<a name="l00066"></a>00066 
-<a name="l00067"></a>00067         <span class="comment">//===================data access methods===============================</span>
-<a name="l00076"></a>00076 <span class="comment"></span>        <span class="keywordtype">object</span> __getitem__(<span class="keyword">const</span> std::string &amp;name) <span class="keyword">const</span>;
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00080"></a>00080 <span class="comment"></span>        tuple childs() <span class="keyword">const</span>;
-<a name="l00081"></a>00081 
+<a name="l00043"></a><a class="code" href="classGroupWrapper.html">00043</a> <span class="keyword">class </span><a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a>:<span class="keyword">public</span> <a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;
+<a name="l00044"></a>00044 {
+<a name="l00045"></a>00045     <span class="keyword">public</span>:
+<a name="l00046"></a>00046         <span class="comment">//==================constructors and destructor========================</span>
+<a name="l00048"></a><a class="code" href="classGroupWrapper.html#a3a7aba1bbb8e0981869558836ed66ce1">00048</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#a3a7aba1bbb8e0981869558836ed66ce1" title="default constructor">GroupWrapper</a>():<a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;() {}
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00052"></a><a class="code" href="classGroupWrapper.html#ad8006e725b585d6eadee9997aa24a260">00052</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#ad8006e725b585d6eadee9997aa24a260" title="standard constructor">GroupWrapper</a>(IGroupPtr g):<a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper</a>&lt;IGroupPtr&gt;(g) {}
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00056"></a><a class="code" href="classGroupWrapper.html#aeaba36000eaed8e75b096d86c6416915">00056</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html#aeaba36000eaed8e75b096d86c6416915" title="destructor">~GroupWrapper</a>() {}
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058         <span class="comment">//==================assignment operators===============================</span>
+<a name="l00060"></a><a class="code" href="classGroupWrapper.html#aef713dc9bf2f0a1e609579e916880bdc">00060</a> <span class="comment"></span>        <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> &amp;operator=(<span class="keyword">const</span> <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> &amp;g)
+<a name="l00061"></a>00061         {
+<a name="l00062"></a>00062             <span class="keywordflow">if</span>(<span class="keyword">this</span> == &amp;g) <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00063"></a>00063             <a class="code" href="classContainerWrapper.html" title="wrapper for IContainer interface">ContainerWrapper&lt;IGroupPtr&gt;::operator=</a>(g);
+<a name="l00064"></a>00064             attrs = g.<a class="code" href="classContainerWrapper.html#a6e9c16cf7fe218dde25c490b787f51a9" title="attribute manager">attrs</a>;
+<a name="l00065"></a>00065             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00066"></a>00066         }
+<a name="l00067"></a>00067 
+<a name="l00068"></a>00068         <span class="comment">//===================data access methods===============================</span>
+<a name="l00077"></a>00077 <span class="comment"></span>        <span class="keywordtype">object</span> <a class="code" href="group__utility__classes.html#ga67450e81a40a0de9a6fb8489cef64cd5" title="get item function">__getitem__</a>(<span class="keyword">const</span> std::string &amp;name) <span class="keyword">const</span>;
+<a name="l00078"></a>00078 
+<a name="l00079"></a>00079         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00081"></a>00081 <span class="comment"></span>        tuple childs() <span class="keyword">const</span>;
 <a name="l00082"></a>00082 
 <a name="l00083"></a>00083         <span class="comment">//---------------------------------------------------------------------</span>
 <a name="l00085"></a>00085 <span class="comment"></span>        <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> parent() <span class="keyword">const</span>;
@@ -150,7 +150,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00089"></a>00089 <span class="comment"></span>        <a class="code" href="classGroupWrapper.html" title="wrapper for IGroupPtr">GroupWrapper</a> root() <span class="keyword">const</span>;
 <a name="l00090"></a>00090 
 <a name="l00091"></a>00091         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00093"></a>00093 <span class="comment"></span>        <a class="code" href="classTupleIterator.html">TupleIterator</a> create_iterator() ;
+<a name="l00093"></a>00093 <span class="comment"></span>        <a class="code" href="classTupleIterator.html" title="iterates over a tuple">TupleIterator</a> create_iterator() ;
 <a name="l00094"></a>00094 
 <a name="l00095"></a>00095 
 <a name="l00096"></a>00096         <span class="comment">//---------------------------------------------------------------------</span>
@@ -177,7 +177,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 17 2012 16:25:58 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 18 2012 11:57:36 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

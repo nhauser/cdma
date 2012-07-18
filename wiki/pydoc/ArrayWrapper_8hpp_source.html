@@ -48,6 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -105,71 +106,92 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a name="l00024"></a>00024 <span class="preprocessor">#ifndef __ARRAYWRAPPER_HPP__</span>
 <a name="l00025"></a>00025 <span class="preprocessor"></span><span class="preprocessor">#define __ARRAYWRAPPER_HPP__</span>
 <a name="l00026"></a>00026 <span class="preprocessor"></span>
-<a name="l00027"></a>00027 <span class="preprocessor">#include&lt;cdma/array/Array.h&gt;</span>
-<a name="l00028"></a>00028 <span class="preprocessor">#include &quot;Types.hpp&quot;</span>
-<a name="l00029"></a>00029 
-<a name="l00030"></a>00030 <span class="keyword">using namespace </span>cdma;
-<a name="l00031"></a>00031 
-<a name="l00039"></a><a class="code" href="classArrayWrapper.html">00039</a> <span class="keyword">class </span><a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a>
-<a name="l00040"></a>00040 {
-<a name="l00041"></a>00041     <span class="keyword">private</span>:
-<a name="l00042"></a>00042         ArrayPtr _ptr; 
-<a name="l00043"></a>00043     <span class="keyword">public</span>:
-<a name="l00044"></a>00044         <span class="comment">//================constructors and destructor==========================</span>
-<a name="l00046"></a><a class="code" href="classArrayWrapper.html#ad3309ffdb694e5e3f9771cf2c91eed64">00046</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#ad3309ffdb694e5e3f9771cf2c91eed64" title="default constructor">ArrayWrapper</a>():_ptr(nullptr) {}
-<a name="l00047"></a>00047 
-<a name="l00048"></a>00048         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00050"></a><a class="code" href="classArrayWrapper.html#a7cd585e2aaef376c37a704ce96881655">00050</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a7cd585e2aaef376c37a704ce96881655" title="standard constructor">ArrayWrapper</a>(ArrayPtr ptr):_ptr(ptr) {}
-<a name="l00051"></a>00051 
-<a name="l00052"></a>00052         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00054"></a><a class="code" href="classArrayWrapper.html#a6c994920e61e483d09855313f78a0560">00054</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a6c994920e61e483d09855313f78a0560" title="copy constructor">ArrayWrapper</a>(<span class="keyword">const</span> <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;a):_ptr(a._ptr) {}
-<a name="l00055"></a>00055 
-<a name="l00056"></a>00056         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00058"></a><a class="code" href="classArrayWrapper.html#a465e79553e3dc14c48ce73f17a28dab4">00058</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a465e79553e3dc14c48ce73f17a28dab4" title="destructor">~ArrayWrapper</a>() {}
-<a name="l00059"></a>00059 
-<a name="l00060"></a>00060         <span class="comment">//========================assignment operators=========================</span>
-<a name="l00062"></a><a class="code" href="classArrayWrapper.html#a9562899a8c227ab8b901456d84700dfc">00062</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;operator=(<span class="keyword">const</span> <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;a)
-<a name="l00063"></a>00063         {
-<a name="l00064"></a>00064             <span class="keywordflow">if</span>(<span class="keyword">this</span> == &amp;a) <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00065"></a>00065             _ptr = a._ptr;
-<a name="l00066"></a>00066             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
-<a name="l00067"></a>00067         }
-<a name="l00068"></a>00068 
-<a name="l00069"></a>00069         <span class="comment">//=====================================================================</span>
-<a name="l00076"></a><a class="code" href="classArrayWrapper.html#a9bcaa60683ad1e2037632976a194a7c4">00076</a> <span class="comment"></span>        <span class="keywordtype">size_t</span> <a class="code" href="classArrayWrapper.html#a9bcaa60683ad1e2037632976a194a7c4" title="get rank">rank</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ptr-&gt;getRank(); }
-<a name="l00077"></a>00077 
-<a name="l00078"></a>00078         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00085"></a><a class="code" href="classArrayWrapper.html#ac92ac6469561314216730a17289b626d">00085</a> <span class="comment"></span>        <span class="keywordtype">size_t</span> <a class="code" href="classArrayWrapper.html#ac92ac6469561314216730a17289b626d" title="get number of elements">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ptr-&gt;getSize(); }
-<a name="l00086"></a>00086 
-<a name="l00087"></a>00087         <span class="comment">//----------------------------------------------------------------------</span>
-<a name="l00094"></a><a class="code" href="classArrayWrapper.html#a337816062a8caa71523260934c1c481f">00094</a> <span class="comment"></span>        std::vector&lt;int&gt; <a class="code" href="classArrayWrapper.html#a337816062a8caa71523260934c1c481f" title="get shape">shape</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ptr-&gt;getShape(); }
-<a name="l00095"></a>00095 
-<a name="l00096"></a>00096         <span class="comment">//----------------------------------------------------------------------</span>
-<a name="l00103"></a><a class="code" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">00103</a> <span class="comment"></span>        TypeID type()<span class="keyword"> const </span>
-<a name="l00104"></a>00104 <span class="keyword">        </span>{ 
-<a name="l00105"></a>00105             <span class="keywordflow">return</span> typename2typeid[_ptr-&gt;getValueType().name()]; 
-<a name="l00106"></a>00106         }
-<a name="l00107"></a>00107 
-<a name="l00108"></a>00108         <span class="comment">//----------------------------------------------------------------------</span>
-<a name="l00110"></a><a class="code" href="classArrayWrapper.html#a51d910c189aa00d70e4b4a5689b80c7b">00110</a> <span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T <span class="keyword">get</span>() <span class="keyword">const</span>
-<a name="l00111"></a>00111         {
-<a name="l00112"></a>00112             <span class="keywordflow">return</span> _ptr-&gt;getValue&lt;T&gt;();
-<a name="l00113"></a>00113         }
-<a name="l00114"></a>00114 
-<a name="l00115"></a>00115         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00117"></a><a class="code" href="classArrayWrapper.html#a97f4446a9cd0e741fe3ab5eb2639e0d7">00117</a> <span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T <span class="keyword">get</span>(<span class="keyword">const</span> std::vector&lt;size_t&gt; &amp;pos) <span class="keyword">const</span>
-<a name="l00118"></a>00118         {
-<a name="l00119"></a>00119             <span class="keywordflow">return</span> _ptr-&gt;getValue&lt;T&gt;(pos);
-<a name="l00120"></a>00120         }
-<a name="l00121"></a>00121 
-<a name="l00122"></a>00122         <span class="comment">//---------------------------------------------------------------------</span>
-<a name="l00124"></a><a class="code" href="classArrayWrapper.html#a6efe0e9bd68b9b43ada6c32d46324fec">00124</a> <span class="comment"></span>        <span class="keyword">const</span> <span class="keywordtype">void</span> *ptr()<span class="keyword"> const</span>
-<a name="l00125"></a>00125 <span class="keyword">        </span>{
-<a name="l00126"></a>00126             <span class="keywordflow">return</span> _ptr-&gt;getStorage()-&gt;getStorage();
-<a name="l00127"></a>00127         }
-<a name="l00128"></a>00128 };
-<a name="l00129"></a>00129 
-<a name="l00130"></a>00130 <span class="preprocessor">#endif</span>
+<a name="l00027"></a>00027 <span class="preprocessor">#include &lt;algorithm&gt;</span>
+<a name="l00028"></a>00028 <span class="preprocessor">#include&lt;cdma/array/Array.h&gt;</span>
+<a name="l00029"></a>00029 <span class="preprocessor">#include &quot;Types.hpp&quot;</span>
+<a name="l00030"></a>00030 
+<a name="l00031"></a>00031 <span class="keyword">using namespace </span>cdma;
+<a name="l00032"></a>00032 
+<a name="l00041"></a><a class="code" href="classArrayWrapper.html">00041</a> <span class="keyword">class </span><a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a>
+<a name="l00042"></a>00042 {
+<a name="l00043"></a>00043     <span class="keyword">private</span>:
+<a name="l00044"></a>00044         ArrayPtr _ptr; 
+<a name="l00045"></a>00045     <span class="keyword">public</span>:
+<a name="l00046"></a>00046         <span class="comment">//================constructors and destructor==========================</span>
+<a name="l00048"></a><a class="code" href="classArrayWrapper.html#ad3309ffdb694e5e3f9771cf2c91eed64">00048</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#ad3309ffdb694e5e3f9771cf2c91eed64" title="default constructor">ArrayWrapper</a>():_ptr(nullptr) {}
+<a name="l00049"></a>00049 
+<a name="l00050"></a>00050         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00052"></a><a class="code" href="classArrayWrapper.html#a7cd585e2aaef376c37a704ce96881655">00052</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a7cd585e2aaef376c37a704ce96881655" title="standard constructor">ArrayWrapper</a>(ArrayPtr ptr):_ptr(ptr) {}
+<a name="l00053"></a>00053 
+<a name="l00054"></a>00054         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00056"></a><a class="code" href="classArrayWrapper.html#a6c994920e61e483d09855313f78a0560">00056</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a6c994920e61e483d09855313f78a0560" title="copy constructor">ArrayWrapper</a>(<span class="keyword">const</span> <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;a):_ptr(a._ptr) {}
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00060"></a><a class="code" href="classArrayWrapper.html#a465e79553e3dc14c48ce73f17a28dab4">00060</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html#a465e79553e3dc14c48ce73f17a28dab4" title="destructor">~ArrayWrapper</a>() {}
+<a name="l00061"></a>00061 
+<a name="l00062"></a>00062         <span class="comment">//========================assignment operators=========================</span>
+<a name="l00064"></a><a class="code" href="classArrayWrapper.html#a9562899a8c227ab8b901456d84700dfc">00064</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;operator=(<span class="keyword">const</span> <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> &amp;a)
+<a name="l00065"></a>00065         {
+<a name="l00066"></a>00066             <span class="keywordflow">if</span>(<span class="keyword">this</span> == &amp;a) <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00067"></a>00067             _ptr = a._ptr;
+<a name="l00068"></a>00068             <span class="keywordflow">return</span> *<span class="keyword">this</span>;
+<a name="l00069"></a>00069         }
+<a name="l00070"></a>00070 
+<a name="l00071"></a>00071         <span class="comment">//=====================================================================</span>
+<a name="l00078"></a><a class="code" href="classArrayWrapper.html#a9bcaa60683ad1e2037632976a194a7c4">00078</a> <span class="comment"></span>        <span class="keywordtype">size_t</span> <a class="code" href="classArrayWrapper.html#a9bcaa60683ad1e2037632976a194a7c4" title="get rank">rank</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ptr-&gt;getRank(); }
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00087"></a><a class="code" href="classArrayWrapper.html#ac92ac6469561314216730a17289b626d">00087</a> <span class="comment"></span>        <span class="keywordtype">size_t</span> <a class="code" href="classArrayWrapper.html#ac92ac6469561314216730a17289b626d" title="get number of elements">size</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _ptr-&gt;getSize(); }
+<a name="l00088"></a>00088 
+<a name="l00089"></a>00089         <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00096"></a><a class="code" href="classArrayWrapper.html#a523b4d6eaf473a99f24be4564e6d5470">00096</a> <span class="comment"></span>        std::vector&lt;size_t&gt; shape()<span class="keyword"> const </span>
+<a name="l00097"></a>00097 <span class="keyword">        </span>{   
+<a name="l00098"></a>00098             std::vector&lt;size_t&gt; s;
+<a name="l00099"></a>00099 
+<a name="l00100"></a>00100             std::copy(_ptr-&gt;getShape().begin(),_ptr-&gt;getShape().end(),s.begin());
+<a name="l00101"></a>00101             <span class="keywordflow">return</span> s;
+<a name="l00102"></a>00102         }
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104         <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00111"></a><a class="code" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">00111</a> <span class="comment"></span>        <a class="code" href="group__utility__classes.html#ga183c40b2ba67065929d70b3987da4cc2" title="enum class with type IDs.">TypeID</a> type()<span class="keyword"> const </span>
+<a name="l00112"></a>00112 <span class="keyword">        </span>{ 
+<a name="l00113"></a>00113             <span class="keywordflow">return</span> typename2typeid[_ptr-&gt;getValueType().name()]; 
+<a name="l00114"></a>00114         }
+<a name="l00115"></a>00115 
+<a name="l00116"></a>00116         <span class="comment">//----------------------------------------------------------------------</span>
+<a name="l00123"></a><a class="code" href="classArrayWrapper.html#a51d910c189aa00d70e4b4a5689b80c7b">00123</a> <span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T <span class="keyword">get</span>() <span class="keyword">const</span>
+<a name="l00124"></a>00124         {
+<a name="l00125"></a>00125             <span class="keywordflow">return</span> _ptr-&gt;getValue&lt;T&gt;();
+<a name="l00126"></a>00126         }
+<a name="l00127"></a>00127 
+<a name="l00128"></a>00128         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00136"></a><a class="code" href="classArrayWrapper.html#a97f4446a9cd0e741fe3ab5eb2639e0d7">00136</a> <span class="comment"></span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; T <span class="keyword">get</span>(<span class="keyword">const</span> std::vector&lt;size_t&gt; &amp;pos) <span class="keyword">const</span>
+<a name="l00137"></a>00137         {
+<a name="l00138"></a>00138             <span class="keywordflow">return</span> _ptr-&gt;getValue&lt;T&gt;(pos);
+<a name="l00139"></a>00139         }
+<a name="l00140"></a>00140 
+<a name="l00141"></a>00141         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00146"></a><a class="code" href="classArrayWrapper.html#a1e45d6ea6a98a4645d9c21e8cada36a5">00146</a> <span class="comment"></span>        <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> <span class="keyword">get</span>(<span class="keyword">const</span> std::vector&lt;size_t&gt; offset,
+<a name="l00147"></a>00147                          <span class="keyword">const</span> std::vector&lt;size_t&gt; shape) <span class="keyword">const</span>
+<a name="l00148"></a>00148         {
+<a name="l00149"></a>00149             std::vector&lt;int&gt; _offset;
+<a name="l00150"></a>00150             std::vector&lt;int&gt; _shape;
+<a name="l00151"></a>00151 
+<a name="l00152"></a>00152             std::copy(offset.begin(),offset.end(),_offset.begin());
+<a name="l00153"></a>00153             std::copy(shape.begin(),shape.end(),_shape.begin());
+<a name="l00154"></a>00154 
+<a name="l00155"></a>00155             <a class="code" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> a(_ptr-&gt;getRegion(_offset,_shape));
+<a name="l00156"></a>00156             <span class="keywordflow">return</span> a;
+<a name="l00157"></a>00157         }
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159         <span class="comment">//---------------------------------------------------------------------</span>
+<a name="l00161"></a><a class="code" href="classArrayWrapper.html#a6efe0e9bd68b9b43ada6c32d46324fec">00161</a> <span class="comment"></span>        <span class="keyword">const</span> <span class="keywordtype">void</span> *ptr()<span class="keyword"> const</span>
+<a name="l00162"></a>00162 <span class="keyword">        </span>{
+<a name="l00163"></a>00163             <span class="keywordflow">return</span> _ptr-&gt;getStorage()-&gt;getStorage();
+<a name="l00164"></a>00164         }
+<a name="l00165"></a>00165 };
+<a name="l00166"></a>00166 
+<a name="l00167"></a>00167 <span class="preprocessor">#endif</span>
 </pre></div></div><!-- contents -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -188,7 +210,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 17 2012 16:25:58 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 18 2012 11:57:36 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
