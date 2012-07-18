@@ -102,6 +102,7 @@
   <dataset-model name="generic_flyscan">
     <criteria>
       <if exist="true" target="/{NXentry}/{NXinstrument}"/>
+      <if exist="true" target="/*flyscan*{NXentry}/{NXinstrument}" />
       <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
       <if exist="false" target="/{NXentry}/acquisition_model"/>
       <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
