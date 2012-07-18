@@ -48,6 +48,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li><a href="modules.html"><span>Modules</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -81,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
-<div class="title">ArrayWrapper Class Reference</div>  </div>
+<div class="title">ArrayWrapper Class Reference<div class="ingroups"><a class="el" href="group__wrapper__classes.html">Wrapper Classes</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="ArrayWrapper" -->
@@ -113,18 +114,19 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get rank  <a href="#a9bcaa60683ad1e2037632976a194a7c4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#ac92ac6469561314216730a17289b626d">size</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get number of elements  <a href="#ac92ac6469561314216730a17289b626d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a337816062a8caa71523260934c1c481f">shape</a> () const </td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get shape  <a href="#a337816062a8caa71523260934c1c481f"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">TypeID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">type</a> () const </td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a523b4d6eaf473a99f24be4564e6d5470">shape</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get shape  <a href="#a523b4d6eaf473a99f24be4564e6d5470"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__utility__classes.html#ga183c40b2ba67065929d70b3987da4cc2">TypeID</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">type</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get type ID  <a href="#a3918a90fcf2f389b8cd004fee8c41547"></a><br/></td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a51d910c189aa00d70e4b4a5689b80c7b"></a><!-- doxytag: member="ArrayWrapper::get" ref="a51d910c189aa00d70e4b4a5689b80c7b" args="() const " -->
-template&lt;typename T &gt; </td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a51d910c189aa00d70e4b4a5689b80c7b">get</a> () const </td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">read scalar data <br/></td></tr>
-<tr><td class="memTemplParams" colspan="2"><a class="anchor" id="a97f4446a9cd0e741fe3ab5eb2639e0d7"></a><!-- doxytag: member="ArrayWrapper::get" ref="a97f4446a9cd0e741fe3ab5eb2639e0d7" args="(const std::vector&lt; size_t &gt; &amp;pos) const " -->
-template&lt;typename T &gt; </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">read scalar data  <a href="#a51d910c189aa00d70e4b4a5689b80c7b"></a><br/></td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a97f4446a9cd0e741fe3ab5eb2639e0d7">get</a> (const std::vector&lt; size_t &gt; &amp;pos) const </td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">read from position <br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">read from position  <a href="#a97f4446a9cd0e741fe3ab5eb2639e0d7"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e45d6ea6a98a4645d9c21e8cada36a5"></a><!-- doxytag: member="ArrayWrapper::get" ref="a1e45d6ea6a98a4645d9c21e8cada36a5" args="(const std::vector&lt; size_t &gt; offset, const std::vector&lt; size_t &gt; shape) const " -->
+<a class="el" href="classArrayWrapper.html">ArrayWrapper</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a1e45d6ea6a98a4645d9c21e8cada36a5">get</a> (const std::vector&lt; size_t &gt; offset, const std::vector&lt; size_t &gt; <a class="el" href="classArrayWrapper.html#a523b4d6eaf473a99f24be4564e6d5470">shape</a>) const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">read part of the array <br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6efe0e9bd68b9b43ada6c32d46324fec"></a><!-- doxytag: member="ArrayWrapper::ptr" ref="a6efe0e9bd68b9b43ada6c32d46324fec" args="() const " -->
 const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classArrayWrapper.html#a6efe0e9bd68b9b43ada6c32d46324fec">ptr</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">get pointer to data <br/></td></tr>
@@ -133,6 +135,57 @@ const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="textblock"><p><a class="el" href="classArrayWrapper.html" title="ArrayWrapper class.">ArrayWrapper</a> class. </p>
 <p>This class wraps around an ArrayPtr type. This class is not intended to be exposed to Python but is within the process of harmonizing the interface between data holdgin types (like attributes and datasets) </p>
 </div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a51d910c189aa00d70e4b4a5689b80c7b"></a><!-- doxytag: member="ArrayWrapper::get" ref="a51d910c189aa00d70e4b4a5689b80c7b" args="() const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="classArrayWrapper.html#a51d910c189aa00d70e4b4a5689b80c7b">ArrayWrapper::get</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>read scalar data </p>
+<p>Read scalar data if the array stores only a single value. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>scalar data value </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a97f4446a9cd0e741fe3ab5eb2639e0d7"></a><!-- doxytag: member="ArrayWrapper::get" ref="a97f4446a9cd0e741fe3ab5eb2639e0d7" args="(const std::vector&lt; size_t &gt; &amp;pos) const " -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="classArrayWrapper.html#a51d910c189aa00d70e4b4a5689b80c7b">ArrayWrapper::get</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; size_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>pos</em></td><td>)</td>
+          <td> const<code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>read from position </p>
+<p>Read data from a particular array index pos. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pos</td><td>array index from which to read data </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>data at index </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a9bcaa60683ad1e2037632976a194a7c4"></a><!-- doxytag: member="ArrayWrapper::rank" ref="a9bcaa60683ad1e2037632976a194a7c4" args="() const " -->
 <div class="memitem">
 <div class="memproto">
@@ -153,12 +206,12 @@ const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 </div>
 </div>
-<a class="anchor" id="a337816062a8caa71523260934c1c481f"></a><!-- doxytag: member="ArrayWrapper::shape" ref="a337816062a8caa71523260934c1c481f" args="() const " -->
+<a class="anchor" id="a523b4d6eaf473a99f24be4564e6d5470"></a><!-- doxytag: member="ArrayWrapper::shape" ref="a523b4d6eaf473a99f24be4564e6d5470" args="() const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;int&gt; <a class="el" href="classArrayWrapper.html#a337816062a8caa71523260934c1c481f">ArrayWrapper::shape</a> </td>
+          <td class="memname">std::vector&lt;size_t&gt; <a class="el" href="classArrayWrapper.html#a523b4d6eaf473a99f24be4564e6d5470">ArrayWrapper::shape</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const<code> [inline]</code></td>
@@ -198,7 +251,7 @@ const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">TypeID <a class="el" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">ArrayWrapper::type</a> </td>
+          <td class="memname"><a class="el" href="group__utility__classes.html#ga183c40b2ba67065929d70b3987da4cc2">TypeID</a> <a class="el" href="classArrayWrapper.html#a3918a90fcf2f389b8cd004fee8c41547">ArrayWrapper::type</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const<code> [inline]</code></td>
@@ -234,7 +287,7 @@ const void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Jul 17 2012 16:25:58 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 18 2012 11:57:36 for CDMA Python by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

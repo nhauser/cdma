@@ -29,8 +29,6 @@
      * [JavaReference API Reference guide]
      * [JavaTools CDMA Utilities]
    * [http://cdma.googlecode.com/svn/wiki/pydoc/index.html Python]
-     * [PyClient Client application development]
-     * [PyReference API Reference guide]
    * [DataFormatEngines Data format engines]
      * [JavaEngines Java]
      * [CppEngines C++]
