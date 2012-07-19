@@ -21,6 +21,7 @@ import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
+import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;

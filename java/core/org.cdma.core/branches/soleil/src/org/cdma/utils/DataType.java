@@ -8,7 +8,7 @@
 // Contributors: 
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //******************************************************************************
-package org.cdma;
+package org.cdma.utils;
 
 /// @cond internal
 

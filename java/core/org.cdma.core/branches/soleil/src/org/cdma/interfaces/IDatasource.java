@@ -8,7 +8,7 @@
 // Contributors: 
 //    Clément RODRIGUEZ (clement.rodriguez@synchroton-soleil.fr) - initial API and implementation
 // ****************************************************************************
-package org.cdma;
+package org.cdma.interfaces;
 
 import java.net.URI;
 

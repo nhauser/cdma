@@ -49,6 +49,8 @@ import org.jdom2.input.sax.XMLReaders;
 
 
 public final class ExtendedDictionary implements IModelObject, Cloneable{
+    private static final String FILE_CONCEPT_NAME = "concepts";
+    
     private static volatile PluginMethodManager mMethodMgr;
     private IFactory mFactory;     // Name of the plug-in's factory that created this object 
     private String   mView;        // View matching that dictionary
@@ -58,19 +60,18 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     private String   mConceptFile; // Path where to find all concepts
 
     private Map<IKey, String>               mKeyMap  = new HashMap<IKey, String>();               // Key / ID association
-    //private Map<String, List<Solver> >      mPathMap = new HashMap<String, List<Solver> >();      // ID / Path association
     private Map<String, ItemSolver >        mPathMap = new HashMap<String, ItemSolver>();        // ID / ItemSolver association
     private Map<String, ExtendedDictionary> mSubDict = new HashMap<String, ExtendedDictionary>(); // ID / sub-dictionaries
     
     private ConceptManager mConcepts; // All available concepts
 
-    public ExtendedDictionary(IFactory factory, String keyFile, String mapFile, String conceptFile) {
+    public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) {
         mMethodMgr   = PluginMethodManager.instantiate();
         mFactory     = factory; 
         mView        = Factory.getActiveView();
         mKeyFile     = keyFile;
         mMapFile     = mapFile;
-        mConceptFile = conceptFile;
+        mConceptFile = null;
         mConcepts    = null;
     }
 
@@ -113,26 +114,6 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @param key key object
      * @return ItemSolver object
      */
-/*
-    public List<Solver> getKeySolver(IKey key)
-    {
-        List<Solver> solvers;
-        if( mKeyMap.containsKey(key) )
-        {
-            String keyName = mKeyMap.get(key);
-            if( mPathMap.containsKey(keyName) ) {
-                solvers = mPathMap.get(keyName);
-            }
-            else {
-                solvers = new ArrayList<Solver>();
-            }
-        }
-        else {
-            solvers = new ArrayList<Solver>();
-        }
-        return solvers;
-    }
- */
     public ItemSolver getItemSolver(IKey key)
     {
         ItemSolver solver = null;
@@ -158,10 +139,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             throw new FileAccessException("the target dictionary file does not exist");
         }
 
-        // Read the pivot dictionary
-        readDictionaryConcepts();
-        
-        // Read corresponding dictionaries
+        // Read keys and mapping dictionaries
         readDictionaryKeys(null);
         readDictionaryMappings();
     }
@@ -181,12 +159,13 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     @SuppressWarnings("unchecked")
     public ExtendedDictionary clone() throws CloneNotSupportedException
     {
-        ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile, mConceptFile);
-        dict.mVersion  = mVersion;
-        dict.mKeyMap   = (HashMap<IKey, String>) ((HashMap<IKey, String>) mKeyMap).clone();
-        dict.mPathMap  = (HashMap<String, ItemSolver >) ((HashMap<String, ItemSolver >) mPathMap).clone();
-        dict.mSubDict  = (HashMap<String, ExtendedDictionary>) ((HashMap<String, ExtendedDictionary>) mSubDict).clone();
-        dict.mConcepts = mConcepts;
+        ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile);
+        dict.mVersion     = mVersion;
+        dict.mKeyMap      = (HashMap<IKey, String>) ((HashMap<IKey, String>) mKeyMap).clone();
+        dict.mPathMap     = (HashMap<String, ItemSolver >) ((HashMap<String, ItemSolver >) mPathMap).clone();
+        dict.mSubDict     = (HashMap<String, ExtendedDictionary>) ((HashMap<String, ExtendedDictionary>) mSubDict).clone();
+        dict.mConceptFile = mConceptFile;
+        dict.mConcepts    = mConcepts;
         return dict;
     }
 
@@ -316,10 +295,21 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             if( ! exp.equalsIgnoreCase(mView) ) {
                 throw new FileAccessException("an I/O error prevent parsing dictionary!\nThe dictionary doesn't match the experiment!");
             }
+            
+            String concept = startNode.getAttributeValue("concept");
+            if( concept != null ) {
+                mConceptFile = Factory.getDictionariesFolder() + File.separator + concept; 
+            }
         }
         else {
             startNode = xmlNode;
         }
+        
+        if( mConcepts == null ) {
+            // Read the pivot dictionary
+            readDictionaryConcepts();
+        }
+        
         List<?> nodes = startNode.getChildren();
         Element elem;
         IKey key;
@@ -370,7 +360,6 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         mVersion = root.getAttributeValue("version");
 
         List<?> nodes = root.getChildren("item");
-        List<Solver> solvers;
         String keyID;
         String keyName;
 

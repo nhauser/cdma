@@ -175,7 +175,8 @@ public final class Utilities {
             IDataset dataset = null;
             IContainer container = null;
             try {
-                dataset = Factory.createDatasetInstance(uri);
+                IFactory factory = Factory.getFactory( dataset.getFactoryName() );
+                dataset = factory.createDatasetInstance(uri);
                 dataset.open();
             } catch (IOException e1) {
                 throw new FileAccessException(e1);
@@ -263,7 +264,8 @@ public final class Utilities {
             throw new InvalidArrayTypeException("the shape is invalid");
         }
         //[SOLEIL][clement][12/08/2011] TODO potential bug here: should be Factory.getFactory(array.getFactoryName()).createArray...
-        return Factory.createArray(array.getElementType(), shape, array
+        IFactory factory = Factory.getFactory( array.getFactoryName() );
+        return factory.createArray(array.getElementType(), shape, array
                 .getStorage());
     }
 
@@ -274,7 +276,8 @@ public final class Utilities {
      * @return new IArray 
      */
     public static IArray copyToDoubleArray(final IArray array) {
-        IArray doubleArray = Factory.createArray(Double.TYPE, array.getShape());
+        IFactory factory = Factory.getFactory( array.getFactoryName() );
+        IArray doubleArray = factory.createArray(Double.TYPE, array.getShape());
         IArrayIterator oldIterator = array.getIterator();
         IArrayIterator newIterator = doubleArray.getIterator();
         while (oldIterator.hasNext()) {
@@ -284,6 +287,7 @@ public final class Utilities {
         return doubleArray;
     }
 
+    
     /**
      * Copy the array to a new array with double type storage.
      * 
@@ -291,7 +295,8 @@ public final class Utilities {
      * @return new IArray 
      */
     public static IArray copyToPositiveDoubleArray(final IArray array) {
-        IArray doubleArray = Factory.createArray(Double.TYPE, array.getShape());
+        IFactory factory = Factory.getFactory( array.getFactoryName() );
+        IArray doubleArray = factory.createArray(Double.TYPE, array.getShape());
         IArrayIterator oldIterator = array.getIterator();
         IArrayIterator newIterator = doubleArray.getIterator();
         while (oldIterator.hasNext()) {
