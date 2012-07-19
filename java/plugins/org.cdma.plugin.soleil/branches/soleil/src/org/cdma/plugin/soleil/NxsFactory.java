@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
 
-import org.cdma.IDatasource;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
@@ -13,10 +12,12 @@ import org.cdma.dictionary.Path;
 import org.cdma.engine.nexus.navigation.NexusAttribute;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
+import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
+import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
@@ -197,8 +198,14 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
-        // TODO Auto-generated method stub
-        throw new FileAccessException(ERR_NOT_SUPPORTED);
+        IDataset ds = null;
+        try {
+            ds = NxsDataset.instanciate(new File(uri.getPath()));
+        }
+        catch( NoResultException e) {
+            throw new FileAccessException(e);
+        }
+        return ds;
     }
 
     @Override

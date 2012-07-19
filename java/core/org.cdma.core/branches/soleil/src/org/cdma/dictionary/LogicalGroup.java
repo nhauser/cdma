@@ -438,8 +438,7 @@ public class LogicalGroup implements IContainer, Cloneable {
         // Detect the key dictionary file and mapping dictionary file
         String keyFile = Factory.getPathKeyDictionary();
         String mapFile = Factory.getPathMappingDictionaryFolder( mFactory ) + mFactory.getName() + "_dictionary.xml";
-        String cntFile = Factory.getPathExperimentConceptDictionary();
-        mDictionary = new ExtendedDictionary( mFactory, keyFile, mapFile, cntFile );
+        mDictionary = new ExtendedDictionary( mFactory, keyFile, mapFile );
         try {
             mDictionary.readEntries();
         } catch (FileAccessException e) {

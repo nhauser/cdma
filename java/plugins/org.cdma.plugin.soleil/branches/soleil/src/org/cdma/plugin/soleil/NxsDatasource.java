@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 
-import org.cdma.IDatasource;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDataset;
+import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.nexusformat.NexusException;

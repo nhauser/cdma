@@ -12,7 +12,10 @@ package org.cdma.utils;
 
 /// @cond internal
 
+import java.io.ObjectInputStream.GetField;
+
 import org.cdma.Factory;
+import org.cdma.IFactory;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
@@ -471,7 +474,8 @@ public abstract class ArrayUtils implements IArrayUtils {
                         "the shape of the map does not match with the array");
             }
         }
-        IArray resultArray = Factory.createArray(Double.TYPE, shape);
+        IFactory factory = Factory.getFactory( getArray().getFactoryName() );
+        IArray resultArray = factory.createArray(Double.TYPE, shape);
         if (shape.length > mapShape.length) {
             try {
                 ISliceIterator sliceIterator = getArray().getSliceIterator(
@@ -551,7 +555,8 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
         }
         section[dimension] = shape[dimension];
-        IArray newArray = Factory.createArray(Double.TYPE, newShape);
+        IFactory factory = Factory.getFactory( getArray().getFactoryName() );
+        IArray newArray = factory.createArray(Double.TYPE, newShape);
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();
@@ -603,7 +608,8 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
         }
         section[dimension] = shape[dimension];
-        IArray newArray = Factory.createArray(Double.TYPE, newShape);
+        IFactory factory = Factory.getFactory( getArray().getFactoryName() );
+        IArray newArray = factory.createArray(Double.TYPE, newShape);
         IArrayIterator newIterator = newArray.getIterator();
         while (newIterator.hasNext()) {
             newIterator.next();

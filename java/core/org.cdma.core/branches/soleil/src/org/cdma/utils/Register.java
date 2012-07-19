@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cdma.DataType;
 import org.cdma.Factory;
+import org.cdma.IFactory;
 import org.cdma.exception.BackupException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IDataItem;
@@ -222,7 +222,8 @@ public class Register {
                     DATA_GROUP_NAME).getDataItem(itemName);
             array.lock();
             if (item == null) {
-                item = Factory.createDataItem(backupReader.getRootGroup(),
+                IFactory factory = Factory.getFactory( array.getFactoryName() );
+                item = factory.createDataItem(backupReader.getRootGroup(),
                         itemName, array);
                 backupReader.getRootGroup().getGroup(DATA_GROUP_NAME)
                 .addDataItem(item);

@@ -34,8 +34,7 @@ public class NxsLogicalGroup extends LogicalGroup {
         // Detect the key dictionary file and mapping dictionary file
         String keyFile = Factory.getPathKeyDictionary();
         String mapFile = Factory.getPathMappingDictionaryFolder( factory ) + NxsDictionary.detectDictionaryFile( (NxsDataset) getDataset() );
-        String cntFile = Factory.getPathExperimentConceptDictionary();
-        ExtendedDictionary dictionary = new ExtendedDictionary( factory, keyFile, mapFile, cntFile);
+        ExtendedDictionary dictionary = new ExtendedDictionary( factory, keyFile, mapFile);
         try {
             dictionary.readEntries();
         } catch (FileAccessException e) {
