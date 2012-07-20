@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+       <groupId>fr.soleil</groupId>
+       <artifactId>super-pom-C-CPP</artifactId>
+       <version>RELEASE</version>
+    </parent>
+
+    <groupId>org.cdma.engines</groupId>
+    <artifactId>CdmaNexusEngine-${aol}-shared-${mode}</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>nar</packaging>
+
+    <name>CdmaNexusEngine</name>
+    <description>NeXus engine library for the CDMA project</description>
+
+    <developers>
+        <developer>
+            <id>poirier</id>
+            <name>poirier</name>
+            <email>stephane.poirier@synchrotron-soleil.fr</email>
+            <url>http://www.synchrotron-soleil.fr</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>manager</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
+
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/engines/nexus/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/engines/nexus/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/engines/nexus/trunk</url>
+  </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.freehep</groupId>
+        <artifactId>freehep-nar-plugin</artifactId>
+        <configuration>
+          <cpp>
+            <sourceDirectory>src</sourceDirectory>
+            <includePaths>
+              <includePath>include</includePath>
+              <includePath>src</includePath>
+            </includePaths>
+            <defines>
+              <!--define>CDMA_DEBUG</define-->
+            </defines>
+          </cpp>
+          <libraries>
+            <library>
+              <type>shared</type>
+            </library>
+          </libraries>
+          <specificConfigurations>
+            <specificConfiguration>
+              <id>CDMANeXus Linux</id>
+              <activation>
+                <os>Linux</os>
+              </activation>
+            </specificConfiguration>
+            <specificConfiguration>
+              <id>CDMANeXus Windows</id>
+              <activation>
+                <os>Windows</os>
+              </activation>
+              <cpp>
+                <defines>
+                  <define>CDMA_NEXUS_DLL</define>
+                  <define>CDMA_NEXUS_BUILD</define>
+                  <define>CDMA_DLL</define>
+                  <define>NEXUSCPP_DLL</define>
+                  <define>YAT_DLL</define>
+                </defines>
+              </cpp>
+            </specificConfiguration>
+          </specificConfigurations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+        <dependency>
+            <groupId>org.cdma</groupId>
+            <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.soleil.lib</groupId>
+            <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+          <version>1.13.4</version>
+        </dependency>
+        <dependency>
+           <groupId>fr.soleil.lib</groupId>
+           <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+          <version>1.7.8</version>
+        </dependency>
+        <dependency>
+            <groupId>net.zlib</groupId>
+            <artifactId>Zlib-${aol}-shared-release</artifactId>
+        </dependency>
+         <dependency>
+            <groupId>ncsa.uiuc.edu</groupId>
+            <artifactId>HDF5-${aol}-shared-release</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.nexusformat</groupId>
+            <artifactId>Nexus-${aol}-shared-release</artifactId>
+        </dependency>
+    </dependencies>
+    
+</project>
