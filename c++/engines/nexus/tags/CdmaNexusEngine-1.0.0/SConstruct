@@ -1,0 +1,157 @@
+from os import path
+import os
+
+###================================================================================
+# The names under which a library can be used depend heavily on the operating 
+# system. Unix provides the most detailed naming scheme depending on three 
+# parameters:
+#  libname ............. the name of the library
+#  version ............. the API version of the library
+#  soversion ........... the ABI version of the library
+#
+# On Linux a shared object is available under three names following the
+# following naming convention
+# lib<libname>.so.<soversion>.<version>
+# lib<libname>.so.<soversion>
+# lib<libname>.so
+#
+# The functions defined in this section create the appropriate names for the 
+# library target and add them to the build environment.
+#
+
+def create_full_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]+"."+env["VERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+"."+env["VERSION"]+env["SHLIBSUFFIX"]
+    env.Append(LIBFULLNAME = rstr) 
+
+def create_so_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]
+    if os.name == "posix":
+        rstr += env["SHLIBSUFFIX"]+"."+env["SOVERSION"]
+    if os.name == "nt":
+        rstr += "."+env["SOVERSION"]+env["SHLIBSUFFIX"]
+
+    env.Append(LIBSONAME = rstr)
+
+def create_link_libname(env):
+    rstr = env["LIBPREFIX"]+env["LIBNAME"]+env["SHLIBSUFFIX"]
+    env.Append(LIBLINKNAME = rstr)
+        
+    
+#==================================================================================
+
+
+#===================set build variables========================================
+vars = Variables("BuildConfig.py")
+
+vars.Add("SOVERSION","ABI version of the core libraray","")
+vars.Add("VERSION","API version of the core libraray","")
+vars.Add("LIBNAME","Name of the shared library","")
+vars.Add("LIBDIR","Installation directory of the libraray","")
+vars.Add("INCDIR","Installation directory for the header files","")
+vars.Add("PREFIX","Installation prefix","/usr")
+
+
+#=====================create the basic build environment=======================
+env = Environment(variables=vars,tools=["default","textfile"])
+env.ParseConfig('pkg-config --libs --cflags cdmacore')
+env.ParseConfig('pkg-config --libs --cflags nexuscpp')
+env.ParseConfig('pkg-config --libs --cflags yat')
+
+
+#=====================here we need some autoconfiguration======================
+conf = Configure(env)
+
+if not conf.CheckCHeader("hdf5.h"):
+    print "No HDF5 header file found!"
+    Exit(1)
+
+if not conf.CheckLib("hdf5"):
+    print "HDF5 library not found!"
+    Exit(1)
+
+if not conf.CheckCHeader("zlib.h"):
+    print "No zlib header found!"
+    Exit(1)
+
+if not conf.CheckLib("z"):
+    print "No zlib library found!"
+    Exit(1)
+
+if not conf.CheckHeader("napi.h"):
+    print "No Nexus NAPI header file found!"
+    Exit(1)
+
+if not conf.CheckLib("NeXus"):
+    print "Nexus library not found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("nxwriter.h"):
+    print "No header for the Soleil Nexus C++ interface found"
+    Exit(1)
+
+if not conf.CheckLib("nexuscpp"):
+    print "No Soleil Nexus C++ interface library found!"
+    Exit(1)
+
+if not conf.CheckCXXHeader("yat/CommonHeader.h"):
+    print "No YAT headers found!"
+    Exit(1)
+
+if not conf.CheckLib("yat"):
+    print "No YAT library found!"
+    Exit(1)
+
+
+if not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/array/Array.h") or \
+   not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/utils/ArrayUtils.h") or \
+   not conf.CheckCXXHeader("cdma/Common.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
+   not conf.CheckCXXHeader("cdma/navigation/IAttribute.h") or \
+   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+   not conf.CheckCXXHeader("cdma/Factory.h"):
+    print "No CDMA core header files found!"
+    Exit(1)
+
+if not conf.CheckLib("cdmacore"):
+    print "CDMA core library not found!"
+    Exit(1)
+
+
+
+env = conf.Finish()
+
+#===================create and export the build environment=====================
+if os.name == "posix":
+    #add special link flag to ensure that the soname of the library is 
+    #entioned in the ELF header
+    env.Append(LINKFLAGS=["-Wl,-h${LIBSONAME}"]) 
+
+#manage installation paths
+if env["LIBDIR"]:
+    env.Replace(LIBDIR=env["LIBDIR"])
+else:
+    env.Replace(LIBDIR=os.path.join(env["PREFIX"],"lib"))
+
+if env["INCDIR"]:
+    env.Replace(INCDIR=env["INCDIR"])
+else:
+    env.Replace(INCDIR=os.path.join(env["PREFIX"],"include/cdma/engines/nexus"))
+
+#set library name environment variables
+create_full_libname(env)
+create_so_libname(env)
+create_link_libname(env)
+
+Export("env")
+
+#=======================build the plugin==================================
+SConscript(["src/SConscript"])
+

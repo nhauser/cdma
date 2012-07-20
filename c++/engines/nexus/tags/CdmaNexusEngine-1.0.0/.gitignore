@@ -1,0 +1,9 @@
+.sconf_temp
+config.log
+*.dblite
+*.os
+*.o
+*.so
+*.swp
+*.so.*
+*.pc
