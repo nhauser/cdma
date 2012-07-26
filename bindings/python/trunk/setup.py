@@ -96,7 +96,7 @@ cdma = Extension("cdmacore",files,
                  extra_compile_args = compile_args,
                  **pkgconfig('cdmacore'))
 
-setup(name="cmda-python",
+setup(name="cdma-python",
         author="Eugen Wintersberger",
         author_email="eugen.wintersberger@desy.de",
         description="Python bindings for CDMA ",
