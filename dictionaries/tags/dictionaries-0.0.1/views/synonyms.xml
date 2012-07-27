@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE dictionary SYSTEM "../dtd/synonyms_file.dtd">
+<dictionary name="" version="">
+
+  <concept label="atom_bidule">
+  
+    <definition>
+      <description>Angle d'attaque du lancer de patate</description>
+      <unit>Joule</unit>
+    </definition>
+    
+    <synonyms>
+      <key>xBin</key>
+      <key>diff_meas_angle_chi</key>
+      <key>pd_meas_angle_chi</key>
+    </synonyms>
+    
+  </concept>
+
+  <concept label="atom_machin">
+  
+    <definition>
+      <description>Angle d'attaque du lancer de patate</description>
+      <unit>Joule</unit>
+    </definition>
+
+    <attributes>
+      <attribute name="unit">unit of the physical measurement</attribute>
+      <attribute name="equipment">e.g. motor/detector name</attribute>
+    </attributes>
+
+    <synonyms>
+      <key>yBin</key>
+      <key>diff_meas_angle_chi</key>
+      <key>pd_meas_angle_chi</key>
+    </synonyms>
+  </concept>
+  
+</dictionary>
