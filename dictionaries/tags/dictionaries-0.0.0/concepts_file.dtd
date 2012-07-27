@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!ELEMENT dictionary (concept*)>
+<!ATTLIST dictionary 
+    name CDATA #REQUIRED
+    version CDATA #REQUIRED
+>
+
+<!-- 
+==========================
+concept
+========================== 
+-->
+<!ELEMENT concept (definition,attributes?,synonyms)>
+<!ATTLIST concept 
+    label CDATA #REQUIRED
+>
+
+<!-- 
+==========================
+definition
+========================== 
+-->
+<!ELEMENT definition (description,unit?)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT unit (#PCDATA)>
+
+<!-- 
+==========================
+synonyms
+========================== 
+-->
+<!ELEMENT synonyms (key*)>
+<!ELEMENT key (#PCDATA)>
+
+<!-- 
+==========================
+attributes
+========================== 
+-->
+<!ELEMENT attributes (attribute*)>
+<!ELEMENT attribute (#PCDATA)>
+<!ATTLIST attribute
+    name CDATA #REQUIRED
+>
+
+
