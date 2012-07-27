@@ -3,8 +3,10 @@ package org.cdma.plugin.soleil.navigation;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -14,7 +16,6 @@ import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.nexus.navigation.NexusDataset;
 import org.cdma.engine.nexus.navigation.NexusGroup;
-import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -26,6 +27,7 @@ import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
+import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
@@ -55,6 +57,28 @@ public final class NxsDataset implements IDataset {
 
     public static NxsDataset instanciate(File destination) throws NoResultException {
         return new NxsDataset(destination);
+    }
+    
+    public static NxsDataset instanciate(URI destination) throws NoResultException {
+        NxsDataset dataset = new NxsDataset( new File(destination.getPath()) );
+        String fragment = destination.getFragment();
+        
+        if( fragment != null && ! fragment.isEmpty() ) {
+            IGroup group = dataset.getRootGroup();
+            try {
+                String path = URLDecoder.decode( fragment, "UTF-8");
+                for( IContainer container : group.findAllContainerByPath( path ) ) {
+                    if( container.getModelType().equals(ModelType.Group) ) {
+                        dataset.mRootPhysical = (IGroup) container;
+                        break;
+                    }
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return dataset;
     }
 
     @Override
@@ -145,11 +169,13 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public String getTitle() {
-        String title = "";
-        try {
-            title = mDatasets.get(0).getTitle();
+        String title = getRootGroup().getShortName();
+        if( title.isEmpty() ) {
+            try {
+                title = mDatasets.get(0).getTitle();
+            }
+            catch( NoSuchElementException e ) {}
         }
-        catch( NoSuchElementException e ) {}
 
         return title;
     }

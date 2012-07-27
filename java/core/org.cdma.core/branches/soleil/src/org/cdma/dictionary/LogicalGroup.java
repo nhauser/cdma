@@ -36,7 +36,6 @@ import java.util.List;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
-import org.cdma.dictionary.filter.IFilter;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IAttribute;
@@ -61,6 +60,7 @@ public class LogicalGroup implements IContainer, Cloneable {
     private LogicalGroup        mParent;       // Parent logical group if root then, it's null
     private IFactory            mFactory;
     private boolean             mThrow;        // Display debug info trace when dictionary isn't valid 
+    private List<IAttribute>    mAttributes;   // List of attributes
 
     public LogicalGroup(IKey key, IDataset dataset) {
         this(key, dataset, false);
@@ -91,6 +91,7 @@ public class LogicalGroup implements IContainer, Cloneable {
         else {
             mDictionary = null;
         }
+        mAttributes = new ArrayList<IAttribute>();
     }
 
     @Override
@@ -107,6 +108,7 @@ public class LogicalGroup implements IContainer, Cloneable {
         } catch (CloneNotSupportedException e) {
         }
         group.setDictionary(dictionary);
+        group.mAttributes = mAttributes;
         return group;
     }
 
@@ -344,8 +346,24 @@ public class LogicalGroup implements IContainer, Cloneable {
      * @return List of type Group; may be empty, not null.
      */
     public List<String> getKeyNames(ModelType model) {
-        // TODO Auto-generated method stub
-        return null;
+        List<String> result = new ArrayList<String>();
+        
+        // List all keys
+        ExtendedDictionary dictionary = getDictionary();
+        if( dictionary != null ) {
+            List<IKey> keys = dictionary.getAllKeys();
+            
+            // Check the ones that matches the model
+            ItemSolver solver;
+            for( IKey key : keys ) {
+                solver = dictionary.getItemSolver(key);
+                if( solver != null && solver.getModelType() == model ) {
+                    result.add( key.getName() );
+                }
+            }
+        }
+                
+        return result;
     }
 
     /**
@@ -403,24 +421,32 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        new NotImplementedException().printStackTrace();
+        mAttributes.add(attribute);
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
-        new NotImplementedException().printStackTrace();
+        IAttribute attribute = mFactory.createAttribute(name, value);
+        mAttributes.add(attribute);
     }
 
     @Override
     public IAttribute getAttribute(String name) {
-        new NotImplementedException().printStackTrace();
-        return null;
+        IAttribute result = null;
+        
+        for( IAttribute attribute : mAttributes ) {
+            if( attribute.getName().equals(name) ) {
+                result = attribute;
+                break;
+            }
+        }
+        
+        return result;
     }
 
     @Override
     public List<IAttribute> getAttributeList() {
-        new NotImplementedException().printStackTrace();
-        return null;
+        return mAttributes;
     }
 
     /**

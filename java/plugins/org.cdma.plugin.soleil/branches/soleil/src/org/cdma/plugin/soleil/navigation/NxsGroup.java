@@ -333,7 +333,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         NexusNode groupName;
         NexusNode[] nodes;
         for (IGroup group : list) {
-            nodes = PathNexus.splitStringToNode(group.getName());
+            nodes = PathNexus.splitStringToNode(group.getLocation());
             groupName = nodes[nodes.length - 1];
             if (groupName.matchesNode(nodeName)) {
                 result = group;

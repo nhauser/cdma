@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.NexusException;
 
 public class PathNexus implements Cloneable {
