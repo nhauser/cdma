@@ -39,13 +39,14 @@ import org.cdma.dictionary.filter.IFilter;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IKey;
+import org.cdma.utils.Utilities.ModelType;
 import org.jdom2.Element;
 
 public class ItemSolver {
     IFactory mFactory; // IFactory instance of the plug-in using this item solver
     List<Solver> mContent; // List of solvers to process to get IContainer content
-    List<AttributeSolver> mAttributes; // List of attribute solvers to process to get IContainer
-                                       // attributes
+    List<AttributeSolver> mAttributes; // List of attribute solvers to process to get IContainer attributes
+    ModelType mModelType; // The model type of created item when solved
 
     public ItemSolver(IFactory factory, PluginMethodManager manager, Element elem) {
         mFactory = factory;
@@ -56,6 +57,8 @@ public class ItemSolver {
         // Prepare list of attribute solvers
         mAttributes = new ArrayList<AttributeSolver>();
 
+        mModelType = ModelType.DataItem;
+        
         // Initialize internal fields
         init(manager, elem);
     }
@@ -71,6 +74,7 @@ public class ItemSolver {
 
         // Initialize internal fields
         mContent.add(new Solver(key));
+        mModelType = ModelType.LogicalGroup;
     }
 
     public List<IContainer> solve(Context context) {
@@ -196,6 +200,14 @@ public class ItemSolver {
             }
         }
         return result;
+    }
+
+    /**
+     * Returns the model type of instantiated object when solve is called 
+     * @return the ModelType of item
+     */
+    public ModelType getModelType() {
+        return mModelType;
     }
 }
 

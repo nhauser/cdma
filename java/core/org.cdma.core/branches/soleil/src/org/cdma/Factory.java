@@ -44,9 +44,15 @@ public final class Factory {
     private static volatile IFactoryManager manager;
     //private static String CDM_EXPERIMENT = "";
     private static String CDM_VIEW = "";
-    private static final String DICO_PATH_PROP = "CDM_DICTIONARY_PATH";
-    private static final String FILE_CONCEPT_NAME = "concepts";
-    private static final String FILE_VIEW_NAME    = "view";
+    private static final String DICO_PATH_PROP       = "CDM_DICTIONARY_PATH";
+    private static final String FILE_CONCEPT_NAME    = "concepts";
+    private static final String FILE_CONCEPT_CORE    = "core_";
+    private static final String FILE_VIEW_NAME       = "view";
+    
+    private static final String PATH_FOLDER_DTD      = "dtd";
+    private static final String PATH_FOLDER_MAPS     = "mappings";
+    private static final String PATH_FOLDER_VIEWS    = "views";
+    private static final String PATH_FOLDER_CONCEPTS = "concepts";
 
     /**
      * Create a CDMA Dataset that can read the given URI.
@@ -112,7 +118,7 @@ public final class Factory {
         String sDict = getDictionariesFolder();
         String sFile = ( getActiveView() + "_" + FILE_VIEW_NAME + ".xml" ).toLowerCase();
 
-        return sDict + File.separator + sFile;
+        return sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + sFile;
     }
 
     /**
@@ -125,15 +131,15 @@ public final class Factory {
      */
     public static String getPathCommonConceptDictionary() {
         String sDict = getDictionariesFolder();
-        String sFile = "common_" + FILE_CONCEPT_NAME + ".xml".toLowerCase();
-        String sPath = sDict + File.separator + sFile;
+        String sFile = FILE_CONCEPT_CORE + FILE_CONCEPT_NAME + ".xml".toLowerCase();
+        String sPath = sDict + File.separator + PATH_FOLDER_CONCEPTS + File.separator + sFile;
 
         // Check the concept dictionary corresponding to the view exist
         File file = new File(sPath);
         if( ! file.exists() ) {
             sPath = null;
         }
-                
+
         return sPath;
     }
 
@@ -143,12 +149,12 @@ public final class Factory {
      * keys to paths that are plug-in dependent.
      * 
      * @param factory of the plug-in instance from which we want to load the dictionary
-     * @return the path to the plug-in's mapping dictionaries folder  
+     * @return the path to the plug-in's mapping dictionaries folder
      */
     public static String getPathMappingDictionaryFolder(IFactory factory) {
         String sDict = getDictionariesFolder();
 
-        return sDict + File.separator + factory.getName() + File.separator;
+        return sDict + File.separator + PATH_FOLDER_MAPS + File.separator + factory.getName() + File.separator;
     }
 
     /**
@@ -216,24 +222,7 @@ public final class Factory {
     public static IFactory getFactory(URI uri) {
         List<String> reader = new ArrayList<String>();
         IFactory result = null;
-/*
-        IFactoryManager mngr = getManager();
 
-        Map<String, IFactory> registry = mngr.getFactoryRegistry();
-
-        for( Entry<String, IFactory> entry : registry.entrySet() ) {
-            plugin   = entry.getValue();
-            detector = plugin.getPluginURIDetector();
-
-            if( detector.isReadable(uri) ) {
-                reader.add( plugin );
-                if( detector.isProducer(uri) ) {
-                    result = plugin;
-                    break;
-                }
-            }
-        }
-*/
         // Get the list of data source detector
         List<IDatasource> sources = getDatasources();
         

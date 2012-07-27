@@ -3,7 +3,6 @@ package fr.soleil.nexus;
 import java.text.Collator;
 import java.util.Comparator;
 
-import org.cdma.utilities.performance.Benchmarker;
 
 public class NexusNode implements Cloneable {
     // Private definitions

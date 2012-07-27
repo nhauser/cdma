@@ -11,6 +11,7 @@
 package org.cdma.interfaces;
 
 import java.net.URI;
+import java.util.List;
 
 import org.cdma.internal.IModelObject;
 
@@ -55,7 +56,7 @@ public interface IDatasource extends IModelObject
 
     /**
      * Returns true if the target can be browsed with that plug-in. The aim is to determine
-     * the entry point of a that data source (i.e to obtain a IDataset that provides 
+     * the entry point of a data source (i.e to obtain a IDataset that provides 
      * the Extended Dictionary mechanism). If the target points an experiment for that plug-in
      * (in the meaning of the Extended Dictionary mechanism) it will return false.
      * 
@@ -80,6 +81,20 @@ public interface IDatasource extends IModelObject
      * @see IDatasource#isBrowsable(URI)
      */
     boolean isExperiment( URI target );
+    
+    
+    /**
+     * Returns the list of available sub URIs. That method has a meaning only when
+     * isBrowsable returns true and isExperiment is false.
+     * 
+     * The aim is to obtain the list of sub available URI to iterate again on it and 
+     * discover in the file system (that might be proper to the plug-in) the experiment
+     * entry point. 
+     * 
+     * @param target
+     * @return list of URI whom elements have a meaning for the plug-in.
+     */
+    List<URI> getValidURI( URI target );
 }
 
 /// @endcond pluginAPIclientAPI

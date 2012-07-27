@@ -26,7 +26,6 @@ import org.cdma.internal.IModelObject;
 import org.cdma.internal.dictionary.ConceptManager;
 import org.cdma.internal.dictionary.ItemSolver;
 import org.cdma.internal.dictionary.PluginMethodManager;
-import org.cdma.internal.dictionary.Solver;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -49,7 +48,6 @@ import org.jdom2.input.sax.XMLReaders;
 
 
 public final class ExtendedDictionary implements IModelObject, Cloneable{
-    private static final String FILE_CONCEPT_NAME = "concepts";
     
     private static volatile PluginMethodManager mMethodMgr;
     private IFactory mFactory;     // Name of the plug-in's factory that created this object 
@@ -59,8 +57,8 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     private String   mMapFile;     // Path to reach the mapping file
     private String   mConceptFile; // Path where to find all concepts
 
-    private Map<IKey, String>               mKeyMap  = new HashMap<IKey, String>();               // Key / ID association
-    private Map<String, ItemSolver >        mPathMap = new HashMap<String, ItemSolver>();        // ID / ItemSolver association
+    private Map<IKey,   String>             mKeyMap  = new HashMap<IKey,   String>();             // Key / ID association
+    private Map<String, ItemSolver>         mPathMap = new HashMap<String, ItemSolver>();         // ID / ItemSolver association
     private Map<String, ExtendedDictionary> mSubDict = new HashMap<String, ExtendedDictionary>(); // ID / sub-dictionaries
     
     private ConceptManager mConcepts; // All available concepts
@@ -136,7 +134,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         File dicFile = new File(mKeyFile);
         if (!dicFile.exists()) 
         {
-            throw new FileAccessException("the target dictionary file does not exist");
+            throw new FileAccessException("the target dictionary file does not exist:\n" + dicFile.toString() );
         }
 
         // Read keys and mapping dictionaries
@@ -258,13 +256,16 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         List<Concept> concepts= new ArrayList<Concept>();
         
         String commonFile = Factory.getPathCommonConceptDictionary();
+        // Read common concept file
         if( commonFile != null ) {
             concepts.addAll( readConceptFile(commonFile) );
         }
         
+        // Read specific concept file
         if( mConceptFile != null ) {
             concepts.addAll( readConceptFile( mConceptFile ) );
         }
+        
         mConcepts = new ConceptManager(concepts);
     }
     

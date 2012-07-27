@@ -124,7 +124,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-        return NxsDataset.instanciate(new File(uri.getPath()));
+        return NxsDataset.instanciate(uri);
     }
 
     @Override
@@ -200,7 +200,7 @@ public final class NxsFactory implements IFactory {
     public IDataset openDataset(URI uri) throws FileAccessException {
         IDataset ds = null;
         try {
-            ds = NxsDataset.instanciate(new File(uri.getPath()));
+            ds = NxsDataset.instanciate(uri);
         }
         catch( NoResultException e) {
             throw new FileAccessException(e);

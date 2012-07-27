@@ -48,6 +48,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     private IDictionary      mDictionary;    // Group dictionary
     private List<IAttribute> mAttributes;    // Attributes belonging to this
     private List<IDimension> mDimensions;    // Dimensions direct child of this
+    private boolean readAttributes;          // have attributes been read
 
     // / Constructors
     public NexusGroup(String factoryName, IGroup parent, PathNexus from, NexusDataset dataset) {
@@ -58,6 +59,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mChild = new ArrayList<IContainer>();
         mAttributes = new ArrayList<IAttribute>();
         mDimensions = new ArrayList<IDimension>();
+        readAttributes = false;
         setParent(parent);
     }
 
@@ -69,6 +71,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mChild = new ArrayList<IContainer>();
         mAttributes = new ArrayList<IAttribute>();
         mDimensions = new ArrayList<IDimension>();
+        readAttributes = false;
         if (from != null && dataset != null) {
             createFamilyTree();
         }
@@ -82,6 +85,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mChild = new ArrayList<IContainer>(group.mChild);
         mAttributes = new ArrayList<IAttribute>(group.mAttributes);
         mDimensions = new ArrayList<IDimension>(group.mDimensions);
+        readAttributes = group.readAttributes;
         try {
             mDictionary = (IDictionary) group.mDictionary.clone();
         } catch (CloneNotSupportedException e) {
@@ -138,6 +142,10 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public IAttribute getAttribute(String name) {
+        if( ! readAttributes ) {
+            readAttributes();
+        }
+
         for (IAttribute attr : mAttributes) {
             if (attr.getName().equals(name)) {
                 return attr;
@@ -209,35 +217,17 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public List<IAttribute> getAttributeList() {
-        Hashtable<String, AttributeEntry> inList;
-        ArrayList<IAttribute> outList = new ArrayList<IAttribute>();
-        NexusAttribute tmpAttr;
-        String sAttrName;
-
-        try {
-            mDataset.getHandler().openFile();
-            mDataset.getHandler().openPath(mN4TCurPath);
-            inList = mDataset.getHandler().listAttribute();
-
-            Iterator<String> iter = inList.keySet().iterator();
-            while (iter.hasNext()) {
-                sAttrName = iter.next();
-                try {
-                    tmpAttr = new NexusAttribute(mFactory, sAttrName, mDataset.getHandler().readAttr(sAttrName, null));
-                    outList.add(tmpAttr);
-                } catch (NexusException e) {
-                    e.printStackTrace();
-                }
-            }
-            mDataset.getHandler().closeFile();
-        } catch (NexusException ne) {
-            try {
-                mDataset.getHandler().closeFile();
-            } catch (NexusException e) {
-            }
+        List<IAttribute> attributes = new ArrayList<IAttribute>();
+        
+        if( ! readAttributes ) {
+            readAttributes();
         }
-
-        return outList;
+        
+        for( IAttribute attr : mAttributes ) {
+            attributes.add(attr);
+        }
+        
+        return attributes;
     }
 
     @Override
@@ -814,5 +804,34 @@ public final class NexusGroup implements IGroup, Cloneable {
         }
 
         return result;
+    }
+    
+    private void readAttributes() {
+        Hashtable<String, AttributeEntry> inList;
+        NexusAttribute tmpAttr;
+        String sAttrName;
+
+        try {
+            mDataset.getHandler().openFile();
+            mDataset.getHandler().openPath(mN4TCurPath);
+            inList = mDataset.getHandler().listAttribute();
+
+            Iterator<String> iter = inList.keySet().iterator();
+            while (iter.hasNext()) {
+                sAttrName = iter.next();
+                try {
+                    tmpAttr = new NexusAttribute(mFactory, sAttrName, mDataset.getHandler().readAttr(sAttrName, null));
+                    mAttributes.add(tmpAttr);
+                } catch (NexusException e) {
+                    e.printStackTrace();
+                }
+            }
+            mDataset.getHandler().closeFile();
+        } catch (NexusException ne) {
+            try {
+                mDataset.getHandler().closeFile();
+            } catch (NexusException e) {
+            }
+        }
     }
 }
