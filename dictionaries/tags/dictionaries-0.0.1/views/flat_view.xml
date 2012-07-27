@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="FLAT">
+    <item key="camera"/>
+    <item key="dark"/>
+    <item key="distance"/>
+    <item key="exposureTime"/>
+    <item key="shutterCloseDelay"/>
+    <item key="channelScale"/>
+    <item key="xBin"/>
+    <item key="yBin"/>
+    <item key="mi"/>
+    <item key="gain"/>
+    <item key="intensity"/>
+    <item key="lambda"/>
+    <item key="energy"/>
+    <item key="energyScale"/>
+    <item key="images"/>
+    <item key="spectrums"/>
+    <item key="comments"/>
+    <item key="spectrums_scienta"/>
+    <item key="motor_position" />
+</data-def>
