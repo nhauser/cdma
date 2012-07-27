@@ -15,8 +15,8 @@
 	<description>CDMA Engine: NeXus based on Soleil's API</description>
 
 	<scm>
-     <connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/jnexus-0.0.5</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/jnexus-0.0.5</developerConnection>
+     <connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/nexus-0.0.5</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/nexus-0.0.5</developerConnection>
 	</scm>
 
 	<dependencies>
