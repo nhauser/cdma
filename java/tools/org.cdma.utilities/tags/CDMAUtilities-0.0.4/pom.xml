@@ -16,8 +16,8 @@
 	<description> This project contains various tools to interact with CDMA </description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/CDMAUtilities-0.0.4</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/CDMAUtilities-0.0.4</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.4</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.4</developerConnection>
 	</scm>
 
 	<developers>
