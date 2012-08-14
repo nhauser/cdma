@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF8"?>
-<!DOCTYPE map-def SYSTEM "../mapping_file.dtd">
+<!DOCTYPE map-def SYSTEM "../dtd/mapping_file.dtd">
 <map-def name="SWING_FLYSCAN" version="1.0.0">
   <item key="acquisition_sequence">
     <path>/{NXentry}</path>
