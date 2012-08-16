@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF8"?>
-<!DOCTYPE plugin-config SYSTEM "../dtd/plugin_config_file.dtd">
+<!DOCTYPE plugin-config SYSTEM "../../dtd/plugin_config_file.dtd">
 <plugin-config name="SOLEIL's NeXus plug-in configuration file">
 <!-- ============================================
 ==  CONFIG 1: detection by file information    ==
