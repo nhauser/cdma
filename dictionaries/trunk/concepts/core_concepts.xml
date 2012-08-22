@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE dictionary SYSTEM "../dtd/concepts_file.dtd">
+<dictionary name="common" version="1.0.0">
+<!--
+  <concept label="concept_label">
+  
+    <definition>
+      <description>Description of the physical measurement.</description>
+      <unit>Unit used to describ the measurement</unit>
+    </definition>
+    
+    <attributes>
+      <attribute name="attribute_name_1">Description of the attribute 1</attribute>
+      <attribute name="attribute_name_2">Description of the attribute 2</attribute>
+    </attributes>
+    
+    <synonyms>
+      <key>key_word_1</key>
+      <key>key_word_2</key>
+      <key>key_word_3</key>
+      <key>key_word_4</key>
+    </synonyms>
+    
+  </concept>
+-->
+
+  
+</dictionary>

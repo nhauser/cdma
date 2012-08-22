@@ -197,8 +197,8 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         ConfigDataset conf = dataset.getConfiguration();
 
         // Ask for beamline and datamodel parameters
-        String beamline = conf.getParameter(NxsConstant.BEAMLINE, dataset);
-        String model = conf.getParameter(NxsConstant.MODEL, dataset);
+        String beamline = conf.getParameter(NxsConstant.BEAMLINE);
+        String model = conf.getParameter(NxsConstant.MODEL);
 
         // Construct the dictionary file name
         if( beamline != null ) {

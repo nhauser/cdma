@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.SoftReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.cdma.Factory;
@@ -22,11 +25,12 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
-import org.cdma.plugin.soleil.NxsDatasource.NeXusFilter;
 import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
+import org.cdma.plugin.soleil.internal.DetectedSource.NeXusFilter;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
+import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
@@ -54,30 +58,45 @@ public final class NxsDataset implements IDataset {
     private IGroup             mRootPhysical; // Physical root of the document 
     private NxsLogicalGroup    mRootLogical;  // Logical root of the document
     private boolean            mOpen;         // is the dataset open 
+    private static Map<String, SoftReference<NxsDataset> > datasets;
 
-    public static NxsDataset instanciate(File destination) throws NoResultException {
-        return new NxsDataset(destination);
-    }
-    
     public static NxsDataset instanciate(URI destination) throws NoResultException {
-        NxsDataset dataset = new NxsDataset( new File(destination.getPath()) );
-        String fragment = destination.getFragment();
-        
-        if( fragment != null && ! fragment.isEmpty() ) {
-            IGroup group = dataset.getRootGroup();
-            try {
-                String path = URLDecoder.decode( fragment, "UTF-8");
-                for( IContainer container : group.findAllContainerByPath( path ) ) {
-                    if( container.getModelType().equals(ModelType.Group) ) {
-                        dataset.mRootPhysical = (IGroup) container;
-                        break;
-                    }
+        NxsDataset dataset = null;
+        if (datasets == null) {
+            synchronized ( NxsDataset.class ) {
+                if( datasets == null ) {
+                    datasets = new HashMap<String, SoftReference<NxsDataset>>();
                 }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
             }
         }
         
+        synchronized ( datasets ) {
+            SoftReference<NxsDataset> ref = datasets.get( destination.toString() );
+            if( ref != null ) {
+                dataset = ref.get();
+            }
+            
+            if( dataset == null ) {
+                dataset = new NxsDataset( new File(destination.getPath()) );
+                String fragment = destination.getFragment();
+                
+                if( fragment != null && ! fragment.isEmpty() ) {
+                    IGroup group = dataset.getRootGroup();
+                    try {
+                        String path = URLDecoder.decode( fragment, "UTF-8");
+                        for( IContainer container : group.findAllContainerByPath( path ) ) {
+                            if( container.getModelType().equals(ModelType.Group) ) {
+                                dataset.mRootPhysical = (IGroup) container;
+                                break;
+                            }
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+                datasets.put( destination.toString(), new SoftReference<NxsDataset>(dataset));
+            }
+        }
         return dataset;
     }
 
@@ -89,7 +108,7 @@ public final class NxsDataset implements IDataset {
     @Override
     public LogicalGroup getLogicalRoot() {
         if( mRootLogical == null ) {
-            String param = getConfiguration().getParameter(NxsFactory.DEBUG_INF, this);
+            String param = getConfiguration().getParameter(NxsFactory.DEBUG_INF);
             boolean debug = Boolean.parseBoolean( param );
             mRootLogical = new NxsLogicalGroup(null, null, this, debug);
 
@@ -205,6 +224,7 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void open() throws IOException {
+        mOpen = true;
     }
 
     @Override
@@ -221,16 +241,15 @@ public final class NxsDataset implements IDataset {
 
     public ConfigDataset getConfiguration() {
         if( mConfig == null ) {
-            ConfigDataset conf;
-            try {
-                open();
-                conf = ConfigManager.getInstance( NxsFactory.getInstance(), NxsFactory.CONFIG_FILE ).getConfig(this);
-                mConfig = conf;
-                close();
-            } catch (NoResultException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if( mDatasets.size() > 0 ) {
+                ConfigDataset conf;
+                try {
+                    IDataset dataset = new NxsDataset( new File(mPath) );
+                    conf = ConfigManager.getInstance( NxsFactory.getInstance(), NxsFactory.CONFIG_FILE ).getConfig(dataset);
+                    mConfig = conf;
+                } catch (NoResultException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return mConfig;
@@ -256,7 +275,4 @@ public final class NxsDataset implements IDataset {
         mOpen = false;
     }
 
-    private void setConfig(ConfigDataset conf) {
-        mConfig = conf;
-    }
 }

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.cdma.interfaces.IDataset;
 import org.cdma.utilities.configuration.internal.ConfigParameter.CriterionValue;
+import org.cdma.utilities.performance.Benchmarker;
 import org.jdom2.Element;
 
 /**
@@ -78,14 +79,12 @@ public class ConfigCriteria {
      */
     public boolean match( IDataset dataset ) {
         boolean result = true;
-
         for( ConfigParameterCriterion criterion : mCriterion ) {
             if( criterion.getValue(dataset).equals(CriterionValue.FALSE.toString()) ) {
                 result = false;
                 break;
             }
         }
-
         return result;
     }
     

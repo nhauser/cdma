@@ -78,7 +78,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
         // Scan attribute
         if (nodes.length > 0 && nodes[0].getClassName().equals("NXentry")) {
             String attrName = "acquisition_sequence";
-            String attrValue = root.getGroup(nodes[0].getNodeName()).getShortName();
+            String attrValue = root.getShortName();
             container.addStringAttribute(attrName, attrValue);
         }
     }

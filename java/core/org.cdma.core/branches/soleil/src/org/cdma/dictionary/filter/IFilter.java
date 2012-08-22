@@ -39,7 +39,7 @@ public interface IFilter {
     boolean matches(IContainer item);
     
     /**
-     * Equality test of to filters implementation.
+     * Equality test of two filters implementation.
      * 
      * @param filter to be compared to this one
      * @return true if both IFilter implementation have same type and filtering properties 

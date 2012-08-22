@@ -2,16 +2,16 @@
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="HERMES_SCANSERVER" version="1.0.0">
   <item key="acquisition_sequence">
-    <path>/{NXentry}</path>
+    <path></path>
     <!-- create virtual data item having the name of the nodes listed above -->
     <call>CreateVirtualItem</call>
   </item>
   <item key="images">
-    <path>/{NXentry}/{NXdata}/data_03</path>
+    <path>/{NXdata}/data_03</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="x_position">
-    <path>/{NXentry}/{NXdata}/time_1</path>
+    <path>/{NXdata}/time_1</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
 </map-def>

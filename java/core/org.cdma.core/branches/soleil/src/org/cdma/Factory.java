@@ -156,6 +156,25 @@ public final class Factory {
 
         return sDict + File.separator + PATH_FOLDER_MAPS + File.separator + factory.getName() + File.separator;
     }
+    
+    /**
+     * This method will return the path to reach the <b>specific concept dictionary</b>. 
+     * It means the file where is defined every specific physical concepts defined by the view.
+     * 
+     * @return the path to the specific concept folder or null if not found
+     */
+    public static String getPathConceptDictionaryFolder() {
+        String sDict = getDictionariesFolder();
+        String sPath = sDict + File.separator + PATH_FOLDER_CONCEPTS + File.separator;
+
+        // Check the concept dictionary corresponding to the view exist
+        File file = new File(sPath);
+        if( ! file.exists() ) {
+            sPath = null;
+        }
+
+        return sPath;
+    }
 
     /**
      * Set the folder path where to search for key dictionary files.

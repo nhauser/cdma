@@ -46,11 +46,10 @@ public interface IDatasource extends IModelObject
 
     /**
      * Returns true if the given URI aims to a data source that is compatible with that 
-     * plug-in's instance AND if the Extended Dictionary mechanism can be used with it.
-     * Mostly will return true when the data source was produced by the plug-in.
+     * plug-in's instance AND if the data source was produced by the plug-in.
      * 
      * @param target of the data source can be a file, a folder, data base...
-     * @return true if the target can browsed using the Extended Dictionary mechanism
+     * @return true if the target is fully compatible with the plug-in
      */
     boolean isProducer( URI target );
 
@@ -92,9 +91,15 @@ public interface IDatasource extends IModelObject
      * entry point. 
      * 
      * @param target
-     * @return list of URI whom elements have a meaning for the plug-in.
+     * @return list of URI whom elements have a meaning for this plug-in.
      */
     List<URI> getValidURI( URI target );
+    
+    /**
+     * Returns an array of string compound of each element or the URI
+     * but the protocol.
+     */
+    String[] getURIParts( URI target );
 }
 
 /// @endcond pluginAPIclientAPI
