@@ -616,7 +616,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public void setDataType(Class<?> dataType) {
         try {
-            // TODO
+            // TODO Auto-generated method stub
             throw new BackupException(NexusDataset.ERR_NOT_SUPPORTED);
         }
         catch (BackupException e) {
@@ -654,9 +654,8 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public void setElementSize(int elementSize) {
         try {
-            // TODO
-            throw new BackupException(
-                    "Method not support in plug-in: setElementSize(int elementSize)!");
+            // TODO Auto-generated catch block
+            throw new BackupException(NexusDataset.ERR_NOT_SUPPORTED);
         }
         catch (BackupException e) {
             e.printStackTrace();

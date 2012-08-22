@@ -35,6 +35,7 @@ import java.util.List;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
+import org.cdma.dictionary.Path;
 import org.cdma.dictionary.filter.IFilter;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -43,11 +44,28 @@ import org.cdma.utils.Utilities.ModelType;
 import org.jdom2.Element;
 
 public class ItemSolver {
-    IFactory mFactory; // IFactory instance of the plug-in using this item solver
-    List<Solver> mContent; // List of solvers to process to get IContainer content
+    IFactory mFactory;                 // IFactory instance of the plug-in using this item solver
+    List<Solver> mContent;             // List of solvers to process to get IContainer content
     List<AttributeSolver> mAttributes; // List of attribute solvers to process to get IContainer attributes
-    ModelType mModelType; // The model type of created item when solved
+    ModelType mModelType;              // The model type of created item when solved
 
+    public ItemSolver(IFactory factory, Path path) {
+        mFactory = factory;
+
+        // Prepare list of solver
+        mContent = new ArrayList<Solver>();
+
+        // Prepare list of attribute solvers
+        mAttributes = new ArrayList<AttributeSolver>();
+
+        // Set the model type
+        mModelType = ModelType.DataItem;
+        
+        // Add the solver to this item solver
+        Solver solver = new Solver(path);
+        mContent.add(solver);
+    }
+    
     public ItemSolver(IFactory factory, PluginMethodManager manager, Element elem) {
         mFactory = factory;
 

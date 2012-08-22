@@ -63,6 +63,20 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     
     private ConceptManager mConcepts; // All available concepts
 
+    /**
+     * Create an empty dictionary
+     * @param factory
+     */
+    public ExtendedDictionary(IFactory factory) {
+        mMethodMgr   = PluginMethodManager.instantiate();
+        mFactory     = factory; 
+        mView        = Factory.getActiveView();
+        mKeyFile     = null;
+        mMapFile     = null;
+        mConceptFile = null;
+        mConcepts    = new ConceptManager( new ArrayList<Concept>() );
+    }
+    
     public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) {
         mMethodMgr   = PluginMethodManager.instantiate();
         mFactory     = factory; 
@@ -74,7 +88,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     }
 
     /**
-     * Add an entry of key and path.
+     * Add an entry of key and item solver.
      * 
      * @param keyName key's name in string
      * @param solver Solver that will be used to resolve the key when asked 
@@ -83,6 +97,30 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         IKey key = mFactory.createKey(keyName);
         mKeyMap.put(key, keyName);
         mPathMap.put(keyName, solver);
+    }
+    
+    /**
+     * Add an entry of key and path.
+     * 
+     * @param keyName key's name in string
+     * @param path where data can be found
+     */
+    public void addEntry(String keyName, Path path) {
+        IKey key = mFactory.createKey(keyName);
+        mKeyMap.put(key, keyName);
+        ItemSolver solver = new ItemSolver(mFactory, path);
+        mPathMap.put(keyName, solver);
+    }
+    
+    /**
+     * Add a concept to the dictionary.
+     * 
+     * @param concept to be added
+     */
+    public void addConcept(Concept concept) {
+        if( mConcepts != null ) {
+            mConcepts.addConcept(concept);
+        }
     }
 
     /**
@@ -131,15 +169,17 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @throws FileAccessException in case of any problem while reading
      */
     public void readEntries() throws FileAccessException {
-        File dicFile = new File(mKeyFile);
-        if (!dicFile.exists()) 
-        {
-            throw new FileAccessException("the target dictionary file does not exist:\n" + dicFile.toString() );
+        if( mKeyFile != null ) {
+            File dicFile = new File(mKeyFile);
+            if (!dicFile.exists()) 
+            {
+                throw new FileAccessException("the target dictionary file does not exist:\n" + dicFile.toString() );
+            }
+    
+            // Read keys and mapping dictionaries
+            readDictionaryKeys(null);
+            readDictionaryMappings();
         }
-
-        // Read keys and mapping dictionaries
-        readDictionaryKeys(null);
-        readDictionaryMappings();
     }
 
     /**
@@ -299,7 +339,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             
             String concept = startNode.getAttributeValue("concept");
             if( concept != null ) {
-                mConceptFile = Factory.getDictionariesFolder() + File.separator + concept; 
+                mConceptFile = Factory.getPathConceptDictionaryFolder() + concept; 
             }
         }
         else {
@@ -382,36 +422,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             }
         }
     }
-/*
-    @SuppressWarnings("unchecked")
-    private List<Solver> loadKeySolver(Element elem) {
-        // Prepare result
-        List<Solver> result = new ArrayList<Solver>();
-        
-        // List DOM children 
-        List<?> nodes = elem.getChildren();
-        
-        IPluginMethod method;
-        Solver current;
-        
-        // For each children of the mapping key item
-        for( Element node : (List<Element>) nodes ) {
-            // If path open the path
-            if( node.getName().equals("path") )  {
-                current = new Solver( mFactory.createPath(node.getText()) );
-                result.add(current);
-            }
-            // If call on a method
-            else if( node.getName().equals("call") )  {
-                method = mMethodMgr.getPluginMethod(mFactory.getName(), node.getText());
-                current = new Solver(method);
-                result.add( current );
-            }
-        }
 
-        return result;
-    }
-*/
     /**
      * Check the given file exists and open the root node
      * 

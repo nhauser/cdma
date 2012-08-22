@@ -87,7 +87,9 @@ public final class NexusGroup implements IGroup, Cloneable {
         mDimensions = new ArrayList<IDimension>(group.mDimensions);
         readAttributes = group.readAttributes;
         try {
-            mDictionary = (IDictionary) group.mDictionary.clone();
+            if( group.mDictionary != null ) {
+                mDictionary = (IDictionary) group.mDictionary.clone();
+            }
         } catch (CloneNotSupportedException e) {
             mDictionary = null;
         }

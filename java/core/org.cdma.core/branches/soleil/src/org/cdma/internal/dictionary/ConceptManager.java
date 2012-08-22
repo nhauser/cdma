@@ -70,6 +70,15 @@ public class ConceptManager {
         
         return result; 
     }
+    
+    /**
+     * Add a given concept to this concept manager
+     * 
+     * @param concept
+     */
+    public void addConcept(Concept concept) {
+        mConcepts.add(concept);
+    }
 
 }
 

@@ -110,7 +110,9 @@ public final class NxsGroup implements IGroup, Cloneable {
         for (IGroup group : mGroups) {
             mGroups[i++] = group.clone();
         }
-        clone.mParent = mParent.clone();
+        if( mParent != null ) {
+            clone.mParent = mParent.clone();
+        }
         clone.mDataset = mDataset;
         clone.mIsChildUpdate = false;
         return clone;
@@ -458,9 +460,10 @@ public final class NxsGroup implements IGroup, Cloneable {
         // Store in a map all different containers from all m_groups
         Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
         List<String> sortGrp = new ArrayList<String>();
+        String absPath = mDataset.getRootGroup().getLocation() + path;
         for (IGroup group : mGroups) {
             try {
-                tmp = group.findAllContainerByPath(path);
+                tmp = group.findAllContainerByPath(absPath);
                 for (IContainer item : tmp) {
                     location = item.getLocation();
                     if (items.containsKey(location)) {
@@ -607,7 +610,7 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void addStringAttribute(String name, String value) {
-        if (mGroups != null && mGroups.length > 0) {
+        if (mGroups != null && mGroups.length > 0 && mGroups[0] != null ) {
             mGroups[0].addStringAttribute(name, value);
         }
     }
@@ -762,5 +765,15 @@ public final class NxsGroup implements IGroup, Cloneable {
     // ****************************************************
     public PathNexus getPathNexus() {
         return ((NexusGroup) mGroups[0]).getPathNexus();
+    }
+    
+    @Override
+    public String toString() {
+        String res = getShortName() + "\n";
+        
+        for( IGroup group : mGroups ) {
+            res +=  group.getLocation() + "\n";
+        }
+        return res;
     }
 }

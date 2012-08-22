@@ -86,7 +86,9 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         // Scan attribute
         if (nodes.length > 0 && nodes[0].getClassName().equals("NXentry")) {
             String attrName = "acquisition_sequence";
-            String attrValue = root.getGroup(nodes[0].getNodeName()).getShortName();
+            // if the root is the entry (logical mode) we don't need this anymore
+            //String attrValue = root.getGroup(nodes[0].getNodeName()).getShortName();
+            String attrValue = root.getShortName();
             container.addStringAttribute(attrName, attrValue);
         }
     }
@@ -96,8 +98,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         // Equipment attribute (NXdetector, NXmono...)
         if (nodes.length > 1 && nodes[1].getClassName().equals("NXinstrument")) {
             String attrName = "equipment";
-            String attrValue = root.getGroup(nodes[0].getNodeName())
-                                   .getGroup(nodes[1].getNodeName())
+            String attrValue = root.getGroup(nodes[1].getNodeName())
                                    .getGroup(nodes[2].getNodeName())
                     .getShortName();
             container.addStringAttribute(attrName, attrValue);
@@ -123,7 +124,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                     }
                     else {
                         // We are on the XIA the region is contained in the children name
-                        IGroup xia = root.getGroup(nodes[0].getNodeName()).getGroup(nodes[1].getNodeName()).getGroup(nodes[2].getNodeName());
+                        IGroup xia = root.getGroup(nodes[1].getNodeName()).getGroup(nodes[2].getNodeName());
                         List<IDataItem> list = xia.getDataItemList();
                         String region;
                         List<String> regions = new ArrayList<String>();

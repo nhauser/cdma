@@ -8,7 +8,6 @@ import java.util.List;
 import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusDimension;
 import org.cdma.exception.BackupException;
-import org.cdma.exception.CDMAException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NoResultException;
@@ -136,7 +135,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
                 arrays[i] = mDataItems[i].getData();
             }
             mArray = new NxsArray(arrays);
-            String fastMode = mDataset.getConfiguration().getParameter(NxsConstant.FAST_MODE, mDataset);
+            String fastMode = mDataset.getConfiguration().getParameter(NxsConstant.FAST_MODE);
             if( fastMode != null ) {
                 ((NxsArray) mArray).setFastMode(fastMode.equals(CriterionValue.TRUE.getName()));
             }
@@ -148,6 +147,14 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
         IArray array = getData().copy(false);
         IIndex index = array.getIndex();
+        
+        if( shape == null || shape.length != array.getRank() ) {
+            throw new InvalidRangeException("Shape must be of same rank as the array!");
+        }
+        if( origin == null || origin.length != array.getRank() ) {
+            throw new InvalidRangeException("Origin must be of same rank as the array!");
+        }
+        
         int str      = 1;
         long[] stride = new long[array.getRank()];
         for( int i = array.getRank() - 1; i >= 0; i-- ) {
@@ -691,7 +698,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         }
         else {
                 try {
-                    mDataset = NxsDataset.instanciate( new File(dataset.getLocation()) );
+                    mDataset = NxsDataset.instanciate( new File(dataset.getLocation()).toURI() );
                 } catch (NoResultException e) {
                     e.printStackTrace();
                 }

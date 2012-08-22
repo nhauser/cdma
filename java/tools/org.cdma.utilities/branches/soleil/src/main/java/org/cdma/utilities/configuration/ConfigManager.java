@@ -23,8 +23,10 @@ import org.cdma.IFactory;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDataset;
+import org.cdma.utilities.configuration.internal.ConfigGeneric;
 import org.cdma.utilities.configuration.internal.ConfigParameter;
 import org.cdma.utilities.configuration.internal.ConfigParameterStatic;
+import org.cdma.utilities.performance.Benchmarker;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -50,7 +52,7 @@ public class ConfigManager {
 
     private Map<String, IFactory>               mFactories;      // Factories registered by the plug-in name
     private Map<String, File>                   mFiles;          // Files of configuration for each plug-in
-    private Map<String, Vector<ConfigDataset> > mConfigurations; // Available configurations for each plug-in
+    private Map<String, Vector<ConfigGeneric> > mConfigurations; // Available configurations for each plug-in
     private Map<String, Boolean>                mInitialized;    // Does each plug-in been initiated
 
     /**
@@ -81,7 +83,6 @@ public class ConfigManager {
      */
     public ConfigDataset getConfig( IDataset dataset ) throws NoResultException {
         ConfigDataset result = null;
-
         // Lock the class
         synchronized (ConfigManager.class ) {
             // Get plug-in name
@@ -100,9 +101,9 @@ public class ConfigManager {
 
             // Seek for a matching configuration of the plug-in for that dataset
             boolean found = false;
-            for( ConfigDataset conf: mConfigurations.get(factoryName) ) {
+            for( ConfigGeneric conf: mConfigurations.get(factoryName) ) {
                 if( conf.getCriteria().match(dataset) ) {
-                    result = conf;
+                    result = new ConfigDataset(conf, dataset);
                     found = true;
                     break;
                 }
@@ -126,7 +127,7 @@ public class ConfigManager {
     private ConfigManager() {
         mFactories      = new HashMap<String, IFactory> ();
         mFiles          = new HashMap<String, File> ();
-        mConfigurations = new HashMap<String, Vector<ConfigDataset> > ();
+        mConfigurations = new HashMap<String, Vector<ConfigGeneric> > ();
         mInitialized    = new HashMap<String, Boolean>();
     }
 
@@ -149,7 +150,7 @@ public class ConfigManager {
             // Construct maps
             mFiles.put( factory, file );
             mInitialized.put( factory, false );
-            mConfigurations.put( factory, new Vector<ConfigDataset>() );
+            mConfigurations.put( factory, new Vector<ConfigGeneric>() );
             mFactories.put( factory, pluginFactory );
         }
     }
@@ -199,17 +200,16 @@ public class ConfigManager {
             // Load each data model configuration
             List<?> nodes = root.getChildren("dataset-model");
             Element elem;
-            Vector<ConfigDataset> configurations = new Vector<ConfigDataset>();
-            ConfigDataset conf;
+            Vector<ConfigGeneric> configurations = new Vector<ConfigGeneric>();
+            ConfigGeneric conf;
             for( Object node : nodes ) {
                 elem = (Element) node;
-                conf = new ConfigDataset(elem, params);
+                conf = new ConfigGeneric(elem, params);
                 configurations.add(conf);
             }
             mConfigurations.put(name, configurations);
             mInitialized.put(name, true);
         }
-
     }
 
     /**

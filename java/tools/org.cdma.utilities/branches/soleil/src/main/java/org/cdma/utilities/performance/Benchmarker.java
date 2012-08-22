@@ -95,4 +95,28 @@ public class Benchmarker {
         return result;
     }
 
+    public static void reset() {
+        synchronized (Benchmarker.class) {
+            boolean reset = true;
+            for( Long counter : counters.values() ) {
+                if( counter > 0 ) {
+                    reset = false;
+                    break;
+                }
+            }
+            if( reset ) {
+                timers   = new TreeMap<String, Long>();
+                counters = new TreeMap<String, Long>();
+                starters = new TreeMap<String, Long>();
+                nbcalls  = new TreeMap<String, Long>();
+                nbthread = new TreeMap<String, Long>();
+            }
+            else {
+                System.out.println(">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                System.out.println("Timers are still running!!!!");
+                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            }
+        }
+    }
+
 }
