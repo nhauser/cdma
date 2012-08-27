@@ -669,8 +669,13 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     }
 
+    @Override
+    public long getLastModificationDate() {
+        return mDataset.getLastModificationDate();
+    }
+    
     // ------------------------------------------------------------------------
-    // / Protected methods
+    // Protected methods
     // ------------------------------------------------------------------------
     protected void setChild(IContainer node) {
         if (!mChildren.contains(node)) {
@@ -678,9 +683,9 @@ public final class NxsGroup implements IGroup, Cloneable {
         }
     }
 
-    // ****************************************************
-    // private methods
-    // ****************************************************
+    // ------------------------------------------------------------------------
+    // Private methods
+    // ------------------------------------------------------------------------
     private List<IContainer> listChildren() {
         List<IContainer> result;
         if (mIsMultigroup) {

@@ -30,12 +30,11 @@ import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
 import org.cdma.plugin.soleil.internal.DetectedSource.NeXusFilter;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
-import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
-    /// Inner class that concretes the abstract NexusDataset 
+    // Inner class that concretes the abstract NexusDataset 
     // ---------------------------------------------------------
     private class NexusDatasetImpl extends NexusDataset {
         public NexusDatasetImpl(NexusDatasetImpl dataset) {
@@ -254,6 +253,21 @@ public final class NxsDataset implements IDataset {
         }
         return mConfig;
     }
+    
+    @Override
+    public long getLastModificationDate() {
+        long last = 0;
+        long temp = 0;
+        
+        for( NexusDataset dataset : mDatasets ) {
+            temp = dataset.getLastModificationDate();
+            if( temp > last ) {
+                last = temp;
+            }
+        }
+        
+        return last;
+    }
 
     // ---------------------------------------------------------
     /// Private methods
@@ -274,5 +288,4 @@ public final class NxsDataset implements IDataset {
         }
         mOpen = false;
     }
-
 }

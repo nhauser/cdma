@@ -726,6 +726,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public String getFactoryName() {
         return NxsFactory.NAME;
     }
+    
+    @Override
+    public long getLastModificationDate() {
+        return mDataset.getLastModificationDate();
+    }
 
     // specific methods
     public DataItem[] getNexusItems() {

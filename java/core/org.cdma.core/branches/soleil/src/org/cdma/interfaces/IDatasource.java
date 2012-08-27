@@ -100,6 +100,16 @@ public interface IDatasource extends IModelObject
      * but the protocol.
      */
     String[] getURIParts( URI target );
+
+    
+    /**
+     * Return the last modification of the given URI if it can be managed by 
+     * this plug-in. Else return 0.
+     * 
+     * @param URI target to obtain last modification date
+     * @return long representing the last modification
+     */
+    long getLastModificationDate( URI target );
 }
 
 /// @endcond pluginAPIclientAPI

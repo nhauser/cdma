@@ -8,18 +8,18 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 public class NexusFileInstance {
-    // / Definitions
+    // Definitions
     protected static final String PATH_SEPARATOR = "/"; // Node separator in path when having a  string representation
     protected final static int    RANK_MAX       = 32; // Maximum dimension  rank
 
-    // / Member attributes
+    // Member attributes
     private String                m_sFilePath;         // Path to current file
     private NexusFileHandler      m_nfFile;            // Current file
     private int                   m_iAccessMode;       // The current access mode to the file: read / write
     private static ReentrantLock  g_mutex;             // Mutex for thread safety
     public static String          g_curFile;
 
-    // / Constructors
+    // Constructors
     protected NexusFileInstance() {
         m_sFilePath = "";
         synchronized (NexusFileInstance.class) {
@@ -40,7 +40,7 @@ public class NexusFileInstance {
         }
     }
 
-    // / Accessors
+    // Accessors
     public String getFilePath() {
         return m_sFilePath;
     }
@@ -54,8 +54,9 @@ public class NexusFileInstance {
     }
 
     protected NexusFileHandler getNexusFile() throws NexusException {
-        if (m_nfFile == null)
+        if (m_nfFile == null) {
             throw new NexusException("No file currently opened!");
+        }
         return m_nfFile;
     }
 
@@ -88,10 +89,9 @@ public class NexusFileInstance {
     }
 
     // ---------------------------------------------------------
-    // / Protected methods
-
+    // Protected methods
     // ---------------------------------------------------------
-    // / File manipulation
+    // File manipulation
     // ---------------------------------------------------------
     /**
      * openFile
@@ -105,6 +105,43 @@ public class NexusFileInstance {
     public void openFile() throws NexusException {
         openFile(m_sFilePath, NexusFile.NXACC_READ);
     }
+    
+    /**
+     * closeFile Close the current file, but keep its path so we can easily open
+     * it again.
+     */
+    public void closeFile() throws NexusException {
+        try {
+            if (m_nfFile != null) {
+                m_nfFile.close();
+                m_nfFile.finalize();
+            }
+
+            m_nfFile = null;
+
+        } catch (Throwable t) {
+            if (g_mutex.isLocked() && g_curFile.equals(m_sFilePath)) {
+                if (g_mutex.getHoldCount() - 1 == 0) {
+                    g_curFile = "";
+                }
+                g_mutex.unlock();
+            }
+            if (t instanceof NexusException) {
+                throw (NexusException) t;
+            } else {
+                t.printStackTrace();
+                return;
+            }
+        }
+        if (g_mutex.isLocked() && g_curFile.equals(m_sFilePath)) {
+            if (g_mutex.getHoldCount() - 1 == 0) {
+                g_curFile = "";
+            }
+
+            g_mutex.unlock();
+        }
+    }
+
 
     protected void openFile(int iAccessMode) throws NexusException {
         openFile(m_sFilePath, iAccessMode);
@@ -148,7 +185,6 @@ public class NexusFileInstance {
             m_nfFile = null;
             m_sFilePath = "";
             g_curFile = "";
-            e.printStackTrace();
             g_mutex.unlock();
             throw e;
         }
@@ -172,48 +208,5 @@ public class NexusFileInstance {
             throw new NexusException("Can't open file for read: " + sFilePath + " doesn't exist!");
         }
         m_iAccessMode = iAccessMode;
-    }
-
-    /**
-     * closeFile Close the current file, but keep its path so we can easily open
-     * it again.
-     */
-    public void closeFile() throws NexusException {
-        try {
-            if (m_nfFile != null) {
-                m_nfFile.close();
-                m_nfFile.finalize();
-            }
-
-            m_nfFile = null;
-
-        } catch (Throwable t) {
-            if (g_mutex.isLocked() && g_curFile.equals(m_sFilePath)) {
-                if (g_mutex.getHoldCount() - 1 == 0) {
-                    g_curFile = "";
-                }
-                g_mutex.unlock();
-            }
-            if (t instanceof NexusException) {
-                throw (NexusException) t;
-            } else {
-                t.printStackTrace();
-                return;
-            }
-        }
-        if (g_mutex.isLocked() && g_curFile.equals(m_sFilePath)) {
-            if (g_mutex.getHoldCount() - 1 == 0) {
-                g_curFile = "";
-            }
-
-            g_mutex.unlock();
-        }
-    }
-
-    // ---------------------------------------------------------
-    // / Debugging methods
-    // ---------------------------------------------------------
-    public static void ShowFreeMem(String lab) {
-        System.out.println("Free mem " + Runtime.getRuntime().freeMemory() + " (octet) -> " + lab);
     }
 }

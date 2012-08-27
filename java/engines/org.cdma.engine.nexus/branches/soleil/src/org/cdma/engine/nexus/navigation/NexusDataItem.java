@@ -29,12 +29,13 @@ import fr.soleil.nexus.DataItem.Data;
 import fr.soleil.nexus.PathGroup;
 
 public final class NexusDataItem implements IDataItem, Cloneable {
-
+    // ---------------------------------------------
     // Inner class
     // Associate a IDimension to an order of the array
+    // ---------------------------------------------
     private static class DimOrder {
         // Members
-        private int mOrder; // order of the corresponding dimension in the NxsDataItem
+        private int mOrder;            // order of the corresponding dimension in the NxsDataItem
         private IDimension mDimension; // dimension object
 
         public DimOrder(int order, IDimension dim) {
@@ -51,18 +52,22 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         }
     }
 
-    // / Members
-    private NexusDataset mCDMDataset; // CDMA IDataset i.e. file handler
-    private IGroup mParent = null; // parent group
-    private DataItem mn4tDataItem; // NeXus dataitem support of the data
-    private IArray mArray = null; // CDMA IArray supporting a view of the data
+    // ---------------------------------------------
+    // Members
+    // ---------------------------------------------
+    private NexusDataset mDataset;      // CDMA IDataset i.e. file handler
+    private IGroup mParent;             // Parent group
+    private DataItem mn4tDataItem;      // NeXus dataitem support of the data
+    private IArray mArray;              // CDMA IArray supporting a view of the data
     private List<DimOrder> mDimensions; // list of dimensions
     private String mFactory;
 
-    // / Constructors
+    // ---------------------------------------------
+    // Constructors
+    // ---------------------------------------------
     public NexusDataItem(String factoryName) {
         mFactory = factoryName;
-        mCDMDataset = null;
+        mDataset = null;
         mn4tDataItem = new DataItem();
         mDimensions = new ArrayList<DimOrder>();
         mParent = null;
@@ -71,7 +76,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     public NexusDataItem(final NexusDataItem dataItem) {
         mFactory = dataItem.mFactory;
-        mCDMDataset = dataItem.mCDMDataset;
+        mDataset = dataItem.mDataset;
         mn4tDataItem = dataItem.getN4TDataItem();
         mDimensions = new ArrayList<DimOrder>(dataItem.mDimensions);
         mParent = dataItem.getParentGroup();
@@ -85,7 +90,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     public NexusDataItem(String factoryName, DataItem data, NexusDataset handler) {
         mFactory = factoryName;
-        mCDMDataset = handler;
+        mDataset = handler;
         mn4tDataItem = data;
         mDimensions = new ArrayList<DimOrder>();
         mParent = null;
@@ -94,14 +99,16 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     public NexusDataItem(String factoryName, DataItem data, IGroup parent, NexusDataset handler) {
         mFactory = factoryName;
-        mCDMDataset = handler;
+        mDataset = handler;
         mn4tDataItem = data;
         mDimensions = new ArrayList<DimOrder>();
         mParent = parent;
         mArray = null;
     }
 
-    // / Methods
+    // ---------------------------------------------
+    // Methods
+    // ---------------------------------------------
     @Override
     public ModelType getModelType() {
         return ModelType.DataItem;
@@ -357,7 +364,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         if (mParent == null) {
             PathGroup path = mn4tDataItem.getPath().getParentPath();
             try {
-                mParent = (IGroup) mCDMDataset.getRootGroup().findContainerByPath(path.getValue());
+                mParent = (IGroup) mDataset.getRootGroup().findContainerByPath(path.getValue());
                 ((NexusGroup) mParent).setChild(this);
             }
             catch (NoResultException e) {
@@ -741,7 +748,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public IGroup getRootGroup() {
-        return mCDMDataset.getRootGroup();
+        return mDataset.getRootGroup();
     }
 
     @Override
@@ -757,7 +764,9 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     public DataItem getN4TDataItem() {
         return mn4tDataItem;
     }
-    // ------------------------------------------------------------------------
-    // / Protected methods
-    // ------------------------------------------------------------------------
+
+    @Override
+    public long getLastModificationDate() {
+        return mDataset.getLastModificationDate();
+    }
 }

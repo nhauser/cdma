@@ -154,4 +154,12 @@ public interface IDataset extends IModelObject {
      * @return true or false
      */
     boolean isOpen();
+    
+    
+    /**
+     * Return the last modification of the dataset.
+     * 
+     * @return long representing the last modification
+     */
+    long getLastModificationDate();
 }
