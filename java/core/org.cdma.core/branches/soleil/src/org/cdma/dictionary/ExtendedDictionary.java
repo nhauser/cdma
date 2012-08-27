@@ -417,7 +417,6 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             }
             
             if( ! mPathMap.containsKey(keyID) ) {
-                //solvers = loadKeySolver(elem);
                 mPathMap.put( keyID, new ItemSolver(mFactory, mMethodMgr, elem) );
             }
         }

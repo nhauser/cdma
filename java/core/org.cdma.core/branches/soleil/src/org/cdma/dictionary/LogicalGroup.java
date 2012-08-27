@@ -506,35 +506,10 @@ public class LogicalGroup implements IContainer, Cloneable {
         return result;
     }
 
-/*
-    private List<IContainer> getItemByKey(IKey key) {
-        // Create the context of resolution
-        List<IContainer> valid = new ArrayList<IContainer>();
-        List<IContainer> found = new ArrayList<IContainer>();
-        Context context = new Context(mDataset, this, key);
-        
-        // Get the path from the dictionary
-        ExtendedDictionary dico = getDictionary();
-        List<Solver> solvers = dico.getKeySolver( key );
-        context.setConcept( dico.getConcept(key) );
 
-        // Execute sequentially each solver
-        for( Solver solver : solvers ) {
-            found = solver.solve(context);
-            
-            // Check found items match what is requested by key
-            valid.clear();
-            for( IContainer container : found ) {
-                if( isValidContainer( key, container ) ) {
-                    valid.add(container);
-                }
-            }
-            
-            context.setContainers(valid);
-        }
-
-        return valid;
+    @Override
+    public long getLastModificationDate() {
+        return mDataset.getLastModificationDate();
     }
- */
 }
 

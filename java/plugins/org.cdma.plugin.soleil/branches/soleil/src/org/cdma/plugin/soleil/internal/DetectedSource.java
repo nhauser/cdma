@@ -51,13 +51,17 @@ public class DetectedSource {
         mIsProducer      = producer;
         mIsBrowsable     = browsable;
         mIsExperiment    = experiment;
-        mIsDataset = datasetFolder;
+        mIsDataset       = datasetFolder;
         mURI             = uri;
     }
     
     public DetectedSource( URI uri ) {
         mURI = uri;
         init( uri );
+    }
+    
+    public URI getURI() {
+        return mURI;
     }
 
     public boolean isDatasetFolder() {
@@ -86,7 +90,7 @@ public class DetectedSource {
 
     
     // ---------------------------------------------------------
-    // / private methods
+    /// private methods
     // ---------------------------------------------------------
     private void init( URI uri ) {
         if( uri != null ) {

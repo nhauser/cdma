@@ -115,6 +115,18 @@ public final class NxsDatasource implements IDatasource {
         return parts.toArray(new String[] {});
     }
     
+    @Override
+    public long getLastModificationDate(URI target) {
+        long last = 0;
+        if( isReadable( target ) || isBrowsable( target ) ) {
+            File file = new File(target.getPath());
+            if( file.exists() ) {
+                last = file.lastModified();
+            }
+        }
+        return last;
+    }
+    
     // ---------------------------------------------------------
     // / private methods
     // ---------------------------------------------------------
@@ -143,5 +155,4 @@ public final class NxsDatasource implements IDatasource {
         }
         return source;
     }
-
 }

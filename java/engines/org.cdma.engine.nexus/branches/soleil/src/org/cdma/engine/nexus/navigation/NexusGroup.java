@@ -836,4 +836,9 @@ public final class NexusGroup implements IGroup, Cloneable {
             }
         }
     }
+    
+    @Override
+    public long getLastModificationDate() {
+        return mDataset.getLastModificationDate();
+    }
 }

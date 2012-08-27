@@ -170,5 +170,13 @@ public interface IContainer extends IModelObject, Cloneable {
      * @return new IDataItem instance
      */
     IContainer clone();
+    
+    /**
+     * Return the last modification of the IContainer. If no information 
+     * is provided on it, it will return its dataset last modification date.
+     * 
+     * @return long representing the last modification
+     */
+    long getLastModificationDate();
 
 }
