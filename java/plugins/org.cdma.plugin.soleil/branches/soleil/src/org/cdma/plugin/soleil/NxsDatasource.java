@@ -121,7 +121,7 @@ public final class NxsDatasource implements IDatasource {
         if ( isBrowsable(target) || isReadable(target) ) {
             String path = target.getPath();
             String fragment = target.getFragment();
-            for( String part : path.split( File.separator ) ) {
+            for( String part : path.split( "/" ) ) {
                 if( part != null && ! part.isEmpty() ) {
                     parts.add(part);
                 }
