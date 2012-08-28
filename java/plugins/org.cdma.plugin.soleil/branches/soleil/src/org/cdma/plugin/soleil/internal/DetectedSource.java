@@ -14,7 +14,6 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.plugin.soleil.utils.NxsConstant;
 import org.cdma.utilities.configuration.ConfigDataset;
-import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.NexusException;
 
 import fr.soleil.nexus.DataItem;
@@ -24,13 +23,14 @@ import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.PathNexus;
 
 public class DetectedSource {
-    private static final int      EXTENSION_LENGTH = 4;
-    private static final String   EXTENSION        = ".nxs";
-    private static final String   CREATOR          = "Synchrotron SOLEIL";
-    private static final String[] BEAMLINES        = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS",
-            "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE",
-            "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
-    
+    private static final int EXTENSION_LENGTH = 4;
+    private static final String EXTENSION = ".nxs";
+    private static final String CREATOR = "Synchrotron SOLEIL";
+    private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES",
+            "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA",
+            "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2",
+            "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
+
     public static final class NeXusFilter implements FilenameFilter {
 
         public boolean accept(File dir, String name) {
@@ -44,22 +44,23 @@ public class DetectedSource {
     private boolean mIsProducer;
     private boolean mIsReadable;
     private boolean mIsFolder;
-    private URI     mURI;
-    
-    public DetectedSource( URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment, boolean datasetFolder ) {
-        mIsReadable      = readable;
-        mIsProducer      = producer;
-        mIsBrowsable     = browsable;
-        mIsExperiment    = experiment;
-        mIsDataset       = datasetFolder;
-        mURI             = uri;
-    }
-    
-    public DetectedSource( URI uri ) {
+    private URI mURI;
+
+    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer,
+            boolean experiment, boolean datasetFolder) {
+        mIsReadable = readable;
+        mIsProducer = producer;
+        mIsBrowsable = browsable;
+        mIsExperiment = experiment;
+        mIsDataset = datasetFolder;
         mURI = uri;
-        init( uri );
     }
-    
+
+    public DetectedSource(URI uri) {
+        mURI = uri;
+        init(uri);
+    }
+
     public URI getURI() {
         return mURI;
     }
@@ -67,7 +68,7 @@ public class DetectedSource {
     public boolean isDatasetFolder() {
         return mIsDataset;
     }
-    
+
     public boolean isExperiment() {
         return mIsExperiment;
     }
@@ -83,69 +84,69 @@ public class DetectedSource {
     public boolean isReadable() {
         return mIsReadable;
     }
-    
+
     public boolean isFolder() {
         return mIsFolder;
     }
 
-    
     // ---------------------------------------------------------
-    /// private methods
+    // / private methods
     // ---------------------------------------------------------
-    private void init( URI uri ) {
-        if( uri != null ) {
+    private void init(URI uri) {
+        if (uri != null) {
             // Check if the uri is a folder
             File file = new File(uri.getPath());
-            if( file.isDirectory() ) {
+            if (file.isDirectory()) {
                 mIsDataset = isDatasetFolder(file);
-                mIsFolder  = true;
+                mIsFolder = true;
             }
             else {
                 mIsDataset = false;
                 mIsFolder = false;
             }
-            
+
             // Check it is a NeXus file
-            mIsReadable   = initReadable(uri);
-            
+            mIsReadable = initReadable(uri);
+
             // Check if we are producer of the source
-            mIsProducer   = initProducer(uri);
-            
+            mIsProducer = initProducer(uri);
+
             // Check if the uri corresponds to dataset experiment
             mIsExperiment = initExperiment(uri);
-            
+
             // Check if the URI is considered as browsable
-            mIsBrowsable  = initBrowsable(uri);
+            mIsBrowsable = initBrowsable(uri);
         }
-        
+
     }
-    
-    private boolean initReadable( URI uri ) {
-        
+
+    private boolean initReadable(URI uri) {
+
         boolean result;
-        if( mIsDataset ) {
+        if (mIsDataset) {
             result = true;
         }
         else {
             File file = new File(uri.getPath());
             String name = file.getName();
             int length = name.length();
-            
+
             // Check if the URI is a NeXus file
-            if (length > EXTENSION_LENGTH && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
+            if (length > EXTENSION_LENGTH
+                    && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
                 result = true;
             }
             else {
                 result = false;
             }
         }
-        
+
         return result;
     }
-    
-    private boolean initProducer( URI uri ) {
+
+    private boolean initProducer(URI uri) {
         boolean result = false;
-        if ( mIsReadable ) {
+        if (mIsReadable) {
             File file = new File(uri.getPath());
             IDataset dataset = null;
             try {
@@ -159,7 +160,8 @@ public class DetectedSource {
                 IGroup group = dataset.getRootGroup();
                 if (group.hasAttribute("creator", CREATOR)) {
                     result = true;
-                } else {
+                }
+                else {
                     group = group.getGroup("<NXentry>");
                     if (group != null) {
                         group = group.getGroup("<NXinstrument>");
@@ -180,26 +182,29 @@ public class DetectedSource {
                 // close file
                 dataset.close();
 
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 // close file
                 if (dataset != null) {
                     try {
                         dataset.close();
-                    } catch (IOException e1) {
+                    }
+                    catch (IOException e1) {
                     }
                 }
-            } catch (NoResultException e) {
+            }
+            catch (NoResultException e) {
                 e.printStackTrace();
             }
         }
         return result;
     }
-    
-    private boolean initExperiment( URI uri ) {
+
+    private boolean initExperiment(URI uri) {
         boolean result = false;
 
         // Check if the URI is a NeXus file
-        if ( mIsProducer ) {
+        if (mIsProducer) {
             File file = new File(uri.getPath());
             try {
                 // Instantiate the dataset corresponding to file and detect its
@@ -208,20 +213,20 @@ public class DetectedSource {
 
                 // Interrogate the config to know the experiment path
                 ConfigDataset conf = dataset.getConfiguration();
-                if( conf != null ) {
+                if (conf != null) {
                     String experiment = conf.getParameter(NxsConstant.EXPERIMENT_PATH);
                     String uriFragment = uri.getFragment();
                     if (uriFragment == null) {
                         uriFragment = "";
                     }
-    
+
                     // Decode the fragment part
                     uriFragment = URLDecoder.decode(uriFragment, "UTF-8");
-    
+
                     // construct path node to compare them
                     NexusNode[] expNodes = PathNexus.splitStringToNode(experiment);
                     NexusNode[] fraNodes = PathNexus.splitStringToNode(uriFragment);
-    
+
                     // compare both path
                     if (expNodes.length == fraNodes.length) {
                         result = true;
@@ -234,39 +239,41 @@ public class DetectedSource {
                         }
                     }
                 }
-            } catch (NoResultException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
+            }
+            catch (NoResultException e) {
+            }
+            catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
         }
         return result;
     }
-    
-    private boolean initBrowsable( URI uri ) {
+
+    private boolean initBrowsable(URI uri) {
         boolean result = false;
 
         // If experiment not browsable
-        if ( ! mIsExperiment ) {
+        if (!mIsExperiment) {
 
             // If it is a folder containing split NeXus file (quick_exaf)
-            if ( mIsFolder || mIsProducer ) {
+            if (mIsFolder || mIsProducer) {
                 result = true;
             }
         }
         return result;
     }
-    
+
     /**
      * Return true if the given is a folder dataset.
+     * 
      * @note the given file must be a folder
      */
     private boolean isDatasetFolder(File file) {
         boolean result = false;
-        
+
         NeXusFilter filter = new NeXusFilter();
-        File[] files =  file.listFiles(filter);
-        if( files.length > 0 ){
+        File[] files = file.listFiles(filter);
+        if (files.length > 0) {
             NexusFileReader reader = new NexusFileReader(files[0].getAbsolutePath());
             PathNexus path = new PathGroup(new String[] { "<NXentry>", "<NXdata>" });
             try {
@@ -285,16 +292,19 @@ public class DetectedSource {
 
                 }
                 reader.closeFile();
-            } catch (NexusException e1) {
+            }
+            catch (NexusException e1) {
                 try {
                     reader.closeFile();
-                } catch (NexusException e2) {
-                } finally {
+                }
+                catch (NexusException e2) {
+                }
+                finally {
                     result = false;
                 }
             }
         }
-            
+
         return result;
     }
 }

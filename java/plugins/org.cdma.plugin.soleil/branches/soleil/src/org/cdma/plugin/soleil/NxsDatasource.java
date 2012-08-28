@@ -18,17 +18,17 @@ import org.cdma.plugin.soleil.navigation.NxsDataset;
 public final class NxsDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
     private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
-    
+
     public NxsDatasource() {
-        if( mDetectedSources == null ) {
-            synchronized( NxsDatasource.class ) {
-                if( mDetectedSources == null ) {
+        if (mDetectedSources == null) {
+            synchronized (NxsDatasource.class) {
+                if (mDetectedSources == null) {
                     mDetectedSources = new HashMap<String, DetectedSource>();
                 }
             }
         }
     }
-    
+
     @Override
     public String getFactoryName() {
         return NxsFactory.NAME;
@@ -36,54 +36,76 @@ public final class NxsDatasource implements IDatasource {
 
     @Override
     public boolean isReadable(URI target) {
+        boolean result = false;
         DetectedSource source = getSource(target);
-        return source.isReadable();
+        if (source != null) {
+            result = source.isReadable();
+        }
+        return result;
     }
 
     @Override
     public boolean isProducer(URI target) {
+        boolean result = false;
         DetectedSource source = getSource(target);
-        return source.isProducer();
+        if (source != null) {
+            result = source.isProducer();
+        }
+        return result;
     }
 
     @Override
     public boolean isExperiment(URI target) {
+        boolean result = false;
         DetectedSource source = getSource(target);
-        return source.isExperiment();
+        if (source != null) {
+            result = source.isExperiment();
+        }
+        return result;
     }
 
     @Override
     public boolean isBrowsable(URI target) {
+        boolean result = false;
         DetectedSource source = getSource(target);
-        return source.isBrowsable();
+        if (source != null) {
+            result = source.isBrowsable();
+        }
+        return result;
     }
 
     @Override
     public List<URI> getValidURI(URI target) {
         List<URI> result = new ArrayList<URI>();
 
-        DetectedSource source = getSource( target );
-        if (source.isFolder() && !source.isDatasetFolder()) {
-            File folder = new File(target.getPath());
-            for (File file : folder.listFiles()) {
-                result.add(file.toURI());
+        DetectedSource source = getSource(target);
+        if (source != null) {
+            if (source.isFolder() && !source.isDatasetFolder()) {
+                File folder = new File(target.getPath());
+                for (File file : folder.listFiles()) {
+                    result.add(file.toURI());
+                }
             }
-        } else {
-            if ( source.isReadable() && source.isBrowsable()) {
-                try {
-                    String uri = target.toString();
-                    String sep = target.getFragment() == null ? "#" : "";
+            else {
+                if (source.isReadable() && source.isBrowsable()) {
+                    try {
+                        String uri = target.toString();
+                        String sep = target.getFragment() == null ? "#" : "";
 
-                    NxsDataset dataset = NxsDataset.instanciate(target);
-                    IGroup group = dataset.getRootGroup();
-                    for (IGroup node : group.getGroupList()) {
-                        result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+                        NxsDataset dataset = NxsDataset.instanciate(target);
+                        IGroup group = dataset.getRootGroup();
+                        for (IGroup node : group.getGroupList()) {
+                            result.add(URI.create(uri + sep
+                                    + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+                        }
+
                     }
-
-                } catch (NoResultException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    catch (NoResultException e) {
+                        e.printStackTrace();
+                    }
+                    catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -93,8 +115,7 @@ public final class NxsDatasource implements IDatasource {
     @Override
     public String[] getURIParts(URI target) {
         List<String> parts = new ArrayList<String>();
-        DetectedSource source = getSource(target);
-        if ( source.isProducer() ) {
+        if (isProducer(target)) {
             String name = target.getPath();
             String fragment = target.getFragment();
 
@@ -107,50 +128,51 @@ public final class NxsDatasource implements IDatasource {
                     for (String node : fragment.split("/")) {
                         parts.add(node);
                     }
-                } catch (UnsupportedEncodingException e) {
+                }
+                catch (UnsupportedEncodingException e) {
                 }
             }
         }
 
         return parts.toArray(new String[] {});
     }
-    
+
     @Override
     public long getLastModificationDate(URI target) {
         long last = 0;
-        if( isReadable( target ) || isBrowsable( target ) ) {
+        if (isReadable(target) || isBrowsable(target)) {
             File file = new File(target.getPath());
-            if( file.exists() ) {
+            if (file.exists()) {
                 last = file.lastModified();
             }
         }
         return last;
     }
-    
+
     // ---------------------------------------------------------
     // / private methods
     // ---------------------------------------------------------
     private DetectedSource getSource(URI uri) {
         DetectedSource source = null;
-        synchronized( mDetectedSources ) {
-            source = mDetectedSources.get( uri.toString() );
-            if( source == null ) {
-                if( mDetectedSources.size() > MAX_SOURCE_BUFFER_SIZE ) {
+        synchronized (mDetectedSources) {
+            source = mDetectedSources.get(uri.toString());
+            if (source == null) {
+                if (mDetectedSources.size() > MAX_SOURCE_BUFFER_SIZE) {
                     int i = MAX_SOURCE_BUFFER_SIZE / 2;
                     List<String> remove = new ArrayList<String>();
-                    for( String key : mDetectedSources.keySet() ) {
+                    for (String key : mDetectedSources.keySet()) {
                         remove.add(key);
-                        if( i-- < 0 ) {
+                        if (i-- < 0) {
                             break;
                         }
                     }
-                    for( String key : remove ) {
-                        mDetectedSources.remove( key );
+                    for (String key : remove) {
+                        mDetectedSources.remove(key);
                     }
                 }
-                
-                source = new DetectedSource( uri );
-                mDetectedSources.put( uri.toString(), source );
+
+                source = new DetectedSource(uri);
+                mDetectedSources.put(uri.toString(), source);
             }
         }
         return source;
