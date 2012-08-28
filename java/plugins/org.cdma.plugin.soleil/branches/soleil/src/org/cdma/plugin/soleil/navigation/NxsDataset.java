@@ -34,15 +34,15 @@ import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
-    // Inner class that concretes the abstract NexusDataset 
+    // Inner class that concretes the abstract NexusDataset
     // ---------------------------------------------------------
     private class NexusDatasetImpl extends NexusDataset {
         public NexusDatasetImpl(NexusDatasetImpl dataset) {
             super(dataset);
         }
 
-        public NexusDatasetImpl( File nexusFile ) {
-            super( NxsFactory.NAME, nexusFile );
+        public NexusDatasetImpl(File nexusFile) {
+            super(NxsFactory.NAME, nexusFile);
         }
 
         @Override
@@ -51,49 +51,50 @@ public final class NxsDataset implements IDataset {
         }
     }
 
-    private ConfigDataset      mConfig;
-    private List<NexusDataset> mDatasets;     // all found datasets in the folder
-    private URI                mPath;         // folder containing all datasets
-    private IGroup             mRootPhysical; // Physical root of the document 
-    private NxsLogicalGroup    mRootLogical;  // Logical root of the document
-    private boolean            mOpen;         // is the dataset open 
-    private static Map<String, SoftReference<NxsDataset> > datasets;
+    private ConfigDataset mConfig;
+    private List<NexusDataset> mDatasets; // all found datasets in the folder
+    private URI mPath; // folder containing all datasets
+    private IGroup mRootPhysical; // Physical root of the document
+    private NxsLogicalGroup mRootLogical; // Logical root of the document
+    private boolean mOpen; // is the dataset open
+    private static Map<String, SoftReference<NxsDataset>> datasets;
 
     public static NxsDataset instanciate(URI destination) throws NoResultException {
         NxsDataset dataset = null;
         if (datasets == null) {
-            synchronized ( NxsDataset.class ) {
-                if( datasets == null ) {
+            synchronized (NxsDataset.class) {
+                if (datasets == null) {
                     datasets = new HashMap<String, SoftReference<NxsDataset>>();
                 }
             }
         }
-        
-        synchronized ( datasets ) {
-            SoftReference<NxsDataset> ref = datasets.get( destination.toString() );
-            if( ref != null ) {
+
+        synchronized (datasets) {
+            SoftReference<NxsDataset> ref = datasets.get(destination.toString());
+            if (ref != null) {
                 dataset = ref.get();
             }
-            
-            if( dataset == null ) {
-                dataset = new NxsDataset( new File(destination.getPath()) );
+
+            if (dataset == null) {
+                dataset = new NxsDataset(new File(destination.getPath()));
                 String fragment = destination.getFragment();
-                
-                if( fragment != null && ! fragment.isEmpty() ) {
+
+                if (fragment != null && !fragment.isEmpty()) {
                     IGroup group = dataset.getRootGroup();
                     try {
-                        String path = URLDecoder.decode( fragment, "UTF-8");
-                        for( IContainer container : group.findAllContainerByPath( path ) ) {
-                            if( container.getModelType().equals(ModelType.Group) ) {
+                        String path = URLDecoder.decode(fragment, "UTF-8");
+                        for (IContainer container : group.findAllContainerByPath(path)) {
+                            if (container.getModelType().equals(ModelType.Group)) {
                                 dataset.mRootPhysical = (IGroup) container;
                                 break;
                             }
                         }
-                    } catch (UnsupportedEncodingException e) {
+                    }
+                    catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
                 }
-                datasets.put( destination.toString(), new SoftReference<NxsDataset>(dataset));
+                datasets.put(destination.toString(), new SoftReference<NxsDataset>(dataset));
             }
         }
         return dataset;
@@ -106,15 +107,20 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public LogicalGroup getLogicalRoot() {
-        if( mRootLogical == null ) {
-            String param = getConfiguration().getParameter(NxsFactory.DEBUG_INF);
-            boolean debug = Boolean.parseBoolean( param );
-            mRootLogical = new NxsLogicalGroup(null, null, this, debug);
-
+        if (mRootLogical == null) {
+            String param;
+            try {
+                param = getConfiguration().getParameter(NxsFactory.DEBUG_INF);
+                boolean debug = Boolean.parseBoolean(param);
+                mRootLogical = new NxsLogicalGroup(null, null, this, debug);
+            }
+            catch (NoResultException e) {
+                e.printStackTrace();
+            }
         }
         else {
             ExtendedDictionary dict = mRootLogical.getDictionary();
-            if ( dict != null && ! dict.getView().equals( Factory.getActiveView() ) ) {
+            if (dict != null && !dict.getView().equals(Factory.getActiveView())) {
                 mRootLogical.setDictionary(mRootLogical.findAndReadDictionary());
             }
         }
@@ -123,10 +129,10 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public IGroup getRootGroup() {
-        if( mRootPhysical == null && mDatasets.size() > 0 ) {
+        if (mRootPhysical == null && mDatasets.size() > 0) {
             NexusGroup[] groups = new NexusGroup[mDatasets.size()];
             int i = 0;
-            for( IDataset dataset : mDatasets ) {
+            for (IDataset dataset : mDatasets) {
                 groups[i++] = (NexusGroup) dataset.getRootGroup();
             }
             mRootPhysical = new NxsGroup(groups, null, this);
@@ -134,25 +140,23 @@ public final class NxsDataset implements IDataset {
         return mRootPhysical;
     }
 
-
     @Override
     public void saveTo(String location) throws WriterException {
-        for( IDataset dataset : mDatasets ) {
+        for (IDataset dataset : mDatasets) {
             dataset.saveTo(location);
         }
     }
 
     @Override
     public void save(IContainer container) throws WriterException {
-        for( IDataset dataset : mDatasets ) {
+        for (IDataset dataset : mDatasets) {
             dataset.save(container);
         }
     }
 
     @Override
-    public void save(String parentPath, IAttribute attribute)
-            throws WriterException {
-        for( IDataset dataset : mDatasets ) {
+    public void save(String parentPath, IAttribute attribute) throws WriterException {
+        for (IDataset dataset : mDatasets) {
             dataset.save(parentPath, attribute);
         }
     }
@@ -160,8 +164,8 @@ public final class NxsDataset implements IDataset {
     @Override
     public boolean sync() throws IOException {
         boolean result = true;
-        for( IDataset dataset : mDatasets ) {
-            if( ! dataset.sync() ) {
+        for (IDataset dataset : mDatasets) {
+            if (!dataset.sync()) {
                 result = false;
             }
         }
@@ -170,7 +174,7 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void writeNcML(OutputStream os, String uri) throws IOException {
-        for( IDataset dataset : mDatasets ) {
+        for (IDataset dataset : mDatasets) {
             dataset.writeNcML(os, uri);
         }
     }
@@ -188,11 +192,12 @@ public final class NxsDataset implements IDataset {
     @Override
     public String getTitle() {
         String title = getRootGroup().getShortName();
-        if( title.isEmpty() ) {
+        if (title.isEmpty()) {
             try {
                 title = mDatasets.get(0).getTitle();
             }
-            catch( NoSuchElementException e ) {}
+            catch (NoSuchElementException e) {
+            }
         }
 
         return title;
@@ -200,12 +205,13 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void setLocation(String location) {
-        File newLoc = new File( location );
-        File oldLoc = new File( mPath );
-        if( ! oldLoc.equals(newLoc) ) {
+        File newLoc = new File(location);
+        File oldLoc = new File(mPath);
+        if (!oldLoc.equals(newLoc)) {
             try {
                 mPath = new URI(newLoc.getAbsolutePath());
-            } catch (URISyntaxException e) {
+            }
+            catch (URISyntaxException e) {
                 e.printStackTrace();
             }
             mDatasets.clear();
@@ -214,11 +220,11 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void setTitle(String title) {
-        try
-        {
+        try {
             mDatasets.get(0).setTitle(title);
         }
-        catch( NoSuchElementException e ) {}
+        catch (NoSuchElementException e) {
+        }
     }
 
     @Override
@@ -228,7 +234,7 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void save() throws WriterException {
-        for( IDataset dataset : mDatasets ) {
+        for (IDataset dataset : mDatasets) {
             dataset.save();
         }
     }
@@ -238,53 +244,50 @@ public final class NxsDataset implements IDataset {
         return mOpen;
     }
 
-    public ConfigDataset getConfiguration() {
-        if( mConfig == null ) {
-            if( mDatasets.size() > 0 ) {
+    public ConfigDataset getConfiguration() throws NoResultException {
+        if (mConfig == null) {
+            if (mDatasets.size() > 0) {
                 ConfigDataset conf;
-                try {
-                    IDataset dataset = new NxsDataset( new File(mPath) );
-                    conf = ConfigManager.getInstance( NxsFactory.getInstance(), NxsFactory.CONFIG_FILE ).getConfig(dataset);
-                    mConfig = conf;
-                } catch (NoResultException e) {
-                    e.printStackTrace();
-                }
+                IDataset dataset = new NxsDataset(new File(mPath));
+                conf = ConfigManager.getInstance(NxsFactory.getInstance(), NxsFactory.CONFIG_FILE)
+                        .getConfig(dataset);
+                mConfig = conf;
             }
         }
         return mConfig;
     }
-    
+
     @Override
     public long getLastModificationDate() {
         long last = 0;
         long temp = 0;
-        
-        for( NexusDataset dataset : mDatasets ) {
+
+        for (NexusDataset dataset : mDatasets) {
             temp = dataset.getLastModificationDate();
-            if( temp > last ) {
+            if (temp > last) {
                 last = temp;
             }
         }
-        
+
         return last;
     }
 
     // ---------------------------------------------------------
-    /// Private methods
+    // / Private methods
     // ---------------------------------------------------------
     private NxsDataset(File destination) {
         mPath = destination.toURI();
         mDatasets = new ArrayList<NexusDataset>();
-        if( destination.exists() && destination.isDirectory() ) {
+        if (destination.exists() && destination.isDirectory()) {
             IDataset datafile;
             NeXusFilter filter = new NeXusFilter();
-            for( File file : destination.listFiles(filter) ) {
+            for (File file : destination.listFiles(filter)) {
                 datafile = new NexusDatasetImpl(file);
-                mDatasets.add( (NexusDatasetImpl) datafile );
+                mDatasets.add((NexusDatasetImpl) datafile);
             }
         }
         else {
-            mDatasets.add( new NexusDatasetImpl(destination ) );
+            mDatasets.add(new NexusDatasetImpl(destination));
         }
         mOpen = false;
     }

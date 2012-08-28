@@ -14,6 +14,7 @@ import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.FileAccessException;
+import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.soleil.NxsFactory;
@@ -25,96 +26,82 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-
 /**
- * @note This class is just a test and is not representative of how the real implementation should work.
- * Behaviors and algorithms of this class do not apply to the CDMA dictionary's behaviour!
+ * @note This class is just a test and is not representative of how the real implementation should
+ *       work. Behaviors and algorithms of this class do not apply to the CDMA dictionary's
+ *       behaviour!
  * @author rodriguez
- *
+ * 
  */
 public final class NxsDictionary implements IDictionary, Cloneable {
-    private String mPath;              // Path of the XML file carrying the dictionary 
-    private Map<IKey, Path> mItemMap; // Map associating keys from view file to path from mapping file
+    private String mPath; // Path of the XML file carrying the dictionary
+    private Map<IKey, Path> mItemMap; // Map associating keys from view file to path from mapping
+                                      // file
 
     public NxsDictionary() {
         mItemMap = new HashMap<IKey, Path>();
     }
 
     @Override
-    public void addEntry(String keyName, String path)
-    {
+    public void addEntry(String keyName, String path) {
         IFactory factory = NxsFactory.getInstance();
         mItemMap.put(new Key(factory, keyName), new Path(factory, path));
     }
 
     @Override
-    public boolean containsKey(String keyName)
-    {
+    public boolean containsKey(String keyName) {
         return mItemMap.containsKey(keyName);
     }
 
     @Override
-    public List<IKey> getAllKeys()
-    {
+    public List<IKey> getAllKeys() {
         return new ArrayList<IKey>(mItemMap.keySet());
     }
 
     @Override
-    public List<Path> getAllPaths(IKey keyName)
-    {
+    public List<Path> getAllPaths(IKey keyName) {
         return new ArrayList<Path>(mItemMap.values());
     }
 
     @Override
-    public Path getPath(IKey keyName)
-    {
-        if( mItemMap.containsKey(keyName) )
-        {
+    public Path getPath(IKey keyName) {
+        if (mItemMap.containsKey(keyName)) {
             return mItemMap.get(keyName);
         }
-        else
-        {
+        else {
             return null;
         }
     }
 
     @Override
-    public void readEntries(URI uri) throws FileAccessException
-    {
+    public void readEntries(URI uri) throws FileAccessException {
         File dicFile = new File(uri);
-        if (!dicFile.exists()) 
-        {
+        if (!dicFile.exists()) {
             throw new FileAccessException("the target dictionary file does not exist");
         }
-        try 
-        {
+        try {
             BufferedReader br = new BufferedReader(new FileReader(dicFile));
-            while (br.ready())
-            {
+            while (br.ready()) {
                 String line = br.readLine();
-                if( line != null ) {
+                if (line != null) {
                     String[] temp = line.split("=");
-                    if (0 < (temp[0].length())) 
-                    {
+                    if (0 < (temp[0].length())) {
                         addEntry(temp[0], temp[1]);
                     }
                 }
             }
             br.close();
-        } 
-        catch (IOException ex) 
-        {
+        }
+        catch (IOException ex) {
             throw new FileAccessException("failed to open the dictionary file\n", ex);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void readEntries(String filePath) throws FileAccessException
-    {
+    public void readEntries(String filePath) throws FileAccessException {
         File dicFile = new File(filePath);
-        if (!dicFile.exists()) 
-        {
+        if (!dicFile.exists()) {
             throw new FileAccessException("the target dictionary file does not exist");
         }
 
@@ -135,14 +122,14 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         mPath = dicFile.getAbsolutePath();
         root = dictionary.getRootElement();
 
-        List<?> nodes = root.getChildren("item"), tmpList;
+        List<?> nodes = root.getChildren("item");
 
         String key;
         String path = "";
-        for( Element node : (List<Element>) nodes ) {
+        for (Element node : (List<Element>) nodes) {
             key = node.getAttributeValue("key");
             path = node.getChildText("path");
-            if( key != null && !key.isEmpty() && path != null && ! path.isEmpty() ) {
+            if (key != null && !key.isEmpty() && path != null && !path.isEmpty()) {
                 addEntry(key, path);
             }
         }
@@ -158,11 +145,9 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         mItemMap.remove(keyName);
     }
 
-
     @SuppressWarnings("unchecked")
     @Override
-    public IDictionary clone() throws CloneNotSupportedException
-    {
+    public IDictionary clone() throws CloneNotSupportedException {
         NxsDictionary dict = new NxsDictionary();
         dict.mItemMap = (HashMap<IKey, Path>) ((HashMap<IKey, Path>) mItemMap).clone();
         return dict;
@@ -187,32 +172,37 @@ public final class NxsDictionary implements IDictionary, Cloneable {
     }
 
     /**
-     * According to the current corresponding dataset, this method will try
-     * to guess which XML dictionary mapping file should be used
+     * According to the current corresponding dataset, this method will try to guess which XML
+     * dictionary mapping file should be used
+     * 
      * @return
-     * @throws FileAccessException 
+     * @throws FileAccessException
      */
     public static String detectDictionaryFile(NxsDataset dataset) {
+        String beamline = "UNKNOWN";
+        String model = "UNKNOWN";
+
         // Get the configuration
-        ConfigDataset conf = dataset.getConfiguration();
+        ConfigDataset conf;
+        try {
+            conf = dataset.getConfiguration();
 
-        // Ask for beamline and datamodel parameters
-        String beamline = conf.getParameter(NxsConstant.BEAMLINE);
-        String model = conf.getParameter(NxsConstant.MODEL);
+            // Ask for beamline and datamodel parameters
+            beamline = conf.getParameter(NxsConstant.BEAMLINE);
+            model = conf.getParameter(NxsConstant.MODEL);
+        }
+        catch (NoResultException e) {
+            e.printStackTrace();
+        }
 
-        // Construct the dictionary file name
-        if( beamline != null ) {
+        if (beamline != null) {
             beamline = beamline.toLowerCase();
         }
-        else {
-            beamline = "UNKNOWN";
-        }
-        if( model != null ) {
+        if (model != null) {
             model = model.toLowerCase();
         }
-        else {
-            model = "UNKNOWN";
-        }
+
+        // Construct the dictionary file name
         return beamline + "_" + model + ".xml";
     }
 }
