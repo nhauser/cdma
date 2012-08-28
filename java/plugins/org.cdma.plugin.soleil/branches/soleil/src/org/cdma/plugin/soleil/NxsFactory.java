@@ -1,11 +1,8 @@
 package org.cdma.plugin.soleil;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Array;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
