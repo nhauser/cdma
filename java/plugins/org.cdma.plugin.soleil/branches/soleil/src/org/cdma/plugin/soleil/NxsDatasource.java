@@ -15,6 +15,9 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.internal.DetectedSource;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 
+import fr.soleil.nexus.NexusNode;
+import fr.soleil.nexus.PathNexus;
+
 public final class NxsDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
     private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
@@ -115,18 +118,21 @@ public final class NxsDatasource implements IDatasource {
     @Override
     public String[] getURIParts(URI target) {
         List<String> parts = new ArrayList<String>();
-        if (isProducer(target)) {
-            String name = target.getPath();
+        if ( isBrowsable(target) || isReadable(target) ) {
+            String path = target.getPath();
             String fragment = target.getFragment();
-
-            parts.add(name);
+            for( String part : path.split( File.separator ) ) {
+                if( part != null && ! part.isEmpty() ) {
+                    parts.add(part);
+                }
+            }
 
             if (fragment != null) {
                 try {
                     fragment = URLDecoder.decode(fragment, "UTF-8");
-
-                    for (String node : fragment.split("/")) {
-                        parts.add(node);
+                    NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
+                    for (NexusNode node : nodes ) {
+                        parts.add( node.getNodeName() );
                     }
                 }
                 catch (UnsupportedEncodingException e) {
