@@ -10,42 +10,38 @@
  ******************************************************************************/
 package org.cdma.utilities.configuration;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.cdma.interfaces.IDataset;
 import org.cdma.utilities.configuration.internal.ConfigCriteria;
 import org.cdma.utilities.configuration.internal.ConfigGeneric;
 import org.cdma.utilities.configuration.internal.ConfigParameter;
-import org.cdma.utilities.configuration.internal.ConfigParameterDynamic;
-import org.cdma.utilities.configuration.internal.ConfigParameterStatic;
-import org.jdom2.Element;
 
 /**
- * ConfigDataset defines some criteria that will permit to verify the given IDataset
- * matches it. A IDataset of the plug-in has one and only one configuration.
+ * ConfigDataset defines some criteria that will permit to verify the given IDataset matches it. A
+ * IDataset of the plug-in has one and only one configuration.
  * <p>
- * It permits to determines some parameters that can be statically or dynamically (according
- * to some conditions or values in dataset) fixed for a that specific data model.
- * Those parameters (ConfigParameter) are resolved according the given IDataset.
+ * It permits to determines some parameters that can be statically or dynamically (according to some
+ * conditions or values in dataset) fixed for a that specific data model. Those parameters
+ * (ConfigParameter) are resolved according the given IDataset.
  * <p>
  * Each IDataset should match a specific ConfigDataset.
  * 
  * @see ConfigParameter ConfigParameter: interface a parameter must implement
- * @see ConfigCriteria ConfigCriteria: criteria that an IDataset must respect to match a ConfigDataset
+ * @see ConfigCriteria ConfigCriteria: criteria that an IDataset must respect to match a
+ *      ConfigDataset
  * @author rodriguez
- *
+ * 
  */
 
 public class ConfigDataset {
+
     private ConfigGeneric mConfig;
-    private IDataset      mDataset;
+    private IDataset mDataset;
 
     /**
-     * Constructor of the dataset configuration
-     * need a dom element named: "config_dataset"
+     * Constructor of the dataset configuration need a dom element named: "config_dataset"
+     * 
      * @param dataset_model DOM element "dataset_model"
      * @param params some default parameters that can be override by this Config
      */
@@ -56,6 +52,7 @@ public class ConfigDataset {
 
     /**
      * Return the label of that ConfigDataset
+     * 
      * @return
      */
     public String getLabel() {
@@ -64,6 +61,7 @@ public class ConfigDataset {
 
     /**
      * Returns the list of all parameters that can be asked for that configuration
+     * 
      * @return list of ConfigParameter
      */
     public List<ConfigParameter> getParameters() {
@@ -71,8 +69,9 @@ public class ConfigDataset {
     }
 
     /**
-     * Returns the value of the named <b>ConfigParameter</b> for the given IDataset. 
-     * @param label of the parameter 
+     * Returns the value of the named <b>ConfigParameter</b> for the given IDataset.
+     * 
+     * @param label of the parameter
      * @return the string value of the parameter
      */
     public String getParameter(String label) {
@@ -81,6 +80,7 @@ public class ConfigDataset {
 
     /**
      * Returns the criteria a IDataset must respect to match that configuration.
+     * 
      * @return ConfigCriteria object
      */
     public ConfigCriteria getCriteria() {
@@ -89,6 +89,7 @@ public class ConfigDataset {
 
     /**
      * Add a parameter to that configuration
+     * 
      * @param param implementing ConfigParameter interface
      */
     public void addParameter(ConfigParameter param) {
@@ -98,7 +99,7 @@ public class ConfigDataset {
     @Override
     public String toString() {
         String result = mConfig + "\nFor dataset: " + mDataset.getLocation();
-        
+
         return result;
     }
 }
