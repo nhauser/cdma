@@ -29,6 +29,6 @@ public class LabelledURI {
     
     @Override
     public String toString() {
-        return mURI.toString();
+        return mLabel.toString();
     }
 }
