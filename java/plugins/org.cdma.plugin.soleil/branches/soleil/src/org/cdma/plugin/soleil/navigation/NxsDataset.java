@@ -172,6 +172,7 @@ public final class NxsDataset implements IDataset {
         return result;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void writeNcML(OutputStream os, String uri) throws IOException {
         for (IDataset dataset : mDatasets) {
@@ -205,11 +206,9 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public void setLocation(String location) {
-        File newLoc = new File(location);
-        File oldLoc = new File(mPath);
-        if (!oldLoc.equals(newLoc)) {
+        if (location != null && !location.equals(mPath.toString())) {
             try {
-                mPath = new URI(newLoc.getAbsolutePath());
+                mPath = new URI(location);
             }
             catch (URISyntaxException e) {
                 e.printStackTrace();
@@ -248,9 +247,7 @@ public final class NxsDataset implements IDataset {
         if (mConfig == null) {
             if (mDatasets.size() > 0) {
                 ConfigDataset conf;
-                IDataset dataset = new NxsDataset(new File(mPath));
-                conf = ConfigManager.getInstance(NxsFactory.getInstance(), NxsFactory.CONFIG_FILE)
-                        .getConfig(dataset);
+                conf = ConfigManager.getInstance(NxsFactory.getInstance(), NxsFactory.CONFIG_FILE).getConfig(this);
                 mConfig = conf;
             }
         }
