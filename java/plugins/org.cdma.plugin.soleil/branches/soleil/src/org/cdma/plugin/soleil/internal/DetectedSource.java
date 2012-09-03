@@ -3,16 +3,13 @@ package org.cdma.plugin.soleil.internal;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
-import org.cdma.plugin.soleil.utils.NxsConstant;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.nexusformat.NexusException;
 
@@ -205,45 +202,17 @@ public class DetectedSource {
 
         // Check if the URI is a NeXus file
         if (mIsProducer) {
-            File file = new File(uri.getPath());
             try {
-                // Instantiate the dataset corresponding to file and detect its
-                // configuration
-                NxsDataset dataset = NxsDataset.instanciate(file.toURI());
+                // Instantiate the dataset and detect its configuration
+                NxsDataset dataset = NxsDataset.instanciate(uri);
 
                 // Interrogate the config to know the experiment path
                 ConfigDataset conf = dataset.getConfiguration();
                 if (conf != null) {
-                    String experiment = conf.getParameter(NxsConstant.EXPERIMENT_PATH);
-                    String uriFragment = uri.getFragment();
-                    if (uriFragment == null) {
-                        uriFragment = "";
-                    }
-
-                    // Decode the fragment part
-                    uriFragment = URLDecoder.decode(uriFragment, "UTF-8");
-
-                    // construct path node to compare them
-                    NexusNode[] expNodes = PathNexus.splitStringToNode(experiment);
-                    NexusNode[] fraNodes = PathNexus.splitStringToNode(uriFragment);
-
-                    // compare both path
-                    if (expNodes.length == fraNodes.length) {
-                        result = true;
-                        // search for not similar nodes in path
-                        for (int i = 0; i < expNodes.length; i++) {
-                            if (expNodes[i].matchesPartNode(fraNodes[i])) {
-                                result = false;
-                                break;
-                            }
-                        }
-                    }
+                    result = true;
                 }
             }
             catch (NoResultException e) {
-            }
-            catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
             }
         }
         return result;
