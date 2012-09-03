@@ -6,20 +6,19 @@
 ============================================= -->
   <dataset-model name="fully_defined_conf">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
-      <if exist="true" target="/{NXentry}/acquisition_model"/>
+      <if exist="true" target="/{NXinstrument}"/>
+      <if exist="true" target="/acquisition_model"/>
     </criteria>
 
     <parameters> 
-      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
-      <parameter name="MODEL" type="value" target="/{NXentry}/acquisition_model"/>
+      <parameter name="BEAMLINE" type="name" target="/{NXinstrument}"/>
+      <parameter name="MODEL" type="value" target="/acquisition_model"/>
     </parameters>
 
     <plugin>
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/{NXentry}"/>
       </java>
     </plugin>
   </dataset-model>
@@ -30,7 +29,6 @@
   <dataset-model name="generic_quickexafs">
     <criteria>
       <if exist="true" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
     </criteria>
     
     <parameters>
@@ -42,7 +40,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/" />
       </java>
     </plugin>
   </dataset-model>
@@ -52,14 +49,12 @@
 ============================================= -->
   <dataset-model name="generic_scanserver">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1"/>
+      <if exist="true" target="/{NXinstrument}"/>
+      <if exist="true" target="/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="BEAMLINE" type="name" target="/{NXinstrument}"/>
       <parameter name="MODEL" type="constant" constant="scanserver"/>
     </parameters>
 
@@ -67,7 +62,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/{NXentry}" />
       </java>
     </plugin>
   </dataset-model>
@@ -77,9 +71,7 @@
 ============================================= -->
   <dataset-model name="ANTARES_passerelle">
     <criteria>
-      <if exist="true" target="/{NXentry}/ANTARES"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
+      <if exist="true" target="/ANTARES{NXinstrument}"/>
     </criteria>
 <!-- 
     <parameters>
@@ -95,7 +87,6 @@
         <set name="fast_iterator" value="true"/>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/{NXentry}" />
       </java>
     </plugin>
   </dataset-model>
@@ -105,11 +96,7 @@
 ============================================= -->
   <dataset-model name="generic_flyscan">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
       <if exist="true" target="/*flyscan*{NXentry}/{NXinstrument}" />
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
@@ -121,7 +108,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/" />
       </java>
     </plugin>
   </dataset-model>
@@ -131,11 +117,7 @@
 ============================================= -->
   <dataset-model name="generic_passerelle">
     <criteria>
-      <if exist="true" target="/{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/ANTARES"/>
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
+      <if exist="true" target="/{NXinstrument}"/>
     </criteria>
     
     <parameters>
@@ -147,7 +129,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/{NXentry}" />
       </java>
     </plugin>
   </dataset-model>
@@ -157,10 +138,7 @@
 ============================================= -->
   <dataset-model name="contacq_flyscan">
     <criteria>
-      <if exist="true" target="/{NXentry}/contacq{NXinstrument}"/>
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="false" target="/{NXentry}/scan_data{NXdata}/time_1"/>
+      <if exist="true" target="/*flyscan*{NXentry}/contacq{NXinstrument}"/>
     </criteria>
     
     <parameters>
@@ -172,7 +150,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/" />
       </java>
     </plugin>
   </dataset-model>
@@ -182,10 +159,8 @@
 ============================================= -->
   <dataset-model name="contacq_passerelle">
     <criteria>
-      <if exist="false" target="/{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
-      <if exist="false" target="/{NXentry}/acquisition_model"/>
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1"/>
+      <if exist="false" target="/{NXinstrument}"/>
+      <if exist="true" target="/scan_data{NXdata}/time_1"/>
     </criteria>
     
     <parameters>
@@ -198,7 +173,6 @@
         <set name="log_debug" value="true" />
         <set name="N4T_buffer_size" value="300" />
         <set name="OPTIMAL_DATA_SIZE" value="3000000" />
-        <set name="experiment_path" value="/{NXentry}" />
       </java>
     </plugin>
   </dataset-model>
@@ -208,8 +182,8 @@
 ============================================= -->
   <dataset-model name="test_flyscan">
     <criteria>
-      <if exist="false" target="/{NXentry}/{NXinstrument}"/>
-      <if exist="true" target="/{NXentry}/scan_data{NXdata}/"/>
+      <if exist="false" target="/*flyscan*{NXentry}/{NXinstrument}"/>
+      <if exist="true" target="/*flyscan*{NXentry}/scan_data{NXdata}/"/>
     </criteria>
     
     <parameters>
@@ -221,7 +195,6 @@
       <java>
         <set name="log_debug" value="true"/>
         <set name="N4T_buffer_size" value="300"/>
-        <set name="experiment_path" value="/" />
       </java>
     </plugin>
   </dataset-model>
