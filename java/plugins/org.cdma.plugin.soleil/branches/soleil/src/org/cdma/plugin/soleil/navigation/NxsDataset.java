@@ -19,6 +19,7 @@ import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.nexus.navigation.NexusDataset;
 import org.cdma.engine.nexus.navigation.NexusGroup;
+import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -41,7 +42,7 @@ public final class NxsDataset implements IDataset {
             super(dataset);
         }
 
-        public NexusDatasetImpl(File nexusFile) {
+        public NexusDatasetImpl(File nexusFile) throws FileAccessException {
             super(NxsFactory.NAME, nexusFile);
         }
 
@@ -76,25 +77,30 @@ public final class NxsDataset implements IDataset {
             }
 
             if (dataset == null) {
-                dataset = new NxsDataset(new File(destination.getPath()));
-                String fragment = destination.getFragment();
-
-                if (fragment != null && !fragment.isEmpty()) {
-                    IGroup group = dataset.getRootGroup();
-                    try {
-                        String path = URLDecoder.decode(fragment, "UTF-8");
-                        for (IContainer container : group.findAllContainerByPath(path)) {
-                            if (container.getModelType().equals(ModelType.Group)) {
-                                dataset.mRootPhysical = (IGroup) container;
-                                break;
+                try {
+                    dataset = new NxsDataset(new File(destination.getPath()));
+                    String fragment = destination.getFragment();
+    
+                    if (fragment != null && !fragment.isEmpty()) {
+                        IGroup group = dataset.getRootGroup();
+                        try {
+                            String path = URLDecoder.decode(fragment, "UTF-8");
+                            for (IContainer container : group.findAllContainerByPath(path)) {
+                                if (container.getModelType().equals(ModelType.Group)) {
+                                    dataset.mRootPhysical = (IGroup) container;
+                                    break;
+                                }
                             }
                         }
+                        catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                    datasets.put(destination.toString(), new SoftReference<NxsDataset>(dataset));
                     }
+                catch ( FileAccessException e ) {
+                    throw new NoResultException( e );
                 }
-                datasets.put(destination.toString(), new SoftReference<NxsDataset>(dataset));
             }
         }
         return dataset;
@@ -272,11 +278,11 @@ public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(File destination) {
+    private NxsDataset(File destination) throws FileAccessException {
         mPath = destination.toURI();
         mDatasets = new ArrayList<NexusDataset>();
+        NexusDatasetImpl datafile;
         if (destination.exists() && destination.isDirectory()) {
-            IDataset datafile;
             NeXusFilter filter = new NeXusFilter();
             for (File file : destination.listFiles(filter)) {
                 datafile = new NexusDatasetImpl(file);
@@ -284,7 +290,8 @@ public final class NxsDataset implements IDataset {
             }
         }
         else {
-            mDatasets.add(new NexusDatasetImpl(destination));
+            datafile = new NexusDatasetImpl(destination);
+            mDatasets.add(datafile);
         }
         mOpen = false;
     }

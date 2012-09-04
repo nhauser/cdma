@@ -4,20 +4,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.cdma.exception.NoResultException;
+import org.cdma.interfaces.IContainer;
+import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.utilities.configuration.ConfigDataset;
-import org.nexusformat.NexusException;
-
-import fr.soleil.nexus.DataItem;
-import fr.soleil.nexus.NexusFileReader;
-import fr.soleil.nexus.NexusNode;
-import fr.soleil.nexus.PathGroup;
-import fr.soleil.nexus.PathNexus;
 
 public class DetectedSource {
     private static final int EXTENSION_LENGTH = 4;
@@ -119,7 +114,7 @@ public class DetectedSource {
 
     private boolean initReadable(URI uri) {
 
-        boolean result;
+        boolean result = false;
         if (mIsDataset) {
             result = true;
         }
@@ -128,13 +123,14 @@ public class DetectedSource {
             String name = file.getName();
             int length = name.length();
 
-            // Check if the URI is a NeXus file
-            if (length > EXTENSION_LENGTH
-                    && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
-                result = true;
-            }
-            else {
-                result = false;
+            if( file.exists() && file.length() != 0L ) {
+                // Check if the URI is a NeXus file
+                if (length > EXTENSION_LENGTH && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
+                    result = true;
+                }
+                else {
+                    result = false;
+                }
             }
         }
 
@@ -243,37 +239,25 @@ public class DetectedSource {
         NeXusFilter filter = new NeXusFilter();
         File[] files = file.listFiles(filter);
         if (files.length > 0) {
-            NexusFileReader reader = new NexusFileReader(files[0].getAbsolutePath());
-            PathNexus path = new PathGroup(new String[] { "<NXentry>", "<NXdata>" });
             try {
-                reader.openFile();
-                reader.openPath(path);
-                ArrayList<NexusNode> list = reader.listChildren();
-                for (NexusNode node : list) {
-                    reader.openNode(node);
-                    DataItem data = reader.readDataInfo();
-                    if (data.getAttribute("dataset_part") != null) {
-                        result = true;
-                        reader.closeFile();
-                        break;
+                IDataset dataset = NxsDataset.instanciate(file.toURI());
+                IGroup group = dataset.getRootGroup();
+    
+                IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
+                //for( IContainer container : groups ) {
+                    if( groups instanceof IGroup ) {
+                        for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
+                            if( item.getAttribute( "dataset_part" ) != null ) {
+                                result = true;
+                                break;
+                            }
+                        }
                     }
-                    reader.closeData();
-
-                }
-                reader.closeFile();
-            }
-            catch (NexusException e1) {
-                try {
-                    reader.closeFile();
-                }
-                catch (NexusException e2) {
-                }
-                finally {
-                    result = false;
-                }
+               // }
+            } catch (NoResultException e) {
             }
         }
-
+        
         return result;
     }
 }

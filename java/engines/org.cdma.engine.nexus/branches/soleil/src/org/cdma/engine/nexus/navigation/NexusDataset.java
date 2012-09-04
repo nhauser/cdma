@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cdma.exception.FileAccessException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -26,7 +27,7 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 
     public static final String ERR_NOT_SUPPORTED = "Method not supported yet in this plug-in!";
 
-    public NexusDataset(String factoryName, File nexusFile, int buffer_size) {
+    public NexusDataset(String factoryName, File nexusFile, int buffer_size) throws FileAccessException {
         mFactory = factoryName;
         mN4TWriter = null;
         mRootPhysical = null;
@@ -39,7 +40,7 @@ public abstract class NexusDataset implements IDataset, Cloneable {
         mN4TWriter.setCompressedData(true);
     }
 
-    public NexusDataset(String factoryName, File nexusFile) {
+    public NexusDataset(String factoryName, File nexusFile) throws FileAccessException {
         this(factoryName, nexusFile, N4T_BUFF_SIZE);
     }
 
