@@ -294,18 +294,16 @@ public final class NexusGroup implements IGroup, Cloneable {
     @Override
     public List<IDataItem> getDataItemList() {
         List<IContainer> listItem = getGroupNodes(false);
-        if (listItem == null) {
-            return null;
-        }
-
         List<IDataItem> dataItemList = new ArrayList<IDataItem>();
-        for (IContainer variable : listItem) {
-            dataItemList.add((IDataItem) variable);
-        }
-
-        for (IContainer variable : mChild) {
-            if (variable.getModelType().equals(ModelType.DataItem)) {
+        if (listItem != null) {
+            for (IContainer variable : listItem) {
                 dataItemList.add((IDataItem) variable);
+            }
+    
+            for (IContainer variable : mChild) {
+                if (variable.getModelType().equals(ModelType.DataItem)) {
+                    dataItemList.add((IDataItem) variable);
+                }
             }
         }
         return dataItemList;
@@ -358,18 +356,16 @@ public final class NexusGroup implements IGroup, Cloneable {
     @Override
     public List<IGroup> getGroupList() {
         List<IContainer> listItem = getGroupNodes(true);
-        if (listItem == null) {
-            return null;
-        }
-
-        List<IGroup> dataItemList = new ArrayList<IGroup>();
-        for (IContainer variable : listItem) {
-            if (!mChild.contains(variable)) {
-                mChild.add((IGroup) variable);
+        List<IGroup> groupList = new ArrayList<IGroup>();
+        if (listItem != null) {
+            for (IContainer variable : listItem) {
+                if (!mChild.contains(variable)) {
+                    mChild.add((IGroup) variable);
+                }
+                groupList.add((IGroup) variable);
             }
-            dataItemList.add((IGroup) variable);
         }
-        return dataItemList;
+        return groupList;
     }
 
     @Override

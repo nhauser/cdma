@@ -203,6 +203,9 @@ public class NexusFileInstance {
                 m_nfFile = new NexusFileHandler(sFilePath, NexusFile.NXACC_CREATE5);
             }
         } else if (file.exists()) {
+            if( NexusFile.NXACC_READ == iAccessMode && file.length() == 0L ) {
+                throw new NexusException("Can't open file for read: " + sFilePath + " is badly formated!");
+            }
             m_nfFile = new NexusFileHandler(sFilePath, iAccessMode);
         } else {
             throw new NexusException("Can't open file for read: " + sFilePath + " doesn't exist!");
