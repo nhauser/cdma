@@ -248,16 +248,34 @@ const std::string& Factory::getActiveView()
 //----------------------------------------------------------------------------
 std::string Factory::getKeyDictionaryPath()
 {
-  yat::FileName file( getDictionariesFolder(), ( getActiveView() + "_view.xml" ) );
+  yat::FileName file( getDictionariesFolder() + "/views/", ( getActiveView() + "_view.xml" ) );
+  return file.full_name();
+}
+
+//----------------------------------------------------------------------------
+// Factory::getConceptDictionaryFolder
+//----------------------------------------------------------------------------
+std::string Factory::getConceptDictionaryFolder()
+{
+  yat::FileName file( getDictionariesFolder() + "/concepts/" );
+  return file.full_name();
+}
+
+//----------------------------------------------------------------------------
+// Factory::getKeyDictionaryFolder
+//----------------------------------------------------------------------------
+std::string Factory::getKeyDictionaryFolder()
+{
+  yat::FileName file( getDictionariesFolder() + "/views/" );
   return file.full_name();
 }
 
 //----------------------------------------------------------------------------
 // Factory::getMappingDictionaryFolder
 //----------------------------------------------------------------------------
-std::string Factory::getMappingDictionaryFolder(const IFactoryPtr& factory)
+std::string Factory::getMappingDictionaryFolder(const std::string& plugin_id)
 {
-  yat::FileName file( getDictionariesFolder() + "/" + factory->getName() + "/" );
+  yat::FileName file( getDictionariesFolder() + "/mappings/" + plugin_id + "/" );
   return file.full_name();
 }
     
@@ -280,12 +298,24 @@ std::string Factory::getDictionariesFolder()
 //----------------------------------------------------------------------------
 std::pair<IDatasetPtr, IFactoryPtr> Factory::openDataset( const yat::URI& uri ) throw ( Exception )
 {
+  CDMA_STATIC_FUNCTION_TRACE("Factory::openDataset");
   std::pair< IDatasetPtr, IFactoryPtr > result;
   
-  result.second = detectPluginFactory(uri);
-  
-  result.first = result.second->openDataset( uri.get() );
-  
+  try
+  {
+    result.second = detectPluginFactory(uri);
+    result.first = result.second->openDataset( uri.get() );
+  }
+  catch( cdma::Exception& e )
+  {
+    LOG_EXCEPTION("cdma", e);
+    throw e;
+  }
+  catch( yat::Exception& e )
+  {
+    LOG_EXCEPTION("yat", e);
+    throw e;
+  }
   return result;
 }
 
