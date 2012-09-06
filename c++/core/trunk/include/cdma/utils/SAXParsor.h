@@ -30,6 +30,7 @@
 #include <string>
 #include <stdio.h>
 #include <yat/utils/String.h>
+#include <yat/utils/Singleton.h>
 
 namespace cdma
 {
@@ -39,10 +40,10 @@ namespace cdma
 // !! SAXParsor class is strictly for internal purpose !!
 
 //=============================================================================
-/// Purpose : Reading a XML file using libxml2 library then parsing the document
+/// Purpose : Reading XML files using libxml2 library then parsing the document
 /// to construct a configuration
 //=============================================================================
-class SAXParsor
+class SAXParsor : public yat::Singleton<SAXParsor>
 {
 public:
 
@@ -59,9 +60,6 @@ public:
     virtual void release() {}
   };
 
-private:
-  yat::String m_current_parsed_source;
-
 protected:
   /// Parse a XML node
   void parse_node(void *_pNode, INodeAnalyser* pAnalyser);
@@ -71,21 +69,50 @@ public :
   ~SAXParsor();
 
   /// Start the SAX parsor
-  void start(const std::string& document_path, INodeAnalyser* pRootAnalyser);
+  static void start(const std::string& document_path, INodeAnalyser* pRootAnalyser);
+
+  /// helper method to check an attribute by its name
+  static bool has_attribute(const Attributes& attrs, const yat::String& name)
+  {
+    if( attrs.find(name) != attrs.end() )
+      return true;
+    return false;
+  }
+
+  /// helper method to get a the value of an attribute
+  static yat::String attribute_value(const Attributes& attrs, const yat::String& name)
+  {
+    cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name);
+    if( cit == attrs.end() )
+      throw yat::Exception("NOT_FOUND", 
+                      PSZ_FMT("Unable to get value for attribute '%s'", PSZ(name)),
+                      "cdma::SAXParsor");
+    return cit->second;
+  }
 };
 
-/// Macro helper to retrive attribute value
+/// Macro helper to retrieve attribute value
 #define FIND_ATTR_VALUE(attrs, name, value_string) \
     cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name); \
     if( cit == attrs.end() ) \
-      throw Exception("NOT_FOUND", yat::String::str_format("Unable to get value for attribute '%s'", name), "cdma::SAXParsor"); \
+    throw yat::Exception("NOT_FOUND", yat::String::str_format("Unable to get value for attribute '%s'", name), "cdma::SAXParsor"); \
     value_string = cit->second
 
-/// Macro helper to retrive attribute value. nothrow
+/// Macro helper to retrieve attribute value. nothrow
 #define FIND_ATTR_VALUE_NO_THROW(attrs, name, value_string) \
     cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name); \
     if( cit != attrs.end() ) \
       value_string = cit->second
+
+/// Macro helper to test attribute presence
+/// usage:
+/// IF_HAS_ATTR(attrs, name)
+/// {
+/// ...
+/// }
+#define IF_HAS_ATTR(attrs, name) \
+    cdma::SAXParsor::AttributesConstIterator cit = attrs.find(name); \
+    if( cit != attrs.end() )
 
 /// @endcond internal
 
