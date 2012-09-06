@@ -264,7 +264,7 @@ std::list<KeyPtr> LogicalGroup::getKeys()
   std::list< KeyPtr > result;
 
   // Get children keys' names
-  yat::String key = m_key_ptr.is_null() ? "" : m_key_ptr->getName();
+  yat::String key = m_key_ptr.is_null() ? "root" : m_key_ptr->getName();
   if( m_listkey_ptr.is_null() )
   {
     m_listkey_ptr = m_dictionary_ptr->getKeys( key );
