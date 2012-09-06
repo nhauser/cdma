@@ -36,10 +36,6 @@
 namespace cdma
 {
 
-typedef std::multimap<int, int> IdConnectionMap;
-typedef std::map<std::string, int> KeyIdMap;
-typedef std::map<int, SolverList> KeySolverListMap;
-typedef std::multimap<int, std::string> KeySynonymsMap;
 
 //==============================================================================
 /// Keywords dictionary manager
@@ -48,23 +44,59 @@ class CDMA_DECL Dictionary
 {
 friend class DataDefAnalyser;
 friend class MapDefAnalyser;
-  
+friend class DictionaryConceptAnalyser;
+
+public:
+  class Concept
+  {
+  friend class DictionaryConceptAnalyser;
+  friend class Dictionary;
+  public:
+    typedef std::map<std::string, std::string> AttributeMap;
+    typedef std::list<std::string> SynonymList;
+
+    bool isSynonym(const std::string &keyword);
+
+    int id() const { return m_id; }
+    const std::string& label() const { return m_label; }
+    const std::string& description() const { return m_description; }
+    const std::string& unit() const { return m_unit; }
+
+  private:
+    int         m_id;
+    std::string m_label;           // the label is the primary keyword for the concept
+    std::string m_description;     // concept explanation
+    std::string m_unit;            // physical unit of the underlying data
+    AttributeMap m_attribute_map;  // list of wished attributes
+    SynonymList m_synonym_list;    // other keywords associated to this concept
+  };
+typedef yat::SharedPtr<Concept> ConceptPtr;
+
+typedef std::multimap<std::string, std::string> KeyConnectionMap;
+typedef std::map<int, SolverList> ConceptIdSolverListMap;
+typedef std::map<int, ConceptPtr> IdConceptMap;
+typedef std::map<std::string, int> KeywordConceptIdMap;
+
 private:
 
-  IdConnectionMap     m_connection_map;    // connection between parent (int:key) and children (int:data)
-  KeyIdMap            m_key_id_map;        // the keys and the associated identifier
-  KeySolverListMap    m_key_solver_map;    // Association between key index and solvers list
-  KeySynonymsMap      m_key_synonyms_map;  // Association between key index and synonyms
-
-  std::string         m_key_file_path;     // Path to the data definition document
-  std::string         m_mapping_file_path; // Path to the mapping document (the dict itself)
+  KeyConnectionMap     m_connection_map;    // connection between parent key and children keys
+  ConceptIdSolverListMap m_concept_solvers_map;// Association between concept and solvers list
+  KeywordConceptIdMap m_key_concept_map;   // Association between application keywords & concepts
+  IdConceptMap        m_id_concept_map;    // The concepts
+  std::string         m_key_file_name;     // Data definition document name
+  std::string         m_spec_dict_name;    // Optional Specific dictionnary of concepts
+  std::string         m_mapping_file_name; // Mapping document
   std::string         m_data_def_name;     // Data definition name
   std::string         m_mapping_name;      // Mapping name
   std::string         m_plugin_id;         // Plugin who created this object
 
-  typedef std::multimap<int, int>::const_iterator connection_map_const_iterator;
+  typedef std::multimap<std::string, std::string>::const_iterator connection_map_const_iterator;
   typedef std::pair<connection_map_const_iterator, connection_map_const_iterator> 
           connection_map_const_range;
+
+  ConceptPtr createConcept(const std::string &label);
+  ConceptPtr getConcept(const std::string &keyword);
+  int getConceptId(const std::string &keyword);
 
 public:
 
@@ -88,11 +120,11 @@ public:
   
   /// Return the path to reach the key dictionary file
   ///
-  std::string& getKeyFilePath() { return m_key_file_path; }
+  std::string& getKeyFileName() { return m_key_file_name; }
   
   /// Return the path to reach the mapping dictionary file
   ///
-  std::string getMappingFilePath() { return m_mapping_file_path; }
+  std::string getMappingFileName() { return m_mapping_file_name; }
   
   /// Return the name of the data definition
   ///
@@ -128,13 +160,21 @@ public:
   ///
   bool containsKey(const std::string& key);
 
-  /// Return the path to reach the key dictionary file
+  /// Set the key file name
+  /// The key file will be searched in $CDMA_DICTIONARY_PATH/views/
   ///
-  void setKeyFilePath(const std::string& file_path) { m_key_file_path = file_path; }
+  void setKeyFileName(const std::string& file_name) { m_key_file_name = file_name; }
   
-  /// Return the path to reach the mapping dictionary file
+  /// Set the mapping file relative path and name
+  /// typically: {plugin_name}/{mapping_file.xml}
+  /// The mapping file will be searched in $CDMA_DICTIONARY_PATH/mappings/
   ///
-  void setMappingFilePath(const std::string& file_path) { m_mapping_file_path = file_path; }
+  void setMappingFileName(const std::string& file_name) { m_mapping_file_name = file_name; }
+
+  /// Set the (optionnal) concept dictionary file name
+  /// The concepts file will be searched in $CDMA_DICTIONARY_PATH/concepts/
+  ///
+  void setSpecificConceptDictionary(const std::string& file_name) { m_spec_dict_name = file_name; }
 };
 
 DECLARE_SHARED_PTR(Dictionary);
