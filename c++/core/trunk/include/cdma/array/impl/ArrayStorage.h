@@ -67,7 +67,6 @@ public:
 
   //@{ IArrayStorage
 
-    void set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value);
     void setValue(const cdma::ViewPtr& ima, std::vector<int> position, void* value_ptr);
     const std::type_info& getType()            { return typeid(*m_data); };
     void*                 getStorage()         { return (void*) m_data; }
