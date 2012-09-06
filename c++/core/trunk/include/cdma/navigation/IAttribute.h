@@ -56,68 +56,44 @@ public:
   ///
   virtual const std::type_info& getType() = 0;
 
-  /// True if value is a string or String[].
-  ///
-  /// @return true or false
-  ///
-  virtual bool isString() = 0;
-
   /// True if value is an array (getLength() > 1).
   ///
   /// @return true or false
   ///
   virtual bool isArray() = 0;
 
-  /// Get the length of the array of values; = 1 if scaler.
+  /// Get the size of the array of values; = 1 if scaler.
   ///
   /// @return integer value
   ///
-  virtual int getLength() = 0;
+  virtual int getSize() = 0;
 
-  /// Retrieve string value; only call if isString() is true.
+  /// Read all the data for this Attribute and return a memory resident Array.
+  /// The Array has the same element type and shape as the Attribute.
   ///
-  /// @return string if this is a string valued attribute, else null.
-  /// @see IAttribute#isString
+  /// @return the requested data in a memory-resident Array.
   ///
-  virtual std::string getStringValue() = 0;
+  virtual ArrayPtr getData() = 0;
 
-  /// Retrieve integer value as long C-type
+  /// Set the given array as new data for this IDataItem
   ///
-  /// @return the value as a integer (converted if needed)
-  /// @throw throw an cdma::Exception if type conversion isn't possible
+  /// @param array ArrayPtr object
   ///
-  virtual long getIntValue() = 0;
+  virtual void setData(const ArrayPtr&) = 0;
 
-  /// Retrieve floating point value as double C-type
+  /// Convenience non-abstract method allowing to get a scalar value
   ///
-  /// @return the value as a double (converted if needed)
-  /// @throw throw an cdma::Exception if type conversion isn't possible
-  ///
-  virtual double getFloatValue() = 0;
+  template<typename T> T getValue() 
+  {
+    return getData()->getValue<T>();
+  }
 
-  /// string representation.
+  /// Convenience non-abstract method allowing to set a scalar value
   ///
-  /// @return string object
-  ///
-  virtual std::string toString() = 0;
-
-  /// set the value as a string, trimming trailing zeroes.
-  ///
-  /// @param val string object
-  ///
-  virtual void setStringValue(const std::string& val) = 0;
-
-  /// set the value as an integer.
-  ///
-  /// @param value int
-  ///
-  virtual void setIntValue(int value) = 0;
-  
-  /// set the value as a float.
-  ///
-  /// @param value float
-  ///
-  virtual void setFloatValue(float value) = 0;
+  template<typename T> void setValue(T value) 
+  {
+    return setData(new Array(value));
+  }
 };
 
 DECLARE_SHARED_PTR(IAttribute);
