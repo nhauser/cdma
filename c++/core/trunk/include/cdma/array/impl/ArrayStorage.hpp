@@ -79,15 +79,6 @@ template<typename T> void* DefaultArrayStorage<T>::getValue( const cdma::ViewPtr
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::set
 //----------------------------------------------------------------------------
-template<typename T> void DefaultArrayStorage<T>::set(const cdma::ViewPtr& ima, std::vector<int> position, const yat::Any& value)
-{
-  m_data[ima->getElementOffset(position)] = yat::any_cast<T>(value);
-  m_dirty = true;
-}
-
-//----------------------------------------------------------------------------
-// DefaultArrayStorage<T>::set
-//----------------------------------------------------------------------------
 template<typename T> void DefaultArrayStorage<T>::setValue(const cdma::ViewPtr& ima, std::vector<int> position, void * value_ptr)
 {
   memcpy(&m_data[ima->getElementOffset(position)], value_ptr, m_elem_size);
