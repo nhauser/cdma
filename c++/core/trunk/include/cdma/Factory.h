@@ -38,6 +38,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/IFactory.h>
+#include <cdma/dictionary/Dictionary.h>
 #include <cdma/dictionary/PluginMethods.h>
 #include <cdma/array/Array.h>
 
@@ -75,7 +76,7 @@ private:
     yat::PlugIn*           plugin_objet;
     PluginMethodsMap       plugin_method_map;
   };
-  
+
 public:
   typedef std::map<std::string, Plugin> PluginMap;
   typedef std::map<std::string, IFactoryPtr> PluginFactoryPtrMap;
@@ -86,9 +87,10 @@ private:
   static std::string s_cdma_view;
   static std::string s_dico_path_prop;
   
-  PluginMap            m_plugin_map;
-  PluginFactoryPtrMap  m_plugin_factory_map;
-  cdma::PlugInManager  m_plugin_manager;
+  PluginMap                m_plugin_map;
+  PluginFactoryPtrMap      m_plugin_factory_map;
+  PlugInManager            m_plugin_manager;
+  Dictionary::IdConceptMap m_core_dict;
 
   // This is a singleton
   Factory() {}
@@ -143,6 +145,13 @@ public:
   ///
   static std::string getKeyDictionaryPath();
 
+  /// This method returns the path of the data definition documents.
+  /// This path is not plug-in dependent.
+  ///
+  /// @return the path to the standard declarative file
+  ///
+  static std::string getKeyDictionaryFolder();
+
   /// According to the given factory this method will return the path to reach
   /// the folder containing mapping dictionaries. This file associate entry
   /// keys to paths that are plug-in dependent.
@@ -150,7 +159,14 @@ public:
   /// @param factory_ptr Plug-in instance from which we want to load the dictionary
   /// @return the path to the plug-in's mapping dictionaries folder
   ///
-  static std::string getMappingDictionaryFolder(const IFactoryPtr& factory_ptr);
+  static std::string getMappingDictionaryFolder(const std::string& plugin_id);
+
+  /// This method returns the path of the concepts dictionaries.
+  /// This path is not plug-in dependent.
+  ///
+  /// @return the path to the concepts dictionaries folder
+  ///
+  static std::string getConceptDictionaryFolder();
 
   /// Get the folder path where to search for key dictionary files.
   /// This folder should contains all dictionaries that the above application needs.
