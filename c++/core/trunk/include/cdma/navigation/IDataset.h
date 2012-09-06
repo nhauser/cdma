@@ -117,6 +117,20 @@ public:
   /// @note the given path must be absolute
   ///
   virtual IDataItemPtr getItemFromPath(const std::string &path) = 0;
+
+  /// Find a group or a data item by its path
+  ///
+  /// @param path path of the element relative to this object
+  ///
+  virtual IContainerPtr findContainerByPath(const std::string& path) = 0;
+
+  /// Find a list of groups and/or data items giving a path
+  ///
+  /// @param path path of the element relative to this object
+  /// @param first_only if true returns only the first container found that match the input path
+  ///
+  virtual IContainerPtrList findAllContainerByPath(const std::string& path, bool first_only=false) = 0;
+
 };
 
 
