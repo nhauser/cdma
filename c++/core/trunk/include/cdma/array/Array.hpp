@@ -24,7 +24,12 @@
 
 #ifndef __CDMA_ARRAY_HPP__
 #define __CDMA_ARRAY_HPP__
+
+#include <yat/utils/String.h>
+#include <string.h>
+
 #include <cdma/array/ArrayIterator.h>
+
 namespace cdma
 {
 
@@ -114,6 +119,7 @@ template<typename T> void Array::setValue(T value)
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( std::vector<int> position )
 {
+  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue( std::vector<int> position )");
   return getValue<T>( m_view_ptr, position );
 }
 
@@ -122,6 +128,7 @@ template<typename T> T Array::getValue( std::vector<int> position )
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( void )
 {
+  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue( void )");
   return getValue<T>( m_view_ptr, std::vector<int>() );
 }
 
@@ -130,31 +137,41 @@ template<typename T> T Array::getValue( void )
 //----------------------------------------------------------------------------
 template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> position )
 {
-  if( typeid(T) == m_data_impl->getType() )
+  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue( const ViewPtr& view, std::vector<int> position )");
+  if( typeid(T) == m_data_impl->getType() ||
+      !strcmp(typeid(T).name(), m_data_impl->getType().name()) )
     return *( (T*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(short) )
+  else if( m_data_impl->getType() == typeid(short) || 
+           !strcmp(m_data_impl->getType().name(), typeid(short).name() ) )
     return T( *(short*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(unsigned short) )
+  else if( m_data_impl->getType() == typeid(unsigned short) ||
+           !strcmp(m_data_impl->getType().name(), typeid(unsigned short).name() ) )
     return T( *(unsigned short*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(long) )
+  else if( m_data_impl->getType() == typeid(long) ||
+           !strcmp(m_data_impl->getType().name(), typeid(long).name() ) )
     return T( *(long*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(unsigned long) )
+  else if( m_data_impl->getType() == typeid(unsigned long) ||
+           !strcmp(m_data_impl->getType().name(), typeid(unsigned long).name() ) )
     return T( *(unsigned long*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(float) )
+  else if( m_data_impl->getType() == typeid(float) ||
+           !strcmp(m_data_impl->getType().name(), typeid(float).name() ) )
     return T( *(float*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(double) )
+  else if( m_data_impl->getType() == typeid(double) ||
+           !strcmp(m_data_impl->getType().name(), typeid(double).name() ) )
     return T( *(double*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(int) )
+  else if( m_data_impl->getType() == typeid(int) ||
+           !strcmp(m_data_impl->getType().name(), typeid(int).name() ) )
     return T( *(int*)( m_data_impl->getValue( view, position ) ) );
 
-  else if( m_data_impl->getType() == typeid(unsigned int) )
+  else if( m_data_impl->getType() == typeid(unsigned int) ||
+           !strcmp(m_data_impl->getType().name(), typeid(unsigned int).name() ) )
     return T( *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
 
   else
@@ -167,11 +184,39 @@ template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> po
 //----------------------------------------------------------------------------
 template<> inline std::string Array::getValue<std::string>( const ViewPtr& view, std::vector<int> position )
 {
+  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue<std::string>( const ViewPtr& view, std::vector<int> position )");
   if( m_data_impl->getType() == typeid(char) )
     return std::string( (char *)(m_data_impl->getValue( view, position ) ) );
-  else
-    throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
-                          "Array::getValue");
+  else 
+  {
+    if( m_data_impl->getType() == typeid(double) )
+      return PSZ_FMT("%g", *(double*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(float) )
+      return PSZ_FMT("%g", *(float*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(short) )
+      return PSZ_FMT("%hd", *(short*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(unsigned short) )
+      return PSZ_FMT("%hu", *(unsigned short*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(long) )
+      return PSZ_FMT("%ld", *(long*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(unsigned long) )
+      return PSZ_FMT("%lu", *(unsigned long*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(int) )
+      return PSZ_FMT("%d", *(long*)( m_data_impl->getValue( view, position ) ) );
+
+    else if( m_data_impl->getType() == typeid(unsigned int) )
+      return PSZ_FMT("%u", *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
+
+    else
+      throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
+                            "Array::getValue");
+  }
 }
 
 }
