@@ -114,6 +114,47 @@ public final class NxsDatasource implements IDatasource {
         }
         return result;
     }
+    
+    @Override
+    public URI getParentURI( URI target ) {
+        URI result = null;
+        
+        if ( isBrowsable(target) || isReadable(target) ) {
+
+            File current = new File(target.getPath());
+            String fragment = target.getFragment();
+            String filePath = "";
+            
+            if( fragment == null ) {
+                current = current.getParentFile();
+                filePath = current.toURI().toString();
+                fragment = "";
+            }
+            else {
+                filePath = current.toURI().toString();
+                
+                try {
+                    fragment = URLDecoder.decode(fragment, "UTF-8");
+                    NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
+                    fragment = "";
+                    for ( int i = 0; i < nodes.length; i++ ) {
+                        fragment += nodes[i].getNodeName() + "/";
+                    }
+                    
+                    if( ! fragment.isEmpty() ) {
+                        fragment = "#" + URLEncoder.encode(fragment, "UTF-8");
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                
+            }
+            
+            result = URI.create(filePath + fragment);
+        }
+        
+        return result;
+    }
 
     @Override
     public String[] getURIParts(URI target) {
