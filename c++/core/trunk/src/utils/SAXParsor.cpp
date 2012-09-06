@@ -59,8 +59,9 @@ SAXParsor::~SAXParsor()
 //----------------------------------------------------------------------------
 void SAXParsor::start(const std::string& document_path, INodeAnalyser* pRootAnalyser)
 {
+  CDMA_STATIC_FUNCTION_TRACE("SAXParsor::start");
   static bool sbLibXmlInit = false;
-  yat::log_info("cfg", "Loading configuration file %s", PSZ(document_path));
+  yat::log_info("cfg", "Loading XML file %s", PSZ(document_path));
 
   if( false == sbLibXmlInit )
   {
@@ -99,7 +100,7 @@ void SAXParsor::start(const std::string& document_path, INodeAnalyser* pRootAnal
     // Start parsing giving a ConfigAnalyser as nodes interpretor
     yat::log_info("cfg", "Parsing configuration");
 
-    parse_node(pRootNode, pRootAnalyser);
+    instance().parse_node(pRootNode, pRootAnalyser);
   }
 
   // Free the document
@@ -152,7 +153,8 @@ void SAXParsor::parse_node(void *_pNode, INodeAnalyser* pAnalyser)
         attributes[name] = value;
       }
 
-      pNextAnalyser = pAnalyser->on_element(element_name, attributes, current_file);
+      if( NULL != pAnalyser )
+        pNextAnalyser = pAnalyser->on_element(element_name, attributes, current_file);
     }
 
     else if (pCurrentNode->type == XML_TEXT_NODE && !xmlIsBlankNode(pCurrentNode) )
@@ -164,7 +166,8 @@ void SAXParsor::parse_node(void *_pNode, INodeAnalyser* pAnalyser)
       content.trim();
 
       // Process content
-      pAnalyser->on_element_content(element_name, content, current_file);
+      if( NULL != pAnalyser )
+        pAnalyser->on_element_content(element_name, content, current_file);
     }
 
     if( NULL != pNextAnalyser )
@@ -180,7 +183,7 @@ void SAXParsor::parse_node(void *_pNode, INodeAnalyser* pAnalyser)
     }
 
     // Notify target for end parsing
-    if( pCurrentNode->type == XML_ELEMENT_NODE )
+    if( pCurrentNode->type == XML_ELEMENT_NODE && NULL != pNextAnalyser )
       pAnalyser->on_end_element(element_name);
   }
 
