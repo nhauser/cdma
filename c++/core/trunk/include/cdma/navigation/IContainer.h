@@ -32,16 +32,19 @@ namespace cdma
 // Forward declarations
 DECLARE_CLASS_SHARED_PTR(IDataItem);
 DECLARE_CLASS_SHARED_PTR(IGroup);
+DECLARE_CLASS_SHARED_PTR(IContainer);
 DECLARE_CLASS_SHARED_WEAK_PTR(IDataset);
 DECLARE_CLASS_SHARED_PTR(LogicalGroup);
-  
+
+typedef std::list<IContainerPtr> IContainerPtrList;
+
 //==============================================================================
 /// @brief Base interface of IGroup and IDataItem
 ///
 /// Must be implemented by concretized IGroup and IDataItem classes in data format engines
 /// and, if needed, in plug-ins
 //==============================================================================
-class IContainer
+class CDMA_DECL IContainer
 {
 public:
 
@@ -69,8 +72,7 @@ public:
   
   /// Find an Attribute in this Group by its name.
   ///
-  /// @param name
-  ///      the name of the attribute
+  /// @param name  attribute's name
   /// @return the attribute, or null if not found
   ///
   virtual IAttributePtr getAttribute(const std::string& name) = 0;
@@ -105,17 +107,15 @@ public:
   ///
   virtual bool removeAttribute(const IAttributePtr& attribute) = 0;
   
-  /// Set the IObject's (long) name.
+  /// Set the object's (long) name.
   ///
-  /// @param name
-  ///      string object
+  /// @param name object's name
   ///
   virtual void setName(const std::string& name) = 0;
   
-  /// Set the IObject's (short) name.
+  /// Set the object's (short) name.
   ///
-  /// @param name
-  ///      in string type Created on 18/06/2008
+  /// @param name short name
   ///
   virtual void setShortName(const std::string& name) = 0;
   
