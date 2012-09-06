@@ -81,29 +81,30 @@ public:
 
   /// Read all the data for this DataItem and return a memory resident Array.
   /// The Array has the same element type and shape as the DataItem.
-  /// If the DataItem is a member of an array of Structures, this returns only
-  /// the variable's data in the first Structure, so that the Array shape is
-  /// the same as the DataItem. To read the data in all structures, use
-  /// readAllStructures().
   ///
   /// @return the requested data in a memory-resident Array.
   ///
   virtual ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception ) = 0;
-  // Methode initiale:		  virtual ArrayPtr getData() throw ( Exception ) = 0;
 
   /// Read a section of the data for this DataItem and return a memory resident
   /// Array. The Array has the same element type as the DataItem. The size of
   /// the Array will be either smaller or equal to the DataItem.
-  /// If the DataItem is a member of an array of Structures, this returns only
-  /// the variable's data in the first Structure, so that the Array shape is
-  /// the same as the DataItem. To read the data in all structures, use
-  /// readAllStructures().
   ///
   /// @param origin array of int
   /// @param shape array of int
   /// @return the requested data in a memory-resident Array.
   ///
   virtual ArrayPtr getData( std::vector<int> origin, std::vector<int> shape) throw ( Exception ) = 0;
+
+  /// Get data as scalar value
+  ///
+  /// @return value
+  ///
+  template<typename T> T getValue(std::vector<int> position = std::vector<int>())
+  {
+      return this->getData(position)->getValue<T>();
+  }
+
   ///
   /// Get the description of the DataItem. Default is to use "long_name"
   /// attribute value. If not exist, look for "description", "title", or
@@ -188,19 +189,7 @@ public:
   ///
   /// @return unit string, or null if not found.
   ///
-  virtual std::string getUnitsString() = 0;
-
-  /// Is this variable is a member of a Structure?
-  ///
-  /// @return bool value
-  ///
-  virtual bool isMemberOfStructure() = 0;
-
-  /// Is this variable metadata?
-  ///
-  /// @return true or false
-  ///
-  virtual bool isMetadata() = 0;
+  virtual std::string getUnit() = 0;
 
   /// Whether this is a scalar DataItem (rank == 0).
   ///
@@ -222,56 +211,6 @@ public:
   ///
   virtual bool isUnsigned() = 0;
 
-  /// Get the value as a unsigned char for a scalar DataItem. May also be
-  /// one-dimensional of length 1.
-  ///
-  /// @return unsigned char object
-  ///
-  virtual unsigned char readScalarByte() throw ( Exception ) = 0;
-
-  /// Get the value as a double for a scalar DataItem. May also be
-  /// one-dimensional of length 1.
-  ///
-  /// @return double value
-  ///
-  virtual double readScalarDouble() throw ( Exception ) = 0;
-
-  /// Get the value as a float for a scalar DataItem. May also be
-  /// one-dimensional of length 1.
-  ///
-  /// @return float value
-  ///
-  virtual float readScalarFloat() throw ( Exception ) = 0;
-
-  /// Get the value as a int for a scalar DataItem. May also be one-dimensional
-  /// of length 1.
-  ///
-  /// @return integer value
-  ///
-  virtual int readScalarInt() throw ( Exception ) = 0;
-
-  /// Get the value as a long for a scalar DataItem. May also be
-  /// one-dimensional of length 1.
-  ///
-  /// @return long value
-  ///
-  virtual long readScalarLong() throw ( Exception ) = 0;
-
-  /// Get the value as a short for a scalar DataItem. May also be
-  /// one-dimensional of length 1.
-  ///
-  /// @return short value
-  ///
-  virtual short readScalarShort() throw ( Exception ) = 0;
-
-  /// Get the value as a string. May also be one-dimensional of length 1.
-  /// May also be one-dimensional of type CHAR,
-  /// which will be turned into a single String.
-  ///
-  /// @return string object
-  ///
-  virtual std::string readString() throw ( Exception ) = 0;
-
   /// Remove an Attribute : uses the attribute hashCode to find it.
   ///
   /// @param attr IAttribute object
@@ -291,25 +230,18 @@ public:
   ///
   virtual void setData(const ArrayPtr& array ) = 0;
 
-  /// Set the dimensions using the dimensions names. The dimension is searched
-  /// for recursively in the parent groups.
-  ///
-  /// @param dimString : whitespace separated list of dimension names, or '*' for Dimension.UNKNOWN.
-  ///
-  virtual void setDimensions(const std::string& dimString) = 0;
-
   /// Set the dimension on the specified index.
   ///
-  /// @param dim IDimension to add to this data item
-  /// @param ind Index the dimension matches
+  /// @param dim_ptr IDimension to add to this data item
+  /// @param index Index the dimension matches
   ///
-  virtual void setDimension(const IDimensionPtr& dim, int ind) throw ( Exception ) = 0;
+  virtual void setDimension(const IDimensionPtr& dim_ptr, int index) throw ( Exception ) = 0;
 
   /// Set the units of the DataItem.
   ///
   /// @param units string object Created on 20/03/2008
   ///
-  virtual void setUnitsString(const std::string& units) = 0;
+  virtual void setUnit(const std::string& units) = 0;
 
  };
  
