@@ -261,11 +261,11 @@ const std::type_info& SimpleDataItem::getType()
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::getUnitsString
+// SimpleDataItem::getUnit
 //---------------------------------------------------------------------------
-std::string SimpleDataItem::getUnitsString()
+std::string SimpleDataItem::getUnit()
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::getUnitsString");
+  THROW_NOT_IMPLEMENTED("SimpleDataItem::getUnit");
 }
 
 //---------------------------------------------------------------------------
@@ -298,22 +298,6 @@ bool SimpleDataItem::isCaching()
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::isMemberOfStructure
-//---------------------------------------------------------------------------
-bool SimpleDataItem::isMemberOfStructure()
-{
-  return false;
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::isMetadata
-//---------------------------------------------------------------------------
-bool SimpleDataItem::isMetadata()
-{
-  return false;
-}
-
-//---------------------------------------------------------------------------
 // SimpleDataItem::isScalar
 //---------------------------------------------------------------------------
 bool SimpleDataItem::isScalar()
@@ -335,62 +319,6 @@ bool SimpleDataItem::isUnlimited()
 bool SimpleDataItem::isUnsigned()
 {
   THROW_NOT_IMPLEMENTED("SimpleDataItem::isUnsigned");
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarByte
-//---------------------------------------------------------------------------
-unsigned char SimpleDataItem::readScalarByte() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<unsigned char>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarDouble
-//---------------------------------------------------------------------------
-double SimpleDataItem::readScalarDouble() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<double>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarFloat
-//---------------------------------------------------------------------------
-float SimpleDataItem::readScalarFloat() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<float>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarInt
-//---------------------------------------------------------------------------
-int SimpleDataItem::readScalarInt() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<int>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarLong
-//---------------------------------------------------------------------------
-long SimpleDataItem::readScalarLong() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<long>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readScalarShort
-//---------------------------------------------------------------------------
-short SimpleDataItem::readScalarShort() throw ( cdma::Exception )
-{
-  return m_array_ptr->getValue<short>();
-}
-
-//---------------------------------------------------------------------------
-// SimpleDataItem::readString
-//---------------------------------------------------------------------------
-std::string SimpleDataItem::readString() throw ( cdma::Exception )
-{
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::readScalarString");
 }
 
 //---------------------------------------------------------------------------
@@ -423,14 +351,6 @@ void SimpleDataItem::setDataType( const std::type_info& )
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::setDimensions
-//---------------------------------------------------------------------------
-void SimpleDataItem::setDimensions(const std::string& /*dimString*/)
-{
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::setDimensions");
-}
-
-//---------------------------------------------------------------------------
 // SimpleDataItem::setDimension
 //---------------------------------------------------------------------------
 void SimpleDataItem::setDimension( const cdma::IDimensionPtr&, int /*ind*/) throw ( cdma::Exception )
@@ -455,11 +375,11 @@ void SimpleDataItem::setSizeToCache( int )
 }
 
 //---------------------------------------------------------------------------
-// SimpleDataItem::setUnitsString
+// SimpleDataItem::setUnit
 //---------------------------------------------------------------------------
-void SimpleDataItem::setUnitsString( const std::string& )
+void SimpleDataItem::setUnit( const std::string& )
 {
-  THROW_NOT_IMPLEMENTED("SimpleDataItem::setUnitsString");
+  THROW_NOT_IMPLEMENTED("SimpleDataItem::setUnit");
 }
 
 //---------------------------------------------------------------------------
