@@ -722,7 +722,14 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public IGroup getRootGroup() {
-        return mParent.getRootGroup();
+        IGroup root;
+        if( mParent != null ) {
+            root = mParent.getRootGroup();
+        }
+        else {
+            root = mDataset.getRootGroup();
+        }
+        return root;
     }
 
     @Override

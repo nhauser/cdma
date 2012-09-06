@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IContainer;
@@ -38,8 +37,7 @@ public class DetectedSource {
     private boolean mIsFolder;
     private URI mURI;
 
-    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer,
-            boolean experiment, boolean datasetFolder) {
+    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment, boolean datasetFolder) {
         mIsReadable = readable;
         mIsProducer = producer;
         mIsBrowsable = browsable;
@@ -244,16 +242,14 @@ public class DetectedSource {
                 IGroup group = dataset.getRootGroup();
     
                 IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
-                //for( IContainer container : groups ) {
-                    if( groups instanceof IGroup ) {
-                        for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
-                            if( item.getAttribute( "dataset_part" ) != null ) {
-                                result = true;
-                                break;
-                            }
+                if( groups instanceof IGroup ) {
+                    for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
+                        if( item.getAttribute( "dataset_part" ) != null ) {
+                            result = true;
+                            break;
                         }
                     }
-               // }
+                }
             } catch (NoResultException e) {
             }
         }

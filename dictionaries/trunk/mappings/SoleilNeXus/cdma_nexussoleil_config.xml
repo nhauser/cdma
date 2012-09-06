@@ -50,7 +50,7 @@
   <dataset-model name="generic_scanserver">
     <criteria>
       <if exist="true" target="/{NXinstrument}"/>
-      <if exist="true" target="/scan_data{NXdata}/time_1"/>
+      <if exist="true" target="/scan_data{NXdata}/data_01"/>
     </criteria>
     
     <parameters>
@@ -73,13 +73,7 @@
     <criteria>
       <if exist="true" target="/ANTARES{NXinstrument}"/>
     </criteria>
-<!-- 
-    <parameters>
-      <parameter name="BEAMLINE" type="constant" constant="antares"/>
-      <parameter name="MODEL" type="constant" constant="passerelle" />
-      </parameter>
-    </parameters>
--->
+
     <plugin>
       <java>
         <set name="BEAMLINE" value="antares"/>
@@ -121,7 +115,7 @@
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="BEAMLINE" type="name" target="/{NXinstrument}"/>
       <parameter name="MODEL" type="constant" constant="passerelle"/>
     </parameters>
 
@@ -134,7 +128,7 @@
   </dataset-model>
 
 <!-- ============================================
-==  CONFIG 5: test files                       ==
+==  CONFIG 6: test files                       ==
 ============================================= -->
   <dataset-model name="contacq_flyscan">
     <criteria>
@@ -155,7 +149,7 @@
   </dataset-model>
 
 <!-- ============================================
-==  CONFIG 6: test files                       ==
+==  CONFIG 7: test files                       ==
 ============================================= -->
   <dataset-model name="contacq_passerelle">
     <criteria>
@@ -178,7 +172,7 @@
   </dataset-model>
 
 <!-- ============================================
-==  CONFIG 5: test files                       ==
+==  CONFIG 8: test files                       ==
 ============================================= -->
   <dataset-model name="test_flyscan">
     <criteria>

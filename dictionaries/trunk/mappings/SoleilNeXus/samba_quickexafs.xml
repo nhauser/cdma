@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="SWING_FLYSCAN" version="1.0.0">
+  <item key="spectrums">
+    <path>/{NXentry}/{NXdata}/channel*</path>
+    <call>DataItemStacker</call>
+  </item>
+</map-def>
