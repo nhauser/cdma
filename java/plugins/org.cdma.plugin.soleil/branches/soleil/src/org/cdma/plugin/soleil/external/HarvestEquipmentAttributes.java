@@ -27,7 +27,10 @@ import fr.soleil.nexus.NexusNode;
  * @throws CDMAException
  */
 public class HarvestEquipmentAttributes implements IPluginMethod {
-
+    private static final String ATTR_EQUIPMENT = "equipment";
+    private static final String ATTR_REGION    = "region";
+    private static final String ATTR_SCAN      = "acquisition_sequence";
+    
     @Override
     public String getFactoryName() {
         return NxsFactory.NAME;
@@ -44,28 +47,26 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
             switch (type) {
                 case Group: {
                     NxsGroup group = (NxsGroup) container;
-                    IGroup root = container.getDataset().getRootGroup();
                     NexusNode[] nodes = group.getPathNexus().getNodes();
 
-                    setAttributeAcquisitionSequence(container, nodes, root);
-                    setAttributeEquipment(container, nodes, root, outList);
+                    setAttributeAcquisitionSequence(container, nodes);
+                    setAttributeEquipment(container, nodes, outList);
 
                     break;
                 }
                 case DataItem: {
                     NxsDataItem item = (NxsDataItem) container;
-                    IGroup root = container.getDataset().getRootGroup();
 
                     // Try to set attributes
                     DataItem[] n4tItems = item.getNexusItems();
                     NexusNode[] nodes = n4tItems[0].getPath().getNodes();
 
                     // Set scan acquisition
-                    setAttributeAcquisitionSequence(container, nodes, root);
+                    setAttributeAcquisitionSequence(container, nodes);
 
                     // Node is under NXinstrument it belongs to an equipment
                     if (nodes.length > 2 && nodes[1].getClassName().equals("NXinstrument")) {
-                        setAttributeEquipment(container, nodes, root, outList);
+                        setAttributeEquipment(container, nodes, outList);
                     }
 
                     break;
@@ -82,35 +83,46 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         context.setContainers(outList);
     }
 
-    private void setAttributeAcquisitionSequence(IContainer container, NexusNode[] nodes, IGroup root) {
+    private void setAttributeAcquisitionSequence(IContainer container, NexusNode[] nodes) {
+        NxsGroup root = (NxsGroup) container.getRootGroup();
+        
         // Scan attribute
-        if (nodes.length > 0 && nodes[0].getClassName().equals("NXentry")) {
-            String attrName = "acquisition_sequence";
-            // if the root is the entry (logical mode) we don't need this anymore
-            //String attrValue = root.getGroup(nodes[0].getNodeName()).getShortName();
+        if (nodes.length > 0 /* && nodes[0].getClassName().equals("NXentry") */ ) {
+            NexusNode[] rootNodes = root.getPathNexus().getNodes();
+            if( rootNodes.length == 0 || ! rootNodes[0].getClassName().equals("NXentry") ) {
+                root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+            }
+            String attrName = ATTR_SCAN;
             String attrValue = root.getShortName();
             container.addStringAttribute(attrName, attrValue);
         }
     }
 
-    private void setAttributeEquipment(IContainer container, NexusNode[] nodes, IGroup root,
-            List<IContainer> outList) {
+    private void setAttributeEquipment(IContainer container, NexusNode[] nodes, List<IContainer> outList) {
+        // Set the root group at the NXentry position
+        NxsGroup root = (NxsGroup) container.getRootGroup();
+        NexusNode[] rootNodes = root.getPathNexus().getNodes();
+        if( rootNodes.length == 0 || ! rootNodes[0].getClassName().equals("NXentry") ) {
+            root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+        }
+        
         // Equipment attribute (NXdetector, NXmono...)
-        if (nodes.length > 1 && nodes[1].getClassName().equals("NXinstrument")) {
-            String attrName = "equipment";
-            String attrValue = root.getGroup(nodes[1].getNodeName())
-                                   .getGroup(nodes[2].getNodeName())
-                    .getShortName();
-            container.addStringAttribute(attrName, attrValue);
+        if (container.getAttribute(ATTR_EQUIPMENT) == null) {
+            if (nodes.length > 2 && nodes[1].getClassName().equals("NXinstrument")) {
+                String attrValue = root.getGroup(nodes[1].getNodeName())
+                                       .getGroup(nodes[2].getNodeName())
+                                       .getShortName();
+                container.addStringAttribute(ATTR_EQUIPMENT, attrValue);
+            }
         }
 
-        if (container.getAttribute("region") == null) {
+        if (container.getAttribute(ATTR_REGION) == null) {
             if (nodes.length > 2 && nodes[2].getClassName().equals("NXdetector")) {
                 NexusNode node = nodes[2];
                 // If Scienta
                 if (node.getNodeName().toLowerCase().matches(".*scienta.*")) {
                     String region = node.getNodeName().replaceAll(".*([0-9]+)$", "$1");
-                    container.addStringAttribute("region", region);
+                    container.addStringAttribute(ATTR_REGION, region);
                 }
                 // If Xia
                 else if (node.getNodeName().toLowerCase().matches("xia")) {
@@ -119,7 +131,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                         node = nodes[4];
                         String region = node.getNodeName().replaceAll(".*([0-9]+)$", "$1");
                         if (node.getNodeName().toLowerCase().matches(".*xia.*")) {
-                            container.addStringAttribute("region", region);
+                            container.addStringAttribute(ATTR_REGION, region);
                         }
                     }
                     else {
@@ -135,11 +147,11 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                                 regions.add(region);
 
                                 if (first) {
-                                    container.addStringAttribute("region", region);
+                                    container.addStringAttribute(ATTR_REGION, region);
                                 }
                                 else {
                                     IContainer clone = container.clone();
-                                    clone.addStringAttribute("region", region);
+                                    clone.addStringAttribute(ATTR_REGION, region);
                                     outList.add(clone);
                                 }
                                 first = false;
@@ -149,7 +161,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                     }
                 }
                 else {
-                    container.addStringAttribute("region", "0");
+                    container.addStringAttribute(ATTR_REGION, "0");
                 }
             }
         }
