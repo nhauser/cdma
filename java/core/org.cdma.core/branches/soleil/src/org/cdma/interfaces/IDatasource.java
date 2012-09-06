@@ -94,14 +94,24 @@ public interface IDatasource extends IModelObject
      * @return list of URI whom elements have a meaning for this plug-in.
      */
     List<URI> getValidURI( URI target );
+
+    /**
+     * Returns the URI that is the direct ascendent of the given URI.
+     * 
+     * @param target URI from which we want the parent
+     * @return an URI that directly contain the given one
+     */
+    URI getParentURI( URI target );
     
     /**
      * Returns an array of string compound of each element or the URI
      * but the protocol.
+     * 
+     * @param target URI to be split
+     * @return an array of String containing each element of the URI
      */
     String[] getURIParts( URI target );
 
-    
     /**
      * Return the last modification of the given URI if it can be managed by 
      * this plug-in. Else return 0.
