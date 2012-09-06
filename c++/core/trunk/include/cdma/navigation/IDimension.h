@@ -60,7 +60,7 @@ public:
   ///
   /// @return integer value
   ///
-  virtual int getLength() = 0;
+  virtual int getSize() = 0;
   
   /// Return the index of axis this dimension refers to. Several can describe
   /// the same axis.
@@ -74,7 +74,7 @@ public:
 
   /// Get the units as string this dimension uses to describe the dataitem
   ///
-  virtual std::string getUnitsString() = 0;
+  virtual std::string getUnit() = 0;
   
   /// Get the coordinate variables or coordinate variable aliases if the
   /// dimension has any, else return an empty list. A coordinate variable has
@@ -127,7 +127,7 @@ public:
   ///
   /// @param n integer value
   ///
-  virtual void setLength(int n) = 0;
+  virtual void setSize(int n) = 0;
   
   /// Rename the dimension.
   ///
