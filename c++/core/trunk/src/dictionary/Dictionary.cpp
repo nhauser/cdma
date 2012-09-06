@@ -38,6 +38,108 @@
 namespace cdma
 {
 
+const std::string s_core_dict_file = "core_concepts.xml";
+
+//=============================================================================
+// DictionaryConceptAnalyser
+//
+// Read dictionary type xml tree
+//=============================================================================
+class DictionaryConceptAnalyser: public SAXParsor::INodeAnalyser
+{
+private:
+  Dictionary* m_dict_p;
+  Dictionary::ConceptPtr m_current_concept_ptr;
+  std::string m_last_attr_name;
+  std::string m_last_content;
+
+public:
+  DictionaryConceptAnalyser(Dictionary* dict_p);
+
+  INodeAnalyser* on_element(const yat::String& element_name, 
+                            const SAXParsor::Attributes& attrs, 
+                            const yat::String& current_file);
+
+  void on_element_content(const yat::String&, const yat::String&, const yat::String&);
+
+  void on_end_element(const yat::String& element_name);
+
+  void release() { }
+};
+
+//----------------------------------------------------------------------------
+// DictionaryConceptAnalyser::DictionaryConceptAnalyser
+//----------------------------------------------------------------------------
+DictionaryConceptAnalyser::DictionaryConceptAnalyser(Dictionary* dict_p)
+: m_dict_p(dict_p)
+{
+
+}
+
+//----------------------------------------------------------------------------
+// DictionaryConceptAnalyser::on_element
+//----------------------------------------------------------------------------
+SAXParsor::INodeAnalyser* DictionaryConceptAnalyser::on_element(const yat::String& element_name, 
+                                                      const SAXParsor::Attributes& attrs, 
+                                                      const yat::String&)
+{
+  if( element_name.is_equal("dictionary") ||
+      element_name.is_equal("definition") ||
+      element_name.is_equal("attributes") ||
+      element_name.is_equal("synonyms") ||
+      element_name.is_equal("key") ||
+      element_name.is_equal("unit") ||
+      element_name.is_equal("description") )
+  {
+    // do nothing
+  }
+  
+  else if( element_name.is_equal("concept") )
+  {
+    yat::String name;
+    FIND_ATTR_VALUE(attrs, "label", name);
+    m_current_concept_ptr = m_dict_p->createConcept(name);
+  }
+
+  else
+  {
+    throw cdma::Exception( "BAD_CONFIG",
+                           PSZ_FMT( "Unknown element '%s' while parsing dicrtionary document",
+                                      PSZ(element_name) ),
+                           "DictionaryConceptAnalyser::on_element" );
+  }
+  
+  return this;
+}
+
+//----------------------------------------------------------------------------
+// DictionaryConceptAnalyser::on_element_content
+//----------------------------------------------------------------------------
+void DictionaryConceptAnalyser::on_element_content(const yat::String&, 
+                                                   const yat::String& el_content, 
+                                                   const yat::String&)
+{
+  m_last_content = el_content;
+}
+
+//----------------------------------------------------------------------------
+// DictionaryConceptAnalyser::on_end_element
+//----------------------------------------------------------------------------
+void DictionaryConceptAnalyser::on_end_element(const yat::String& el_name)
+{
+  if( el_name.is_equal("key") )
+    m_current_concept_ptr->m_synonym_list.push_back(m_last_content);
+
+  else if( el_name.is_equal("description") )
+    m_current_concept_ptr->m_description = m_last_content;
+
+  else if( el_name.is_equal("unit") )
+    m_current_concept_ptr->m_unit = m_last_content;
+
+  else if( el_name.is_equal("attribute") )
+    m_current_concept_ptr->m_attribute_map[m_last_attr_name] = m_last_content;
+}
+
 //=============================================================================
 // DataDefAnalyser
 //
@@ -47,7 +149,7 @@ class DataDefAnalyser: public SAXParsor::INodeAnalyser
 {
 private:
   Dictionary* m_dict_ptr;
-  std::stack<int> m_current_group_id;
+  std::stack<std::string> m_current_group_name;
   
 public:
   DataDefAnalyser(Dictionary* dict_ptr);
@@ -60,7 +162,7 @@ public:
 
   void on_end_element(const yat::String& element_name);
 
-  void release() { delete this; }
+  void release() { }
 };
 
 //----------------------------------------------------------------------------
@@ -68,7 +170,7 @@ public:
 //----------------------------------------------------------------------------
 DataDefAnalyser::DataDefAnalyser(Dictionary* dict_ptr) : m_dict_ptr(dict_ptr)
 {
-  m_current_group_id.push(0);
+  m_current_group_name.push("root");
 }
 
 //----------------------------------------------------------------------------
@@ -78,8 +180,6 @@ SAXParsor::INodeAnalyser* DataDefAnalyser::on_element(const yat::String& element
                                                       const SAXParsor::Attributes& attrs, 
                                                       const yat::String&)
 {
-  static int s_key_id = 0;
-  
   if( element_name.is_equal("data-def") )
   {
     yat::String name;
@@ -91,17 +191,29 @@ SAXParsor::INodeAnalyser* DataDefAnalyser::on_element(const yat::String& element
   {
     yat::String key;
     FIND_ATTR_VALUE(attrs, "key", key);
-    m_dict_ptr->m_key_id_map[key] = ++s_key_id;
-    m_dict_ptr->m_connection_map.insert(std::pair<int,int>(m_current_group_id.top(), s_key_id));
-    m_current_group_id.push(s_key_id);
+    m_dict_ptr->m_connection_map.insert(std::pair<std::string,std::string>(m_current_group_name.top(), key));
+    m_current_group_name.push(key);
   }
   
   else if( element_name.is_equal("item") )
   {
     yat::String key;
     FIND_ATTR_VALUE(attrs, "key", key);
-    m_dict_ptr->m_key_id_map[key] = ++s_key_id;
-    m_dict_ptr->m_connection_map.insert(std::pair<int,int>(m_current_group_id.top(), s_key_id));
+    int concept_id = 0;
+    try
+    {
+      concept_id = m_dict_ptr->getConceptId(key);
+    }
+    catch( ... )
+    {
+      // There is not defined concept related to this keyword, let's create it
+      concept_id = m_dict_ptr->createConcept(key)->id();
+      yat::log_notice( "dict", 
+                       PSZ_FMT( "keyword '%s' doesn't refer to a defined concept", 
+                                 PSZ(key) ) );
+    }
+    m_dict_ptr->m_key_concept_map[key] = concept_id;
+    m_dict_ptr->m_connection_map.insert(std::pair<std::string,std::string>(m_current_group_name.top(), key));
   }
   
   return this;
@@ -114,7 +226,7 @@ void DataDefAnalyser::on_end_element(const yat::String& element_name)
 {
   if( element_name.is_equal("group") )
   {
-    m_current_group_id.pop();
+    m_current_group_name.pop();
   }
 }
 
@@ -127,10 +239,11 @@ class MapDefAnalyser: public SAXParsor::INodeAnalyser
 {
 private:
   Dictionary*  m_dict_ptr;
+  int          m_current_concept_id;
   std::string  m_current_key;
-  int          m_current_key_id;
 
-  SolverList& get_solvers_list(int key_id);
+  SolverList& get_solvers_list(int concept_id);
+  void remove_from_solvers_list(int concept_id);
 
 public:
   MapDefAnalyser(Dictionary* dict_ptr) : m_dict_ptr(dict_ptr)  {}
@@ -145,7 +258,7 @@ public:
 
   void on_end_element(const yat::String&) {}
 
-  void release() { delete this; }
+  void release() { }
 };
 
 //----------------------------------------------------------------------------
@@ -165,10 +278,19 @@ SAXParsor::INodeAnalyser* MapDefAnalyser::on_element(const yat::String& element_
   if( element_name.is_equal("item") )
   {
     FIND_ATTR_VALUE_NO_THROW(attrs, "key", m_current_key);
-    if( m_dict_ptr->m_key_id_map.find(m_current_key) == m_dict_ptr->m_key_id_map.end() )
-      yat::log_warning( "dict", 
-                        PSZ_FMT( "key '%s' not defined in data definition document", 
+    try
+    {
+      m_current_concept_id = m_dict_ptr->getConceptId(m_current_key);
+    }
+    catch( ... )
+    {
+      // The key may be not used by the application and may
+      // not refer to a fully defined concept
+      m_current_concept_id = 0;
+      yat::log_notice( "dict", 
+                       PSZ_FMT( "key '%s' not defined in data definition document", 
                                  PSZ(m_current_key) ) );
+    }
   }
   return this;
 }
@@ -176,15 +298,27 @@ SAXParsor::INodeAnalyser* MapDefAnalyser::on_element(const yat::String& element_
 //----------------------------------------------------------------------------
 // MapDefAnalyser::get_solvers_list
 //----------------------------------------------------------------------------
-SolverList& MapDefAnalyser::get_solvers_list(int key_id)
+SolverList& MapDefAnalyser::get_solvers_list(int concept_id)
 {
-  KeySolverListMap::iterator it = m_dict_ptr->m_key_solver_map.find(key_id);
-  if( it == m_dict_ptr->m_key_solver_map.end() )
+  Dictionary::ConceptIdSolverListMap::iterator it = m_dict_ptr->m_concept_solvers_map.find(concept_id);
+  if( it == m_dict_ptr->m_concept_solvers_map.end() )
   {
     // Creates the solver list
-    m_dict_ptr->m_key_solver_map[key_id] = SolverList();
+    m_dict_ptr->m_concept_solvers_map[concept_id] = SolverList();
   }
-  return m_dict_ptr->m_key_solver_map[key_id];
+  return m_dict_ptr->m_concept_solvers_map[concept_id];
+}
+
+//----------------------------------------------------------------------------
+// MapDefAnalyser::remove_from_solvers_list
+//----------------------------------------------------------------------------
+void MapDefAnalyser::remove_from_solvers_list(int concept_id)
+{
+  Dictionary::ConceptIdSolverListMap::iterator it = m_dict_ptr->m_concept_solvers_map.find(concept_id);
+  if( it != m_dict_ptr->m_concept_solvers_map.end() )
+  {
+    m_dict_ptr->m_concept_solvers_map.erase(it);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -194,31 +328,27 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
                                         const yat::String& element_content, 
                                         const yat::String& /*current_file*/)
 {
-  if( element_name.is_equal("path") )
+  if( m_current_concept_id && element_name.is_equal("path") )
   {
-    if( !m_current_key.empty() )
-    {
-      // Get the key identifier
-      int key_id = m_dict_ptr->m_key_id_map[m_current_key];
+    KeyPathPtr path_ptr = new KeyPath(element_content);
 
-      KeyPathPtr path_ptr = new KeyPath(element_content);
-
-      // Push the KeyPath object at the back of the list
-      get_solvers_list(key_id).push_back( IKeySolverPtr(path_ptr) );
-    }
+    // Push the KeyPath object at the back of the list
+    get_solvers_list(m_current_concept_id).push_back( IKeySolverPtr(path_ptr) );
   }
-  if( element_name.is_equal("call") )
+  else if( m_current_concept_id && element_name.is_equal("call") )
   {
-    if( !m_current_key.empty() )
+    IPluginMethodPtr method_ptr = Factory::getPluginMethod(m_dict_ptr->m_plugin_id, element_content);
+    if( method_ptr )
     {
-      // Get the key identifier
-      int key_id = m_dict_ptr->m_key_id_map[m_current_key];
-
-      IPluginMethodPtr method_ptr = Factory::getPluginMethod(m_dict_ptr->m_plugin_id, element_content);
       KeyMethodPtr key_method_ptr = new KeyMethod(element_content, method_ptr);
 
       // Push the KeyMethod object reference at the back of the list
-      get_solvers_list(key_id).push_back( IKeySolverPtr(key_method_ptr) );
+      get_solvers_list(m_current_concept_id).push_back( IKeySolverPtr(key_method_ptr) );
+    }
+    else
+    {
+      yat::log_error( "dict", PSZ_FMT("unable to solve key '%s'. method '%s' not implemented by plugin",
+                      PSZ(m_current_key), PSZ(element_content) ) );
     }
   }
 }
@@ -228,6 +358,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
 //----------------------------------------------------------------------------
 Dictionary::Dictionary(const std::string &plugin_id) : m_plugin_id(plugin_id)
 {
+  m_key_file_name = Factory::getActiveView() + "_view.xml";
 }
     
 //----------------------------------------------------------------------------
@@ -235,6 +366,7 @@ Dictionary::Dictionary(const std::string &plugin_id) : m_plugin_id(plugin_id)
 //----------------------------------------------------------------------------
 Dictionary::Dictionary()
 {
+  m_key_file_name = Factory::getActiveView() + "_view.xml";
 }
     
 //----------------------------------------------------------------------------
@@ -253,19 +385,36 @@ std::string Dictionary::getVersionNum()
 }
 
 //----------------------------------------------------------------------------
-// Dictionary::getDictionary
+// Dictionary::readEntries
 //----------------------------------------------------------------------------
 void Dictionary::readEntries() throw ( Exception )
 {
-  SAXParsor parsor;
-  
   try
   {
+    CDMA_TRACE("reading concepts...");
+
+    // Read the main (core) dictionary of concepts
+    DictionaryConceptAnalyser core_dict_analyser(this);
+    SAXParsor::start(Factory::getConceptDictionaryFolder() + s_core_dict_file, &core_dict_analyser);
+
+    if( !m_spec_dict_name.empty() )
+    {
+      CDMA_TRACE("reading specific concepts: " << m_spec_dict_name);
+      // Read a more specific dictionary of concepts
+      DictionaryConceptAnalyser spec_dict_analyser(this);
+      SAXParsor::start(Factory::getConceptDictionaryFolder() + m_spec_dict_name, &spec_dict_analyser);
+    }
+
+    CDMA_TRACE("reading data definition");
+    // Read the data definition expected by the client app
     DataDefAnalyser datadef_analyser(this);
-    parsor.start(m_key_file_path, &datadef_analyser);
+    SAXParsor::start(Factory::getKeyDictionaryFolder() + m_key_file_name, &datadef_analyser);
     
+    CDMA_TRACE("reading keywords mapping");
+    // Read the mapping document
     MapDefAnalyser mapdef_analyser(this);
-    parsor.start(m_mapping_file_path, &mapdef_analyser);
+    SAXParsor::start(Factory::getMappingDictionaryFolder(m_plugin_id) + m_mapping_file_name,
+                     &mapdef_analyser);
   }
   catch( yat::Exception& e )
   {
@@ -281,8 +430,8 @@ void Dictionary::readEntries() throw ( Exception )
 StringListPtr Dictionary::getAllKeys()
 {
   StringList* pList = new StringList;
-  for(std::map<std::string, int>::const_iterator cit = m_key_id_map.begin();
-      cit !=  m_key_id_map.end(); cit++)
+  for(KeywordConceptIdMap::const_iterator cit = m_key_concept_map.begin();
+      cit !=  m_key_concept_map.end(); cit++)
   {
     pList->push_back(cit->first);
   }
@@ -290,37 +439,16 @@ StringListPtr Dictionary::getAllKeys()
 }
 
 //----------------------------------------------------------------------------
-// Dictionary::getDictionary
+// Dictionary::getKeys
 //----------------------------------------------------------------------------
 StringListPtr Dictionary::getKeys(const std::string& parent_key) throw( Exception )
 {
-  int parent_id = 0;
-  if( !parent_key.empty() )
-  {
-    std::map<std::string, int>::const_iterator citKey = m_key_id_map.find(parent_key);
-    if( citKey == m_key_id_map.end() )
-      throw cdma::Exception( "KEY_NOT_FOUND",
-                             PSZ_FMT( "Group key '%s' not found in data definition",
-                                      PSZ(parent_key) ),
-                                      "Dictionary::getKeys" );
-    parent_id = citKey->second;
-  }
-  
-  // Build the reverse of the map key
-  std::map<int, std::string> reverse_key_map;
-  for(std::map<std::string, int>::const_iterator cit = m_key_id_map.begin();
-      cit !=  m_key_id_map.end(); cit++)
-  {
-    reverse_key_map[cit->second] = cit->first;
-  }
-  
-  // Get the key ids the keys whose parent is the parent_key id
-  // then use the above reverse map to retreive corresponding key names
-  connection_map_const_range range = m_connection_map.equal_range(parent_id);
+  CDMA_FUNCTION_TRACE("Dictionary::getKeys");
+  connection_map_const_range range = m_connection_map.equal_range(parent_key);
   StringList* pList = new StringList;
   for(connection_map_const_iterator cit = range.first; cit != range.second; cit++)
   {    
-    pList->push_back(reverse_key_map[cit->second]);
+    pList->push_back(cit->second);
   }
   return pList;
 }
@@ -330,14 +458,14 @@ StringListPtr Dictionary::getKeys(const std::string& parent_key) throw( Exceptio
 //----------------------------------------------------------------------------
 Key::Type Dictionary::getKeyType(const std::string& key) throw( Exception )
 {
-  std::map<std::string, int>::const_iterator citKey = m_key_id_map.find(key);
-  if( citKey == m_key_id_map.end() )
+  KeywordConceptIdMap::const_iterator citKey = m_key_concept_map.find(key);
+  if( citKey == m_key_concept_map.end() )
     throw cdma::Exception( "KEY_NOT_FOUND", 
                            PSZ_FMT( "Key '%s' not found in data definition", 
                                     PSZ(key) ), "Dictionary::getPath" );
 
   // Looking for group key
-  if( m_connection_map.find(citKey->second) != m_connection_map.end() )
+  if( m_connection_map.find(key) != m_connection_map.end() )
     return Key::GROUP;
     
   return Key::ITEM;
@@ -351,15 +479,15 @@ SolverList Dictionary::getSolversList(const KeyPtr& key_ptr)
   std::string key = key_ptr->getName();
 
   // Retreive the key id
-  KeyIdMap::const_iterator citKey = m_key_id_map.find(key);
-  if( citKey == m_key_id_map.end() )
+  KeywordConceptIdMap::const_iterator citKey = m_key_concept_map.find(key);
+  if( citKey == m_key_concept_map.end() )
     throw cdma::Exception( "KEY_NOT_FOUND", 
                            PSZ_FMT( "Key '%s' not found in data definition", 
                                     PSZ(key) ), "Dictionary::getSolversList" );
-  int key_id = citKey->second;
+  int concept_id = citKey->second;
 
-  KeySolverListMap::iterator itSolvers = m_key_solver_map.find(key_id);
-  if( itSolvers == m_key_solver_map.end() )
+  ConceptIdSolverListMap::iterator itSolvers = m_concept_solvers_map.find(concept_id);
+  if( itSolvers == m_concept_solvers_map.end() )
     throw cdma::Exception( "NO_DATA", 
                            PSZ_FMT( "Key '%s' isn't associated with any solver", 
                                     PSZ(key) ), "Dictionary::getSolversList" );
@@ -373,6 +501,70 @@ SolverList Dictionary::getSolversList(const KeyPtr& key_ptr)
 bool Dictionary::containsKey( const std::string& )
 {
   THROW_NOT_IMPLEMENTED("Dictionary::containsKey");
+}
+
+//----------------------------------------------------------------------------
+// Dictionary::createConcept
+//----------------------------------------------------------------------------
+Dictionary::ConceptPtr Dictionary::createConcept(const std::string &label)
+{
+  static int s_concept_id = 0;
+
+  ConceptPtr concept_ptr = new Dictionary::Concept;
+  concept_ptr->m_label = label;
+  concept_ptr->m_id = ++s_concept_id;
+  m_id_concept_map[s_concept_id] = concept_ptr;
+  return concept_ptr;
+}
+
+//----------------------------------------------------------------------------
+// Dictionary::getConcept
+//----------------------------------------------------------------------------
+Dictionary::ConceptPtr Dictionary::getConcept(const std::string &keyword)
+{
+  for( IdConceptMap::const_iterator cit = m_id_concept_map.begin();
+       cit != m_id_concept_map.end(); ++cit )
+  {
+    if( cit->second->isSynonym(keyword) )
+      return cit->second;
+  }
+  throw yat::Exception("NO_DATA", 
+                       PSZ_FMT("No concept for this keyword: %s", PSZ(keyword)),
+                       "Dictionary::getConcept");
+}
+
+//----------------------------------------------------------------------------
+// Dictionary::getConceptId
+//----------------------------------------------------------------------------
+int Dictionary::getConceptId(const std::string &keyword)
+{
+  for( IdConceptMap::const_iterator cit = m_id_concept_map.begin();
+       cit != m_id_concept_map.end(); ++cit )
+  {
+    if( cit->second->isSynonym(keyword) )
+      return cit->first;
+  }
+  throw yat::Exception("NO_DATA", 
+                       PSZ_FMT("No concept for this keyword: %s", PSZ(keyword)),
+                       "Dictionary::getConcept");
+}
+
+//----------------------------------------------------------------------------
+// Dictionary::Concept::isSynonym
+//----------------------------------------------------------------------------
+bool Dictionary::Concept::isSynonym( const std::string &keyword )
+{
+  if( keyword == m_label )
+    return true;
+
+  for( SynonymList::const_iterator cit = m_synonym_list.begin(); 
+       cit != m_synonym_list.end(); ++cit )
+  {
+    if( keyword == *cit )
+      return true;
+  }
+
+  return false;
 }
 
 } //namespace
