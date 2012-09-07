@@ -38,12 +38,8 @@ public final class NxsDataset implements IDataset {
     // Inner class that concretes the abstract NexusDataset
     // ---------------------------------------------------------
     private class NexusDatasetImpl extends NexusDataset {
-        public NexusDatasetImpl(NexusDatasetImpl dataset) {
-            super(dataset);
-        }
-
-        public NexusDatasetImpl(File nexusFile) throws FileAccessException {
-            super(NxsFactory.NAME, nexusFile);
+        public NexusDatasetImpl(File nexusFile, boolean resetBuffer) throws FileAccessException {
+            super(NxsFactory.NAME, nexusFile, resetBuffer);
         }
 
         @Override
@@ -52,13 +48,18 @@ public final class NxsDataset implements IDataset {
         }
     }
 
-    private ConfigDataset mConfig;
-    private List<NexusDataset> mDatasets; // all found datasets in the folder
-    private URI mPath; // folder containing all datasets
-    private IGroup mRootPhysical; // Physical root of the document
-    private NxsLogicalGroup mRootLogical; // Logical root of the document
-    private boolean mOpen; // is the dataset open
+    private boolean            mOpen;         // is the dataset open
+    private URI                mPath;         // URI of this dataset
+    private ConfigDataset      mConfig;       // Configuration associated to this dataset
+    private List<NexusDataset> mDatasets;     // NexusDataset compounding this NxsDataset
+    private IGroup             mRootPhysical; // Physical root of the document
+    private NxsLogicalGroup    mRootLogical;  // Logical root of the document
+    
+    // SoftReference of dataset associated to their URI
     private static Map<String, SoftReference<NxsDataset>> datasets;
+    
+    // datasets' URIs associated to the last modification
+    private static Map<String, Long> lastModifications;
 
     public static NxsDataset instanciate(URI destination) throws NoResultException {
         NxsDataset dataset = null;
@@ -66,19 +67,29 @@ public final class NxsDataset implements IDataset {
             synchronized (NxsDataset.class) {
                 if (datasets == null) {
                     datasets = new HashMap<String, SoftReference<NxsDataset>>();
+                    lastModifications = new HashMap<String, Long>();
                 }
             }
         }
 
         synchronized (datasets) {
-            SoftReference<NxsDataset> ref = datasets.get(destination.toString());
+            boolean resetBuffer = false;
+            String uri = destination.toString();
+            SoftReference<NxsDataset> ref = datasets.get( uri );
             if (ref != null) {
                 dataset = ref.get();
+                long last = lastModifications.get( uri );
+                if( dataset != null ) {
+                    if( last < dataset.getLastModificationDate() ) {
+                        dataset = null;
+                        resetBuffer = true;
+                    }
+                }
             }
 
             if (dataset == null) {
                 try {
-                    dataset = new NxsDataset(new File(destination.getPath()));
+                    dataset = new NxsDataset(new File(destination.getPath()), resetBuffer);
                     String fragment = destination.getFragment();
     
                     if (fragment != null && !fragment.isEmpty()) {
@@ -96,8 +107,9 @@ public final class NxsDataset implements IDataset {
                             e.printStackTrace();
                         }
                     }
-                    datasets.put(destination.toString(), new SoftReference<NxsDataset>(dataset));
-                    }
+                    datasets.put( uri, new SoftReference<NxsDataset>(dataset));
+                    lastModifications.put( uri, dataset.getLastModificationDate());
+                }
                 catch ( FileAccessException e ) {
                     throw new NoResultException( e );
                 }
@@ -178,14 +190,6 @@ public final class NxsDataset implements IDataset {
         return result;
     }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void writeNcML(OutputStream os, String uri) throws IOException {
-        for (IDataset dataset : mDatasets) {
-            dataset.writeNcML(os, uri);
-        }
-    }
-
     @Override
     public void close() throws IOException {
         mOpen = false;
@@ -193,7 +197,7 @@ public final class NxsDataset implements IDataset {
 
     @Override
     public String getLocation() {
-        return mPath.getPath();
+        return mPath.toString();
     }
 
     @Override
@@ -264,6 +268,11 @@ public final class NxsDataset implements IDataset {
     public long getLastModificationDate() {
         long last = 0;
         long temp = 0;
+        
+        File path = new File( mPath.getPath() );
+        if( path.exists() && path.isDirectory() ) {
+            last = path.lastModified();
+        }
 
         for (NexusDataset dataset : mDatasets) {
             temp = dataset.getLastModificationDate();
@@ -278,21 +287,23 @@ public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(File destination) throws FileAccessException {
+    private NxsDataset(File destination, boolean resetBuffer) throws FileAccessException {
         mPath = destination.toURI();
         mDatasets = new ArrayList<NexusDataset>();
         NexusDatasetImpl datafile;
         if (destination.exists() && destination.isDirectory()) {
             NeXusFilter filter = new NeXusFilter();
             for (File file : destination.listFiles(filter)) {
-                datafile = new NexusDatasetImpl(file);
+                datafile = new NexusDatasetImpl(file, resetBuffer);
                 mDatasets.add((NexusDatasetImpl) datafile);
             }
         }
         else {
-            datafile = new NexusDatasetImpl(destination);
+            datafile = new NexusDatasetImpl(destination, resetBuffer);
             mDatasets.add(datafile);
         }
         mOpen = false;
     }
+    
+    
 }

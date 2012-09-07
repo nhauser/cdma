@@ -52,7 +52,7 @@ public class ConfigManager {
     private Map<String, IFactory>               mFactories;      // Factories registered by the plug-in name
     private Map<String, File>                   mFiles;          // Files of configuration for each plug-in
     private Map<String, Vector<ConfigGeneric> > mConfigurations; // Available configurations for each plug-in
-    private Map<String, Boolean>                mInitialized;    // Does each plug-in been initiated
+    private Map<String, Boolean>                mInitialized;    // Do each plug-in configuration file has been loaded ?
 
     /**
      * Get the configuration manager unique instance

@@ -227,34 +227,6 @@ public interface IFactory {
     public Path createPath( String path );
 
     /**
-     * Create a IPathParameter that will permit selection of a specific branch while browsing.
-     * 
-     * @param type of parameter 
-     * @param name of the parameter
-     * @param value of the parameter
-     * @return a new IPathParameter
-     */
-/*
-    public PathParameter createPathParameter(ParameterType type, String name, Object value);
-*/
-    /**
-     * Create a new IPathParamResolver which is used to resolve a IPath.
-     * 
-     * @param path the resolver will use 
-     * @return a new IPathParamResolver
-     */
-/*
-     public IPathParamResolver createPathParamResolver(Path path);
- */
-
-    /**
-     * Return the symbol used by the plug-in to separate nodes in a string path
-     * @return 
-     * @note <b>EXPERIMENTAL METHOD</b> do note use/implements
-     */
-    public String getPathSeparator();
-
-    /**
      * The factory has a unique name that identifies it.
      * @return the factory's name
      */

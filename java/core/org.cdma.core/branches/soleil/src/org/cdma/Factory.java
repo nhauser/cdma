@@ -49,7 +49,6 @@ public final class Factory {
     private static final String FILE_CONCEPT_CORE    = "core_";
     private static final String FILE_VIEW_NAME       = "view";
     
-    private static final String PATH_FOLDER_DTD      = "dtd";
     private static final String PATH_FOLDER_MAPS     = "mappings";
     private static final String PATH_FOLDER_VIEWS    = "views";
     private static final String PATH_FOLDER_CONCEPTS = "concepts";

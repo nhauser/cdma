@@ -87,6 +87,17 @@ public class NexusFileInstance {
         m_sFilePath = null;
         m_nfFile = null;
     }
+    
+    public long getLastModificationDate() {
+        long last = 0;
+        if( m_sFilePath != null ) {
+            File file = new File(m_sFilePath);
+            if( file.exists() ) {
+                last = file.lastModified();
+            }
+        }
+        return last;
+    }
 
     // ---------------------------------------------------------
     // Protected methods
@@ -96,8 +107,8 @@ public class NexusFileInstance {
     /**
      * openFile
      * 
-     * @param sFilePath the full path to reach the NeXus file (including its name) (optionnal)
-     * @param iAccesMode the requested acces mode (read and/or write) (optionnal)
+     * @param sFilePath the full path to reach the NeXus file (including its name) (optional)
+     * @param iAccesMode the requested access mode (read and/or write) (optional)
      * @note if path isn't specified, the default will be the AcquisitionData specified one
      * @note if access mode isn't, the default will be read-only
      * @throws NexusException

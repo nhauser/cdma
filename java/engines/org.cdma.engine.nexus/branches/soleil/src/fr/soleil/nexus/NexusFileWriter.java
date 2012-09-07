@@ -13,11 +13,8 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 public class NexusFileWriter extends NexusFileReader {
-    public final static String NULL_VALUE = "null"; // Value used to mean null when reading/writing
-                                                    // a DataItem
-
-    protected static final String DataItem_LINK = "link_node"; // Generic name of a node wearing a
-                                                               // link
+    public final static String NULL_VALUE = "null";            // Value used to mean null when reading/writing a DataItem
+    protected static final String DATAITEM_LINK = "link_node"; // Generic name of a node wearing a link
 
     private boolean m_bCompressed;
 
@@ -453,7 +450,7 @@ public class NexusFileWriter extends NexusFileReader {
         // Ensure the wearing node is a DataItem
         if (prRelPath.getDataItemName() == null) {
             PathGroup pgDest = new PathGroup(prRelPath.clone());
-            pdDestNode = new PathData(pgDest, generateDataName((PathGroup) pgDest, DataItem_LINK));
+            pdDestNode = new PathData(pgDest, generateDataName((PathGroup) pgDest, DATAITEM_LINK));
         }
         else
             pdDestNode = (PathData) prRelPath;

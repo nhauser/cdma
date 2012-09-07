@@ -1,8 +1,5 @@
 package org.cdma.engine.nexus.array;
 
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
 import org.cdma.engine.nexus.utils.NexusArrayMath;
 import org.cdma.engine.nexus.utils.NexusArrayUtils;
 import org.cdma.exception.BackupException;

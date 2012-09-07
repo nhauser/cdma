@@ -138,17 +138,6 @@ public interface IDataset extends IModelObject {
     void save(String parentPath, IAttribute attribute) throws WriterException;
 
     /**
-     * Write the file with NcML format.
-     * 
-     * @param os java i/o OutputStream
-     * @param uri a path to the file
-     * @throws java.io.IOException
-     * @deprecated [SOLEIL][clement][2012-04-18] seems to be a plug-in dependent method 
-     */
-    //[SOLEIL][clement][2012-04-18] seems to be a plug-in dependent method maybe I'm wrong. I think we should remove it from the Core or rename it like write(...)
-    void writeNcML(java.io.OutputStream os, java.lang.String uri) throws java.io.IOException;
-
-    /**
      * Check if the data set is open.
      * 
      * @return true or false
