@@ -211,12 +211,7 @@ public final class NxsFactory implements IFactory {
     public IKey createKey(String keyName) {
         return new Key(this, keyName);
     }
-/*
-    @Override
-    public PathParameter createPathParameter(ParameterType type, String name, Object value) {
-        return new PathParameter(this, type, name, value);
-    }
-*/
+
     @Override
     public LogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
         return new NxsLogicalGroup(dataset, new Key(this, key.getName()) );
@@ -227,24 +222,6 @@ public final class NxsFactory implements IFactory {
         return new Path(this, path);
     }
 
-    @Override
-    public String getPathSeparator() {
-        return "/";
-    }
-/*
-    @Override
-    public IPathParamResolver createPathParamResolver(Path path) {
-        IPathParamResolver result;
-        if( path instanceof Path ) {
-            result = new NxsPathParamResolver(this, (Path) path);
-        }
-        else {
-            result = new NxsPathParamResolver( this, new Path(this, path.getValue() ) );
-        }
-
-        return result;
-    }
-*/
     @Override
     public IDictionary openDictionary(URI uri) throws FileAccessException {
         throw new UnsupportedOperationException();

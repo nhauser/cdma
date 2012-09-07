@@ -27,29 +27,31 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 
     public static final String ERR_NOT_SUPPORTED = "Method not supported yet in this plug-in!";
 
-    public NexusDataset(String factoryName, File nexusFile, int buffer_size) throws FileAccessException {
-        mFactory = factoryName;
-        mN4TWriter = null;
+    public NexusDataset(String factoryName, File nexusFile, int bufferSize, boolean resetBuffer) throws FileAccessException {
+        mFactory      = factoryName;
         mRootPhysical = null;
-        mN4TWriter = new NexusFileWriter(nexusFile.getAbsolutePath());
-        mN4TCurPath = PathNexus.ROOT_PATH.clone();
-        mTitle = nexusFile.getName();
+        mN4TWriter    = new NexusFileWriter(nexusFile.getAbsolutePath());
+        mN4TCurPath   = PathNexus.ROOT_PATH.clone();
+        mTitle        = nexusFile.getName();
         mN4TCurPath.setFile(nexusFile.getAbsolutePath());
-        mN4TWriter.setBufferSize(buffer_size);
+        mN4TWriter.setBufferSize(bufferSize);
         mN4TWriter.isSingleRawResult(true);
         mN4TWriter.setCompressedData(true);
+        if( resetBuffer ) {
+            mN4TWriter.resetBuffer();
+        }
     }
 
-    public NexusDataset(String factoryName, File nexusFile) throws FileAccessException {
-        this(factoryName, nexusFile, N4T_BUFF_SIZE);
+    public NexusDataset(String factoryName, File nexusFile, boolean resetBuffer) throws FileAccessException {
+        this(factoryName, nexusFile, N4T_BUFF_SIZE, resetBuffer);
     }
 
     public NexusDataset(NexusDataset dataset) {
-        mFactory = dataset.mFactory;
+        mFactory      = dataset.mFactory;
+        mN4TWriter    = dataset.mN4TWriter;
+        mN4TCurPath   = dataset.mN4TCurPath.clone();
+        mTitle        = dataset.mTitle;
         mRootPhysical = dataset.mRootPhysical;
-        mN4TWriter = dataset.mN4TWriter;
-        mN4TCurPath = dataset.mN4TCurPath.clone();
-        mTitle = dataset.mTitle;
         mN4TWriter.isSingleRawResult(true);
     }
 
@@ -149,39 +151,9 @@ public abstract class NexusDataset implements IDataset, Cloneable {
     
     @Override
     public long getLastModificationDate() {
-        long last = 0;
-        File file = new File(mN4TCurPath.getFilePath());
-        if( file.exists() ) {
-            last = file.lastModified();
-        }
-        return last;
+        return mN4TWriter.getLastModificationDate();
     }
-
-    // -----------------------------------------------------------
-    /// protected methods
-    // -----------------------------------------------------------
-    // Accessors
-    protected PathNexus getCurrentPath() {
-        return mN4TCurPath;
-    }
-
-    protected PathNexus getRootPath() {
-        return ((NexusGroup) mRootPhysical).getPathNexus();
-    }
-
-    protected void setLocation(PathNexus location) {
-        try {
-            mN4TWriter.openPath(location);
-        } catch (NexusException e) {
-        }
-        mN4TCurPath = location.clone();
-    }
-
-    // Methods
-    protected void setRootGroup(PathNexus rootPath) {
-        mRootPhysical = new NexusGroup(mFactory, rootPath, this);
-    }
-
+    
     @Override
     public String getFactoryName() {
         return mFactory;
@@ -219,10 +191,36 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 
     }
 
-    @Override
-    public void writeNcML(OutputStream os, String uri) throws IOException {
-        // TODO Auto-generated method stub
+    /**
+     * Reset the internal buffer so the NexusDataset can see changes
+     */
+    public void resetBuffer() {
+        mN4TWriter.resetBuffer();
+    }
+    
+    // -----------------------------------------------------------
+    /// protected methods
+    // -----------------------------------------------------------
+    // Accessors
+    protected PathNexus getCurrentPath() {
+        return mN4TCurPath;
+    }
 
+    protected PathNexus getRootPath() {
+        return ((NexusGroup) mRootPhysical).getPathNexus();
+    }
+
+    protected void setLocation(PathNexus location) {
+        try {
+            mN4TWriter.openPath(location);
+        } catch (NexusException e) {
+        }
+        mN4TCurPath = location.clone();
+    }
+
+    // Methods
+    protected void setRootGroup(PathNexus rootPath) {
+        mRootPhysical = new NexusGroup(mFactory, rootPath, this);
     }
 
     private IGroup           mRootPhysical;      // Physical root of the document

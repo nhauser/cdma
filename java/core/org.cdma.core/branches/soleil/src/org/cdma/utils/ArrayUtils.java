@@ -12,8 +12,6 @@ package org.cdma.utils;
 
 /// @cond internal
 
-import java.io.ObjectInputStream.GetField;
-
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.exception.InvalidRangeException;

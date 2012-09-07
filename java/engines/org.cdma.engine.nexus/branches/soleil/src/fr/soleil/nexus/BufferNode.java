@@ -57,6 +57,14 @@ public class BufferNode {
         if (iSize > 10)
             m_iBufferSize = iSize;
     }
+
+    /**
+     * Reset all information stored into that buffer 
+     */
+    public void resetBuffer() {
+        m_tNodeInPath.clear();
+        m_hPathUsageWeigth.clear();
+    }
     
     // ---------------------------------------------------------
     // ---------------------------------------------------------
@@ -127,12 +135,13 @@ public class BufferNode {
         freeBufferSpace();
 
         Integer value = m_hPathUsageWeigth.get(path.toString());
-        if (value == null)
+        if (value == null) {
             value = iTimeToAccessNode;
-        else
+        }
+        else {
             value += iTimeToAccessNode + 1;
+        }
         m_hPathUsageWeigth.put(path.toString(), value);
-
         m_tNodeInPath.put(path.toString(), tmNodes);
     }
     

@@ -12,6 +12,7 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.navigation.NxsGroup;
+import org.cdma.plugin.soleil.utils.NxsConstant;
 import org.cdma.utils.Utilities.ModelType;
 
 import fr.soleil.nexus.DataItem;
@@ -27,9 +28,6 @@ import fr.soleil.nexus.NexusNode;
  * @throws CDMAException
  */
 public class HarvestEquipmentAttributes implements IPluginMethod {
-    private static final String ATTR_EQUIPMENT = "equipment";
-    private static final String ATTR_REGION    = "region";
-    private static final String ATTR_SCAN      = "acquisition_sequence";
     
     @Override
     public String getFactoryName() {
@@ -87,12 +85,12 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         NxsGroup root = (NxsGroup) container.getRootGroup();
         
         // Scan attribute
-        if (nodes.length > 0 /* && nodes[0].getClassName().equals("NXentry") */ ) {
+        if (nodes.length > 0) {
             NexusNode[] rootNodes = root.getPathNexus().getNodes();
             if( rootNodes.length == 0 || ! rootNodes[0].getClassName().equals("NXentry") ) {
                 root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
             }
-            String attrName = ATTR_SCAN;
+            String attrName = NxsConstant.ATTR_SCAN;
             String attrValue = root.getShortName();
             container.addStringAttribute(attrName, attrValue);
         }
@@ -107,22 +105,22 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         }
         
         // Equipment attribute (NXdetector, NXmono...)
-        if (container.getAttribute(ATTR_EQUIPMENT) == null) {
+        if (container.getAttribute(NxsConstant.ATTR_EQUIPMENT) == null) {
             if (nodes.length > 2 && nodes[1].getClassName().equals("NXinstrument")) {
                 String attrValue = root.getGroup(nodes[1].getNodeName())
                                        .getGroup(nodes[2].getNodeName())
                                        .getShortName();
-                container.addStringAttribute(ATTR_EQUIPMENT, attrValue);
+                container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, attrValue);
             }
         }
 
-        if (container.getAttribute(ATTR_REGION) == null) {
+        if (container.getAttribute(NxsConstant.ATTR_REGION) == null) {
             if (nodes.length > 2 && nodes[2].getClassName().equals("NXdetector")) {
                 NexusNode node = nodes[2];
                 // If Scienta
                 if (node.getNodeName().toLowerCase().matches(".*scienta.*")) {
                     String region = node.getNodeName().replaceAll(".*([0-9]+)$", "$1");
-                    container.addStringAttribute(ATTR_REGION, region);
+                    container.addStringAttribute(NxsConstant.ATTR_REGION, region);
                 }
                 // If Xia
                 else if (node.getNodeName().toLowerCase().matches("xia")) {
@@ -131,7 +129,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                         node = nodes[4];
                         String region = node.getNodeName().replaceAll(".*([0-9]+)$", "$1");
                         if (node.getNodeName().toLowerCase().matches(".*xia.*")) {
-                            container.addStringAttribute(ATTR_REGION, region);
+                            container.addStringAttribute(NxsConstant.ATTR_REGION, region);
                         }
                     }
                     else {
@@ -147,11 +145,11 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                                 regions.add(region);
 
                                 if (first) {
-                                    container.addStringAttribute(ATTR_REGION, region);
+                                    container.addStringAttribute(NxsConstant.ATTR_REGION, region);
                                 }
                                 else {
                                     IContainer clone = container.clone();
-                                    clone.addStringAttribute(ATTR_REGION, region);
+                                    clone.addStringAttribute(NxsConstant.ATTR_REGION, region);
                                     outList.add(clone);
                                 }
                                 first = false;
@@ -161,7 +159,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                     }
                 }
                 else {
-                    container.addStringAttribute(ATTR_REGION, "0");
+                    container.addStringAttribute(NxsConstant.ATTR_REGION, "0");
                 }
             }
         }

@@ -166,8 +166,7 @@ public final class Utilities {
      * @return CDMA DataType object
      * @throws FileAccessException
      */
-    public static ModelType checkDataType(final URI uri,
-            final String dictionaryPath) throws FileAccessException {
+    public static ModelType checkDataType(final URI uri, final String dictionaryPath) throws FileAccessException {
         String path = null;
         if (uri.getScheme().equals("file")) {
             path = uri.getPath();
@@ -175,8 +174,7 @@ public final class Utilities {
             IDataset dataset = null;
             IContainer container = null;
             try {
-                IFactory factory = Factory.getFactory( dataset.getFactoryName() );
-                dataset = factory.createDatasetInstance(uri);
+                dataset = Factory.openDataset(uri);
                 dataset.open();
             } catch (IOException e1) {
                 throw new FileAccessException(e1);

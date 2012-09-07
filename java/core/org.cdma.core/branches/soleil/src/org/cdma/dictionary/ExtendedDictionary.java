@@ -80,7 +80,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) {
         mMethodMgr   = PluginMethodManager.instantiate();
         mFactory     = factory; 
-        mView        = Factory.getActiveView();
+        mView        = null;
         mKeyFile     = keyFile;
         mMapFile     = mapFile;
         mConceptFile = null;
@@ -242,6 +242,12 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @return the name of the experimental view
      */
     public String getView() {
+        if( mView == null ) {
+            try {
+                readEntries();
+            } catch (FileAccessException e) {
+            }
+        }
         return mView;
     }
 
@@ -332,11 +338,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         if( xmlNode == null ) {
             startNode = saxBuildFile(mKeyFile);
 
-            String exp = startNode.getAttributeValue("name");
-            if( ! exp.equalsIgnoreCase(mView) ) {
-                throw new FileAccessException("an I/O error prevent parsing dictionary!\nThe dictionary doesn't match the experiment!");
-            }
-            
+            mView = startNode.getAttributeValue("name");
             String concept = startNode.getAttributeValue("concept");
             if( concept != null ) {
                 mConceptFile = Factory.getPathConceptDictionaryFolder() + concept; 

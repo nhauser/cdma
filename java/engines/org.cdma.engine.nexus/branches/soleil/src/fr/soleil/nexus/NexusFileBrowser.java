@@ -47,7 +47,13 @@ public class NexusFileBrowser extends NexusFileInstance {
         m_bFileChanged = false;
     }
 
-
+    /**
+     * Reset all information stored into that buffer 
+     */
+    public void resetBuffer() {
+        getBuffer().resetBuffer();
+    }
+    
     /**
      * Set the current maximum size of the node buffer (in number of slots)
      * 
