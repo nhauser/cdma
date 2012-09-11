@@ -2,7 +2,6 @@ package org.cdma.plugin.soleil.navigation;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.net.URI;
@@ -29,25 +28,12 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
 import org.cdma.plugin.soleil.internal.DetectedSource.NeXusFilter;
+import org.cdma.plugin.soleil.internal.NexusDatasetImpl;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
 import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
-    // ---------------------------------------------------------
-    // Inner class that concretes the abstract NexusDataset
-    // ---------------------------------------------------------
-    private class NexusDatasetImpl extends NexusDataset {
-        public NexusDatasetImpl(File nexusFile, boolean resetBuffer) throws FileAccessException {
-            super(NxsFactory.NAME, nexusFile, resetBuffer);
-        }
-
-        @Override
-        public LogicalGroup getLogicalRoot() {
-            return new LogicalGroup(null, null, this, false);
-        }
-    }
-
     private boolean            mOpen;         // is the dataset open
     private URI                mPath;         // URI of this dataset
     private ConfigDataset      mConfig;       // Configuration associated to this dataset

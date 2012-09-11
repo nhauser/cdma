@@ -127,7 +127,6 @@ public class NexusFileInstance {
                 m_nfFile.close();
                 m_nfFile.finalize();
             }
-
             m_nfFile = null;
 
         } catch (Throwable t) {
@@ -205,9 +204,7 @@ public class NexusFileInstance {
         // Transform path into absolute
         File file = new File(sFilePath);
         sFilePath = file.getAbsolutePath();
-
         if (NexusFile.NXACC_RDWR == iAccessMode) {
-
             if (file.exists()) {
                 m_nfFile = new NexusFileHandler(sFilePath, iAccessMode);
             } else {
