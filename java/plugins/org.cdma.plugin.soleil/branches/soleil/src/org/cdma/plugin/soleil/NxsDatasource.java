@@ -159,7 +159,7 @@ public final class NxsDatasource implements IDatasource {
     @Override
     public String[] getURIParts(URI target) {
         List<String> parts = new ArrayList<String>();
-        if ( isBrowsable(target) || isReadable(target) ) {
+//        if ( isBrowsable(target) || isReadable(target) ) {
             String path = target.getPath();
             String fragment = target.getFragment();
             for( String part : path.split( "/" ) ) {
@@ -179,7 +179,7 @@ public final class NxsDatasource implements IDatasource {
                 catch (UnsupportedEncodingException e) {
                 }
             }
-        }
+//        }
 
         return parts.toArray(new String[] {});
     }

@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 
+import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
@@ -238,7 +239,7 @@ public class DetectedSource {
         File[] files = file.listFiles(filter);
         if (files.length > 0) {
             try {
-                IDataset dataset = NxsDataset.instanciate(file.toURI());
+                IDataset dataset = new NexusDatasetImpl(files[0], false);
                 IGroup group = dataset.getRootGroup();
     
                 IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
@@ -251,6 +252,7 @@ public class DetectedSource {
                     }
                 }
             } catch (NoResultException e) {
+            } catch (FileAccessException e) {
             }
         }
         
