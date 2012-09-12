@@ -10,9 +10,13 @@ public class LabelledURI {
     private IDatasource mSource;
 
     public LabelledURI( String label, URI uri, IDatasource datasource ) {
-        mLabel = label;
-        mURI = uri;
+        mLabel  = label;
+        mURI    = uri;
         mSource = datasource;
+    }
+
+    public LabelledURI( URI uri, IDatasource datasource ) {
+        this(extractLabel(uri, datasource), uri, datasource);
     }
     
     public URI getURI() {
@@ -27,6 +31,23 @@ public class LabelledURI {
         return mSource;
     }
     
+    protected static String extractLabel(URI uri, IDatasource datasource) {
+        String label;
+        if( datasource != null ) {
+            String[] parts = datasource.getURIParts(uri);
+            if( parts != null && parts.length > 0 ) {
+                label = parts[parts.length - 1];
+            }
+            else {
+                label = String.valueOf(uri);
+            }
+        }
+        else {
+            label = String.valueOf(uri);
+        }
+        return label;
+    }
+
     @Override
     public String toString() {
         return mLabel.toString();
