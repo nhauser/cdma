@@ -137,10 +137,10 @@ public final class NxsDatasource implements IDatasource {
                     fragment = URLDecoder.decode(fragment, "UTF-8");
                     NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
                     fragment = "";
-                    for ( int i = 0; i < nodes.length; i++ ) {
-                        fragment += nodes[i].getNodeName() + "/";
+                    for ( int i = 0; i < nodes.length - 1; i++ ) {
+                        fragment += "/" + nodes[i].getNodeName();
                     }
-                    
+
                     if( ! fragment.isEmpty() ) {
                         fragment = "#" + URLEncoder.encode(fragment, "UTF-8");
                     }
