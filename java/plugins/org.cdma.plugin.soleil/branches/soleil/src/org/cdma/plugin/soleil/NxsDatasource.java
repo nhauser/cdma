@@ -21,17 +21,17 @@ import fr.soleil.nexus.PathNexus;
 public final class NxsDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
     private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
+    private static NxsDatasource datasource;
 
-    public NxsDatasource() {
-        if (mDetectedSources == null) {
-            synchronized (NxsDatasource.class) {
-                if (mDetectedSources == null) {
-                    mDetectedSources = new HashMap<String, DetectedSource>();
-                }
+    public static NxsDatasource getInstance() {
+        synchronized (NxsFactory.class ) {
+            if( datasource == null ) {
+                datasource  = new NxsDatasource();
             }
         }
+        return datasource;
     }
-
+    
     @Override
     public String getFactoryName() {
         return NxsFactory.NAME;
@@ -223,5 +223,15 @@ public final class NxsDatasource implements IDatasource {
             }
         }
         return source;
+    }
+    
+    private NxsDatasource() {
+        if (mDetectedSources == null) {
+            synchronized (NxsDatasource.class) {
+                if (mDetectedSources == null) {
+                    mDetectedSources = new HashMap<String, DetectedSource>();
+                }
+            }
+        }
     }
 }

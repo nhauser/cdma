@@ -50,7 +50,7 @@ public final class NxsFactory implements IFactory {
         synchronized (NxsFactory.class ) {
             if( factory == null ) {
                 factory  = new NxsFactory();
-                detector = new NxsDatasource();
+                detector = NxsDatasource.getInstance();
             }
         }
         return factory;
@@ -189,7 +189,7 @@ public final class NxsFactory implements IFactory {
     public IDatasource getPluginURIDetector() {
         synchronized (NxsDatasource.class ) {
             if( detector == null ) {
-                detector = new NxsDatasource();
+                detector = NxsDatasource.getInstance();
             }
         }
         return detector;
