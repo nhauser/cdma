@@ -7,10 +7,12 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -326,7 +328,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         try {
             list = findAllOccurrences(key);
         } catch (NoResultException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
         }
 
         for (IContainer object : list) {
@@ -454,8 +456,7 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public Map<String, String> harvestMetadata(String md_standard) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -658,8 +659,7 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     /**
@@ -796,7 +796,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         try {
             result = findContainerByPath(path.getValue());
         } catch (NoResultException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
         }
 
         return result;
@@ -819,7 +819,7 @@ public final class NexusGroup implements IGroup, Cloneable {
                     tmpAttr = new NexusAttribute(mFactory, sAttrName, mDataset.getHandler().readAttr(sAttrName, null));
                     mAttributes.add(tmpAttr);
                 } catch (NexusException e) {
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
             mDataset.getHandler().closeFile();

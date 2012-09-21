@@ -12,7 +12,9 @@ package org.cdma.utilities;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.interfaces.IArray;
 
@@ -120,7 +122,7 @@ public class CubeData {
                     try {
                         tmpArray = mArray.getArrayUtils().section(projPos, shape).getArray();
                     } catch (InvalidRangeException e) {
-                        e.printStackTrace();
+                        Factory.getLogger().log( Level.SEVERE, e.getMessage());
                     }
 
                     CubeData tmpCube = new CubeData(tmpArray, mSliceRank, maxBuffer);
@@ -192,7 +194,7 @@ public class CubeData {
             try {
                 result = mArray.getArrayUtils().section(projPos, shape).getArray();
             } catch (InvalidRangeException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         return result;

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: GumTree Data Core
-Bundle-SymbolicName: org.gumtree.data.CDMA.Core
+Bundle-Name: Common Data Model API
+Bundle-SymbolicName: org.cdma.core
 Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.cdma,

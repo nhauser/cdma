@@ -26,6 +26,9 @@ package org.cdma.dictionary;
  * @see org.cdma.interfaces.IKey
  */
 
+import java.util.logging.Level;
+
+import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.internal.IModelObject;
 
@@ -85,7 +88,7 @@ public class Path implements IModelObject, Cloneable {
         try {
             return super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage() );
             return null;
         }
     }

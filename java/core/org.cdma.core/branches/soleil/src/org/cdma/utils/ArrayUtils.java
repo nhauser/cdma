@@ -12,6 +12,8 @@ package org.cdma.utils;
 
 /// @cond internal
 
+import java.util.logging.Level;
+
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.exception.InvalidRangeException;
@@ -116,10 +118,10 @@ public abstract class ArrayUtils implements IArrayUtils {
             }
         } catch (ShapeNotMatchException e) {
             result = null;
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
         } catch (InvalidRangeException e) {
             result = null;
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
         }
         return result;
     }

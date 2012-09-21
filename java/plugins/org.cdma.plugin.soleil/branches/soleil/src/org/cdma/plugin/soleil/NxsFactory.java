@@ -12,6 +12,7 @@ import org.cdma.engine.nexus.navigation.NexusAttribute;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -150,12 +151,11 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataset createEmptyDatasetInstance() throws IOException {
-        // TODO Auto-generated method stub
-        throw new IOException(ERR_NOT_SUPPORTED);
+        throw new NotImplementedException();
     }
 
     @Override
-    public IGroup createGroup(IGroup parent, String shortName, boolean updateParent) {
+    public IGroup createGroup(IGroup parent, String shortName) {
         String path_val = parent.getLocation();
         PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
         NxsGroup group = new NxsGroup( parent, (PathNexus) path, (NxsDataset) parent.getDataset());
@@ -165,14 +165,12 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IGroup createGroup(String shortName) throws IOException {
-        // TODO Auto-generated method stub
-        throw new IOException(ERR_NOT_SUPPORTED);
+        throw new NotImplementedException();
     }
 
     @Override
     public IArray createStringArray(String string) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override

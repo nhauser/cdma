@@ -5,6 +5,7 @@ import java.util.List;
 import org.cdma.engine.nexus.array.NexusArray;
 import org.cdma.engine.nexus.array.NexusIndex;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IIndex;
@@ -164,8 +165,7 @@ public final class NexusArrayUtils extends ArrayUtils {
 
     @Override
     public IArrayUtils sectionNoReduce(List<IRange> ranges) throws InvalidRangeException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -181,8 +181,7 @@ public final class NexusArrayUtils extends ArrayUtils {
 
     @Override
     public Object get1DJavaArray(Class<?> wantType) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     // --------------------------------------------------

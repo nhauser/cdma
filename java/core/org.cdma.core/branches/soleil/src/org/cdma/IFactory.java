@@ -149,17 +149,13 @@ public interface IFactory {
                     throws InvalidArrayTypeException;
 
     /**
-     * Create a CDMA Group with a given parent CDMA Group, name, and a boolean
-     * initiate parameter telling the factory if the new group will be put in
-     * the list of children of the parent. Group.
+     * Create a CDMA Group with a given parent CDMA Group and a name.
      * 
      * @param parent CDMA Group
      * @param shortName in String type
-     * @param updateParent if the parent will be updated
      * @return CDMA Group 
      */
-    public IGroup createGroup(final IGroup parent, final String shortName,
-            final boolean updateParent);
+    public IGroup createGroup(final IGroup parent, final String shortName);
 
     /**
      * Create an empty CDMA Group with a given name. The factory will create an
@@ -192,7 +188,8 @@ public interface IFactory {
     public IAttribute createAttribute(final String name, final Object value);
 
     /**
-     * Create a CDMA Dataset with a URI reference. If the file exists, it will
+     * Create a CDMA Dataset with a URI reference. If the file exists it will open
+     * it, else it will be created
      * 
      * @param uri URI object
      * @return CDMA Dataset

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDatasource;
@@ -52,6 +53,8 @@ public final class Factory {
     private static final String PATH_FOLDER_MAPS     = "mappings";
     private static final String PATH_FOLDER_VIEWS    = "views";
     private static final String PATH_FOLDER_CONCEPTS = "concepts";
+    
+    private static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
      * Create a CDMA Dataset that can read the given URI.
@@ -83,6 +86,24 @@ public final class Factory {
             }
         }
         return dataset;
+    }
+    
+    /**
+     * Returns the logger that will be used by the CDMA.
+     * 
+     * @return java.util.logging.Logger 
+     */
+    public static Logger getLogger() {
+        return LOGGER;
+    }
+    
+    /**
+     * Set the logger that the CDMA have to use for messages.
+     * 
+     * @param logger
+     */
+    public static void setLogger( Logger logger ) {
+        LOGGER = logger;
     }
 
     /**

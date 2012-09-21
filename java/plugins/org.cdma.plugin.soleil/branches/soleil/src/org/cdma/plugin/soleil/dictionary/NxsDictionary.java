@@ -9,12 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.soleil.NxsFactory;
@@ -162,8 +165,7 @@ public final class NxsDictionary implements IDictionary, Cloneable {
 
     @Override
     public void addEntry(String key, Path path) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
@@ -192,7 +194,7 @@ public final class NxsDictionary implements IDictionary, Cloneable {
             model = conf.getParameter(NxsConstant.MODEL);
         }
         catch (NoResultException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
         }
 
         if (beamline != null) {

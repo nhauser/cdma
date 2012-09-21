@@ -4,7 +4,9 @@ package org.cdma.internal.dictionary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
 import org.cdma.dictionary.LogicalGroup;
@@ -73,7 +75,7 @@ public class Solver {
             try {
                 result = root.findAllContainerByPath( mPath.getValue() );
             } catch (NoResultException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         // If the solver is a call on a method
@@ -86,7 +88,7 @@ public class Solver {
                 // Get all items added by the method
                 result.addAll( context.getContainers() );
             } catch (CDMAException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         // If the solver is a key create a LogicalGroup

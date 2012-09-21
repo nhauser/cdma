@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusDimension;
-import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -434,9 +436,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public int getSizeToCache() {
-        // TODO Auto-generated method stub
-        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -685,15 +685,12 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public String writeCDL(String indent, boolean useFullName, boolean strict) {
-        // TODO Auto-generated method stub
-        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public void setUnitsString(String units) {
-        // TODO Auto-generated method stub
-        new BackupException(NxsFactory.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -710,7 +707,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
                 mDataset = NxsDataset.instanciate(new File(dataset.getLocation()).toURI());
             }
             catch (NoResultException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
     }

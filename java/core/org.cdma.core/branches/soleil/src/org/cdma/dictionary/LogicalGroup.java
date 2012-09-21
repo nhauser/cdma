@@ -33,6 +33,7 @@ package org.cdma.dictionary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -66,10 +67,10 @@ public class LogicalGroup implements IContainer, Cloneable {
         this(key, dataset, false);
     }
 
-
     public LogicalGroup(IKey key, IDataset dataset, boolean exception) {
         this( null, key, dataset, exception);
     }
+
     public LogicalGroup(LogicalGroup parent, IKey key, IDataset dataset ) {
         this( parent, key, dataset, false);
     }
@@ -374,8 +375,7 @@ public class LogicalGroup implements IContainer, Cloneable {
      * @return the given key
      */
     public IKey bindKey(String bind, IKey key) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     public void setParent(LogicalGroup group) {
@@ -389,19 +389,17 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     @Override
     public boolean hasAttribute(String name, String value) {
-        new NotImplementedException().printStackTrace();
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeAttribute(IAttribute attribute) {
-        new NotImplementedException().printStackTrace();
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void setName(String name) {
-        new NotImplementedException().printStackTrace();
+        throw new NotImplementedException();
     }
 
     /**
@@ -411,12 +409,12 @@ public class LogicalGroup implements IContainer, Cloneable {
      */
     @Override
     public void setParent(IGroup group) {
-        new NotImplementedException().printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
     public void setShortName(String name) {
-        new NotImplementedException().printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -451,7 +449,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * This method defines the way the ExtendedDictionary will be loaded.
-     * It must manage the do the detection and loading of the key file, 
+     * It must manage the detection and loading of the key file, 
      * and the corresponding mapping file that belongs to the plug-in.
      * Once the dictionary has its paths targeting both key and mapping
      * files set, the detection work is done. It just remains the loading 
@@ -468,7 +466,7 @@ public class LogicalGroup implements IContainer, Cloneable {
         try {
             mDictionary.readEntries();
         } catch (FileAccessException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.SEVERE, e.getMessage() );
         }
         return mDictionary;
     }

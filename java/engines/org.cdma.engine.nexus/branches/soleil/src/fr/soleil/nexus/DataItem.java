@@ -5,7 +5,9 @@ import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
@@ -471,7 +473,7 @@ public class DataItem implements Cloneable {
                 nfrFile.closeFile();
             }
             catch (NexusException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.SEVERE, e.getMessage() );
             }
         }
     }

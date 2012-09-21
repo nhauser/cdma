@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -15,6 +16,7 @@ import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusGroup;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -559,9 +561,8 @@ public final class NxsGroup implements IGroup, Cloneable {
             }
             catch (FileAccessException e) {
                 dictionary = null;
-                e.printStackTrace();
+                Factory.getLogger().log( Level.SEVERE, e.getMessage());
             }
-            // dictionary = mGroups[0].findDictionary();
         }
         return dictionary;
     }
@@ -617,56 +618,47 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean removeDimension(IDimension dimension) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeDimension(String dimName) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public List<IDimension> getDimensionList() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IDimension getDimension(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public void addDataItem(IDataItem v) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeAttribute(IAttribute attribute) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void addOneDimension(IDimension dimension) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void addSubgroup(IGroup group) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override

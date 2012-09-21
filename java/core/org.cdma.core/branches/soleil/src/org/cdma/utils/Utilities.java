@@ -14,6 +14,7 @@ package org.cdma.utils;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -149,7 +150,7 @@ public final class Utilities {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, ex.getMessage());
                 return null;
             }
             return signal;
