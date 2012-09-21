@@ -11,7 +11,7 @@
 package org.cdma.exception;
 
 
-public class NotImplementedException extends CDMAException {
+public class NotImplementedException extends RuntimeException {
 
     /**
      * 

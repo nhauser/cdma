@@ -1,11 +1,13 @@
 package org.cdma.plugin.soleil.array;
 
+
 import org.cdma.engine.nexus.array.NexusArray;
 import org.cdma.engine.nexus.array.NexusArrayIterator;
 import org.cdma.engine.nexus.array.NexusIndex;
 import org.cdma.engine.nexus.array.NexusSliceIterator;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IArrayIterator;
@@ -321,38 +323,32 @@ public final class NxsArray implements IArray {
 
     @Override
     public void releaseStorage() throws BackupException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public long getRegisterId() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public void lock() {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void unlock() {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isDirty() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public IArray setDouble(double value) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -367,8 +363,7 @@ public final class NxsArray implements IArray {
 
     @Override
     public void setDirty(boolean dirty) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     public boolean getFastMode() {

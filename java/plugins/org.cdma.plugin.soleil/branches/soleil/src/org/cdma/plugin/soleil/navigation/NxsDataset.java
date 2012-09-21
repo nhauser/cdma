@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.ExtendedDictionary;
@@ -90,7 +91,7 @@ public final class NxsDataset implements IDataset {
                             }
                         }
                         catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
+                            Factory.getLogger().log( Level.WARNING, e.getMessage());
                         }
                     }
                     datasets.put( uri, new SoftReference<NxsDataset>(dataset));
@@ -119,7 +120,7 @@ public final class NxsDataset implements IDataset {
                 mRootLogical = new NxsLogicalGroup(null, null, this, debug);
             }
             catch (NoResultException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         else {
@@ -207,7 +208,7 @@ public final class NxsDataset implements IDataset {
                 mPath = new URI(location);
             }
             catch (URISyntaxException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
             mDatasets.clear();
         }

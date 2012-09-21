@@ -11,13 +11,14 @@
 package org.cdma.utilities.configuration.internal;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
-import org.cdma.utilities.configuration.internal.ConfigParameter.CriterionType;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 
@@ -99,7 +100,7 @@ public final class ConfigParameterDynamic implements ConfigParameter {
                 try {
                     result = ((IDataItem) cnt).getData().getObject(((IDataItem) cnt).getData().getIndex()).toString();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
             else {
@@ -123,7 +124,7 @@ public final class ConfigParameterDynamic implements ConfigParameter {
                     }
                     result = mTest.equals( crt ) ? CriterionValue.TRUE.toString() : CriterionValue.FALSE.toString();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
             else {

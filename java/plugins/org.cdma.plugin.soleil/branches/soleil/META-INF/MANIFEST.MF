@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CDMA NeXus Soleil Plug-in
-Bundle-SymbolicName: org.gumtree.data.CDMA.NexusSoleil
-Bundle-Version: 2.1.0.qualifier
+Bundle-SymbolicName: org.cdma.plugin.nexussoleil
+Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: fr.soleil.nexus,
  org.cdma,
@@ -25,6 +25,6 @@ Export-Package: org.cdma.plugin.soleil,
  org.cdma.plugin.soleil.navigation,
  org.cdma.plugin.soleil.utils
 Eclipse-BundleShape: jar
-Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
+Require-Bundle: org.cdma.core;bundle-version="3.0.0.qualifier";visibility:=reexport,
  org.nexusformat
 Bundle-ActivationPolicy: lazy

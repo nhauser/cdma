@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CDMA NeXus Engine
-Bundle-SymbolicName: org.gumtree.data.CDMA.engine.jnexus
-Bundle-Version: 2.1.0.qualifier
+Bundle-SymbolicName: org.cdma.engine.nexus
+Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.cdma,
@@ -14,10 +14,10 @@ Import-Package: org.cdma,
  org.jdom.filter,
  org.jdom.input,
  org.nexusformat
-Export-Package: fr.soleil.nexus,
+Export-Package:
  org.cdma.engine.nexus.array,
  org.cdma.engine.nexus.navigation,
  org.cdma.engine.nexus.utils
 Eclipse-BundleShape: jar
-Require-Bundle: org.gumtree.data.CDMA.Core;bundle-version="3.0.0.qualifier";visibility:=reexport,
+Require-Bundle: org.cdma.core;bundle-version="3.0.0.qualifier";visibility:=reexport,
  org.nexusformat 

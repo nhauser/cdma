@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IContainer;
@@ -186,7 +188,7 @@ public class DetectedSource {
                 }
             }
             catch (NoResultException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         return result;

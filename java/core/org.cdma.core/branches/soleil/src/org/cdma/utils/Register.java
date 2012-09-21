@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -111,7 +112,7 @@ public class Register {
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
         WeakReference<IArray> arrayReference = new WeakReference<IArray>(array,
@@ -131,8 +132,6 @@ public class Register {
     }
 
     public static void clean() {
-        //[SOLEIL][clement] TODO Shall we remove this GC call ? It's seen as a major violation by SONAR: our code analyzer and may cause performance leak 
-        System.gc();
         for (Entry<Long, WeakReference<IArray>> referenceEntry : ARRAY_REGISTRY
                 .entrySet())
             if (referenceEntry.getValue().get() == null)
@@ -188,7 +187,7 @@ public class Register {
                     array.releaseStorage();
                 } catch (Exception e) {
                     isLocked = false;
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             else {
                 try {
@@ -202,7 +201,7 @@ public class Register {
                     toBeRemovedId.add(arrayEntry.getKey());
                 } catch (Exception e) {
                     // isLocked = false;
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
         }

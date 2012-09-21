@@ -1,9 +1,11 @@
 package org.cdma.engine.nexus.array;
 
+
 import org.cdma.engine.nexus.utils.NexusArrayMath;
 import org.cdma.engine.nexus.utils.NexusArrayUtils;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IArrayIterator;
@@ -144,7 +146,7 @@ public final class NexusArray implements IArray {
 
     @Override
     public void lock() {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
     }
 
     @Override
@@ -154,7 +156,7 @@ public final class NexusArray implements IArray {
 
     @Override
     public void releaseStorage() throws BackupException {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
     }
 
     @Override
@@ -177,8 +179,7 @@ public final class NexusArray implements IArray {
 
     @Override
     public void unlock() {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     // / IArray data manipulation
@@ -205,8 +206,7 @@ public final class NexusArray implements IArray {
 
     @Override
     public long getRegisterId() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -703,6 +703,6 @@ public final class NexusArray implements IArray {
 
     @Override
     public void setDirty(boolean dirty) {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
     }
 }

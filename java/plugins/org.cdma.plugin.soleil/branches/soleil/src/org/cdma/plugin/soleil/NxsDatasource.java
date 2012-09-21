@@ -8,7 +8,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IGroup;
@@ -24,7 +26,7 @@ public final class NxsDatasource implements IDatasource {
     private static NxsDatasource datasource;
 
     public static NxsDatasource getInstance() {
-        synchronized (NxsFactory.class ) {
+        synchronized (NxsDatasource.class ) {
             if( datasource == null ) {
                 datasource  = new NxsDatasource();
             }
@@ -104,10 +106,10 @@ public final class NxsDatasource implements IDatasource {
 
                     }
                     catch (NoResultException e) {
-                        e.printStackTrace();
+                        Factory.getLogger().log( Level.WARNING, e.getMessage());
                     }
                     catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                        Factory.getLogger().log( Level.WARNING, e.getMessage());
                     }
                 }
             }
@@ -145,7 +147,7 @@ public final class NxsDatasource implements IDatasource {
                         fragment = "#" + URLEncoder.encode(fragment, "UTF-8");
                     }
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
                 
             }

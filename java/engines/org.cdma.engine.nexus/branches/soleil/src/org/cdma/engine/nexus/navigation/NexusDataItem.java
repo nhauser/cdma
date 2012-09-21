@@ -9,10 +9,10 @@ import java.util.Map.Entry;
 
 import org.cdma.engine.nexus.array.NexusArray;
 import org.cdma.engine.nexus.array.NexusIndex;
-import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -454,9 +454,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public int getSizeToCache() {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -508,29 +506,22 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public boolean hasCachedData() {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void invalidateCache() {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isCaching() {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isMemberOfStructure() {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -610,25 +601,17 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public void setCachedData(IArray cacheData, boolean isMetadata)
             throws InvalidArrayTypeException {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
     public void setCaching(boolean caching) {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
     public void setDataType(Class<?> dataType) {
-        try {
-            // TODO Auto-generated method stub
-            throw new BackupException(NexusDataset.ERR_NOT_SUPPORTED);
-        }
-        catch (BackupException e) {
-            e.printStackTrace();
-        }
+        throw new NotImplementedException();
     }
 
     @Override
@@ -660,13 +643,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public void setElementSize(int elementSize) {
-        try {
-            // TODO Auto-generated catch block
-            throw new BackupException(NexusDataset.ERR_NOT_SUPPORTED);
-        }
-        catch (BackupException e) {
-            e.printStackTrace();
-        }
+        throw new NotImplementedException();
     }
 
     @Override
@@ -684,8 +661,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public void setSizeToCache(int sizeToCache) {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -725,15 +701,12 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public String writeCDL(String indent, boolean useFullName, boolean strict) {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public void setUnitsString(String units) {
-        // TODO Auto-generated method stub
-        new BackupException(NexusDataset.ERR_NOT_SUPPORTED).printStackTrace();
+        throw new NotImplementedException();
     }
 
     @Override

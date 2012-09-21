@@ -11,13 +11,23 @@
 // ****************************************************************************
 package org.cdma.dictionary;
 
+// JAVA imports
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
+// JDOM imports
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
+
+//CDMA imports
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.exception.FileAccessException;
@@ -26,11 +36,6 @@ import org.cdma.internal.IModelObject;
 import org.cdma.internal.dictionary.ConceptManager;
 import org.cdma.internal.dictionary.ItemSolver;
 import org.cdma.internal.dictionary.PluginMethodManager;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
 
 
 /**
@@ -327,8 +332,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
                 concepts.add(new Concept(elem));
             }
         } catch (FileAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Factory.getLogger().log( Level.WARNING, e.getMessage() );
         }
         return concepts;
     }

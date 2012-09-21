@@ -2,11 +2,11 @@ package org.cdma.engine.nexus.navigation;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.cdma.exception.FileAccessException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -169,26 +169,22 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 
     @Override
     public boolean sync() throws IOException {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void saveTo(String location) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void save(IContainer container) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void save(String parentPath, IAttribute attribute) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     /**

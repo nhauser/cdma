@@ -7,7 +7,6 @@ import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
 import org.cdma.exception.CDMAException;
 import org.cdma.interfaces.IContainer;
-import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.navigation.NxsGroup;

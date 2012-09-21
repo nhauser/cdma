@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 
@@ -113,7 +114,7 @@ public class CDMATool {
                 reference.close();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, e.getMessage());
             }
         }
     }
@@ -189,7 +190,7 @@ public class CDMATool {
                 }
             }
             catch (IOException ex) {
-                ex.printStackTrace();
+                Factory.getLogger().log( Level.WARNING, ex.getMessage());
                 result = false;
             }
             finally {
@@ -198,14 +199,14 @@ public class CDMATool {
                         output.close();
                     }
                     catch (IOException e) {
-                        e.printStackTrace();
+                        Factory.getLogger().log( Level.WARNING, e.getMessage());
                     }
                 }
                 try {
                     source.close();
                 }
                 catch (IOException e) {
-                    e.printStackTrace();
+                    Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
         }

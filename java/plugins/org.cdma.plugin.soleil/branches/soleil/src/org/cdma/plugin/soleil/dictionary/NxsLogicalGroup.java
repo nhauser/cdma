@@ -1,5 +1,7 @@
 package org.cdma.plugin.soleil.dictionary;
 
+import java.util.logging.Level;
+
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.ExtendedDictionary;
@@ -38,7 +40,7 @@ public class NxsLogicalGroup extends LogicalGroup {
         try {
             dictionary.readEntries();
         } catch (FileAccessException e) {
-            e.printStackTrace();
+            Factory.getLogger().log( Level.SEVERE, e.getMessage());
             dictionary = null;
         }
 
