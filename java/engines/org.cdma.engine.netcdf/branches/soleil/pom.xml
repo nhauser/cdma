@@ -14,16 +14,10 @@
 	<name>CDMA Engine NetCDF</name>
 	<description>CDMA Engine: NetCDF</description>
 
-    <scm>
-        <connection>./</connection>
-        <developerConnection>./</developerConnection>
-    </scm>
-<!-- 
 	<scm>
 		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/branches/soleil</connection>
 		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/branches/soleil</developerConnection>
 	</scm>
-	-->
 
 	<dependencies>
 		<dependency>
@@ -31,15 +25,32 @@
 			<artifactId>Core</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>ncsa</groupId>
-			<artifactId>ncsa.hdf</artifactId>
-			<version>2.7.0-SNAPSHOT</version>
+		    <groupId>org.hdfgroup</groupId>
+			<artifactId>hdf-java</artifactId>
+			<version>2.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>ucar</groupId>
-			<artifactId>ucar.netcdf</artifactId>
-			<version>4.0.48-SNAPSHOT</version>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf</artifactId>
+			<version>4.0</version>
 		</dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <!-- 
+        <dependency>
+            <groupId>ncsa</groupId>
+            <artifactId>ncsa.hdf</artifactId>
+            <version>2.7.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>ucar</groupId>
+            <artifactId>ucar.netcdf</artifactId>
+            <version>4.0.48-SNAPSHOT</version>
+        </dependency>
+        -->
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>

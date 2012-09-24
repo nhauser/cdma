@@ -29,7 +29,6 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IGroup;
 import org.cdma.io.IWriter;
-import org.slf4j.LoggerFactory;
 
 /**
  * An HDF implementation of IWriter. Export GDM model objects into HDF files.
@@ -132,7 +131,7 @@ public class NcHdfWriter implements IWriter {
 			try {
 				fileHandler.close();
 			} catch (Exception e) {
-				LoggerFactory.getLogger(this.getClass()).error(e.getMessage());
+				Factory.getLogger().log( Level.SEVERE, e.getMessage());
 			}
 			isOpen = false;
 		}
@@ -829,8 +828,7 @@ public class NcHdfWriter implements IWriter {
 				}
 			}
 		} catch (Exception e) {
-			LoggerFactory.getLogger(this.getClass()).error(
-					e.getLocalizedMessage());
+		    Factory.getLogger().log( Level.SEVERE, e.getLocalizedMessage());
 		}
 		return false;
 	}
