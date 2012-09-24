@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.soleil</groupId>
+		<artifactId>super-pom-java</artifactId>
+		<version>RELEASE</version>
+	</parent>
+
+	<groupId>org.cdma.engines</groupId>
+	<artifactId>netcdf</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>CDMA Engine NetCDF</name>
+	<description>CDMA Engine: NetCDF</description>
+
+    <scm>
+        <connection>./</connection>
+        <developerConnection>./</developerConnection>
+    </scm>
+<!-- 
+	<scm>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/branches/soleil</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/branches/soleil</developerConnection>
+	</scm>
+	-->
+
+	<dependencies>
+		<dependency>
+			<groupId>org.cdma</groupId>
+			<artifactId>Core</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>ncsa</groupId>
+			<artifactId>ncsa.hdf</artifactId>
+			<version>2.7.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>ucar</groupId>
+			<artifactId>ucar.netcdf</artifactId>
+			<version>4.0.48-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+	</build>
+
+	<developers>
+		<developer>
+			<name>LAM</name>
+			<email>tla@ansto.gov.au</email>
+			<url>http://www.synchrotron-soleil.fr</url>
+			<organization>Australian Nuclear Science and Technology Organisation</organization>
+			<organizationUrl>http://www.ansto.gov.au</organizationUrl>
+			<roles>
+				<role>author</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>XIONG</name>
+			<email>nxi@ansto.gov.au</email>
+			<url>http://www.synchrotron-soleil.fr</url>
+			<organization>Australian Nuclear Science and Technology Organisation</organization>
+			<organizationUrl>http://www.ansto.gov.au</organizationUrl>
+			<roles>
+				<role>author</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rodriguez</id>
+			<name>rodriguez</name>
+			<email>clement.rodriguez@synchrotron-soleil.fr</email>
+			<url>http://www.synchrotron-soleil.fr</url>
+			<organization>Synchrotron Soleil</organization>
+			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+	</developers>
+
+</project>
