@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CDMA NetCDF ANSTO Plug-in
+Bundle-SymbolicName: org.cdma.plugin.ansto.netcdf
+Bundle-Version: 3.0.0.qualifier
+Export-Package: org.cdma.plugin.ansto;
+  uses:="ucar.nc2,
+   org.cdma.utils,
+   org.cdma.math,
+   org.cdma.interfaces,
+   ucar.ma2,
+   org.cdma.dictionary,
+   ucar.nc2.dataset",
+ org.cdma.plugin.ansto.internal
+Require-Bundle: org.cdma.core;bundle-version="2.1.0";visibility:=reexport,
+ org.cdma.engine.netcdf;bundle-version="3.0.0.qualifier";visibility:=reexport
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Eclipse-BundleShape: jar
+Service-Component: OSGI-INF/factory.xml
+Bundle-ActivationPolicy: lazy
