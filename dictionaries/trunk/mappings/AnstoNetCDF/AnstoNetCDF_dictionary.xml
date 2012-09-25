@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="ANSTO_NETCDF" version="1.0.0">
+  <item key="images">
+    <path>/entry1/data/hmm_xy</path>
+  </item>
+</map-def>
