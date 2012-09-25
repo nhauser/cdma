@@ -5,7 +5,7 @@ import org.nexusformat.NexusFile;
 
 public class NexusFileHandler extends NexusFile {
     public NexusFileHandler(String filename, int access) throws NexusException  {
-	super(filename, access);
+        super(filename, access);
     }
 
     /**
@@ -18,18 +18,18 @@ public class NexusFileHandler extends NexusFile {
      * @note the first item has index number 0
      */
     public String getSubItemName(int iIndex, String sNodeClass) throws NexusException {
-	if(handle < 0) throw new NexusException("NAPI-ERROR: File not open");
-	String names[] = new String[2];
-	int i = 0;
-	while(nextentry(handle,names) != -1)
-	{
-	    if( names[1].equals(sNodeClass) ) {
-		if( i == iIndex ) {
-		    return names[0];
-		}
-		i++;
-	    }
-	}
-	return null;
+    	if(handle < 0) throw new NexusException("NAPI-ERROR: File not open");
+    	String names[] = new String[2];
+    	int i = 0;
+    	while(nextentry(handle,names) != -1)
+    	{
+    	    if( names[1].equals(sNodeClass) ) {
+    		if( i == iIndex ) {
+    		    return names[0];
+    		}
+    		i++;
+    	    }
+    	}
+    	return null;
     }
 }
