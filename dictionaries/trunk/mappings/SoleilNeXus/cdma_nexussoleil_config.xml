@@ -194,6 +194,29 @@
   </dataset-model>
 
 <!-- ============================================
+==  CONFIG 9: temporary files                       ==
+============================================= -->
+  <dataset-model name="temp_flyscan">
+    <criteria>
+		<if exist="true" target="/{NXentry}/scan_data{NXdata}/"/>
+		<if exist="false" target="/{NXentry}/{NXinstrument}"/>
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE" type="constant" constant="temporary"/>
+      <parameter name="MODEL" type="constant" constant="local_files" />
+    </parameters>
+    
+    <plugin>
+      <java>
+        <set name="log_debug" value="true"/>
+        <set name="N4T_buffer_size" value="300"/>
+      </java>
+    </plugin>
+  </dataset-model>
+
+  
+<!-- ============================================
 ==  Global section                             ==
 ============================================= -->
   <global>
