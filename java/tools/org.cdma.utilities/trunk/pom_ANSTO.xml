@@ -2,21 +2,19 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.cdma.plugins</groupId>
-    <artifactId>NetcdfAnsto</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <name>ANSTO NetCDF</name>
-    <description>CDMA Plug-in: ANSTO using NetCDF</description>
+	<artifactId>org.gumtree.data.utilities</artifactId>
+	<packaging>eclipse-plugin</packaging>
 
     <scm>
-        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</connection>
-        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</developerConnection>
+      <connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk/</connection>
+      <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk/</developerConnection>
     </scm>
 
     <parent>
-        <groupId>fr.soleil</groupId>
-        <artifactId>super-pom-java</artifactId>
-        <version>RELEASE</version>
+        <groupId>org.codehaus.gumtree</groupId>
+        <artifactId>org.cdma.parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../../../others/org.cdma.parent</relativePath>
     </parent>
 
     <dependencies>
@@ -25,22 +23,30 @@
             <artifactId>Core</artifactId>
             <version>3.2.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>org.cdma.engines</groupId>
-            <artifactId>netcdf</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
+    
     <build>
+        <plugins>
+            <plugin>
+                <groupId>${tycho.groupId}</groupId>
+                <artifactId>tycho-source-plugin</artifactId>
+                <version>${tycho.version}</version>
+                <executions>
+                    <execution>
+                        <id>plugin-source</id>
+                        <goals>
+                            <goal>plugin-source</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
             <resource>
                 <directory>META-INF</directory>
                 <targetPath>META-INF</targetPath>
-            </resource>
-            <resource>
-                <directory>OSGI-INF</directory>
-                <targetPath>OSGI-INF</targetPath>
             </resource>
         </resources>
     </build>
