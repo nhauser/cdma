@@ -9,8 +9,8 @@
     <description>CDMA Plug-in: ANSTO using NetCDF</description>
 
     <scm>
-        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/branches/soleil/</connection>
-        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/branches/soleil/</developerConnection>
+        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</connection>
+        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</developerConnection>
     </scm>
 
     <parent>

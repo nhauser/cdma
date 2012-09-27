@@ -8,29 +8,44 @@
 		<version>RELEASE</version>
 	</parent>
 
-	<groupId>org.cdma.engines</groupId>
-	<artifactId>nexus</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
-	<name>CDMA Engine Nexus</name>
-	<description>CDMA Engine: NeXus based on Soleil's API</description>
+	<groupId>org.cdma.plugins</groupId>
+	<artifactId>NexusSoleil</artifactId>
+	<version>1.4.8-SNAPSHOT</version>
+	<name>CDMA NeXus Soleil Plugin</name>
 
+	<description>
+    This project is Soleil's NeXus plugin for the CDMA
+    </description>
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/trunk</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/trunk</developerConnection>
 	</scm>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.nexusformat</groupId>
-			<artifactId>jnexus</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.cdma</groupId>
 			<artifactId>Core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.cdma</groupId>
+			<artifactId>utilities</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.cdma.engines</groupId>
+			<artifactId>nexus</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src/</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>META-INF</directory>
+				<targetPath>META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>OSGI-INF</directory>
+				<targetPath>OSGI-INF</targetPath>
+			</resource>
+		</resources>
 	</build>
 
 	<developers>
