@@ -48,7 +48,7 @@ public final class Factory {
     private static final String DICO_PATH_PROP       = "CDM_DICTIONARY_PATH";
     private static final String FILE_CONCEPT_NAME    = "concepts";
     private static final String FILE_CONCEPT_CORE    = "core_";
-    private static final String FILE_VIEW_NAME       = "view";
+    private static final String FILE_VIEW_SUFFIX     = "view";
     
     private static final String PATH_FOLDER_MAPS     = "mappings";
     private static final String PATH_FOLDER_VIEWS    = "views";
@@ -135,10 +135,16 @@ public final class Factory {
      * @return the path to the standard declarative file
      */
     public static String getPathKeyDictionary() {
-        String sDict = getDictionariesFolder();
-        String sFile = ( getActiveView() + "_" + FILE_VIEW_NAME + ".xml" ).toLowerCase();
+    	String file  = null;
+    	String sDict = getDictionariesFolder();
+        String view  = getActiveView();
+        
+        if( ! view.trim().isEmpty() ) {
+        	String vFile = ( view + "_" + FILE_VIEW_SUFFIX + ".xml" ).toLowerCase();
+        	file = sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + vFile;
+        }
 
-        return sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + sFile;
+        return file;
     }
 
     /**

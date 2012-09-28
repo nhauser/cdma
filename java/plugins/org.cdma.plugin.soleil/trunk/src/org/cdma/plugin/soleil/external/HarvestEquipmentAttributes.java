@@ -126,7 +126,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                 else if (node.getNodeName().toLowerCase().matches("xia")) {
                     // We are on sub-node of the XIA the region is contained in the name
                     if (nodes.length >= 4) {
-                        node = nodes[4];
+                        node = nodes[3];
                         String region = node.getNodeName().replaceAll(".*([0-9]+)$", "$1");
                         if (node.getNodeName().toLowerCase().matches(".*xia.*")) {
                             container.addStringAttribute(NxsConstant.ATTR_REGION, region);

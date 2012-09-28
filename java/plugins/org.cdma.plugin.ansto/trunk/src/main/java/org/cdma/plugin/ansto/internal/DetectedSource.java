@@ -2,10 +2,17 @@ package org.cdma.plugin.ansto.internal;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URI;
 
+import org.cdma.engine.netcdf.navigation.NcDataset;
+import org.cdma.interfaces.IGroup;
+import org.cdma.plugin.ansto.AnstoFactory;
+
 public class DetectedSource {
-    private static final String EXTENSION[] = new String[] {".nxs", ".nx.hdf" };
+	private static final String NEXUS_EXTENSION = ".nxs";
+	private static final String HDF_EXTENSION   = ".nx.hdf";
+    private static final String EXTENSION[]     = new String[] { NEXUS_EXTENSION, HDF_EXTENSION };
 
     public static final class NetCDFFilter implements FilenameFilter {
 
@@ -76,11 +83,15 @@ public class DetectedSource {
             File file = new File(uri.getPath());
             if ( ! file.isDirectory() ) {
                 mIsFolder = true;
+                mIsReadable = false;
+                mIsProducer = false;
+                mIsBrowsable = false;
+                mIsExperiment = false;
             }
             else {
                 mIsFolder = false;
             }
-
+            
             // Check it is a NeXus file
             mIsReadable = initReadable(uri);
 
@@ -120,8 +131,24 @@ public class DetectedSource {
         
         // Check if the URI targets an ANSTO file
         if ( mIsReadable ) {
-            // TODO [SOLEIL][clement] make a real test case
-            return true;
+        	{
+        		// TODO [SOLEIL][clement] make a real test case
+	        	File file = new File(uri.getPath());
+	        	if ( file.getName().endsWith( HDF_EXTENSION ) ) {
+	        		return true;
+	        	}
+	        	else {
+	        		try {
+						NcDataset dataset = new NcDataset(file.getAbsolutePath(), AnstoFactory.NAME);
+						IGroup grp = dataset.getRootGroup().getGroup("entry1");
+						if( grp != null ) {
+							result = grp.getDataItem("program_name") != null;
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+	        	}
+        	}
         }
         return result;
     }
@@ -131,8 +158,8 @@ public class DetectedSource {
 
         // Check if the URI targets an ANSTO experiment dataset
         if ( mIsProducer ) {
-            // TODO [SOLEIL][clement] make a real test case
-            return true;
+        	// TODO [SOLEIL][clement] make a real test case
+        	return true;
         }
         return result;
     }

@@ -477,30 +477,27 @@ public class LogicalGroup implements IContainer, Cloneable {
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
     private List<IContainer> getItemByKey(IKey key) {
-        // Get the working dictionary
+    	// Create output list
+        List<IContainer> result = new ArrayList<IContainer>();
+        
+    	// Get the working dictionary
         ExtendedDictionary dico = getDictionary();
-
-        // Create the context of resolution
-        Context context = new Context(mDataset, this, key);
-        
-        // Update context
-        context.setConcept( dico.getConcept(key) );
-        
-        // Get the corresponding item solver
-        ItemSolver solver = dico.getItemSolver(key);
-
-        // Create output list
-        List<IContainer> result;
-        
-        // Execute the solver
-        if( solver != null ) {
-            result = solver.solve(context);
-        }
-        // No solver returns empty list
-        else {
-            result = new ArrayList<IContainer>();
-        }
-   
+        if( dico != null ) {
+        	
+	        // Create the context of resolution
+	        Context context = new Context(mDataset, this, key);
+	        
+	        // Update context with corresponding concept
+	        context.setConcept( dico.getConcept(key) );
+	        
+	        // Get the corresponding item solver
+	        ItemSolver solver = dico.getItemSolver(key);
+	
+	        // Execute the solver
+	        if( solver != null ) {
+	            result = solver.solve(context);
+	        }
+        }   
         return result;
     }
 
