@@ -1199,11 +1199,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	public boolean isRoot() {
 		return super.isRoot() || getParentGroup() == null || getShortName().length() == 0;
 	}
-	
-	// TODO [SOLEIL][clement]
-	// Bellow methods are added to fit new mechanism of dictionary based 
-	// on filtering nodes according keys' filters.
-	// TODO END
+
 	@Override
 	public IDataItem findDataItem(IKey key) {
         IDataItem item = null;
@@ -1221,12 +1217,20 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 
 	@Override
 	public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) throws NoResultException {
-//        IKeyFilter filter;
-//        filter = new NcKeyFilter(FilterLabel.ATTRIBUTE_NAME, name);
-//        key.pushFilter(filter);
-//        filter = new NcKeyFilter(FilterLabel.ATTRIBUTE_VALUE, attribute);
-		// [ANSTO][Tony][2011-05-04] TODO: implement the logic to filter attribute
-        return findDataItem(key);
+		IDataItem result = null;
+		if( attribute != null ) {
+			List<IContainer> items = findAllContainers(key);
+			for( IContainer item : items ) {
+				if( item instanceof IDataItem ) {
+					IAttribute attr = item.getAttribute(attribute);
+					if( attr != null && attribute.equals( attr.getStringValue() ) ) {
+						result = (IDataItem) item;
+						break;
+					}
+				}
+			}
+		}
+        return result;
 	}
 
 	@Override
@@ -1268,7 +1272,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	 */
     private List<IContainer> getObjectByKey(IKey key) {
     	// [SOLEIL][clement] must complete this method to have a filtered dictionary mechanism
-    	// TODO IMPORTANT: main method to get an item according a key containing filters.
+    	// IMPORTANT: main method to get an item according a key containing filters.
     	// To apply them according to the underlying data format, I used another private method (applyKeyFilter)
 		IDictionary dictionary = findDictionary();
 		List<IContainer> objectList = new ArrayList<IContainer>();

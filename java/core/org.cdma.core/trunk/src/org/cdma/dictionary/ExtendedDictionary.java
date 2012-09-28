@@ -193,7 +193,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
         	// Read mapping dictionaries
         	readDictionaryMappings();
         	
-        	// TODO create virtually the flat view
+        	// Create a virtual view from the mapping file
         	IKey key;
         	for( String keyID : mPathMap.keySet() ) {
         		key = mFactory.createKey(keyID);
