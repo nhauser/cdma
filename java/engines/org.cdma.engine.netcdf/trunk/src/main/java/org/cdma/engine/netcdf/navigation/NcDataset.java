@@ -118,23 +118,6 @@ public class NcDataset implements IDataset {
 		createRootGroup();
 	}
 
-	/**
-	 * Open an dataset file at a given location.
-	 * 
-	 * @param location
-	 *            String value
-	 * @return NcDataset object
-	 * @throws IOException
-	 *             I/O exception
-	 */
-	/*
-	 * TODO [SOLEIL][clement] find a solution for that
-	 *
-	public static NcDataset open(final String location, String factoryName) throws IOException {
-		return new NcDataset(NetcdfDataset.openDataset(location), factoryName);
-	}
-	*/
-
 	@Override
 	public NcGroup getRootGroup() {
 		return rootGroup;
