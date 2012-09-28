@@ -125,7 +125,7 @@ public final class NxsDataset implements IDataset {
         }
         else {
             ExtendedDictionary dict = mRootLogical.getDictionary();
-            if (dict != null && !dict.getView().equals(Factory.getActiveView())) {
+            if (dict != null && !Factory.getActiveView().equals(dict.getView())) {
                 mRootLogical.setDictionary(mRootLogical.findAndReadDictionary());
             }
         }

@@ -670,6 +670,7 @@ public class NcMLReader {
    * @param refParent parent Group in referenced dataset
    * @param groupElem ncml group element
    */
+  @SuppressWarnings("unchecked")
   private void readGroup(NetcdfDataset newds, NetcdfFile refds, Group parent, Group refParent, Element groupElem) throws IOException {
 
 	  //Changed by nxi, initiate refg to null
@@ -717,7 +718,7 @@ public class NcMLReader {
     }
 
     // look for attributes
-    java.util.List<Element> attList = groupElem.getChildren("attribute", ncNS);
+	java.util.List<Element> attList = groupElem.getChildren("attribute", ncNS);
     for (Element attElem : attList) {
       readAtt(g, refg, attElem);
     }
@@ -785,6 +786,7 @@ public class NcMLReader {
    * @param varElem ncml variable element
    * @throws java.io.IOException on read error
    */
+  @SuppressWarnings("unchecked")
   private void readVariable(NetcdfDataset ds, Group g, Group refg, Element varElem) throws IOException {
     String name = varElem.getAttributeValue("name");
     if (name == null) {
@@ -961,7 +963,8 @@ public class NcMLReader {
    * @param varElem ncml variable element
    * @return return new Variable
    */
-  private Variable readVariableNew(NetcdfDataset ds, Group g, Structure parentS, Element varElem) {
+  @SuppressWarnings("unchecked")
+private Variable readVariableNew(NetcdfDataset ds, Group g, Structure parentS, Element varElem) {
     String name = varElem.getAttributeValue("name");
     if (name == null) {
       errlog.format("NcML Variable name is required (%s)%n",varElem);
@@ -1018,7 +1021,8 @@ public class NcMLReader {
    * @param refStruct reference dataset structure
    * @param varElem   ncml variable element
    */
-  private void readVariableNested(NetcdfDataset ds, Structure parentS, Structure refStruct, Element varElem) {
+  @SuppressWarnings("unchecked")
+private void readVariableNested(NetcdfDataset ds, Structure parentS, Structure refStruct, Element varElem) {
     String name = varElem.getAttributeValue("name");
     if (name == null) {
       errlog.format("NcML Variable name is required (%s)%n", varElem);
@@ -1151,7 +1155,8 @@ public class NcMLReader {
 
   /////////////////////////////////////////////////////////////////////////////////////////
 
-  private Aggregation readAgg(Element aggElem, String ncmlLocation, NetcdfDataset newds, CancelTask cancelTask) throws IOException {
+  @SuppressWarnings("unchecked")
+private Aggregation readAgg(Element aggElem, String ncmlLocation, NetcdfDataset newds, CancelTask cancelTask) throws IOException {
     String dimName = aggElem.getAttributeValue("dimName");
     String type = aggElem.getAttributeValue("type");
     String recheck = aggElem.getAttributeValue("recheckEvery");

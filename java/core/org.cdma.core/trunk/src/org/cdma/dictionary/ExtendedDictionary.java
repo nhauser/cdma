@@ -185,6 +185,21 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
             readDictionaryKeys(null);
             readDictionaryMappings();
         }
+        // No active is set view: create a flat view from mapping
+        else {
+            // Read the pivot dictionary
+            readDictionaryConcepts();
+        	
+        	// Read mapping dictionaries
+        	readDictionaryMappings();
+        	
+        	// TODO create virtually the flat view
+        	IKey key;
+        	for( String keyID : mPathMap.keySet() ) {
+        		key = mFactory.createKey(keyID);
+        		mKeyMap.put(key, keyID);
+        	}            
+        }
     }
 
     /**
