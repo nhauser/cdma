@@ -220,17 +220,20 @@ public final class NxsFactory implements IFactory {
         return new Path(this, path);
     }
 
+    @Deprecated
     @Override
     public IDictionary openDictionary(URI uri) throws FileAccessException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public IDictionary openDictionary(String filepath)
             throws FileAccessException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public IDictionary createDictionary() {
         throw new UnsupportedOperationException();

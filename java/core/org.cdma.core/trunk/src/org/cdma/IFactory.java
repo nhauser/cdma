@@ -54,6 +54,7 @@ public interface IFactory {
      * @return a new instance of the dictionary
      * @throws FileAccessException
      */
+    @Deprecated
     public IDictionary openDictionary(final URI uri) throws FileAccessException;
 
     /**
@@ -63,6 +64,7 @@ public interface IFactory {
      * @return a new instance of the dictionary
      * @throws FileAccessException
      */
+    @Deprecated
     public IDictionary openDictionary(final String filepath) throws FileAccessException;
 
     /**
@@ -248,6 +250,7 @@ public interface IFactory {
      * 
      * @return a CDMA IDictionary
      */
+    @Deprecated
     public IDictionary createDictionary();
 }
 

@@ -331,6 +331,7 @@ public interface IGroup extends IContainer {
      * 
      * @param dictionary the dictionary to set
      */
+    @Deprecated
     void setDictionary(IDictionary dictionary);
 
     /**
@@ -338,6 +339,7 @@ public interface IGroup extends IContainer {
      * 
      * @return IDictionary object
      */
+    @Deprecated
     IDictionary findDictionary();
 
     /**

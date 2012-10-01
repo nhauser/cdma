@@ -126,6 +126,7 @@ public interface IDimension extends IModelObject {
      * @param strict boolean type
      * @return String object
      */
+    @Deprecated
     String writeCDL(boolean strict);
 
     /**

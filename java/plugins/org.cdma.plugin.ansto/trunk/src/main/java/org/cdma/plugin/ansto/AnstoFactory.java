@@ -33,6 +33,7 @@ public class AnstoFactory implements IFactory {
         return AnstoDataset.instantiate(uri);
     }
 
+    @Deprecated
     @Override
     public IDictionary openDictionary(URI uri) throws FileAccessException {
         IDictionary dict = new NcDictionary(AnstoFactory.NAME);
@@ -41,6 +42,7 @@ public class AnstoFactory implements IFactory {
         return dict;
     }
 
+    @Deprecated
     @Override
     public IDictionary openDictionary(String filepath) throws FileAccessException {
         IDictionary dict = new NcDictionary(AnstoFactory.NAME);
@@ -201,6 +203,7 @@ public class AnstoFactory implements IFactory {
         return AnstoDataSource.getInstance();
     }
 
+    @Deprecated
     @Override
     public IDictionary createDictionary() {
         return new NcDictionary(AnstoFactory.NAME);

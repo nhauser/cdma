@@ -67,6 +67,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	 * Dictionary that holding key-path pairs. Only the root group has this
 	 * field initialised.
 	 */
+	@Deprecated
 	protected IDictionary dictionary;
 
 	@Override
@@ -74,6 +75,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 		return ModelType.Group;
 	}
 	
+	@Deprecated
 	@Override
 	public void setDictionary(final IDictionary dictionary) {
 		if (isRoot()) {
@@ -534,6 +536,7 @@ public class NcGroup extends ucar.nc2.Group implements IGroup {
 	 * @return IDictionary object
 	 * @see org.gumtree.data.interfaces.IGroup#findDictionary()
 	 */
+	@Deprecated
 	@Override
 	public IDictionary findDictionary() {
 		if (isRoot()) {
