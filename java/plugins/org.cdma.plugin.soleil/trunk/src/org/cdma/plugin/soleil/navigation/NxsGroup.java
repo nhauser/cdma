@@ -542,6 +542,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         return succeed;
     }
 
+    @Deprecated
     @Override
     public void setDictionary(IDictionary dictionary) {
         if (mGroups.length > 0) {
@@ -549,6 +550,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public IDictionary findDictionary() {
         IDictionary dictionary = null;

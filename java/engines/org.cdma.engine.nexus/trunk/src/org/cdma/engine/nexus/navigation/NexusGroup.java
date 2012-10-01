@@ -45,6 +45,7 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     // Internal members
     private PathNexus        mN4TCurPath;    // Current path
+    @Deprecated
     private IDictionary      mDictionary;    // Group dictionary
     private List<IAttribute> mAttributes;    // Attributes belonging to this
     private List<IDimension> mDimensions;    // Dimensions direct child of this
@@ -543,6 +544,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         }
     }
 
+    @Deprecated
     @Override
     public void setDictionary(IDictionary dictionary) {
         mDictionary = dictionary;
@@ -634,6 +636,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         return list;
     }
 
+    @Deprecated
     @Override
     public IDictionary findDictionary() {
         return null;

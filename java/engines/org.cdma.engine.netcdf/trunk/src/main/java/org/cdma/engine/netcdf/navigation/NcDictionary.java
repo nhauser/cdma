@@ -36,6 +36,7 @@ import org.cdma.interfaces.IKey;
  * @author nxi
  * 
  */
+@Deprecated
 public class NcDictionary implements IDictionary {
 
 	/**

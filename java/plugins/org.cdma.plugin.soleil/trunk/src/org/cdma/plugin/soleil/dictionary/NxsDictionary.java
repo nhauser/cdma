@@ -36,6 +36,7 @@ import org.jdom2.input.SAXBuilder;
  * @author rodriguez
  * 
  */
+@Deprecated
 public final class NxsDictionary implements IDictionary, Cloneable {
     private String mPath; // Path of the XML file carrying the dictionary
     private Map<IKey, Path> mItemMap; // Map associating keys from view file to path from mapping

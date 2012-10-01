@@ -39,6 +39,7 @@ import org.cdma.internal.IModelObject;
  * 
  * @author nxi
  */
+@Deprecated
 public interface IDictionary extends IModelObject, Cloneable {
 
     /**
