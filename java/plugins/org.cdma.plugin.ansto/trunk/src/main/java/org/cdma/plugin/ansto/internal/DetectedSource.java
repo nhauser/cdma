@@ -1,7 +1,7 @@
 package org.cdma.plugin.ansto.internal;
 
 import java.io.File;
-import java.io.FilenameFilter;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
 
@@ -14,20 +14,35 @@ public class DetectedSource {
 	private static final String HDF_EXTENSION   = ".nx.hdf";
     private static final String EXTENSION[]     = new String[] { NEXUS_EXTENSION, HDF_EXTENSION };
 
-    public static final class NetCDFFilter implements FilenameFilter {
+    public static final class NetCDFFilter implements FileFilter {
+    	private boolean mAllowFolder;
+    	
+    	public NetCDFFilter(boolean allowFolder) {
+    		mAllowFolder = allowFolder;
+    	}
+    	
+    	public NetCDFFilter() {
+    		this(false);
+    	}
+    	
+		public boolean accept(File file) {
+			boolean result = false;
 
-        public boolean accept(File dir, String name) {
-            boolean result = false;
-            
-            for( String ext : EXTENSION ) {
-                if ( name.endsWith(ext) ) {
-                    result = true;
-                    break;
-                }
-            }
-            
-            return result;
-        }
+			if(  file.isDirectory() ) {
+				result = mAllowFolder;
+			}
+			else {
+				String name = file.getName();
+				for (String ext : EXTENSION) {
+					if (name.endsWith(ext)) {
+						result = true;
+						break;
+					}
+				}
+			}
+
+			return result;
+		}
     }
 
     private boolean mIsExperiment;
@@ -81,28 +96,28 @@ public class DetectedSource {
         if (uri != null) {
             // Check if the uri is a folder
             File file = new File(uri.getPath());
-            if ( ! file.isDirectory() ) {
+            if ( file.isDirectory() ) {
                 mIsFolder = true;
                 mIsReadable = false;
                 mIsProducer = false;
-                mIsBrowsable = false;
+                mIsBrowsable = true;
                 mIsExperiment = false;
             }
             else {
                 mIsFolder = false;
+
+                // Check it is a NeXus file
+                mIsReadable = initReadable(uri);
+
+                // Check if we are producer of the source
+                mIsProducer = initProducer(uri);
+
+                // Check if the uri corresponds to dataset experiment
+                mIsExperiment = initExperiment(uri);
+
+                // Check if the URI is considered as browsable
+                mIsBrowsable = initBrowsable(uri);
             }
-            
-            // Check it is a NeXus file
-            mIsReadable = initReadable(uri);
-
-            // Check if we are producer of the source
-            mIsProducer = initProducer(uri);
-
-            // Check if the uri corresponds to dataset experiment
-            mIsExperiment = initExperiment(uri);
-
-            // Check if the URI is considered as browsable
-            mIsBrowsable = initBrowsable(uri);
         }
 
     }

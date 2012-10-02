@@ -1,6 +1,7 @@
 package org.cdma.plugin.ansto;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -84,7 +85,7 @@ public class AnstoDataSource implements IDatasource {
         if (source != null) {
             if ( source.isFolder() ) {
                 File folder = new File(target.getPath());
-                NetCDFFilter filter = new NetCDFFilter();
+                NetCDFFilter filter = new NetCDFFilter(true);
                 File[] files = folder.listFiles(filter);
                 if( files != null ) {
                     for ( File file : files ) {
