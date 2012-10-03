@@ -2,11 +2,11 @@
 <!DOCTYPE dictionary SYSTEM "../dtd/synonyms_file.dtd">
 <dictionary name="" version="">
 
-  <concept label="atom_bidule">
+  <concept label="atom_smthg1">
   
     <definition>
-      <description>Angle d'attaque du lancer de patate</description>
-      <unit>Joule</unit>
+      <description>My desc</description>
+      <unit>My units</unit>
     </definition>
     
     <synonyms>
@@ -17,11 +17,11 @@
     
   </concept>
 
-  <concept label="atom_machin">
+  <concept label="atom_smthg2">
   
     <definition>
-      <description>Angle d'attaque du lancer de patate</description>
-      <unit>Joule</unit>
+      <description>My desc 2</description>
+      <unit>My units 2</unit>
     </definition>
 
     <attributes>
