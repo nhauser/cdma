@@ -38,7 +38,7 @@ and seek for attributes and properties somewhere else."
 
 The concepts document is the list of all available concept. They are listed with no particular order.
 
-The fullest list of concept is compound of 2 concept files. One that manages general / generic physical measurements: [http://code.google.com/p/cdma/source/browse/dictionaries/trunk/concepts.xml concepts.xml] .
+The fullest list of concept is compound of 2 concept files. One that manages general / generic physical measurements: [http://code.google.com/p/cdma/source/browse/dictionaries/trunk/concepts/concepts.xml concepts.xml] .
 The other one that is linked to the view that the application has set ( Factory.setView(String) ), indeed the view can specify a particular concept file to complete the global one.
 
 A concepts document is a XML file as following:
@@ -77,7 +77,7 @@ A concepts document is a XML file as following:
 
 = Main idea and usage =
 
-Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk dictionaries part of the SVN repository].
+Concept documents are public and available in the [http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk/concepts dictionaries part of the SVN repository].
 
 If no concepts document is found, specified or the view only refers keywords not listed in concepts; then synonyms mechanism will be disabled. The extended dictionary mechanism will still work but in a degraded mode: only a direct matching between view and mapping will be considered.
 
