@@ -10,13 +10,13 @@
 
 	<groupId>org.cdma.engines</groupId>
 	<artifactId>netcdf</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>CDMA Engine NetCDF</name>
 	<description>CDMA Engine: NetCDF</description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/tags/netcdf-0.0.1</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.netcdf/tags/netcdf-0.0.1</developerConnection>
 	</scm>
 
 	<dependencies>

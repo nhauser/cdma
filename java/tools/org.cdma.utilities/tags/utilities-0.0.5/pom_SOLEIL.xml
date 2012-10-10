@@ -11,14 +11,14 @@
 
 	<groupId>org.cdma</groupId>
 	<artifactId>utilities</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.5</version>
 
 	<name>CDMA Utilities</name>
 	<description> This project contains various tools to interact with CDMA </description>
 	
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.5</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.5</developerConnection>
 	</scm>
 	
 		<developers>

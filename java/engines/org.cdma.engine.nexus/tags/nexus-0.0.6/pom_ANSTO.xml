@@ -4,14 +4,14 @@
 
 	<groupId>org.cdma.engines</groupId>
 	<artifactId>nexus</artifactId>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>0.0.6</version>
 	<name>CDMA Engine Nexus</name>
 	<description>CDMA Engine: NeXus based on Soleil's API</description>
     <packaging>eclipse-plugin</packaging>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/nexus-0.0.6</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.nexus/tags/nexus-0.0.6</developerConnection>
 	</scm>
 
     <parent>
