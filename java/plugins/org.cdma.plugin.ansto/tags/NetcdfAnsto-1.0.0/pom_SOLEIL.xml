@@ -3,14 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.cdma.plugins</groupId>
-    <artifactId>ANSTONetCDF</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>NetcdfAnsto</artifactId>
+    <version>1.0.0</version>
     <name>ANSTO NetCDF</name>
     <description>CDMA Plug-in: ANSTO using NetCDF</description>
 
     <scm>
-        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</connection>
-        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/trunk</developerConnection>
+        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/tags/NetcdfAnsto-1.0.0</connection>
+        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/tags/NetcdfAnsto-1.0.0</developerConnection>
     </scm>
 
     <parent>

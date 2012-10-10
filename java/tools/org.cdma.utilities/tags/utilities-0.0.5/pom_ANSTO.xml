@@ -2,12 +2,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>org.gumtree.data.utilities</artifactId>
+	<artifactId>org.cdma.utilities</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
     <scm>
-      <connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk/</connection>
-      <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/trunk/</developerConnection>
+      <connection>scm:svn:http://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.5/</connection>
+      <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/tools/org.cdma.utilities/tags/utilities-0.0.5/</developerConnection>
     </scm>
 
     <parent>

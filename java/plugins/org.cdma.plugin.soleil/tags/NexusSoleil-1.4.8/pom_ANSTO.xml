@@ -4,13 +4,13 @@
 
 	<groupId>org.cdma.plugins</groupId>
 	<artifactId>NexusSoleil</artifactId>
-	<version>1.4.8-SNAPSHOT</version>
+	<version>1.4.8</version>
 	<name>CDMA NeXus Soleil Plugin</name>
     <packaging>eclipse-plugin</packaging>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/tags/NexusSoleil-1.4.8</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil/tags/NexusSoleil-1.4.8</developerConnection>
 	</scm>
 
     <parent>
