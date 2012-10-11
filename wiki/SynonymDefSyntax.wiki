@@ -14,7 +14,7 @@ Mainly, there's two way of defining keywords of a view:
 
 The fact, is that there is absolutely *no guarantee that all plug-ins use same keywords* or directly refers to a concept file (which should be the good way of doing). So keywords used by the application can be unidentified in the mapping of a specific plug-in. Even if the physical measure exist under an another form in the mapping file.
 
-This is where synonyms interpose.
+*This is where synonyms interpose*.
 
 == What for ==
 
