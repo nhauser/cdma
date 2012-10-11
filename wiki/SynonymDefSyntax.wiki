@@ -31,7 +31,7 @@ Let's imagine an application that only displays images, it uses the following vi
 
 {{{
 <!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
-<data-def name="DATA_REDUCTION" synonym=""> 
+<data-def name="IMAGE_VIEWER" synonym=""> 
     <group key="data"> 
         <item key="images"/>
         <item key="x_position"/> 
@@ -68,4 +68,22 @@ and two plug-ins are available, they have defined the following mapping:
   </item>
 ...
 </map-def>
+}}}
+
+The application will use *the keyword _images_ according its view*. In the case of the _plug-in A_, the CDMA will answer an item, whereas the _plug-in B_ won't find the item.
+
+Now in the view, we define the following:
+{{{
+<data-def name="IMAGE_VIEWER" synonym="my_synonym_file.xml"> 
+}}}
+
+In the same folder we create the so called "my_synonym_file.xml", as following:
+{{{
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE synonym-def SYSTEM "../dtd/synonyms_file.dtd">
+<synonym-def>
+   <plugin name="plug_in_B">
+      <synonym key="images" mapping="image_stack"/>
+   </plugin>
+</synonym-def>
 }}}
