@@ -70,14 +70,14 @@ and two plug-ins are available, they have defined the following mapping:
 </map-def>
 }}}
 
-The application will use *the keyword _images_ according its view*. In the case of the _plug-in A_, the CDMA will answer an item, whereas the _plug-in B_ won't find the item.
+The application will use *the keyword _images_ according its view*. In the case of the _plug-in A_, the CDMA will answer an item, whereas *the _plug-in B_ won't find the item*.
 
-Now in the view, we define the following:
+Now in the view, *we define the synonym file name* as the following:
 {{{
 <data-def name="IMAGE_VIEWER" synonym="my_synonym_file.xml"> 
 }}}
 
-In the same folder we create the so called "my_synonym_file.xml", as following:
+In the same folder *we create the synonym file* so called "my_synonym_file.xml", as following:
 {{{
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE synonym-def SYSTEM "../dtd/synonyms_file.dtd">
@@ -87,3 +87,5 @@ In the same folder we create the so called "my_synonym_file.xml", as following:
    </plugin>
 </synonym-def>
 }}}
+
+Therefore, the application will still ask for data with both plug-ins the same way. But the in the case of the _plug-in B_ *the keyword _images_ will be translated into _image_stack_*.
