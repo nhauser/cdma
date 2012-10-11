@@ -1,0 +1,23 @@
+#summary synonyms permits to link keywords having different names
+
+= Introduction =
+
+The *synonym document is relative to a particular view*. Synonyms have a meaning only when using a the dictionary mechanism. It will permit to associate for each plug-in a specific keyword to another one.
+
+== The need of synonyms ==
+
+The need of synonyms appears when an application can use several plug-ins. It will ask for data using keywords from its defined view.
+
+Mainly, there's two way of defining keywords of a view:
+  * in worst cases, according a particular data format
+  * or according a concept file relative to a specific experiment
+
+The fact, is that there is absolutely *no guarantee that all plug-ins use same keywords* or directly refers to a concept file (which should be the good way of doing). So keywords used by the application can be unidentified in the mapping of a specific plug-in. Even if the physical measure exist under an another form in the mapping file.
+
+This is where synonyms interpose.
+
+== What for ==
+
+Synonyms are loaded at the same time as the view. Its main purpose is to link two keywords. Once linked and when called both of them will return the same data.
+
+The synonym of a keyword is plug-in dependent. It means that the specified synonym will be used only when the associated plug-in is working.
