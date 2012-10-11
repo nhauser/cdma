@@ -1,4 +1,4 @@
-#summary it organize the data tree that the application will use.
+#summary it organizes the data tree that the application will use.
 
 = Introduction =
 
