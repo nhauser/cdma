@@ -12,6 +12,11 @@ Today some CDMA engines already exist:
 
 == NetCDF engine ==
 
+Based on the [http://www.unidata.ucar.edu/software/netcdf/ NetCDF API] this engine supports various file format.
+
+=== Benefits ===
+
+This API is fully java implemented. No dependencies to any native code is required. It supports a large number of file formats.
 
 == NeXus engine ==
 
