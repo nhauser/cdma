@@ -4,7 +4,7 @@
 
 The *synonym document is relative to a particular view*. Synonyms have a meaning only when using a the dictionary mechanism. It will permit to associate for each plug-in a specific keyword to another one.
 
-== The need of synonyms ==
+= The need of synonyms =
 
 The need of synonyms appears when an application can use several plug-ins. It will ask for data using keywords from its defined view.
 
@@ -16,8 +16,56 @@ The fact, is that there is absolutely *no guarantee that all plug-ins use same k
 
 *This is where synonyms interpose*.
 
-== What for ==
+= What for =
 
 Synonyms are loaded at the same time as the view. Its main purpose is to link two keywords. Once linked and when called both of them will return the same data.
 
 The synonym of a keyword is plug-in dependent. It means that the specified synonym will be used only when the associated plug-in is working.
+
+All synonyms corresponding to a view are stored in the same XML file. When specified that particular is searched in the same folder as the view.
+
+= Use case =
+
+
+Let's imagine an application that only displays images, it uses the following view:
+
+{{{
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="DATA_REDUCTION" synonym=""> 
+    <group key="data"> 
+        <item key="images"/>
+        <item key="x_position"/> 
+        <item key="y_position"/> 
+    </group> 
+    <group key="info"> 
+        <item key="comments"/> 
+    </group> 
+</data-def>
+}}}
+
+and two plug-ins are available, they have defined the following mapping:
+
+ * plug-in A:
+{{{
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="plug_in_A" version="1.0.0">
+...
+  <item key="images">
+    <path>/entry1/data/my_images</path>
+  </item>
+...
+</map-def>
+}}}
+
+ * plug-in B
+{{{
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="plug_in_B" version="1.0.0">
+...
+  <item key="image_stack">
+    <path>/image*/data</path>
+    <call>DataItemStacker</call>
+  </item>
+...
+</map-def>
+}}}
