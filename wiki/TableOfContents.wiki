@@ -15,6 +15,7 @@
      * [ConceptDefSyntax Concepts documents]
      * [KeyDefSyntax View documents]
      * [MapDefSyntax Mapping documents]
+     * [SynonymDefSyntax Synonym documents]
    * [CppImpl C++]
      * [CppClient Client application development]
      * [CppGuideLines Programming guidelines]
