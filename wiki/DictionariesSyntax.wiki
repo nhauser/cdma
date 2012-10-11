@@ -6,20 +6,22 @@ The content of this section is applicable what ever the programming language is 
 
 = Introduction =
 
-The _dictionary mechanism_ is provided by the Core. It is a non-customisable service (i.e. interfaces to implement): the behaviour is the same what ever the plug-in is. It permits to have a virtual view, that is independent and quite different, of the underlying data format.
+The _dictionary mechanism_ is provided by the Core. It is a non-customizable service (i.e. interfaces to implement): the behavior is the same what ever the plug-in is. It permits to have a virtual view, that is independent and quite different, of the underlying data format.
 
 The dictionary describes how data should be presented, its main properties and how to get it. 
-A CDMA dictionary is compound of 3 parts:
+A CDMA dictionary is compound of 4 parts:
   * the [ConceptDefSyntax concepts document] which presents physical measurements and what to expect when getting it
   * the [KeyDefSyntax view documents] which organize the data tree that the application will use
   * the [MapDefSyntax mapping documents] which describes how a particular plug-in will access and construct its data
+  * the [SynonymDefSyntax synonyms documents] which allows to link a plug-in's particular data to a physical measurement 
 
 They all works with keywords:
   * the concept defines a meaning for a keyword
   * the view defines how keywords are organized together
   * the mapping defines how to construct data for that keyword
+  * the synonym link a view keyword to a plug-in mapping keyword (that can be named differently)
 
-Those parts are used internally by the mechanism, they are visible for the application developper. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
+Those parts are used internally by the mechanism, they are visible for the application developer. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
 
 = General informations =
 
@@ -39,3 +41,5 @@ This mechanism consists in binding a key to a physical organization, usually a p
 That "service" is provided in “Core” (see package org.cdma.data.dictionary for Java developers).
 
 The association key/path is done by dictionaries object. The `LogicalGroup` will instantiate one and give it all necessary informations to reach key and mapping files.
+
+If no view is set as _active_ by the application, a flat representation of all the mapping content will be available. But there will be no guarantee of homogeneity (in keywords) between two different data sources.
