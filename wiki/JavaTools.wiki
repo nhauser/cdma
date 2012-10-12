@@ -67,7 +67,7 @@ The _ConfigManager_ retrieves which _ConfigDataset_ is associated to a particula
 
 == Configuration file ==
 
-The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _[http://cdma.googlecode.com/svn/dictionaries/trunk/dtd/configuration_file.dtd configuration_file.dtd]_, that is provided in the.
+The configuration is stored in a *XML file* that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _[http://cdma.googlecode.com/svn/dictionaries/trunk/dtd/configuration_file.dtd configuration_file.dtd]_, that is provided in the [http://cdma.googlecode.com/svn/dictionaries/trunk/ dictionary folder].
 
 The XML file can store as many configurations as requested by the plug-in. Configurations are tested sequentially to determine which one should be applied. Each configuration (markup _dataset_model_) can be cut in 3 sections:
  * criteria that permits to determine if that configuration fits the dataset
