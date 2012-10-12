@@ -24,7 +24,7 @@ The engine developer should focus on efficiency and memory usage.
 = Main parts of an engine =
 ----
 
-All the things an engine should implement are stored in the Core package _interfaces_: `org.gumtree.data.interfaces`.
+All the things an engine should implement are stored in the Core package _interfaces_: `org.cdma.interfaces`.
 
 Notice that one particular interface shouldn't be implemented directly because it is inherited yet from other interfaces : _IContainer_. Its role is to give the property of a physical node of the data source to prevent rewriting many methods many times.
 
