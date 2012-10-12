@@ -70,7 +70,7 @@ and two plug-ins are available, they have defined the following mapping:
 </map-def>
 }}}
 
-The application will use *the keyword _images_ according its view*. In the case of the _plug-in A_, the CDMA will answer an item, whereas *the _plug-in B_ won't find the item*.
+The application will use *the keyword _images_ according its view*. In the displayed view file above, no synonym file is mentioned. Therefore, in the case of the _plug-in A_, the CDMA will answer an item, whereas *the _plug-in B_ won't find the item*.
 
 Now in the view, *we define the synonym file name* as the following:
 {{{
