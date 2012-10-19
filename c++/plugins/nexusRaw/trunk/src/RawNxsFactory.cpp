@@ -21,7 +21,7 @@
 
 // CDMA core
 #include <cdma/Common.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/IKey.h>
 
 // NeXus Engine
 #include <NxsDataset.h>
@@ -165,9 +165,9 @@ Dataset::Dataset()
 //---------------------------------------------------------------------------
 // Dataset::getLogicalRoot
 //---------------------------------------------------------------------------
-cdma::LogicalGroupPtr Dataset::getLogicalRoot()
+cdma::ILogicalGroupPtr Dataset::getLogicalRoot()
 {
-  return cdma::LogicalGroupPtr(NULL);
+  return cdma::ILogicalGroupPtr(NULL);
 }
 
 //==============================================================================
@@ -176,10 +176,11 @@ cdma::LogicalGroupPtr Dataset::getLogicalRoot()
 //----------------------------------------------------------------------------
 // DataSource::isReadable
 //----------------------------------------------------------------------------
-bool DataSource::isReadable(const yat::URI& dataset_location) const
+bool DataSource::isReadable(const std::string& dataset_uri) const
 {
   CDMA_FUNCTION_TRACE("cdma::soleil::rawnexus::DataSource::isReadable");
   // Get the path from URI
+  yat::URI dataset_location(dataset_uri);
   yat::String path = dataset_location.get( yat::URI::PATH );
   
   // Check file exists and is has a NeXus extension
@@ -208,7 +209,7 @@ bool DataSource::isReadable(const yat::URI& dataset_location) const
 //----------------------------------------------------------------------------
 // DataSource::isBrowsable
 //----------------------------------------------------------------------------
-bool DataSource::isBrowsable( const yat::URI& ) const
+bool DataSource::isBrowsable( const std::string& ) const
 {
   return false;
 }
@@ -216,7 +217,7 @@ bool DataSource::isBrowsable( const yat::URI& ) const
 //----------------------------------------------------------------------------
 // DataSource::isProducer
 //----------------------------------------------------------------------------
-bool DataSource::isProducer( const yat::URI& ) const
+bool DataSource::isProducer( const std::string& ) const
 {
   return false;
 }
@@ -224,7 +225,7 @@ bool DataSource::isProducer( const yat::URI& ) const
 //----------------------------------------------------------------------------
 // DataSource::isExperiment
 //----------------------------------------------------------------------------
-bool DataSource::isExperiment( const yat::URI& ) const
+bool DataSource::isExperiment( const std::string& ) const
 {
   return false;
 }
