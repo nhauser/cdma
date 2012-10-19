@@ -29,7 +29,7 @@
 
 #include <yat/any/Any.h>
 #include <cdma/array/IArrayStorage.h>
-#include <cdma/array/View.h>
+#include <cdma/array/IView.h>
 
 /// @cond engineAPI
 
@@ -67,14 +67,14 @@ public:
 
   //@{ IArrayStorage
 
-    void setValue(const cdma::ViewPtr& ima, std::vector<int> position, void* value_ptr);
+    void setValue(const cdma::IViewPtr& ima, std::vector<int> position, void* value_ptr);
     const std::type_info& getType()            { return typeid(*m_data); };
     void*                 getStorage()         { return (void*) m_data; }
     bool                  dirty()              { return m_dirty; };
     void                  setDirty(bool dirty) { m_dirty = dirty; };
-    void*                 getValue( const cdma::ViewPtr& view, std::vector<int> position );
+    void*                 getValue( const cdma::IViewPtr& view, std::vector<int> position );
     IArrayStoragePtr      deepCopy();
-    IArrayStoragePtr      deepCopy(ViewPtr view);
+    IArrayStoragePtr      deepCopy(IViewPtr view);
 
   //@}
 

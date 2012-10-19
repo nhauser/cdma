@@ -23,12 +23,10 @@
 #ifndef __CDMA_IDATASET_H__
 #define __CDMA_IDATASET_H__
 
-#include <yat/utils/URI.h>
-
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IGroup.h>
 #include <cdma/navigation/IDataItem.h>
-#include <cdma/dictionary/LogicalGroup.h>
+#include <cdma/dictionary/ILogicalGroup.h>
 
 namespace cdma
 {
@@ -55,7 +53,7 @@ public:
   /// Return the the logical root of the dataset.
   /// @return CDMA Group type
   ///
-  virtual LogicalGroupPtr getLogicalRoot() = 0;
+  virtual ILogicalGroupPtr getLogicalRoot() = 0;
 
   /// Return the location of the dataset. If it's a file, return the path. 
   /// @return string type 
@@ -67,15 +65,15 @@ public:
   ///
   virtual std::string getTitle() = 0;
 
-  /// Set the location field of the dataset.
-  /// @param location as string
+  /// Set the location (URI) field of the dataset.
+  /// @param location URI
   ///
   virtual void setLocation(const std::string& location) = 0;
 
   /// Set the location field of the dataset.
   /// @param location as yat::URI object
   ///
-  virtual void setLocation(const yat::URI& location) = 0;
+  //virtual void setLocation(const yat::URI& location) = 0;
 
   /// Set the title for the Dataset.
   /// @param title a string object 

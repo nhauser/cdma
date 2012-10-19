@@ -33,7 +33,7 @@
 
 #include <vector>
 #include <cdma/exception/Exception.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <cdma/array/ArrayIterator.h>
 #include <cdma/array/SliceIterator.h>
 
@@ -56,7 +56,7 @@ public:
   /// @param array: the array we want to slice
   /// @param dim: rank of the slice
   ///
-  Slicer(const ArrayPtr& array, int dim);
+  Slicer(const IArrayPtr& array, int dim);
 
   /// d-tor
   ~Slicer();
@@ -71,7 +71,7 @@ public:
   
   /// Returns the whole array
   ///
-  const ArrayPtr& array();
+  const IArrayPtr& array();
 
   /// Get the shape of any slice that is returned. This could be used when a
   /// temporary array of the right shape needs to be created.
@@ -81,8 +81,8 @@ public:
   std::vector<int> getSliceShape();
 
 private:
-  ArrayPtr m_array; // Array from which slices are desired
-  int      m_rank;  // Desired rank of the slices
+  IArrayPtr m_array; // Array from which slices are desired
+  int       m_rank;  // Desired rank of the slices
 };
 
 /// Declaration of shared pointer SlicerPtr

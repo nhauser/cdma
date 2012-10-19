@@ -32,7 +32,7 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
 #include <cdma/navigation/IDataset.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 
 namespace cdma
 {
@@ -56,13 +56,13 @@ class CDMA_DECL SimpleDataItem : public IDataItem
 private:
   std::list<IAttributePtr> m_attr_list;
   IDataset*                m_dataset_ptr;
-  yat::String              m_name;        // Name of the dataitem
-  ArrayPtr                 m_array_ptr;       // Array object
+  std::string              m_name;        // Name of the dataitem
+  IArrayPtr                m_array_ptr;       // Array object
 
 public:
 
   /// c-tor
-  SimpleDataItem(IDataset* dataset_ptr, ArrayPtr ptrArray, const std::string &name);
+  SimpleDataItem(IDataset* dataset_ptr, IArrayPtr ptrArray, const std::string &name);
   
   /// d-tor
   ~SimpleDataItem() { CDMA_FUNCTION_TRACE("SimpleDataItem::~SimpleDataItem"); };
@@ -74,8 +74,8 @@ public:
     IDataItemPtr getASlice(int dimension, int value) throw ( cdma::Exception );
     IGroupPtr getParent();
     IGroupPtr getRoot();
-    ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
-    ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
+    IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( cdma::Exception );
+    IArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception );
     std::string getDescription();
     std::list<IDimensionPtr> getDimensions(int i);
     std::list<IDimensionPtr> getDimensionList();
@@ -110,7 +110,7 @@ public:
     AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
     IDatasetPtr getDataset();
-    void setData(const cdma::ArrayPtr& array);
+    void setData(const cdma::IArrayPtr& array);
   
   ///@} --------------------------------
 

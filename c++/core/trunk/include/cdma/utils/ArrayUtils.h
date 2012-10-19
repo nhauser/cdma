@@ -28,7 +28,7 @@
 
 #include "cdma/Common.h"
 #include "cdma/exception/Exception.h"
-#include "cdma/array/Array.h"
+#include "cdma/array/IArray.h"
 
 /// @cond clientAPI
 
@@ -45,12 +45,12 @@ class CDMA_DECL ArrayUtils
 {
 public:
   /// constructor
-  ArrayUtils( const ArrayPtr& array );
+  ArrayUtils( const IArrayPtr& array );
 
   /// destructor
   ~ArrayUtils();
   
-  ArrayPtr getArray();
+  IArrayPtr getArray();
 
   /// Check if the shape matches with another Array object.
   /// 
@@ -59,7 +59,7 @@ public:
   ///
   /// @return false if shapes do not match
   //
-  bool checkShape(const ArrayPtr& newArray);
+  bool checkShape(const IArrayPtr& newArray);
     
   /// Create a new Array using same backing store as this Array, by eliminating
   /// any dimensions with length one.
@@ -143,7 +143,7 @@ public:
   ArrayUtilsPtr permute(std::vector<int> dims);
 
 private:
-  ArrayPtr m_array;   // SharedPtr on array
+  IArrayPtr m_array;   // SharedPtr on array
 };
 
 } //namespace cdma

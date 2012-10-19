@@ -42,7 +42,7 @@ class CDMA_DECL ArrayIterator
 public:
   // Constructor
   ArrayIterator(const ArrayIterator& iter);
-  ArrayIterator(const cdma::ArrayPtr& array, const cdma::ViewPtr& view, std::vector<int> position);
+  ArrayIterator(const cdma::IArrayPtr& array, const cdma::IViewPtr& view, std::vector<int> position);
 
   // d-structor
   ~ArrayIterator();
@@ -105,14 +105,14 @@ protected:
     /// @param view used to describe how to increments
     /// @param position to be incremented
     ///
-    std::vector<int>& incrementPosition(const ViewPtr& view, std::vector<int>& position);
+    std::vector<int>& incrementPosition(const IViewPtr& view, std::vector<int>& position);
 
     /// Decrements the position vector according the defined view
     ///
     /// @param view used to describe how to increments
     /// @param position to be incremented
     ///
-    std::vector<int>& decrementPosition(const ViewPtr& view, std::vector<int>& position);
+    std::vector<int>& decrementPosition(const IViewPtr& view, std::vector<int>& position);
     
     /// Returns true if the position is equivalent to the last position
     /// that iterator can take
@@ -125,8 +125,8 @@ protected:
     bool isBeginPosition(std::vector<int> shape, std::vector<int> position);
     
 private:
-  ArrayPtr         m_array;    // array storing data to iterate over
-  ViewPtr          m_view;     // view of how to iterate over the array
+  IArrayPtr         m_array;    // array storing data to iterate over
+  IViewPtr          m_view;     // view of how to iterate over the array
   std::vector<int> m_position; // position in the current view of the iterator
 };
 

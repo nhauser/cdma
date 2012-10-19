@@ -25,7 +25,7 @@
 
 #include <typeinfo>
 
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <cdma/Common.h>
 
 namespace cdma
@@ -73,13 +73,13 @@ public:
   ///
   /// @return the requested data in a memory-resident Array.
   ///
-  virtual ArrayPtr getData() = 0;
+  virtual IArrayPtr getData() = 0;
 
   /// Set the given array as new data for this IDataItem
   ///
-  /// @param array ArrayPtr object
+  /// @param array IArrayPtr object
   ///
-  virtual void setData(const ArrayPtr&) = 0;
+  virtual void setData(const IArrayPtr&) = 0;
 
   /// Convenience non-abstract method allowing to get a scalar value
   ///

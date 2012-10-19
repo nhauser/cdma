@@ -84,13 +84,17 @@ namespace cdma
   /// A simple trace helper
   #define CDMA_TRACE(s)  std::cout << CDMA_DBG_PREFIX(this) << dbg_helper::indent() << s << std::endl
   #define CDMA_STATIC_TRACE(s)  std::cout << CDMA_DBG_PREFIX(0x12345678) << dbg_helper::indent() << s << std::endl
-    
+  #define CDMA_COND_TRACE(c, s) do { if(c) { CDMA_TRACE(s); } } while(0)
+  #define CDMA_STATIC_COND_TRACE(c, s) do { if(c) { CDMA_STATIC_TRACE(s); } } while(0)
+
 #else
   class dbg_helper;
   #define CDMA_FUNCTION_TRACE(s)
   #define CDMA_TRACE(s)
   #define CDMA_STATIC_FUNCTION_TRACE(s)
   #define CDMA_STATIC_TRACE(s)
+  #define CDMA_COND_TRACE(c, s)
+  #define CDMA_STATIC_COND_TRACE(c, s)
 #endif
 
 } // namespace

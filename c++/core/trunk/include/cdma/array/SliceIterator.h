@@ -25,7 +25,7 @@
 
 #include <vector>
 #include <cdma/exception/Exception.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <cdma/array/ArrayIterator.h>
 
 /// @cond clientAPI
@@ -48,7 +48,7 @@ class CDMA_DECL SliceIterator
 public:
   // Consrtuctor
   SliceIterator(const SliceIterator& iterator);
-  SliceIterator(const ArrayPtr& array, int dim);
+  SliceIterator(const IArrayPtr& array, int dim);
   
   // D-structor
   ~SliceIterator();
@@ -66,23 +66,23 @@ public:
   /// Access operator: returns a reference on the currently targeted
   /// slice.
   ///
-  /// @return ArrayPtr reference of the current array slice
+  /// @return IArrayPtr reference of the current array slice
   ///
-  ArrayPtr& operator*(void);
+  IArrayPtr& operator*(void) const;
   
   /// Comparison operator: egality
   ///
   /// @param it SliceIterator to compare with this instance
   /// @return true if both iterator refers to the same position
   ///
-  bool operator==(const SliceIteratorPtr& it);
+  bool operator==(const SliceIterator& it);
   
   /// Comparison operator: difference
   ///
   /// @param it SliceIterator to compare with this instance
   /// @return true if both iterator refers to different position
   ///
-  bool operator!=(const SliceIteratorPtr& it);
+  bool operator!=(const SliceIterator& it);
 
   /// Jump to the next slice.
   ///
@@ -102,16 +102,16 @@ public:
   /// @return <code>int</code> array of the current position of the slice
   /// @note rank of the returned position is the same as the IArray shape we are slicing
   ///
-  std::vector<int> getPosition();
+  std::vector<int> getPosition() const;
   
 private:
-  void get();
+  void get() const;
 
 private:
-  ArrayPtr         m_array;      // Whole array to slice
-  ArrayIteratorPtr m_iterator;   // Current position of the slice
-  int              m_dimension;  // Dimension of the slice
-  ArrayPtr         m_slice;      // Reference of the last read slice
+  IArrayPtr         m_array;      // Whole array to slice
+  ArrayIteratorPtr  m_iterator;   // Current position of the slice
+  int               m_dimension;  // Dimension of the slice
+  mutable IArrayPtr m_slice;      // Reference of the last read slice
 
 };
 

@@ -25,10 +25,13 @@
 #ifndef __CDMA_ARRAY_HPP__
 #define __CDMA_ARRAY_HPP__
 
-#include <yat/utils/String.h>
+//#include <yat/utils/String.h>
 #include <string.h>
+#include <sstream>
 
 #include <cdma/array/ArrayIterator.h>
+#include <cdma/array/impl/View.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 
 namespace cdma
 {
@@ -93,7 +96,7 @@ template<typename T> void Array::setValue(const ArrayIterator& target, T value)
 //----------------------------------------------------------------------------
 // Array::setValue
 //----------------------------------------------------------------------------
-template<typename T> void Array::setValue(const ViewPtr& view, std::vector<int> position, T value)
+template<typename T> void Array::setValue(const IViewPtr& view, std::vector<int> position, T value)
 {
   m_data_impl->setValue( view, position, &value );
 }
@@ -135,9 +138,9 @@ template<typename T> T Array::getValue( void )
 //----------------------------------------------------------------------------
 // Array::getValue<T>
 //----------------------------------------------------------------------------
-template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> position )
+template<typename T> T Array::getValue( const IViewPtr& view, std::vector<int> position )
 {
-  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue( const ViewPtr& view, std::vector<int> position )");
+  CDMA_FUNCTION_TRACE("template<typename T> Array::getValue( const IViewPtr& view, std::vector<int> position )");
   if( typeid(T) == m_data_impl->getType() ||
       !strcmp(typeid(T).name(), m_data_impl->getType().name()) )
     return *( (T*)( m_data_impl->getValue( view, position ) ) );
@@ -175,47 +178,57 @@ template<typename T> T Array::getValue( const ViewPtr& view, std::vector<int> po
     return T( *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
 
   else
-    throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
-                          "Array::getValue");
+    THROW_TYPE_MISMATCH("Cannot convert data to the requested type", "Array::getValue");
 }
 
 //----------------------------------------------------------------------------
 // Array::getValue<std::string>
 //----------------------------------------------------------------------------
-template<> inline std::string Array::getValue<std::string>( const ViewPtr& view, std::vector<int> position )
+template<> inline std::string Array::getValue<std::string>( const IViewPtr& view, std::vector<int> position )
 {
   CDMA_FUNCTION_TRACE("template<typename T> Array::getValue<std::string>( const ViewPtr& view, std::vector<int> position )");
   if( m_data_impl->getType() == typeid(char) )
     return std::string( (char *)(m_data_impl->getValue( view, position ) ) );
   else 
   {
+    std::ostringstream oss;
+    
     if( m_data_impl->getType() == typeid(double) )
-      return PSZ_FMT("%g", *(double*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(double*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%g", *(double*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(float) )
-      return PSZ_FMT("%g", *(float*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(double*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%g", *(float*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(short) )
-      return PSZ_FMT("%hd", *(short*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(short*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%hd", *(short*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(unsigned short) )
-      return PSZ_FMT("%hu", *(unsigned short*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(unsigned short*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%hu", *(unsigned short*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(long) )
-      return PSZ_FMT("%ld", *(long*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(long*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%ld", *(long*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(unsigned long) )
-      return PSZ_FMT("%lu", *(unsigned long*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(unsigned long*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%lu", *(unsigned long*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(int) )
-      return PSZ_FMT("%d", *(long*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(long*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%d", *(long*)( m_data_impl->getValue( view, position ) ) );
 
     else if( m_data_impl->getType() == typeid(unsigned int) )
-      return PSZ_FMT("%u", *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
+      oss << *(unsigned int*)( m_data_impl->getValue( view, position ) );
+      //return PSZ_FMT("%u", *(unsigned int*)( m_data_impl->getValue( view, position ) ) );
 
     else
-      throw cdma::Exception("INVALID_TYPE", "Cannot convert data to the requested type", 
-                            "Array::getValue");
+      THROW_TYPE_MISMATCH("Cannot convert data to the requested type", "Array::getValue");
+    
+    return oss.str();
   }
 }
 

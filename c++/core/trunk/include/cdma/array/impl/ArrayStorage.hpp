@@ -70,7 +70,7 @@ template<typename T> DefaultArrayStorage<T>::DefaultArrayStorage( T* data, std::
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::get
 //----------------------------------------------------------------------------
-template<typename T> void* DefaultArrayStorage<T>::getValue( const cdma::ViewPtr& view, std::vector<int> position )
+template<typename T> void* DefaultArrayStorage<T>::getValue( const cdma::IViewPtr& view, std::vector<int> position )
 {
   long idx = view->getElementOffset(position);
   return (void*)(&m_data[idx]);
@@ -79,7 +79,7 @@ template<typename T> void* DefaultArrayStorage<T>::getValue( const cdma::ViewPtr
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::set
 //----------------------------------------------------------------------------
-template<typename T> void DefaultArrayStorage<T>::setValue(const cdma::ViewPtr& ima, std::vector<int> position, void * value_ptr)
+template<typename T> void DefaultArrayStorage<T>::setValue(const cdma::IViewPtr& ima, std::vector<int> position, void * value_ptr)
 {
   memcpy(&m_data[ima->getElementOffset(position)], value_ptr, m_elem_size);
   m_dirty = true;
@@ -98,9 +98,9 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
 //----------------------------------------------------------------------------
 // DefaultArrayStorage<T>::deepCopy(view)
 //----------------------------------------------------------------------------
-template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(ViewPtr view)
+template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(IViewPtr view)
 {
-  CDMA_FUNCTION_TRACE("DefaultArrayStorage<T>::deepCopy(ViewPtr view)");
+  CDMA_FUNCTION_TRACE("DefaultArrayStorage<T>::deepCopy(IViewPtr view)");
   // Initialize memory
   T* data = new T[view->getSize()];
   T* storage = data;
