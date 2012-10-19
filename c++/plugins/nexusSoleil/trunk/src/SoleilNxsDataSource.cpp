@@ -1,6 +1,6 @@
 //******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
+// The cdma-core library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
 // Software Foundation; either version 2 of the License, or (at your option)
 // any later version.
@@ -41,8 +41,12 @@ std::string BEAMLINES [] = {"contacq", "CONTACQ", "AILES", "ANTARES", "CASSIOPEE
 //----------------------------------------------------------------------------
 // DataSource::isReadable
 //----------------------------------------------------------------------------
-bool DataSource::isReadable(const yat::URI& dataset_location) const
+bool DataSource::isReadable(const std::string& dataset_uri) const
 {
+  yat::URI dataset_location(dataset_uri);
+  FUNCTION_TRACE("DataSource::isReadable");
+  CDMA_TRACE("dataset_location: " << dataset_location.get());
+  CDMA_TRACE("path: " << dataset_location.get( yat::URI::PATH ));
   // Get the path from URI
   yat::String path = dataset_location.get( yat::URI::PATH );
   
@@ -51,16 +55,9 @@ bool DataSource::isReadable(const yat::URI& dataset_location) const
   
   if( file.file_exist() )
   {
-    try
-    {
-      // Will try to open the file and close it
-      m_factory_ptr->openDataset( dataset_location.get() );
-      return true;
-    }
-    catch( ... )
-    {
-      return false;
-    }
+    // Will try to open the file and close it
+    m_factory_ptr->openDataset( dataset_location.get(yat::URI::SCHEME) + ':' + path );
+    return true;
   }
   return false; 
 }
@@ -68,7 +65,7 @@ bool DataSource::isReadable(const yat::URI& dataset_location) const
 //----------------------------------------------------------------------------
 // DataSource::isBrowsable
 //----------------------------------------------------------------------------
-bool DataSource::isBrowsable(const yat::URI&) const
+bool DataSource::isBrowsable(const std::string&) const
 {
   return false;
 }
@@ -76,19 +73,21 @@ bool DataSource::isBrowsable(const yat::URI&) const
 //----------------------------------------------------------------------------
 // DataSource::isProducer
 //----------------------------------------------------------------------------
-bool DataSource::isProducer(const yat::URI& dataset_location) const
+bool DataSource::isProducer(const std::string& dataset_uri) const
 {
   FUNCTION_TRACE("DataSource::isProducer");
+  CDMA_TRACE("dataset_location: " << dataset_uri);
   bool result = false;
-  if( isReadable( dataset_location ) )
+  if( isReadable( dataset_uri ) )
   {
+    yat::URI dataset_location(dataset_uri);
     // Get the path from URI
-    yat::String path = dataset_location.get();
+    yat::String path = dataset_location.get(yat::URI::PATH);
     Factory plug_factory;
-    cdma::IDatasetPtr dataset = plug_factory.openDataset( path );
+    cdma::IDatasetPtr dataset = plug_factory.openDataset( dataset_location.get(yat::URI::SCHEME) + ':' + path );
     // seek at root for 'creator' attribute
     cdma::IGroupPtr group = dataset->getRootGroup();
-    if( group->hasAttribute("creator") && group->getAttribute("creator")->getStringValue() == CREATOR )
+    if( group->hasAttribute("creator") && group->getAttribute("creator")->getValue<std::string>() == CREATOR )
     {
       result = true;
     }
@@ -121,9 +120,9 @@ bool DataSource::isProducer(const yat::URI& dataset_location) const
 //----------------------------------------------------------------------------
 // DataSource::isExperiment
 //----------------------------------------------------------------------------
-bool DataSource::isExperiment(const yat::URI& dataset_location) const
+bool DataSource::isExperiment(const std::string& dataset_uri) const
 {
-  return isProducer(dataset_location);
+  return isProducer(dataset_uri);
 }
 
 } // namespace nexus

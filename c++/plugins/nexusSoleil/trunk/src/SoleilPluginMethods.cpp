@@ -1,6 +1,6 @@
 // ****************************************************************************
 // Copyright (c) 2011-2012 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
+// The cdma-core library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
 // Software Foundation; either version 2 of the License, or (at your option)
 // any later version.
@@ -13,10 +13,10 @@
 
 // CDMA core
 #include <cdma/Common.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Context.h>
-#include <cdma/dictionary/PluginMethods.h>
-#include <cdma/dictionary/SimpleDataItem.h>
+#include <cdma/dictionary/IKey.h>
+#include <cdma/dictionary/plugin/Context.h>
+#include <cdma/dictionary/plugin/PluginMethods.h>
+#include <cdma/dictionary/plugin/SimpleDataItem.h>
 
 // NeXus Engine 
 #include <NxsDataset.h>
@@ -58,7 +58,7 @@ void TestMethod::execute(Context& ctx) throw (cdma::Exception)
   FUNCTION_TRACE("TestMethod::execute");
 
   IDataItemPtr dataitem_ptr = ctx.getTopDataItem();
-  double value = dataitem_ptr->readScalarDouble();
+  double value = dataitem_ptr->getValue<double>();
 
   IDataItemPtr new_data_item_ptr = new SimpleDataItem(ctx.getDataset(),
                                                         new cdma::Array(value * 2),

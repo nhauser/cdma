@@ -20,9 +20,10 @@
 #include <yat/utils/URI.h>
 
 // CDMA core
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Dictionary.h>
-#include <cdma/dictionary/LogicalGroup.h>
+#include <cdma/dictionary/IKey.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
+#include <cdma/dictionary/impl/LogicalGroup.h>
+#include <cdma/utils/PluginConfig.h>
 
 // Soleil plugin
 #include <SoleilNxsFactory.h>
@@ -39,9 +40,11 @@ namespace nexus
 //---------------------------------------------------------------------------
 // Dataset::Dataset
 //---------------------------------------------------------------------------
-Dataset::Dataset( const yat::URI& location, Factory *factory_ptr )
-: cdma::nexus::Dataset( location, factory_ptr )
+Dataset::Dataset( const yat::URI& location, Factory *factory_ptr ):
+cdma::nexus::Dataset( yat::URI("file:" + location.get(yat::URI::PATH)), factory_ptr )
 {
+  // Utiliser yat pour sortir un FileName et récupérer son contenu (1 ou plusieurs fichiers)
+  m_location = location;
 }
 
 //---------------------------------------------------------------------------
@@ -53,36 +56,83 @@ Dataset::Dataset()
 }
 
 //---------------------------------------------------------------------------
+// Dataset::getRootPath
+//---------------------------------------------------------------------------
+std::string Dataset::getRootPath() const
+{
+  return m_location.get(yat::URI::FRAGMENT);
+}
+
+//---------------------------------------------------------------------------
+// Dataset::getItemFromPath
+//---------------------------------------------------------------------------
+IDataItemPtr Dataset::getItemFromPath(const std::string &fullPath)
+{
+  CDMA_FUNCTION_TRACE("cdma::soleil::nexus::Dataset::getItemFromPath(const std::string &)");
+  return cdma::nexus::Dataset::getItemFromPath(getRootPath() + fullPath);
+}
+
+IDataItemPtr Dataset::getItemFromPath(const yat::String& path, const yat::String& name)
+{
+  CDMA_FUNCTION_TRACE("cdma::soleil::nexus::Dataset::getItemFromPath(const yat::String&, const yat::String&)");
+  return cdma::nexus::Dataset::getItemFromPath(getRootPath() + path, name);
+}
+
+//---------------------------------------------------------------------------
+// Dataset::findContainerByPath
+//---------------------------------------------------------------------------
+IContainerPtr Dataset::findContainerByPath(const std::string& input_path)
+{
+  CDMA_FUNCTION_TRACE("cdma::soleil::nexus::Dataset::findContainerByPath");
+  IContainerPtrList containers = findAllContainerByPath( getRootPath() + input_path, true);
+  if( containers.begin() != containers.end() )
+    return *(containers.begin());
+  return NULL;
+}
+
+//---------------------------------------------------------------------------
 // Dataset::getLogicalRoot
 //---------------------------------------------------------------------------
-cdma::LogicalGroupPtr Dataset::getLogicalRoot()
+cdma::ILogicalGroupPtr Dataset::getLogicalRoot()
 {
   FUNCTION_TRACE("Dataset::getLogicalRoot");
 
   if( m_log_root.is_null() )
   {
-    CDMA_TRACE("Getting key file");
-    yat::String keyFile = cdma::Factory::getKeyDictionaryPath();
-
     CDMA_TRACE("Creating Dictionary detector");
     DictionaryDetector detector ( m_file_handle );
     CDMA_TRACE("Getting mapping file");
-    yat::FileName file( cdma::Factory::getDictionariesFolder() + "/" +\
-                        Factory::plugin_id() + "/" +\
-                        detector.getDictionaryName());
 
-    yat::FileName mapFile ( file );
+    // Load plugin configuration file
+    PluginConfigManager::load( Factory::plugin_id(), "mappings/SoleilNeXus/cdma_nexussoleil_config.xml" );
 
-    CDMA_TRACE("Creating dictionary");
+    cdma::DatasetModel::ParamMap map_params;
+    PluginConfigManager::getConfiguration(Factory::plugin_id(), this, &map_params);
+
+    // Get mapping file parameters
+    yat::String beamline = map_params["BEAMLINE"];
+    yat::String model = map_params["MODEL"];
+
+    if( beamline.empty() || model.empty() )
+    {
+      THROW_NO_RESULT("No mapping found for this dataset", "cdma::soleil::nexus::Dataset::getLogicalRoot");
+    }
+
+    // Mapping file name is lower case
+    beamline.to_lower();
+    model.to_lower();
+
+    std::string mapping_file = beamline + "_" + model + ".xml";
+
+    CDMA_TRACE("Creating dictionary " << mapping_file);
     cdma::DictionaryPtr dictionary ( new cdma::Dictionary(Factory::plugin_id()) );
-    dictionary->setKeyFilePath( keyFile );
-    dictionary->setMappingFilePath( mapFile.full_name() );
+    dictionary->setMappingFileName( mapping_file );
 
     CDMA_TRACE("Read the dictionary");
     dictionary->readEntries();
 
     CDMA_TRACE("Creating logical root");
-    cdma::LogicalGroup* ptrRoot = new cdma::LogicalGroup( this, NULL, KeyPtr(NULL), dictionary );
+    cdma::ILogicalGroup* ptrRoot = new cdma::LogicalGroup( this, NULL, IKeyPtr(NULL), dictionary );
     m_log_root.reset( ptrRoot );
   }
   return m_log_root;
