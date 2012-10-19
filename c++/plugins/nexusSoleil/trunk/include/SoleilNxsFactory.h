@@ -9,11 +9,12 @@
 #include <yat/plugin/PlugInSymbols.h>
 #include <yat/utils/URI.h>
 #include <yat/plugin/IPlugInInfo.h>
+#include <yat/plugin/IPlugInObject.h>
 
 // CDMA core
 #include <cdma/exception/Exception.h>
-#include <cdma/IFactory.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/factory/plugin/IPluginFactory.h>
+#include <cdma/dictionary/IKey.h>
 
 // NeXus engine
 #include <NxsDataset.h>
@@ -31,6 +32,7 @@ namespace nexus
 // Debug macro helper
 #define FUNCTION_TRACE(x) CDMA_FUNCTION_TRACE(std::string("cdma::soleil::nexus::") + std::string(x))
 
+
 //==============================================================================
 /// Plugin info class
 //==============================================================================
@@ -45,7 +47,7 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class Factory : public cdma::IFactory 
+class Factory : public cdma::IPluginFactory
 {
 public:
   Factory();
@@ -65,7 +67,7 @@ public:
   //@} IFactory methods
 
   inline static std::string plugin_id() { return "SoleilNeXus"; }
-  inline static std::string interface_name() { return "cdma::IFactory"; }
+  inline static std::string interface_name() { return "cdma::IPluginFactory"; }
   inline static std::string version_number() { return "1.0.0"; }
 
 };

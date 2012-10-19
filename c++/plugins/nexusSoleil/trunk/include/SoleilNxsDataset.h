@@ -11,9 +11,9 @@
 
 // CDMA core
 #include <cdma/exception/Exception.h>
-#include <cdma/Factory.h>
-#include <cdma/IFactory.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/factory/Factory.h>
+#include <cdma/factory/plugin/IPluginFactory.h>
+#include <cdma/dictionary/IKey.h>
 
 // NeXus engine
 #include <NxsDataset.h>
@@ -41,7 +41,10 @@ public:
 
   //@{ IDataset methods
 
-  cdma::LogicalGroupPtr getLogicalRoot();
+  cdma::ILogicalGroupPtr getLogicalRoot();
+  IDataItemPtr getItemFromPath(const std::string &fullPath);
+  IDataItemPtr getItemFromPath(const yat::String &path, const yat::String& name);
+  IContainerPtr findContainerByPath(const std::string& path);
   
   //@}
 
@@ -50,6 +53,10 @@ private:
   // Constructor
   Dataset(const yat::URI& location, Factory* factory_ptr);
   Dataset();
+
+  /// Return the root path of the dataset inside the file defined by the fragment part of the URI
+  ///
+  std::string getRootPath() const;
 
 };
 
