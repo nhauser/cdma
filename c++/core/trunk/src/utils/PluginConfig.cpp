@@ -28,10 +28,10 @@
 #include <yat/utils/Logging.h>
 
 #include <cdma/utils/SAXParsor.h>
-#include <cdma/exception/Exception.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 #include <cdma/utils/PluginConfig.h>
 #include <cdma/navigation/IDataset.h>
-#include <cdma/Factory.h>
+#include <cdma/factory/Factory.h>
 
 namespace cdma
 {
@@ -115,7 +115,7 @@ SAXParsor::INodeAnalyser* PluginConfigAnalyser::on_element(const yat::String& el
   
   else
   {
-    throw cdma::Exception(
+    THROW_EXCEPTION(
       "BAD_CONFIG", 
       PSZ_FMT("Element '%s' in plugin configuration file is unknown", PSZ(element_name)),
       "PluginConfigAnalyser::on_element");
@@ -160,7 +160,7 @@ void PluginConfigAnalyser::criterionAnalysis(const SAXParsor::Attributes& attrs)
   }
   else
   {
-    throw cdma::Exception(
+    THROW_EXCEPTION(
       "BAD_CONFIG", 
       PSZ_FMT("Criterion type is missing"),
       "PluginConfigAnalyser::criterionAnalysis");
@@ -307,10 +307,9 @@ std::string DatasetModel::DatasetParameter::getValue(IDataset* dataset_p) const
       }
       else
       {
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad path for dataset parameter"),
-          "DatasetModel::DatasetParameter::getValue");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad path for dataset parameter"),
+                         "DatasetModel::DatasetParameter::getValue" );
       }
 
     case VALUE:
@@ -318,10 +317,9 @@ std::string DatasetModel::DatasetParameter::getValue(IDataset* dataset_p) const
         return IDataItemPtr(ptr_container)->getValue<std::string>();
       else
       {
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad path for dataset parameter"),
-          "DatasetModel::DatasetParameter::getValue");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad path for dataset parameter"),
+                         "DatasetModel::DatasetParameter::getValue" );
       }
 
     case NAME:
@@ -329,10 +327,9 @@ std::string DatasetModel::DatasetParameter::getValue(IDataset* dataset_p) const
       return ptr_container->getName();
 
     default:
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad dataset parameter type"),
-          "DatasetModel::DatasetParameter::getValue");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad dataset parameter type"),
+                         "DatasetModel::DatasetParameter::getValue" );
   }
 }
 
@@ -348,9 +345,16 @@ bool DatasetModel::Criterion::doTest(IDataset* dataset_p) const
   switch( m_type )
   {
     case EXIST:
-      if( ptr_container )
-        return true;
-      return false;
+      {
+        bool result = ptr_container ? true : false;
+        CDMA_TRACE(m_target_path << " -> " << result << "(" << yat::any_cast<bool>(m_criterion_value) << ")");
+
+        if( result && yat::any_cast<bool>(m_criterion_value) )
+          return true;
+        if( !result && !yat::any_cast<bool>(m_criterion_value) )
+          return true;
+        return false;
+      }
 
     case EQUAL:
       if( ptr_container->getContainerType() == IContainer::DATA_ITEM )
@@ -363,10 +367,9 @@ bool DatasetModel::Criterion::doTest(IDataset* dataset_p) const
       }
       else
       {
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad path for dataset parameter"),
-          "DatasetModel::Criterion::doTest");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad path for dataset parameter"),
+                         "DatasetModel::Criterion::doTest" );
       }
 
     case NOT_EQUAL:
@@ -379,17 +382,15 @@ bool DatasetModel::Criterion::doTest(IDataset* dataset_p) const
       }
       else
       {
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad path for dataset parameter"),
-          "DatasetModel::Criterion::doTest");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad path for dataset parameter"),
+                         "DatasetModel::Criterion::doTest" );
       }
 
     default:
-        throw cdma::Exception(
-          "BAD_CONFIG", 
-          PSZ_FMT("Bad criterion type"),
-          "DatasetModel::Criterion::doTest");
+        THROW_EXCEPTION( "BAD_CONFIG", 
+                         PSZ_FMT("Bad criterion type"),
+                         "DatasetModel::Criterion::doTest" );
   }
 }
 
@@ -445,7 +446,7 @@ void PluginConfigManager::load(const std::string& plugin_id,
     e.push_error("READ_ERROR", "Cannot read plugin configuration file", 
                  "PluginConfigManager::loadConfigFile");
     LOG_EXCEPTION("cdma", e);
-    throw Exception(e);
+    RE_THROW_EXCEPTION(e);
   }
 }
 

@@ -23,14 +23,15 @@
 //-----------------------------------------------------------------------------
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
-#include <cdma/array/Range.h>
+#include <cdma/array/impl/Range.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 
 namespace cdma
 {
 //---------------------------------------------------------------------------
 // Range::Range
 //---------------------------------------------------------------------------
-#define TEMP_EXCEPTION(a,b) throw Exception("TARTAMPION", a, b)
+
 Range::Range()
 {
   m_last     = 0;
@@ -207,7 +208,7 @@ RangePtr Range::intersect(const Range& r) throw ( Exception )
   }
   else
   {
-    TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersect");
+    THROW_INVALID_RANGE("Intersection when both ranges have a stride", "Range::intersect");
   }
   if (useFirst > last)
   {
@@ -266,7 +267,7 @@ bool Range::intersects(const Range& r)
   }
   else 
   {
-    TEMP_EXCEPTION("Intersection when both ranges have a stride", "Range::intersects");
+    THROW_INVALID_RANGE("Intersection when both ranges have a stride", "Range::intersects");
   }
   return (useFirst <= last);
 }
@@ -278,7 +279,7 @@ RangePtr Range::unionRanges(const Range& r) throw ( Exception )
 {
   if( r.stride() != m_stride ) 
   {
-    TEMP_EXCEPTION("Stride must identical to make a Range union!", "Range::unionRanges");
+    THROW_INVALID_RANGE("Stride must identical to make a Range union!", "Range::unionRanges");
   }
 
   if (this->length() == 0) 
@@ -318,11 +319,11 @@ int Range::element(int i) throw ( Exception )
   //CDMA_FUNCTION_TRACE("Range::element(int)");
   if ( i < 0 )
   {
-    TEMP_EXCEPTION("index must be >= 0", "Range::element");
+    THROW_INVALID_RANGE("index must be >= 0", "Range::element");
   }
   if ( i > m_length )
   {
-    TEMP_EXCEPTION("index must be < length", "Range::element");
+    THROW_INVALID_RANGE("index must be < length", "Range::element");
   }
   return (m_first + i * m_stride);
 }
@@ -335,13 +336,13 @@ int Range::index(long& elem) throw ( Exception )
   //CDMA_FUNCTION_TRACE("Range::index(int)");
   if (elem < m_first) 
   {
-    TEMP_EXCEPTION("elem must be >= first", "Range::index");
+    THROW_INVALID_RANGE("elem must be >= first", "Range::index");
   }
   int result = (int) ((elem - m_first) / m_stride);
   elem = (elem - m_first) % m_stride;
   if (result > m_last) 
   {
-    TEMP_EXCEPTION("elem must be <= last = n * stride", "Range::index");
+    THROW_INVALID_RANGE("elem must be <= last = n * stride", "Range::index");
   }
   return result;
 }

@@ -23,9 +23,7 @@
 //-----------------------------------------------------------------------------
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
-#include <cdma/dictionary/SimpleDataItem.h>
-
-#define TEMP_EXCEPTION(a,b) throw cdma::Exception("TARTAMPION", a, b)
+#include <cdma/dictionary/plugin/SimpleDataItem.h>
 
 namespace cdma
 {
@@ -37,7 +35,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 // c-tor
 //---------------------------------------------------------------------------
-SimpleDataItem::SimpleDataItem(IDataset* dataset_ptr, ArrayPtr ptrArray, const std::string &name):
+SimpleDataItem::SimpleDataItem(IDataset* dataset_ptr, IArrayPtr ptrArray, const std::string &name):
 m_dataset_ptr(dataset_ptr), m_name(name), m_array_ptr(ptrArray)
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::SimpleDataItem");
@@ -86,7 +84,7 @@ cdma::IGroupPtr SimpleDataItem::getRoot()
 //---------------------------------------------------------------------------
 // SimpleDataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
+cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> position)");
   int node_rank = m_array_ptr->getRank();
@@ -107,14 +105,14 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> position) throw ( cdma::
       shape.push_back( m_array_ptr->getShape()[dim] );
     }
   }
-  cdma::ArrayPtr array_ptr = getData(origin, shape);
+  cdma::IArrayPtr array_ptr = getData(origin, shape);
   return array_ptr;
 }
 
 //---------------------------------------------------------------------------
 // SimpleDataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
+cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("SimpleDataItem::getData(vector<int> origin, vector<int> shape)");
 
@@ -126,9 +124,9 @@ cdma::ArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int>
     iStart[i] = origin[i];
     iShape[i] = shape[i];
   }
-  cdma::ViewPtr view = new cdma::View( rank, iShape, iStart );
+  cdma::IViewPtr view = new cdma::View( rank, iShape, iStart );
   //## Should pass the shared pointer rather than a pointer to the referenced object
-  cdma::ArrayPtr array_ptr = new cdma::Array( *m_array_ptr, view );
+  cdma::IArrayPtr array_ptr = new cdma::Array( m_array_ptr, view );
   return array_ptr;
 }
 
@@ -480,7 +478,7 @@ cdma::IDatasetPtr SimpleDataItem::getDataset()
 //---------------------------------------------------------------------------
 // SimpleDataItem::setData
 //---------------------------------------------------------------------------
-void SimpleDataItem::setData(const cdma::ArrayPtr& array)
+void SimpleDataItem::setData(const cdma::IArrayPtr& array)
 {
   m_array_ptr = array;
 }

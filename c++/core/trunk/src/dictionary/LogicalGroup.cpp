@@ -27,11 +27,11 @@
 #include <yat/utils/String.h>
 
 #include <cdma/Common.h>
-#include <cdma/exception/Exception.h>
-#include <cdma/dictionary/LogicalGroup.h>
-#include <cdma/dictionary/Dictionary.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Context.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
+#include <cdma/dictionary/impl/LogicalGroup.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
+#include <cdma/dictionary/impl/Key.h>
+#include <cdma/dictionary/plugin/Context.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/navigation/IDataItem.h>
 
@@ -42,7 +42,7 @@ namespace cdma
 // LogicalGroup::LogicalGroup
 //-----------------------------------------------------------------------------
 LogicalGroup::LogicalGroup( IDataset* dataset_ptr, LogicalGroup* parent_ptr, 
-                            const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr )
+                            const IKeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr )
 {
   m_dataset_ptr = dataset_ptr;
   if( parent_ptr != NULL )
@@ -69,7 +69,7 @@ void LogicalGroup::PrivSolveKey(Context *context_ptr)
 {
   CDMA_FUNCTION_TRACE("LogicalGroup::PrivSolveKey");
 
-  KeyPtr key_ptr = context_ptr->getKey();
+  IKeyPtr key_ptr = context_ptr->getKey();
 
   if( key_ptr )
   {
@@ -83,17 +83,17 @@ void LogicalGroup::PrivSolveKey(Context *context_ptr)
         (*it)->solve(*context_ptr);
       }
     }
-    catch( cdma::Exception &ex )
+    catch( yat::Exception &ex )
     {
       ex.push_error( "KEY_ERROR", PSZ_FMT( "Unable to get data from key '%s'",
                                            PSZ( key_ptr->getName() ) ),
                                            "LogicalGroup::PrivSolveKey" );
-      throw ex;
+      RE_THROW_EXCEPTION(ex);
     }
   }
   else
   {
-    throw cdma::Exception( "NULL_POINTER",
+    THROW_EXCEPTION( "NULL_POINTER",
                            "A valid key is required",
                            "LogicalGroup::PrivSolveKey" );
   }
@@ -102,7 +102,7 @@ void LogicalGroup::PrivSolveKey(Context *context_ptr)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getDataItem
 //-----------------------------------------------------------------------------
-IDataItemPtr LogicalGroup::getDataItem(const KeyPtr& key_ptr)
+IDataItemPtr LogicalGroup::getDataItem(const IKeyPtr& key_ptr)
 {
   CDMA_FUNCTION_TRACE("LogicalGroup::getDataItem");
   CDMA_TRACE("key: " << key_ptr->getName());
@@ -133,16 +133,16 @@ IDataItemPtr LogicalGroup::getDataItem(const std::string& keypath)
     path.replace( "::", "/" );
     path.split( '/', &keys );
     
-    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+    ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
     
     for( unsigned int i = 0; i < keys.size() - 1 && ! tmp.is_null(); i++ )
     {
-       tmp = tmp->getGroup( KeyPtr( new Key( keys[i], Key::GROUP ) ) );
+       tmp = tmp->getGroup( IKeyPtr( new Key( keys[i], IKey::GROUP ) ) );
     }
     
     if( tmp )
     {
-      return tmp->getDataItem( KeyPtr( new Key( keys[ keys.size() - 1 ], Key::ITEM ) ) );
+      return tmp->getDataItem( IKeyPtr( new Key( keys[ keys.size() - 1 ], IKey::ITEM ) ) );
     }
     else
     {
@@ -155,7 +155,7 @@ IDataItemPtr LogicalGroup::getDataItem(const std::string& keypath)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getDataItemList
 //-----------------------------------------------------------------------------
-std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key_ptr)
+std::list<IDataItemPtr> LogicalGroup::getDataItemList(const IKeyPtr& key_ptr)
 {
   try
   {
@@ -175,24 +175,24 @@ std::list<IDataItemPtr> LogicalGroup::getDataItemList(const KeyPtr& key_ptr)
 //-----------------------------------------------------------------------------
 DataItemList LogicalGroup::getDataItemList(const std::string& keyword)
 {
-  return getDataItemList( KeyPtr( new Key( keyword, Key::ITEM ) ) );
+  return getDataItemList( IKeyPtr( new Key( keyword, Key::ITEM ) ) );
 }
 
 //-----------------------------------------------------------------------------
 // LogicalGroup::getGroup
 //-----------------------------------------------------------------------------
-LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key_ptr)
+ILogicalGroupPtr LogicalGroup::getGroup(const IKeyPtr& key_ptr)
 {
   CDMA_FUNCTION_TRACE("LogicalGroup::getGroup");
   // Check key isn't empty
-  LogicalGroupPtr child;
+  ILogicalGroupPtr child;
   if( key_ptr )
   {
     // Store key's name
     yat::String keyName = key_ptr->getName();
 
     // Check key hasn't beed asked yet
-    std::map<std::string, LogicalGroupPtr>::iterator itChild = m_child_groups.find( keyName );
+    std::map<std::string, ILogicalGroupPtr>::iterator itChild = m_child_groups.find( keyName );
     if( itChild != m_child_groups.end() )
     {
       child = itChild->second;
@@ -224,7 +224,7 @@ LogicalGroupPtr LogicalGroup::getGroup(const KeyPtr& key_ptr)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getGroup
 //-----------------------------------------------------------------------------
-LogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
+ILogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
 {
   // TODO if path starts with ':' then consider it as absolute path else as a relative path
   if( m_dataset_ptr != NULL )
@@ -235,11 +235,11 @@ LogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
     path.replace( "/", ":" );
     path.split( ':', &keys );
     
-    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+    ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
 
     for( unsigned int i = 0; i < keys.size() && ! tmp.is_null(); i++ )
     {
-       tmp = tmp->getGroup( KeyPtr( new Key( keys[i], Key::GROUP ) ) );
+       tmp = tmp->getGroup( IKeyPtr( new Key( keys[i], Key::GROUP ) ) );
     }
     
     return tmp;
@@ -258,10 +258,10 @@ std::list<std::string> LogicalGroup::getKeyNames(IContainer::Type)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getKeys
 //-----------------------------------------------------------------------------
-std::list<KeyPtr> LogicalGroup::getKeys()
+std::list<IKeyPtr> LogicalGroup::getKeys()
 {
   CDMA_FUNCTION_TRACE("LogicalGroup::getKeys");
-  std::list< KeyPtr > result;
+  std::list<IKeyPtr> result;
 
   // Get children keys' names
   yat::String key = m_key_ptr.is_null() ? "root" : m_key_ptr->getName();
@@ -271,7 +271,7 @@ std::list<KeyPtr> LogicalGroup::getKeys()
   }
   for( StringList::iterator itChildren = m_listkey_ptr->begin(); itChildren != m_listkey_ptr->end(); itChildren++ )
   {
-    result.push_back( KeyPtr(new Key( *itChildren, m_dictionary_ptr->getKeyType(*itChildren)) ) );
+    result.push_back( IKeyPtr(new Key( *itChildren, m_dictionary_ptr->getKeyType(*itChildren)) ) );
   }
   return result;
 }
@@ -279,7 +279,7 @@ std::list<KeyPtr> LogicalGroup::getKeys()
 //-----------------------------------------------------------------------------
 // LogicalGroup::bindKey
 //-----------------------------------------------------------------------------
-KeyPtr LogicalGroup::bindKey(const std::string&, const KeyPtr&)
+IKeyPtr LogicalGroup::bindKey(const std::string&, const IKeyPtr&)
 {
   THROW_NOT_IMPLEMENTED("LogicalGroup::bindKey");
 }
@@ -295,12 +295,12 @@ void LogicalGroup::setParent(LogicalGroup*)
 //-----------------------------------------------------------------------------
 // LogicalGroup::getParent
 //-----------------------------------------------------------------------------
-LogicalGroupPtr LogicalGroup::getParent() const
+ILogicalGroupPtr LogicalGroup::getParent() const
 {
-  LogicalGroupPtr res (NULL);
+  ILogicalGroupPtr res (NULL);
   if( m_dataset_ptr != NULL )
   {
-    LogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
+    ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
     res = tmp->getGroup( m_parent_path );
   }
   return res;

@@ -31,11 +31,10 @@
 
 #include <yat/utils/Logging.h>
 
-#include <cdma/exception/Exception.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 #include <cdma/utils/SAXParsor.h>
 
-#define THROW_LIBXML2_EXCEPTION(m,o) \
-  throw cdma::Exception("LIBXML2_ERROR", m, o)
+#define THROW_LIBXML2_EXCEPTION(m,o) THROW_EXCEPTION("LIBXML2_ERROR", m, o)
 
 namespace cdma
 {

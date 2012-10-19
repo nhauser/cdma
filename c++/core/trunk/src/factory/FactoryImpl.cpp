@@ -29,12 +29,14 @@
 #include <yat/file/FileName.h>
 
 // cdma
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Dictionary.h>
-#include <cdma/dictionary/Context.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
+#include <cdma/dictionary/impl/Key.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
+#include <cdma/dictionary/plugin/Context.h>
 #include <cdma/IDataSource.h>
-#include <cdma/IFactory.h>
-#include <cdma/Factory.h>
+#include <cdma/factory/plugin/IPluginFactory.h>
+#include <cdma/factory/Factory.h>
+#include <cdma/factory/impl/FactoryImpl.h>
 
 namespace cdma
 {
@@ -44,25 +46,25 @@ namespace cdma
   const std::string SHARED_LIB_EXTENSION( "so" );
 #endif
 
-std::string INTERFACE_NAME("cdma::IFactory");
-std::string Factory::s_dico_path_prop = "CDMA_DICTIONARY_PATH";
-std::string Factory::s_cdma_view = "";
+std::string INTERFACE_NAME("cdma::IPluginFactory");
+std::string FactoryImpl::s_dico_path_prop = "CDMA_DICTIONARY_PATH";
+std::string FactoryImpl::s_cdma_view = "";
 
 //----------------------------------------------------------------------------
-// Factory::instance
+// FactoryImpl::instance
 //----------------------------------------------------------------------------
-Factory& Factory::instance()
+FactoryImpl& FactoryImpl::instance()
 {
-  static Factory the_instance;
+  static FactoryImpl the_instance;
   return the_instance;
 }
 
 //----------------------------------------------------------------------------
-// Factory::cleanup
+// FactoryImpl::cleanup
 //----------------------------------------------------------------------------
-void Factory::cleanup()
+void FactoryImpl::cleanup()
 {
-  CDMA_STATIC_FUNCTION_TRACE("Factory::cleanup");
+  CDMA_STATIC_FUNCTION_TRACE("FactoryImpl::cleanup");
   // Free method objects for each plugins
   for( PluginMap::iterator it = instance().m_plugin_map.begin();
                            it != instance().m_plugin_map.end(); it++)
@@ -78,17 +80,17 @@ void Factory::cleanup()
 }
 
 //----------------------------------------------------------------------------
-// Factory::init
+// FactoryImpl::init
 //----------------------------------------------------------------------------
-void Factory::init(const std::string &plugin_path)
+void FactoryImpl::init(const std::string &plugin_path)
 {
-  CDMA_STATIC_FUNCTION_TRACE("Factory::init");
+  CDMA_STATIC_FUNCTION_TRACE("FactoryImpl::init");
 
   yat::FileEnum fe(plugin_path + '/', yat::FileEnum::ENUM_FILE);
   CDMA_STATIC_TRACE(fe.path());
 
   if( !fe.path_exist() )
-    throw cdma::Exception("BAD_PATH", PSZ_FMT("Path not exists (%s)", PSZ(plugin_path)), "Factory::init");
+    THROW_EXCEPTION("BAD_PATH", PSZ_FMT("Path not exists (%s)", PSZ(plugin_path)), "FactoryImpl::init");
   
   while( fe.find() )
   {
@@ -134,11 +136,11 @@ void Factory::init(const std::string &plugin_path)
 }
 
 //----------------------------------------------------------------------------
-// Factory::initPluginMethods
+// FactoryImpl::initPluginMethods
 //----------------------------------------------------------------------------
-void Factory::initPluginMethods(const IFactoryPtr& factory_ptr, Factory::Plugin *plugin_ptr)
+void FactoryImpl::initPluginMethods(const IPluginFactoryPtr& factory_ptr, FactoryImpl::Plugin *plugin_ptr)
 {
-  CDMA_FUNCTION_TRACE("Factory::initPluginMethods");
+  CDMA_FUNCTION_TRACE("FactoryImpl::initPluginMethods");
   CDMA_TRACE("Plugin id: " << plugin_ptr->info->get_plugin_id());
 
   // Retreive the list of supported dictionary methods
@@ -172,16 +174,16 @@ void Factory::initPluginMethods(const IFactoryPtr& factory_ptr, Factory::Plugin 
 }
 
 //----------------------------------------------------------------------------
-// Factory::getPluginFactory
+// FactoryImpl::getPluginFactory
 //----------------------------------------------------------------------------
-IPluginMethodPtr Factory::getPluginMethod(const std::string &plugin_id, 
+IPluginMethodPtr FactoryImpl::getPluginMethod(const std::string &plugin_id, 
                                           const std::string &method_name)
 {
   // Find the plugin
   PluginMap::iterator plugin_it = instance().m_plugin_map.find(plugin_id);
   if( plugin_it == instance().m_plugin_map.end() )
-    throw cdma::Exception( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
-                           "cdma::Factory::getPluginMethod" );
+    THROW_EXCEPTION( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
+                           "cdma::FactoryImpl::getPluginMethod" );
   
   // Look for the requested method
   PluginMethodsMap& methods_map = instance().m_plugin_map[plugin_id].plugin_method_map;
@@ -196,9 +198,9 @@ IPluginMethodPtr Factory::getPluginMethod(const std::string &plugin_id,
 }
 
 //----------------------------------------------------------------------------
-// Factory::getPluginFactory
+// FactoryImpl::getPluginFactory
 //----------------------------------------------------------------------------
-IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
+IPluginFactoryPtr FactoryImpl::getPluginFactory(const std::string &plugin_id)
 {
   PluginFactoryPtrMap::iterator it = instance().m_plugin_factory_map.find(plugin_id);
   if( it == instance().m_plugin_factory_map.end() )
@@ -206,15 +208,15 @@ IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
     // Find the plugin
     PluginMap::iterator it = instance().m_plugin_map.find(plugin_id);
     if( it == instance().m_plugin_map.end() )
-      throw cdma::Exception( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
-                             "cdma::Factory::getPluginFactory" );
+      THROW_EXCEPTION( "NOT_FOUND", PSZ_FMT("No such plugin (%s).", PSZ(plugin_id)),
+                             "cdma::FactoryImpl::getPluginFactory" );
     
     yat::IPlugInFactory* factory = (*it).second.factory;
 
-    // Instanciate the IFactory implementation
+    // Instanciate the IPluginFactory implementation
     yat::IPlugInObject* obj;
     factory->create(obj);
-    IFactoryPtr factory_ptr(dynamic_cast<cdma::IFactory*>(obj));
+    IPluginFactoryPtr factory_ptr(dynamic_cast<cdma::IPluginFactory*>(obj));
     instance().m_plugin_factory_map[plugin_id] = factory_ptr;
     
     // Initialize the dictionnary methods supported by this plugin factory
@@ -228,113 +230,112 @@ IFactoryPtr Factory::getPluginFactory(const std::string &plugin_id)
 }
 
 //----------------------------------------------------------------------------
-// Factory::setActiveView
+// FactoryImpl::setActiveView
 //----------------------------------------------------------------------------
-void Factory::setActiveView(const std::string& experiment)
+void FactoryImpl::setActiveView(const std::string& experiment)
 {
   s_cdma_view = experiment;
 }
 
 //----------------------------------------------------------------------------
-// Factory::getActiveView
+// FactoryImpl::getActiveView
 //----------------------------------------------------------------------------
-const std::string& Factory::getActiveView()
+const std::string& FactoryImpl::getActiveView()
 {
   return s_cdma_view;
 }
 
 //----------------------------------------------------------------------------
-// Factory::getKeyDictionaryPath
+// FactoryImpl::getKeyDictionaryPath
 //----------------------------------------------------------------------------
-std::string Factory::getKeyDictionaryPath()
+std::string FactoryImpl::getKeyDictionaryPath()
 {
   yat::FileName file( getDictionariesFolder() + "/views/", ( getActiveView() + "_view.xml" ) );
   return file.full_name();
 }
 
 //----------------------------------------------------------------------------
-// Factory::getConceptDictionaryFolder
+// FactoryImpl::getConceptDictionaryFolder
 //----------------------------------------------------------------------------
-std::string Factory::getConceptDictionaryFolder()
+std::string FactoryImpl::getConceptDictionaryFolder()
 {
   yat::FileName file( getDictionariesFolder() + "/concepts/" );
   return file.full_name();
 }
 
 //----------------------------------------------------------------------------
-// Factory::getKeyDictionaryFolder
+// FactoryImpl::getKeyDictionaryFolder
 //----------------------------------------------------------------------------
-std::string Factory::getKeyDictionaryFolder()
+std::string FactoryImpl::getKeyDictionaryFolder()
 {
   yat::FileName file( getDictionariesFolder() + "/views/" );
   return file.full_name();
 }
 
 //----------------------------------------------------------------------------
-// Factory::getMappingDictionaryFolder
+// FactoryImpl::getMappingDictionaryFolder
 //----------------------------------------------------------------------------
-std::string Factory::getMappingDictionaryFolder(const std::string& plugin_id)
+std::string FactoryImpl::getMappingDictionaryFolder(const std::string& plugin_id)
 {
   yat::FileName file( getDictionariesFolder() + "/mappings/" + plugin_id + "/" );
   return file.full_name();
 }
     
 //----------------------------------------------------------------------------
-// Factory::getDictionariesFolder
+// FactoryImpl::getDictionariesFolder
 //----------------------------------------------------------------------------
-std::string Factory::getDictionariesFolder()
+std::string FactoryImpl::getDictionariesFolder()
 {
   yat::String value;
   if( ! yat::SysUtils::get_env(s_dico_path_prop, &value, "") )
   {
-    THROW_NO_RESULT("No environment variable '" + s_dico_path_prop + "' that defines dictionaries folder!", "Factory::getDictionariesFolder");
+    THROW_NO_RESULT("No environment variable '" + s_dico_path_prop + "' that defines dictionaries folder!", "FactoryImpl::getDictionariesFolder");
   }
   yat::FileName folder(value);
   return folder.full_name();
 }
 
 //----------------------------------------------------------------------------
-// Factory::openDataset
+// FactoryImpl::openDataset
 //----------------------------------------------------------------------------
-std::pair<IDatasetPtr, IFactoryPtr> Factory::openDataset( const yat::URI& uri ) throw ( Exception )
+IDatasetPtr FactoryImpl::openDataset( const yat::URI& uri ) throw ( Exception )
 {
-  CDMA_STATIC_FUNCTION_TRACE("Factory::openDataset");
-  std::pair< IDatasetPtr, IFactoryPtr > result;
+  CDMA_STATIC_FUNCTION_TRACE("FactoryImpl::openDataset");
+  std::pair< IDatasetPtr, IPluginFactoryPtr > result;
   
   try
   {
-    result.second = detectPluginFactory(uri);
-    result.first = result.second->openDataset( uri.get() );
+    IPluginFactoryPtr plugin = detectPluginFactory(uri);
+    return plugin->openDataset( uri.get() );
   }
-  catch( cdma::Exception& e )
+  catch( BaseException& e )
   {
     LOG_EXCEPTION("cdma", e);
-    throw e;
+    RE_THROW_EXCEPTION(e);
   }
   catch( yat::Exception& e )
   {
     LOG_EXCEPTION("yat", e);
-    throw e;
+    RE_THROW_EXCEPTION(e);
   }
-  return result;
 }
 
 //----------------------------------------------------------------------------
-// Factory::openDictionary
+// FactoryImpl::openDictionary
 //----------------------------------------------------------------------------
-DictionaryPtr Factory::openDictionary( const std::string& ) throw ( Exception )
+DictionaryPtr FactoryImpl::openDictionary( const std::string& ) throw ( Exception )
 {
-  THROW_NOT_IMPLEMENTED("Factory::openDictionary");
+  THROW_NOT_IMPLEMENTED("FactoryImpl::openDictionary");
 }
 
 //----------------------------------------------------------------------------
-// Factory::detectPluginFactory
+// FactoryImpl::detectPluginFactory
 //----------------------------------------------------------------------------
-IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri) 
+IPluginFactoryPtr FactoryImpl::detectPluginFactory(const yat::URI& uri) throw ( Exception )
 {
-  CDMA_STATIC_FUNCTION_TRACE("Factory::detectPluginFactory");
-  IFactoryPtr result;
-  IFactoryPtr tmp;
+  CDMA_STATIC_FUNCTION_TRACE("FactoryImpl::detectPluginFactory");
+  IPluginFactoryPtr result;
+  IPluginFactoryPtr tmp;
   IDataSourcePtr data_source;
   std::string plugin_id;
     
@@ -354,10 +355,10 @@ IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri)
     else
     {
       // Ask if the URI is readable
-      if( data_source->isReadable( uri ) )
+      if( data_source->isReadable( uri.get() ) )
       {
         // Ask if the plugin is the owner of that URI
-        if( data_source->isProducer( uri ) )
+        if( data_source->isProducer( uri.get() ) )
         {
           result = tmp;
           break;
@@ -372,6 +373,15 @@ IFactoryPtr Factory::detectPluginFactory(const yat::URI& uri)
     ++iterator;
   }
   return result;
+}
+
+//----------------------------------------------------------------------------
+// FactoryImpl::getDataSource
+//----------------------------------------------------------------------------
+IDataSourcePtr FactoryImpl::getDataSource(const yat::URI& uri) throw ( Exception )
+{
+  IPluginFactoryPtr plugin_factory = FactoryImpl::detectPluginFactory(uri);
+  return plugin_factory->getPluginURIDetector();
 }
 
 } // namespace cdma

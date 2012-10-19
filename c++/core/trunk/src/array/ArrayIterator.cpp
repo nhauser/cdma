@@ -23,9 +23,9 @@
 //-----------------------------------------------------------------------------
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
-#include <cdma/exception/Exception.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <cdma/array/ArrayIterator.h>
 
 namespace cdma
@@ -33,7 +33,7 @@ namespace cdma
 //-----------------------------------------------------------------------------
 // ArrayIterator::ArrayIterator
 //-----------------------------------------------------------------------------
-ArrayIterator::ArrayIterator(const cdma::ArrayPtr& array, const cdma::ViewPtr& view, std::vector<int> position) 
+ArrayIterator::ArrayIterator(const cdma::IArrayPtr& array, const cdma::IViewPtr& view, std::vector<int> position) 
 {
 //  CDMA_FUNCTION_TRACE("ArrayIterator::ArrayIterator");
   m_array = array;
@@ -132,7 +132,7 @@ bool ArrayIterator::operator!=(const ArrayIterator& it)
 //-----------------------------------------------------------------------------
 // ArrayIterator::incrementPosition
 //-----------------------------------------------------------------------------
-std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vector<int>& position)
+std::vector<int>& ArrayIterator::incrementPosition(const IViewPtr& view, std::vector<int>& position)
 {
   std::vector<int> shape = view->getShape();
 
@@ -157,7 +157,7 @@ std::vector<int>& ArrayIterator::incrementPosition(const ViewPtr& view, std::vec
 //-----------------------------------------------------------------------------
 // ArrayIterator::decrementPosition
 //-----------------------------------------------------------------------------
-std::vector<int>& ArrayIterator::decrementPosition(const ViewPtr& view, std::vector<int>& position)
+std::vector<int>& ArrayIterator::decrementPosition(const IViewPtr& view, std::vector<int>& position)
 {
   std::vector<int> shape = view->getShape();
 
