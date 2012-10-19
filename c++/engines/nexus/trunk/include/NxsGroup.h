@@ -42,7 +42,6 @@ class CDMA_NEXUS_DECL Group : public IGroup
 {
 private:
   Dataset*            m_dataset_ptr;       // C-style pointer to the parent dataset
-  Group*              m_root_ptr;          // TODO appeler celui du Dataset
   yat::String         m_path;              // Group path inside the Nexus File
   bool                m_bChildren;         // true if childs are enumerated
   bool                m_attributes_loaded; // 'true' when the attributes are loaded from the data source

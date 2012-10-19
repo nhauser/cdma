@@ -20,7 +20,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDimension.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <NxsDataItem.h>
 
 #include <internal/common.h>
@@ -47,22 +47,22 @@ public:
     
   //@{ IDimension interface
     std::string getName();
-    int getLength();
+    int getSize();
     bool isUnlimited();
     bool isVariableLength();
     bool isShared();
-    ArrayPtr getCoordinateVariable();
+    IArrayPtr getCoordinateVariable();
     int getDimensionAxis();
     int getDisplayOrder();
     void setUnlimited(bool b);
     void setVariableLength(bool b);
     void setShared(bool b);
-    void setLength(int n);
+    void setSize(int n);
     void setName(const std::string& name);
-    void setCoordinateVariable(const ArrayPtr& array) throw ( Exception );
+    void setCoordinateVariable(const IArrayPtr& array) throw ( Exception );
     void setDimensionAxis(int index);
     void setDisplayOrder(int order);
-    std::string getUnitsString();
+    std::string getUnit();
   //@}
  };
 

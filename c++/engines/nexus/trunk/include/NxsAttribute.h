@@ -39,7 +39,7 @@ namespace nexus
 private:
   std::string    m_name;
   NexusDataType  m_datatype;
-  yat::MemBuf    m_value_buf;
+  IArrayPtr       m_array_ptr;    // Array object
 
 public:
   Attribute();
@@ -49,17 +49,11 @@ public:
 
   std::string getName();
   const std::type_info& getType();
-  bool isString();
   bool isArray();
-  int getLength();
-  std::string getStringValue();
-  std::string toString();
-  void setStringValue(const std::string& val);
+  int getSize();
+  IArrayPtr getData();
+  void setData(const IArrayPtr&);
   void setName(const std::string& name);
-  long getIntValue();
-  double getFloatValue();
-  void setIntValue(int value);
-  void setFloatValue(float value);
   };
 
 } // namespace nexus
