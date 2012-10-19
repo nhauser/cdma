@@ -24,9 +24,9 @@
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
 #include <cdma/array/SliceIterator.h>
-#include <cdma/array/View.h>
+#include <cdma/array/impl/View.h>
 #include <cdma/array/ArrayIterator.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 
 namespace cdma
 {
@@ -42,7 +42,7 @@ SliceIterator::SliceIterator(const SliceIterator& iterator)
   m_slice     = m_slice;
 }
 
-SliceIterator::SliceIterator(const ArrayPtr& array, int dim)
+SliceIterator::SliceIterator(const IArrayPtr& array, int dim)
 {
   CDMA_FUNCTION_TRACE("SliceIterator::SliceIterator");
   
@@ -51,7 +51,7 @@ SliceIterator::SliceIterator(const ArrayPtr& array, int dim)
   // new copy of the array storage and so is unusable
   m_array = array;
   m_slice = array;
-  ViewPtr index = new View(m_array->getView());
+  IViewPtr index = new View(m_array->getView());
   int rank = index->getRank();
   std::vector<int> position( rank );
   std::vector<int> shape  = index->getShape();
@@ -97,7 +97,7 @@ void SliceIterator::next()
 //---------------------------------------------------------------------------
 // SliceIterator::getArrayNext
 //---------------------------------------------------------------------------
-ArrayPtr SliceIterator::getArrayNext() throw ( cdma::Exception )
+IArrayPtr SliceIterator::getArrayNext() throw ( cdma::Exception )
 {
   ++(*m_iterator);
   return get();
@@ -106,7 +106,7 @@ ArrayPtr SliceIterator::getArrayNext() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 // SliceIterator::getArrayCurrent
 //---------------------------------------------------------------------------
-ArrayPtr SliceIterator::getArrayCurrent() throw ( cdma::Exception )
+IArrayPtr SliceIterator::getArrayCurrent() throw ( cdma::Exception )
 {
   return get();
 }
@@ -132,7 +132,7 @@ std::vector<int> SliceIterator::getSliceShape() throw ( cdma::Exception )
 //---------------------------------------------------------------------------
 // SliceIterator::getPosition
 //---------------------------------------------------------------------------
-std::vector<int> SliceIterator::getPosition()
+std::vector<int> SliceIterator::getPosition() const
 {
   // Get the iterator position
   std::vector<int> position = m_iterator->getPosition();
@@ -168,7 +168,7 @@ SliceIterator SliceIterator::operator++(int)
 //---------------------------------------------------------------------------
 // SliceIterator::operator*
 //---------------------------------------------------------------------------
-ArrayPtr& SliceIterator::operator*(void)
+IArrayPtr& SliceIterator::operator*(void) const
 {
   CDMA_FUNCTION_TRACE("SliceIterator::operator*");
   this->get();
@@ -178,11 +178,11 @@ ArrayPtr& SliceIterator::operator*(void)
 //---------------------------------------------------------------------------
 // SliceIterator::operator==
 //---------------------------------------------------------------------------
-bool SliceIterator::operator==(const SliceIteratorPtr& iter)
+bool SliceIterator::operator==(const SliceIterator& iter)
 {
-  std::vector<int> source = this->getPosition();
-  std::vector<int> destin = iter->getPosition();
-  bool result = ( ( *(*iter) )->getStorage() == (*(*this))->getStorage() );
+  std::vector<int> source = (*this).getPosition();
+  std::vector<int> destin = iter.getPosition();
+  bool result = ( ( *(iter) )->getStorage() == (*(*this))->getStorage() );
  
   if( result )
   {
@@ -205,7 +205,7 @@ bool SliceIterator::operator==(const SliceIteratorPtr& iter)
 //---------------------------------------------------------------------------
 // SliceIterator::operator!=
 //---------------------------------------------------------------------------
-bool SliceIterator::operator!=(const SliceIteratorPtr& iter)
+bool SliceIterator::operator!=(const SliceIterator& iter)
 {
   return !( (*this) == iter );
 }
@@ -213,12 +213,12 @@ bool SliceIterator::operator!=(const SliceIteratorPtr& iter)
 //---------------------------------------------------------------------------
 // SliceIterator::get
 //---------------------------------------------------------------------------
-void SliceIterator::get()
+void SliceIterator::get() const
 {
   CDMA_FUNCTION_TRACE("SliceIterator::get");
 
   // Get array current informations
-  ViewPtr index = new View( m_array->getView() );
+  IViewPtr index = new View( m_array->getView() );
   std::vector<int> current = m_iterator->getPosition();
   std::vector<int> shape   = index->getShape();
   int rank = m_array->getRank();

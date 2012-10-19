@@ -23,9 +23,9 @@
 //-----------------------------------------------------------------------------
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
-#include <cdma/dictionary/Dictionary.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Context.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
+#include <cdma/dictionary/impl/Key.h>
+#include <cdma/dictionary/plugin/Context.h>
 
 namespace cdma
 {

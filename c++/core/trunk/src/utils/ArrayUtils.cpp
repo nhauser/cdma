@@ -25,9 +25,10 @@
 //-----------------------------------------------------------------------------
 #include <typeinfo>
 
-#include <cdma/exception/Exception.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
 #include <cdma/utils/ArrayUtils.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/impl/View.h>
+#include <cdma/array/IArray.h>
 #include <cdma/array/ArrayIterator.h>
 #include <cdma/array/SliceIterator.h>
 #include <cdma/array/Slicer.h>
@@ -39,7 +40,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 // ArrayUtils::ArrayUtils
 //---------------------------------------------------------------------------
-ArrayUtils::ArrayUtils( const ArrayPtr& array )
+ArrayUtils::ArrayUtils( const IArrayPtr& array )
 {
   m_array = array;
 }
@@ -52,7 +53,7 @@ ArrayUtils::~ArrayUtils() { }
 //---------------------------------------------------------------------------
 // ArrayUtils::getArray
 //---------------------------------------------------------------------------
-ArrayPtr ArrayUtils::getArray()
+IArrayPtr ArrayUtils::getArray()
 {
   CDMA_FUNCTION_TRACE("ArrayUtils::getArray");
   return m_array;
@@ -61,7 +62,7 @@ ArrayPtr ArrayUtils::getArray()
 //---------------------------------------------------------------------------
 // ArrayUtils::checkShape
 //---------------------------------------------------------------------------
-bool ArrayUtils::checkShape(const ArrayPtr& newArray)
+bool ArrayUtils::checkShape(const IArrayPtr& newArray)
 {
   bool result = true;
   if( m_array && newArray )
@@ -102,7 +103,7 @@ ArrayUtilsPtr ArrayUtils::reduce()
 
   if( getArray() )
   {
-    ViewPtr view = new View( m_array->getView() );
+    IViewPtr view = new View( m_array->getView() );
     view->reduce();
 
     return new ArrayUtils( new Array(getArray(), view) );
@@ -119,10 +120,10 @@ ArrayUtilsPtr ArrayUtils::reduce()
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reduce(int dim)
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
-    ViewPtr view = new View( thisArray->getView() );
+    IViewPtr view = new View( thisArray->getView() );
     view->reduce(dim);
 
     thisArray = new Array(thisArray, view);
@@ -137,7 +138,7 @@ ArrayUtilsPtr ArrayUtils::reduceTo(int rank)
 {
   if( m_array )
   {
-    ViewPtr view = new View( m_array->getView() );
+    IViewPtr view = new View( m_array->getView() );
     std::vector<int> shape = view->getShape();
     for( unsigned int i = 0; i < shape.size(); i++ )
     {
@@ -165,11 +166,11 @@ ArrayUtilsPtr ArrayUtils::reduceTo(int rank)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::reshape(std::vector<int> shape) throw ( Exception )
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
     std::vector<int> start ( shape.size() );
-    ViewPtr view = new View( shape, start );
+    IViewPtr view = new View( shape, start );
     view->compose( thisArray->getView() );
 
     thisArray = new Array(thisArray, view);
@@ -182,10 +183,10 @@ ArrayUtilsPtr ArrayUtils::reshape(std::vector<int> shape) throw ( Exception )
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::slice(int dim, int value)
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
-    ViewPtr view = new View( thisArray->getView() );
+    IViewPtr view = new View( thisArray->getView() );
 
     if( dim < view->getRank() ) 
     {
@@ -219,11 +220,11 @@ ArrayUtilsPtr ArrayUtils::slice(int dim, int value)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::transpose(int dim1, int dim2)
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
-    ViewPtr view = new View( thisArray->getView() );
+    IViewPtr view = new View( thisArray->getView() );
 
     std::vector<int> shape  = view->getShape();
     std::vector<int> origin = view->getOrigin();
@@ -259,11 +260,11 @@ ArrayUtilsPtr ArrayUtils::transpose(int dim1, int dim2)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::flip(int dim)
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
-    ViewPtr view = new View( thisArray->getView() );
+    IViewPtr view = new View( thisArray->getView() );
     std::vector<int> shape  = view->getShape();
     std::vector<int> origin = view->getOrigin();
     std::vector<int> stride = view->getStride();
@@ -283,11 +284,11 @@ ArrayUtilsPtr ArrayUtils::flip(int dim)
 //---------------------------------------------------------------------------
 ArrayUtilsPtr ArrayUtils::permute(std::vector<int> dims)
 {
-  ArrayPtr thisArray = m_array;
+  IArrayPtr thisArray = m_array;
   if( thisArray )
   {
     // Get current view of the array
-    ViewPtr view = new View( thisArray->getView() );
+    IViewPtr view = new View( thisArray->getView() );
     int rank = view->getRank();
     
     std::vector<int> shape  = view->getShape();

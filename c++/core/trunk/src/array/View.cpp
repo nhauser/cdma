@@ -24,12 +24,10 @@
 // DEPENDENCIES
 //-----------------------------------------------------------------------------
 #include <cdma/Common.h>
-#include <cdma/exception/Exception.h>
-#include <cdma/array/View.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
+#include <cdma/array/impl/View.h>
 
 #include <stdlib.h>
-
-#define VIEW_ERROR(a,b) throw cdma::Exception("View error", a, b)
 
 namespace cdma
 {
@@ -47,13 +45,13 @@ View::View()
 //---------------------------------------------------------------------------
 // View::View
 //---------------------------------------------------------------------------
-View::View(const cdma::ViewPtr& View)
+View::View(const cdma::IViewPtr& view)
 {
 //  CDMA_FUNCTION_TRACE("View::View");
-  m_rank = View->getRank();
+  m_rank = view->getRank();
   
   // Create new ranges
-  std::vector<Range> ranges = View->m_ranges;
+  std::vector<Range> ranges = ViewPtr(view)->m_ranges;
   m_ranges.resize( ranges.size() );
   for( yat::uint16 i = 0; i < ranges.size(); i++ )
   {
@@ -159,7 +157,7 @@ View::View(std::vector<int> shape, std::vector<int> start, std::vector<int> stri
 //---------------------------------------------------------------------------
 View::~View()
 {
-//  CDMA_FUNCTION_TRACE("View::~View");
+  CDMA_FUNCTION_TRACE("View::~View");
 }
 
 //---------------------------------------------------------------------------
@@ -314,7 +312,7 @@ std::vector<int> View::getPositionElement(long offset)
 //---------------------------------------------------------------------------
 // View::compose
 //---------------------------------------------------------------------------
-void View::compose(const ViewPtr& higher_view)
+void View::compose(const IViewPtr& higher_view)
 {
   m_compound = higher_view;
 }
@@ -404,7 +402,7 @@ void View::setOrigin(std::vector<int> origin)
   CDMA_FUNCTION_TRACE("View::setOrigin");
   if( origin.size() != (unsigned int)m_rank )
   {
-    VIEW_ERROR("Origin must have same length as view's rank!", "View::setOrigin");
+    THROW_EXCEPTION("VIEW_ERROR", "Origin must have same length as view's rank!", "View::setOrigin");
   }
   yat::uint16 i = 0;
   yat::uint16 j = 0;
@@ -435,7 +433,7 @@ void View::setShape(std::vector<int> shape)
 {
   if( shape.size() != (unsigned int) m_rank )
   {
-    VIEW_ERROR("Origin must have same length as view's rank!", "View::setShape");
+    THROW_EXCEPTION("VIEW_ERROR", "Origin must have same length as view's rank!", "View::setShape");
   }
 
   m_upToDate = false;
@@ -466,7 +464,7 @@ void View::setStride(std::vector<int> stride)
 {
   if( stride.size() != (unsigned int)m_rank )
   {
-    VIEW_ERROR("Origin must have same length as view's rank!", "View::setStride");
+    THROW_EXCEPTION("VIEW_ERROR", "Origin must have same length as view's rank!", "View::setStride");
   }
 
   m_upToDate = false;
@@ -497,7 +495,7 @@ void View::setViewName(int dim, const std::string& viewName)
 {
   if( dim >= m_rank || dim < 0 )
   {
-    VIEW_ERROR("Requested range is out of rank!", "View::setViewName");
+    THROW_EXCEPTION("VIEW_ERROR", "Requested range is out of rank!", "View::setViewName");
   }
   Range range ( viewName, m_ranges[dim].first(), m_ranges[dim].last(), m_ranges[dim].stride() );
   m_ranges[dim] = range;
@@ -510,7 +508,7 @@ std::string View::getViewName(int dim)
 {
   if( dim >= m_rank || dim < 0 )
   {
-    VIEW_ERROR("Requested range is out of rank!", "View::getViewName");
+    THROW_EXCEPTION("VIEW_ERROR", "Requested range is out of rank!", "View::getViewName");
   }
   return m_ranges[dim].getName();
 }
@@ -554,11 +552,11 @@ void View::reduce(int dim) throw ( cdma::Exception )
 
     if( (dim < 0) || (dim >= m_rank) ) 
     {
-        VIEW_ERROR("Illegal reduce dim " + ('0' + dim), "View::reduce" );
+        THROW_EXCEPTION("VIEW_ERROR", "Illegal reduce dim " + ('0' + dim), "View::reduce" );
     }
     if( m_ranges[range].length() != 1 ) 
     {
-        VIEW_ERROR(std::string("Illegal reduce dim " + ('0' + dim)) + " : reduced dimension must be have length=1", "View::reduce");
+        THROW_EXCEPTION("VIEW_ERROR", std::string("Illegal reduce dim " + ('0' + dim)) + " : reduced dimension must be have length=1", "View::reduce");
     }
 
     // Reduce proper range

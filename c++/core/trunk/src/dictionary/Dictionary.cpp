@@ -29,11 +29,11 @@
 #include <yat/utils/Logging.h>
 
 #include <cdma/utils/SAXParsor.h>
-#include <cdma/exception/Exception.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Dictionary.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
+#include <cdma/dictionary/impl/Key.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
 #include <cdma/navigation/IDataset.h>
-#include <cdma/Factory.h>
+#include <cdma/factory/impl/FactoryImpl.h>
 
 namespace cdma
 {
@@ -103,7 +103,7 @@ SAXParsor::INodeAnalyser* DictionaryConceptAnalyser::on_element(const yat::Strin
 
   else
   {
-    throw cdma::Exception( "BAD_CONFIG",
+    THROW_EXCEPTION( "BAD_CONFIG",
                            PSZ_FMT( "Unknown element '%s' while parsing dicrtionary document",
                                       PSZ(element_name) ),
                            "DictionaryConceptAnalyser::on_element" );
@@ -337,7 +337,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
   }
   else if( m_current_concept_id && element_name.is_equal("call") )
   {
-    IPluginMethodPtr method_ptr = Factory::getPluginMethod(m_dict_ptr->m_plugin_id, element_content);
+    IPluginMethodPtr method_ptr = FactoryImpl::getPluginMethod(m_dict_ptr->m_plugin_id, element_content);
     if( method_ptr )
     {
       KeyMethodPtr key_method_ptr = new KeyMethod(element_content, method_ptr);
@@ -420,7 +420,7 @@ void Dictionary::readEntries() throw ( Exception )
   {
     e.push_error("READ_ERROR", "Cannot read dictionary documents", 
                  "Dictionary::readEntries");
-    throw Exception(e);
+    RE_THROW_EXCEPTION(e);
   }
 }
 
@@ -460,7 +460,7 @@ Key::Type Dictionary::getKeyType(const std::string& key) throw( Exception )
 {
   KeywordConceptIdMap::const_iterator citKey = m_key_concept_map.find(key);
   if( citKey == m_key_concept_map.end() )
-    throw cdma::Exception( "KEY_NOT_FOUND", 
+    THROW_EXCEPTION( "KEY_NOT_FOUND", 
                            PSZ_FMT( "Key '%s' not found in data definition", 
                                     PSZ(key) ), "Dictionary::getPath" );
 
@@ -474,21 +474,21 @@ Key::Type Dictionary::getKeyType(const std::string& key) throw( Exception )
 //----------------------------------------------------------------------------
 // Dictionary::getSolversList
 //----------------------------------------------------------------------------
-SolverList Dictionary::getSolversList(const KeyPtr& key_ptr)
+SolverList Dictionary::getSolversList(const IKeyPtr& key_ptr)
 {
   std::string key = key_ptr->getName();
 
   // Retreive the key id
   KeywordConceptIdMap::const_iterator citKey = m_key_concept_map.find(key);
   if( citKey == m_key_concept_map.end() )
-    throw cdma::Exception( "KEY_NOT_FOUND", 
+    THROW_EXCEPTION( "KEY_NOT_FOUND", 
                            PSZ_FMT( "Key '%s' not found in data definition", 
                                     PSZ(key) ), "Dictionary::getSolversList" );
   int concept_id = citKey->second;
 
   ConceptIdSolverListMap::iterator itSolvers = m_concept_solvers_map.find(concept_id);
   if( itSolvers == m_concept_solvers_map.end() )
-    throw cdma::Exception( "NO_DATA", 
+    THROW_EXCEPTION( "NO_DATA", 
                            PSZ_FMT( "Key '%s' isn't associated with any solver", 
                                     PSZ(key) ), "Dictionary::getSolversList" );
 
@@ -528,7 +528,7 @@ Dictionary::ConceptPtr Dictionary::getConcept(const std::string &keyword)
     if( cit->second->isSynonym(keyword) )
       return cit->second;
   }
-  throw yat::Exception("NO_DATA", 
+  THROW_EXCEPTION("NO_DATA", 
                        PSZ_FMT("No concept for this keyword: %s", PSZ(keyword)),
                        "Dictionary::getConcept");
 }
@@ -544,7 +544,7 @@ int Dictionary::getConceptId(const std::string &keyword)
     if( cit->second->isSynonym(keyword) )
       return cit->first;
   }
-  throw yat::Exception("NO_DATA", 
+  THROW_EXCEPTION("NO_DATA", 
                        PSZ_FMT("No concept for this keyword: %s", PSZ(keyword)),
                        "Dictionary::getConcept");
 }

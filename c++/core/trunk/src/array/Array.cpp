@@ -26,8 +26,9 @@
 #include <typeinfo>
 
 #include <cdma/Common.h>
-#include <cdma/exception/Exception.h>
-#include <cdma/array/Array.h>
+#include <cdma/exception/impl/ExceptionImpl.h>
+#include <cdma/array/impl/View.h>
+#include <cdma/array/IArray.h>
 #include <cdma/math/ArrayMath.h>
 #include <cdma/utils/ArrayUtils.h>
 #include <cdma/array/ArrayIterator.h>
@@ -57,7 +58,7 @@ Array::Array( const Array& array ) : m_view_ptr ( array.m_view_ptr )
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const Array& array, const ViewPtr& view ) : m_view_ptr (view)
+Array::Array( const Array& array, const IViewPtr& view ) : m_view_ptr (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array( const Array& array, const ViewPtr& view )");
   m_data_impl = array.m_data_impl;
@@ -67,9 +68,9 @@ Array::Array( const Array& array, const ViewPtr& view ) : m_view_ptr (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view_ptr (view)
+Array::Array( const IArrayPtr& array, const IViewPtr& view ) : m_view_ptr (view)
 {
-  CDMA_FUNCTION_TRACE("Array::Array( const ArrayPtr& array, const ViewPtr& view )");
+  CDMA_FUNCTION_TRACE("Array::Array( const IArrayPtr& array, const ViewPtr& view )");
   m_data_impl = array->getStorage();
   m_shape = view->getShape();
 }
@@ -77,7 +78,7 @@ Array::Array( const ArrayPtr& array, const ViewPtr& view ) : m_view_ptr (view)
 //---------------------------------------------------------------------------
 // Array::Array
 //---------------------------------------------------------------------------
-Array::Array( const IArrayStoragePtr& data_ptr, const ViewPtr& view ) : m_view_ptr (view)
+Array::Array( const IArrayStoragePtr& data_ptr, const IViewPtr& view ) : m_view_ptr (view)
 {
   CDMA_FUNCTION_TRACE("Array::Array( const std::string& factory, const IArrayStoragePtr& data_ptr, const ViewPtr& view )");
   m_data_impl = data_ptr;
@@ -187,7 +188,7 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
 //---------------------------------------------------------------------------
 // Array::deepCopy
 //---------------------------------------------------------------------------
-ArrayPtr Array::deepCopy()
+IArrayPtr Array::deepCopy()
 {
   // Copy memory storage
   std::vector<int> origin( m_view_ptr->getRank() );
@@ -205,6 +206,22 @@ ArrayPtr Array::deepCopy()
 }
 
 //---------------------------------------------------------------------------
+// Array::getValue
+//---------------------------------------------------------------------------
+void* Array::getValue( const IViewPtr& view, std::vector<int> position )
+{
+  return m_data_impl->getValue(view, position);
+}
+
+//---------------------------------------------------------------------------
+// Array::setValue
+//---------------------------------------------------------------------------
+void Array::setValue( const IViewPtr& view, std::vector<int> position, void* value_ptr )
+{
+  m_data_impl->setValue(view, position, value_ptr);
+}
+
+//---------------------------------------------------------------------------
 // Array::getValueType
 //---------------------------------------------------------------------------
 const std::type_info& Array::getValueType()
@@ -215,10 +232,10 @@ const std::type_info& Array::getValueType()
 //---------------------------------------------------------------------------
 // Array::getView
 //---------------------------------------------------------------------------
-ViewPtr Array::getView()
+IViewPtr Array::getView()
 {
   CDMA_FUNCTION_TRACE("Array::getView");
-  return cdma::ViewPtr(m_view_ptr);
+  return cdma::IViewPtr(m_view_ptr);
 }
 
 //---------------------------------------------------------------------------
@@ -227,7 +244,7 @@ ViewPtr Array::getView()
 ArrayIterator Array::begin()
 {
   CDMA_FUNCTION_TRACE("Array::begin");
-  ViewPtr view = new View(m_view_ptr);
+  IViewPtr view = new View(m_view_ptr);
   std::vector<int> position;
   for( int i = 0; i < view->getRank(); i++ )
   {
@@ -249,7 +266,7 @@ ArrayIterator Array::end()
 {
   CDMA_FUNCTION_TRACE("Array::end");
   // Copy view
-  ViewPtr view = new View(m_view_ptr);
+  IViewPtr view = new View(m_view_ptr);
   
   // Construct a vector of position having 0 in each low dimension
   // the first is having shape[0]. Means positioned at the cell that just
@@ -279,10 +296,10 @@ int Array::getRank()
 //---------------------------------------------------------------------------
 // Array::getRegion
 //---------------------------------------------------------------------------
-ArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw ( cdma::Exception )
+IArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("Array::getRegion");
-  ViewPtr view = new View(m_view_ptr);
+  IViewPtr view = new View(m_view_ptr);
   view->setOrigin(start);
   view->setShape(shape);
   return new Array(*this, view);
@@ -307,7 +324,7 @@ long Array::getSize()
 //---------------------------------------------------------------------------
 // Array::setView
 //---------------------------------------------------------------------------
-void Array::setView(const cdma::ViewPtr& view)
+void Array::setView(const cdma::IViewPtr& view)
 {
   m_view_ptr = view;
 }

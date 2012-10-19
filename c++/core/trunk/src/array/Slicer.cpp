@@ -31,7 +31,7 @@ namespace cdma
 //---------------------------------------------------------------------------
 // Slicer::Slicer
 //---------------------------------------------------------------------------
-Slicer::Slicer(const ArrayPtr& array, int dim)
+Slicer::Slicer(const IArrayPtr& array, int dim)
 {
   CDMA_FUNCTION_TRACE("Slicer::Slicer");
   m_array = array;
@@ -65,7 +65,7 @@ SliceIterator Slicer::end()
 //---------------------------------------------------------------------------
 // Slicer::operator*
 //---------------------------------------------------------------------------
-const ArrayPtr& Slicer::array()
+const IArrayPtr& Slicer::array()
 {
   return m_array;
 }
