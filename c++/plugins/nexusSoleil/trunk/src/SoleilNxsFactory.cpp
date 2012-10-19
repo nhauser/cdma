@@ -19,7 +19,8 @@
 
 // CDMA core
 #include <cdma/Common.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/IKey.h>
+#include <cdma/utils/PluginConfig.h>
 
 // Engine NeXus
 #include <NxsDataset.h>
@@ -90,6 +91,15 @@ cdma::IDatasetPtr Factory::openDataset(const std::string& location_string)
 throw ( cdma::Exception )
 {
   FUNCTION_TRACE("Factory::openDataset");
+  CDMA_TRACE("location_string: " << location_string);
+
+  static bool configFileLoaded = false;
+/*
+  if( !configFileLoaded )
+  {
+    PluginConfigManager::load( plugin_id(), "cdma_nexussoleil_config.xml" );
+  }
+*/
   return new Dataset( yat::URI(location_string), this );
 }
 
