@@ -51,9 +51,9 @@ std::string Dimension::getName()
   return m_item->getName();
 }
 //----------------------------------------------------------------------------
-// Dimension::getLength
+// Dimension::getSize
 //----------------------------------------------------------------------------
-int Dimension::getLength()
+int Dimension::getSize()
 {
   return m_item->getSize();
 }
@@ -82,7 +82,7 @@ bool Dimension::isShared()
 //----------------------------------------------------------------------------
 // Dimension::getCoordinateVariable
 //----------------------------------------------------------------------------
-ArrayPtr Dimension::getCoordinateVariable()
+IArrayPtr Dimension::getCoordinateVariable()
 {
   return m_item->getData();
 }
@@ -112,9 +112,9 @@ void Dimension::setShared(bool value)
 }
 
 //----------------------------------------------------------------------------
-// Dimension::setLength
+// Dimension::setSize
 //----------------------------------------------------------------------------
-void Dimension::setLength(int)
+void Dimension::setSize(int)
 {
   THROW_NOT_IMPLEMENTED("cdma_nexus::Dimension::setLength");
 }
@@ -130,7 +130,7 @@ void Dimension::setName(const std::string& name)
 //----------------------------------------------------------------------------
 // Dimension::setCoordinateVariable
 //----------------------------------------------------------------------------
-void Dimension::setCoordinateVariable(const cdma::ArrayPtr& array) throw ( cdma::Exception )
+void Dimension::setCoordinateVariable(const cdma::IArrayPtr& array) throw ( cdma::Exception )
 {
   m_item->setData(array);
 }
@@ -143,7 +143,7 @@ int Dimension::getDimensionAxis()
   IAttributePtr attr = m_item->getAttribute("axis");
   if( attr )
   {
-    return attr->getIntValue();
+    return attr->getValue<long>();
   }
   else
   {
@@ -159,7 +159,7 @@ int Dimension::getDisplayOrder()
   IAttributePtr attr = m_item->getAttribute("primary");
   if( attr )
   {
-    return attr->getIntValue();
+    return attr->getValue<long>();
   }
   else
   {
@@ -168,11 +168,11 @@ int Dimension::getDisplayOrder()
 }
 
 //----------------------------------------------------------------------------
-// Dimension::getUnitsString
+// Dimension::getUnit
 //----------------------------------------------------------------------------
-std::string Dimension::getUnitsString()
+std::string Dimension::getUnit()
 {
-  return m_item->getUnitsString();
+  return m_item->getUnit();
 }
 
 //---------------------------------------------------------------------------
@@ -183,7 +183,7 @@ void Dimension::setDimensionAxis(int index)
   IAttributePtr attr = m_item->getAttribute("axis");
   if( attr )
   {
-    attr->setIntValue(index);
+    attr->setValue(index);
   }
 }
 
@@ -195,7 +195,7 @@ void Dimension::setDisplayOrder(int order)
   IAttributePtr attr = m_item->getAttribute("primary");
   if( attr )
   {
-    attr->setIntValue(order);
+    attr->setValue(order);
   }
 }
 

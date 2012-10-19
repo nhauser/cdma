@@ -67,7 +67,7 @@ void Group::PrivEnumChildren()
   }
   catch( NexusException &e )
   {
-    throw cdma::Exception(e);
+    RE_THROW_EXCEPTION(e);
   }
 }
 
@@ -103,7 +103,7 @@ void Group::PrivEnumAttributes()
   }
   catch( NexusException &e )
   {
-    throw cdma::Exception(e);
+    RE_THROW_EXCEPTION(e);
   }
 
 }
@@ -231,7 +231,7 @@ cdma::IDataItemPtr Group::getDataItemWithAttribute(const std::string& name, cons
     if( (*iter)->hasAttribute(name) )
     {
       IAttributePtr attr = (*iter)->getAttribute(name);
-      if( attr->getStringValue() == value )
+      if( attr->getValue<std::string>() == value )
       {
         result = *iter;
         break;
@@ -295,7 +295,7 @@ cdma::IGroupPtr Group::getGroupWithAttribute(const std::string& name, const std:
     if( (*iter)->hasAttribute(name) )
     {
       IAttributePtr attr = (*iter)->getAttribute(name);
-      if( attr->getStringValue() == value )
+      if( attr->getValue<std::string>() == value )
       {
         result = *iter;
         break;
