@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.nexus.array;
 
 
@@ -13,7 +22,6 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
 import org.cdma.utils.IArrayUtils;
-import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
 
@@ -21,17 +29,16 @@ import fr.soleil.nexus.DataItem;
 public final class NexusArray implements IArray {
     private IIndex    mIndex;        // IIndex corresponding to this IArray (dimension sizes defining the viewable part of the array)
     private Object    mData;         // It's an array of values
-    private boolean   mIsRawArray;   // True if the stored array has a rank of 1 (independently of its shape)
-    private boolean   mIsDirty;      // Is the array synchronized with the handled file
+    private boolean  mIsRawArray;   // True if the stored array has a rank of 1 (independently of its shape)
+    private boolean  mIsDirty;      // Is the array synchronized with the handled file
     private DataItem  mN4TDataItem;  // IArray of dataitem that are used to store the storage backing
-    private int[]     mShape;        // Shape of the array (dimension sizes of the storage backing)
+    private int[]    mShape;         // Shape of the array (dimension sizes of the storage backing)
     private String    mFactory;      // Name of the instantiating factory 
     private static final int TO_STRING_LENGTH = 1000;
 
 
     // Constructors
     public NexusArray(String factoryName, Object oArray, int[] iShape) {
-
         mIndex = new NexusIndex(mFactory, iShape.clone());
         mData = oArray;
         mShape = iShape.clone();
@@ -59,10 +66,12 @@ public final class NexusArray implements IArray {
         }
         mIsRawArray = array.mIsRawArray;
         mIsDirty = array.mIsDirty;
-        try {
-            mN4TDataItem = array.mN4TDataItem.clone();
-        } catch (CloneNotSupportedException e) {
-            mN4TDataItem = null;
+        mN4TDataItem = null;
+        if( array.mN4TDataItem != null ) {
+	        try {
+	            mN4TDataItem = array.mN4TDataItem.clone();
+	        } catch (CloneNotSupportedException e) {
+	        }
         }
     }
 
@@ -73,12 +82,7 @@ public final class NexusArray implements IArray {
     	mIsRawArray  = ds.isSingleRawArray();
     	mIsDirty     = false;
     	mN4TDataItem = ds;
-    	if( ds.getType() == NexusFile.NX_CHAR ) {
-    	    mIndex   = new NexusIndex(mFactory, new int[] {1});
-    	}
-    	else {
-    	    mIndex   = new NexusIndex(mFactory, ds);
-    	}
+	    mIndex   = new NexusIndex(mFactory, ds);
     }
 
     // ---------------------------------------------------------
@@ -94,7 +98,6 @@ public final class NexusArray implements IArray {
         return new NexusArrayUtils(this);
     }
 
-    /// Specific method to match NetCDF plug-in behavior
     @Override
     public String toString() {
         Object oData = getData();
@@ -576,21 +579,21 @@ public final class NexusArray implements IArray {
     /// Protected methods
     // ---------------------------------------------------------
     protected boolean isSingleRawArray() {
-	return mIsRawArray;
+    	return mIsRawArray;
     }
 
-    protected IArray sectionNoReduce(int[] origin, int[] shape, long[] stride) throws ShapeNotMatchException {
-	Object oData = getData();
-	NexusArray array = new NexusArray(mFactory, oData, mShape);
-	array.mIndex.setShape(shape);
-	array.mIndex.setStride(stride);
-	((NexusIndex) array.mIndex).setOrigin(origin);
-	return array;
-    }
+	protected IArray sectionNoReduce(int[] origin, int[] shape, long[] stride) throws ShapeNotMatchException {
+		Object oData = getData();
+		NexusArray array = new NexusArray(mFactory, oData, mShape);
+		array.mIndex.setShape(shape);
+		array.mIndex.setStride(stride);
+		((NexusIndex) array.mIndex).setOrigin(origin);
+		return array;
+	}
 
-    protected void setShape(int[] shape) {
-	mShape = shape.clone();
-    }
+	protected void setShape(int[] shape) {
+		mShape = shape.clone();
+	}
 
     // ---------------------------------------------------------
     /// Private methods
@@ -623,11 +626,11 @@ public final class NexusArray implements IArray {
     private Object getData() {
         Object result = mData;
         if (result == null && mN4TDataItem != null) {
-            if (mN4TDataItem.getType() == NexusFile.NX_CHAR) {
+/*            if (mN4TDataItem.getType() == NexusFile.NX_CHAR) {
                 result = mN4TDataItem.getData();
             } else {
-                result = mN4TDataItem.getData(((NexusIndex) mIndex).getProjectionOrigin(), ((NexusIndex) mIndex).getProjectionShape());
-            }
+*/                result = mN4TDataItem.getData(((NexusIndex) mIndex).getProjectionOrigin(), ((NexusIndex) mIndex).getProjectionShape());
+//            }
         }
         return result;
     }

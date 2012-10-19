@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package fr.soleil.nexus;
 
 // Tools lib
@@ -184,7 +193,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Converting byte[] to string in case of NX_CHAR data
         if (iDataInf[1] == NexusFile.NX_CHAR) {
-            oOutput = new String((byte[]) oOutput);
+            oOutput = new String((byte[]) oOutput).toCharArray();
         }
 
         // Setting DataItem's data
@@ -356,7 +365,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
             // Converting byte[] to string in case of NX_CHAR data
             if (iDataInf[1] == NexusFile.NX_CHAR) {
-                oOutput = new String((byte[]) oOutput);
+                oOutput = new String((byte[]) oOutput).toCharArray();
             }
 
             // Setting DataItem's data
@@ -450,7 +459,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Try to return the first array cell if there's no need of returning an
         // array
-        if (oTmpOut != null && !(oTmpOut instanceof String) && oTmpOut.getClass().isArray()) {
+        if (oTmpOut != null && !(oTmpOut instanceof char[]) && oTmpOut.getClass().isArray()) {
             if (java.lang.reflect.Array.getLength(oTmpOut) == 1)
                 oOutput = java.lang.reflect.Array.get(oTmpOut, 0);
         }

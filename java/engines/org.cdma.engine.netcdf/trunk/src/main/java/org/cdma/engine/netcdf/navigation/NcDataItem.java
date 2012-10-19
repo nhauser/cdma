@@ -502,5 +502,29 @@ public class NcDataItem extends VariableDS implements IDataItem {
     public long getLastModificationDate() {
         return dataset.getLastModificationDate();
     }
-	
+    
+    @Override
+    public int getRank() {
+    	int[] shape = getShape();
+    	int rank = shape.length;
+    	if (shape.length == 1 && shape[0] == 1) {
+            rank = 0;
+        }
+    	
+    	return rank;
+    }
+    
+    @Override
+    public int[] getShape() {
+    	int[] shape = super.getShape();
+    	if( dataType == DataType.STRING ) {
+    		shape = new int[] {1};
+    	}
+    	else if( dataType == DataType.CHAR ) {
+    		if( super.getShape().length == 2 && super.getShape()[0] == 1 ) {
+    			shape = new int[] {1};
+    		}
+    	}
+    	return shape;
+    }
 }

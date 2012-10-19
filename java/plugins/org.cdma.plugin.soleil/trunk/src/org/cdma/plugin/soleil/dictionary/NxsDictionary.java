@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.soleil.dictionary;
 
 import java.io.BufferedReader;
@@ -28,6 +37,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 /**
  * @note This class is just a test and is not representative of how the real implementation should
@@ -110,7 +120,7 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         }
 
         // Parse the XML dictionary
-        SAXBuilder xmlFile = new SAXBuilder();
+        SAXBuilder xmlFile = new SAXBuilder(XMLReaders.DTDVALIDATING);
         Element root;
         Document dictionary;
         try {
@@ -172,40 +182,5 @@ public final class NxsDictionary implements IDictionary, Cloneable {
     @Override
     public String getFactoryName() {
         return NxsFactory.NAME;
-    }
-
-    /**
-     * According to the current corresponding dataset, this method will try to guess which XML
-     * dictionary mapping file should be used
-     * 
-     * @return
-     * @throws FileAccessException
-     */
-    public static String detectDictionaryFile(NxsDataset dataset) {
-        String beamline = "UNKNOWN";
-        String model = "UNKNOWN";
-
-        // Get the configuration
-        ConfigDataset conf;
-        try {
-            conf = dataset.getConfiguration();
-
-            // Ask for beamline and datamodel parameters
-            beamline = conf.getParameter(NxsConstant.BEAMLINE);
-            model = conf.getParameter(NxsConstant.MODEL);
-        }
-        catch (NoResultException e) {
-            Factory.getLogger().log( Level.WARNING, e.getMessage());
-        }
-
-        if (beamline != null) {
-            beamline = beamline.toLowerCase();
-        }
-        if (model != null) {
-            model = model.toLowerCase();
-        }
-
-        // Construct the dictionary file name
-        return beamline + "_" + model + ".xml";
     }
 }

@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.soleil.array;
 
 
@@ -15,6 +24,7 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.soleil.NxsFactory;
+import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.IArrayUtils;
 
 import fr.soleil.nexus.DataItem;
@@ -23,7 +33,7 @@ public final class NxsArray implements IArray {
     private Object     mData;      // It's an array of values
     private NxsIndex   mIndex;     // IIndex corresponding to mArray shape
     private IArray[]   mArrays;    // IArray of IArray
-    private boolean    mFastMode;  // flag toggling in fast mode: i.e when true the IArray will be shared among references
+    private boolean   mFastMode;  // flag toggling in fast mode: i.e when true the IArray will be shared among references
 
     public NxsArray( IArray[] arrays ) {
         mArrays   = arrays.clone();
@@ -195,7 +205,10 @@ public final class NxsArray implements IArray {
 
     @Override
     public int[] getShape() {
-        return mIndex.getShape();
+    	Benchmarker.start("Array.getShape");
+    	int[] result = mIndex.getShape();
+    	Benchmarker.stop("Array.getShape");
+    	return result;
     }
 
     @Override
@@ -215,19 +228,20 @@ public final class NxsArray implements IArray {
 
             int[] shape = new int[] { nbMatrixCells.intValue(), nbStorageCells.intValue() };
             result = java.lang.reflect.Array.newInstance(getElementType(), shape);
-            
+            /*
             if( mArrays[0].getElementType().equals(String.class) ) {
-                for( int i = 0; i < nbMatrixCells; i++ ) {
-                    java.lang.reflect.Array.set(result, i, new String[] { (String) mArrays[(int) matrixIndex.currentElement()].getStorage() } );
-                    NexusArrayIterator.incrementIndex(matrixIndex);
-                }
-            }
-            else {
                 for( int i = 0; i < nbMatrixCells; i++ ) {
                     java.lang.reflect.Array.set(result, i, mArrays[(int) matrixIndex.currentElement()].getStorage() );
                     NexusArrayIterator.incrementIndex(matrixIndex);
                 }
             }
+            else {*/
+                for( int i = 0; i < nbMatrixCells; i++ ) {
+                	Object o = mArrays[(int) matrixIndex.currentElement()].getStorage();
+                    java.lang.reflect.Array.set(result, i, o );
+                    NexusArrayIterator.incrementIndex(matrixIndex);
+                }
+            //}
         }
 
         return result;
@@ -373,7 +387,14 @@ public final class NxsArray implements IArray {
     public void setFastMode( boolean activate ) {
         mFastMode = activate;
     }
-    
+
+    /**
+     * @return this array sub-parts if any
+     */
+    public IArray[] getArrayParts() {
+    	return mArrays;
+    }
+
     // ---------------------------------------------------------
     /// Private methods
     // ---------------------------------------------------------
