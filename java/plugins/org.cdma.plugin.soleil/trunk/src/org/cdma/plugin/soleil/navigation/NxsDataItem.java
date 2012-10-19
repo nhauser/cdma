@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.soleil.navigation;
 
 import java.io.File;
@@ -26,8 +35,8 @@ import org.cdma.plugin.soleil.array.NxsArray;
 import org.cdma.plugin.soleil.array.NxsIndex;
 import org.cdma.plugin.soleil.utils.NxsConstant;
 import org.cdma.utilities.configuration.internal.ConfigParameter.CriterionValue;
+import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.Utilities.ModelType;
-import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
 
@@ -58,7 +67,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     private NxsDataset mDataset; // CDMA IDataset i.e. file handler
     private IGroup mParent; // parent group
     private NexusDataItem[] mDataItems; // NeXus dataitem support of the data
-    private IArray mArray; // CDMA IArray supporting a view of the data
+    private NxsArray mArray; // CDMA IArray supporting a view of the data
     private List<DimOrder> mDimension; // list of dimensions
 
     // / Constructors
@@ -382,15 +391,14 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public int getRank() {
         int result;
         int[] shape = getShape();
-        if (mDataItems[0].getN4TDataItem().getType() == NexusFile.NX_CHAR) {
-            result = 0;
-        }
-        else if (shape.length == 1 && shape[0] == 1) {
+        
+        if (shape.length == 1 && shape[0] == 1) {
             result = 0;
         }
         else {
-            result = shape.length;
+        	result = shape.length;
         }
+
         return result;
     }
 
@@ -408,13 +416,18 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public int[] getShape() {
-        int[] shape;
-        try {
-            shape = getData().getShape();
-        }
-        catch (IOException e) {
-            shape = new int[] {};
-        }
+    	int[] shape;
+    	if( mDataItems.length == 1 ) {
+    		shape = mDataItems[0].getShape();
+    	}
+    	else {
+            try {
+                shape = getData().getShape();
+            }
+            catch (IOException e) {
+                shape = new int[] {};
+            }
+    	}
         return shape;
     }
 
@@ -443,7 +456,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
         NxsDataItem item = new NxsDataItem(this);
         try {
-            item.mArray = item.getData().getArrayUtils().slice(dim, value).getArray();
+            item.mArray = (NxsArray) item.getData().getArrayUtils().slice(dim, value).getArray();
         }
         catch (Exception e) {
             item = null;
@@ -513,13 +526,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public boolean isScalar() {
-        int rank = 0;
-        try {
-            rank = getData().getRank();
-        }
-        catch (IOException e) {
-        }
-        return (rank == 0);
+    	return ( getRank() == 0 );
     }
 
     @Override
@@ -578,11 +585,16 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void setCachedData(IArray cacheData, boolean isMetadata)
-            throws InvalidArrayTypeException {
-        for (IDataItem item : mDataItems) {
-            item.setCachedData(cacheData, isMetadata);
-        }
+    public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
+    	if( cacheData instanceof NxsArray ) {
+   			mArray = (NxsArray) cacheData;
+    	}
+    	else if( mDataItems.length == 1 ) {
+	        mDataItems[0].setCachedData(cacheData, isMetadata);
+    	}
+    	else {
+    		throw new InvalidArrayTypeException("Unable to set data: NxsArray is expected!");
+    	}
     }
 
     @Override
@@ -644,7 +656,8 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public void setParent(IGroup group) {
         if (mParent == null || !mParent.equals(group)) {
             mParent = group;
-            group.addDataItem(this);
+            // TODO
+            //group.addDataItem(this);
         }
     }
 

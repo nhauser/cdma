@@ -1,13 +1,13 @@
-/*******************************************************************************
- * Copyright (c) 2012 Synchrotron SOLEIL.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0 
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: 
- *    ClÃ©ment Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
- ******************************************************************************/
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.utilities.configuration;
 
 import java.io.File;
@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -30,6 +31,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 /**
  * ConfigManager is a <b>singleton</b>, only one instance managing all configurations for all plug-ins.
@@ -94,7 +96,8 @@ public class ConfigManager {
                     load(factoryName);
                 }
                 catch(FileAccessException e) {
-                    throw new NoResultException("No result due to a FileAccessException!", e );
+                    Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                    return null;
                 }
             }
 
@@ -160,7 +163,7 @@ public class ConfigManager {
      * @param name of the plug-in
      * @throws FileAccessException if unable to load configuration file
      */
-    private void load(String name) throws FileAccessException {
+    private void load(String name) throws FileAccessException, NoResultException {
         // Get the configuration file
         File file = mFiles.get(name);
 
@@ -171,23 +174,23 @@ public class ConfigManager {
 
             // Determine the experiment dictionary according to given path
             if (!file.exists()) {
-                throw new FileAccessException("Configuration file for '" + 
+                throw new NoResultException("Configuration file for '" + 
                         factory.getPluginLabel() + "' plug-in doesn't exist:\n" + 
                         file.getAbsolutePath()
                         );
             }
 
             // Parse the XML configuration file
-            SAXBuilder xmlFile = new SAXBuilder();
+            SAXBuilder xmlFile = new SAXBuilder(XMLReaders.DTDVALIDATING);
             Document config;
             try {
                 config = xmlFile.build(file);
             }
             catch (JDOMException e1) {
-                throw new FileAccessException("Error while to parsing the configuration!\n" + file.getAbsolutePath() + "\n", e1);
+                throw new FileAccessException("Error while to parsing the configuration!\n" + file.getAbsolutePath() + "\n" + e1.getMessage(), e1);
             }
             catch (IOException e1) {
-                throw new FileAccessException("An I/O error prevent parsing configuration!\n" + file.getAbsolutePath() + "\n", e1);
+                throw new FileAccessException("An I/O error prevent parsing configuration!\n" + file.getAbsolutePath() + "\n" + e1.getMessage(), e1);
             }
 
             // Get the XML file root

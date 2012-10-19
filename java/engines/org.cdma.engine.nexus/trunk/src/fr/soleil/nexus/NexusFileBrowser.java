@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package fr.soleil.nexus;
 
 // Tools lib
@@ -728,7 +737,7 @@ public class NexusFileBrowser extends NexusFileInstance {
         // Convert bytes array (representing chars) to string
         if (iAttrInf[1] == NexusFile.NX_CHAR) {
             oAttrVal = new String((byte[]) oAttrVal);
-            oAttrVal = ((String) oAttrVal).substring(0, ((String) oAttrVal).length() - 1);
+            oAttrVal = ((String) oAttrVal).substring(0, ((String) oAttrVal).length() - 1).toCharArray();
         }
         return oAttrVal;
     }

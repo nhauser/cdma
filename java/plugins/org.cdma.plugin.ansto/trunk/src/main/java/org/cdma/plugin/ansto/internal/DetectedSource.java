@@ -146,8 +146,8 @@ public class DetectedSource {
         
         // Check if the URI targets an ANSTO file
         if ( mIsReadable ) {
+        	// TODO [SOLEIL][clement] make a real test case
         	{
-        		// TODO [SOLEIL][clement] make a real test case
 	        	File file = new File(uri.getPath());
 	        	if ( file.getName().endsWith( HDF_EXTENSION ) ) {
 	        		return true;
@@ -183,8 +183,11 @@ public class DetectedSource {
         boolean result = false;
 
         // If experiment not browsable
-        if ( mIsFolder || (!mIsExperiment && mIsFolder) ) {
-            return true;
+        if (!mIsExperiment) {
+            // If it is a folder or if we are producer of the file
+            if (mIsFolder || mIsProducer) {
+                result = true;
+            }
         }
         return result;
     }

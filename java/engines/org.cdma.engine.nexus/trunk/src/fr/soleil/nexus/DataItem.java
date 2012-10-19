@@ -1,6 +1,14 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package fr.soleil.nexus;
 
-// Nexus Lib
 import java.lang.ref.SoftReference;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -211,8 +219,13 @@ public class DataItem implements Cloneable {
             mAttribs = new HashMap<String, Data<?>>();
         }
 
-        Data<T> tValue = new Data<T>(oValue);
-        mAttribs.put(sAttrName, tValue);
+        if( oValue != null ) {
+        	Data<T> tValue = new Data<T>(oValue);
+        	mAttribs.put(sAttrName, tValue);
+        }
+        else {
+        	mAttribs.remove(sAttrName);
+        }
     }
 
     @Override
@@ -240,7 +253,7 @@ public class DataItem implements Cloneable {
         if (oData instanceof String) {
             mType = NexusFile.NX_CHAR;
             mDimSize = new int[] { ((String) oData).length() };
-            mData = new SoftReference<Object>(oData);
+            mData = new SoftReference<Object>(((String) oData).toCharArray());
             mDimData = new int[] { ((String) oData).length() };
             mStart = new int[] { 0 };
             mPrevShape = mDimData;
@@ -259,7 +272,7 @@ public class DataItem implements Cloneable {
         // Try to determine type of data (primitive only) and its dimension size
         else {
             // If data is not array try to arrify it
-            if (!oData.getClass().isArray() && !(oData instanceof String)) {
+            if ( !oData.getClass().isArray() ) {
                 Object oObj = java.lang.reflect.Array.newInstance(oData.getClass(), 1);
                 java.lang.reflect.Array.set(oObj, 0, oData);
                 oData = oObj;
@@ -312,7 +325,7 @@ public class DataItem implements Cloneable {
         str.append("\n     - Node Path: " + mPath);
         Object data = getData();
         if (mType == NexusFile.NX_CHAR && null != data) {
-            str.append("\n     - Value: " + data);
+            str.append("\n     - Value: " + new String( (char[]) data) );
         }
         return str.toString();
     }
@@ -345,7 +358,7 @@ public class DataItem implements Cloneable {
             case NexusFile.NX_INT64:
                 return Long.TYPE;
             case NexusFile.NX_CHAR:
-                return String.class;
+                return Character.TYPE;
             case NexusFile.NX_BOOLEAN:
                 return Boolean.TYPE;
             case NexusFile.NX_BINARY:
@@ -459,8 +472,7 @@ public class DataItem implements Cloneable {
                 mPrevShape = mDimSize;
             }
             else {
-                mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData)
-                        .getRawData());
+                mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData).getRawData());
                 mPrevStart = mStart;
                 mPrevShape = mDimData;
             }
@@ -533,7 +545,7 @@ public class DataItem implements Cloneable {
                 result = Arrays.copyOfRange((long[]) data, start, start + length);
                 break;
             case NexusFile.NX_CHAR:
-                result = Arrays.copyOfRange((String[]) data, start, start + length);
+                result = Arrays.copyOfRange((char[]) data, start, start + length);
                 break;
             case NexusFile.NX_BOOLEAN:
                 result = Arrays.copyOfRange((boolean[]) data, start, start + length);

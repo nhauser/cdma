@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.nexus.navigation;
 
 import java.io.IOException;
@@ -6,7 +15,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.engine.nexus.array.NexusArray;
 import org.cdma.engine.nexus.array.NexusIndex;
 import org.cdma.exception.InvalidArrayTypeException;
@@ -161,24 +172,17 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public void addStringAttribute(String name, String value) {
-        mn4tDataItem.setAttribute(name, value);
+        mn4tDataItem.setAttribute(name, value.toCharArray());
     }
 
     @Override
     public IAttribute getAttribute(String name) {
-        HashMap<String, Data<?>> inList;
+        HashMap<String, Data<?>> attrList;
 
-        inList = mn4tDataItem.getAttributes();
-
-        Entry<String, Data<?>> sAttr;
-        Iterator<Entry<String, Data<?>>> iter = inList.entrySet().iterator();
-        while (iter.hasNext()) {
-            sAttr = iter.next();
-            if (sAttr.getKey().equals(name)) {
-                return new NexusAttribute(mFactory, sAttr.getKey(), sAttr.getValue().getValue());
-            }
+        attrList = mn4tDataItem.getAttributes();
+        if( attrList.containsKey(name) ) {
+        	return new NexusAttribute(mFactory, name, attrList.get(name).getValue());
         }
-
         return null;
     }
 
@@ -399,8 +403,10 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     public int getRank() {
         int[] shape = getShape();
         int rank;
-        if (mn4tDataItem.getType() == NexusFile.NX_CHAR) {
-            rank = 0;
+        
+        if( shape.length == 0 ) {
+        	rank = -1;
+        	Factory.getLogger().log( Level.SEVERE, "Unable to determine rank!" );
         }
         else if (shape.length == 1 && shape[0] == 1) {
             rank = 0;
@@ -427,11 +433,17 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public int[] getShape() {
         int[] shape;
-        try {
-            shape = getData().getShape();
+        if (mn4tDataItem.getType() == NexusFile.NX_CHAR) {
+        	shape = new int[] {1};
         }
-        catch (IOException e) {
-            shape = new int[] { -1 };
+        else {
+	        try {
+	            shape = getData().getShape();
+	        }
+	        catch (IOException e) {
+	            shape = new int[] {};
+	            Factory.getLogger().log( Level.SEVERE, "Unable to determine shape! ", e );
+	        }
         }
         return shape;
     }
@@ -531,13 +543,7 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public boolean isScalar() {
-        int rank = 0;
-        try {
-            rank = getData().getRank();
-        }
-        catch (IOException e) {
-        }
-        return (rank == 0);
+        return ( getRank() == 0);
     }
 
     @Override
@@ -557,39 +563,41 @@ public final class NexusDataItem implements IDataItem, Cloneable {
         }
     }
 
+    
+    
     @Override
     public byte readScalarByte() throws IOException {
-        return ((byte[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getByte(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public double readScalarDouble() throws IOException {
-        return ((double[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getDouble(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public float readScalarFloat() throws IOException {
-        return ((float[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getFloat(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public int readScalarInt() throws IOException {
-        return ((int[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getInt(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public long readScalarLong() throws IOException {
-        return ((long[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getLong(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public short readScalarShort() throws IOException {
-        return ((short[]) mn4tDataItem.getData())[0];
+    	return java.lang.reflect.Array.getShort(mn4tDataItem.getData(), 0);
     }
 
     @Override
     public String readScalarString() throws IOException {
-        return (String) mn4tDataItem.getData();
+        return new String ((char[]) mn4tDataItem.getData());
     }
 
     @Override
@@ -601,7 +609,13 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public void setCachedData(IArray cacheData, boolean isMetadata)
             throws InvalidArrayTypeException {
-        throw new NotImplementedException();
+        mArray = cacheData;
+        if( isMetadata ) {
+        	mn4tDataItem.setAttribute("signal", 1);
+        }
+        else {
+        	mn4tDataItem.setAttribute("signal", null);
+        }
     }
 
     @Override

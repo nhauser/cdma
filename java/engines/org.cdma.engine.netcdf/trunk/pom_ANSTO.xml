@@ -12,7 +12,7 @@
 
 	<groupId>org.cdma.engines</groupId>
 	<artifactId>netcdf</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>CDMA Engine NetCDF</name>
 	<description>CDMA Engine: NetCDF</description>
   <packaging>eclipse-plugin</packaging>

@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.nexus.navigation;
 
 import org.cdma.engine.nexus.array.NexusArray;
@@ -8,18 +17,25 @@ public final class NexusAttribute implements IAttribute {
 
     /// Members
     private String  mName;    // Attribute's name
-    private IArray  mValue;    // Attribute's value
-    private String  mFactory;   // factory name that attribute depends on
+    private IArray  mValue;   // Attribute's value
+    private String  mFactory; // factory name that attribute depends on
 
     /// Constructors
-    public NexusAttribute(String factoryName, String sName, Object aValue) {
-        int i = 1;
-        if (aValue.getClass().isArray()) {
-            i = java.lang.reflect.Array.getLength(aValue);
+    public NexusAttribute(String factoryName, String name, String value) {
+    	this( factoryName, name, value.toCharArray());
+    }
+    
+    public NexusAttribute(String factoryName, String name, Object value) {
+        int[] shape;
+        if (value.getClass().isArray()) {
+        	shape = new int[] { java.lang.reflect.Array.getLength(value) };
+        }
+        else {
+        	shape = new int[] {};
         }
         mFactory = factoryName;
-        mName = sName;
-        mValue = new NexusArray(mFactory, aValue, new int[] { i });
+        mName = name;
+        mValue = new NexusArray(mFactory, value, shape);
     }
 
 
@@ -67,7 +83,7 @@ public final class NexusAttribute implements IAttribute {
     @Override
     public String getStringValue() {
         if (isString()) {
-            return (String) mValue.getStorage();
+            return new String( (char[]) mValue.getStorage() );
         } else {
             return getNumericValue().toString();
         }
@@ -99,9 +115,8 @@ public final class NexusAttribute implements IAttribute {
 
     @Override
     public boolean isString() {
-        Class<?> tmpClass = "".getClass();
         Class<?> container = mValue.getElementType();
-        return (container.equals(tmpClass));
+        return (container.equals( Character.TYPE ));
     }
 
     @Override
