@@ -8,7 +8,7 @@
 // Contributors: 
 //    Clement Rodriguez (clement.rodriguez@synchrotron-soleil.fr) - initial API and implementation
 // ****************************************************************************
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.classloader;
 
 /// @cond internal
 

@@ -1,13 +1,14 @@
 // ****************************************************************************
-// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
 // are made available under the terms of the Eclipse Public License v1.0 
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
 // 
-// Contributors
-//    Clement Rodriguez - initial API and implementation
-//    Norman Xiong
+// Contributors: 
+//    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
 // ****************************************************************************
 package org.cdma.dictionary;
 
@@ -45,7 +46,7 @@ import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
-import org.cdma.internal.dictionary.ItemSolver;
+import org.cdma.internal.dictionary.solvers.ItemSolver;
 import org.cdma.utils.Utilities.ModelType;
 
 public class LogicalGroup implements IContainer, Cloneable {
@@ -59,8 +60,8 @@ public class LogicalGroup implements IContainer, Cloneable {
     private IKey                mKey;          // IKey that populated this items (with filters eventually used)
     private ExtendedDictionary  mDictionary;   // Dictionary that belongs to this current LogicalGroup
     private LogicalGroup        mParent;       // Parent logical group if root then, it's null
-    private IFactory            mFactory;
-    private boolean             mThrow;        // Display debug info trace when dictionary isn't valid 
+    private IFactory            mFactory;      // Factory instantiating this group
+    private boolean            mThrow;        // Display debug info trace when dictionary isn't valid 
     private List<IAttribute>    mAttributes;   // List of attributes
 
     public LogicalGroup(IKey key, IDataset dataset) {

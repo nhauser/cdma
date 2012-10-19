@@ -7,6 +7,8 @@
 // 
 // Contributors: 
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
 // ****************************************************************************
 package org.cdma;
 

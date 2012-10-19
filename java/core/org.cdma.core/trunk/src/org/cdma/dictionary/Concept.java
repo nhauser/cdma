@@ -1,12 +1,14 @@
 // ****************************************************************************
-// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
 // are made available under the terms of the Eclipse Public License v1.0 
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
 // 
-// Contributors
-//    Clement Rodriguez - initial API and implementation
+// Contributors: 
+//    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
 // ****************************************************************************
 package org.cdma.dictionary;
 
@@ -37,45 +39,31 @@ public class Concept {
     private String mLabel;
     private String mDescription;
     private String mUnit;
+    private String mID;
     private Map<String, String> mAttributes;
-    private List<String> mSynonyms;
+    private Map<String, List<String>> mSynonyms;
     
-    public Concept(Element elem) {
-        if( elem.getName().equals("concept") ) {
-            mLabel = elem.getAttributeValue("label");
-            
-            // Local variables
-            Element dom;
-            List<?> list;
-            
-            // Constructing the definition part
-            dom = elem.getChild("definition");
-            mDescription = dom.getChildText("description");
-            dom = dom.getChild("unit");
-            if( dom != null ) {
-                mUnit = dom.getText();
-            }
-            
-            // Constructing the synonyms part
-            mSynonyms = new ArrayList<String>();
-            dom = elem.getChild("synonyms");
-            list = dom.getChildren("key");
-            for( Object synonym : list ) {
-                mSynonyms.add( ((Element) synonym).getText() );
-            }
-            
-            // Constructing the attributes part
-            mAttributes = new HashMap<String, String>();
-            dom = elem.getChild("attributes");
-            if( dom != null ) {
-                list = dom.getChildren("attribute");
-                
-                for( Object synonym : list ) {
-                    dom = (Element) synonym;
-                    mAttributes.put( dom.getAttributeValue("name"), dom.getText() );
-                }
-            }            
-        }
+    public Concept(String keyName) {
+		mID = keyName;
+		mLabel = keyName;
+		mSynonyms = new HashMap<String, List<String>>();
+		mDescription = "";
+		mAttributes = new HashMap<String, String>();
+	}
+    
+    /**
+     * Instantiate the Concept corresponding to the given XML node  
+     * @param element DOM named 'concept' respecting the concept_file.dtd
+     * 
+     * @return the loaded concept from XML file
+     */
+    public static Concept instantiate( Element elem ) {
+    	Concept result = null;
+    	if( elem.getName().equals("concept") ) {
+    		result = new Concept(elem); 
+    	}
+    	
+    	return result;
     }
     
     /**
@@ -84,7 +72,7 @@ public class Concept {
      * @return list of String of any synonym
      */
     public List<String> getSynonymList() {
-        return mSynonyms;
+        return new ArrayList<String>( mSynonyms.keySet());
     }
     
     /**
@@ -128,10 +116,18 @@ public class Concept {
      * Returns true if the given synonym is for that concept
      * 
      * @param synonym we want to test
+     * @param plugin name for this synonym
      * @return boolean value that is true in case of matching 
      */
-    public boolean matches( String synonym ) {
-        return mSynonyms.contains( synonym );
+    public boolean matches( String synonym, String factoryName ) {
+    	boolean result;
+    	if( factoryName != null ) {
+    		result = mSynonyms.containsKey( synonym ) && mSynonyms.get(synonym).contains(factoryName);
+    	}
+    	else {
+    		result = mSynonyms.containsKey( synonym );
+    	}
+    	return result;
     }
     
     /**
@@ -140,6 +136,48 @@ public class Concept {
      * @return the ID of the concept
      */
     public String getConceptID() {
-        return mSynonyms.get(0);
+        return mID;
+    }
+    
+    public void addSynonym(String value, String factoryName ) {
+    	List<String> synonyms = mSynonyms.get(value);
+    	if( synonyms == null ) {
+    		synonyms = new ArrayList<String>();
+    		mSynonyms.put(value, synonyms);
+    	}
+    	
+    	if( ! synonyms.contains(factoryName) ) {
+    		synonyms.add(value);
+    	}
+    }
+    
+    private Concept(Element elem) {
+    	mSynonyms = new HashMap<String, List<String>>();
+    	
+        mLabel = elem.getAttributeValue("label");
+        mID    = elem.getAttributeValue("key");
+        // Local variables
+        Element dom;
+        List<?> list;
+        
+        // Constructing the definition part
+        dom = elem.getChild("definition");
+        mDescription = dom.getChildText("description");
+        dom = dom.getChild("unit");
+        if( dom != null ) {
+            mUnit = dom.getText();
+        }
+        
+        // Constructing the attributes part
+        mAttributes = new HashMap<String, String>();
+        dom = elem.getChild("attributes");
+        if( dom != null ) {
+            list = dom.getChildren("attribute");
+            
+            for( Object synonym : list ) {
+                dom = (Element) synonym;
+                mAttributes.put( dom.getAttributeValue("name"), dom.getText() );
+            }
+        }            
     }
 }

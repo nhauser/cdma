@@ -7,7 +7,8 @@
 // 
 // Contributors: 
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr) - API evolution
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (clement.rodriguez@synchrotron-soleil.fr) - API evolution
 // ****************************************************************************
 package org.cdma.interfaces;
 

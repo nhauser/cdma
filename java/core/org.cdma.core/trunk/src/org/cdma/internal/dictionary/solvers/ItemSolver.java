@@ -8,7 +8,7 @@
 // Contributors: 
 //    Clément Rodriguez - initial API and implementation
 // ****************************************************************************
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.solvers;
 
 /// @cond internal
 
@@ -40,6 +40,7 @@ import org.cdma.dictionary.filter.IFilter;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IKey;
+import org.cdma.internal.dictionary.classloader.PluginMethodManager;
 import org.cdma.utils.Utilities.ModelType;
 import org.jdom2.Element;
 

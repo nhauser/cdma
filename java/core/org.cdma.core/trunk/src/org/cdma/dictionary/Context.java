@@ -1,34 +1,15 @@
 // ****************************************************************************
-// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
 // are made available under the terms of the Eclipse Public License v1.0 
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
 // 
-// Contributors
-//    Clement Rodriguez - initial API and implementation
-//    Norman Xiong
+// Contributors: 
+//    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
 // ****************************************************************************
-
-/// @cond pluginAPI
-
-/**
- * @brief The Context class is used when invoking an external method (IPluginMethod implementation).
- * 
- * It should contain all required information, so the called method can work 
- * properly as if it were in the CDMA.
- * <p> 
- * The context is used as an input/ouput parameter of {@link IPluginMethod} implementation.
- * It is compound of:
- * <br/> - the current working dataset
- * <br/> - the caller of the method (i.e a LogicalGroup)
- * <br/> - the IKey used to call that method
- * <br/> - the previously executed solvers (path, method call...)
- * <br/> - all IContainers produced by the last solver
- * <p>
- * Therefore the IPluginMethod will have access to the whole CDMA environment.
- */
-
 package org.cdma.dictionary;
 
 import java.util.ArrayList;
@@ -37,7 +18,7 @@ import java.util.List;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IKey;
-import org.cdma.internal.dictionary.Solver;
+import org.cdma.internal.dictionary.solvers.Solver;
 
 public final class Context {
     private IDataset         mDataset;
