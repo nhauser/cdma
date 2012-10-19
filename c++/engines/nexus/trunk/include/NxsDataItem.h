@@ -25,7 +25,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 #include <cdma/navigation/IDataItem.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 
 // Plug-in
 #include <internal/common.h>
@@ -57,7 +57,7 @@ private:
   yat::String       m_nodeName;     // physical name in NeXus file
   yat::String       m_path;         // Path of the item through the dataset file structure (excluding item node name)
   NexusDataSetInfo  m_item;         // Info on the belonged data
-  ArrayPtr          m_array_ptr;    // Array object
+  IArrayPtr         m_array_ptr;    // Array object
   std::vector<int>  m_shape;        // Shape defined by the NexusDatasetInfo
   bool              m_bDimension;   // Does dimension order map has been initialized
 
@@ -78,8 +78,8 @@ public:
     int findDimensionView(const std::string& name);
     IGroupPtr getParent();
     IGroupPtr getRoot();
-    ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception );
-    ArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( Exception );
+    IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception );
+    IArrayPtr getData(std::vector<int> origin, std::vector<int> shape) throw ( Exception );
     std::string getDescription();
     std::list<IDimensionPtr> getDimensions(int i);
     std::list<IDimensionPtr> getDimensionList();
@@ -90,24 +90,14 @@ public:
     long getSize();
     IDataItemPtr getSlice(int dim, int value) throw ( Exception );
     const std::type_info& getType();
-    std::string getUnitsString();
-    bool isMemberOfStructure();
-    bool isMetadata();
+    std::string getUnit();
     bool isScalar();
     bool isUnlimited();
     bool isUnsigned();
-    unsigned char readScalarByte() throw ( Exception );
-    double readScalarDouble() throw ( Exception );
-    float readScalarFloat() throw ( Exception );
-    int readScalarInt() throw ( Exception );
-    long readScalarLong() throw ( Exception );
-    short readScalarShort() throw ( Exception );
-    std::string readString() throw ( Exception );
     void setDataType(const std::type_info& dataType);
-    void setData(const ArrayPtr&);
-    void setDimensions(const std::string& dimString);
+    void setData(const IArrayPtr&);
     void setDimension(const IDimensionPtr& dim, int ind) throw ( Exception );
-    void setUnitsString(const std::string& units);
+    void setUnit(const std::string& units);
     IAttributePtr getAttribute(const std::string&);
     AttributeList getAttributeList();
     void setParent(const IGroupPtr&);
