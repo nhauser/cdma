@@ -61,6 +61,8 @@ DataItem::~DataItem()
 //---------------------------------------------------------------------------
 void DataItem::init(Dataset* dataset_ptr, const std::string& path, bool init_from_file)
 {
+  CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::init");
+  CDMA_TRACE("path: " << path);
   // Resolve dataitem name and path
   std::vector<yat::String> nodes;
   // First the path
@@ -100,7 +102,7 @@ void DataItem::init(Dataset* dataset_ptr, const std::string& path, bool init_fro
   
   if( hasAttribute("long_name") )
   {
-    m_name = getAttribute("long_name")->getStringValue();
+    m_name = getAttribute("long_name")->getValue<std::string>();
   }
 }
 
@@ -166,9 +168,14 @@ cdma::IGroupPtr DataItem::getRoot()
 //---------------------------------------------------------------------------
 // DataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr DataItem::getData(std::vector<int> position) throw ( cdma::Exception )
+cdma::IArrayPtr DataItem::getData(std::vector<int> position) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::getData(vector<int> position)");
+
+  checkArray();
+  if( position.empty() )
+    return m_array_ptr;
+
   int node_rank = m_item.Rank();
   
   std::vector<int> origin;
@@ -187,22 +194,22 @@ cdma::ArrayPtr DataItem::getData(std::vector<int> position) throw ( cdma::Except
       shape.push_back( m_item.DimArray()[dim] );
     }
   }
-  cdma::ArrayPtr array = getData(origin, shape);
+  cdma::IArrayPtr array = getData(origin, shape);
   return array;
 }
 
 //---------------------------------------------------------------------------
 // DataItem::getData
 //---------------------------------------------------------------------------
-cdma::ArrayPtr DataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
+cdma::IArrayPtr DataItem::getData(std::vector<int> origin, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("cdma::nexus::DataItem::getData(vector<int> origin, vector<int> shape)");
 
   checkArray();
   std::vector<int> stride = m_array_ptr->getView()->getStride();
 
-  cdma::ViewPtr view = new cdma::View( shape, origin, stride );
-  cdma::ArrayPtr array_ptr = new cdma::Array( *m_array_ptr, view );
+  cdma::IViewPtr view = new cdma::View( shape, origin, stride );
+  cdma::IArrayPtr array_ptr = new cdma::Array( m_array_ptr, view );
   return array_ptr;
 }
 
@@ -213,7 +220,7 @@ std::string DataItem::getDescription()
 {
   if( hasAttribute("description") )
   {
-    return getAttribute("description")->getStringValue();
+    return getAttribute("description")->getValue<std::string>();
   }
   return yat::String::nil;
 }
@@ -319,7 +326,7 @@ cdma::IDataItemPtr DataItem::getSlice(int dim, int value) throw ( cdma::Exceptio
   } 
 
   cdma::IDataItemPtr result (NULL);
-  cdma::ArrayPtr array = getData();
+  cdma::IArrayPtr array = getData();
 
   // Search the non-reduced dimsension that given 'dim' corresponds to
   int realDim  = 0;
@@ -378,29 +385,13 @@ const std::type_info& DataItem::getType()
 }
 
 //---------------------------------------------------------------------------
-// DataItem::getUnitsString
+// DataItem::getUnit
 //---------------------------------------------------------------------------
-std::string DataItem::getUnitsString()
+std::string DataItem::getUnit()
 {
   if( hasAttribute("units") )
-    return getAttribute("units")->getStringValue();
+    return getAttribute("units")->getValue<std::string>();
   return yat::String::nil;
-}
-
-//---------------------------------------------------------------------------
-// DataItem::isMemberOfStructure
-//---------------------------------------------------------------------------
-bool DataItem::isMemberOfStructure()
-{
-  return false;
-}
-
-//---------------------------------------------------------------------------
-// DataItem::isMetadata
-//---------------------------------------------------------------------------
-bool DataItem::isMetadata()
-{
-  return hasAttribute("signal");
 }
 
 //---------------------------------------------------------------------------
@@ -445,69 +436,6 @@ bool DataItem::isUnsigned()
 }
 
 //---------------------------------------------------------------------------
-// DataItem::readScalarByte
-//---------------------------------------------------------------------------
-unsigned char DataItem::readScalarByte() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<unsigned char>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readScalarDouble
-//---------------------------------------------------------------------------
-double DataItem::readScalarDouble() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<double>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readScalarFloat
-//---------------------------------------------------------------------------
-float DataItem::readScalarFloat() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<float>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readScalarInt
-//---------------------------------------------------------------------------
-int DataItem::readScalarInt() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<int>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readScalarLong
-//---------------------------------------------------------------------------
-long DataItem::readScalarLong() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<long>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readScalarShort
-//---------------------------------------------------------------------------
-short DataItem::readScalarShort() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<short>();
-}
-
-//---------------------------------------------------------------------------
-// DataItem::readString
-//---------------------------------------------------------------------------
-std::string DataItem::readString() throw ( cdma::Exception )
-{
-  checkArray();
-  return m_array_ptr->getValue<std::string>();
-}
-
-//---------------------------------------------------------------------------
 // DataItem::removeAttribute
 //---------------------------------------------------------------------------
 bool DataItem::removeAttribute(const cdma::IAttributePtr& attr)
@@ -533,41 +461,33 @@ void DataItem::setDataType(const std::type_info& type)
 //---------------------------------------------------------------------------
 // DataItem::setData
 //---------------------------------------------------------------------------
-void DataItem::setData(const cdma::ArrayPtr& array)
+void DataItem::setData(const cdma::IArrayPtr& array)
 {
   m_array_ptr = array;
 }
 
 //---------------------------------------------------------------------------
-// DataItem::setDimensions
-//---------------------------------------------------------------------------
-void DataItem::setDimensions(const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("cdma::nexus::DataItem::setDimensions");
-}
-
-//---------------------------------------------------------------------------
 // DataItem::setDimension
 //---------------------------------------------------------------------------
-void DataItem::setDimension(const cdma::IDimensionPtr& dim, int order) throw ( cdma::Exception )
+void DataItem::setDimension(const cdma::IDimensionPtr& dim, int index) throw ( cdma::Exception )
 {
   IGroupPtr parent = getParent();
   
   if( parent )
   {
-    dim->setDisplayOrder( order );
+    dim->setDimensionAxis( index );
     parent->addDimension(dim);
   }
 }
 
 //---------------------------------------------------------------------------
-// DataItem::setUnitsString
+// DataItem::setUnit
 //---------------------------------------------------------------------------
-void DataItem::setUnitsString(const std::string& unit)
+void DataItem::setUnit(const std::string& unit)
 {
   Attribute* attr = new Attribute( );
   attr->setName("units");
-  attr->setStringValue(unit);
+  attr->setValue(unit);
   addAttribute( attr );
 }
 
@@ -576,13 +496,6 @@ void DataItem::setUnitsString(const std::string& unit)
 //---------------------------------------------------------------------------
 void DataItem::addAttribute(const cdma::IAttributePtr& attr)
 {
-/*
-  Attribute* attr = new Attribute();
-  IAttributePtr attribute = attr;
-  attr->setName( name );
-  attr->setValue( value );
-  m_attr_map[name] = attribute;
-*/
   m_attr_map[attr->getName()] = attr;  
 //  return attribute;
 }

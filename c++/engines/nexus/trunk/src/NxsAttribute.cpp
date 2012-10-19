@@ -1,6 +1,6 @@
 // ******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
+// The cdma-core library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
 // Software Foundation; either version 2 of the License, or (at your option)
 // any later version.
@@ -9,7 +9,7 @@
 // ******************************************************************************
 
 #include <cdma/Common.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 
 #include <NxsAttribute.h>
 #include <TypeUtils.h>
@@ -43,7 +43,20 @@ Attribute::Attribute( const NexusFilePtr& file_ptr, const NexusAttrInfo& info )
 
   // Load corresponding data
   file_ptr->GetAttribute( info.AttrName(), &attr_bytes, buf, info.DataType() );
-  m_value_buf.attach( buf, attr_bytes );
+
+  // prepare shape
+  std::vector<int> shape;
+  if( info.DataType() != NX_CHAR )
+    shape.push_back(1);
+  else
+    shape.push_back(attr_bytes);
+
+  // Init Array
+  cdma::Array *array_ptr = new cdma::Array( TypeUtils::toRawCType(info.DataType()),
+                                            shape, buf );
+
+  // update Array
+  m_array_ptr.reset(array_ptr);
 
   m_name = info.AttrName();
   m_datatype = info.DataType();
@@ -66,14 +79,6 @@ const std::type_info& Attribute::getType()
 }
 
 //---------------------------------------------------------------------------
-// Attribute::isString
-//---------------------------------------------------------------------------
-bool Attribute::isString()
-{
-  return ( m_datatype == NX_CHAR );
-}
-
-//---------------------------------------------------------------------------
 // Attribute::isArray
 //---------------------------------------------------------------------------
 bool Attribute::isArray()
@@ -82,73 +87,28 @@ bool Attribute::isArray()
 }
 
 //---------------------------------------------------------------------------
-// Attribute::getLength
+// Attribute::getSize
 //---------------------------------------------------------------------------
-int Attribute::getLength()
+int Attribute::getSize()
 {
   return 1;
 }
 
 //---------------------------------------------------------------------------
-// Attribute::getStringValue
+// Attribute::getData
 //---------------------------------------------------------------------------
-std::string Attribute::getStringValue()
+cdma::IArrayPtr Attribute::getData()
 {
-  CDMA_FUNCTION_TRACE("cdma::nexus::Attribute::getStringValue");
-  if( isString() )
-  {
-    return yat::String( (char*)(m_value_buf.buf()) );
-  }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getStringValue");
+  CDMA_FUNCTION_TRACE("cdma::nexus::Attribute::getData(vector<int> origin, vector<int> shape)");
+  return m_array_ptr;
 }
 
 //---------------------------------------------------------------------------
-// Attribute::getIntValue
+// Attribute::setData
 //---------------------------------------------------------------------------
-long Attribute::getIntValue()
+void Attribute::setData(const cdma::IArrayPtr& array)
 {
-  if( !isString() )
-  {
-    return TypeUtils::valueToType<long>( m_value_buf.buf(), getType() );
-  }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getIntValue");
-}
-
-//---------------------------------------------------------------------------
-// Attribute::getFloatValue
-//---------------------------------------------------------------------------
-double Attribute::getFloatValue()
-{
-  if( !isString() )
-  {
-    return TypeUtils::valueToType<double>( m_value_buf.buf(), getType() );
-  }
-  MISMATCH_EXCEPTION("Requested type of result isn't valid", "cdma::nexus::Attribute::getFloatValue");
-}
-
-//---------------------------------------------------------------------------
-// Attribute::toString
-//---------------------------------------------------------------------------
-std::string Attribute::toString()
-{
-  if( this->isString() )
-  {
-    return getStringValue();
-  }
-  else
-  {
-    std::stringstream ss;
-    ss << getFloatValue();
-    return ss.str();
-  }
-}
-
-//---------------------------------------------------------------------------
-// Attribute::setStringValue
-//---------------------------------------------------------------------------
-void Attribute::setStringValue(const std::string&)
-{
-  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setStringValue");
+  m_array_ptr = array;
 }
 
 //---------------------------------------------------------------------------
@@ -157,22 +117,6 @@ void Attribute::setStringValue(const std::string&)
 void Attribute::setName(const std::string& name)
 {
   m_name = name;
-}
-
-//---------------------------------------------------------------------------
-// Attribute::setDisplayOrder
-//---------------------------------------------------------------------------
-void Attribute::setIntValue(int)
-{
-  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setIntValue");
-}
-  
-//---------------------------------------------------------------------------
-// Attribute::setDisplayOrder
-//---------------------------------------------------------------------------
-void Attribute::setFloatValue(float)
-{
-  THROW_NOT_IMPLEMENTED("cdma::nexus::Attribute::setFloatValue");
 }
 
 
