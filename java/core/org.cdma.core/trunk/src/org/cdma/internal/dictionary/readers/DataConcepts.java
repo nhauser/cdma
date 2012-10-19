@@ -8,15 +8,17 @@
 // Contributors: 
 //    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr) - initial API
 // ****************************************************************************
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.readers;
 
+import java.util.ArrayList;
 import java.util.List;
+
 import org.cdma.dictionary.Concept;
 
 /// @cond internal
 
 /**
- * @brief The ConceptManager aims to retrieve the Concept that corresponds to an IKey
+ * @brief The DataConcepts aims to retrieve the Concept that corresponds to an IKey
  * 
  * The ConceptManage stores all the concepts that can ask the end user when using the 
  * <i>Extended Dictionary Mechanism</i> for specific experiment.
@@ -27,29 +29,49 @@ import org.cdma.dictionary.Concept;
  * @see Concept
  * @author rodriguez
  */
-public class ConceptManager {
+public class DataConcepts implements Cloneable {
     private List<Concept> mConcepts; // List of all concepts currently loaded 
     
-    public ConceptManager( List<Concept> concepts ) {
+    public DataConcepts( List<Concept> concepts ) {
         mConcepts = concepts;
     }
     
     /**
-     * Retrieve the concept corresponding the given Key
+     * Retrieve the concept corresponding the given Key regardless the plug-in is
      * 
      * @param key which the matching concept is required 
      * @return Concept object 
      */
     public Concept getConcept(String keyName) {
         Concept result = null;
-        
+
         for( Concept concept : mConcepts ) {
-            if( concept.matches( keyName ) ) {
+            if( concept.matches( keyName, null ) ) {
                 result = concept;
                 break;
             }
         }
-        
+
+        return result;
+    }
+    
+    /**
+     * Retrieve the concept corresponding the given Key for a specific plugin
+     * 
+     * @param key which the matching concept is required 
+     * @param factoryName which plug-in's synonyms should be considered
+     * @return Concept object 
+     */
+    public Concept getConcept(String keyName, String factoryName) {
+        Concept result = null;
+
+        for( Concept concept : mConcepts ) {
+            if( concept.matches( keyName, factoryName ) ) {
+                result = concept;
+                break;
+            }
+        }
+
         return result;
     }
     
@@ -59,6 +81,7 @@ public class ConceptManager {
      * @param key name which the concept's ID is required 
      * @return String representing the identifier of the corresponding concept
      */
+    /*
     public String getConceptID(String keyName) {
         String result = null;
         for( Concept concept : mConcepts ) {
@@ -70,7 +93,7 @@ public class ConceptManager {
         
         return result; 
     }
-    
+    */
     /**
      * Add a given concept to this concept manager
      * 
@@ -79,6 +102,11 @@ public class ConceptManager {
     public void addConcept(Concept concept) {
         mConcepts.add(concept);
     }
+    
+	public DataConcepts clone() throws CloneNotSupportedException {
+		DataConcepts clone = new DataConcepts( new ArrayList<Concept>(mConcepts) );
+		return clone;
+	}
 
 }
 

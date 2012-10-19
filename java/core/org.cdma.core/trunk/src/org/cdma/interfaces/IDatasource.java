@@ -41,6 +41,7 @@ public interface IDatasource extends IModelObject
      * 
      * @param target of the data source can be a file, a folder, data base...
      * @return true if the target is compatible
+     * @note it will return true only if the target is a IDataset (physical or logical), else it will return false
      */
     boolean isReadable( URI target );
 

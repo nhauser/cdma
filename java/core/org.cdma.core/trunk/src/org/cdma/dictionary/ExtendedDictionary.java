@@ -1,41 +1,35 @@
 // ****************************************************************************
-// Copyright (c) 2010 Australian Nuclear Science and Technology Organisation.
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
 // are made available under the terms of the Eclipse Public License v1.0 
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
 // 
-// Contributors
-//    Clement Rodriguez - initial API and implementation
-//    Norman Xiong
+// Contributors: 
+//    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+//    Tony Lam (nxi@Bragg Institute) - initial API and implementation
+//    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
 // ****************************************************************************
 package org.cdma.dictionary;
 
 // JAVA imports
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
-// JDOM imports
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
-
-//CDMA imports
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.exception.FileAccessException;
 import org.cdma.interfaces.IKey;
 import org.cdma.internal.IModelObject;
-import org.cdma.internal.dictionary.ConceptManager;
-import org.cdma.internal.dictionary.ItemSolver;
-import org.cdma.internal.dictionary.PluginMethodManager;
+import org.cdma.internal.dictionary.readers.DataConcepts;
+import org.cdma.internal.dictionary.readers.DataMapping;
+import org.cdma.internal.dictionary.readers.DataView;
+import org.cdma.internal.dictionary.readers.DictionaryReader;
+import org.cdma.internal.dictionary.solvers.ItemSolver;
 
 
 /**
@@ -54,42 +48,36 @@ import org.cdma.internal.dictionary.PluginMethodManager;
 
 public final class ExtendedDictionary implements IModelObject, Cloneable{
     
-    private static volatile PluginMethodManager mMethodMgr;
     private IFactory mFactory;     // Name of the plug-in's factory that created this object 
     private String   mView;        // View matching that dictionary
-    private String   mVersion;     // Version of the read dictionary
+//    private String   mVersion;     // Version of the read dictionary
     private String   mKeyFile;     // Path to reach the key file (containing the view)
     private String   mMapFile;     // Path to reach the mapping file
-    private String   mConceptFile; // Path where to find all concepts
+    private IKey[]   mKeyPath;
 
-    private Map<IKey,   String>             mKeyMap  = new HashMap<IKey,   String>();             // Key / ID association
-    private Map<String, ItemSolver>         mPathMap = new HashMap<String, ItemSolver>();         // ID / ItemSolver association
-    private Map<String, ExtendedDictionary> mSubDict = new HashMap<String, ExtendedDictionary>(); // ID / sub-dictionaries
+    private DictionaryReader mReader;
     
-    private ConceptManager mConcepts; // All available concepts
+    private Map<IKey, String>    mKeys;
+    private Map<String, ItemSolver> mMaps;
 
     /**
      * Create an empty dictionary
      * @param factory
      */
     public ExtendedDictionary(IFactory factory) {
-        mMethodMgr   = PluginMethodManager.instantiate();
-        mFactory     = factory; 
-        mView        = Factory.getActiveView();
-        mKeyFile     = null;
-        mMapFile     = null;
-        mConceptFile = null;
-        mConcepts    = new ConceptManager( new ArrayList<Concept>() );
+        mFactory      = factory; 
+        mView         = Factory.getActiveView();
+        mKeyFile      = null;
+        mMapFile      = null;
+        mKeyPath      = new IKey[] {};
     }
     
     public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) {
-        mMethodMgr   = PluginMethodManager.instantiate();
-        mFactory     = factory; 
-        mView        = null;
-        mKeyFile     = keyFile;
-        mMapFile     = mapFile;
-        mConceptFile = null;
-        mConcepts    = null;
+        mFactory      = factory; 
+        mView         = null;
+        mKeyFile      = keyFile;
+        mMapFile      = mapFile;
+        mKeyPath      = new IKey[] {};
     }
 
     /**
@@ -99,9 +87,8 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @param solver Solver that will be used to resolve the key when asked 
      */
     public void addEntry(String keyName, ItemSolver solver) {
-        IKey key = mFactory.createKey(keyName);
-        mKeyMap.put(key, keyName);
-        mPathMap.put(keyName, solver);
+    	mKeys.put( mFactory.createKey(keyName), keyName );
+    	mMaps.put( keyName, solver );
     }
     
     /**
@@ -111,10 +98,9 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @param path where data can be found
      */
     public void addEntry(String keyName, Path path) {
-        IKey key = mFactory.createKey(keyName);
-        mKeyMap.put(key, keyName);
         ItemSolver solver = new ItemSolver(mFactory, path);
-        mPathMap.put(keyName, solver);
+    	mKeys.put( mFactory.createKey(keyName), keyName );
+    	mMaps.put( keyName, solver );
     }
     
     /**
@@ -123,10 +109,13 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @param concept to be added
      */
     public void addConcept(Concept concept) {
-        if( mConcepts != null ) {
-            mConcepts.addConcept(concept);
-        }
+    	try {
+			mReader.getConcepts().addConcept(concept);
+		} catch (FileAccessException e) {
+			Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+		}
     }
+    
 
     /**
      * Returns true if the given key is in this dictionary
@@ -135,8 +124,8 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @return true or false
      */
     public boolean containsKey(String keyName) {
-        IKey key = mFactory.createKey(keyName);
-        return mKeyMap.containsKey(key);
+    	IKey key = mFactory.createKey(keyName);
+        return mKeys.containsKey( key );
     }
 
     /**
@@ -144,9 +133,8 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * 
      * @return a list of String objects
      */
-    public List<IKey> getAllKeys()
-    {
-        return new ArrayList<IKey>(mKeyMap.keySet());
+    public List<IKey> getAllKeys() {
+        return new ArrayList<IKey>(mKeys.keySet());
     }
 
     /**
@@ -158,72 +146,34 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     public ItemSolver getItemSolver(IKey key)
     {
         ItemSolver solver = null;
-        if( mKeyMap.containsKey(key) )
+        if( mKeys.containsKey( key ) )
         {
-            String keyName = mKeyMap.get(key);
-            if( mPathMap.containsKey(keyName) ) {
-                solver = mPathMap.get(keyName);
+            String keyName = mKeys.get(key);
+            if( mMaps.containsKey(keyName) ) {
+                solver = mMaps.get(keyName);
             }
         }
         return solver;
     }
     
     /**
-     * Read all keys stored in the XML dictionary file
-     * 
-     * @throws FileAccessException in case of any problem while reading
-     */
-    public void readEntries() throws FileAccessException {
-        if( mKeyFile != null ) {
-            File dicFile = new File(mKeyFile);
-            if (!dicFile.exists()) 
-            {
-                throw new FileAccessException("the target dictionary file does not exist:\n" + dicFile.toString() );
-            }
-    
-            // Read keys and mapping dictionaries
-            readDictionaryKeys(null);
-            readDictionaryMappings();
-        }
-        // No active is set view: create a flat view from mapping
-        else {
-            // Read the pivot dictionary
-            readDictionaryConcepts();
-        	
-        	// Read mapping dictionaries
-        	readDictionaryMappings();
-        	
-        	// Create a virtual view from the mapping file
-        	IKey key;
-        	for( String keyID : mPathMap.keySet() ) {
-        		key = mFactory.createKey(keyID);
-        		mKeyMap.put(key, keyID);
-        	}            
-        }
-    }
-
-    /**
      * Remove an entry from the dictionary.
      * 
      * @param key key object
      */
     public void removeEntry(String keyName) {
-        IKey key = Factory.getFactory().createKey(keyName); 
-        String keyID = mKeyMap.get(key);
-        mKeyMap.remove(key);
-        mPathMap.remove(keyID);
+        IKey key = Factory.getFactory().createKey(keyName);
+        mKeys.remove(key);
+        mMaps.remove(key);
     }
 
-    @SuppressWarnings("unchecked")
     public ExtendedDictionary clone() throws CloneNotSupportedException
     {
         ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile);
-        dict.mVersion     = mVersion;
-        dict.mKeyMap      = (HashMap<IKey, String>) ((HashMap<IKey, String>) mKeyMap).clone();
-        dict.mPathMap     = (HashMap<String, ItemSolver >) ((HashMap<String, ItemSolver >) mPathMap).clone();
-        dict.mSubDict     = (HashMap<String, ExtendedDictionary>) ((HashMap<String, ExtendedDictionary>) mSubDict).clone();
-        dict.mConceptFile = mConceptFile;
-        dict.mConcepts    = mConcepts;
+        dict.mReader  = mReader;
+        dict.mKeyPath = mKeyPath.clone();
+        dict.mView    = mView;
+        
         return dict;
     }
 
@@ -233,27 +183,35 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @return IExtendedDictionary matching the key
      */
     public ExtendedDictionary getDictionary(IKey key) {
-        String keyID = mKeyMap.get(key);
-        ExtendedDictionary subDict = null;
-
-        if( keyID != null ) {
-            subDict = mSubDict.get(keyID);
-        }
+    	ExtendedDictionary subDict;
+		try {
+			subDict = this.clone();
+			
+			// Update the key path to reach sub dictionary
+			int depth = mKeyPath.length + 1;
+			subDict.mKeyPath = java.util.Arrays.copyOf(mKeyPath, depth);
+			subDict.mKeyPath[depth - 1] = key.clone();
+			
+			// Calculate the sub data view
+			DataView view = mReader.getView();
+			for( IKey tmp : subDict.mKeyPath ) {
+				view = view.getView( tmp.getName() );
+			}
+			
+			// Get concepts and mappings
+			DataConcepts concepts = mReader.getConcepts();
+			DataMapping mapping = mReader.getMapping(mFactory, mMapFile);
+			
+			subDict.link(view, mapping, concepts);
+		} catch (CloneNotSupportedException e) {
+			subDict = null;
+			Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+		} catch (FileAccessException e) {
+			subDict = null;
+			Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+		}
 
         return subDict;
-    }
-
-    /**
-     * Get the version number (in 3 digits default implementation) that is plug-in
-     * dependent. This version corresponds of the dictionary defining the path. It  
-     * permits to distinguish various generation of IDataset for a same institutes.
-     * Moreover it's required to select the right class when using a IClassLoader
-     * invocation.
-     * 
-     * @return the string representation of the plug-in's version number
-     */
-    public String getVersionNum() {
-        return mVersion;
     }
 
     /**
@@ -300,185 +258,89 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @return the Concept 
      */
     public Concept getConcept(IKey key) {
-        return mConcepts.getConcept(key.getName());
-    }
-
-    // ---------------------------------------------------------------
-    // PROTECTED methods
-    // ---------------------------------------------------------------
-    private ExtendedDictionary(IFactory factory, String keyFile, String mapFile, String conceptFile, String view) {
-        mMethodMgr   = PluginMethodManager.instantiate();
-        mView        = view;
-        mFactory     = factory;
-        mKeyFile     = keyFile;
-        mMapFile     = mapFile;
-        mConceptFile = conceptFile;
-    }
-    
-    // ---------------------------------------------------------------
-    // PRIVATE : Reading methods
-    // ---------------------------------------------------------------
-    private void readDictionaryConcepts() {
-        List<Concept> concepts= new ArrayList<Concept>();
-        
-        String commonFile = Factory.getPathCommonConceptDictionary();
-        // Read common concept file
-        if( commonFile != null ) {
-            concepts.addAll( readConceptFile(commonFile) );
-        }
-        
-        // Read specific concept file
-        if( mConceptFile != null ) {
-            concepts.addAll( readConceptFile( mConceptFile ) );
-        }
-        
-        mConcepts = new ConceptManager(concepts);
-    }
-    
-    @SuppressWarnings("unchecked")
-    private List<Concept> readConceptFile( String file ) {
-        List<Concept> concepts = new ArrayList<Concept>();
+    	Concept concept;
         try {
-            Element elem = saxBuildFile(file);
-
-            List<?> nodes = elem.getChildren("concept");
-            for (Object child : (List<Element>) nodes) {
-                elem = (Element) child;
-                concepts.add(new Concept(elem));
-            }
-        } catch (FileAccessException e) {
-            Factory.getLogger().log( Level.WARNING, e.getMessage() );
-        }
-        return concepts;
+        	concept = mReader.getConcepts().getConcept(key.getName(), mFactory.getName() );
+		} catch (FileAccessException e) {
+			concept = null;
+			Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+		}
+    	return concept;
     }
     
-    private void readDictionaryKeys(Element xmlNode) throws FileAccessException {
-        Element startNode;
-        if( xmlNode == null ) {
-            startNode = saxBuildFile(mKeyFile);
-
-            mView = startNode.getAttributeValue("name");
-            String concept = startNode.getAttributeValue("concept");
-            if( concept != null ) {
-                mConceptFile = Factory.getPathConceptDictionaryFolder() + concept; 
-            }
-        }
-        else {
-            startNode = xmlNode;
-        }
-        
-        if( mConcepts == null ) {
-            // Read the pivot dictionary
-            readDictionaryConcepts();
-        }
-        
-        List<?> nodes = startNode.getChildren();
-        Element elem;
-        IKey key;
-        String keyName;
-        String keyID;
-        // For each element of the view (item or group)
-        for( Object current : nodes ) {
-            elem = (Element) current;
-            // Get the key name
-            keyName = elem.getAttributeValue("key");
-            if( keyName != null && !keyName.isEmpty() ) {
-                // Create key
-                key = mFactory.createKey(keyName);
-                
-                // If the element is an item
-                if( elem.getName().equals("item") ) {
-                    // Search the corresponding concept ID
-                    keyID = mConcepts.getConceptID(keyName);
-                    if( keyID == null ) {
-                        keyID = keyName;
-                    }
-                    mKeyMap.put(key, keyID);
-                }
-                // If the element is a group of keys
-                else if( elem.getName().equals("group") ){
-                    // Read corresponding dictionaries
-                    ExtendedDictionary dict = new ExtendedDictionary(mFactory, mKeyFile, mMapFile, mConceptFile, mView);
-                    dict.mConcepts = mConcepts;
-                    dict.mConceptFile = dict.mConceptFile;
-                    dict.readDictionaryKeys(elem);
-                    dict.readDictionaryMappings();
-
-                    // Create corresponding path
-                    ItemSolver solver = new ItemSolver(mFactory, key);
-                    
-                    // Update maps
-                    mSubDict.put(keyName, dict);
-                    mKeyMap.put(key, keyName);
-                    mPathMap.put(keyName, solver);
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void readDictionaryMappings() throws FileAccessException{
-        Element root = saxBuildFile(mMapFile);
-        mVersion = root.getAttributeValue("version");
-
-        List<?> nodes = root.getChildren("item");
-        String keyID;
-        String keyName;
-
-        // Updating the KeyID / Path map
-        for (Element elem : (List<Element>) nodes) {
-            // Get the key name
-            keyName = elem.getAttributeValue("key");
-
-            // Retrieve the corresponding concept ID
-            keyID = mConcepts.getConceptID(keyName);
-            
-            if ( keyID == null ) {
-                keyID = keyName;
-            }
-            
-            if( ! mPathMap.containsKey(keyID) ) {
-                mPathMap.put( keyID, new ItemSolver(mFactory, mMethodMgr, elem) );
-            }
-        }
-    }
-
     /**
-     * Check the given file exists and open the root node
+     * Read all keys stored in the XML dictionary file
      * 
-     * @param filePath XML file to be opened
-     * @return Sax element that is the root of the XML file
-     * @throws FileAccessException
+     * @throws FileAccessException in case of any problem while reading
      */
-    private Element saxBuildFile(String filePath) throws FileAccessException {
-        // Check the file path isn't empty
-        if( filePath == null || filePath.isEmpty() ) {
-            throw new FileAccessException("empty file path for XML file: unable to open it!");
-        }
-        
-        // Check the file path is a valid XML file 
-        File dicFile = new File(filePath);
-        if ( !dicFile.exists() ) {
-            throw new FileAccessException("the target dictionary file does not exist:\n" + filePath);
-        }
-        else if( dicFile.isDirectory() ) {
-            throw new FileAccessException("the target dictionary is a folder not a XML file:\n" + filePath);
-        }
+    public void readEntries() throws FileAccessException {
+    	synchronized( ExtendedDictionary.class ) {
+    		// Init the XML files reader: mappings, views, concepts
+	    	mReader = new DictionaryReader(mKeyFile);
+	    	mReader.init();
+	    	
+	    	// Get mappings, views, concepts
+	    	DataView view = mReader.getView();
+	    	DataConcepts concepts = mReader.getConcepts();
+	    	DataMapping mapping = mReader.getMapping(mFactory, mMapFile);
+	    	if( mView == null ) {
+	    		mView = mReader.getView().getName();
+	    	}
+	    	
+	    	// Link the data view and the concept
+	    	link(view, mapping, concepts );
+    	}
+    }
 
-        // Open the XML file to get its root element
-        SAXBuilder xmlFile = new SAXBuilder(XMLReaders.NONVALIDATING);
-        Document dictionary;
-        try {
-            dictionary = xmlFile.build(dicFile);
-        }
-        catch (JDOMException e1) {
-            throw new FileAccessException("error while to parsing the dictionary!\n", e1);
-        }
-        catch (IOException e1) {
-            throw new FileAccessException("an I/O error prevent parsing dictionary!\n", e1);
-        }
+	private void link(DataView view, DataMapping mapping, DataConcepts concepts) {
+    	String keyID;
 
-        return dictionary.getRootElement();
+    	// Init keys map
+    	if( mKeys == null ) {
+    		mKeys = new HashMap<IKey, String>();
+    	}
+    	
+    	// Get concept IDs from view item
+    	for( String keyName : view.getItemKeys() ) {
+    		Concept concept = concepts.getConcept(keyName);
+    		if( concept == null ) {
+    			concept = new Concept(keyName);
+    			concepts.addConcept(concept);
+    			keyID = keyName;
+    		}
+    		else {
+    			keyID = concept.getConceptID();
+    		}
+    		
+    		mKeys.put( mFactory.createKey(keyName), keyID);
+    	}
+		
+    	// Init mapping map
+		if( mMaps == null ) {
+			mMaps = new HashMap<String, ItemSolver>();
+		}
+		
+    	// Add all sub views to dictionary (i.e: keys and mappings)
+    	for( Entry<String, DataView> entry : view.getSubViews().entrySet() ) {
+    		IKey key = mFactory.createKey( entry.getKey() );
+    		mMaps.put( key.getName(), new ItemSolver(mFactory, key) );
+    		mKeys.put( key, key.getName() );
+    	}
+    	
+    	// Add all items to mapping
+    	for( Entry<String, ItemSolver> entry : mapping.getSolvers().entrySet() ) {
+    		Concept concept = concepts.getConcept( entry.getKey() );
+    		if( concept == null ) {
+    			keyID = entry.getKey();
+    		}
+    		else {
+    			keyID = concept.getConceptID();
+    		}
+    		mMaps.put( keyID, entry.getValue() );
+    		if( mKeyFile == null ) {
+    			mKeys.put( mFactory.createKey(keyID), keyID);
+    		}
+    	}
     }
 }
 

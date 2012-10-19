@@ -8,7 +8,7 @@
 // Contributors: 
 //    Clément Rodriguez - initial API and implementation
 // ****************************************************************************
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.solvers;
 
 /// @cond internal
 

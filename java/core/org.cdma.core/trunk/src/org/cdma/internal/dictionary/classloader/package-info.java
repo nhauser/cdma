@@ -11,17 +11,18 @@
 // ****************************************************************************
 
 /**
- * @brief The CDMA internal dictionary package contains sub-packages for the <i>Extended Dictionary Mechanism</i>.
+ * @brief The CDMA internal dictionary classloader package aims to dynamically load plug-in's code.
  * 
- * Those package aren't exposed, they are internally used by the <i>Extended Dictionary Mechanism</i>.
+ * This package isn't exposed, it's internally used by the <i>Extended Dictionary Mechanism</i>.
  * <p>
- * It contains following packages:
- * <br/> - solvers: allow having same behavior to resolve an IKey 
- * <br/> - readers: managing XML relative to the dictionary mechanism (views, mapping, concept and synonyms)
- * <br/> - classloader: permit discovering all code that will be dynamically loaded and executed according mappings
+ * It contains proposes following functionalities:
+ * <br/> - a common interface for a seeker of plug-in dynamic code
+ * <br/> - a manager to centralize all found code preventing multiple loading 
+ * <br/> - various loaders: based on java class loader or OSGI service loader 
+ * <br/> ...
  * <p>
  * To activate it's API reference documentation use the '<i>internal</i>' condition flag.
  * 
  */
 
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.classloader;

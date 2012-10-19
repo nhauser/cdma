@@ -1,4 +1,4 @@
-package org.cdma.internal.dictionary;
+package org.cdma.internal.dictionary.solvers;
 
 /// @cond internal
 
@@ -64,32 +64,12 @@ public class Solver {
         
         // If the solver is a path
         if( mPath != null ) {
-            // Clear the context of previously found nodes
-            context.clearContainers();
-            
-            // Get the dataset
-            result = new ArrayList<IContainer>();
-            IGroup root = context.getDataset().getRootGroup();
-            
-            // Try to get all nodes at the targeted path
-            try {
-                result = root.findAllContainerByPath( mPath.getValue() );
-            } catch (NoResultException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
-            }
+        	// return all found nodes at path
+        	result = findAllContainerByPath(context);
         }
         // If the solver is a call on a method
         else if( mMethod != null ) {
-            result = new ArrayList<IContainer>();
-            try {
-                // Execute the method
-                mMethod.execute(context);
-                
-                // Get all items added by the method
-                result.addAll( context.getContainers() );
-            } catch (CDMAException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
-            }
+        	result = executeMethod(context);
         }
         // If the solver is a key create a LogicalGroup
         else if( mKey != null ) {
@@ -103,8 +83,9 @@ public class Solver {
         
         return result;
     }
-    
-    /**
+
+
+	/**
      * Give an access to the given IKey that constructed this object.
      * @return IKey implementation
      */
@@ -128,6 +109,41 @@ public class Solver {
         return mMethod;
     }
     
+    // ---------------------------------------------------------------
+    // PRIVATE methods
+    // ---------------------------------------------------------------
+    private List<IContainer> findAllContainerByPath(Context context) {
+    	List<IContainer> result = new ArrayList<IContainer>();
+    	
+    	// Clear the context of previously found nodes
+        context.clearContainers();
+        
+        // Get the dataset
+        IGroup root = context.getDataset().getRootGroup();
+        
+        // Try to get all nodes at the targeted path
+        try {
+            result = root.findAllContainerByPath( mPath.getValue() );
+        } catch (NoResultException e) {
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
+        }
+
+        return result;
+	}
+        
+	private List<IContainer> executeMethod(Context context) {
+		List<IContainer> result = new ArrayList<IContainer>();
+        try {
+            // Execute the method
+            mMethod.execute(context);
+            
+            // Get all items added by the method
+            result.addAll( context.getContainers() );
+        } catch (CDMAException e) {
+            Factory.getLogger().log( Level.WARNING, e.getMessage());
+        }
+        return result;
+	}
 }
 
 /// @endcond internal
