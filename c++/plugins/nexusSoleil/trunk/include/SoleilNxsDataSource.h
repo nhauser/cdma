@@ -1,6 +1,6 @@
 //******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
+// The cdma-core library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
 // Software Foundation; either version 2 of the License, or (at your option)
 // any later version.
@@ -41,10 +41,10 @@ public:
 
   //@{ IDataSource methods ------------
 
-  bool isReadable(const yat::URI& dataset_location) const;
-  bool isBrowsable(const yat::URI& dataset_location) const;
-  bool isProducer(const yat::URI& dataset_location) const;
-  bool isExperiment(const yat::URI& dataset_location) const;
+  bool isReadable(const std::string& dataset_uri) const;
+  bool isBrowsable(const std::string& dataset_uri) const;
+  bool isProducer(const std::string& dataset_uri) const;
+  bool isExperiment(const std::string& dataset_uri) const;
   
   //@}
 
