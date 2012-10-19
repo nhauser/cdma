@@ -41,20 +41,45 @@
 
 #include <cdma/TraceDebug.h>
 #include <list>
-#include <yat/memory/SharedPtr.h>
-
-/// Macro helper to declare a shared pointer on a given object class
-#define DECLARE_SHARED_PTR(x)\
-  typedef yat::SharedPtr<x, yat::Mutex> x##Ptr
 
 /// @cond internal
+
+// Plateform & capabilities detection
+#if defined (_WIN64) || defined (WIN64) || defined (_WIN32) || defined (WIN32)
+  #define CDMA_WINDOWS
+  #if (_MSC_VER >= 1600)
+    #define CDMA_STD_SMART_PTR
+  #endif
+  #if (_MSC_VER >= 1700)
+    #define CDMA_CPP_11
+  #endif
+#elif (defined _linux_ || defined __linux__)
+  #define CDMA_LINUX
+  #if (__STDC_VERSION__ >= 201112)
+    #define CDMA_CPP_11
+    #define CDMA_STD_SMART_PTR
+  #endif
+#endif
+
+// Smart pointer helpers
+#ifdef CDMA_STD_SMART_PTR
+  #include <memory>
+  #define DECLARE_SHARED_PTR(x)\
+    typedef std::shared_ptr<x> x##Ptr
+  #define DECLARE_WEAK_PTR(x)\
+    typedef std::weak_ptr<x> x##WPtr
+#else
+  #include <yat/memory/SharedPtr.h>
+  #define DECLARE_SHARED_PTR(x)\
+    typedef yat::SharedPtr<x, yat::Mutex> x##Ptr
+  #define DECLARE_WEAK_PTR(x)\
+    typedef yat::WeakPtr<x, yat::Mutex> x##WPtr
+#endif
+
 
 #define DECLARE_CLASS_SHARED_PTR(x)\
   class x;\
   DECLARE_SHARED_PTR(x)
-
-#define DECLARE_WEAK_PTR(x)\
-  typedef yat::WeakPtr<x, yat::Mutex> x##WPtr
 
 #define DECLARE_CLASS_WEAK_PTR(x)\
   class x;\
@@ -75,6 +100,6 @@
 /// List of std::string objects
 typedef std::list<std::string> StringList;
 /// Declaration of shared pointer on StringList
-typedef yat::SharedPtr<StringList, yat::Mutex> StringListPtr;
+DECLARE_SHARED_PTR(StringList);
 
 #endif // __CDMA_COMMON_H__

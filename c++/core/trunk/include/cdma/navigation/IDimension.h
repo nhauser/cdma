@@ -24,7 +24,7 @@
 #define __CDMA_IDIMENSION_H__
 
 #include <cdma/Common.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 #include <cdma/exception/Exception.h>
 
 namespace cdma
@@ -85,7 +85,7 @@ public:
   ///
   /// @return IArray containing coordinates
   ///
-  virtual ArrayPtr getCoordinateVariable() = 0;
+  virtual IArrayPtr getCoordinateVariable() = 0;
   
   /// If unlimited, then the length can increase; otherwise it is immutable.
   ///
@@ -155,7 +155,7 @@ public:
   /// @param array
   ///            with new coordinates
   ///
-  virtual void setCoordinateVariable(const ArrayPtr& array) throw ( Exception ) = 0;
+  virtual void setCoordinateVariable(const IArrayPtr& array) throw ( Exception ) = 0;
 };
 
 

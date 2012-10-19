@@ -24,7 +24,7 @@
 #define __CDMA_ICONTAINER_H__
 
 #include <cdma/Common.h>
-#include <cdma/array/Range.h>
+#include <cdma/array/impl/Range.h>
 #include <cdma/navigation/IAttribute.h>
 
 namespace cdma
@@ -34,7 +34,7 @@ DECLARE_CLASS_SHARED_PTR(IDataItem);
 DECLARE_CLASS_SHARED_PTR(IGroup);
 DECLARE_CLASS_SHARED_PTR(IContainer);
 DECLARE_CLASS_SHARED_WEAK_PTR(IDataset);
-DECLARE_CLASS_SHARED_PTR(LogicalGroup);
+DECLARE_CLASS_SHARED_PTR(ILogicalGroup);
 
 typedef std::list<IContainerPtr> IContainerPtrList;
 

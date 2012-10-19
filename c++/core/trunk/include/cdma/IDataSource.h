@@ -23,8 +23,6 @@
 #ifndef __CDMA_IDATASOURCE_H__
 #define __CDMA_IDATASOURCE_H__
 
-#include <yat/utils/URI.h>
-
 // CDMA includes
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
@@ -53,10 +51,10 @@ public:
   ///
   /// @see isExperiment
   ///
-  /// @param dataset_location location of the dataset asked for
+  /// @param dataset_uri location (conform to the RFC3986 specification) of the dataset asked for
   /// @return true of false
   ///
-  virtual bool isReadable(const yat::URI& dataset_location) const = 0;
+  virtual bool isReadable(const std::string& dataset_uri) const = 0;
   
   /// When browsing a file system, ask the plugin if the location corresponds
   /// to a file containing one or more datasets, at this plug-in sense.
@@ -65,10 +63,10 @@ public:
   /// a yet to be developed CDMA service) the same way the directory
   /// containing it.
   ///
-  /// @param dataset_location location of the dataset asked for
+  /// @param dataset_uri location (conform to the RFC3986 specification) of the dataset asked for
   /// @return true or false
   ///
-  virtual bool isBrowsable(const yat::URI& dataset_location) const = 0;
+  virtual bool isBrowsable(const std::string& dataset_uri) const = 0;
 
   /// Ask the plug-in if the location corresponds to a file produced by the 
   /// institute's editor of this plug-in.
@@ -77,18 +75,18 @@ public:
   /// files: each file is effectively produced by the institute who provide 
   /// the plug-in, but is not a dataset, just a part.
   ///
-  /// @param dataset_location location of the dataset asked for
+  /// @param dataset_uri location (conform to the RFC3986 specification) of the dataset asked for
   /// @return true of false
   ///
-  virtual bool isProducer(const yat::URI& dataset_location) const = 0;
+  virtual bool isProducer(const std::string& dataset_uri) const = 0;
   
   /// Ask the plugin if the location corresponds to a dataset produced
   /// by the same institute providing this plug-in.
   ///
-  /// @param dataset_location location of the dataset asked for
+  /// @param dataset_uri location (conform to the RFC3986 specification) of the dataset asked for
   /// @return true of false
   ///
-  virtual bool isExperiment(const yat::URI& dataset_location) const = 0;
+  virtual bool isExperiment(const std::string& dataset_uri) const = 0;
  };
 
 DECLARE_SHARED_PTR(IDataSource);

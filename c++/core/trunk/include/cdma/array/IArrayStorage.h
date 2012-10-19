@@ -28,7 +28,7 @@
 
 // cdma
 #include <cdma/Common.h>
-#include <cdma/array/View.h>
+#include <cdma/array/IView.h>
 
 /// @cond engineAPI
 
@@ -51,7 +51,7 @@ public:
   /// @param position into which the value will be set
   /// @return anonymous pointer to the value
   ///
-  virtual void *getValue( const cdma::ViewPtr& view_ptr, std::vector<int> position ) = 0;
+  virtual void *getValue( const cdma::IViewPtr& view_ptr, std::vector<int> position ) = 0;
 
   /// Set "value" in the memory buffer according the position in the given view. The 
   /// given yat::Any will be casted into memory buffer type.
@@ -60,7 +60,7 @@ public:
   /// @param position into which the value will be set
   /// @param value_ptr C-style pointer to memory position to be set
   ///
-  virtual void setValue(const cdma::ViewPtr& view_ptr, std::vector<int> position, void *value_ptr) = 0;
+  virtual void setValue(const cdma::IViewPtr& view_ptr, std::vector<int> position, void *value_ptr) = 0;
 
   /// Returns the type_info of the underlying canonical data
   ///
@@ -95,7 +95,7 @@ public:
   /// @return the new IArrayStorage with copied memory storage
   /// @note be aware: can lead to out of memory 
   ///  
-  virtual IArrayStoragePtr deepCopy(ViewPtr view) = 0;
+  virtual IArrayStoragePtr deepCopy(IViewPtr view) = 0;
 };
 
 /// @endcond engineAPI

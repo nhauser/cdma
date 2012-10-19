@@ -25,9 +25,10 @@
 
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/PluginMethods.h>
+#include <cdma/dictionary/plugin/PluginMethods.h>
+#include <cdma/dictionary/IKey.h>
 
-/// @cond dictAPI
+/// @cond internal
 
 namespace cdma
 {
@@ -47,59 +48,25 @@ class CDMA_DECL Context;
 /// attribute, a part of the name...
 ///
 //=============================================================================
-class CDMA_DECL Key
+class Key: public cdma::IKey
 {
 public:
-
-  /// key type: determines if the key is related to a IDataItem or a LogicalGroup
-  enum Type
-  {
-    UNDEFINED = 0,
-    ITEM,
-    GROUP
-  };
   
 private:
   std::string m_name;
-  Type m_type;
+  IKey::Type m_type;
   
 public:
-  /// constructor
-  Key(const std::string& name, Type type = UNDEFINED)
+  // c-tor
+  Key(const std::string& name, IKey::Type type = UNDEFINED)
     : m_name(name), m_type(type) {}
 
-  /// Get the entry name in the dictionary that will be
-  /// searched when using this key.
-  ///
-  /// @return the name of this key
-  ///
+  // Interface IKey
   const std::string& getName() const { return m_name; }
- 
-  /// Set the entry name in the dictionary that will be
-  /// searched when using this key.
-  ///
-  /// @param name of this key
-  ///
   void setName(const std::string& name) { m_name = name; }
- 
-  /// Get the key related notion: LogicalGroup or DataItem
-  ///
-  /// @return Key::Type value
-  ///
-  const Type& getType() const { return m_type; }
-
-  /// Set the key related notion: LogicalGroup or DataItem
-  /// 
-  /// @param type of this key
-  ///
-  void setType(Type type) { m_type = type; }
+  const IKey::Type& getType() const { return m_type; }
+  void setType(IKey::Type type) { m_type = type; }
 };
-
-/// Declaration of shared pointer KeyPtr
-DECLARE_CLASS_SHARED_PTR(Key);
-
-/// @cond internal
-// !! IKeySolver, KeyPath, KeyMethod classes are strictly for internal purpose !!
 
 //==============================================================================
 /// Internal class
@@ -121,7 +88,6 @@ public:
 DECLARE_CLASS_SHARED_PTR(IKeySolver);
 /// internal declaration
 typedef std::list<IKeySolverPtr> SolverList;
-
 
 //==============================================================================
 /// Internal class
@@ -168,10 +134,8 @@ DECLARE_SHARED_PTR(KeyPath);
 /// for internal purpose
 DECLARE_SHARED_PTR(KeyMethod);
 
-/// @endcond internal
-
 } //namespace
 
-/// @endcond dictAPI
+/// @endcond internal
 
 #endif //__CDMA_KEY_H__

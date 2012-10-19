@@ -35,7 +35,7 @@
 #include <cdma/Common.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/IKey.h>
 
 namespace cdma
 {

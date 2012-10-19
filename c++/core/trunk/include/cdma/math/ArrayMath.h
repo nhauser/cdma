@@ -23,9 +23,6 @@
 #ifndef __CDMA_ARRAYMATH_H__
 #define __CDMA_ARRAYMATH_H__
 
-#include <yat/memory/SharedPtr.h>
-
-#include <cdma/IFactory.h>
 #include <cdma/exception/Exception.h>
 
 /// @cond clientAPI
@@ -46,7 +43,7 @@ public:
   ~ArrayMath() {};
 
   /// Return a shapred pointer on the underlaying Array object
-  ArrayPtr getArray();
+  IArrayPtr getArray();
 
   /// Add two Array together, element-wisely. The two arrays must have the same
   /// shape.
@@ -481,7 +478,7 @@ public:
   ///
   /// @return implementation of the factory object
   //
-  yat::SharedPtr<IFactory, yat::Mutex> getFactory();
+  //yat::SharedPtr<IFactory, yat::Mutex> getFactory();
 
   /// Element-wise apply a bool map to the array. The values of the Array
   /// will get updated. The map's rank must be smaller or equal to the rank of
@@ -493,7 +490,7 @@ public:
   /// @return Array itself
   /// @throw  Exception
   ///
-  ArrayMathPtr eltAnd(const ArrayPtr& boolMap) throw ( Exception );
+  ArrayMathPtr eltAnd(const IArrayPtr& boolMap) throw ( Exception );
 };
 
 } //namespace cdma

@@ -20,13 +20,13 @@
 // See AUTHORS file 
 //******************************************************************************
 
-#ifndef __CDMA_LOGICALGROUP_H__
-#define __CDMA_LOGICALGROUP_H__
+#ifndef __CDMA_ILOGICALGROUP_H__
+#define __CDMA_ILOGICALGROUP_H__
 
 #include <cdma/Common.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataset.h>
-#include <cdma/dictionary/Dictionary.h>
+#include <cdma/dictionary/IKey.h>
 
 /// @cond clientAPI
 
@@ -49,32 +49,12 @@ namespace cdma
 /// The aim is to find a really specific node by doing a search that get narrower
 /// while iterating over queries.
 //==============================================================================
-class CDMA_DECL LogicalGroup
+class CDMA_DECL ILogicalGroup
 {
-private:
-  IDataset*                              m_dataset_ptr;    // C-style pointer to the parent dataset
-  std::string                            m_parent_path;    // Path of parent logical group
-  KeyPtr                                 m_key_ptr;        // Key from which this logical group was intantiated (is_null() = true if root)
-  DictionaryPtr                          m_dictionary_ptr; // Dictionary this logical group match to
-  std::map<std::string, LogicalGroupPtr> m_child_groups;   // List of child groups
-  StringListPtr                          m_listkey_ptr;
-
-  // Retreive the data associated with a keyword
-  void PrivSolveKey(Context *context_ptr);
-
 public:
-  /// c-tor
-  ///
-  /// @param dataset_ptr C-style pointer to the parent dataset
-  /// @param parent_ptr C-style pointer to the parent Logical group
-  /// @param key_ptr Shared pointer on the corresponding GROUP-type key
-  /// @param dictionary_ptr Shared pointer on the keywords dictionary object
-  ///
-  LogicalGroup( IDataset* dataset_ptr, LogicalGroup* parent_ptr, 
-                const KeyPtr& key_ptr, const DictionaryPtr& dictionary_ptr );
 
   /// d-tor
-  virtual ~LogicalGroup();
+  virtual ~ILogicalGroup() {}
 
   /// Find the IDataItem corresponding to the given key in the dictionary.
   ///
@@ -82,7 +62,7 @@ public:
   ///
   /// @return the first encountered DataItem that match the key, else null
   ///
-  IDataItemPtr getDataItem(const KeyPtr& key_ptr);
+  virtual IDataItemPtr getDataItem(const IKeyPtr& key_ptr) = 0;
 
   /// Find the DataItem corresponding to the given key in the dictionary.
   ///
@@ -91,7 +71,7 @@ public:
   /// @return the first encountered DataItem that match the key, else null
   /// @note keyPath can contain several keys concatenated with a plug-in's separator
   ///
-  IDataItemPtr getDataItem(const std::string& keyPath);
+  virtual IDataItemPtr getDataItem(const std::string& keyPath) = 0;
 
   /// Find all IDataItems corresponding to the given key in the dictionary.
   ///
@@ -99,7 +79,7 @@ public:
   ///
   /// @return a std::list of DataItem that match the key
   ///
-  std::list<IDataItemPtr> getDataItemList(const KeyPtr& key_ptr);
+  virtual std::list<IDataItemPtr> getDataItemList(const IKeyPtr& key_ptr) = 0;
 
   /// Find all IDataItems corresponding to the given path of key in the dictionary.
   ///
@@ -107,21 +87,21 @@ public:
   ///
   /// @return a std::list of DataItem that match the key
   ///
-  std::list<IDataItemPtr> getDataItemList(const std::string& keyPath);
+  virtual std::list<IDataItemPtr> getDataItemList(const std::string& keyPath) = 0;
 
   /// Find the Group corresponding to the given key in the dictionary.
   ///
   /// @param key_ptr Shared pointer on the keyword description
   /// @return the first encountered LogicalGroup that matches the key, else null
   ///
-  LogicalGroupPtr getGroup(const KeyPtr& key_ptr);
+  virtual ILogicalGroupPtr getGroup(const IKeyPtr& key_ptr) = 0;
 
   /// Find the Group corresponding to the given key in the dictionary.
   ///
   /// @param keyPath keywords path (keyword1::keyword2...)
   /// @return the first encountered LogicalGroup that matches the key, else null
   ///
-  LogicalGroupPtr getGroup(const std::string& keyPath);
+  virtual ILogicalGroupPtr getGroup(const std::string& keyPath) = 0;
 
   /// Return the std::list of key that match the given model type.
   ///
@@ -129,13 +109,13 @@ public:
   ///
   /// @return List of type Group; may be empty, not null.
   ///
-  std::list<std::string> getKeyNames(IContainer::Type type);
+  virtual std::list<std::string> getKeyNames(IContainer::Type type) = 0;
 
   /// Return a list of available keys for this LogicalGroup
   ///
   /// @return List of keys that can be asked
   ///
-  std::list<KeyPtr> getKeys();
+  virtual std::list<IKeyPtr> getKeys() = 0;
 
   /// Bind the given key with the given name, so the key can be accessed by the bind
   ///
@@ -143,29 +123,35 @@ public:
   /// @param key_ptr Shared pointer on the keyword description
   /// @return the given key
   ///
-  KeyPtr bindKey(const std::string& bind, const KeyPtr& key_ptr);
+  virtual IKeyPtr bindKey(const std::string& bind, const IKeyPtr& key_ptr) = 0;
 
   /// Get the parent of this logical group
   /// @return group LogicalGroup
   ///
-  LogicalGroupPtr getParent() const;
-
-  /// Set the given logical group as parent of this logical group
-  /// @param group_ptr LogicalGroup
-  ///
-  void setParent(LogicalGroup* group_ptr);
+  virtual ILogicalGroupPtr getParent() const = 0;
 
   /// Return the logical location
-  std::string getLocation() const;
+  virtual std::string getLocation() const = 0;
 
   /// Return the logical name
-  std::string getName() const;
+  virtual std::string getName() const = 0;
 
   /// Return the logical short name
-  std::string getShortName() const;
+  virtual std::string getShortName() const = 0;
+
+private:
+  ILogicalGroup() {};
+  
+/// @cond internal
+
+public:
+  // implementation
+  friend class LogicalGroup;
+  
+/// @endcond internal
 };
 
-/// @endcond dictAPI
+/// @endcond clientAPI
 
 } //namespace cdma
 #endif //__CDMA_LOGICALGROUP_H__

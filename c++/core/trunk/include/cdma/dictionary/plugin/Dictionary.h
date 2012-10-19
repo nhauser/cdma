@@ -29,7 +29,7 @@
 // Include CDMA
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/dictionary/impl/Key.h>
 
 /// @cond dictAPI
 
@@ -136,7 +136,7 @@ public:
   
   /// Return the ordered list of the solvers associated with a key
   ///
-  SolverList getSolversList(const KeyPtr& key_ptr);
+  SolverList getSolversList(const IKeyPtr& key_ptr);
   
   /// Return all keys referenced in the dictionary.
   ///
@@ -152,7 +152,7 @@ public:
 
   /// Return key type
   ///
-  Key::Type getKeyType(const std::string& key) throw( Exception );
+  IKey::Type getKeyType(const std::string& key) throw( Exception );
   
   /// @param key
   ///            key object

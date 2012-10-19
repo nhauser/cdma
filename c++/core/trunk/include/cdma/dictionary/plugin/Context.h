@@ -30,8 +30,8 @@
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IDataset.h>
 #include <cdma/navigation/IDataItem.h>
-#include <cdma/dictionary/Key.h>
-#include <cdma/dictionary/Dictionary.h>
+#include <cdma/dictionary/IKey.h>
+#include <cdma/dictionary/plugin/Dictionary.h>
 
 /// @cond pluginAPI
 
@@ -50,7 +50,7 @@ namespace cdma
 class CDMA_DECL Context
 {
 private:
-  KeyPtr          m_key_ptr;
+  IKeyPtr         m_key_ptr;
   IDataset*       m_dataset_ptr;
   DataItemList    m_dataitems;
   DictionaryPtr   m_dictionary_ptr;
@@ -61,13 +61,13 @@ public:
   Context() {}
 
   /// Constructor
-  Context(IDataset* dataset_ptr, const KeyPtr& key_ptr, const DictionaryPtr dict_ptr)
+  Context(IDataset* dataset_ptr, const IKeyPtr& key_ptr, const DictionaryPtr dict_ptr)
     : m_key_ptr(key_ptr), m_dataset_ptr(dataset_ptr), m_dictionary_ptr(dict_ptr)  {}
 
   //@{ Accessors
 
   /// Return smart pointer on key object
-  const KeyPtr& getKey() const { return m_key_ptr; }
+  const IKeyPtr& getKey() const { return m_key_ptr; }
 
   /// Return smart pointer on key object
   const DictionaryPtr& getDictionary() const { return m_dictionary_ptr; }

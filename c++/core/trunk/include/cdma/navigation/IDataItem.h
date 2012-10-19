@@ -33,7 +33,7 @@
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IGroup.h>
 #include <cdma/navigation/IDimension.h>
-#include <cdma/array/Array.h>
+#include <cdma/array/IArray.h>
 
 namespace cdma
 {
@@ -84,7 +84,7 @@ public:
   ///
   /// @return the requested data in a memory-resident Array.
   ///
-  virtual ArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception ) = 0;
+  virtual IArrayPtr getData(std::vector<int> position = std::vector<int>() ) throw ( Exception ) = 0;
 
   /// Read a section of the data for this DataItem and return a memory resident
   /// Array. The Array has the same element type as the DataItem. The size of
@@ -94,7 +94,7 @@ public:
   /// @param shape array of int
   /// @return the requested data in a memory-resident Array.
   ///
-  virtual ArrayPtr getData( std::vector<int> origin, std::vector<int> shape) throw ( Exception ) = 0;
+  virtual IArrayPtr getData( std::vector<int> origin, std::vector<int> shape) throw ( Exception ) = 0;
 
   /// Get data as scalar value
   ///
@@ -226,9 +226,9 @@ public:
   
   /// Set the given array as new data for this IDataItem
   ///
-  /// @param array ArrayPtr object
+  /// @param array IArrayPtr object
   ///
-  virtual void setData(const ArrayPtr& array ) = 0;
+  virtual void setData(const IArrayPtr& array ) = 0;
 
   /// Set the dimension on the specified index.
   ///
