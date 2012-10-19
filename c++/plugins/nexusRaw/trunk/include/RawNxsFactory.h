@@ -12,14 +12,11 @@
 
 // CDMA core
 #include <cdma/exception/Exception.h>
-#include <cdma/IFactory.h>
-#include <cdma/dictionary/Key.h>
+#include <cdma/factory/plugin/IPluginFactory.h>
+#include <cdma/dictionary/IKey.h>
 
 // NeXus engine
 #include <NxsDataset.h>
-
-// Raw NeXus plug-in
-#include <RawNxsFactory.h>
 
 namespace cdma
 {
@@ -44,7 +41,7 @@ public:
 //==============================================================================
 /// IFactory implementation
 //==============================================================================
-class Factory : public cdma::IFactory 
+class Factory : public cdma::IPluginFactory 
 {
 public:
   Factory();
@@ -52,13 +49,13 @@ public:
 
   //@{ IFactory methods
 
-  IDatasetPtr openDataset( const std::string& location ) throw ( cdma::Exception );
-  DictionaryPtr openDictionary( const std::string& filepath ) throw ( cdma::Exception );
-  IDatasetPtr createDatasetInstance( const std::string& uri ) throw ( cdma::Exception );
-  IDatasetPtr createEmptyDatasetInstance() throw ( cdma::Exception );
+  cdma::IDatasetPtr openDataset( const std::string& location ) throw ( cdma::Exception );
+  cdma::DictionaryPtr openDictionary( const std::string& filepath ) throw ( cdma::Exception );
+  cdma::IDatasetPtr createDatasetInstance( const std::string& uri ) throw ( cdma::Exception );
+  cdma::IDatasetPtr createEmptyDatasetInstance() throw ( cdma::Exception );
   std::string getPathSeparator();
   std::string getName() { return NXS_FACTORY_NAME; };
-  IDataSourcePtr getPluginURIDetector();
+  cdma::IDataSourcePtr getPluginURIDetector();
   std::list<std::string> getPluginMethodsList();
 
   //@} IFactory methods
@@ -80,7 +77,7 @@ public:
 
   //@{ IDataset methods
 
-   cdma::LogicalGroupPtr getLogicalRoot();
+   cdma::ILogicalGroupPtr getLogicalRoot();
   
   //@}
 
@@ -105,10 +102,10 @@ public:
 
   //@{ IDataSource methods ------------
 
-  bool isReadable(const yat::URI& destination) const;
-  bool isBrowsable(const yat::URI& destination) const;
-  bool isProducer(const yat::URI& destination) const;
-  bool isExperiment(const yat::URI& destination) const;
+  bool isReadable(const std::string& destination) const;
+  bool isBrowsable(const std::string& destination) const;
+  bool isProducer(const std::string& destination) const;
+  bool isExperiment(const std::string& destination) const;
   
   //@}
 
