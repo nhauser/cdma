@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="ANTARES_SCANSERVER" version="1.0.0">
+
   <item key="acquisition_sequence">
     <path></path>
-    <!-- create virtual data item having the name of the nodes listed above -->
     <call>CreateVirtualItem</call>
   </item>
   <item key="camera">
     <path>/{NXinstrument}/{NXdetector}</path>
-    <!-- create virtual data item having the name of the nodes listed above -->
     <call>CreateVirtualItem</call>
-    <!-- set attributes as "acquisition_sequence", "region" and "instrument" works only with NXinstrument 
-      children -->
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
@@ -221,5 +218,11 @@
   <item key="comments">
     <path>/comment_conditions/data</path>
     <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="end_time">
+    <path>/start_time</path>
+  </item>
+  <item key="time">
+    <path>/duration</path>
   </item>
 </map-def>

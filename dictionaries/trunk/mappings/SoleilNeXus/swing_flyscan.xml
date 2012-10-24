@@ -10,6 +10,7 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  
   <item key="channelScale">
     <path>/{NXentry}/{NXinstrument}/{NXdetector}/channelScale</path>
     <call>HarvestEquipmentAttributes</call>
