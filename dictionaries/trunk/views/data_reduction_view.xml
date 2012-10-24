@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
-<data-def name="DATA_REDUCTION">
+<data-def name="DATA_REDUCTION" synonym="">
     <group key="detectors">
         <group key="detector">
             <item key="camera"/>

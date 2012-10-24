@@ -2,8 +2,9 @@
 <!ELEMENT data-def ( (group | item)*)>
 <!ATTLIST data-def
     name CDATA #REQUIRED
-    version CDATA #REQUIRED
+    synonym CDATA #REQUIRED
     concept CDATA #IMPLIED
+    version CDATA #IMPLIED
 >
 
 <!-- 
