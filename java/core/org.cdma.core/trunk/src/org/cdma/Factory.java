@@ -42,19 +42,27 @@ import org.cdma.utils.IFactoryManager;
  * @version 1.1
  */
 public final class Factory {
-
+	// Version of the current CDMA API
+    private static final String CDMA_VERSION = "3_2_0";
+	
+	// Plugin manager
     private static volatile IFactoryManager manager;
-    //private static String CDM_EXPERIMENT = "";
+
+    // Dictionary view
     private static String CDM_VIEW = "";
     private static final String DICO_PATH_PROP       = "CDM_DICTIONARY_PATH";
+    
+    // Files' suffix / prefix
     private static final String FILE_CONCEPT_NAME    = "concepts";
     private static final String FILE_CONCEPT_CORE    = "core_";
     private static final String FILE_VIEW_SUFFIX     = "view";
     
+    // Dictionaries
     private static final String PATH_FOLDER_MAPS     = "mappings";
     private static final String PATH_FOLDER_VIEWS    = "views";
     private static final String PATH_FOLDER_CONCEPTS = "concepts";
     
+    // Global logger for the CDMA 
     private static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
@@ -231,7 +239,7 @@ public final class Factory {
         if (manager == null) {
             synchronized (Factory.class) {
                 if (manager == null) {
-                    manager = new FactoryManager();
+                    manager = new FactoryManager(CDMA_VERSION);
                 }
             }
         }

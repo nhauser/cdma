@@ -254,6 +254,23 @@ public interface IFactory {
      */
     @Deprecated
     public IDictionary createDictionary();
+    
+    /** 
+     * Returns the plug-ins version number with under the form
+     * of 3 digits: X_Y_Z
+     * 
+     * @return String representation of the plug-in's version
+     */
+    String getPluginVersion();
+    
+    /**
+     * Returns the CDMA core's version this plug-in is expected to work with.
+     * The version will be represented under the form of 3 digits:
+     * X_Y_Z
+     * 
+     * @return String representation of the CDMA core's version
+     */
+    String getCDMAVersion();
 }
 
 /// @endcond pluginAPIclientAPI
