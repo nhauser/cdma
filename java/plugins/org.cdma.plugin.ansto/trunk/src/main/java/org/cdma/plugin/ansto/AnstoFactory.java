@@ -27,6 +27,8 @@ import org.cdma.interfaces.IKey;
 public class AnstoFactory implements IFactory {
     public static final String NAME  = "AnstoNetCDF";
     public static final String LABEL = "ANSTO's NetCDF plug-in";
+    private static final String CDMA_VERSION = "3_2_0";
+    private static final String PLUG_VERSION = "1.0.0";
     
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
@@ -208,5 +210,15 @@ public class AnstoFactory implements IFactory {
     public IDictionary createDictionary() {
         return new NcDictionary(AnstoFactory.NAME);
     }
+
+	@Override
+	public String getPluginVersion() {
+		return PLUG_VERSION;
+	}
+
+	@Override
+	public String getCDMAVersion() {
+		return CDMA_VERSION;
+	}
 
 }

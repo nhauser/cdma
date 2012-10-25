@@ -299,7 +299,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     	if( mKeys == null ) {
     		mKeys = new HashMap<IKey, String>();
     	}
-    	
+
     	// Get concept IDs from view item
     	for( String keyName : view.getItemKeys() ) {
     		Concept concept = concepts.getConcept(keyName);
@@ -314,7 +314,7 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     		
     		mKeys.put( mFactory.createKey(keyName), keyID);
     	}
-		
+
     	// Init mapping map
 		if( mMaps == null ) {
 			mMaps = new HashMap<String, ItemSolver>();
@@ -341,6 +341,26 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
     			mKeys.put( mFactory.createKey(keyID), keyID);
     		}
     	}
+    	
+    	// Check all keys from view are mapped
+    	StringBuffer configInfo = new StringBuffer();
+    	for( Entry<IKey, String> entry : mKeys.entrySet() ) {
+    		if( ! mMaps.containsKey( entry.getValue() ) ) {
+    			configInfo.append("\n  - Key '");
+    			configInfo.append(entry.getKey().getName() + "'");
+    		}
+    	}
+    	
+    	// Log not mapped keys
+    	if( configInfo.length() != 0 ) {
+    		StringBuffer header = new StringBuffer();
+    		header.append("Dictionary unavailable keys\nFor plug-in: '" + mFactory.getName() + "' named " + mFactory.getPluginLabel() );
+    		header.append("\nIn view file: '" + mKeyFile +"'" );
+    		header.append("\nWith mapping file: '" + mMapFile + "'" );
+    		header.append("\nFollowing keys haven't been mapped nor have synonyms:");
+    		Factory.getLogger().log( Level.INFO, header.toString() + configInfo.toString() );
+    	}
+    	
     }
 }
 

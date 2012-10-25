@@ -50,9 +50,9 @@ public final class NxsFactory implements IFactory {
     public static final String LABEL       = "SOLEIL's NeXus plug-in";
     public static final String DEBUG_INF   = "CDMA_DEBUG";
     public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
-
-    public static final String ERR_NOT_SUPPORTED = "not supported yet in plug-in!";
-
+    private static final String CDMA_VERSION = "3_2_0";
+    private static final String PLUG_VERSION = "1.4.19";
+    
     public NxsFactory() {
     }
 
@@ -128,7 +128,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-        throw new InvalidArrayTypeException(ERR_NOT_SUPPORTED);
+        throw new NotImplementedException();
     }
 
     @Override
@@ -255,4 +255,14 @@ public final class NxsFactory implements IFactory {
     public static IArrayMath createArrayMath(NxsArray array) {
         return new NxsArrayMath(array);
     }
+
+	@Override
+	public String getPluginVersion() {
+		return PLUG_VERSION;
+	}
+
+	@Override
+	public String getCDMAVersion() {
+		return CDMA_VERSION;
+	}
 }
