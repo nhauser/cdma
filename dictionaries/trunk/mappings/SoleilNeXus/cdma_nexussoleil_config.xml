@@ -28,11 +28,11 @@
 ============================================= -->
   <dataset-model name="generic_quickexafs">
     <criteria>
-      <if exist="true" target="/QuickEXAFS*{NXentry}/{NXinstrument}"/>
+      <if exist="true" target="/QuickEXAFS*{NXentry}"/>
     </criteria>
     
     <parameters>
-      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
+      <parameter name="BEAMLINE" type="constant" constant="samba"/>
       <parameter name="MODEL" type="constant" constant="quickexafs"/>
     </parameters>
 
