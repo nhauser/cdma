@@ -25,7 +25,6 @@
 
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
-#include <cdma/dictionary/plugin/PluginMethods.h>
 
 /// @cond dictAPI
 
