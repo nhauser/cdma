@@ -29,7 +29,6 @@
 
 // CDMA includes
 #include <cdma/Common.h>
-#include <cdma/exception/Exception.h>
 #include <cdma/navigation/IContainer.h>
 #include <cdma/navigation/IGroup.h>
 #include <cdma/navigation/IDimension.h>
