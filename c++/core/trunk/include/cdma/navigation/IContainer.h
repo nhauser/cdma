@@ -24,7 +24,6 @@
 #define __CDMA_ICONTAINER_H__
 
 #include <cdma/Common.h>
-#include <cdma/array/impl/Range.h>
 #include <cdma/navigation/IAttribute.h>
 
 namespace cdma
