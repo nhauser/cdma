@@ -34,3 +34,13 @@ Informations and available sets of scientific keywords: the dictionaries used by
  * [PyImpl Python implementation]
  * [DataFormatEngines Data format engines]
  * [PlugIns Plug-ins]
+
+= Roadmap =
+
+Here is the plan for next versions of the CDMA core library
+
+|| *langage* || *version* || *when?* || *what?* ||
+|| Java || 3.2.0 || October, 2012 || Refreshing service ||
+|| C++ || 2.0 || November, 2012 || missing functionalities already availables in the Java version ||
+|| C++/Java/Python || 4.0 || December, 2012 || Python binding, API unification (Java/C++), coherent version numbers ||
+|| C++/Java/Python || 5.0 || Q2/2013 || Writing capabilities ||
