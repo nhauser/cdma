@@ -31,7 +31,7 @@ Informations and available sets of scientific keywords: the dictionaries used by
  * [KeyConcepts CDMA concepts]
  * [CppImpl C++ implementation]
  * [JavaImpl Java implementation]
- * [PyImpl Python implementation]
+ * [http://cdma.googlecode.com/svn/wiki/pydoc/index.html Python documentation]
  * [DataFormatEngines Data format engines]
  * [PlugIns Plug-ins]
 
