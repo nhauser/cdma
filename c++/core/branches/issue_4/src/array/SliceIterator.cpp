@@ -51,7 +51,7 @@ SliceIterator::SliceIterator(const IArrayPtr& array, int dim)
   // new copy of the array storage and so is unusable
   m_array = array;
   m_slice = array;
-  IViewPtr index = new View(m_array->getView());
+  IViewPtr index(new View(m_array->getView()));
   int rank = index->getRank();
   std::vector<int> position( rank );
   std::vector<int> shape  = index->getShape();
@@ -74,7 +74,7 @@ SliceIterator::SliceIterator(const IArrayPtr& array, int dim)
   index->setStride(stride);
   index->setShape(shape);
 
-  m_iterator = new ArrayIterator(m_array, index, position);
+  m_iterator = ArrayIteratorPtr(new ArrayIterator(m_array, index, position));
 	
 }
 
@@ -218,7 +218,7 @@ void SliceIterator::get() const
   CDMA_FUNCTION_TRACE("SliceIterator::get");
 
   // Get array current informations
-  IViewPtr index = new View( m_array->getView() );
+  IViewPtr index(new View( m_array->getView() ));
   std::vector<int> current = m_iterator->getPosition();
   std::vector<int> shape   = index->getShape();
   int rank = m_array->getRank();
@@ -234,7 +234,7 @@ void SliceIterator::get() const
   index->reduce();
 
   // Create a new array with the right view
-  m_slice = new Array( m_array, index );
+  m_slice = IArrayPtr(new Array( m_array, index ));
 }
 
 }
