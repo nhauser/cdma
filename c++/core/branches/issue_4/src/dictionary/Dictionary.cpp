@@ -330,7 +330,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
 {
   if( m_current_concept_id && element_name.is_equal("path") )
   {
-    KeyPathPtr path_ptr = new KeyPath(element_content);
+    KeyPathPtr path_ptr(new KeyPath(element_content));
 
     // Push the KeyPath object at the back of the list
     get_solvers_list(m_current_concept_id).push_back( IKeySolverPtr(path_ptr) );
@@ -340,7 +340,7 @@ void MapDefAnalyser::on_element_content(const yat::String& element_name,
     IPluginMethodPtr method_ptr = FactoryImpl::getPluginMethod(m_dict_ptr->m_plugin_id, element_content);
     if( method_ptr )
     {
-      KeyMethodPtr key_method_ptr = new KeyMethod(element_content, method_ptr);
+      KeyMethodPtr key_method_ptr(new KeyMethod(element_content, method_ptr));
 
       // Push the KeyMethod object reference at the back of the list
       get_solvers_list(m_current_concept_id).push_back( IKeySolverPtr(key_method_ptr) );
@@ -435,7 +435,7 @@ StringListPtr Dictionary::getAllKeys()
   {
     pList->push_back(cit->first);
   }
-  return pList;
+  return StringListPtr(pList);
 }
 
 //----------------------------------------------------------------------------
@@ -450,7 +450,7 @@ StringListPtr Dictionary::getKeys(const std::string& parent_key) throw( Exceptio
   {    
     pList->push_back(cit->second);
   }
-  return pList;
+  return StringListPtr(pList);
 }
 
 //----------------------------------------------------------------------------
@@ -510,7 +510,7 @@ Dictionary::ConceptPtr Dictionary::createConcept(const std::string &label)
 {
   static int s_concept_id = 0;
 
-  ConceptPtr concept_ptr = new Dictionary::Concept;
+  ConceptPtr concept_ptr(new Dictionary::Concept);
   concept_ptr->m_label = label;
   concept_ptr->m_id = ++s_concept_id;
   m_id_concept_map[s_concept_id] = concept_ptr;
