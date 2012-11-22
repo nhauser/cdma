@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA client API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -97,7 +97,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#define-members">Defines</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">Common.h File Reference</div>  </div>
@@ -114,13 +114,10 @@ Defines</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#a00ac07341a46908138794bb6827c38b7">CDMA_DECL</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#ac87036e93e2940dee447ec226c6c801b">CDMA_DECL_EXPORT</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#a7396db1cc33c04a744c600f4f750b31f">CDMA_DECL_IMPORT</a></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#a6528c16bad1da7d121edaf4e9a0cd370">DECLARE_SHARED_PTR</a>(x)&#160;&#160;&#160;typedef yat::SharedPtr&lt;x, yat::Mutex&gt; x##Ptr</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Macro helper to declare a shared pointer on a given object class.  <a href="#a6528c16bad1da7d121edaf4e9a0cd370"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="typedef-members"></a>
-Typedefs</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">typedef yat::SharedPtr<br class="typebreak"/>
-&lt; <a class="el" href="_common_8h.html#ae08e821fa4727c5d99431429d0d19b94">StringList</a>, yat::Mutex &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#a2f339b79c2385f8d76e1442396685945">StringListPtr</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Declaration of shared pointer on StringList.  <a href="#a2f339b79c2385f8d76e1442396685945"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_common_8h.html#a4cbd72b3fdf64866ffc44afd5d07fd54">DECLARE_SHARED_PTR</a> (<a class="el" href="_common_8h.html#ae08e821fa4727c5d99431429d0d19b94">StringList</a>)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Declaration of shared pointer on StringList.  <a href="#a4cbd72b3fdf64866ffc44afd5d07fd54"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="var-members"></a>
 Variables</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">internal typedef std::list<br class="typebreak"/>
@@ -166,32 +163,17 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6528c16bad1da7d121edaf4e9a0cd370"></a><!-- doxytag: member="Common.h::DECLARE_SHARED_PTR" ref="a6528c16bad1da7d121edaf4e9a0cd370" args="(x)" -->
+<hr/><h2>Function Documentation</h2>
+<a class="anchor" id="a4cbd72b3fdf64866ffc44afd5d07fd54"></a><!-- doxytag: member="Common.h::DECLARE_SHARED_PTR" ref="a4cbd72b3fdf64866ffc44afd5d07fd54" args="(StringList)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define <a class="el" href="_common_8h.html#a6528c16bad1da7d121edaf4e9a0cd370">DECLARE_SHARED_PTR</a></td>
+          <td class="memname"><a class="el" href="_common_8h.html#a4cbd72b3fdf64866ffc44afd5d07fd54">DECLARE_SHARED_PTR</a> </td>
           <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname">x</td><td>)</td>
-          <td>&#160;&#160;&#160;typedef yat::SharedPtr&lt;x, yat::Mutex&gt; x##Ptr</td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Macro helper to declare a shared pointer on a given object class. </p>
-
-</div>
-</div>
-<hr/><h2>Typedef Documentation</h2>
-<a class="anchor" id="a2f339b79c2385f8d76e1442396685945"></a><!-- doxytag: member="Common.h::StringListPtr" ref="a2f339b79c2385f8d76e1442396685945" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef yat::SharedPtr&lt;<a class="el" href="_common_8h.html#ae08e821fa4727c5d99431429d0d19b94">StringList</a>, yat::Mutex&gt; <a class="el" href="_common_8h.html#a2f339b79c2385f8d76e1442396685945">StringListPtr</a></td>
+          <td class="paramtype"><a class="el" href="_common_8h.html#ae08e821fa4727c5d99431429d0d19b94">StringList</a>&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
 </div>
@@ -236,7 +218,7 @@ Variables</h2></td></tr>
     <ul>
       <li class="navelem"><a class="el" href="_common_8h.html">Common.h</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:23:35 for CDMA client API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:57:33 for CDMA client API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

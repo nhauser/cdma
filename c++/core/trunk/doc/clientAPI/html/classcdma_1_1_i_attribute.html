@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA client API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -116,16 +116,14 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#aac9a88f40afeab2448e2b7f9dc23dd74">~IAttribute</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#abc7d36ccd68bc4085d2c4b85fc889da2">getName</a> ()=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual const std::type_info &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a64096140120da3e15fe9cf7ccbb0affb">getType</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a13daf2625bd4ccecb40dff7e3a3a928f">isString</a> ()=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a7f70839b71ca3737cc54034fc32650ab">isArray</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#ad5bbd9b3a7306d32c39cc323af19e844">getLength</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a807bd4e4ed284e251bf4e8433bf40565">getStringValue</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a25cd1df81ff746d6804a6fc5362cf230">getIntValue</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a59114f57d248a012f33ef49e44cc1286">getFloatValue</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a01e81a8ee6ce381498e4fba3531edd15">toString</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a0c0623dd6d912b97f4b5cc1f03ff4a2f">setStringValue</a> (const std::string &amp;val)=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a28057bdb3358a29bc53b4f143b9686c4">setIntValue</a> (int value)=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a2f47da2c0c5f6036a46173a0279350e6">setFloatValue</a> (float value)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#adc3f501f56fc5eb39edab952ea80ca7d">getSize</a> ()=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual IArrayPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a5db69dfcf255b7811abde23dc0b64708">getData</a> ()=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#afbb1b2a6aa6b823e39d7be6255e74400">setData</a> (const IArrayPtr &amp;)=0</td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#af28b6ab4b340bd66d8e784a2d19e572d">getValue</a> ()</td></tr>
+<tr><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_attribute.html#a5bea9a7a434bfa480ad8caca2d0949bf">setValue</a> (T value)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Abstraction of the metadata related to a <a class="el" href="classcdma_1_1_i_data_item.html" title="Abstraction of a data item container.">IDataItem</a> or a <a class="el" href="classcdma_1_1_i_group.html" title="An IGroup is the abstraction of a collection of IDataItem(s).">IGroup</a>. </p>
@@ -148,12 +146,12 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a59114f57d248a012f33ef49e44cc1286"></a><!-- doxytag: member="cdma::IAttribute::getFloatValue" ref="a59114f57d248a012f33ef49e44cc1286" args="()=0" -->
+<a class="anchor" id="a5db69dfcf255b7811abde23dc0b64708"></a><!-- doxytag: member="cdma::IAttribute::getData" ref="a5db69dfcf255b7811abde23dc0b64708" args="()=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual double <a class="el" href="classcdma_1_1_i_attribute.html#a59114f57d248a012f33ef49e44cc1286">cdma::IAttribute::getFloatValue</a> </td>
+          <td class="memname">virtual IArrayPtr <a class="el" href="classcdma_1_1_i_attribute.html#a5db69dfcf255b7811abde23dc0b64708">cdma::IAttribute::getData</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [pure virtual]</code></td>
@@ -161,56 +159,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Retrieve floating point value as double C-type</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>the value as a double (converted if needed) </dd></dl>
-<dl class="exception"><dt><b>Exceptions:</b></dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">throw</td><td>an <a class="el" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">cdma::Exception</a> if type conversion isn't possible </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a25cd1df81ff746d6804a6fc5362cf230"></a><!-- doxytag: member="cdma::IAttribute::getIntValue" ref="a25cd1df81ff746d6804a6fc5362cf230" args="()=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual long <a class="el" href="classcdma_1_1_i_attribute.html#a25cd1df81ff746d6804a6fc5362cf230">cdma::IAttribute::getIntValue</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Retrieve integer value as long C-type</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>the value as a integer (converted if needed) </dd></dl>
-<dl class="exception"><dt><b>Exceptions:</b></dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">throw</td><td>an <a class="el" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">cdma::Exception</a> if type conversion isn't possible </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="ad5bbd9b3a7306d32c39cc323af19e844"></a><!-- doxytag: member="cdma::IAttribute::getLength" ref="ad5bbd9b3a7306d32c39cc323af19e844" args="()=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual int <a class="el" href="classcdma_1_1_i_attribute.html#ad5bbd9b3a7306d32c39cc323af19e844">cdma::IAttribute::getLength</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Get the length of the array of values; = 1 if scaler.</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>integer value </dd></dl>
+<p>Read all the data for this Attribute and return a memory resident Array. The Array has the same element type and shape as the Attribute.</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>the requested data in a memory-resident Array. </dd></dl>
 
 </div>
 </div>
@@ -232,12 +182,12 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a807bd4e4ed284e251bf4e8433bf40565"></a><!-- doxytag: member="cdma::IAttribute::getStringValue" ref="a807bd4e4ed284e251bf4e8433bf40565" args="()=0" -->
+<a class="anchor" id="adc3f501f56fc5eb39edab952ea80ca7d"></a><!-- doxytag: member="cdma::IAttribute::getSize" ref="adc3f501f56fc5eb39edab952ea80ca7d" args="()=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::string <a class="el" href="classcdma_1_1_i_attribute.html#a807bd4e4ed284e251bf4e8433bf40565">cdma::IAttribute::getStringValue</a> </td>
+          <td class="memname">virtual int <a class="el" href="classcdma_1_1_i_attribute.html#adc3f501f56fc5eb39edab952ea80ca7d">cdma::IAttribute::getSize</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [pure virtual]</code></td>
@@ -245,9 +195,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Retrieve string value; only call if <a class="el" href="classcdma_1_1_i_attribute.html#a13daf2625bd4ccecb40dff7e3a3a928f">isString()</a> is true.</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>string if this is a string valued attribute, else null. </dd></dl>
-<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classcdma_1_1_i_attribute.html#a13daf2625bd4ccecb40dff7e3a3a928f">IAttribute::isString</a> </dd></dl>
+<p>Get the size of the array of values; = 1 if scaler.</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>integer value </dd></dl>
 
 </div>
 </div>
@@ -269,6 +218,26 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="af28b6ab4b340bd66d8e784a2d19e572d"></a><!-- doxytag: member="cdma::IAttribute::getValue" ref="af28b6ab4b340bd66d8e784a2d19e572d" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="classcdma_1_1_i_attribute.html#af28b6ab4b340bd66d8e784a2d19e572d">cdma::IAttribute::getValue</a> </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [inline]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Convenience non-abstract method allowing to get a scalar value </p>
+
+</div>
+</div>
 <a class="anchor" id="a7f70839b71ca3737cc54034fc32650ab"></a><!-- doxytag: member="cdma::IAttribute::isArray" ref="a7f70839b71ca3737cc54034fc32650ab" args="()=0" -->
 <div class="memitem">
 <div class="memproto">
@@ -282,116 +251,52 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>True if value is an array (<a class="el" href="classcdma_1_1_i_attribute.html#ad5bbd9b3a7306d32c39cc323af19e844">getLength()</a> &gt; 1).</p>
+<p>True if value is an array (getLength() &gt; 1).</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>true or false </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a13daf2625bd4ccecb40dff7e3a3a928f"></a><!-- doxytag: member="cdma::IAttribute::isString" ref="a13daf2625bd4ccecb40dff7e3a3a928f" args="()=0" -->
+<a class="anchor" id="afbb1b2a6aa6b823e39d7be6255e74400"></a><!-- doxytag: member="cdma::IAttribute::setData" ref="afbb1b2a6aa6b823e39d7be6255e74400" args="(const IArrayPtr &amp;)=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_attribute.html#a13daf2625bd4ccecb40dff7e3a3a928f">cdma::IAttribute::isString</a> </td>
+          <td class="memname">virtual void <a class="el" href="classcdma_1_1_i_attribute.html#afbb1b2a6aa6b823e39d7be6255e74400">cdma::IAttribute::setData</a> </td>
           <td>(</td>
+          <td class="paramtype">const IArrayPtr &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>True if value is a string or String[].</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true or false </dd></dl>
+<p>Set the given array as new data for this <a class="el" href="classcdma_1_1_i_data_item.html" title="Abstraction of a data item container.">IDataItem</a></p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">array</td><td>IArrayPtr object </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
-<a class="anchor" id="a2f47da2c0c5f6036a46173a0279350e6"></a><!-- doxytag: member="cdma::IAttribute::setFloatValue" ref="a2f47da2c0c5f6036a46173a0279350e6" args="(float value)=0" -->
+<a class="anchor" id="a5bea9a7a434bfa480ad8caca2d0949bf"></a><!-- doxytag: member="cdma::IAttribute::setValue" ref="a5bea9a7a434bfa480ad8caca2d0949bf" args="(T value)" -->
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">virtual void <a class="el" href="classcdma_1_1_i_attribute.html#a2f47da2c0c5f6036a46173a0279350e6">cdma::IAttribute::setFloatValue</a> </td>
+          <td class="memname">void <a class="el" href="classcdma_1_1_i_attribute.html#a5bea9a7a434bfa480ad8caca2d0949bf">cdma::IAttribute::setValue</a> </td>
           <td>(</td>
-          <td class="paramtype">float&#160;</td>
+          <td class="paramtype">T&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
+          <td><code> [inline]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>set the value as a float.</p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">value</td><td>float </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a28057bdb3358a29bc53b4f143b9686c4"></a><!-- doxytag: member="cdma::IAttribute::setIntValue" ref="a28057bdb3358a29bc53b4f143b9686c4" args="(int value)=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classcdma_1_1_i_attribute.html#a28057bdb3358a29bc53b4f143b9686c4">cdma::IAttribute::setIntValue</a> </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>value</em></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>set the value as an integer.</p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">value</td><td>int </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a0c0623dd6d912b97f4b5cc1f03ff4a2f"></a><!-- doxytag: member="cdma::IAttribute::setStringValue" ref="a0c0623dd6d912b97f4b5cc1f03ff4a2f" args="(const std::string &amp;val)=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classcdma_1_1_i_attribute.html#a0c0623dd6d912b97f4b5cc1f03ff4a2f">cdma::IAttribute::setStringValue</a> </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>val</em></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>set the value as a string, trimming trailing zeroes.</p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">val</td><td>string object </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a01e81a8ee6ce381498e4fba3531edd15"></a><!-- doxytag: member="cdma::IAttribute::toString" ref="a01e81a8ee6ce381498e4fba3531edd15" args="()=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual std::string <a class="el" href="classcdma_1_1_i_attribute.html#a01e81a8ee6ce381498e4fba3531edd15">cdma::IAttribute::toString</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>string representation.</p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>string object </dd></dl>
+<p>Convenience non-abstract method allowing to set a scalar value </p>
 
 </div>
 </div>
@@ -419,7 +324,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_i_attribute.html">IAttribute</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:23:36 for CDMA client API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:57:34 for CDMA client API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

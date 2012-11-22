@@ -1,20 +1,6 @@
 var searchData=
 [
   ['tan',['tan',['../classcdma_1_1_array_math.html#a5768e055a59c1b9eb20493c6fcc9278d',1,'cdma::ArrayMath']]],
-  ['throw_5fbad_5farray_5ftype',['THROW_BAD_ARRAY_TYPE',['../_exception_8h.html#ac07e733401d0ae3fb1a997ecaf85f201',1,'Exception.h']]],
-  ['throw_5fdimension_5fnot_5fsupported',['THROW_DIMENSION_NOT_SUPPORTED',['../_exception_8h.html#a05645da924dae4a48ac199fc75ced2bf',1,'Exception.h']]],
-  ['throw_5fdivide_5fny_5fzero',['THROW_DIVIDE_NY_ZERO',['../_exception_8h.html#ac44ee6a8497c63391d6fe7392c19fd7f',1,'Exception.h']]],
-  ['throw_5fduplication_5ferror',['THROW_DUPLICATION_ERROR',['../_exception_8h.html#aa3836baff6af58febed996485f9b3ace',1,'Exception.h']]],
-  ['throw_5ffile_5faccess',['THROW_FILE_ACCESS',['../_exception_8h.html#a460249d894d8951d68cde124fe00930f',1,'Exception.h']]],
-  ['throw_5ffitter_5ferror',['THROW_FITTER_ERROR',['../_exception_8h.html#abcfceddf07e44404521766a333614e69',1,'Exception.h']]],
-  ['throw_5finvalid_5fpointer',['THROW_INVALID_POINTER',['../_exception_8h.html#a31e97d148e5ed96ea1a05312477288fb',1,'Exception.h']]],
-  ['throw_5finvalid_5frange',['THROW_INVALID_RANGE',['../_exception_8h.html#a5457dcf2fbe62fd9773612d6c3327015',1,'Exception.h']]],
-  ['throw_5fno_5fdata',['THROW_NO_DATA',['../_exception_8h.html#a76b8a3cd2b39da298ffd7cf4118c6228',1,'Exception.h']]],
-  ['throw_5fno_5fresult',['THROW_NO_RESULT',['../_exception_8h.html#a298e0d902415cca33ed1b1c5264d72fd',1,'Exception.h']]],
-  ['throw_5fno_5fsignal',['THROW_NO_SIGNAL',['../_exception_8h.html#a10a6baa2a7ff9d2d0bd10e894855111a',1,'Exception.h']]],
-  ['throw_5fnot_5fimplemented',['THROW_NOT_IMPLEMENTED',['../_exception_8h.html#a8d597967576f7f68ba98f0bc6677259a',1,'Exception.h']]],
-  ['throw_5fshape_5fnot_5fmatch',['THROW_SHAPE_NOT_MATCH',['../_exception_8h.html#ae6fab9cc770ec766ab901028f795f14f',1,'Exception.h']]],
-  ['throw_5ftoo_5fmany_5fresults',['THROW_TOO_MANY_RESULTS',['../_exception_8h.html#a9777f00473b87c6b1ad6f1c700504100',1,'Exception.h']]],
   ['toacos',['toAcos',['../classcdma_1_1_array_math.html#ad0953f4be550ef8999e770424d661f17',1,'cdma::ArrayMath']]],
   ['toadd',['toAdd',['../classcdma_1_1_array_math.html#a7764fb94a632a79f8b5560bc6b287636',1,'cdma::ArrayMath::toAdd(Array &amp;array)'],['../classcdma_1_1_array_math.html#ad6a28ccd4a34a3ded7afe90298bcd70d',1,'cdma::ArrayMath::toAdd(ArrayMath &amp;array)'],['../classcdma_1_1_array_math.html#af656c871bdc7de96c4b41b0037a71c2e',1,'cdma::ArrayMath::toAdd(double value)']]],
   ['toasin',['toAsin',['../classcdma_1_1_array_math.html#a2ab8df7a76ab1ecffa2872c72abeedae',1,'cdma::ArrayMath']]],
@@ -33,10 +19,8 @@ var searchData=
   ['toscale',['toScale',['../classcdma_1_1_array_math.html#af22852345aca41a59efa7e17e1294de9',1,'cdma::ArrayMath']]],
   ['tosin',['toSin',['../classcdma_1_1_array_math.html#afd03d78a74e91535b0b1a99a06586bf7',1,'cdma::ArrayMath']]],
   ['tosqrt',['toSqrt',['../classcdma_1_1_array_math.html#a6b0e73fdecb30180dad2cb281e48c47f',1,'cdma::ArrayMath']]],
-  ['tostring',['toString',['../classcdma_1_1_i_attribute.html#a01e81a8ee6ce381498e4fba3531edd15',1,'cdma::IAttribute']]],
   ['totan',['toTan',['../classcdma_1_1_array_math.html#a8d22bfb1cc1a3d6bbb07d5998a20a580',1,'cdma::ArrayMath']]],
   ['tracedebug_2eh',['TraceDebug.h',['../_trace_debug_8h.html',1,'']]],
   ['transpose',['transpose',['../classcdma_1_1_array_utils.html#ad6e5043be76897560e632a8608d7490a',1,'cdma::ArrayUtils']]],
-  ['twodimarraydataitem',['TwoDimArrayDataItem',['../classcdma_1_1_two_dim_array_data_item.html',1,'cdma']]],
-  ['type',['Type',['../classcdma_1_1_key.html#a74af9958be27ee00d3a540446f1be6ce',1,'cdma::Key::Type()'],['../classcdma_1_1_i_container.html#a5d91a5af76de4765f775f893eef25999',1,'cdma::IContainer::Type()']]]
+  ['type',['Type',['../classcdma_1_1_i_key.html#a78a83c75aafe4fc1e1cc80fded187fc5',1,'cdma::IKey::Type()'],['../classcdma_1_1_i_container.html#a5d91a5af76de4765f775f893eef25999',1,'cdma::IContainer::Type()'],['../classcdma_1_1_dataset_model_1_1_criterion.html#a3876cdd5f90476211203d650f8118e5c',1,'cdma::DatasetModel::Criterion::Type()'],['../classcdma_1_1_dataset_model_1_1_dataset_parameter.html#ae2253fbf348c5b58b77e8b6cc27944d0',1,'cdma::DatasetModel::DatasetParameter::Type()']]]
 ];

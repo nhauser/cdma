@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['group',['GROUP',['../classcdma_1_1_key.html#a74af9958be27ee00d3a540446f1be6ceaf50b3a2d02ce9cd4e9e74cb05561d287',1,'cdma::Key']]]
+  ['group',['GROUP',['../classcdma_1_1_i_key.html#a78a83c75aafe4fc1e1cc80fded187fc5a4d6cfe5dbea4ea924dc507442086ddf6',1,'cdma::IKey']]]
 ];

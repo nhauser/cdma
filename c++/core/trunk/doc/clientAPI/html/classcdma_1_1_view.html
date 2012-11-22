@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA client API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -103,11 +103,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">cdma::View Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="cdma::View" -->
+<!-- doxytag: class="cdma::View" --><!-- doxytag: inherits="cdma::IView" -->
 <p>Describes a way of parsing a array.  
  <a href="classcdma_1_1_view.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="_view_8h_source.html">array/View.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_view_8h_source.html">array/impl/View.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for cdma::View:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classcdma_1_1_view.png" usemap="#cdma::View_map" alt=""/>
+  <map id="cdma::View_map" name="cdma::View_map">
+<area href="classcdma_1_1_i_view.html" title="Describes a way of parsing a array." alt="cdma::IView" shape="rect" coords="0,0,79,24"/>
+</map>
+ </div></div>
 
 <p><a href="classcdma_1_1_view-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -115,11 +124,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#acef78ba65be5d22c8ebe2e3a5afd4c79">View</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">c-tor  <a href="#acef78ba65be5d22c8ebe2e3a5afd4c79"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a483c7d133931032fd84edba12ec97353">View</a> (const cdma::ViewPtr &amp;view)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a8c485a96ee41b63faf521a0e2df95176">View</a> (const cdma::IViewPtr &amp;view)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a7192c3b5ff1a8d520bdee8584fde692f">View</a> (int rank, int shape[], int start[])</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a74933ca8a873c44a0b73911872f37c09">View</a> (std::vector&lt; int &gt; shape, std::vector&lt; int &gt; start)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a100340fd1f25026f54fd204903ed611d">View</a> (std::vector&lt; int &gt; shape, std::vector&lt; int &gt; start, std::vector&lt; int &gt; stride)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#aa0a504dab94c7bdd84f4848fcf7aab37">~View</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">d-tor  <a href="#aa0a504dab94c7bdd84f4848fcf7aab37"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader"></div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a69f7a38bdda968792f8f61bdcaeb9fcc">getRank</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#aa2a0678ca3e5f27b2ec4e1acc71c2244">getShape</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a9da139b18467dfd14abf98848ee780a2">getOrigin</a> ()</td></tr>
@@ -134,7 +145,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a62c708781d418ec89f652bcce1055668">getViewName</a> (int dim)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a7d3a43660777d6c34921a8438305cf96">reduce</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a1b5992a1bdebf3b87b3df4aab362a52f">reduce</a> (int dim)  throw ( Exception )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a193004c68c39dddd08492a1ee495046a">compose</a> (const ViewPtr &amp;higher_view)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_view.html#a313b5c72d3421a16fd9acecb33d05100">compose</a> (const IViewPtr &amp;higher_view)</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Describes a way of parsing a array. </p>
@@ -159,14 +170,14 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a483c7d133931032fd84edba12ec97353"></a><!-- doxytag: member="cdma::View::View" ref="a483c7d133931032fd84edba12ec97353" args="(const cdma::ViewPtr &amp;view)" -->
+<a class="anchor" id="a8c485a96ee41b63faf521a0e2df95176"></a><!-- doxytag: member="cdma::View::View" ref="a8c485a96ee41b63faf521a0e2df95176" args="(const cdma::IViewPtr &amp;view)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="classcdma_1_1_view.html#acef78ba65be5d22c8ebe2e3a5afd4c79">cdma::View::View</a> </td>
           <td>(</td>
-          <td class="paramtype">const cdma::ViewPtr &amp;&#160;</td>
+          <td class="paramtype">const cdma::IViewPtr &amp;&#160;</td>
           <td class="paramname"><em>view</em></td><td>)</td>
           <td></td>
         </tr>
@@ -222,7 +233,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>add a method with stride parameter </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>add a method with stride parameter </dd></dl>
 
 </div>
 </div>
@@ -258,7 +269,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>remove it (see below) </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>remove it (see below) </dd></dl>
 
 </div>
 </div>
@@ -301,7 +312,7 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>stride default value </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>stride default value </dd></dl>
 
 </div>
 </div>
@@ -319,23 +330,27 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>d-tor </p>
+
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a193004c68c39dddd08492a1ee495046a"></a><!-- doxytag: member="cdma::View::compose" ref="a193004c68c39dddd08492a1ee495046a" args="(const ViewPtr &amp;higher_view)" -->
+<a class="anchor" id="a313b5c72d3421a16fd9acecb33d05100"></a><!-- doxytag: member="cdma::View::compose" ref="a313b5c72d3421a16fd9acecb33d05100" args="(const IViewPtr &amp;higher_view)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classcdma_1_1_view.html#a193004c68c39dddd08492a1ee495046a">cdma::View::compose</a> </td>
+          <td class="memname">void <a class="el" href="classcdma_1_1_view.html#a313b5c72d3421a16fd9acecb33d05100">cdma::View::compose</a> </td>
           <td>(</td>
-          <td class="paramtype">const ViewPtr &amp;&#160;</td>
+          <td class="paramtype">const IViewPtr &amp;&#160;</td>
           <td class="paramname"><em>higher_view</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a3cc568bc2f4bbb8a800340b68a87b59c">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -348,13 +363,15 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
           <td class="paramname"><em>position</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the index of the element pointed by the position vector projected into a 1D backing array.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>long value </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ae79e3521b69ab31e0e08e47cb1e3f6fd">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -366,13 +383,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">std::vector&lt;int&gt; <a class="el" href="classcdma_1_1_view.html#a9da139b18467dfd14abf98848ee780a2">cdma::View::getOrigin</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the origin: first index of array in each dimension.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>array of integer </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a20aee4146ce6fad4d03b95568f41d7d3">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -384,13 +403,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">int <a class="el" href="classcdma_1_1_view.html#a69f7a38bdda968792f8f61bdcaeb9fcc">cdma::View::getRank</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the number of dimensions in the array.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>integer value </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a116665f5d91ff0b7e6d76c6f610cbe43">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -402,13 +423,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">std::vector&lt;int&gt; <a class="el" href="classcdma_1_1_view.html#aa2a0678ca3e5f27b2ec4e1acc71c2244">cdma::View::getShape</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the shape: length of array in each dimension.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>array of integer </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ae991f8d9b08912865e3f7e70be35927c">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -420,13 +443,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">long <a class="el" href="classcdma_1_1_view.html#ab721c05202ff3e7564239da827617cdd">cdma::View::getSize</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the total number of elements in the array.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>long value </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ab628d1a74cd083081d51355bada5bd54">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -438,13 +463,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">std::vector&lt;int&gt; <a class="el" href="classcdma_1_1_view.html#a40865f8efff8facb1e4c075b651c491a">cdma::View::getStride</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the stride: for each dimension number elements to jump in the array between two consecutive element of the same dimension</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>array of integer representing the stride </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a6cc2493cff612cb6896230887de371a8">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -457,7 +484,7 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -471,6 +498,8 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>name of dimension, or null if none. </dd></dl>
 
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ac422af5fb3eb945fedf8dc01c3946808">cdma::IView</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="a12ef1d196e30143c0e73a2222b9f19a4"></a><!-- doxytag: member="cdma::View::lastElement" ref="a12ef1d196e30143c0e73a2222b9f19a4" args="()" -->
@@ -481,13 +510,15 @@ Public Member Functions</h2></td></tr>
           <td class="memname">long <a class="el" href="classcdma_1_1_view.html#a12ef1d196e30143c0e73a2222b9f19a4">cdma::View::lastElement</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Get the last element's index projected into the 1D backing array.</p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>integer value </dd></dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a6e94bd56777e296714e00ab8d3efefd3">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -499,12 +530,14 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void <a class="el" href="classcdma_1_1_view.html#a7d3a43660777d6c34921a8438305cf96">cdma::View::reduce</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 <p>Remove all index with length one. </p>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ae251777b913f8967c131ea3c19b97e3f">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -517,7 +550,7 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
-          <td>  throw ( <a class="el" href="classcdma_1_1_exception.html">Exception</a> )</td>
+          <td>  throw ( <a class="el" href="classcdma_1_1_exception.html">Exception</a> )<code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -530,6 +563,8 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#afc8d162a9adac2bee7694b6ee31f37fa">cdma::IView</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="af84b52590ae1cec27762c843ec5f9011"></a><!-- doxytag: member="cdma::View::setOrigin" ref="af84b52590ae1cec27762c843ec5f9011" args="(std::vector&lt; int &gt; origin)" -->
@@ -541,7 +576,7 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
           <td class="paramname"><em>origin</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -554,6 +589,8 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#a47c51da3342052cb6effc6bb8528f3a7">cdma::IView</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="ad7aa3c106122063f204a5d07593a0192"></a><!-- doxytag: member="cdma::View::setShape" ref="ad7aa3c106122063f204a5d07593a0192" args="(std::vector&lt; int &gt; shape)" -->
@@ -565,7 +602,7 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
           <td class="paramname"><em>shape</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -578,6 +615,8 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ac55e1d1f880df4fc1ad9bd00c3e6eccb">cdma::IView</a>.</p>
+
 </div>
 </div>
 <a class="anchor" id="a5d82fc0d0400e0bef409b903e0af2a01"></a><!-- doxytag: member="cdma::View::setStride" ref="a5d82fc0d0400e0bef409b903e0af2a01" args="(std::vector&lt; int &gt; stride)" -->
@@ -589,7 +628,7 @@ Public Member Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">std::vector&lt; int &gt;&#160;</td>
           <td class="paramname"><em>stride</em></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -601,6 +640,8 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#ab8aa0bca3643cd06f2c2d390df46534c">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -623,7 +664,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td></td>
+          <td></td><td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -636,6 +677,8 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="classcdma_1_1_i_view.html#af1dd978e2b2e43bb5030d728e6c3c412">cdma::IView</a>.</p>
 
 </div>
 </div>
@@ -663,7 +706,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_view.html">View</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:23:36 for CDMA client API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:57:34 for CDMA client API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
