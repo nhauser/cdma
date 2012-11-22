@@ -1,0 +1,6 @@
+Main Author/Maintainer:
+Stephane Poirier (stephane.poirier@synchrotron-soleil.fr)
+
+Contributors:
+Clement Rodrigez (clement.rodriguez@synchrotron-soleil.fr) - Array manipulation classes
+Eugen Wintersberger (eugen.wintersberger@desy.de) - Scons support
