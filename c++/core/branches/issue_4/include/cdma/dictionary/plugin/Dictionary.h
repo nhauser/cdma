@@ -70,7 +70,12 @@ public:
     AttributeMap m_attribute_map;  // list of wished attributes
     SynonymList m_synonym_list;    // other keywords associated to this concept
   };
+
+#ifdef CDMA_STD_SMART_PTR
+typedef std::shared_ptr<Concept> ConceptPtr;
+#else
 typedef yat::SharedPtr<Concept> ConceptPtr;
+#endif
 
 typedef std::multimap<std::string, std::string> KeyConnectionMap;
 typedef std::map<int, SolverList> ConceptIdSolverListMap;
