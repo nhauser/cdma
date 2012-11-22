@@ -1,5 +1,8 @@
 var annotated =
 [
+    [ "cdma::DatasetModel::Criterion", "classcdma_1_1_dataset_model_1_1_criterion.html", "classcdma_1_1_dataset_model_1_1_criterion" ],
+    [ "cdma::DatasetModel", "classcdma_1_1_dataset_model.html", "classcdma_1_1_dataset_model" ],
+    [ "cdma::DatasetModel::DatasetParameter", "classcdma_1_1_dataset_model_1_1_dataset_parameter.html", "classcdma_1_1_dataset_model_1_1_dataset_parameter" ],
     [ "cdma::DefaultArrayStorage< T >", "classcdma_1_1_default_array_storage.html", "classcdma_1_1_default_array_storage" ],
     [ "cdma::Exception", "classcdma_1_1_exception.html", "classcdma_1_1_exception" ],
     [ "cdma::Factory", "classcdma_1_1_factory.html", "classcdma_1_1_factory" ],
@@ -10,8 +13,5 @@ var annotated =
     [ "cdma::IDataset", "classcdma_1_1_i_dataset.html", "classcdma_1_1_i_dataset" ],
     [ "cdma::IDimension", "classcdma_1_1_i_dimension.html", "classcdma_1_1_i_dimension" ],
     [ "cdma::IGroup", "classcdma_1_1_i_group.html", "classcdma_1_1_i_group" ],
-    [ "cdma::OneDimArrayDataItem", "classcdma_1_1_one_dim_array_data_item.html", null ],
-    [ "cdma::ScalarDataItem", "classcdma_1_1_scalar_data_item.html", null ],
-    [ "cdma::SimpleDataItem", "classcdma_1_1_simple_data_item.html", "classcdma_1_1_simple_data_item" ],
-    [ "cdma::TwoDimArrayDataItem", "classcdma_1_1_two_dim_array_data_item.html", null ]
+    [ "cdma::PluginConfigManager", "classcdma_1_1_plugin_config_manager.html", "classcdma_1_1_plugin_config_manager" ]
 ];

@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA engine API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -100,99 +100,145 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <a href="_dictionary_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">//******************************************************************************</span>
 <a name="l00002"></a>00002 <span class="comment">// Copyright (c) 2011 Synchrotron Soleil.</span>
-<a name="l00003"></a>00003 <span class="comment">// The CDMA library is free software; you can redistribute it and/or modify it</span>
-<a name="l00004"></a>00004 <span class="comment">// under the terms of the GNU General Public License as published by the Free</span>
-<a name="l00005"></a>00005 <span class="comment">// Software Foundation; either version 2 of the License, or (at your option)</span>
-<a name="l00006"></a>00006 <span class="comment">// any later version.</span>
-<a name="l00007"></a>00007 <span class="comment">// Contributors :</span>
-<a name="l00008"></a>00008 <span class="comment">// See AUTHORS file</span>
-<a name="l00009"></a>00009 <span class="comment">//******************************************************************************</span>
-<a name="l00010"></a>00010 <span class="preprocessor">#ifndef __CDMA_DICTIONARY_H__</span>
-<a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#define __CDMA_DICTIONARY_H__</span>
-<a name="l00012"></a>00012 <span class="preprocessor"></span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;string&gt;</span>
-<a name="l00014"></a>00014 <span class="preprocessor">#include &lt;map&gt;</span>
-<a name="l00015"></a>00015 <span class="preprocessor">#include &lt;yat/memory/SharedPtr.h&gt;</span>
-<a name="l00016"></a>00016 
-<a name="l00017"></a>00017 <span class="comment">// Include CDMA</span>
-<a name="l00018"></a>00018 <span class="preprocessor">#include &lt;<a class="code" href="_common_8h.html">cdma/Common.h</a>&gt;</span>
-<a name="l00019"></a>00019 <span class="preprocessor">#include &lt;<a class="code" href="_exception_8h.html">cdma/exception/Exception.h</a>&gt;</span>
-<a name="l00020"></a>00020 <span class="preprocessor">#include &lt;<a class="code" href="_key_8h.html">cdma/dictionary/Key.h</a>&gt;</span>
-<a name="l00021"></a>00021 
-<a name="l00023"></a>00023 
-<a name="l00024"></a>00024 <span class="keyword">namespace </span>cdma
-<a name="l00025"></a>00025 {
-<a name="l00026"></a>00026 
-<a name="l00027"></a>00027 <span class="keyword">typedef</span> std::multimap&lt;int, int&gt; IdConnectionMap;
-<a name="l00028"></a>00028 <span class="keyword">typedef</span> std::map&lt;std::string, int&gt; KeyIdMap;
-<a name="l00029"></a>00029 <span class="keyword">typedef</span> std::map&lt;int, SolverList&gt; KeySolverListMap;
-<a name="l00030"></a>00030 <span class="keyword">typedef</span> std::multimap&lt;int, std::string&gt; KeySynonymsMap;
-<a name="l00031"></a>00031 
-<a name="l00032"></a>00032 <span class="comment">//==============================================================================</span>
-<a name="l00034"></a>00034 <span class="comment"></span><span class="comment">//==============================================================================</span>
-<a name="l00035"></a>00035 <span class="keyword">class </span><a class="code" href="_common_8h.html#a00ac07341a46908138794bb6827c38b7">CDMA_DECL</a> Dictionary 
-<a name="l00036"></a>00036 {
-<a name="l00037"></a>00037 <span class="keyword">friend</span> <span class="keyword">class </span>DataDefAnalyser;
-<a name="l00038"></a>00038 <span class="keyword">friend</span> <span class="keyword">class </span>MapDefAnalyser;
-<a name="l00039"></a>00039   
-<a name="l00040"></a>00040 <span class="keyword">private</span>:
-<a name="l00041"></a>00041 
-<a name="l00042"></a>00042   IdConnectionMap     m_connection_map;    <span class="comment">// connection between parent (int:key) and children (int:data)</span>
-<a name="l00043"></a>00043   KeyIdMap            m_key_id_map;        <span class="comment">// the keys and the associated identifier</span>
-<a name="l00044"></a>00044   KeySolverListMap    m_key_solver_map;    <span class="comment">// Association between key index and solvers list</span>
-<a name="l00045"></a>00045   KeySynonymsMap      m_key_synonyms_map;  <span class="comment">// Association between key index and synonyms</span>
-<a name="l00046"></a>00046 
-<a name="l00047"></a>00047   std::string         m_key_file_path;     <span class="comment">// Path to the data definition document</span>
-<a name="l00048"></a>00048   std::string         m_mapping_file_path; <span class="comment">// Path to the mapping document (the dict itself)</span>
-<a name="l00049"></a>00049   std::string         m_data_def_name;     <span class="comment">// Data definition name</span>
-<a name="l00050"></a>00050   std::string         m_mapping_name;      <span class="comment">// Mapping name</span>
-<a name="l00051"></a>00051   std::string         m_plugin_id;         <span class="comment">// Plugin who created this object</span>
-<a name="l00052"></a>00052 
-<a name="l00053"></a>00053   <span class="keyword">typedef</span> std::multimap&lt;int, int&gt;::const_iterator connection_map_const_iterator;
-<a name="l00054"></a>00054   <span class="keyword">typedef</span> std::pair&lt;connection_map_const_iterator, connection_map_const_iterator&gt; 
-<a name="l00055"></a>00055           connection_map_const_range;
-<a name="l00056"></a>00056 
-<a name="l00057"></a>00057 <span class="keyword">public</span>:
-<a name="l00058"></a>00058 
-<a name="l00060"></a>00060   Dictionary();
-<a name="l00061"></a>00061   Dictionary(<span class="keyword">const</span> std::string &amp;plugin_id);
-<a name="l00062"></a>00062   
-<a name="l00063"></a>00063   ~Dictionary();
+<a name="l00003"></a>00003 <span class="comment">//</span>
+<a name="l00004"></a>00004 <span class="comment">// This file is part of cdma-core library.</span>
+<a name="l00005"></a>00005 <span class="comment">//</span>
+<a name="l00006"></a>00006 <span class="comment">// The cdma-core library is free software; you can redistribute it and/or modify it </span>
+<a name="l00007"></a>00007 <span class="comment">// under the terms of the GNU General Public License as published by the Free </span>
+<a name="l00008"></a>00008 <span class="comment">// Software Foundation; either version 2 of the License, or (at your option) </span>
+<a name="l00009"></a>00009 <span class="comment">// any later version.</span>
+<a name="l00010"></a>00010 <span class="comment">//</span>
+<a name="l00011"></a>00011 <span class="comment">// The CDMA library is distributed in the hope that it will be useful,</span>
+<a name="l00012"></a>00012 <span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00013"></a>00013 <span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00014"></a>00014 <span class="comment">// GNU General Public License for more details.</span>
+<a name="l00015"></a>00015 <span class="comment">//</span>
+<a name="l00016"></a>00016 <span class="comment">// You should have received a copy of the GNU General Public License</span>
+<a name="l00017"></a>00017 <span class="comment">// along with cmda-python.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00018"></a>00018 <span class="comment">//</span>
+<a name="l00019"></a>00019 <span class="comment">// Contributors :</span>
+<a name="l00020"></a>00020 <span class="comment">// See AUTHORS file </span>
+<a name="l00021"></a>00021 <span class="comment">//******************************************************************************</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#ifndef __CDMA_DICTIONARY_H__</span>
+<a name="l00024"></a>00024 <span class="preprocessor"></span><span class="preprocessor">#define __CDMA_DICTIONARY_H__</span>
+<a name="l00025"></a>00025 <span class="preprocessor"></span>
+<a name="l00026"></a>00026 <span class="preprocessor">#include &lt;string&gt;</span>
+<a name="l00027"></a>00027 <span class="preprocessor">#include &lt;map&gt;</span>
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 <span class="comment">// Include CDMA</span>
+<a name="l00030"></a>00030 <span class="preprocessor">#include &lt;<a class="code" href="_common_8h.html">cdma/Common.h</a>&gt;</span>
+<a name="l00031"></a>00031 <span class="preprocessor">#include &lt;<a class="code" href="_exception_8h.html">cdma/exception/Exception.h</a>&gt;</span>
+<a name="l00032"></a>00032 <span class="preprocessor">#include &lt;<a class="code" href="_key_8h.html">cdma/dictionary/impl/Key.h</a>&gt;</span>
+<a name="l00033"></a>00033 
+<a name="l00035"></a>00035 
+<a name="l00036"></a>00036 <span class="keyword">namespace </span>cdma
+<a name="l00037"></a>00037 {
+<a name="l00038"></a>00038 
+<a name="l00039"></a>00039 
+<a name="l00040"></a>00040 <span class="comment">//==============================================================================</span>
+<a name="l00042"></a>00042 <span class="comment"></span><span class="comment">//==============================================================================</span>
+<a name="l00043"></a>00043 <span class="keyword">class </span><a class="code" href="_common_8h.html#a00ac07341a46908138794bb6827c38b7">CDMA_DECL</a> Dictionary 
+<a name="l00044"></a>00044 {
+<a name="l00045"></a>00045 <span class="keyword">friend</span> <span class="keyword">class </span>DataDefAnalyser;
+<a name="l00046"></a>00046 <span class="keyword">friend</span> <span class="keyword">class </span>MapDefAnalyser;
+<a name="l00047"></a>00047 <span class="keyword">friend</span> <span class="keyword">class </span>DictionaryConceptAnalyser;
+<a name="l00048"></a>00048 
+<a name="l00049"></a>00049 <span class="keyword">public</span>:
+<a name="l00050"></a>00050   <span class="keyword">class </span>Concept
+<a name="l00051"></a>00051   {
+<a name="l00052"></a>00052   <span class="keyword">friend</span> <span class="keyword">class </span>DictionaryConceptAnalyser;
+<a name="l00053"></a>00053   <span class="keyword">friend</span> <span class="keyword">class </span>Dictionary;
+<a name="l00054"></a>00054   <span class="keyword">public</span>:
+<a name="l00055"></a>00055     <span class="keyword">typedef</span> std::map&lt;std::string, std::string&gt; AttributeMap;
+<a name="l00056"></a>00056     <span class="keyword">typedef</span> std::list&lt;std::string&gt; SynonymList;
+<a name="l00057"></a>00057 
+<a name="l00058"></a>00058     <span class="keywordtype">bool</span> isSynonym(<span class="keyword">const</span> std::string &amp;keyword);
+<a name="l00059"></a>00059 
+<a name="l00060"></a>00060     <span class="keywordtype">int</span> id()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_id; }
+<a name="l00061"></a>00061     <span class="keyword">const</span> std::string&amp; label()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_label; }
+<a name="l00062"></a>00062     <span class="keyword">const</span> std::string&amp; description()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_description; }
+<a name="l00063"></a>00063     <span class="keyword">const</span> std::string&amp; unit()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> m_unit; }
 <a name="l00064"></a>00064 
-<a name="l00071"></a>00071   std::string getVersionNum();
-<a name="l00072"></a>00072     
-<a name="l00075"></a>00075   <span class="keywordtype">void</span> readEntries() throw ( Exception );
-<a name="l00076"></a>00076   
-<a name="l00079"></a>00079   std::<span class="keywordtype">string</span>&amp; getKeyFilePath() { <span class="keywordflow">return</span> m_key_file_path; }
-<a name="l00080"></a>00080   
-<a name="l00083"></a>00083   std::string getMappingFilePath() { <span class="keywordflow">return</span> m_mapping_file_path; }
-<a name="l00084"></a>00084   
-<a name="l00087"></a>00087   std::string getDataDefName() { <span class="keywordflow">return</span> m_data_def_name; }
-<a name="l00088"></a>00088   
-<a name="l00091"></a>00091   std::string getMappingName() { <span class="keywordflow">return</span> m_mapping_name; }
-<a name="l00092"></a>00092   
-<a name="l00095"></a>00095   SolverList getSolversList(<span class="keyword">const</span> KeyPtr&amp; key_ptr);
-<a name="l00096"></a>00096   
-<a name="l00101"></a>00101   <a class="code" href="_common_8h.html#a2f339b79c2385f8d76e1442396685945" title="Declaration of shared pointer on StringList.">StringListPtr</a> getAllKeys();
+<a name="l00065"></a>00065   <span class="keyword">private</span>:
+<a name="l00066"></a>00066     <span class="keywordtype">int</span>         m_id;
+<a name="l00067"></a>00067     std::string m_label;           <span class="comment">// the label is the primary keyword for the concept</span>
+<a name="l00068"></a>00068     std::string m_description;     <span class="comment">// concept explanation</span>
+<a name="l00069"></a>00069     std::string m_unit;            <span class="comment">// physical unit of the underlying data</span>
+<a name="l00070"></a>00070     AttributeMap m_attribute_map;  <span class="comment">// list of wished attributes</span>
+<a name="l00071"></a>00071     SynonymList m_synonym_list;    <span class="comment">// other keywords associated to this concept</span>
+<a name="l00072"></a>00072   };
+<a name="l00073"></a>00073 <span class="keyword">typedef</span> yat::SharedPtr&lt;Concept&gt; ConceptPtr;
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075 <span class="keyword">typedef</span> std::multimap&lt;std::string, std::string&gt; KeyConnectionMap;
+<a name="l00076"></a>00076 <span class="keyword">typedef</span> std::map&lt;int, SolverList&gt; ConceptIdSolverListMap;
+<a name="l00077"></a>00077 <span class="keyword">typedef</span> std::map&lt;int, ConceptPtr&gt; IdConceptMap;
+<a name="l00078"></a>00078 <span class="keyword">typedef</span> std::map&lt;std::string, int&gt; KeywordConceptIdMap;
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080 <span class="keyword">private</span>:
+<a name="l00081"></a>00081 
+<a name="l00082"></a>00082   KeyConnectionMap     m_connection_map;    <span class="comment">// connection between parent key and children keys</span>
+<a name="l00083"></a>00083   ConceptIdSolverListMap m_concept_solvers_map;<span class="comment">// Association between concept and solvers list</span>
+<a name="l00084"></a>00084   KeywordConceptIdMap m_key_concept_map;   <span class="comment">// Association between application keywords &amp; concepts</span>
+<a name="l00085"></a>00085   IdConceptMap        m_id_concept_map;    <span class="comment">// The concepts</span>
+<a name="l00086"></a>00086   std::string         m_key_file_name;     <span class="comment">// Data definition document name</span>
+<a name="l00087"></a>00087   std::string         m_spec_dict_name;    <span class="comment">// Optional Specific dictionnary of concepts</span>
+<a name="l00088"></a>00088   std::string         m_mapping_file_name; <span class="comment">// Mapping document</span>
+<a name="l00089"></a>00089   std::string         m_data_def_name;     <span class="comment">// Data definition name</span>
+<a name="l00090"></a>00090   std::string         m_mapping_name;      <span class="comment">// Mapping name</span>
+<a name="l00091"></a>00091   std::string         m_plugin_id;         <span class="comment">// Plugin who created this object</span>
+<a name="l00092"></a>00092 
+<a name="l00093"></a>00093   <span class="keyword">typedef</span> std::multimap&lt;std::string, std::string&gt;::const_iterator connection_map_const_iterator;
+<a name="l00094"></a>00094   <span class="keyword">typedef</span> std::pair&lt;connection_map_const_iterator, connection_map_const_iterator&gt; 
+<a name="l00095"></a>00095           connection_map_const_range;
+<a name="l00096"></a>00096 
+<a name="l00097"></a>00097   ConceptPtr createConcept(<span class="keyword">const</span> std::string &amp;label);
+<a name="l00098"></a>00098   ConceptPtr getConcept(<span class="keyword">const</span> std::string &amp;keyword);
+<a name="l00099"></a>00099   <span class="keywordtype">int</span> getConceptId(<span class="keyword">const</span> std::string &amp;keyword);
+<a name="l00100"></a>00100 
+<a name="l00101"></a>00101 <span class="keyword">public</span>:
 <a name="l00102"></a>00102 
-<a name="l00107"></a>00107   <a class="code" href="_common_8h.html#a2f339b79c2385f8d76e1442396685945" title="Declaration of shared pointer on StringList.">StringListPtr</a> getKeys(<span class="keyword">const</span> std::string&amp; parent_key) <span class="keywordflow">throw</span>( Exception );
+<a name="l00104"></a>00104   Dictionary();
+<a name="l00105"></a>00105   Dictionary(<span class="keyword">const</span> std::string &amp;plugin_id);
+<a name="l00106"></a>00106   
+<a name="l00107"></a>00107   ~Dictionary();
 <a name="l00108"></a>00108 
-<a name="l00111"></a>00111   Key::Type getKeyType(<span class="keyword">const</span> std::string&amp; key) <span class="keywordflow">throw</span>( Exception );
-<a name="l00112"></a>00112   
-<a name="l00117"></a>00117   <span class="keywordtype">bool</span> containsKey(<span class="keyword">const</span> std::string&amp; key);
-<a name="l00118"></a>00118 
-<a name="l00121"></a>00121   <span class="keywordtype">void</span> setKeyFilePath(<span class="keyword">const</span> std::string&amp; file_path) { m_key_file_path = file_path; }
-<a name="l00122"></a>00122   
-<a name="l00125"></a>00125   <span class="keywordtype">void</span> setMappingFilePath(<span class="keyword">const</span> std::string&amp; file_path) { m_mapping_file_path = file_path; }
-<a name="l00126"></a>00126 };
-<a name="l00127"></a>00127 
-<a name="l00128"></a>00128 <a class="code" href="namespacecdma.html#a212d90befb17ad2f7210479a5ac6a1e4">DECLARE_SHARED_PTR</a>(Dictionary);
-<a name="l00129"></a>00129 
-<a name="l00130"></a>00130 } <span class="comment">//namespace</span>
-<a name="l00131"></a>00131 
-<a name="l00133"></a>00133 
-<a name="l00134"></a>00134 <span class="preprocessor">#endif //__CDMA_DICTIONARY_H__</span>
-<a name="l00135"></a>00135 <span class="preprocessor"></span>
+<a name="l00115"></a>00115   std::string getVersionNum();
+<a name="l00116"></a>00116     
+<a name="l00119"></a>00119   <span class="keywordtype">void</span> readEntries() throw ( Exception );
+<a name="l00120"></a>00120   
+<a name="l00123"></a>00123   std::<span class="keywordtype">string</span>&amp; getKeyFileName() { <span class="keywordflow">return</span> m_key_file_name; }
+<a name="l00124"></a>00124   
+<a name="l00127"></a>00127   std::string getMappingFileName() { <span class="keywordflow">return</span> m_mapping_file_name; }
+<a name="l00128"></a>00128   
+<a name="l00131"></a>00131   std::string getDataDefName() { <span class="keywordflow">return</span> m_data_def_name; }
+<a name="l00132"></a>00132   
+<a name="l00135"></a>00135   std::string getMappingName() { <span class="keywordflow">return</span> m_mapping_name; }
+<a name="l00136"></a>00136   
+<a name="l00139"></a>00139   SolverList getSolversList(<span class="keyword">const</span> IKeyPtr&amp; key_ptr);
+<a name="l00140"></a>00140   
+<a name="l00145"></a>00145   StringListPtr getAllKeys();
+<a name="l00146"></a>00146 
+<a name="l00151"></a>00151   StringListPtr getKeys(<span class="keyword">const</span> std::string&amp; parent_key) <span class="keywordflow">throw</span>( Exception );
+<a name="l00152"></a>00152 
+<a name="l00155"></a>00155   IKey::Type getKeyType(<span class="keyword">const</span> std::string&amp; key) <span class="keywordflow">throw</span>( Exception );
+<a name="l00156"></a>00156   
+<a name="l00161"></a>00161   <span class="keywordtype">bool</span> containsKey(<span class="keyword">const</span> std::string&amp; key);
+<a name="l00162"></a>00162 
+<a name="l00166"></a>00166   <span class="keywordtype">void</span> setKeyFileName(<span class="keyword">const</span> std::string&amp; file_name) { m_key_file_name = file_name; }
+<a name="l00167"></a>00167   
+<a name="l00172"></a>00172   <span class="keywordtype">void</span> setMappingFileName(<span class="keyword">const</span> std::string&amp; file_name) { m_mapping_file_name = file_name; }
+<a name="l00173"></a>00173 
+<a name="l00177"></a>00177   <span class="keywordtype">void</span> setSpecificConceptDictionary(<span class="keyword">const</span> std::string&amp; file_name) { m_spec_dict_name = file_name; }
+<a name="l00178"></a>00178 };
+<a name="l00179"></a>00179 
+<a name="l00180"></a>00180 <a class="code" href="namespacecdma.html#a212d90befb17ad2f7210479a5ac6a1e4">DECLARE_SHARED_PTR</a>(Dictionary);
+<a name="l00181"></a>00181 
+<a name="l00182"></a>00182 } <span class="comment">//namespace</span>
+<a name="l00183"></a>00183 
+<a name="l00185"></a>00185 
+<a name="l00186"></a>00186 <span class="preprocessor">#endif //__CDMA_DICTIONARY_H__</span>
+<a name="l00187"></a>00187 <span class="preprocessor"></span>
 </pre></div></div><!-- contents -->
 </div>
 <!-- window showing the filter options -->
@@ -200,7 +246,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Defines</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -213,7 +259,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="_dictionary_8h.html">Dictionary.h</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:21:53 for CDMA engine API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:58:14 for CDMA engine API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
