@@ -92,7 +92,7 @@ public:
   ///
   template<typename T> void setValue(T value) 
   {
-    return setData(new Array(value));
+    return setData(IArrayPtr(new Array(value)));
   }
 };
 
