@@ -41,7 +41,8 @@ def create_link_libname(env):
     env.Append(LIBLINKNAME = rstr)
         
     
-#==================================================================================
+#======================add options=============================================
+AddOption("--with-cpp11",dest="with_cpp11",action="store_true",default=False)
 
 
 #===================set build variables========================================
@@ -92,6 +93,11 @@ if env["DOCDIR"]:
     core_env.Append(DOCDIR=env["DOCDIR"])
 else:
     core_env.Append(DOCDIR=os.path.join(env["PREFIX"],"share/doc/libcdmacore"))
+
+#==============================================================================
+#set default compiler flags
+if GetOption("with_cpp11"):
+    core_env.AppendUnique(CPPFLAGS=["-std=c++0x"])
 
 #===================start here with configuration==============================
 conf = Configure(core_env)
