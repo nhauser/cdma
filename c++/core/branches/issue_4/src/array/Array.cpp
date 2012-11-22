@@ -107,7 +107,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new short[size];
     }
-    m_data_impl = new DefaultArrayStorage<short>((short*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<short>((short*) pData, shape)
+                  );
   }
   else if( type == typeid( unsigned short ) )
   {
@@ -115,7 +117,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new unsigned short[size];
     }
-    m_data_impl = new DefaultArrayStorage<unsigned short>((unsigned short*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<unsigned short>((unsigned short*) pData, shape)
+                  );
   }
   else if( type == typeid( long ) )
   {
@@ -123,7 +127,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new long[size];
     }
-    m_data_impl = new DefaultArrayStorage<long>((long*)pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<long>((long*)pData, shape)
+                  );
   }
   else if( type == typeid( unsigned long ) )
   {
@@ -131,7 +137,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new unsigned long[size];
     }
-    m_data_impl = new DefaultArrayStorage<unsigned long>((unsigned long*)pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<unsigned long>((unsigned long*)pData, shape)
+                  );
   }
   else if( type == typeid( float ) )
   {
@@ -139,7 +147,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new float[size];
     }
-    m_data_impl = new DefaultArrayStorage<float>((float*)pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<float>((float*)pData, shape)
+                  );
   }
   else if( type == typeid( yat::uint64 ) )
   {
@@ -147,7 +157,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new yat::uint64[size];
     }
-    m_data_impl = new DefaultArrayStorage<yat::uint64>((yat::uint64*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<yat::uint64>((yat::uint64*) pData, shape)
+                  );
   }
   else if( type == typeid( yat::int64 ) )
   {
@@ -155,7 +167,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new yat::int64[size];
     }
-    m_data_impl = new DefaultArrayStorage<yat::int64>((yat::int64*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<yat::int64>((yat::int64*) pData, shape)
+                  );
   }
   else if( type == typeid( double ) )
   {
@@ -163,7 +177,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new double[size];
     }
-    m_data_impl = new DefaultArrayStorage<double>((double*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<double>((double*) pData, shape)
+                  );
   }
   else
   {
@@ -171,7 +187,9 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     {
       pData = new char[size];
     }
-    m_data_impl = new DefaultArrayStorage<char>((char*) pData, shape);
+    m_data_impl = IArrayStoragePtr(
+                  new DefaultArrayStorage<char>((char*) pData, shape)
+                  );
   }
   
   m_shape = shape;
@@ -182,7 +200,7 @@ Array::Array( const std::type_info& type, std::vector<int> shape, void* pData )
     shape_ptr[i] = shape[i];
     start_ptr[i] = 0;
   }
-  m_view_ptr = new View( rank, shape_ptr, start_ptr );
+  m_view_ptr = IViewPtr(new View( rank, shape_ptr, start_ptr ));
 }
 
 //---------------------------------------------------------------------------
@@ -201,8 +219,11 @@ IArrayPtr Array::deepCopy()
     stride[i] = newStride;
     newStride *= shape[i];
   }
-  
-  return new Array( m_data_impl->deepCopy(m_view_ptr), new View( shape, origin, stride ) );
+ 
+  return IArrayPtr(
+         new Array( m_data_impl->deepCopy(m_view_ptr), 
+                    IViewPtr(new View( shape, origin, stride ) ))
+         );
 }
 
 //---------------------------------------------------------------------------
@@ -244,7 +265,7 @@ IViewPtr Array::getView()
 ArrayIterator Array::begin()
 {
   CDMA_FUNCTION_TRACE("Array::begin");
-  IViewPtr view = new View(m_view_ptr);
+  IViewPtr view(new View(m_view_ptr));
   std::vector<int> position;
   for( int i = 0; i < view->getRank(); i++ )
   {
@@ -254,7 +275,7 @@ ArrayIterator Array::begin()
   // We use "*this" to copy the array so the SharePtr on memory storage is incremented
   // that permits to not destroy memory storage when the iterator is released
   // There is no memory copy doing so only references are shared
-  ArrayIterator iterator ( new Array(*this), view, position );
+  ArrayIterator iterator ( IArrayPtr(new Array(*this)), view, position );
 
   return iterator;
 }
@@ -266,7 +287,7 @@ ArrayIterator Array::end()
 {
   CDMA_FUNCTION_TRACE("Array::end");
   // Copy view
-  IViewPtr view = new View(m_view_ptr);
+  IViewPtr view(new View(m_view_ptr));
   
   // Construct a vector of position having 0 in each low dimension
   // the first is having shape[0]. Means positioned at the cell that just
@@ -280,7 +301,7 @@ ArrayIterator Array::end()
   // We use "*this" to copy the array so the SharePtr on memory storage is incremented
   // that permits to not destroy memory storage when the iterator is released
   // There is no memory copy doing so only references are shared
-  ArrayIterator iterator ( new Array(*this), view, position );
+  ArrayIterator iterator ( IArrayPtr(new Array(*this)), view, position );
 
   return iterator;
 }
@@ -299,10 +320,10 @@ int Array::getRank()
 IArrayPtr Array::getRegion(std::vector<int> start, std::vector<int> shape) throw ( cdma::Exception )
 {
   CDMA_FUNCTION_TRACE("Array::getRegion");
-  IViewPtr view = new View(m_view_ptr);
+  IViewPtr view(new View(m_view_ptr));
   view->setOrigin(start);
   view->setShape(shape);
-  return new Array(*this, view);
+  return IArrayPtr(new Array(*this, view));
 }
 
 //---------------------------------------------------------------------------
@@ -334,7 +355,8 @@ void Array::setView(const cdma::IViewPtr& view)
 //---------------------------------------------------------------------------
 cdma::SlicerPtr Array::getSlicer(int rank) throw ( cdma::Exception )
 {
-  return new Slicer(new Array(*this, m_view_ptr), rank);
+  return cdma::SlicerPtr(new Slicer(IArrayPtr(new Array(*this, m_view_ptr)),
+              rank));
 }
 
 //---------------------------------------------------------------------------

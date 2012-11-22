@@ -18,6 +18,8 @@ The following tools are required:
 
 The following libraries are required:
 -) yat - a utility library used by SOLEIL
+(http://tango-cs.svn.sourceforge.net/viewvc/tango-cs/share/yat/trunk/)
+
 -) libxml2 - an XML parsing library
 
 All these tools and libraries (except YAT) should be available from the package

@@ -55,7 +55,7 @@
   #endif
 #elif (defined _linux_ || defined __linux__)
   #define CDMA_LINUX
-  #if (__STDC_VERSION__ >= 201112)
+  #if ((__STDC_VERSION__ >= 201112) || (__cplusplus >= 201103 ))
     #define CDMA_CPP_11
     #define CDMA_STD_SMART_PTR
   #endif
