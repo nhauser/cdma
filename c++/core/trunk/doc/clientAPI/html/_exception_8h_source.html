@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA client API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -101,109 +101,62 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <a href="_exception_8h.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">//******************************************************************************</span>
 <a name="l00002"></a>00002 <span class="comment">// Copyright (c) 2011 Synchrotron Soleil.</span>
-<a name="l00003"></a>00003 <span class="comment">// The CDMA library is free software; you can redistribute it and/or modify it </span>
-<a name="l00004"></a>00004 <span class="comment">// under the terms of the GNU General Public License as published by the Free </span>
-<a name="l00005"></a>00005 <span class="comment">// Software Foundation; either version 2 of the License, or (at your option) </span>
-<a name="l00006"></a>00006 <span class="comment">// any later version.</span>
-<a name="l00007"></a>00007 <span class="comment">// Contributors :</span>
-<a name="l00008"></a>00008 <span class="comment">// See AUTHORS file </span>
-<a name="l00009"></a>00009 <span class="comment">//******************************************************************************</span>
-<a name="l00010"></a>00010 <span class="preprocessor">#ifndef __CDMA_EXCEPTION_H__</span>
-<a name="l00011"></a>00011 <span class="preprocessor"></span><span class="preprocessor">#define __CDMA_EXCEPTION_H__</span>
-<a name="l00012"></a>00012 <span class="preprocessor"></span>
-<a name="l00013"></a>00013 <span class="preprocessor">#include &lt;yat/Exception.h&gt;</span>
-<a name="l00014"></a>00014 
-<a name="l00015"></a>00015 <span class="keyword">namespace </span>cdma
-<a name="l00016"></a>00016 {
-<a name="l00017"></a>00017 
-<a name="l00018"></a>00018 <span class="comment">//==============================================================================</span>
-<a name="l00036"></a>00036 <span class="comment"></span><span class="comment">//==============================================================================</span>
-<a name="l00037"></a><a class="code" href="classcdma_1_1_exception.html">00037</a> <span class="keyword">class </span><a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>: <span class="keyword">public</span> yat::<a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>
-<a name="l00038"></a>00038 {
-<a name="l00039"></a>00039 <span class="keyword">public</span>:
-<a name="l00040"></a><a class="code" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">00040</a>   <a class="code" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">Exception</a>( <span class="keyword">const</span> yat::Exception &amp;yat_ex): yat::<a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>(yat_ex)
-<a name="l00041"></a>00041   { }
-<a name="l00042"></a><a class="code" href="classcdma_1_1_exception.html#ae894b6934c04e80212bd39744736ea4f">00042</a>   <a class="code" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">Exception</a>( <span class="keyword">const</span> <span class="keywordtype">char</span> *reason, <span class="keyword">const</span> <span class="keywordtype">char</span> *desc, <span class="keyword">const</span> <span class="keywordtype">char</span> *origin ):
-<a name="l00043"></a>00043    yat::<a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>(reason, desc, origin) { }
-<a name="l00044"></a><a class="code" href="classcdma_1_1_exception.html#a2e793a2700849946729e33c883602013">00044</a>   <a class="code" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">Exception</a>( <span class="keyword">const</span> <span class="keywordtype">char</span> *reason, <span class="keyword">const</span> std::string&amp; desc, <span class="keyword">const</span> std::string&amp; origin ):
-<a name="l00045"></a>00045    yat::<a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>(std::string(reason), desc, origin) { }
-<a name="l00046"></a>00046 
-<a name="l00048"></a><a class="code" href="classcdma_1_1_exception.html#af897c81aa4b2ffbd0dda3abe6df48264">00048</a>   <span class="keywordtype">void</span> <a class="code" href="classcdma_1_1_exception.html#af897c81aa4b2ffbd0dda3abe6df48264" title="Write the errors on stdout.">dump</a>()
-<a name="l00049"></a>00049   {
-<a name="l00050"></a>00050     <a class="code" href="classcdma_1_1_exception.html#af897c81aa4b2ffbd0dda3abe6df48264" title="Write the errors on stdout.">yat::Exception::dump</a>();
-<a name="l00051"></a>00051   }
-<a name="l00052"></a>00052 };
-<a name="l00053"></a>00053 
-<a name="l00054"></a>00054 <span class="comment">//==============================================================================</span>
-<a name="l00056"></a>00056 <span class="comment"></span><span class="comment">//==============================================================================</span>
-<a name="l00057"></a><a class="code" href="_exception_8h.html#af4e362c52676c1984ef060da4a7ada3e">00057</a> <span class="preprocessor">#define DECLARE_EXCEPTION(e, s) \</span>
-<a name="l00058"></a>00058 <span class="preprocessor">class e##Exception : public Exception \</span>
-<a name="l00059"></a>00059 <span class="preprocessor">{ public: \</span>
-<a name="l00060"></a>00060 <span class="preprocessor">  e##Exception(const char *desc, const char *origin ): \</span>
-<a name="l00061"></a>00061 <span class="preprocessor">   Exception(s, desc, origin) { } \</span>
-<a name="l00062"></a>00062 <span class="preprocessor">  e##Exception(const std::string&amp; desc, const std::string&amp; origin ): \</span>
-<a name="l00063"></a>00063 <span class="preprocessor">   Exception(s, desc, origin) { } \</span>
-<a name="l00064"></a>00064 <span class="preprocessor">}</span>
-<a name="l00065"></a>00065 <span class="preprocessor"></span>
-<a name="l00066"></a>00066 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(DimensionNotSupported, <span class="stringliteral">&quot;DIMENSION_NOT_SUPPORTED&quot;</span>);
-<a name="l00067"></a>00067 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(DivideByZero, <span class="stringliteral">&quot;DIVIDE_BY_ZERO&quot;</span>);
-<a name="l00068"></a>00068 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(FileAccess, <span class="stringliteral">&quot;FILE_ACCESS_ERROR&quot;</span>);
-<a name="l00069"></a>00069 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(Fitter, <span class="stringliteral">&quot;FITTER_ERROR&quot;</span>);
-<a name="l00070"></a>00070 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(Duplication, <span class="stringliteral">&quot;ITEM_ALREADY_EXISTS&quot;</span>);
-<a name="l00071"></a>00071 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(BadArrayType, <span class="stringliteral">&quot;BAD_ARRAY_TYPE&quot;</span>);
-<a name="l00072"></a>00072 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(InvalidRange, <span class="stringliteral">&quot;INVALID_RANGE&quot;</span>);
-<a name="l00073"></a>00073 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(ShapeNotMatch, <span class="stringliteral">&quot;SHAPE_NOT_MATCH&quot;</span>);
-<a name="l00074"></a>00074 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(NoResult, <span class="stringliteral">&quot;NO_RESULT&quot;</span>);
-<a name="l00075"></a>00075 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(NoData, <span class="stringliteral">&quot;NO_DATA&quot;</span>);
-<a name="l00076"></a>00076 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(NoSignal, <span class="stringliteral">&quot;NO_SIGNAL&quot;</span>);
-<a name="l00077"></a>00077 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(InvalidPointer, <span class="stringliteral">&quot;INVALID_POINTER&quot;</span>);
-<a name="l00078"></a>00078 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(TooManyResults, <span class="stringliteral">&quot;TOO_MANY_RESULTS&quot;</span>);
-<a name="l00079"></a>00079 <a class="code" href="namespacecdma.html#ac32df3b19440a1aed1d97473dab5252c">DECLARE_EXCEPTION</a>(NotImplemented, <span class="stringliteral">&quot;NOT_IMPLEMENTED&quot;</span>);
-<a name="l00080"></a>00080 
-<a name="l00081"></a><a class="code" href="_exception_8h.html#a05645da924dae4a48ac199fc75ced2bf">00081</a> <span class="preprocessor">#define THROW_DIMENSION_NOT_SUPPORTED(m, o) \</span>
-<a name="l00082"></a>00082 <span class="preprocessor">  throw DimensionNotSupportedException(m, o)</span>
-<a name="l00083"></a>00083 <span class="preprocessor"></span>  
-<a name="l00084"></a><a class="code" href="_exception_8h.html#ac44ee6a8497c63391d6fe7392c19fd7f">00084</a> <span class="preprocessor">#define THROW_DIVIDE_NY_ZERO(m, o) \</span>
-<a name="l00085"></a>00085 <span class="preprocessor">  throw DivideByZeroException(m, o)</span>
-<a name="l00086"></a>00086 <span class="preprocessor"></span>  
-<a name="l00087"></a><a class="code" href="_exception_8h.html#a460249d894d8951d68cde124fe00930f">00087</a> <span class="preprocessor">#define THROW_FILE_ACCESS(m, o) \</span>
-<a name="l00088"></a>00088 <span class="preprocessor">  throw FileAccessException(m, o)</span>
-<a name="l00089"></a>00089 <span class="preprocessor"></span>  
-<a name="l00090"></a><a class="code" href="_exception_8h.html#abcfceddf07e44404521766a333614e69">00090</a> <span class="preprocessor">#define THROW_FITTER_ERROR(m, o) \</span>
-<a name="l00091"></a>00091 <span class="preprocessor">  throw FitterException(m, o)</span>
-<a name="l00092"></a>00092 <span class="preprocessor"></span>  
-<a name="l00093"></a><a class="code" href="_exception_8h.html#aa3836baff6af58febed996485f9b3ace">00093</a> <span class="preprocessor">#define THROW_DUPLICATION_ERROR(m, o) \</span>
-<a name="l00094"></a>00094 <span class="preprocessor">  throw DuplicationException(m, o)</span>
-<a name="l00095"></a>00095 <span class="preprocessor"></span>  
-<a name="l00096"></a><a class="code" href="_exception_8h.html#ac07e733401d0ae3fb1a997ecaf85f201">00096</a> <span class="preprocessor">#define THROW_BAD_ARRAY_TYPE(m, o) \</span>
-<a name="l00097"></a>00097 <span class="preprocessor">  throw BadArrayTypeException(m, o)</span>
-<a name="l00098"></a>00098 <span class="preprocessor"></span>  
-<a name="l00099"></a><a class="code" href="_exception_8h.html#a5457dcf2fbe62fd9773612d6c3327015">00099</a> <span class="preprocessor">#define THROW_INVALID_RANGE(m, o) \</span>
-<a name="l00100"></a>00100 <span class="preprocessor">  throw InvalidRangeException(m, o)</span>
-<a name="l00101"></a>00101 <span class="preprocessor"></span>  
-<a name="l00102"></a><a class="code" href="_exception_8h.html#ae6fab9cc770ec766ab901028f795f14f">00102</a> <span class="preprocessor">#define THROW_SHAPE_NOT_MATCH(m, o) \</span>
-<a name="l00103"></a>00103 <span class="preprocessor">  throw ShapeNotMatchException(m, o)</span>
-<a name="l00104"></a>00104 <span class="preprocessor"></span>  
-<a name="l00105"></a><a class="code" href="_exception_8h.html#a298e0d902415cca33ed1b1c5264d72fd">00105</a> <span class="preprocessor">#define THROW_NO_RESULT(m, o) \</span>
-<a name="l00106"></a>00106 <span class="preprocessor">  throw NoResultException(m, o)</span>
-<a name="l00107"></a>00107 <span class="preprocessor"></span>  
-<a name="l00108"></a><a class="code" href="_exception_8h.html#a76b8a3cd2b39da298ffd7cf4118c6228">00108</a> <span class="preprocessor">#define THROW_NO_DATA(m, o) \</span>
-<a name="l00109"></a>00109 <span class="preprocessor">  throw NoDataException(m, o)</span>
-<a name="l00110"></a>00110 <span class="preprocessor"></span>  
-<a name="l00111"></a><a class="code" href="_exception_8h.html#a10a6baa2a7ff9d2d0bd10e894855111a">00111</a> <span class="preprocessor">#define THROW_NO_SIGNAL(m, o) \</span>
-<a name="l00112"></a>00112 <span class="preprocessor">  throw NoSignalException(m, o)</span>
-<a name="l00113"></a>00113 <span class="preprocessor"></span>  
-<a name="l00114"></a><a class="code" href="_exception_8h.html#a31e97d148e5ed96ea1a05312477288fb">00114</a> <span class="preprocessor">#define THROW_INVALID_POINTER(m, o) \</span>
-<a name="l00115"></a>00115 <span class="preprocessor">  throw InvalidPointerException(m, o)</span>
-<a name="l00116"></a>00116 <span class="preprocessor"></span>  
-<a name="l00117"></a><a class="code" href="_exception_8h.html#a9777f00473b87c6b1ad6f1c700504100">00117</a> <span class="preprocessor">#define THROW_TOO_MANY_RESULTS(m, o) \</span>
-<a name="l00118"></a>00118 <span class="preprocessor">  throw TooManyResultsException(m, o)</span>
-<a name="l00119"></a>00119 <span class="preprocessor"></span>  
-<a name="l00120"></a><a class="code" href="_exception_8h.html#a8d597967576f7f68ba98f0bc6677259a">00120</a> <span class="preprocessor">#define THROW_NOT_IMPLEMENTED(o) \</span>
-<a name="l00121"></a>00121 <span class="preprocessor">  throw NotImplementedException(&quot;Operation cannot be performed&quot;, o)</span>
-<a name="l00122"></a>00122 <span class="preprocessor"></span>
-<a name="l00123"></a>00123 } <span class="comment">//namespace cdma</span>
-<a name="l00124"></a>00124 <span class="preprocessor">#endif //__CDMA_EXCEPTION_H__</span>
+<a name="l00003"></a>00003 <span class="comment">//</span>
+<a name="l00004"></a>00004 <span class="comment">// This file is part of cdma-core library.</span>
+<a name="l00005"></a>00005 <span class="comment">//</span>
+<a name="l00006"></a>00006 <span class="comment">// The cdma-core library is free software; you can redistribute it and/or modify it </span>
+<a name="l00007"></a>00007 <span class="comment">// under the terms of the GNU General Public License as published by the Free </span>
+<a name="l00008"></a>00008 <span class="comment">// Software Foundation; either version 2 of the License, or (at your option) </span>
+<a name="l00009"></a>00009 <span class="comment">// any later version.</span>
+<a name="l00010"></a>00010 <span class="comment">//</span>
+<a name="l00011"></a>00011 <span class="comment">// The CDMA library is distributed in the hope that it will be useful,</span>
+<a name="l00012"></a>00012 <span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="l00013"></a>00013 <span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="l00014"></a>00014 <span class="comment">// GNU General Public License for more details.</span>
+<a name="l00015"></a>00015 <span class="comment">//</span>
+<a name="l00016"></a>00016 <span class="comment">// You should have received a copy of the GNU General Public License</span>
+<a name="l00017"></a>00017 <span class="comment">// along with cmda-python.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<a name="l00018"></a>00018 <span class="comment">//</span>
+<a name="l00019"></a>00019 <span class="comment">// Contributors :</span>
+<a name="l00020"></a>00020 <span class="comment">// See AUTHORS file </span>
+<a name="l00021"></a>00021 <span class="comment">//******************************************************************************</span>
+<a name="l00022"></a>00022 
+<a name="l00023"></a>00023 <span class="preprocessor">#ifndef __CDMA_EXCEPTION_H__</span>
+<a name="l00024"></a>00024 <span class="preprocessor"></span><span class="preprocessor">#define __CDMA_EXCEPTION_H__</span>
+<a name="l00025"></a>00025 <span class="preprocessor"></span>
+<a name="l00026"></a>00026 <span class="keyword">namespace </span>cdma
+<a name="l00027"></a>00027 {
+<a name="l00028"></a>00028 
+<a name="l00029"></a>00029 <span class="comment">//==============================================================================</span>
+<a name="l00047"></a>00047 <span class="comment"></span><span class="comment">//==============================================================================</span>
+<a name="l00048"></a><a class="code" href="classcdma_1_1_exception.html">00048</a> <span class="keyword">class </span><a class="code" href="classcdma_1_1_exception.html" title="Base class for CDMA exceptions.">Exception</a>
+<a name="l00049"></a>00049 {
+<a name="l00050"></a>00050 <span class="keyword">public</span>:
+<a name="l00052"></a>00052   <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classcdma_1_1_exception.html#a377d52ff918d4a1654787d554c975231" title="Write the errors on stdout.">dump</a>()=0;
+<a name="l00053"></a>00053 };
+<a name="l00054"></a>00054 
+<a name="l00055"></a><a class="code" href="_exception_8h.html#a7771041e0a69a27a7d2801d3fd82eaf9">00055</a> <span class="preprocessor">#define DECLARE_EXCEPTION(e) \</span>
+<a name="l00056"></a>00056 <span class="preprocessor">class e##Exception : public Exception {};</span>
+<a name="l00057"></a>00057 <span class="preprocessor"></span>
+<a name="l00058"></a>00058 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(DimensionNotSupported);
+<a name="l00059"></a>00059 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(DivideByZero);
+<a name="l00060"></a>00060 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(FileAccess);
+<a name="l00061"></a>00061 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(Fitter);
+<a name="l00062"></a>00062 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(Duplication);
+<a name="l00063"></a>00063 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(BadArrayType);
+<a name="l00064"></a>00064 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(InvalidRange);
+<a name="l00065"></a>00065 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(ShapeNotMatch);
+<a name="l00066"></a>00066 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(NoResult);
+<a name="l00067"></a>00067 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(NoData);
+<a name="l00068"></a>00068 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(NoSignal);
+<a name="l00069"></a>00069 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(InvalidPointer);
+<a name="l00070"></a>00070 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(TooManyResults);
+<a name="l00071"></a>00071 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(NotImplemented);
+<a name="l00072"></a>00072 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(TypeMismatch);
+<a name="l00073"></a>00073 <a class="code" href="namespacecdma.html#a2a0c7eb841edcf17ab142b2b45b38025">DECLARE_EXCEPTION</a>(Generic);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075 } <span class="comment">//namespace cdma</span>
+<a name="l00076"></a>00076 <span class="preprocessor">#endif //__CDMA_EXCEPTION_H__</span>
 </pre></div></div><!-- contents -->
 </div>
 <!-- window showing the filter options -->
@@ -224,7 +177,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul>
       <li class="navelem"><a class="el" href="_exception_8h.html">Exception.h</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:23:35 for CDMA client API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:57:33 for CDMA client API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['keyidmap',['KeyIdMap',['../namespacecdma.html#aa6208456def5de7a443719d9acd8f133',1,'cdma']]],
-  ['keysolverlistmap',['KeySolverListMap',['../namespacecdma.html#a9edd70827344e1ea4ee325b81af4d8c2',1,'cdma']]],
-  ['keysynonymsmap',['KeySynonymsMap',['../namespacecdma.html#a51a9ac2a4b0e23c0fee3f58c7c98d605',1,'cdma']]]
+  ['keyconnectionmap',['KeyConnectionMap',['../classcdma_1_1_dictionary.html#aab354a9e8356cd28528ee5597bf40d92',1,'cdma::Dictionary']]],
+  ['keywordconceptidmap',['KeywordConceptIdMap',['../classcdma_1_1_dictionary.html#a608de906e78cb86ab9e115e8a3c6be48',1,'cdma::Dictionary']]]
 ];

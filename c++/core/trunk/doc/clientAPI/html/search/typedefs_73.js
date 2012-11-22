@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['stringlistptr',['StringListPtr',['../_common_8h.html#a2f339b79c2385f8d76e1442396685945',1,'Common.h']]]
+  ['synonymlist',['SynonymList',['../classcdma_1_1_dictionary_1_1_concept.html#a740b346da2c7f9454ee4c2b143b1c052',1,'cdma::Dictionary::Concept']]]
 ];

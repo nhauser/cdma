@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA client API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -113,11 +113,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">Exception</a> (const yat::Exception &amp;yat_ex)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_exception.html#ae894b6934c04e80212bd39744736ea4f">Exception</a> (const char *reason, const char *desc, const char *origin)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_exception.html#a2e793a2700849946729e33c883602013">Exception</a> (const char *reason, const std::string &amp;desc, const std::string &amp;origin)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_exception.html#af897c81aa4b2ffbd0dda3abe6df48264">dump</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the errors on stdout.  <a href="#af897c81aa4b2ffbd0dda3abe6df48264"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_exception.html#a377d52ff918d4a1654787d554c975231">dump</a> ()=0</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the errors on stdout.  <a href="#a377d52ff918d4a1654787d554c975231"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Base class for CDMA exceptions. </p>
@@ -138,100 +135,16 @@ Public Member Functions</h2></td></tr>
 <li>ShapeNotMatchException</li>
 <li>TooManyResultsException </li>
 </ul>
-</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="af461ad265f3b9c348fde6968d4b65bbd"></a><!-- doxytag: member="cdma::Exception::Exception" ref="af461ad265f3b9c348fde6968d4b65bbd" args="(const yat::Exception &amp;yat_ex)" -->
+</div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a377d52ff918d4a1654787d554c975231"></a><!-- doxytag: member="cdma::Exception::dump" ref="a377d52ff918d4a1654787d554c975231" args="()=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">cdma::Exception::Exception</a> </td>
-          <td>(</td>
-          <td class="paramtype">const yat::Exception &amp;&#160;</td>
-          <td class="paramname"><em>yat_ex</em></td><td>)</td>
-          <td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="ae894b6934c04e80212bd39744736ea4f"></a><!-- doxytag: member="cdma::Exception::Exception" ref="ae894b6934c04e80212bd39744736ea4f" args="(const char *reason, const char *desc, const char *origin)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">cdma::Exception::Exception</a> </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>reason</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>origin</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a2e793a2700849946729e33c883602013"></a><!-- doxytag: member="cdma::Exception::Exception" ref="a2e793a2700849946729e33c883602013" args="(const char *reason, const std::string &amp;desc, const std::string &amp;origin)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classcdma_1_1_exception.html#af461ad265f3b9c348fde6968d4b65bbd">cdma::Exception::Exception</a> </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>reason</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>desc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>origin</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td><code> [inline]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-</div>
-</div>
-<hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="af897c81aa4b2ffbd0dda3abe6df48264"></a><!-- doxytag: member="cdma::Exception::dump" ref="af897c81aa4b2ffbd0dda3abe6df48264" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="classcdma_1_1_exception.html#af897c81aa4b2ffbd0dda3abe6df48264">cdma::Exception::dump</a> </td>
+          <td class="memname">virtual void <a class="el" href="classcdma_1_1_exception.html#a377d52ff918d4a1654787d554c975231">cdma::Exception::dump</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td><code> [inline]</code></td>
+          <td><code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -265,7 +178,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_exception.html">Exception</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:23:36 for CDMA client API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:57:34 for CDMA client API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
