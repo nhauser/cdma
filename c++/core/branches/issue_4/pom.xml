@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<modelVersion>4.0.0</modelVersion>
+
+<parent>
+   <groupId>fr.soleil</groupId>
+   <artifactId>super-pom-C-CPP</artifactId>
+   <version>RELEASE</version>
+</parent>
+
+<groupId>org.cdma</groupId>
+<artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
+<name>CdmaCore</name>
+<version>1.0.1-SNAPSHOT</version>
+<packaging>nar</packaging>
+
+<description>CDMA Core Cpp library</description>
+
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/c++/core/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/c++/core/trunk</developerConnection>
+    <url>http://cdma.googlecode.com/svn/c++/core/trunk</url>
+  </scm>
+
+<developers>
+  <developer>
+    <id>poirier</id>
+    <name>poirier</name>
+    <email>stephane.poirier@synchrotron-soleil.fr</email>
+    <url>http://www.synchrotron-soleil.fr</url>
+    <organization>Synchrotron Soleil</organization>
+    <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+    <roles>
+      <role>leader</role>
+    </roles>
+    <timezone>1</timezone>
+  </developer>
+  <developer>
+    <id>rodriguez</id>
+    <name>rodriguez</name>
+    <email>clement.rodriguez@synchrotron-soleil.fr</email>
+    <url>http://www.synchrotron-soleil.fr</url>
+    <organization>Synchrotron Soleil</organization>
+    <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+    <roles>
+      <role>developer</role>
+    </roles>
+    <timezone>1</timezone>
+  </developer>
+</developers>
+
+<profiles>
+  <profile>
+    <id>CDMA_Windows</id>
+    <activation>
+      <os>
+        <family>Windows</family>
+      </os>
+    </activation>
+    <dependencies>
+      <dependency>
+        <groupId>com.zlatkovic</groupId>
+        <artifactId>Iconv-${aol}-shared-release</artifactId>
+        <version>1.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zlatkovic</groupId>
+        <artifactId>Xml2-${aol}-shared-release</artifactId>
+        <version>2.7.8</version>
+      </dependency>
+    </dependencies>
+  </profile>
+</profiles>
+  
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.freehep</groupId>
+      <artifactId>freehep-nar-plugin</artifactId>
+      <configuration>
+      <cpp>
+        <sourceDirectory>src</sourceDirectory>
+        <includePaths>
+          <includePath>include</includePath>
+        </includePaths>
+        <systemIncludePaths>
+          <systemIncludePath>/usr/include/libxml2</systemIncludePath>
+        </systemIncludePaths>
+        <defines>
+          <!--define>CDMA_DEBUG</define-->
+        </defines>
+      </cpp>
+      <libraries>
+        <library>
+          <type>shared</type>
+        </library>
+      </libraries>
+        
+      <specificConfigurations>
+        
+        <specificConfiguration>
+          <id>CDMA Linux</id>
+          <activation>
+            <os>Linux</os>
+          </activation>
+          <linker>
+            <sysLibs>
+              <sysLib>
+                <name>xml2</name>
+                <type>shared</type>
+              </sysLib>
+            </sysLibs>
+          </linker>
+        </specificConfiguration>
+        
+        <specificConfiguration>
+          <id>CDMA Windows</id>
+          <activation>
+            <os>Windows</os>
+          </activation>
+          <cpp>
+            <defines>
+              <define>CDMA_DLL</define>
+              <define>CDMA_BUILD</define>
+              <define>YAT_DLL</define>
+            </defines>
+          </cpp>
+          <linker>
+            <sysLibs>
+              <sysLib>
+                <name>shell32</name>
+                <type>shared</type>
+              </sysLib>
+            </sysLibs>
+          </linker>
+        </specificConfiguration>
+        
+        </specificConfigurations>
+        
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+  
+<dependencies>
+  <dependency>
+    <groupId>fr.soleil.lib</groupId>
+    <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+    <version>1.7.10-SNAPSHOT</version>
+  </dependency>
+</dependencies>
+
+</project>
