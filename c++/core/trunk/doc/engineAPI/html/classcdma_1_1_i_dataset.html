@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA engine API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -106,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Handler on a physical storage of a data source.  
  <a href="classcdma_1_1_i_dataset.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="_i_dataset_8h_source.html">navigation/IDataset.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_i_dataset_8h_source.html">cdma/navigation/IDataset.h</a>&gt;</code></p>
 
 <p><a href="classcdma_1_1_i_dataset-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -114,11 +114,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a46386d83bc5307bf70230ec8beb0a1d7">~IDataset</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual IGroupPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a52b7a8ef80a7c13a0282d1243ff430d3">getRootGroup</a> ()=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual LogicalGroupPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a6914b74efcef665910c9b3a76012de6f">getLogicalRoot</a> ()=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual ILogicalGroupPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a729895ce5dd27bf6fccdb24aca3a24ce">getLogicalRoot</a> ()=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a00f3eeb390dea8e2f9ea65a33915e555">getLocation</a> ()=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#af98f72eb3665fe6deea810419d2970dc">getTitle</a> ()=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a0701bbcb7adae95b26c37a07b925a30e">setLocation</a> (const std::string &amp;location)=0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a5ca13cc0fc774ab98b8cfba2bc935644">setLocation</a> (const yat::URI &amp;location)=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a028577e96f8b76a9af6d84b2ef1ac35d">setTitle</a> (const std::string &amp;title)=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#ac52757e1588ccd2d72d16b0375356301">sync</a> ()=0  throw ( Exception )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a08a70720ba38b3963e1b7ce5745383f5">save</a> ()=0  throw ( Exception )</td></tr>
@@ -127,6 +126,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a3ecbda84ad885f2b939b194ea65703f5">save</a> (const std::string &amp;parentPath, const IAttributePtr &amp;attribute)=0  throw ( Exception )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual IGroupPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#af54575a5deddb9d537902a6c61ede692">getGroupFromPath</a> (const std::string &amp;path)=0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual IDataItemPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a875ce4be01220f49327b58a8456deb78">getItemFromPath</a> (const std::string &amp;path)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual IContainerPtr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a59d63be023679a23b53122b033b29404">findContainerByPath</a> (const std::string &amp;path)=0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="namespacecdma.html#a51deecd27704b20f93ea8f998657be77">IContainerPtrList</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_dataset.html#a9c4073ed8430d74b1f8bfdf6d2a62572">findAllContainerByPath</a> (const std::string &amp;path, bool first_only=false)=0</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Handler on a physical storage of a data source. </p>
@@ -149,6 +150,65 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a9c4073ed8430d74b1f8bfdf6d2a62572"></a><!-- doxytag: member="cdma::IDataset::findAllContainerByPath" ref="a9c4073ed8430d74b1f8bfdf6d2a62572" args="(const std::string &amp;path, bool first_only=false)=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual <a class="el" href="namespacecdma.html#a51deecd27704b20f93ea8f998657be77">IContainerPtrList</a> <a class="el" href="classcdma_1_1_i_dataset.html#a9c4073ed8430d74b1f8bfdf6d2a62572">cdma::IDataset::findAllContainerByPath</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>first_only</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Find a list of groups and/or data items giving a path</p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>path of the element relative to this object </td></tr>
+    <tr><td class="paramname">first_only</td><td>if true returns only the first container found that match the input path </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a59d63be023679a23b53122b033b29404"></a><!-- doxytag: member="cdma::IDataset::findContainerByPath" ref="a59d63be023679a23b53122b033b29404" args="(const std::string &amp;path)=0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual IContainerPtr <a class="el" href="classcdma_1_1_i_dataset.html#a59d63be023679a23b53122b033b29404">cdma::IDataset::findContainerByPath</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em></td><td>)</td>
+          <td><code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Find a group or a data item by its path</p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">path</td><td>path of the element relative to this object </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="af54575a5deddb9d537902a6c61ede692"></a><!-- doxytag: member="cdma::IDataset::getGroupFromPath" ref="af54575a5deddb9d537902a6c61ede692" args="(const std::string &amp;path)=0" -->
 <div class="memitem">
 <div class="memproto">
@@ -217,12 +277,12 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6914b74efcef665910c9b3a76012de6f"></a><!-- doxytag: member="cdma::IDataset::getLogicalRoot" ref="a6914b74efcef665910c9b3a76012de6f" args="()=0" -->
+<a class="anchor" id="a729895ce5dd27bf6fccdb24aca3a24ce"></a><!-- doxytag: member="cdma::IDataset::getLogicalRoot" ref="a729895ce5dd27bf6fccdb24aca3a24ce" args="()=0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual LogicalGroupPtr <a class="el" href="classcdma_1_1_i_dataset.html#a6914b74efcef665910c9b3a76012de6f">cdma::IDataset::getLogicalRoot</a> </td>
+          <td class="memname">virtual ILogicalGroupPtr <a class="el" href="classcdma_1_1_i_dataset.html#a729895ce5dd27bf6fccdb24aca3a24ce">cdma::IDataset::getLogicalRoot</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td><code> [pure virtual]</code></td>
@@ -366,34 +426,10 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Set the location field of the dataset. </p>
+<p>Set the location (URI) field of the dataset. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">location</td><td>as string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a5ca13cc0fc774ab98b8cfba2bc935644"></a><!-- doxytag: member="cdma::IDataset::setLocation" ref="a5ca13cc0fc774ab98b8cfba2bc935644" args="(const yat::URI &amp;location)=0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual void <a class="el" href="classcdma_1_1_i_dataset.html#a0701bbcb7adae95b26c37a07b925a30e">cdma::IDataset::setLocation</a> </td>
-          <td>(</td>
-          <td class="paramtype">const yat::URI &amp;&#160;</td>
-          <td class="paramname"><em>location</em></td><td>)</td>
-          <td><code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Set the location field of the dataset. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">location</td><td>as yat::URI object </td></tr>
+    <tr><td class="paramname">location</td><td>URI </td></tr>
   </table>
   </dd>
 </dl>
@@ -414,9 +450,10 @@ Public Member Functions</h2></td></tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Set the title for the Dataset. </p>
+<p>Set the location field of the dataset. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramname">location</td><td>as yat::URI object Set the title for the Dataset. </td></tr>
     <tr><td class="paramname">title</td><td>a string object </td></tr>
   </table>
   </dd>
@@ -452,7 +489,7 @@ Public Member Functions</h2></td></tr>
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Defines</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Enumerator</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(9)"><span class="SelectionMark">&#160;</span>Friends</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(10)"><span class="SelectionMark">&#160;</span>Defines</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -466,7 +503,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_i_dataset.html">IDataset</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:21:54 for CDMA engine API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:58:14 for CDMA engine API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
