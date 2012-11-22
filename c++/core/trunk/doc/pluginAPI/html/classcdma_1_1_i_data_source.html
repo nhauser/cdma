@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA plugin API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -52,7 +52,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -104,42 +103,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="cdma::IDataSource" -->
-<p>Abstraction of the plugin dataset recognition.  
+<p>Abstraction of the plugin data source information.  
  <a href="classcdma_1_1_i_data_source.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="_i_data_source_8h_source.html">IDataSource.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_i_data_source_8h_source.html">cdma/IDataSource.h</a>&gt;</code></p>
 
 <p><a href="classcdma_1_1_i_data_source-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a059fddd2a8f8b4282b1a92d3d5582f45">isReadable</a> (const yat::URI &amp;dataset_location) const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#acb6f36a187d54ca9793f78b668b4d4f2">isBrowsable</a> (const yat::URI &amp;dataset_location) const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a552e184937afb23c9dd77a9c895a0eec">isProducer</a> (const yat::URI &amp;dataset_location) const =0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a65d8712c47d8092014d43ada0caf6fb4">isExperiment</a> (const yat::URI &amp;dataset_location) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a67e968fb5968a68e6c60dcd96418fa42">isReadable</a> (const std::string &amp;dataset_uri) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a4b71529e16a4d874efc06595c7366254">isBrowsable</a> (const std::string &amp;dataset_uri) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#afa5106b236513ec47a3a9b92aff66ad8">isProducer</a> (const std::string &amp;dataset_uri) const =0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_i_data_source.html#a86927439b3354d0f865427917a778687">isExperiment</a> (const std::string &amp;dataset_uri) const =0</td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
-<div class="textblock"><p>Abstraction of the plugin dataset recognition. </p>
+<div class="textblock"><p>Abstraction of the plugin data source information. </p>
 <p>The CDMA asks each plug-ins through this interface to find out which one is the best choice for accessing the data referenced by the given URI </p>
 </div><hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="acb6f36a187d54ca9793f78b668b4d4f2"></a><!-- doxytag: member="cdma::IDataSource::isBrowsable" ref="acb6f36a187d54ca9793f78b668b4d4f2" args="(const yat::URI &amp;dataset_location) const =0" -->
+<a class="anchor" id="a4b71529e16a4d874efc06595c7366254"></a><!-- doxytag: member="cdma::IDataSource::isBrowsable" ref="a4b71529e16a4d874efc06595c7366254" args="(const std::string &amp;dataset_uri) const =0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#acb6f36a187d54ca9793f78b668b4d4f2">cdma::IDataSource::isBrowsable</a> </td>
+          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a4b71529e16a4d874efc06595c7366254">cdma::IDataSource::isBrowsable</a> </td>
           <td>(</td>
-          <td class="paramtype">const yat::URI &amp;&#160;</td>
-          <td class="paramname"><em>dataset_location</em></td><td>)</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dataset_uri</em></td><td>)</td>
           <td> const<code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Ask the plugin if the URI corresponds to a strictly readable dataset Only the basic navigation is applicable in such a dataset The dictionnary mechanism is not relevant for this kind of dataset</p>
+<p>When browsing a file system, ask the plugin if the location corresponds to a file containing one or more datasets, at this plug-in sense.</p>
+<p>If the answer is true, the client should open the file (through a yet to be developed CDMA service) the same way the directory containing it.</p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">dataset_location</td><td>location of the dataset asked for</td></tr>
+    <tr><td class="paramname">dataset_uri</td><td>location (conform to the RFC3986 specification) of the dataset asked for </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true or false </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a86927439b3354d0f865427917a778687"></a><!-- doxytag: member="cdma::IDataSource::isExperiment" ref="a86927439b3354d0f865427917a778687" args="(const std::string &amp;dataset_uri) const =0" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a86927439b3354d0f865427917a778687">cdma::IDataSource::isExperiment</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dataset_uri</em></td><td>)</td>
+          <td> const<code> [pure virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Ask the plugin if the location corresponds to a dataset produced by the same institute providing this plug-in.</p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dataset_uri</td><td>location (conform to the RFC3986 specification) of the dataset asked for </td></tr>
   </table>
   </dd>
 </dl>
@@ -147,24 +172,25 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a65d8712c47d8092014d43ada0caf6fb4"></a><!-- doxytag: member="cdma::IDataSource::isExperiment" ref="a65d8712c47d8092014d43ada0caf6fb4" args="(const yat::URI &amp;dataset_location) const =0" -->
+<a class="anchor" id="afa5106b236513ec47a3a9b92aff66ad8"></a><!-- doxytag: member="cdma::IDataSource::isProducer" ref="afa5106b236513ec47a3a9b92aff66ad8" args="(const std::string &amp;dataset_uri) const =0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a65d8712c47d8092014d43ada0caf6fb4">cdma::IDataSource::isExperiment</a> </td>
+          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#afa5106b236513ec47a3a9b92aff66ad8">cdma::IDataSource::isProducer</a> </td>
           <td>(</td>
-          <td class="paramtype">const yat::URI &amp;&#160;</td>
-          <td class="paramname"><em>dataset_location</em></td><td>)</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dataset_uri</em></td><td>)</td>
           <td> const<code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Ask the plugin if the URI corresponds to a strictly readable dataset Only the basic navigation is applicable in such a dataset The dictionnary mechanism is not relevant for this kind of dataset</p>
+<p>Ask the plug-in if the location corresponds to a file produced by the institute's editor of this plug-in.</p>
+<p>It make sense for a dataset that is a directory containing several files: each file is effectively produced by the institute who provide the plug-in, but is not a dataset, just a part.</p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">dataset_location</td><td>location of the dataset asked for</td></tr>
+    <tr><td class="paramname">dataset_uri</td><td>location (conform to the RFC3986 specification) of the dataset asked for </td></tr>
   </table>
   </dd>
 </dl>
@@ -172,49 +198,26 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a552e184937afb23c9dd77a9c895a0eec"></a><!-- doxytag: member="cdma::IDataSource::isProducer" ref="a552e184937afb23c9dd77a9c895a0eec" args="(const yat::URI &amp;dataset_location) const =0" -->
+<a class="anchor" id="a67e968fb5968a68e6c60dcd96418fa42"></a><!-- doxytag: member="cdma::IDataSource::isReadable" ref="a67e968fb5968a68e6c60dcd96418fa42" args="(const std::string &amp;dataset_uri) const =0" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a552e184937afb23c9dd77a9c895a0eec">cdma::IDataSource::isProducer</a> </td>
+          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a67e968fb5968a68e6c60dcd96418fa42">cdma::IDataSource::isReadable</a> </td>
           <td>(</td>
-          <td class="paramtype">const yat::URI &amp;&#160;</td>
-          <td class="paramname"><em>dataset_location</em></td><td>)</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dataset_uri</em></td><td>)</td>
           <td> const<code> [pure virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
-<p>Ask the plugin if the URI corresponds to a strictly readable dataset Only the basic navigation is applicable in such a dataset The dictionnary mechanism is not relevant for this kind of dataset</p>
+<p>Ask the plugin if the location corresponds to a readable dataset using at least the standard navigation interface.</p>
+<p>It's a necessary condition for reading the dataset but not sufficient for decide to apply the dictionary on it.</p>
+<dl class="see"><dt><b>See also:</b></dt><dd><a class="el" href="classcdma_1_1_i_data_source.html#a86927439b3354d0f865427917a778687">isExperiment</a></dd></dl>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">dataset_location</td><td>location of the dataset asked for</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true of false </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a059fddd2a8f8b4282b1a92d3d5582f45"></a><!-- doxytag: member="cdma::IDataSource::isReadable" ref="a059fddd2a8f8b4282b1a92d3d5582f45" args="(const yat::URI &amp;dataset_location) const =0" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">virtual bool <a class="el" href="classcdma_1_1_i_data_source.html#a059fddd2a8f8b4282b1a92d3d5582f45">cdma::IDataSource::isReadable</a> </td>
-          <td>(</td>
-          <td class="paramtype">const yat::URI &amp;&#160;</td>
-          <td class="paramname"><em>dataset_location</em></td><td>)</td>
-          <td> const<code> [pure virtual]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-<p>Ask the plugin if the URI corresponds to a strictly readable dataset Only the basic navigation is applicable in such a dataset The dictionnary mechanism is not relevant for this kind of dataset</p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">dataset_location</td><td>location of the dataset asked for</td></tr>
+    <tr><td class="paramname">dataset_uri</td><td>location (conform to the RFC3986 specification) of the dataset asked for </td></tr>
   </table>
   </dd>
 </dl>
@@ -246,7 +249,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_i_data_source.html">IDataSource</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:24:27 for CDMA plugin API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:58:37 for CDMA plugin API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>

@@ -33,7 +33,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CDMA plugin API
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">2.0.0</span>
    </div>
    <div id="projectbrief">CDMA core library</div>
   </td>
@@ -52,7 +52,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -107,7 +106,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>Container object used when invoking an external method.  
  <a href="classcdma_1_1_context.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="_context_8h_source.html">dictionary/Context.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_context_8h_source.html">cdma/dictionary/plugin/Context.h</a>&gt;</code></p>
 
 <p><a href="classcdma_1_1_context-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -115,15 +114,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a7a1ea030e43bdafefde9fed5258c2137">Context</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a7a1ea030e43bdafefde9fed5258c2137"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a2516e323fd4f71b10d6880d5820c5dc1">Context</a> (<a class="el" href="classcdma_1_1_i_dataset.html">IDataset</a> *dataset_ptr, const KeyPtr &amp;key_ptr, const DictionaryPtr dict_ptr)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a2516e323fd4f71b10d6880d5820c5dc1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#ac77dc43319a596c3c0ca49528268bb32">Context</a> (<a class="el" href="classcdma_1_1_i_dataset.html">IDataset</a> *dataset_ptr, const IKeyPtr &amp;key_ptr, const DictionaryPtr dict_ptr)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ac77dc43319a596c3c0ca49528268bb32"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a5f3a4e92150cb2877ff124e619026d85">pushDataItem</a> (const IDataItemPtr &amp;dataitem_ptr)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Push a data items at the back of the list.  <a href="#a5f3a4e92150cb2877ff124e619026d85"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a1f4685056f284efd9538ac74fd0bd53f">clearDataItems</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the data items list.  <a href="#a1f4685056f284efd9538ac74fd0bd53f"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader"></div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const KeyPtr &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a9160d5ad236f8c16b31f27d107dfa8d6">getKey</a> () const </td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return smart pointer on key object.  <a href="#a9160d5ad236f8c16b31f27d107dfa8d6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const IKeyPtr &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a2ba1fbe77fc24c712adb98e0882da844">getKey</a> () const </td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return smart pointer on key object.  <a href="#a2ba1fbe77fc24c712adb98e0882da844"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const DictionaryPtr &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a0c69f8b7d63244fe74b669405a3fd46e">getDictionary</a> () const </td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return smart pointer on key object.  <a href="#a0c69f8b7d63244fe74b669405a3fd46e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcdma_1_1_i_dataset.html">IDataset</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcdma_1_1_context.html#a21205bb60468ef3820bc619f5713c8eb">getDataset</a> ()</td></tr>
@@ -138,7 +137,7 @@ Public Member Functions</h2></td></tr>
 <p>It contains all required information by the called method:</p>
 <ul>
 <li>reference to the source <a class="el" href="classcdma_1_1_i_dataset.html" title="Handler on a physical storage of a data source.">IDataset</a></li>
-<li>reference to the <a class="el" href="classcdma_1_1_key.html" title="Key object holds keywords realatives to LogicalGroup or IDataItem.">Key</a> object</li>
+<li>reference to the Key object</li>
 <li>reference to the <a class="el" href="classcdma_1_1_dictionary.html" title="Keywords dictionary manager.">Dictionary</a> object</li>
 <li>input/output list of data items (see <a class="el" href="classcdma_1_1_i_data_item.html" title="Abstraction of a data item container.">IDataItem</a>) </li>
 </ul>
@@ -161,7 +160,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2516e323fd4f71b10d6880d5820c5dc1"></a><!-- doxytag: member="cdma::Context::Context" ref="a2516e323fd4f71b10d6880d5820c5dc1" args="(IDataset *dataset_ptr, const KeyPtr &amp;key_ptr, const DictionaryPtr dict_ptr)" -->
+<a class="anchor" id="ac77dc43319a596c3c0ca49528268bb32"></a><!-- doxytag: member="cdma::Context::Context" ref="ac77dc43319a596c3c0ca49528268bb32" args="(IDataset *dataset_ptr, const IKeyPtr &amp;key_ptr, const DictionaryPtr dict_ptr)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -174,7 +173,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const KeyPtr &amp;&#160;</td>
+          <td class="paramtype">const IKeyPtr &amp;&#160;</td>
           <td class="paramname"><em>key_ptr</em>, </td>
         </tr>
         <tr>
@@ -269,12 +268,12 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a9160d5ad236f8c16b31f27d107dfa8d6"></a><!-- doxytag: member="cdma::Context::getKey" ref="a9160d5ad236f8c16b31f27d107dfa8d6" args="() const " -->
+<a class="anchor" id="a2ba1fbe77fc24c712adb98e0882da844"></a><!-- doxytag: member="cdma::Context::getKey" ref="a2ba1fbe77fc24c712adb98e0882da844" args="() const " -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const KeyPtr&amp; <a class="el" href="classcdma_1_1_context.html#a9160d5ad236f8c16b31f27d107dfa8d6">cdma::Context::getKey</a> </td>
+          <td class="memname">const IKeyPtr&amp; <a class="el" href="classcdma_1_1_context.html#a2ba1fbe77fc24c712adb98e0882da844">cdma::Context::getKey</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const<code> [inline]</code></td>
@@ -348,7 +347,7 @@ Public Member Functions</h2></td></tr>
       <li class="navelem"><a class="el" href="namespacecdma.html">cdma</a>      </li>
       <li class="navelem"><a class="el" href="classcdma_1_1_context.html">Context</a>      </li>
 
-    <li class="footer">Generated on Mon Mar 26 2012 17:24:26 for CDMA plugin API by
+    <li class="footer">Generated on Thu Nov 22 2012 14:58:36 for CDMA plugin API by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.7.6.1 </li>
    </ul>
