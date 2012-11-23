@@ -136,7 +136,7 @@ IDataItemPtr LogicalGroup::getDataItem(const std::string& keypath)
     ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
    
 #ifdef CDMA_STD_SMART_PTR
-    for( unsigned int i = 0; i < keys.size() - 1 && ! tmp ; i++)
+    for( unsigned int i = 0; i < keys.size() - 1 && tmp ; i++)
 #else
     for( unsigned int i = 0; i < keys.size() - 1 && ! tmp.is_null(); i++ )
 #endif
