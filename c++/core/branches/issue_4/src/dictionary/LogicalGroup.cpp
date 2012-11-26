@@ -205,7 +205,7 @@ ILogicalGroupPtr LogicalGroup::getGroup(const IKeyPtr& key_ptr)
     else
     {
 #ifdef CDMA_STD_SMART_PTR
-      yat::String groupKeyName = m_key_ptr ? "" : m_key_ptr->getName();
+      yat::String groupKeyName = ! m_key_ptr ? "" : m_key_ptr->getName();
       if( m_listkey_ptr )
 #else
       yat::String groupKeyName = m_key_ptr.is_null() ? "" : m_key_ptr->getName();
@@ -249,7 +249,7 @@ ILogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
     ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
 
 #ifdef CDMA_STD_SMART_PTR
-    for( unsigned int i = 0; i < keys.size() && ! tmp; i++ )
+    for( unsigned int i = 0; i < keys.size() && tmp; i++ )
 #else
     for( unsigned int i = 0; i < keys.size() && ! tmp.is_null(); i++ )
 #endif
@@ -280,7 +280,7 @@ std::list<IKeyPtr> LogicalGroup::getKeys()
 
   // Get children keys' names
 #ifdef CDMA_STD_SMART_PTR
-  yat::String key = m_key_ptr ? "root" : m_key_ptr->getName();
+  yat::String key = ! m_key_ptr ? "root" : m_key_ptr->getName();
   if( m_listkey_ptr )
 #else
   yat::String key = m_key_ptr.is_null() ? "root" : m_key_ptr->getName();
@@ -348,7 +348,7 @@ std::string LogicalGroup::getLocation() const
 std::string LogicalGroup::getName() const
 {
 #ifdef CDMA_STD_SMART_PTR
-  return m_key_ptr ? "" : m_key_ptr->getName();
+  return ! m_key_ptr ? "" : m_key_ptr->getName();
 #else
   return m_key_ptr.is_null() ? "" : m_key_ptr->getName();
 #endif
