@@ -41,6 +41,7 @@ pkg_config_file = core_env.Substfile(source=["cdmacore.pc.in"],
                              "@INCPATHS@":"${_CPPINCFLAGS}",
                              "@LIBPATHS@":"${_LIBFLAGS}"})
 pkg_config_file = core_env.Install("${LIBDIR}/pkgconfig",[pkg_config_file])
+core_env.AlwaysBuild(pkg_config_file)
 
 #==================install the library=========================================
 shared_library_install = core_env.Install("$LIBDIR",[shared_library])
