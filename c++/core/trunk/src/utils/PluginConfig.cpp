@@ -76,7 +76,7 @@ SAXParsor::INodeAnalyser* PluginConfigAnalyser::on_element(const yat::String& el
   {
     yat::String name;
     FIND_ATTR_VALUE(attrs, "name", name);
-    m_current_dataset_model_ptr = new DatasetModel(name);
+    m_current_dataset_model_ptr = DatasetModelPtr(new DatasetModel(name));
     return this;
   }
   
@@ -300,7 +300,11 @@ std::string DatasetModel::DatasetParameter::getValue(IDataset* dataset_p) const
     case EQUAL:
       if( ptr_container->getContainerType() == IContainer::DATA_ITEM )
       {
+#ifdef CDMA_STD_SMART_PTR
+        yat::String value = std::dynamic_pointer_cast<IDataItem>(ptr_container)->getValue<std::string>();
+#else
         yat::String value = IDataItemPtr(ptr_container)->getValue<std::string>();
+#endif
         if( value.is_equal(m_value) )
           return "true";
         return "false";
@@ -314,7 +318,11 @@ std::string DatasetModel::DatasetParameter::getValue(IDataset* dataset_p) const
 
     case VALUE:
       if( ptr_container->getContainerType() == IContainer::DATA_ITEM )
+#ifdef CDMA_STD_SMART_PTR
+        return std::dynamic_pointer_cast<IDataItem>(ptr_container)->getValue<std::string>();
+#else
         return IDataItemPtr(ptr_container)->getValue<std::string>();
+#endif
       else
       {
         THROW_EXCEPTION( "BAD_CONFIG", 
@@ -359,7 +367,11 @@ bool DatasetModel::Criterion::doTest(IDataset* dataset_p) const
     case EQUAL:
       if( ptr_container->getContainerType() == IContainer::DATA_ITEM )
       {
+#ifdef CDMA_STD_SMART_PTR
+        yat::String value = std::dynamic_pointer_cast<IDataItem>(ptr_container)->getValue<std::string>();
+#else
         yat::String value = IDataItemPtr(ptr_container)->getValue<std::string>();
+#endif
         CDMA_TRACE("value: " << value);
         if( value.is_equal_no_case( yat::any_cast<std::string>(m_criterion_value) ) )
           return "true";
@@ -375,7 +387,11 @@ bool DatasetModel::Criterion::doTest(IDataset* dataset_p) const
     case NOT_EQUAL:
       if( ptr_container->getContainerType() == IContainer::DATA_ITEM )
       {
+#ifdef CDMA_STD_SMART_PTR
+        yat::String value = std::dynamic_pointer_cast<IDataItem>(ptr_container)->getValue<std::string>();
+#else
         yat::String value = IDataItemPtr(ptr_container)->getValue<std::string>();
+#endif
         if( !( value.is_equal( yat::any_cast<std::string>(m_criterion_value) ) ) )
           return "true";
         return "false";

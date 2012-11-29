@@ -134,7 +134,7 @@ RangePtr Range::compose(const Range& range) throw ( Exception )
     long last  = element(range.last());
     res = new Range( m_name, first, last, strid);
   }
-  return res;
+  return RangePtr(res);
 }
 
 //---------------------------------------------------------------------------
@@ -150,7 +150,7 @@ RangePtr Range::compact() throw ( Exception )
   last   = m_last  / m_stride;
   name   = m_name;
 
-  return  new Range(name, first, last, stride);
+  return  RangePtr(new Range(name, first, last, stride));
 }
 
 //---------------------------------------------------------------------------
@@ -158,7 +158,8 @@ RangePtr Range::compact() throw ( Exception )
 //---------------------------------------------------------------------------
 RangePtr Range::shiftOrigin(int origin) throw ( Exception )
 {
-  return new Range(m_name, m_first + origin, m_last + origin, m_stride, m_reduced );
+  return RangePtr(new Range(m_name, m_first + origin, m_last + origin, m_stride,
+          m_reduced ));
 }
 
 //---------------------------------------------------------------------------
@@ -212,11 +213,11 @@ RangePtr Range::intersect(const Range& r) throw ( Exception )
   }
   if (useFirst > last)
   {
-    return  new Range();
+    return  RangePtr(new Range());
   }
   else 
   {
-    return  new Range(m_name, useFirst, last, stride);
+    return  RangePtr(new Range(m_name, useFirst, last, stride));
   }
 }
 
@@ -227,7 +228,11 @@ bool Range::intersects(const Range& r)
 {
   if ((length() == 0) || (r.length() == 0))
   {
-    return  RangePtr ( new Range());
+#ifdef CDMA_STD_SMART_PTR
+    return  bool(RangePtr ( new Range()));
+#else
+    return RangePtr( new Range() );
+#endif
   }
 
   long last = this->last() > r.last() ? r.last() : this->last();
@@ -284,12 +289,12 @@ RangePtr Range::unionRanges(const Range& r) throw ( Exception )
 
   if (this->length() == 0) 
   {
-    return new Range(r);
+    return RangePtr(new Range(r));
   }
 
   if (r.length() == 0) 
   {
-    return new Range(* this);
+    return RangePtr(new Range(* this));
   }
 
   long first, last;
@@ -299,7 +304,7 @@ RangePtr Range::unionRanges(const Range& r) throw ( Exception )
   first = m_first < r.first() ? m_first : r.first();
   last  = m_last > r.last() ? m_last : r.last();
 
-  return new Range(name, first, last, m_stride);
+  return RangePtr(new Range(name, first, last, m_stride));
 }
 
 //---------------------------------------------------------------------------

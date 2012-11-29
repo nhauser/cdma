@@ -92,7 +92,7 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy()
 {
   T* data = new T[m_array_length];
   memcpy( data, m_data, m_array_length * sizeof(T) );
-  return new DefaultArrayStorage( data, m_array_length );
+  return IArrayStoragePtr(new DefaultArrayStorage( data, m_array_length ));
 }
 
 //----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ template<typename T> IArrayStoragePtr DefaultArrayStorage<T>::deepCopy(IViewPtr 
     
     current++;
   }
-  return new DefaultArrayStorage<T>( storage, view->getSize() );
+  return IArrayStoragePtr(new DefaultArrayStorage<T>( storage, view->getSize()));
 }
 
 }

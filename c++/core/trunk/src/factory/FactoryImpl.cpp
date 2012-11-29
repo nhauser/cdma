@@ -157,7 +157,11 @@ void FactoryImpl::initPluginMethods(const IPluginFactoryPtr& factory_ptr, Factor
       cdma::IPluginMethod* method_ptr = get_method_object_func();
 
       // Store the method object in association with the method name
+#ifdef CDMA_STD_SMART_PTR
+      plugin_ptr->plugin_method_map[*it] = cdma::IPluginMethodPtr(method_ptr);
+#else
       plugin_ptr->plugin_method_map[*it] = method_ptr;
+#endif
 
       //Context context;
       //method_ptr->execute(context);

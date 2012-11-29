@@ -157,7 +157,7 @@ IDataSourcePtr Factory::getDataSource(const std::string& uri) throw ( Exception 
 //----------------------------------------------------------------------------
 IViewPtr Factory::createView(std::vector<int> shape, std::vector<int> start, std::vector<int> stride)
 {
-  return new View( shape, start, stride );
+  return IViewPtr(new View( shape, start, stride ));
 }
 
 //----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ IViewPtr Factory::createView(std::vector<int> shape, std::vector<int> start, std
 //----------------------------------------------------------------------------
 IKeyPtr Factory::createKey(const std::string& name, IKey::Type type)
 {
-  return new Key(name, type);
+  return IKeyPtr(new Key(name, type));
 }
 
 } // namespace cdma
