@@ -124,9 +124,9 @@ cdma::IArrayPtr SimpleDataItem::getData(std::vector<int> origin, std::vector<int
     iStart[i] = origin[i];
     iShape[i] = shape[i];
   }
-  cdma::IViewPtr view = new cdma::View( rank, iShape, iStart );
+  cdma::IViewPtr view(new cdma::View( rank, iShape, iStart ));
   //## Should pass the shared pointer rather than a pointer to the referenced object
-  cdma::IArrayPtr array_ptr = new cdma::Array( m_array_ptr, view );
+  cdma::IArrayPtr array_ptr(new cdma::Array( m_array_ptr, view ));
   return array_ptr;
 }
 

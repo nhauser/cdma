@@ -51,7 +51,12 @@ View::View(const cdma::IViewPtr& view)
   m_rank = view->getRank();
   
   // Create new ranges
+#ifdef CDMA_STD_SMART_PTR
+  std::vector<Range> ranges = (std::dynamic_pointer_cast<View>(view))->m_ranges;
+#else
   std::vector<Range> ranges = ViewPtr(view)->m_ranges;
+#endif
+
   m_ranges.resize( ranges.size() );
   for( yat::uint16 i = 0; i < ranges.size(); i++ )
   {
@@ -314,7 +319,11 @@ std::vector<int> View::getPositionElement(long offset)
 //---------------------------------------------------------------------------
 void View::compose(const IViewPtr& higher_view)
 {
+#ifdef CDMA_STD_SMART_PTR
+  m_compound = std::dynamic_pointer_cast<View>(higher_view);
+#else
   m_compound = higher_view;
+#endif
 }
 
 //---------------------------------------------------------------------------

@@ -134,8 +134,12 @@ IDataItemPtr LogicalGroup::getDataItem(const std::string& keypath)
     path.split( '/', &keys );
     
     ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
-    
+   
+#ifdef CDMA_STD_SMART_PTR
+    for( unsigned int i = 0; i < keys.size() - 1 && tmp ; i++)
+#else
     for( unsigned int i = 0; i < keys.size() - 1 && ! tmp.is_null(); i++ )
+#endif
     {
        tmp = tmp->getGroup( IKeyPtr( new Key( keys[i], IKey::GROUP ) ) );
     }
@@ -200,8 +204,13 @@ ILogicalGroupPtr LogicalGroup::getGroup(const IKeyPtr& key_ptr)
     // Check if key is in children list
     else
     {
+#ifdef CDMA_STD_SMART_PTR
+      yat::String groupKeyName = (!m_key_ptr) ? "" : m_key_ptr->getName();
+      if( ! m_listkey_ptr )
+#else
       yat::String groupKeyName = m_key_ptr.is_null() ? "" : m_key_ptr->getName();
       if( m_listkey_ptr.is_null() )
+#endif
       {
         m_listkey_ptr = m_dictionary_ptr->getKeys( groupKeyName );
       }
@@ -211,7 +220,9 @@ ILogicalGroupPtr LogicalGroup::getGroup(const IKeyPtr& key_ptr)
         // Key is in children list -> construct group
         if( *itChildren == keyName )
         {
-          child = new LogicalGroup(m_dataset_ptr, this, key_ptr, m_dictionary_ptr );
+          child = ILogicalGroupPtr(
+                  new LogicalGroup(m_dataset_ptr, this, key_ptr, m_dictionary_ptr )
+                  );
           m_child_groups[ keyName ] = child;
           break;
         }
@@ -237,7 +248,11 @@ ILogicalGroupPtr LogicalGroup::getGroup(const std::string& keypath)
     
     ILogicalGroupPtr tmp = m_dataset_ptr->getLogicalRoot();
 
+#ifdef CDMA_STD_SMART_PTR
+    for( unsigned int i = 0; i < keys.size() && tmp; i++ )
+#else
     for( unsigned int i = 0; i < keys.size() && ! tmp.is_null(); i++ )
+#endif
     {
        tmp = tmp->getGroup( IKeyPtr( new Key( keys[i], Key::GROUP ) ) );
     }
@@ -264,8 +279,13 @@ std::list<IKeyPtr> LogicalGroup::getKeys()
   std::list<IKeyPtr> result;
 
   // Get children keys' names
+#ifdef CDMA_STD_SMART_PTR
+  yat::String key = (!m_key_ptr) ? "root" : m_key_ptr->getName();
+  if( !m_listkey_ptr )
+#else
   yat::String key = m_key_ptr.is_null() ? "root" : m_key_ptr->getName();
   if( m_listkey_ptr.is_null() )
+#endif
   {
     m_listkey_ptr = m_dictionary_ptr->getKeys( key );
   }
@@ -327,7 +347,11 @@ std::string LogicalGroup::getLocation() const
 //-----------------------------------------------------------------------------
 std::string LogicalGroup::getName() const
 {
+#ifdef CDMA_STD_SMART_PTR
+  return (!m_key_ptr) ? "" : m_key_ptr->getName();
+#else
   return m_key_ptr.is_null() ? "" : m_key_ptr->getName();
+#endif
 }
 
 //-----------------------------------------------------------------------------
