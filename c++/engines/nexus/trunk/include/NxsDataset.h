@@ -117,7 +117,11 @@ private:
   IContainerPtrList privFindContainer(const std::string& input_path, bool first_only);
 };
 
+#ifdef CDMA_STD_SMART_PTR
+typedef std::shared_ptr<Dataset> DatasetPtr;
+#else
 typedef yat::SharedPtr<Dataset, yat::Mutex> DatasetPtr;
+#endif
 
 //==============================================================================
 /// Convenient class
