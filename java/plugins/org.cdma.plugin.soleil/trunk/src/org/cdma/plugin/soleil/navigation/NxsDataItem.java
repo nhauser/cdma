@@ -145,17 +145,6 @@ public final class NxsDataItem implements IDataItem, Cloneable {
                 arrays[i] = mDataItems[i].getData();
             }
             mArray = new NxsArray(arrays);
-            String fastMode = null;
-            try {
-                fastMode = mDataset.getConfiguration().getParameter(NxsConstant.FAST_MODE);
-            }
-            catch (NoResultException e) {
-                // FastMode is an optional tag (for performance)!
-                // no need to worry the end user with a stack trace
-            }
-            if (fastMode != null) {
-                ((NxsArray) mArray).setFastMode(fastMode.equals(CriterionValue.TRUE.getName()));
-            }
         }
         return mArray;
     }

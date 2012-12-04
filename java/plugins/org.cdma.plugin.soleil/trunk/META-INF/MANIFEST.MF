@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.cdma.plugin.soleil
 Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Import-Package: org.gumtree.data.utils,
+Import-Package: org.cdma.utils,
  org.jdom,
  org.jdom.filter,
  org.jdom.input
