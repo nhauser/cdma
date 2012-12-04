@@ -82,15 +82,11 @@ if not conf.CheckCXXHeader("NxsDataset.h") or \
     Exit(1)
 
 if not conf.CheckCXXHeader("cdma/Common.h") or \
-   not conf.CheckCXXHeader("cdma/IFactory.h") or \
+   not conf.CheckCXXHeader("cdma/factory/Factory.h") or \
    not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/Key.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
-   not conf.CheckCXXHeader("cdma/navigation/IGroup.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/Context.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/PluginMethods.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/SimpleDataItem.h"):
+   not conf.CheckCXXHeader("cdma/dictionary/IKey.h") or \
+   not conf.CheckCXXHeader("cdma/dictionary/ILogicalGroup.h") or \
+   not conf.CheckCXXHeader("cdma/navigation/IGroup.h"):
     print "No CDMA core header files found!"
     Exit(1)
 
