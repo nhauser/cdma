@@ -44,7 +44,7 @@ import org.cdma.utilities.configuration.ConfigManager;
 import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
-    private boolean            mOpen;         // is the dataset open
+    private boolean           mOpen;         // is the dataset open
     private URI                mPath;         // URI of this dataset
     private ConfigDataset      mConfig;       // Configuration associated to this dataset
     private List<NexusDataset> mDatasets;     // NexusDataset compounding this NxsDataset

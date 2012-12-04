@@ -24,6 +24,7 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.soleil.NxsFactory;
+import org.cdma.utilities.memory.ArrayTools;
 import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.IArrayUtils;
 
@@ -33,7 +34,6 @@ public final class NxsArray implements IArray {
     private Object     mData;      // It's an array of values
     private NxsIndex   mIndex;     // IIndex corresponding to mArray shape
     private IArray[]   mArrays;    // IArray of IArray
-    private boolean   mFastMode;  // flag toggling in fast mode: i.e when true the IArray will be shared among references
 
     public NxsArray( IArray[] arrays ) {
         mArrays   = arrays.clone();
@@ -45,7 +45,6 @@ public final class NxsArray implements IArray {
         for( IArray array : mArrays ) {
             array.setIndex(index.clone());
         }
-        mFastMode = false;
     }
 
     public NxsArray( NxsArray array ) {
@@ -59,7 +58,6 @@ public final class NxsArray implements IArray {
             mArrays[i].setIndex(index);
 
         }
-        mFastMode = array.mFastMode;
     }
 
     public NxsArray(DataItem item) {
@@ -226,22 +224,20 @@ public final class NxsArray implements IArray {
             Long nbMatrixCells  = matrixIndex.getSize() == 0 ? 1 : matrixIndex.getSize();
             Long nbStorageCells = mIndex.getIndexStorage().getSize();
 
+            
+            // Create an array storage compound of all sub-arrays' storage
+            // doing so will permit to share the memory without copy
             int[] shape = new int[] { nbMatrixCells.intValue(), nbStorageCells.intValue() };
             result = java.lang.reflect.Array.newInstance(getElementType(), shape);
-            /*
-            if( mArrays[0].getElementType().equals(String.class) ) {
-                for( int i = 0; i < nbMatrixCells; i++ ) {
-                    java.lang.reflect.Array.set(result, i, mArrays[(int) matrixIndex.currentElement()].getStorage() );
-                    NexusArrayIterator.incrementIndex(matrixIndex);
-                }
+            
+            // Set fill the array with references of sub-arrays' storages 
+            int[] counter = matrixIndex.getCurrentCounter();
+            shape = matrixIndex.getShape();
+            for( int i = 0; i < nbMatrixCells; i++ ) {
+            	Object o = mArrays[(int) matrixIndex.currentElement()].getStorage();
+                java.lang.reflect.Array.set(result, i, o );
+                ArrayTools.incrementCounter(counter, shape);
             }
-            else {*/
-                for( int i = 0; i < nbMatrixCells; i++ ) {
-                	Object o = mArrays[(int) matrixIndex.currentElement()].getStorage();
-                    java.lang.reflect.Array.set(result, i, o );
-                    NexusArrayIterator.incrementIndex(matrixIndex);
-                }
-            //}
         }
 
         return result;
@@ -328,11 +324,7 @@ public final class NxsArray implements IArray {
     @Override
     public ISliceIterator getSliceIterator(int rank)
             throws ShapeNotMatchException, InvalidRangeException {
-        NexusSliceIterator result = new NexusSliceIterator(this, rank);
-        if( mFastMode ) {
-            result.setFastMode(mFastMode);
-        }
-        return result;
+        return new NexusSliceIterator(this, rank);
     }
 
     @Override
@@ -378,14 +370,6 @@ public final class NxsArray implements IArray {
     @Override
     public void setDirty(boolean dirty) {
         throw new NotImplementedException();
-    }
-
-    public boolean getFastMode() {
-        return mFastMode;
-    }
-    
-    public void setFastMode( boolean activate ) {
-        mFastMode = activate;
     }
 
     /**
