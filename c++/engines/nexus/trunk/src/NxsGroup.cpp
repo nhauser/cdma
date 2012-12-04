@@ -49,7 +49,13 @@ void Group::PrivEnumChildren()
       cdma::IDataItemPtr ptrDataItem = dataset_ptr->getItemFromPath(m_path, datasets[ui]);
       if( ptrDataItem->hasAttribute("axis") )
       {
+#ifdef CDMA_STD_SMART_PTR
+        m_mapDimensions[ptrDataItem->getName()] = IDimensionPtr(new Dimension( 
+                                                  std::dynamic_pointer_cast<DataItem>(ptrDataItem
+                                                      )));
+#else
         m_mapDimensions[ptrDataItem->getName()] = new Dimension( (DataItemPtr)ptrDataItem );
+#endif
       }
       else
       {
@@ -146,7 +152,7 @@ cdma::IDataItemPtr Group::addDataItem(const std::string& name)
   {
     parent = m_dataset_ptr->getGroupFromPath( m_path );
   }
-  IDataItemPtr item = new DataItem(m_dataset_ptr, parent, name );
+  IDataItemPtr item(new DataItem(m_dataset_ptr, parent, name ));
   m_mapDataItems[name] = item;
   return item;
 }
@@ -191,7 +197,7 @@ cdma::IGroupPtr Group::addSubgroup(const std::string& groupName)
   if( !m_bChildren )
     PrivEnumChildren();
   
-  IGroupPtr subGroup = new Group(m_dataset_ptr, m_path, groupName);
+  IGroupPtr subGroup (new Group(m_dataset_ptr, m_path, groupName));
   m_mapGroups[subGroup->getShortName()] = subGroup;
   return subGroup;
 }

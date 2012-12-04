@@ -61,6 +61,9 @@ env.ParseConfig('pkg-config --libs --cflags cdmacore')
 env.ParseConfig('pkg-config --libs --cflags nexuscpp')
 env.ParseConfig('pkg-config --libs --cflags yat')
 
+#set default compiler flags
+env.AppendUnique(CPPFLAGS=['-std=c++0x'])
+
 
 #=====================here we need some autoconfiguration======================
 conf = Configure(env)
@@ -106,19 +109,19 @@ if not conf.CheckLib("yat"):
     Exit(1)
 
 
-if not conf.CheckCXXHeader("cdma/Common.h") or \
-   not conf.CheckCXXHeader("cdma/array/Array.h") or \
-   not conf.CheckCXXHeader("cdma/Common.h") or \
-   not conf.CheckCXXHeader("cdma/utils/ArrayUtils.h") or \
-   not conf.CheckCXXHeader("cdma/Common.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
-   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
-   not conf.CheckCXXHeader("cdma/navigation/IAttribute.h") or \
-   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
-   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
-   not conf.CheckCXXHeader("cdma/Factory.h"):
-    print "No CDMA core header files found!"
-    Exit(1)
+#if not conf.CheckCXXHeader("cdma/Common.h") or \
+#   not conf.CheckCXXHeader("cdma/array/impl/Array.h") or \
+#   not conf.CheckCXXHeader("cdma/Common.h") or \
+#   not conf.CheckCXXHeader("cdma/utils/ArrayUtils.h") or \
+#   not conf.CheckCXXHeader("cdma/Common.h") or \
+#   not conf.CheckCXXHeader("cdma/dictionary/Dictionary.h") or \
+#   not conf.CheckCXXHeader("cdma/dictionary/LogicalGroup.h") or \
+#   not conf.CheckCXXHeader("cdma/navigation/IAttribute.h") or \
+#   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+#   not conf.CheckCXXHeader("cdma/exception/Exception.h") or \
+#   not conf.CheckCXXHeader("cdma/Factory.h"):
+#    print "No CDMA core header files found!"
+#    Exit(1)
 
 if not conf.CheckLib("cdmacore"):
     print "CDMA core library not found!"
