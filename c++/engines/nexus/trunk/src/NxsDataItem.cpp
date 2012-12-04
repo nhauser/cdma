@@ -208,8 +208,8 @@ cdma::IArrayPtr DataItem::getData(std::vector<int> origin, std::vector<int> shap
   checkArray();
   std::vector<int> stride = m_array_ptr->getView()->getStride();
 
-  cdma::IViewPtr view = new cdma::View( shape, origin, stride );
-  cdma::IArrayPtr array_ptr = new cdma::Array( m_array_ptr, view );
+  cdma::IViewPtr view(new cdma::View( shape, origin, stride ));
+  cdma::IArrayPtr array_ptr(new cdma::Array( m_array_ptr, view ));
   return array_ptr;
 }
 
@@ -371,7 +371,7 @@ cdma::IDataItemPtr DataItem::getSlice(int dim, int value) throw ( cdma::Exceptio
     dataItem->m_array_ptr = array;
   }
   
-  result = dataItem;
+  result = cdma::IDataItemPtr(dataItem);
   
   return result;
 }
@@ -488,7 +488,7 @@ void DataItem::setUnit(const std::string& unit)
   Attribute* attr = new Attribute( );
   attr->setName("units");
   attr->setValue(unit);
-  addAttribute( attr );
+  addAttribute(cdma::IAttributePtr(attr) );
 }
 
 //---------------------------------------------------------------------------
@@ -688,7 +688,7 @@ void DataItem::initAttr()
          rc = file->GetNextAttribute(&attr_info) )
     {
       // Create Attribute
-      m_attr_map[attr_info.AttrName()] = new Attribute( file, attr_info );
+      m_attr_map[attr_info.AttrName()] = cdma::IAttributePtr(new Attribute( file, attr_info ));
     }
   }
 }
