@@ -46,22 +46,6 @@ def create_link_libname(env):
 
 #===================set build variables========================================
 vars = Variables("BuildConfig.py")
-vars.Add(PathVariable("NEXUSENGINEINC","NEXUS engine include directory",
-                      "/usr/include/cdma/engines/nexus",PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSENGINELIB","NEXUS engine library directory","/usr/lib",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSCPPINC","NEXUS Soleil C++ interface include directory","/usr/include",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("NEXUSCPPLIB","NEXUS Soleil C++ interface library directory","/usr/lib",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("YATINC","YAT include directory","/usr/include",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("YATLIB","YAT library directory","/usr/lib",
-         PathVariable.PathAccept))
-vars.Add(PathVariable("CDMACORELIB","CDMA core library directory","/usr/lib",
-                      PathVariable.PathAccept))
-vars.Add(PathVariable("CDMACOREINC","CMDA core include directory","/usr/include",
-                      PathVariable.PathAccept))
 
 vars.Add("SOVERSION","ABI version of the core libraray","")
 vars.Add("VERSION","API version of the core libraray","")
@@ -73,10 +57,7 @@ vars.Add("PREFIX","Installation prefix","/usr")
 
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
-env.AppendUnique(CPPPATH=[env["YATINC"],"include",env["CDMACOREINC"],
-                 env["NEXUSCPPINC"],env["NEXUSENGINEINC"]])
-env.AppendUnique(LIBPATH=[env["YATLIB"],env["NEXUSCPPLIB"],env["CDMACORELIB"]
-                 ,env["NEXUSENGINEINC"]])
+env.ParseConfig('pkg-config --cflags --libs cdmaengine_nexus')
 
 #=====================here we need some autoconfiguration======================
 conf = Configure(env)
