@@ -135,7 +135,11 @@ private:
   void open(bool openNode = true );
 };
 
+#ifdef CDMA_STD_SMART_PTR
+typedef std::shared_ptr<DataItem> DataItemPtr;
+#else
 typedef yat::SharedPtr<DataItem, yat::Mutex> DataItemPtr;
+#endif
 
 } // namespace nexus
 } // namespace cdma
