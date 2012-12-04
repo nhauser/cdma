@@ -9,6 +9,9 @@
 //******************************************************************************
 package org.cdma.engine.nexus.array;
 
+import java.util.logging.Level;
+
+import org.cdma.Factory;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IIndex;
@@ -21,7 +24,6 @@ public final class NexusSliceIterator implements ISliceIterator {
     private IArray              mArray;         // array of the original shape containing all slices
     private int[]               mDimension;     // shape of the slice
     private IArray              mSlice;         // array that will be returned when asking getArrayNext
-    private boolean             mFastMode;      // flag toggling in fast mode: i.e when true the returned IArray will be shared among references
 
     /// Constructor
     /**
@@ -52,16 +54,18 @@ public final class NexusSliceIterator implements ISliceIterator {
         // final dimensions so that we can use the getCurrentCounter method
         // to create an origin.
 
-        IIndex index = mArray.getIndex();
+		try {
+			IIndex index = mArray.getIndex().clone();
+			
+	        // As we get a reference on array's IIndex we directly modify it
+	        index.setOrigin(origin);
+	        index.setStride(stride);
+	        index.setShape(rangeList);
 
-        // As we get a reference on array's IIndex we directly modify it
-        index.setOrigin(origin);
-        index.setStride(stride);
-        index.setShape(rangeList);
-
-        mIterator = new NexusArrayIterator(mArray, index, false);
-        mFastMode = false;
-
+	        mIterator = new NexusArrayIterator(mArray, index, false);
+		} catch (CloneNotSupportedException e) {
+			Factory.getLogger().log(Level.SEVERE, "Unable to initialize slice iterator!", e);
+		}
     }
 
     /// Public methods
@@ -73,10 +77,6 @@ public final class NexusSliceIterator implements ISliceIterator {
         }
         else {
             updateSlice();
-        }
-        // If fast iteration mode is ON then all returned arrays will be shared
-        if( ! mFastMode ) {
-            mSlice = mSlice.copy(false);
         }
         return mSlice;
     }
@@ -105,14 +105,6 @@ public final class NexusSliceIterator implements ISliceIterator {
         return mArray.getFactoryName();
     }
     
-    public boolean getFastMode() {
-        return mFastMode;
-    }
-    
-    public void setFastMode( boolean activate ) {
-        mFastMode = activate;
-    }
-
     // ---------------------------------------------------------
     /// Private methods
     // ---------------------------------------------------------
