@@ -117,7 +117,12 @@ public:
   //@} --------------------------------
 };
 
+#ifdef CDMA_STD_SMART_PTR
+typedef std::shared_ptr<Group> GroupPtr;
+#else
 typedef yat::SharedPtr<Group, yat::Mutex> GroupPtr;
+#endif
+
 
 } // namespace nexus
 } // namespace cdma
