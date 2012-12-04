@@ -2,7 +2,6 @@ package org.cdma.plugin.archiving.navigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.cdma.exception.DimensionNotSupportedException;
@@ -16,12 +15,8 @@ import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.archiving.VcFactory;
-import org.cdma.plugin.archiving.array.VcArray;
 import org.cdma.plugin.xml.navigation.XmlContainer;
 import org.cdma.utils.Utilities.ModelType;
-
-import fr.soleil.commonarchivingapi.ArchivingTools.Tools.DbData;
-import fr.soleil.commonarchivingapi.ArchivingTools.Tools.NullableTimedData;
 
 public class VcDataItem extends XmlContainer implements IDataItem {
 
