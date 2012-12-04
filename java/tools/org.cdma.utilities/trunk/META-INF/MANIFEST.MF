@@ -11,6 +11,8 @@ Import-Package: org.jdom,
  org.osgi.framework;resolution:=optional
 Export-Package: org.cdma.utilities,
  org.cdma.utilities.configuration,
- org.cdma.utilities.performance
+ org.cdma.utilities.performance,
+ org.cdma.utilities.memory,
+ org.cdma.utilities.conversion
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.cdma.internal.Activator
