@@ -81,8 +81,8 @@ Array::Array(T scalar_value)
   shape.push_back(1);
   std::vector<int> start;
   start.push_back(0);
-  m_data_impl = new DefaultArrayStorage<T>(data_ptr, shape);
-  m_view_ptr = new View(shape, start);
+  m_data_impl = IArrayStoragePtr(new DefaultArrayStorage<T>(data_ptr, shape));
+  m_view_ptr = IViewPtr(new View(shape, start));
 }
 
 //----------------------------------------------------------------------------
