@@ -93,7 +93,11 @@ IDataItemPtr Dataset::getItemFromPath(const yat::String& path, const yat::String
   CDMA_FUNCTION_TRACE("cdma::nexus::Dataset::getItemFromPath(const yat::String&, const yat::String&)");
   CDMA_TRACE("path: " << path);
 
+#ifdef CDMA_STD_SMART_PTR
+  if(!m_file_handle)
+#else
   if( m_file_handle.is_null() )
+#endif
     THROW_NO_DATA("No NeXus file", "cdma_nexus::Dataset::getItemFromPath");
   
   std::map<std::string, IDataItemPtr>::iterator it = m_item_map.find(concatPath(path, name));
@@ -103,7 +107,11 @@ IDataItemPtr Dataset::getItemFromPath(const yat::String& path, const yat::String
   try
   {
     NexusFileAccess auto_open(m_file_handle);
+#ifdef CDMA_STD_SMART_PTR
+    if(! m_file_handle)
+#else
     if( m_file_handle.is_null() )
+#endif
       THROW_NO_DATA("No NeXus file", "cdma_nexus::Dataset::getItemFromPath");
 
     m_file_handle->OpenGroupPath( PSZ(path) );
@@ -122,7 +130,7 @@ IDataItemPtr Dataset::getItemFromPath(const yat::String& path, const yat::String
       return it->second;
       
     // Create corresponding object and stores it
-    IDataItemPtr ptrItem = new DataItem(this, *info, strPath);
+    IDataItemPtr ptrItem(new DataItem(this, *info, strPath));
     m_item_map[strPath] = ptrItem;
     m_file_handle->CloseDataSet();
     return ptrItem;
@@ -138,7 +146,11 @@ IDataItemPtr Dataset::getItemFromPath(const yat::String& path, const yat::String
 //---------------------------------------------------------------------------
 IGroupPtr Dataset::getGroupFromPath(const std::string &groupPath)
 {
+#ifdef CDMA_STD_SMART_PTR
+  if(! m_file_handle)
+#else
   if( m_file_handle.is_null() )
+#endif
     THROW_NO_DATA("No NeXus file", "cdma_nexus::Dataset::getGroupFromPath");
 
   yat::String path = groupPath;
@@ -151,7 +163,11 @@ IGroupPtr Dataset::getGroupFromPath(const std::string &groupPath)
     // get handle and access on file
     NexusFileAccess auto_open(m_file_handle);
 
+#ifdef CDMA_STD_SMART_PTR
+    if( !m_file_handle)
+#else
     if( m_file_handle.is_null() )
+#endif
       THROW_NO_DATA("No NeXus file", "cdma_nexus::Dataset::getGroupFromPath");
   
     // Open the path
@@ -169,7 +185,7 @@ IGroupPtr Dataset::getGroupFromPath(const std::string &groupPath)
       return it->second;
 
     // Create corresponding object and stores it
-    IGroupPtr ptrGroup = new Group(this, path);
+    IGroupPtr ptrGroup(new Group(this, path));
     m_group_map[path] = ptrGroup;
     return ptrGroup;
   }
@@ -287,14 +303,14 @@ IContainerPtrList Dataset::privFindContainer(const std::string& input_path, bool
       if( (*cit)->IsDataSet() )
       {
         CDMA_TRACE("Add matching dataset :" << (*cit)->ItemName());
-        IDataItemPtr ptrItem = new DataItem(this, m_file_handle->CurrentGroupPath() + (*cit)->ItemName());
+        IDataItemPtr ptrItem(new DataItem(this, m_file_handle->CurrentGroupPath() + (*cit)->ItemName()));
         listContainer.push_back(ptrItem);
       }
 
       if( (*cit)->IsGroup() )
       {
         CDMA_TRACE("Add matching group :" << (*cit)->ItemName());
-        IGroupPtr ptrGroup = new Group(this, m_file_handle->CurrentGroupPath(), (*cit)->ItemName());
+        IGroupPtr ptrGroup(new Group(this, m_file_handle->CurrentGroupPath(), (*cit)->ItemName()));
         listContainer.push_back(ptrGroup);
       }
     }
@@ -338,7 +354,11 @@ IContainerPtrList Dataset::findAllContainerByPath(const std::string& input_path,
 {
   CDMA_FUNCTION_TRACE("cdma::nexus::Dataset::findAllContainerByPath");
 
+#ifdef CDMA_STD_SMART_PTR
+  if( !m_file_handle)
+#else
   if( m_file_handle.is_null() )
+#endif
     THROW_NO_DATA("No NeXus file", "cdma_nexus::Dataset::getGroupFromPath");
 
   // Remove the first character if it's a '/' 
