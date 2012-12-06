@@ -90,7 +90,7 @@ Factory::~Factory()
 cdma::IDatasetPtr Factory::openDataset(const std::string& location)
 throw ( cdma::Exception )
 {
-  return new Dataset( yat::URI(location), this );
+  return cdma::IDatasetPtr(new Dataset( yat::URI(location), this ));
 }
 
 //----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ std::string Factory::getPathSeparator()
 //----------------------------------------------------------------------------
 cdma::IDataSourcePtr Factory::getPluginURIDetector()
 {
-  return new DataSource(this);
+  return cdma::IDataSourcePtr(new DataSource(this));
 }
 
 //----------------------------------------------------------------------------
