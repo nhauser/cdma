@@ -44,6 +44,7 @@ TypeID DataItemWrapper::type() const
 }
 
 //================overloaded scalar get template===============================
+/*
 template<> std::string DataItemWrapper::get<std::string>() const
 {
     std::string s = ptr()->readString();
@@ -52,6 +53,7 @@ template<> std::string DataItemWrapper::get<std::string>() const
     size_t ds = s.size()-this->size();
     return std::string(s.begin(),s.end()-ds);
 }
+*/
 
 //-----------------------------------------------------------------------------
 std::list<IDimensionPtr> DataItemWrapper::dimensions() const

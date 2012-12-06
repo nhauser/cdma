@@ -24,7 +24,7 @@
 #define __WRAPPERHELPERS_HPP__
 
 #include<boost/python.hpp>
-#include<cdma/array/Array.h>
+#include<cdma/array/IArray.h>
 #include<typeinfo>
 #include<map>
 
@@ -51,22 +51,6 @@ using namespace boost::python;
 void init_numpy();
 
 
-
-
-//-----------------------------------------------------------------------------
-/*! 
-\ingroup utility_classes
-\brief convert container to tuple
-
-Function converting a standard c++ container to a Python tuple
-\param c C++ container
-\return Python tuple
-*/
-template<typename CTYPE> tuple cont2tuple(const CTYPE &c)
-{
-    return tuple(cont2list(c));
-}
-
 //-----------------------------------------------------------------------------
 /*!
 \ingroup utility_classes
@@ -92,6 +76,20 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
     }
 
     return l;
+}
+
+//-----------------------------------------------------------------------------
+/*! 
+\ingroup utility_classes
+\brief convert container to tuple
+
+Function converting a standard c++ container to a Python tuple
+\param c C++ container
+\return Python tuple
+*/
+template<typename CTYPE> tuple cont2tuple(const CTYPE &c)
+{
+    return tuple(cont2list(c));
 }
 
 //-----------------------------------------------------------------------------

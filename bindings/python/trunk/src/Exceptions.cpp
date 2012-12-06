@@ -30,11 +30,10 @@ extern "C"{
 
 using namespace boost::python;
 
-#include<cdma/exception/Exception.h>
-using namespace cdma;
 
 #include "Exceptions.hpp"
 
+#define CDMA_EXCEPTION_NAME(EXNAME) EXNAME ## Impl
 #define ERR_TRANSLATOR_NAME(CDMAETYPE) CDMAETYPE ## _translator
 #define ERR_PTR_NAME(CDMAETYPE) Py ## CDMAETYPE ## Ptr
 #define ERR_OBJ_NAME(CDMAETYPE) Py ## CDMAETYPE
@@ -56,53 +55,53 @@ using namespace cdma;
 #define ERR_REGISTRATION(CDMAETYPE)\
     register_exception_translator<CDMAETYPE>(ERR_TRANSLATOR_NAME(CDMAETYPE)); 
 
-ERR_TRANSLATOR(BadArrayTypeException);
-ERR_TRANSLATOR(DimensionNotSupportedException);
-ERR_TRANSLATOR(DivideByZeroException);
-ERR_TRANSLATOR(DuplicationException);
-ERR_TRANSLATOR(FileAccessException);
-ERR_TRANSLATOR(FitterException);
-ERR_TRANSLATOR(InvalidPointerException);
-ERR_TRANSLATOR(InvalidRangeException);
-ERR_TRANSLATOR(NoDataException);
-ERR_TRANSLATOR(NoResultException);
-ERR_TRANSLATOR(NoSignalException);
-ERR_TRANSLATOR(NotImplementedException);
-ERR_TRANSLATOR(ShapeNotMatchException);
-ERR_TRANSLATOR(TooManyResultsException);
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(BadArrayTypeException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(DimensionNotSupportedException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(DivideByZeroException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(DuplicationException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(FileAccessException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(FitterException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(InvalidPointerException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(InvalidRangeException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(NoDataException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(NoResultException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(NoSignalException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(NotImplementedException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(ShapeNotMatchException));
+ERR_TRANSLATOR(CDMA_EXCEPTION_NAME(TooManyResultsException));
 
 
 void exception_registration()
 {
-    ERR_OBJECT_DECL(BadArrayTypeException);
-    ERR_OBJECT_DECL(DimensionNotSupportedException);
-    ERR_OBJECT_DECL(DivideByZeroException);
-    ERR_OBJECT_DECL(DuplicationException);
-    ERR_OBJECT_DECL(FileAccessException);
-    ERR_OBJECT_DECL(FitterException);
-    ERR_OBJECT_DECL(InvalidPointerException);
-    ERR_OBJECT_DECL(InvalidRangeException);
-    ERR_OBJECT_DECL(NoDataException);
-    ERR_OBJECT_DECL(NoResultException);
-    ERR_OBJECT_DECL(NoSignalException);
-    ERR_OBJECT_DECL(NotImplementedException);
-    ERR_OBJECT_DECL(ShapeNotMatchException);
-    ERR_OBJECT_DECL(TooManyResultsException);
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(BadArrayTypeException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(DimensionNotSupportedException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(DivideByZeroException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(DuplicationException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(FileAccessException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(FitterException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(InvalidPointerException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(InvalidRangeException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(NoDataException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(NoResultException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(NoSignalException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(NotImplementedException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(ShapeNotMatchException));
+    ERR_OBJECT_DECL(CDMA_EXCEPTION_NAME(TooManyResultsException));
     
-    ERR_REGISTRATION(BadArrayTypeException);
-    ERR_REGISTRATION(DimensionNotSupportedException);
-    ERR_REGISTRATION(DivideByZeroException);
-    ERR_REGISTRATION(DuplicationException);
-    ERR_REGISTRATION(FileAccessException);
-    ERR_REGISTRATION(FitterException);
-    ERR_REGISTRATION(InvalidPointerException);
-    ERR_REGISTRATION(InvalidRangeException);
-    ERR_REGISTRATION(NoDataException);
-    ERR_REGISTRATION(NoResultException);
-    ERR_REGISTRATION(NoSignalException);
-    ERR_REGISTRATION(NotImplementedException);
-    ERR_REGISTRATION(ShapeNotMatchException);
-    ERR_REGISTRATION(TooManyResultsException);
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(BadArrayTypeException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(DimensionNotSupportedException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(DivideByZeroException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(DuplicationException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(FileAccessException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(FitterException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(InvalidPointerException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(InvalidRangeException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(NoDataException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(NoResultException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(NoSignalException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(NotImplementedException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(ShapeNotMatchException));
+    ERR_REGISTRATION(CDMA_EXCEPTION_NAME(TooManyResultsException));
 
 }
 

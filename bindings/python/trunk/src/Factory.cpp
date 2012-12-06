@@ -29,8 +29,7 @@
 
 using namespace boost::python;
 
-#include<cdma/Factory.h>
-#include<cdma/IFactory.h>
+#include<cdma/factory/Factory.h>
 #include<cdma/navigation/IDataset.h>
 
 using namespace cdma;
@@ -75,10 +74,8 @@ class FactoryWrapper
         */
         static DatasetWrapper open_dataset(const std::string &path) 
         {
-            std::pair<IDatasetPtr,IFactoryPtr> p =
-                Factory::openDataset(yat::URI(path)); 
-            IDatasetPtr dataset = p.first;
-            return DatasetWrapper(p.first,p.second);
+            IDatasetPtr p = Factory::openDataset(path); 
+            return DatasetWrapper(p);
         }
 };
 

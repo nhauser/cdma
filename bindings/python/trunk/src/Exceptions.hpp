@@ -24,6 +24,9 @@
 #ifndef __EXCEPTIONS_HPP__
 #define __EXCEPTIONS_HPP__
 
+#include<cdma/exception/impl/ExceptionImpl.h>
+
+using namespace cdma;
 
 //------------------------------------------------------------------------------
 /*! 
