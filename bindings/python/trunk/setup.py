@@ -66,7 +66,7 @@ try:
 except:
     print "Environment variable CC not found!"
 
-compile_args = ["-std=c++0x","-g","-O2"]
+compile_args = ["-std=c++0x","-g","-O0"]
 #now we try to compile the test code
 try:
     print "run compiler test for nullptr ..."

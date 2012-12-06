@@ -85,7 +85,8 @@ ArrayWrapper DataItemWrapper::get(const std::vector<size_t> &offset,
         _shape[i]  = shape[i];
     }
 
-    return ArrayWrapper(ptr()->getData(_offset,_shape)->deepCopy());
+    //create a new copy of the data array
+    return ArrayWrapper(ptr()->getData(_offset,_shape));
 }
 
 
