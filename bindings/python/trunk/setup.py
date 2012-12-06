@@ -31,8 +31,29 @@ from distutils.fancy_getopt import FancyGetopt
 from distutils.fancy_getopt import fancy_getopt
 from distutils.ccompiler import new_compiler
 from distutils.unixccompiler import UnixCCompiler
+from numpy.distutils import misc_util
 
 import commands
+
+cliopts =[]
+cliopts.append(("h5libdir=",None,"HDF5 library path"))
+cliopts.append(("h5incdir=",None,"HDF5 include path"))
+cliopts.append(("h5libname=",None,"HDF5 library name"))
+cliopts.append(("nxlibdir=",None,"PNI NX library path"))
+cliopts.append(("nxincdir=",None,"PNI NX include path"))
+cliopts.append(("utlibdir=",None,"PNI utilities library path"))
+cliopts.append(("utincdir=",None,"PNI utilities include path"))
+cliopts.append(("numpyincdir=",None,"Numpy include path"))
+cliopts.append(("noforeach",None,"Set noforeach option for C++"))
+cliopts.append(("debug",None,"append debuging options"))
+
+op = FancyGetopt(option_table=cliopts)
+args,opts = op.getopt()
+
+debug = False
+for o,v in op.get_option_order():
+    if o == "debug":
+        debug = True
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
@@ -40,49 +61,18 @@ def pkgconfig(*packages, **kw):
         kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
 
     kw["libraries"].append("boost_python")
+    
+    kw["include_dirs"].append(misc_util.get_numpy_include_dirs()[0])
+    try:
+        kw["extra_compile_args"].append('-std=c++0x')
+    except:
+        kw["extra_compile_args"] = ["-std=c++0x"]
+
+    if debug:
+        kw["extra_compile_args"].append('-O0')
+        kw["extra_compile_args"].append('-g')
     return kw
 
-
-#add here some options to handle additional compiler parameters
-cliopts =[]
-cliopts.append(("noforeach",None,"Set noforeach option for C++"))
-
-op = FancyGetopt(option_table=cliopts)
-args,opts = op.getopt()
-
-include_dirs = []
-library_dirs = []
-
-
-try: include_dirs.append(opts.numpyincdir)
-except:pass
-
-#in the end we need to add the Python include directory
-include_dirs.append(get_python_inc())
-
-cc = new_compiler()
-try:
-    cc.set_executables(compiler_so = os.environ['CC'])
-except:
-    print "Environment variable CC not found!"
-
-compile_args = ["-std=c++0x","-g","-O0"]
-#now we try to compile the test code
-try:
-    print "run compiler test for nullptr ..."
-    cc.compile(['ccheck/nullptr_check.cpp'],extra_preargs=compile_args)
-    print "compiler supports nullptr - passed!"
-except:
-    print "no nullptr support!"
-    compile_args.append("-Dnullptr=NULL")
-
-try:
-    print "run compiler check for foreach loops ..."
-    cc.compile(['ccheck/foreach_check.cpp'],extra_preargs=compile_args)
-    print "compiler supports foreach loops!"
-except:
-    print "no support for foreach loops!"
-    compile_args.append("-DNOFOREACH")
 
 
 files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
@@ -92,9 +82,7 @@ files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
          "src/DimensionWrapper.cpp","src/DimensionManager.cpp",
          "src/Types.cpp","src/TupleIterator.cpp"]
 
-cdma = Extension("cdmacore",files,
-                 extra_compile_args = compile_args,
-                 **pkgconfig('cdmacore'))
+cdma = Extension("cdmacore",files,language="c++",**pkgconfig('cdmacore'))
 
 setup(name="cdma-python",
         author="Eugen Wintersberger",

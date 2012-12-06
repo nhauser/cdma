@@ -34,7 +34,9 @@ extern "C"{
 }
 /*! 
 \ingroup utility_classes
-\brief enum class with type IDs.
+\brief enum class with type IDs
+
+This enum class provides CDMA type IDs.
 */
 enum class TypeID { BYTE,   //!< signded char (8Bit)
                     UBYTE,  //!< unsigned char (8Bit)
