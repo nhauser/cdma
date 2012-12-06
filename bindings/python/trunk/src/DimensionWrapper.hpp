@@ -82,7 +82,7 @@ class DimensionWrapper
         Return the size (number of elements) of the dimension.
         \return dimension size
         */
-        size_t size() const { return _ptr->getLength(); }
+        size_t size() const { return _ptr->getSize(); }
 
         //---------------------------------------------------------------------
         /*! 
@@ -110,7 +110,7 @@ class DimensionWrapper
         Return the unit of the dimension as string. 
         \return unit string
         */
-        std::string unit() const { return _ptr->getUnitsString(); }
+        std::string unit() const { return _ptr->getUnit(); }
 
         //----------------------------------------------------------------------
         /*! 
