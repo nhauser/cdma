@@ -102,7 +102,7 @@ class DataItemWrapper:public ContainerWrapper<IDataItemPtr>
         Return the unit of the data stored in this item as string.
         \return unit 
         */
-        std::string unit() const { return ptr()->getUnitsString(); }
+        std::string unit() const { return ptr()->getUnit(); }
 
         //---------------------------------------------------------------------
         /*!

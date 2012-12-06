@@ -97,7 +97,7 @@ class AttributeWrapper
         all methods provideded by the IAttribute interface to obtain data. 
         \return value of type T
         */
-        template<typename T> T get() const { return 0;}
+        template<typename T> T get() const { return _ptr->getValue<T>();}
 
         //---------------------------------------------------------------------
         /*! 

@@ -25,9 +25,9 @@
 #define __SELECTION_HPP__
 
 #include <iostream>
-#include <cdma/exception/Exception.h>
 #include <boost/python.hpp>
 #include <boost/python/slice.hpp>
+#include <cdma/Common.h>
 
 #include "Types.hpp"
 #include "Exceptions.hpp"
@@ -232,7 +232,7 @@ Selection create_selection(const WTYPE &o,const tuple &t)
     bool has_ellipsis = false;
     size_t ellipsis_size = 0;
     if(len(t) > (ssize_t)o.rank())
-        throw_cdma_exception<ShapeNotMatchException>(
+        throw_cdma_exception<ShapeNotMatchExceptionImpl>(
                 "Tuple with indices, slices, and ellipsis is longer than the "
                 "rank of the field - something went wrong here",
                 "template<typename WTYPE> Selection create_selection(const "
@@ -294,7 +294,7 @@ Selection create_selection(const WTYPE &o,const tuple &t)
     //once we are done with looping over all elemnts in the tuple we need 
     //to adjust the selection to take into account an ellipsis
     if((ellipsis_size) && (!has_ellipsis))
-        throw_cdma_exception<ShapeNotMatchException>(
+        throw_cdma_exception<ShapeNotMatchExceptionImpl>(
                 "Selection rank does not match DataItem rank",
                 "template<typename WTYPE> Selection create_selection(const "
                 "WTYPE &o,const tuple &pyselection)");

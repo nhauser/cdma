@@ -27,7 +27,7 @@
 //-----------------------------------------------------------------------------
 TypeID AttributeWrapper::type() const
 {
-    if(_ptr->isString()) return TypeID::STRING;
+    //if(_ptr->isString()) return TypeID::STRING;
     
     return typename2typeid[_ptr->getType().name()];
 }
@@ -47,22 +47,28 @@ size_t AttributeWrapper::rank() const
 }
 
 //------------------------------------------------------------------------------
+/*
 template<> float AttributeWrapper::get<float>() const
 {
     return _ptr->getFloatValue();
 }
+*/
 
 //------------------------------------------------------------------------------
+/*
 template<> int AttributeWrapper::get<int>() const
 {
     return _ptr->getIntValue();
 }
+*/
 
 //------------------------------------------------------------------------------
+/*
 template<> std::string AttributeWrapper::get<std::string>() const
 {
     return _ptr->getStringValue();
 }
+*/
 
 //-----------------------------------------------------------------------------
 std::string AttributeWrapper::__str__() const

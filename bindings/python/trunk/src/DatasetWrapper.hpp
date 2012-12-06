@@ -31,8 +31,7 @@
 
 using namespace boost::python;
 
-#include<cdma/Factory.h>
-#include<cdma/IFactory.h>
+#include<cdma/factory/Factory.h>
 #include<cdma/navigation/IDataset.h>
 
 using namespace cdma;
@@ -51,22 +50,19 @@ class DatasetWrapper
 {
     private:
         IDatasetPtr _dataset; //! pointer to the dataset
-        IFactoryPtr _factory; //! pointer to the factory
         GroupWrapper _root_group; //! pointer to the root group of the dataset
     public:
         //===============constructors and destructor===========================
         //! default constructor
         DatasetWrapper():
             _dataset(nullptr),
-            _factory(nullptr),
             _root_group()
         {}
 
         //---------------------------------------------------------------------
         //! standard constructor
-        DatasetWrapper(IDatasetPtr dptr,IFactoryPtr fptr):
+        DatasetWrapper(IDatasetPtr dptr):
             _dataset(dptr),
-            _factory(fptr),
             _root_group(GroupWrapper(_dataset->getRootGroup()))
         { }
 
@@ -80,7 +76,6 @@ class DatasetWrapper
         {
             if(this == &ds) return *this;
             _dataset = ds._dataset;
-            _factory = ds._factory;
             _root_group = ds._root_group;
 
             return *this;
