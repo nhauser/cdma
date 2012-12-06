@@ -16,7 +16,13 @@
     <item key="direction">
         <path>/{NXentry}/{NXdata}/channel3*</path>
     </item>
-    <item key="crystal_interreticular_distance">
+    <item key="cristal_inter_reticular_distance">
         <path>/{NXentry}/QuickEXAFS/cristal_inter_reticular_distance</path>
+    </item>
+    <item key="delta_theta0">
+        <path>/{NXentry}/QuickEXAFS/delta_theta_0</path>
+    </item>
+    <item key="theta">
+        <path>/{NXentry}/QuickEXAFS/theta</path>
     </item>
 </map-def>
