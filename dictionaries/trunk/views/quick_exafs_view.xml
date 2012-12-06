@@ -5,5 +5,7 @@
 	<item key="intensity1"/>    <!-- current after sample -->
 	<item key="intensity2"/>    <!-- current after sample -->
 	<item key="direction"/>    <!-- current after sample -->
-	<item key ="crystal_interreticular_distance"/>
+	<item key ="cristal_inter_reticular_distance"/>
+	<item key ="delta_theta0"/>
+	<item key ="theta"/>
 </data-def>
