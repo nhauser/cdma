@@ -25,7 +25,7 @@
 #define __ARRAYWRAPPER_HPP__
 
 #include <algorithm>
-#include<cdma/array/Array.h>
+#include<cdma/array/IArray.h>
 #include "Types.hpp"
 
 using namespace cdma;
@@ -41,7 +41,7 @@ exposed to Python but is within the process of harmonizing the interface between
 class ArrayWrapper
 {
     private:
-        ArrayPtr _ptr; //!< pointer to the wrapped array object
+        IArrayPtr _ptr; //!< pointer to the wrapped array object
     public:
         //================constructors and destructor==========================
         //! default constructor
@@ -49,7 +49,7 @@ class ArrayWrapper
 
         //---------------------------------------------------------------------
         //! standard constructor
-        ArrayWrapper(ArrayPtr ptr):_ptr(ptr) {}
+        ArrayWrapper(IArrayPtr ptr):_ptr(ptr) {}
 
         //---------------------------------------------------------------------
         //! copy constructor
