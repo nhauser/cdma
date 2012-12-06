@@ -40,9 +40,8 @@ def create_link_libname(env):
     rstr = env["LIBPREFIX"]+env["LIBNAME"]+env["SHLIBSUFFIX"]
     env.Append(LIBLINKNAME = rstr)
         
-    
-#==================================================================================
-
+#======================add options=============================================
+AddOption("--with-cpp11",dest="with_cpp11",action="store_true",default=False)
 
 #===================set build variables========================================
 vars = Variables("BuildConfig.py")
@@ -58,6 +57,9 @@ vars.Add("PREFIX","Installation prefix","/usr")
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
 env.ParseConfig('pkg-config --cflags --libs cdmaengine_nexus')
+
+if GetOption("with_cpp11"):
+    env.AppendUnique(CPPFLAGS=["-std=c++0x"])
 
 #=====================here we need some autoconfiguration======================
 conf = Configure(env)
