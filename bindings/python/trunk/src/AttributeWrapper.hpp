@@ -81,7 +81,7 @@ class AttributeWrapper
 
         //---------------------------------------------------------------------
         //! return the size of the attribute
-        size_t size() const { return _ptr->getLength(); }
+        size_t size() const { return _ptr->getSize(); }
 
         //---------------------------------------------------------------------
         //! return the name of the attribute
