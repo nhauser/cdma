@@ -38,6 +38,7 @@ object cdma2numpy_array(const ArrayWrapper &array,bool copyflag)
     
     //set the dimension of the new array
     npy_intp *dims = new npy_intp[array.rank()]; 
+    std::vector<size_t> shape = array.shape();
     for(size_t i=0;i<array.rank();i++) 
         dims[i] = array.shape()[i];//[array.rank()-i-1];
 

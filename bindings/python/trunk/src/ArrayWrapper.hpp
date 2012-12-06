@@ -75,7 +75,7 @@ class ArrayWrapper
         Return the number of dimensios of the array.
         \return number of dimension
         */
-        size_t rank() const { return _ptr->getRank(); }
+        size_t rank() const { return size_t(_ptr->getRank()); }
 
         //---------------------------------------------------------------------
         /*! 
@@ -84,7 +84,7 @@ class ArrayWrapper
         returns the number of elements stored in the array.
         \return array size
         */
-        size_t size() const { return _ptr->getSize(); }
+        size_t size() const { return size_t(_ptr->getSize()); }
 
         //----------------------------------------------------------------------
         /*! 
@@ -95,9 +95,10 @@ class ArrayWrapper
         */
         std::vector<size_t> shape() const 
         {   
-            std::vector<size_t> s;
+            std::vector<size_t> s(this->rank());
+            std::vector<int> os = _ptr->getShape();
 
-            std::copy(_ptr->getShape().begin(),_ptr->getShape().end(),s.begin());
+            std::copy(os.begin(),os.end(),s.begin());
             return s;
         }
 
