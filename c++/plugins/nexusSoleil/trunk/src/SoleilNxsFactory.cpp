@@ -100,7 +100,7 @@ throw ( cdma::Exception )
     PluginConfigManager::load( plugin_id(), "cdma_nexussoleil_config.xml" );
   }
 */
-  return new Dataset( yat::URI(location_string), this );
+  return cdma::IDatasetPtr(new Dataset( yat::URI(location_string), this ));
 }
 
 //----------------------------------------------------------------------------
@@ -142,7 +142,7 @@ std::string Factory::getPathSeparator()
 //----------------------------------------------------------------------------
 IDataSourcePtr Factory::getPluginURIDetector()
 {
-  return new DataSource(this);
+  return IDataSourcePtr(new DataSource(this));
 }
 
 //----------------------------------------------------------------------------

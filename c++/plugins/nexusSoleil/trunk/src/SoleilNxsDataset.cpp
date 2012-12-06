@@ -97,7 +97,11 @@ cdma::ILogicalGroupPtr Dataset::getLogicalRoot()
 {
   FUNCTION_TRACE("Dataset::getLogicalRoot");
 
+#ifdef CDMA_STD_SMART_PTR
+  if (!m_log_root)
+#else
   if( m_log_root.is_null() )
+#endif
   {
     CDMA_TRACE("Creating Dictionary detector");
     DictionaryDetector detector ( m_file_handle );

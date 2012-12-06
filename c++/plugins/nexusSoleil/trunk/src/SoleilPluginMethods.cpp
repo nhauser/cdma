@@ -60,9 +60,8 @@ void TestMethod::execute(Context& ctx) throw (cdma::Exception)
   IDataItemPtr dataitem_ptr = ctx.getTopDataItem();
   double value = dataitem_ptr->getValue<double>();
 
-  IDataItemPtr new_data_item_ptr = new SimpleDataItem(ctx.getDataset(),
-                                                        new cdma::Array(value * 2),
-                                                        ctx.getKey()->getName());
+  IDataItemPtr new_data_item_ptr(new SimpleDataItem(ctx.getDataset(),
+          cdma::IArrayPtr(new cdma::Array(value * 2)),ctx.getKey()->getName()));
 
   ctx.clearDataItems();
   ctx.pushDataItem(new_data_item_ptr);
