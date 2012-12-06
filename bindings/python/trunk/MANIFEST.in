@@ -1,5 +1,6 @@
 include src/*.hpp
 include src/*.cpp
+include LICENSE
 include doc/examples/*.py
 include ccheck/*.cpp
 recursive-include doc/html *
