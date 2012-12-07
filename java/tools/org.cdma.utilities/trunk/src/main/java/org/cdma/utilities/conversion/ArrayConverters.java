@@ -1,5 +1,7 @@
 package org.cdma.utilities.conversion;
 
+import org.cdma.utilities.memory.ArrayTools;
+
 /**
  * Tools to convert cells of a String array into an array of another type with same dimension.
  * @author rodriguez
@@ -11,7 +13,7 @@ public final class ArrayConverters {
 	 * @param clazz of expected output array's element
 	 * @return a StringArrayConverter instance
 	 */
-	public static StringArrayConverter detectConverter( Class<?> clazz) {
+	public static StringArrayConverter detectConverter( Class<?> clazz ) {
 		StringArrayConverter result = null;
 		if( clazz.equals( Integer.TYPE ) ) {
 			result = new StringArrayToIntArray();
@@ -50,9 +52,17 @@ public final class ArrayConverters {
 		public void convert( String[] source, Object destination );
 		
 		/**
+		 * Convert a single dimensional array of primitives into an array of 
+		 * string of the same length.
+		 * @param source array of primitive
+		 * @return a newly created String[] or null if not a single-dimensional array
+		 */
+		public String[] convert( Object source );
+		
+		/**
 		 * Return the element's type of the destination array
 		 */
-		public Class<?> outputType();
+		public Class<?> primitiveType();
 	}
 	
 	/**
@@ -71,9 +81,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( int value : (int[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Integer.TYPE;
-		};
+		}
 	}
 
 	/**
@@ -92,9 +118,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( double value : (double[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Double.TYPE;
-		};
+		}
 	}
 	
 	/**
@@ -113,9 +155,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( short value : (short[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Short.TYPE;
-		};
+		}
 	}
 	
 	/**
@@ -134,9 +192,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( long value : (long[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Long.TYPE;
-		};
+		}
 	}
 	
 	/**
@@ -155,9 +229,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( byte value : (byte[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Byte.TYPE;
-		};
+		}
 	}
 	
 	/**
@@ -176,9 +266,25 @@ public final class ArrayConverters {
 		}
 
 		@Override
-		public Class<?> outputType() {
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( boolean value : (boolean[]) source ) {
+					result[index] = String.valueOf(value);
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
 			return Boolean.TYPE;
-		};
+		}
 	}
 
 }
