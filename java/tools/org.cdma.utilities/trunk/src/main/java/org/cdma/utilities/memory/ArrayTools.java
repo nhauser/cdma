@@ -1,6 +1,5 @@
 package org.cdma.utilities.memory;
 
-import org.cdma.interfaces.IIndex;
 
 public class ArrayTools {
 	/**

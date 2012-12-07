@@ -31,7 +31,7 @@ public class StringArrayToPrimitveArray {
 	 */
 	public StringArrayToPrimitveArray(Object[] array, int[] shape, StringArrayConverter converter) {
 		mSource = array;
-		mClazz  = converter.outputType();
+		mClazz  = converter.primitiveType();
 		mShape  = shape;
 		mTarget = null;
 		mConverter = converter;
