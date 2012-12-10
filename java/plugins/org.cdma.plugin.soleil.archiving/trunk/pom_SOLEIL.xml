@@ -17,8 +17,8 @@
     This project is Soleil's Archiving plugin for the CDMA.
     </description>
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.archiving/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.archiving/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.archiving/trunk</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.archiving/trunk</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>
