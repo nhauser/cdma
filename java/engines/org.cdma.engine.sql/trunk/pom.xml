@@ -17,8 +17,8 @@
    </description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engines/sql/trunk</connection> 
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engines/sql/trunk</developerConnection> 
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</connection> 
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</developerConnection> 
 	</scm>
 	
 	<dependencies>
@@ -29,6 +29,7 @@
 		<dependency>
 			<groupId>org.cdma</groupId>
 			<artifactId>utilities</artifactId>
+			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

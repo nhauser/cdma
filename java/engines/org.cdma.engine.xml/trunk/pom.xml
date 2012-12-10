@@ -17,8 +17,8 @@
    </description>
    
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engines/xml/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engines/xml/trunk</developerConnection>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>
