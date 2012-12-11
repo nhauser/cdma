@@ -24,6 +24,7 @@
 #ifndef __ATTRIBUTE_MANAGER_HPP__
 #define __ATTRIBUTE_MANAGER_HPP__
 
+#include <list>
 #include<cdma/navigation/IContainer.h>
 #include "AttributeWrapper.hpp"
 #include "TupleIterator.hpp"
@@ -114,8 +115,10 @@ template<typename CPTR> class AttributeManager
         AttributeWrapper operator[](size_t i) const
         {
             size_t cnt=0;
-            for(auto iter = this->_ptr->getAttributeList().begin();
-                     iter != this->_ptr->getAttributeList().end();++iter)
+
+            std::list<IAttributePtr> alist = this->_ptr->getAttributeList();
+
+            for(auto iter = alist.begin(); iter != alist.end();++iter)
             {
                 if(cnt == i) return AttributeWrapper(*iter);
                 cnt++;
@@ -147,8 +150,8 @@ template<typename CPTR> class AttributeManager
         TupleIterator create_iterator() const
         {
             list l;
-            for(auto iter = this->_ptr->getAttributeList().begin();
-                     iter != this->_ptr->getAttributeList().end();++iter)
+            std::list<IAttributePtr> alist = this->_ptr->getAttributeList();
+            for(auto iter = alist.begin(); iter != alist.end();++iter)
             {
                 l.append(AttributeWrapper(*iter));
             }
