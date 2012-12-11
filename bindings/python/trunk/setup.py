@@ -30,8 +30,15 @@ from distutils.sysconfig import get_python_inc
 from distutils.fancy_getopt import FancyGetopt
 from distutils.fancy_getopt import fancy_getopt
 from distutils.ccompiler import new_compiler
+from distutils.sysconfig import get_config_vars
 from distutils.unixccompiler import UnixCCompiler
 from numpy.distutils import misc_util
+
+
+(opt,) = get_config_vars('OPT')
+os.environ['OPT'] = " ".join(
+            flag for flag in opt.split() if flag != '-Wstrict-prototypes'
+            )
 
 import commands
 
@@ -69,6 +76,7 @@ def pkgconfig(*packages, **kw):
         kw["extra_compile_args"] = ["-std=c++0x"]
 
     if True:
+        
         kw["extra_compile_args"].append('-O0')
         kw["extra_compile_args"].append('-g')
     return kw

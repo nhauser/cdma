@@ -74,7 +74,7 @@ class FactoryWrapper
         */
         static DatasetWrapper open_dataset(const std::string &path) 
         {
-            IDatasetPtr p = Factory::openDataset(path); 
+            IDatasetPtr p(Factory::openDataset(path)); 
             return DatasetWrapper(p);
         }
 };
@@ -93,7 +93,7 @@ void wrap_factory()
         .staticmethod("cleanup")
         .staticmethod("init")
         .staticmethod("open_dataset")
-
         ;
+    
 }
 
