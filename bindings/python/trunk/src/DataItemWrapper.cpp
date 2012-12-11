@@ -21,6 +21,7 @@
  *     Author: Eugen Wintersberger <eugen.wintersberger@desy.de>
  */
 
+#include <vector>
 #include "DataItemWrapper.hpp"
 #include "AttributeManager.hpp"
 
@@ -29,8 +30,8 @@ std::vector<size_t> DataItemWrapper::shape() const
 {
     std::vector<size_t> shape;
 
-    for(auto iter = ptr()->getShape().begin();
-             iter != ptr()->getShape().end(); ++iter)
+    std::vector<int> slist = ptr()->getShape();
+    for(auto iter = slist.begin(); iter != slist.end(); ++iter)
     {
         shape.push_back(*iter);
     }

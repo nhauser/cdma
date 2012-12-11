@@ -22,6 +22,7 @@
  */
 
 #include <sstream>
+#include <list>
 
 #include "GroupWrapper.hpp"
 #include "DataItemWrapper.hpp"
@@ -34,16 +35,16 @@
 object GroupWrapper::__getitem__(const std::string &name) const
 {
     //check groups
-    for(auto iter = ptr()->getGroupList().begin();
-             iter!= ptr()->getGroupList().end();++iter)
+    std::list<IGroupPtr> glist = ptr()->getGroupList();
+    for(auto iter = glist.begin(); iter!= glist.end();++iter)
     {
         if(name == (*iter)->getShortName()) 
             return object(new GroupWrapper(*iter));
     }
 
     //check data items
-    for(auto iter = ptr()->getDataItemList().begin();
-             iter != ptr()->getDataItemList().end();++iter)
+    std::list<IDataItemPtr> dlist = ptr()->getDataItemList();
+    for(auto iter = dlist.begin(); iter != dlist.end();++iter)
     {
         if(name == (*iter)->getShortName()) 
             return object(new DataItemWrapper(*iter));
@@ -82,21 +83,21 @@ std::string GroupWrapper::__str__() const
 tuple GroupWrapper::childs() const
 {
     list l;
-    
-    for(auto iter = ptr()->getGroupList().begin();
-             iter != ptr()->getGroupList().end();++iter)
+   
+    std::list<IGroupPtr> glist = ptr()->getGroupList();
+    for(auto iter = glist.begin(); iter != glist.end();++iter)
     {
         l.append(GroupWrapper(*iter));
     }
 
-    for(auto iter = ptr()->getDataItemList().begin();
-             iter != ptr()->getDataItemList().end();++iter)
+    std::list<IDataItemPtr> ilist = ptr()->getDataItemList();
+    for(auto iter = ilist.begin(); iter != ilist.end();++iter)
     {
         l.append(DataItemWrapper(*iter));
     }
-   
-    for(auto iter = ptr()->getDimensionList().begin();
-             iter != ptr()->getDimensionList().end();++iter)
+  
+    std::list<IDimensionPtr> dlist = ptr()->getDimensionList();
+    for(auto iter = dlist.begin(); iter != dlist.end();++iter)
     {
         l.append(DimensionWrapper(*iter));
     }

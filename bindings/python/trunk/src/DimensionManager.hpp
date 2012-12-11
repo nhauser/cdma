@@ -101,8 +101,8 @@ class DimensionManager
             if(i>=size())
                 throw_PyIndexError("Axis index out of bounds!");
 
-            for(auto iter = _ptr->getDimensions(i).begin();
-                     iter != _ptr->getDimensions(i).end(); ++iter)
+            std::list<IDimensionPtr> dlist = _ptr->getDimensions(i);
+            for(auto iter = dlist.begin(); iter != dlist.end(); ++iter)
             {
                 l.append(DimensionWrapper(*iter));
             }
