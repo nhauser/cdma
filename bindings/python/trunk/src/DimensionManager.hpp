@@ -48,7 +48,7 @@ class DimensionManager
     public:
         //================constructors and destructor==========================
         //! default constructor
-        DimensionManager():_ptr(nullptr) {}
+        DimensionManager():_ptr(NULL) {}
 
         //---------------------------------------------------------------------
         //! copy constructor
@@ -101,7 +101,11 @@ class DimensionManager
             if(i>=size())
                 throw_PyIndexError("Axis index out of bounds!");
 
-            for(auto v: _ptr->getDimensions(i)) l.append(DimensionWrapper(v));
+            for(auto iter = _ptr->getDimensions(i).begin();
+                     iter != _ptr->getDimensions(i).end(); ++iter)
+            {
+                l.append(DimensionWrapper(*iter));
+            }
             return tuple(l);
         }
 
