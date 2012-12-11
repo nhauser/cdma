@@ -45,7 +45,7 @@ class ArrayWrapper
     public:
         //================constructors and destructor==========================
         //! default constructor
-        ArrayWrapper():_ptr(nullptr) {}
+        ArrayWrapper():_ptr(NULL) {}
 
         //---------------------------------------------------------------------
         //! standard constructor

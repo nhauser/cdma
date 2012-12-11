@@ -43,7 +43,7 @@ class DimensionWrapper
     public:
         //============constructors and destructor==============================
         //! default constructor
-        DimensionWrapper():_ptr(nullptr) {}
+        DimensionWrapper():_ptr(NULL) {}
 
         //---------------------------------------------------------------------
         //! copy constructor
