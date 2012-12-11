@@ -34,12 +34,20 @@
 object GroupWrapper::__getitem__(const std::string &name) const
 {
     //check groups
-    for(auto v: ptr()->getGroupList())
-        if(name == v->getShortName()) return object(new GroupWrapper(v));
+    for(auto iter = ptr()->getGroupList().begin();
+             iter!= ptr()->getGroupList().end();++iter)
+    {
+        if(name == (*iter)->getShortName()) 
+            return object(new GroupWrapper(*iter));
+    }
 
     //check data items
-    for(auto v: ptr()->getDataItemList())
-        if(name == v->getShortName()) return object(new DataItemWrapper(v));
+    for(auto iter = ptr()->getDataItemList().begin();
+             iter != ptr()->getDataItemList().end();++iter)
+    {
+        if(name == (*iter)->getShortName()) 
+            return object(new DataItemWrapper(*iter));
+    }
 
 
     //throw an exception here
@@ -75,9 +83,23 @@ tuple GroupWrapper::childs() const
 {
     list l;
     
-    for(auto v: ptr()->getGroupList()) l.append(GroupWrapper(v));
-    for(auto v: ptr()->getDataItemList()) l.append(DataItemWrapper(v));
-    for(auto v: ptr()->getDimensionList()) l.append(DimensionWrapper(v));
+    for(auto iter = ptr()->getGroupList().begin();
+             iter != ptr()->getGroupList().end();++iter)
+    {
+        l.append(GroupWrapper(*iter));
+    }
+
+    for(auto iter = ptr()->getDataItemList().begin();
+             iter != ptr()->getDataItemList().end();++iter)
+    {
+        l.append(DataItemWrapper(*iter));
+    }
+   
+    for(auto iter = ptr()->getDimensionList().begin();
+             iter != ptr()->getDimensionList().end();++iter)
+    {
+        l.append(DimensionWrapper(*iter));
+    }
 
     return tuple(l);
 }

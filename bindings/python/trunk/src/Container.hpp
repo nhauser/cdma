@@ -70,7 +70,7 @@ template<typename TPTR> class ContainerWrapper
 
         //============public constructors and destructor=======================
         //! default constructor
-        ContainerWrapper():_ptr(nullptr),attrs(nullptr) {}
+        ContainerWrapper():_ptr(NULL),attrs(NULL) {}
 
         //---------------------------------------------------------------------
         //! destructor
