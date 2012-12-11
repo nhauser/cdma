@@ -27,7 +27,10 @@
 size_t size(const Selection &sel)
 {
     size_t s=0;
-    for(auto v: sel.shape()) s+=v;
+    for(auto iter = sel.shape().begin();
+             iter != sel.shape().end();++iter)
+        s += *iter;
+
     return s;
 }
 
@@ -35,6 +38,7 @@ size_t size(const Selection &sel)
 size_t span(const Selection &sel)
 {
     size_t s=0;
+
     for(size_t i=0;i<sel.rank();i++)
         s += (sel.shape()[i]*sel.stride()[i]);
 
@@ -57,11 +61,20 @@ std::ostream &operator<<(std::ostream &o,const Selection &s)
 {
     o<<"Selection of rank: "<<s.rank()<<std::endl;
     o<<"offset: [ ";
-    for(auto &v: s.offset()) o<<v<<" ";
+    for(auto iter = s.offset().begin();
+             iter != s.offset().end(); ++iter)
+        o<<*iter<<" ";
+
     o<<std::endl<<"stride: [ ";
-    for(auto &v: s.stride()) o<<v<<" ";
+    for(auto iter = s.offset().begin();
+             iter != s.offset().end(); ++iter)
+        o<<*iter<<" ";
+
     o<<std::endl<<"shape: [ ";
-    for(auto &v: s.shape()) o<<v<<" ";
+    for(auto iter = s.shape().begin();
+             iter != s.shape().end(); ++iter)
+        o<<*iter<<" ";
+
     return o;
 }
 
