@@ -39,10 +39,10 @@ using namespace boost::python;
 #define ERR_OBJ_NAME(CDMAETYPE) Py ## CDMAETYPE
 
 #define ERR_TRANSLATOR(CDMAETYPE)\
-    PyObject *ERR_PTR_NAME(CDMAETYPE) = nullptr;\
+    PyObject *ERR_PTR_NAME(CDMAETYPE) = NULL;\
     void ERR_TRANSLATOR_NAME(CDMAETYPE)(const CDMAETYPE &error)\
     {\
-        assert(ERR_PTR_NAME(CDMAETYPE) != nullptr);\
+        assert(ERR_PTR_NAME(CDMAETYPE) != NULL);\
         object exception(error);\
         PyErr_SetObject(ERR_PTR_NAME(CDMAETYPE),exception.ptr());\
     }
