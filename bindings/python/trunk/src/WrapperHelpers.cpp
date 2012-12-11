@@ -43,7 +43,7 @@ object cdma2numpy_array(const ArrayWrapper &array,bool copyflag)
         dims[i] = array.shape()[i];//[array.rank()-i-1];
 
     //create the new numpy array
-    PyObject *nparray = nullptr;
+    PyObject *nparray = NULL;
     if(copyflag)
     {
         nparray = PyArray_SimpleNewFromData(array.rank(),
