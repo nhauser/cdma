@@ -77,7 +77,7 @@ std::string AttributeWrapper::__str__() const
     ss<<"Attribute ["<<name()<<"] type="<<typeid2numpystr[type()];
     ss<<" shape=( ";
     for(auto iter = shape().begin();iter!=shape().end();++iter)
-        ss<<v<<" ";
+        ss<<*iter<<" ";
 
     ss<<")";
     return ss.str();
