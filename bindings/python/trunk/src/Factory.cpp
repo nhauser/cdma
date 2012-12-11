@@ -23,15 +23,11 @@
 
 #include<iostream>
 #include<list>
-
 #include<boost/python.hpp>
-
-
 using namespace boost::python;
 
 #include<cdma/factory/Factory.h>
 #include<cdma/navigation/IDataset.h>
-
 using namespace cdma;
 
 #include "DatasetWrapper.hpp"

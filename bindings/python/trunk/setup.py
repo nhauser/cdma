@@ -34,7 +34,8 @@ from distutils.sysconfig import get_config_vars
 from distutils.unixccompiler import UnixCCompiler
 from numpy.distutils import misc_util
 
-
+#get rid of this stupid warning for a compiler option never needed - everything
+#else remains the same
 (opt,) = get_config_vars('OPT')
 os.environ['OPT'] = " ".join(
             flag for flag in opt.split() if flag != '-Wstrict-prototypes'
@@ -90,7 +91,8 @@ files = ["src/cdma.cpp","src/Factory.cpp","src/GroupWrapper.cpp",
          "src/DimensionWrapper.cpp","src/DimensionManager.cpp",
          "src/Types.cpp","src/TupleIterator.cpp"]
 
-cdma = Extension("cdmacore",files,language="c++",**pkgconfig('cdmacore'))
+cdma = Extension("cdmacore",files,
+                 language="c++",**pkgconfig('cdmacore'))
 
 setup(name="cdma-python",
         author="Eugen Wintersberger",

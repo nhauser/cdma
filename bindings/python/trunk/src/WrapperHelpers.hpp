@@ -29,11 +29,6 @@
 #include<map>
 #include<list>
 
-extern "C"{
-#include<Python.h>
-#include<numpy/arrayobject.h>
-}
-
 #include "Types.hpp"
 #include "Exceptions.hpp"
 #include "Selection.hpp"
