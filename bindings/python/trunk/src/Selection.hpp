@@ -231,13 +231,13 @@ Selection create_selection(const WTYPE &o,const tuple &t)
 
     bool has_ellipsis = false;
     size_t ellipsis_size = 0;
-    if(len(t) > (ssize_t)o.rank())
+    if(len(t) > (boost::python::ssize_t)o.rank())
         throw_cdma_exception<ShapeNotMatchExceptionImpl>(
                 "Tuple with indices, slices, and ellipsis is longer than the "
                 "rank of the field - something went wrong here",
                 "template<typename WTYPE> Selection create_selection(const "
                 "WTYPE &o,const tuple &pyselection)");
-    else if(len(t) != (ssize_t)o.rank())
+    else if(len(t) != (boost::python::ssize_t)o.rank())
     {
         //here we have to fix the size of an ellipsis
         ellipsis_size = o.rank()-(len(t)-1);
