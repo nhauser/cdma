@@ -95,5 +95,18 @@ static std::map<TypeID,std::string> typeid2numpystr = {
         {TypeID::FLOAT,"float32"}, {TypeID::DOUBLE,"float64"},
         {TypeID::STRING,"string"}};
 
+/*!
+\ingroup type_classes
+\brief < operator for TypeID
+
+gcc 4.4 does not implement the < operator for scoped enums. In such cases
+this overloaded version is used. This operator will only be used if the code
+is compiled with \c -DENUMBUG.
+*/
+bool operator<(TypeID a,TypeID b);
+bool operator>(TypeID a,TypeID b);
+bool operator<=(TypeID a,TypeID b);
+bool operator>=(TypeID a,TypeID b);
+
 
 #endif
