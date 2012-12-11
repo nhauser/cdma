@@ -55,7 +55,7 @@ class DatasetWrapper
         //===============constructors and destructor===========================
         //! default constructor
         DatasetWrapper():
-            _dataset(nullptr),
+            _dataset(NULL),
             _root_group()
         {}
 
