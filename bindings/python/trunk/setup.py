@@ -68,7 +68,7 @@ def pkgconfig(*packages, **kw):
     except:
         kw["extra_compile_args"] = ["-std=c++0x"]
 
-    if debug:
+    if True:
         kw["extra_compile_args"].append('-O0')
         kw["extra_compile_args"].append('-g')
     return kw
