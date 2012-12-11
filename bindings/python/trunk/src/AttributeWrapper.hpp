@@ -44,7 +44,7 @@ class AttributeWrapper
     public:
         //!================public constructors=================================
         //! default constructor
-        AttributeWrapper():_ptr(nullptr) {}
+        AttributeWrapper():_ptr(NULL) {}
 
         //---------------------------------------------------------------------
         //! copy constructor
