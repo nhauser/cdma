@@ -32,6 +32,7 @@ from cdmautil import get_dataitems
 
 #here we need most probably a more sophisticated configuration facility
 _factory.init("/usr/lib/cdma/plugins")
+print _factory
 
 
 def open_dataset(path):

@@ -4,8 +4,10 @@
 import cdma
 
 #open the dataset
+print "open dataset ..."
 ds = cdma.open_dataset("file:demo.nxs")
 
+print "loop over all groups ..."
 #iterate over all group below the root group
 for g in ds.root_group:
 
