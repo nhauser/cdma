@@ -42,7 +42,7 @@ class TupleIterator
 {
     private:
         tuple _container; //!< parent object of the interator
-        ssize_t   _state;          //!< position of the iterator
+        boost::python::ssize_t   _state;          //!< position of the iterator
     public:
         //=======================constructors and destructor====================
         //! default constructor
