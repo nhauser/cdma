@@ -64,14 +64,9 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
 {
     list l;
 
-#ifdef NOFOREACH
     for(auto iter=c.begin();iter!=c.end();iter++)
     {
         const typename CTYPE::value_type &v = *iter;
-#else
-    for(auto v: c)
-    {
-#endif
         l.append(v);
     }
 
@@ -225,7 +220,11 @@ template<typename WTYPE> tuple __dimensions__(WTYPE &o)
 {
     list l;
 
-    for(auto v: o.dimensions()) l.append(DimensionWrapper(v));
+    for(auto iter = o.dimensions().begin();
+             iter != o.dimensions().end();++iter)
+    {
+        l.append(DimensionWrapper(*iter));
+    }
 
     return tuple(l);
 }
