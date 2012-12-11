@@ -59,7 +59,7 @@ template<typename CPTR> class AttributeManager
         typedef AttributeWrapper value_type; //!< value type of the container
         //===================public constructors===============================
         //! default constructor
-        AttributeManager():_ptr(nullptr) {}
+        AttributeManager():_ptr(NULL) {}
 
         //---------------------------------------------------------------------
         //! copy constructor
@@ -94,7 +94,7 @@ template<typename CPTR> class AttributeManager
         */
         AttributeWrapper __getitem__str(const std::string &name) const 
         {
-            IAttributePtr ptr = nullptr;
+            IAttributePtr ptr = NULL;
             ptr = this->_ptr->getAttribute(name);
             if(!ptr)
                 throw_PyKeyError("Attribute ["+name+"] not found!");
@@ -114,9 +114,10 @@ template<typename CPTR> class AttributeManager
         AttributeWrapper operator[](size_t i) const
         {
             size_t cnt=0;
-            for(auto v: this->_ptr->getAttributeList())
+            for(auto iter = this->_ptr->getAttributeList().begin();
+                     iter != this->_ptr->getAttributeList().end();++iter)
             {
-                if(cnt == i) return AttributeWrapper(v);
+                if(cnt == i) return AttributeWrapper(*iter);
                 cnt++;
             }
 
@@ -146,8 +147,11 @@ template<typename CPTR> class AttributeManager
         TupleIterator create_iterator() const
         {
             list l;
-            for(auto v: this->_ptr->getAttributeList())
-                l.append(AttributeWrapper(v));
+            for(auto iter = this->_ptr->getAttributeList().begin();
+                     iter != this->_ptr->getAttributeList().end();++iter)
+            {
+                l.append(AttributeWrapper(*iter));
+            }
 
             return TupleIterator(tuple(l),0);
         }
