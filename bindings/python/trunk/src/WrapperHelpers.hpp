@@ -27,6 +27,7 @@
 #include<cdma/array/IArray.h>
 #include<typeinfo>
 #include<map>
+#include<list>
 
 extern "C"{
 #include<Python.h>
@@ -220,8 +221,10 @@ template<typename WTYPE> tuple __dimensions__(WTYPE &o)
 {
     list l;
 
-    for(auto iter = o.dimensions().begin();
-             iter != o.dimensions().end();++iter)
+
+    std::list<IDimensionPtr> dlist = o.dimensions();
+    for(auto iter = dlist.begin();
+             iter != dlist.end();++iter)
     {
         l.append(DimensionWrapper(*iter));
     }
