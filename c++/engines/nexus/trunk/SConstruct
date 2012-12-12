@@ -42,7 +42,7 @@ def create_link_libname(env):
         
     
 #==================================================================================
-
+AddOption("--with-cpp11",dest="with_cpp11",action="store_true",default=False)
 
 #===================set build variables========================================
 vars = Variables("BuildConfig.py")
@@ -62,7 +62,8 @@ env.ParseConfig('pkg-config --libs --cflags nexuscpp')
 env.ParseConfig('pkg-config --libs --cflags yat')
 
 #set default compiler flags
-env.AppendUnique(CPPFLAGS=['-std=c++0x'])
+if GetOption("with_cpp11"):
+    core_env.AppendUnique(CPPFLAGS=["-std=c++0x"])
 
 
 #=====================here we need some autoconfiguration======================
