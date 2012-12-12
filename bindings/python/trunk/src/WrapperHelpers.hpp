@@ -60,7 +60,7 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
 {
     list l;
 
-    for(auto iter=c.begin();iter!=c.end();iter++)
+    for(typename CTYPE::iterator iter=c.begin();iter!=c.end();iter++)
     {
         const typename CTYPE::value_type &v = *iter;
         l.append(v);
@@ -138,7 +138,7 @@ template<typename WTYPE> object __getitem__(WTYPE &o,object &selection)
 {
     //if the data object itself is scalar we can only return a scalar value
     //in this case we ignore all arguments to __getitem__
-    if((o.shape().size()==1)||(o.type() == TypeID::STRING))
+    if((o.shape().size()==1)||(o.type() == STRING))
             return read_scalar_data(o);
 
     //ok - we have a multidimensional data object. Now it depends on the 
@@ -183,17 +183,17 @@ template<typename WTYPE> object read_scalar_data(WTYPE &o)
 {
     switch(o.type())
     {
-        case TypeID::BYTE: return object(o.template get<int8_t>());
-        case TypeID::UBYTE: return object(o.template get<uint8_t>());
-        case TypeID::SHORT: return object(o.template get<int16_t>());
-        case TypeID::USHORT: return object(o.template get<uint16_t>());
-        case TypeID::INT: return object(o.template get<int32_t>());
-        case TypeID::UINT: return object(o.template get<uint32_t>());
-        case TypeID::LONG: return object(o.template get<int64_t>());
-        case TypeID::ULONG: return object(o.template get<uint64_t>());
-        case TypeID::FLOAT: return object(o.template get<float>());
-        case TypeID::DOUBLE: return object(o.template get<double>());
-        case TypeID::STRING: return object(o.template get<std::string>());
+        case BYTE: return object(o.template get<int8_t>());
+        case UBYTE: return object(o.template get<uint8_t>());
+        case SHORT: return object(o.template get<int16_t>());
+        case USHORT: return object(o.template get<uint16_t>());
+        case INT: return object(o.template get<int32_t>());
+        case UINT: return object(o.template get<uint32_t>());
+        case LONG: return object(o.template get<int64_t>());
+        case ULONG: return object(o.template get<uint64_t>());
+        case FLOAT: return object(o.template get<float>());
+        case DOUBLE: return object(o.template get<double>());
+        case STRING: return object(o.template get<std::string>());
         default:
             throw_PyTypeError("Data type not supported!");
 
@@ -218,7 +218,7 @@ template<typename WTYPE> tuple __dimensions__(WTYPE &o)
 
 
     std::list<IDimensionPtr> dlist = o.dimensions();
-    for(auto iter = dlist.begin();
+    for(std::list<IDimensionPtr>::iterator iter = dlist.begin();
              iter != dlist.end();++iter)
     {
         l.append(DimensionWrapper(*iter));

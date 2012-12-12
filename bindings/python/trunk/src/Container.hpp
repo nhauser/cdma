@@ -147,7 +147,7 @@ container pointer type.
 */
 template<typename TPTR> void wrap_container(const char* name)
 {
-    class_<ContainerWrapper<TPTR>>(name)
+    class_<ContainerWrapper<TPTR> >(name)
         .def_readwrite("attrs",&ContainerWrapper<TPTR>::attrs,
                        __container_doc_attrs)
         .add_property("location",&ContainerWrapper<TPTR>::location,

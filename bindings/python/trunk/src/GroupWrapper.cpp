@@ -36,7 +36,8 @@ object GroupWrapper::__getitem__(const std::string &name) const
 {
     //check groups
     std::list<IGroupPtr> glist = ptr()->getGroupList();
-    for(auto iter = glist.begin(); iter!= glist.end();++iter)
+    for(std::list<IGroupPtr>::iterator iter = glist.begin(); 
+        iter!= glist.end();++iter)
     {
         if(name == (*iter)->getShortName()) 
             return object(new GroupWrapper(*iter));
@@ -44,7 +45,8 @@ object GroupWrapper::__getitem__(const std::string &name) const
 
     //check data items
     std::list<IDataItemPtr> dlist = ptr()->getDataItemList();
-    for(auto iter = dlist.begin(); iter != dlist.end();++iter)
+    for(std::list<IDataItemPtr>::iterator iter = dlist.begin(); 
+        iter != dlist.end();++iter)
     {
         if(name == (*iter)->getShortName()) 
             return object(new DataItemWrapper(*iter));
@@ -85,19 +87,22 @@ tuple GroupWrapper::childs() const
     list l;
    
     std::list<IGroupPtr> glist = ptr()->getGroupList();
-    for(auto iter = glist.begin(); iter != glist.end();++iter)
+    for(std::list<IGroupPtr>::iterator iter = glist.begin(); 
+        iter != glist.end();++iter)
     {
         l.append(GroupWrapper(*iter));
     }
 
     std::list<IDataItemPtr> ilist = ptr()->getDataItemList();
-    for(auto iter = ilist.begin(); iter != ilist.end();++iter)
+    for(std::list<IDataItemPtr>::iterator iter = ilist.begin(); 
+        iter != ilist.end();++iter)
     {
         l.append(DataItemWrapper(*iter));
     }
   
     std::list<IDimensionPtr> dlist = ptr()->getDimensionList();
-    for(auto iter = dlist.begin(); iter != dlist.end();++iter)
+    for(std::list<IDimensionPtr>::iterator iter = dlist.begin(); 
+        iter != dlist.end();++iter)
     {
         l.append(DimensionWrapper(*iter));
     }
@@ -124,7 +129,7 @@ void wrap_group()
     wrap_attribute_manager<IGroupPtr>("GroupAttributeManager");
 
     
-    class_<GroupWrapper,bases<ContainerWrapper<IGroupPtr>> >("Group")
+    class_<GroupWrapper,bases<ContainerWrapper<IGroupPtr> > >("Group")
         .add_property("parent",&GroupWrapper::parent,__group_doc_parent)
         .add_property("root",&GroupWrapper::root,__group_doc_root)
         .def("__getitem__",&GroupWrapper::__getitem__)
