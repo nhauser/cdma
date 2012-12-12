@@ -69,12 +69,12 @@ def pkgconfig(*packages, **kw):
         kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
 
     kw["libraries"].append("boost_python")
-    
+   
+    if not kw.has_key("extra_compile_args"):
+        kw["extra_compile_args"] = []
+
     kw["include_dirs"].append(misc_util.get_numpy_include_dirs()[0])
-    try:
-        kw["extra_compile_args"].append('-std=c++0x')
-    except:
-        kw["extra_compile_args"] = ["-std=c++0x"]
+    #kw["extra_compile_args"].append('-std=c++0x')
 
     if True:
         

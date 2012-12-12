@@ -118,7 +118,8 @@ template<typename CPTR> class AttributeManager
 
             std::list<IAttributePtr> alist = this->_ptr->getAttributeList();
 
-            for(auto iter = alist.begin(); iter != alist.end();++iter)
+            for(std::list<IAttributePtr>::iterator iter = alist.begin(); 
+                iter != alist.end();++iter)
             {
                 if(cnt == i) return AttributeWrapper(*iter);
                 cnt++;
@@ -151,7 +152,8 @@ template<typename CPTR> class AttributeManager
         {
             list l;
             std::list<IAttributePtr> alist = this->_ptr->getAttributeList();
-            for(auto iter = alist.begin(); iter != alist.end();++iter)
+            for(std::list<IAttributePtr>::iterator iter = alist.begin(); 
+                iter != alist.end();++iter)
             {
                 l.append(AttributeWrapper(*iter));
             }
