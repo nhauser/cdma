@@ -90,6 +90,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( int value : (int[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
@@ -127,6 +128,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( double value : (double[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
@@ -164,6 +166,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( short value : (short[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
@@ -201,6 +204,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( long value : (long[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
@@ -238,6 +242,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( byte value : (byte[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
@@ -275,6 +280,7 @@ public final class ArrayConverters {
 				int index = 0;
 				for( boolean value : (boolean[]) source ) {
 					result[index] = String.valueOf(value);
+					index++;
 				}
 			}
 			
