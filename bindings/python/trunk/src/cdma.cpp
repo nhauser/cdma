@@ -46,7 +46,7 @@ extern void wrap_tupleiterator();
 extern void init_typeid2numpystr();
 extern void init_typeid2numpytc();
 extern void init_typeid2size();
-extern void init_typeid2typeid();
+extern void init_typename2typeid();
 
 //=================implementation of the python extension======================
 BOOST_PYTHON_MODULE(cdmacore)
@@ -59,7 +59,7 @@ BOOST_PYTHON_MODULE(cdmacore)
     init_typeid2numpystr();
     init_typeid2numpytc();
     init_typeid2size();
-    init_typeid2typeid();
+    init_typename2typeid();
 
     //call wrappers
     wrap_factory();
