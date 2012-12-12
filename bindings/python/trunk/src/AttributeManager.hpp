@@ -175,7 +175,7 @@ Creates a wrapper for an AttributeManager.
 template<typename CPTR> void wrap_attribute_manager(const char *name)
 {
     //create the attribute manager type
-    class_<AttributeManager<CPTR>>(name)
+    class_<AttributeManager<CPTR> >(name)
         .def("__getitem__",&AttributeManager<CPTR>::__getitem__str)
         .def("__len__",&AttributeManager<CPTR>::size)
         .def("__iter__",&AttributeManager<CPTR>::create_iterator)

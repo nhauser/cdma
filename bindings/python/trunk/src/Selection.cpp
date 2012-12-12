@@ -27,8 +27,9 @@
 size_t size(const Selection &sel)
 {
     size_t s=0;
-    for(auto iter = sel.shape().begin();
-             iter != sel.shape().end();++iter)
+    std::vector<size_t> sh = sel.shape();
+    for(std::vector<size_t>::iteraotr iter = sh.begin();
+             iter != sh.end();++iter)
         s += *iter;
 
     return s;
@@ -61,18 +62,21 @@ std::ostream &operator<<(std::ostream &o,const Selection &s)
 {
     o<<"Selection of rank: "<<s.rank()<<std::endl;
     o<<"offset: [ ";
-    for(auto iter = s.offset().begin();
-             iter != s.offset().end(); ++iter)
+    std::vector<size_t> off = s.offset();
+    for(std::vector<size_t>::iterator iter = off.begin(); 
+        iter != off.end(); ++iter)
         o<<*iter<<" ";
 
     o<<std::endl<<"stride: [ ";
-    for(auto iter = s.offset().begin();
-             iter != s.offset().end(); ++iter)
+    std::vector<size_t> str = s.stride();
+    for(std::vector<size_t>::iterator iter = str.begin();
+             iter != str.end(); ++iter)
         o<<*iter<<" ";
 
     o<<std::endl<<"shape: [ ";
-    for(auto iter = s.shape().begin();
-             iter != s.shape().end(); ++iter)
+    std::vector<size_t> sh = s.shape();
+    for(std::vector<size_t>::iterator iter = sh.begin();
+             iter != sh.end(); ++iter)
         o<<*iter<<" ";
 
     return o;

@@ -61,14 +61,6 @@ class Selection
         {}
 
         //----------------------------------------------------------------------
-        //! move constructor
-        Selection(Selection &&s):
-            _offset(std::move(s._offset)),
-            _stride(std::move(s._stride)),
-            _shape(std::move(s._shape))
-        {}
-
-        //----------------------------------------------------------------------
         //! standard constructor
         Selection(const std::vector<size_t> &o,
                   const std::vector<size_t> &st,std::vector<size_t> sh):
@@ -92,17 +84,6 @@ class Selection
             return *this;
         }
 
-        //---------------------------------------------------------------------
-        //! move assignemnt operator
-        Selection &operator=(Selection &&s)
-        {
-            if(this == &s) return *this;
-
-            _offset = std::move(s._offset);
-            _stride = std::move(s._stride);
-            _shape  = std::move(s._shape);
-            return *this;
-        }
 
         //! get offset of the selection 
         const std::vector<size_t> &offset() const { return _offset; }
