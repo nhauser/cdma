@@ -60,7 +60,7 @@ template<typename CTYPE> list cont2list(const CTYPE &c)
 {
     list l;
 
-    for(typename CTYPE::iterator iter=c.begin();iter!=c.end();iter++)
+    for(typename CTYPE::const_iterator iter=c.begin();iter!=c.end();++iter)
     {
         const typename CTYPE::value_type &v = *iter;
         l.append(v);

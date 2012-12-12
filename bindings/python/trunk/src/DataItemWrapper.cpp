@@ -117,7 +117,7 @@ void wrap_dataitem()
     wrap_attribute_manager<IDataItemPtr>("DataItemAttributeManager");
     wrap_dimensionmanager();
 
-    class_<DataItemWrapper,bases<ContainerWrapper<IDataItemPtr>> >("DataItem")
+    class_<DataItemWrapper,bases<ContainerWrapper<IDataItemPtr> > >("DataItem")
         .def_readwrite("dim",&DataItemWrapper::dim,__dataitem_doc_dim)
         .add_property("rank",&DataItemWrapper::rank,__dataitem_doc_rank)
         .add_property("shape",&__shape__<DataItemWrapper>,__dataitem_doc_shape)

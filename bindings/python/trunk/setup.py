@@ -44,24 +44,23 @@ os.environ['OPT'] = " ".join(
 import commands
 
 cliopts =[]
-cliopts.append(("h5libdir=",None,"HDF5 library path"))
-cliopts.append(("h5incdir=",None,"HDF5 include path"))
-cliopts.append(("h5libname=",None,"HDF5 library name"))
-cliopts.append(("nxlibdir=",None,"PNI NX library path"))
-cliopts.append(("nxincdir=",None,"PNI NX include path"))
-cliopts.append(("utlibdir=",None,"PNI utilities library path"))
-cliopts.append(("utincdir=",None,"PNI utilities include path"))
-cliopts.append(("numpyincdir=",None,"Numpy include path"))
-cliopts.append(("noforeach",None,"Set noforeach option for C++"))
-cliopts.append(("debug",None,"append debuging options"))
+cliopts.append(("boostlibdir=",None,"BOOST library path"))
+cliopts.append(("boostincdir=",None,"BOOST header path"))
+cliopts.append(("with-debug",None,"append debuging options"))
 
 op = FancyGetopt(option_table=cliopts)
 args,opts = op.getopt()
 
 debug = False
 for o,v in op.get_option_order():
-    if o == "debug":
+    if o == "with-debug":
         debug = True
+
+    if o == "boostlibdir":
+        boost_library_dir = v
+
+    if o == "boostincdir":
+        boost_inc_dir = v
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
@@ -69,6 +68,17 @@ def pkgconfig(*packages, **kw):
         kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
 
     kw["libraries"].append("boost_python")
+
+    try:
+        kw["library_dirs"].append(boost_library_dir)
+    except:
+        pass
+
+    try:
+        kw["include_dirs"].append(boost_inc_dir)
+    except:
+        pass
+
    
     if not kw.has_key("extra_compile_args"):
         kw["extra_compile_args"] = []
@@ -76,10 +86,10 @@ def pkgconfig(*packages, **kw):
     kw["include_dirs"].append(misc_util.get_numpy_include_dirs()[0])
     #kw["extra_compile_args"].append('-std=c++0x')
 
-    if True:
-        
+    if debug:
         kw["extra_compile_args"].append('-O0')
         kw["extra_compile_args"].append('-g')
+
     return kw
 
 
@@ -106,6 +116,6 @@ setup(name="cdma-python",
         ext_modules=[cdma],
         packages = ["cdma"],
         license="GPL V2",
-
+        script_args = args
         )
 
