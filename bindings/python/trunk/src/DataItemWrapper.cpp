@@ -31,7 +31,8 @@ std::vector<size_t> DataItemWrapper::shape() const
     std::vector<size_t> shape;
 
     std::vector<int> slist = ptr()->getShape();
-    for(auto iter = slist.begin(); iter != slist.end(); ++iter)
+    for(std::vector<int>::iterator iter = slist.begin(); 
+                                   iter != slist.end(); ++iter)
     {
         shape.push_back(*iter);
     }
@@ -70,8 +71,8 @@ std::string DataItemWrapper::__str__() const
 
     ss<<"DataItem ["<<this->name()<<"] type="<<typeid2numpystr[this->type()];
     ss<<" shape=( ";
-    for(auto iter = this->shape().begin();
-             iter!= this->shape().end();++iter)
+    std::vector<size_t> s = this->shape();
+    for(std::vector<size_t>::iterator iter = s.begin(); iter!= s.end();++iter)
         ss<<*iter<<" ";
 
     ss<<")";
