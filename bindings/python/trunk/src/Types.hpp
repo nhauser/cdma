@@ -57,44 +57,74 @@ std::ostream &operator<<(std::ostream &o,const TypeID &tid);
 
 
 //conversion map from names of numerical native types to TypeID
-static std::map<std::string,TypeID> typename2typeid = {
-        {typeid(int8_t).name(),BYTE},
-        {typeid(uint8_t).name(),UBYTE},
-        {typeid(int16_t).name(),SHORT},
-        {typeid(uint16_t).name(),USHORT},
-        {typeid(int32_t).name(),INT},
-        {typeid(uint32_t).name(),UINT},
-        {typeid(int64_t).name(),LONG},
-        {typeid(uint64_t).name(),ULONG},
-        {typeid(float).name(),FLOAT},
-        {typeid(double).name(),DOUBLE},
-        {typeid(std::string).name(),STRING}};
+static std::map<std::string,TypeID> typename2typeid;
+void init_typename2typeid()
+{
+    typename2typeid[typeid(int8_t).name()  ]  = BYTE;
+    typename2typeid[typeid(uint8_t).name() ]  = UBYTE;
+    typename2typeid[typeid(int16_t).name() ]  = SHORT;
+    typename2typeid[typeid(uint16_t).name()]  = USHORT;
+    typename2typeid[typeid(int32_t).name() ]  = INT;
+    typename2typeid[typeid(uint32_t).name()]  = UINT;
+    typename2typeid[typeid(int64_t).name() ]  = LONG;
+    typename2typeid[typeid(uint64_t).name()]  = ULONG;
+    typename2typeid[typeid(float).name()   ]  = FLOAT;
+    typename2typeid[typeid(double).name()  ]  = DOUBLE;
+    typename2typeid[typeid(std::string).name() ]  = STRING;
+}
 
 //conversion map from Type IDs to type sizes
-static std::map<TypeID,size_t> typeid2size = {
-        {BYTE,sizeof(int8_t)}, {UBYTE,sizeof(uint8_t)},
-        {SHORT,sizeof(int16_t)}, {USHORT,sizeof(uint16_t)},
-        {INT,sizeof(int32_t)}, {UINT,sizeof(uint32_t)},
-        {LONG,sizeof(int64_t)},{ULONG,sizeof(uint64_t)},
-        {FLOAT,sizeof(float)}, {DOUBLE,sizeof(double)},
-        {STRING,sizeof(std::string)}};
+static std::map<TypeID,size_t> typeid2size;
+
+void init_typeid2size()
+{
+    typeid2size[BYTE] = sizeof(int8_t);
+    typeid2size[UBYTE] =  sizeof(uint8_t);
+    typeid2size[SHORT] = sizeof(int16_t);
+    typeid2size[USHORT] = sizeof(uint16_t);
+    typeid2size[INT]  = sizeof(int32_t);
+    typeid2size[UINT]  = sizeof(uint32_t);
+    typeid2size[LONG]  = sizeof(int64_t);
+    typeid2size[ULONG] = sizeof(uint64_t);
+    typeid2size[FLOAT] = sizeof(float);
+    typeid2size[DOUBLE] = sizeof(double);
+    typeid2size[STRING] = sizeof(std::string);
+}
 
 //conversion map from Type IDs to numpy type codes
-static std::map<TypeID,int> typeid2numpytc = {
-        {BYTE,NPY_BYTE}, {UBYTE,NPY_UBYTE},
-        {SHORT,NPY_SHORT}, {USHORT,NPY_USHORT},
-        {INT,NPY_INT}, {UINT,NPY_UINT},
-        {LONG,NPY_LONG}, {ULONG,NPY_ULONG},
-        {FLOAT,NPY_FLOAT}, {DOUBLE,NPY_DOUBLE}};
+static std::map<TypeID,int> typeid2numpytc;
+
+void init_typeid2numpytc()
+{
+    typeid2numpytc[BYTE] = NPY_BYTE;
+    typeid2numpytc[UBYTE] = NPY_UBYTE;
+    typeid2numpytc[SHORT] = NPY_SHORT;
+    typeid2numpytc[USHORT] = NPY_USHORT;
+    typeid2numpytc[INT] = NPY_INT;
+    typeid2numpytc[UINT] = NPY_UINT;
+    typeid2numpytc[LONG]  = NPY_LONG;
+    typeid2numpytc[ULONG] = NPY_ULONG;
+    typeid2numpytc[FLOAT] = NPY_FLOAT;
+    typeid2numpytc[DOUBLE] = NPY_DOUBLE;
+}
 
 //conversion map from Type IDs to numpy type strings
-static std::map<TypeID,std::string> typeid2numpystr = {
-        {BYTE,"int8"}, {UBYTE,"uint8"},
-        {SHORT,"int16"}, {USHORT,"uint16"},
-        {INT,"int32"}, {UINT,"uint32"},
-        {LONG,"int64"}, {ULONG,"uint64"},
-        {FLOAT,"float32"}, {DOUBLE,"float64"},
-        {STRING,"string"}};
+static std::map<TypeID,std::string> typeid2numpystr;
+
+void init_typeid2numpystr()
+{
+    typeid2numpystr[BYTE] = "int8";
+    typeid2numpystr[UBYTE] = "uint8";
+    typeid2numpystr[SHORT] = "int16";
+    typeid2numpystr[USHORT] = "uint16";
+    typeid2numpystr[INT] = "int32";
+    typeid2numpystr[UINT] = "uint32";
+    typeid2numpystr[LONG] = "int64";
+    typeid2numpystr[ULONG] = "uint64";
+    typeid2numpystr[FLOAT] = "float32";
+    typeid2numpystr[DOUBLE]  = "float64";
+    typeid2numpystr[STRING] = "string";
+}
 
 /*!
 \ingroup type_classes
