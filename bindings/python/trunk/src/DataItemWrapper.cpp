@@ -43,7 +43,7 @@ std::vector<size_t> DataItemWrapper::shape() const
 //-----------------------------------------------------------------------------
 TypeID DataItemWrapper::type() const
 {
-    return typename2typeid[ptr()->getType().name()];
+    return TypeUtility::typename2typeid(ptr()->getType().name());
 }
 
 //================overloaded scalar get template===============================
@@ -69,7 +69,8 @@ std::string DataItemWrapper::__str__() const
 {
     std::stringstream ss;
 
-    ss<<"DataItem ["<<this->name()<<"] type="<<typeid2numpystr[this->type()];
+    ss<<"DataItem ["<<this->name()<<"] type=";
+    ss<<TypeUtility::typeid2numpystr(this->type());
     ss<<" shape=( ";
     std::vector<size_t> s = this->shape();
     for(std::vector<size_t>::iterator iter = s.begin(); iter!= s.end();++iter)

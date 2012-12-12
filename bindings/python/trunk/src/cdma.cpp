@@ -43,10 +43,6 @@ extern void exception_registration();
 extern void wrap_attribute();
 extern void wrap_dimension();
 extern void wrap_tupleiterator();
-extern void init_typeid2numpystr();
-extern void init_typeid2numpytc();
-extern void init_typeid2size();
-extern void init_typename2typeid();
 
 //=================implementation of the python extension======================
 BOOST_PYTHON_MODULE(cdmacore)
@@ -55,11 +51,6 @@ BOOST_PYTHON_MODULE(cdmacore)
     //this is absolutely necessary - otherwise the nympy API functions do not
     //work.
     import_array();
-
-    init_typeid2numpystr();
-    init_typeid2numpytc();
-    init_typeid2size();
-    init_typename2typeid();
 
     //call wrappers
     wrap_factory();

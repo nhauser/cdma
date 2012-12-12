@@ -111,7 +111,7 @@ implement the IOObject interface.
 */
 template<typename WTYPE> std::string __type__(WTYPE &o)
 {
-    return typeid2numpystr[o.type()];
+    return TypeUtility::typeid2numpystr(o.type());
 }
 
 //------------------------------------------------------------------------------

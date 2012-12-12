@@ -56,24 +56,18 @@ enum  TypeID { BYTE,   //!< signded char (8Bit)
 std::ostream &operator<<(std::ostream &o,const TypeID &tid);
 
 
-//conversion map from names of numerical native types to TypeID
-static std::map<std::string,TypeID> typename2typeid;
-void init_typename2typeid();
+struct TypeUtility
+{  
+    //obtain the typeid from the C++ type name
+    static TypeID typename2typeid(const std::string &tname);
+    //obtain the size of a type from typeid
+    static size_t typeid2size(const TypeID &tid);
+    //obtain the numpy type code from the typeid
+    static int typeid2numpytc(const TypeID &tid);
+    //obtain the numpy type code from the typeid
+    static std::string typeid2numpystr(const TypeID &tid);
+};
 
-//conversion map from Type IDs to type sizes
-static std::map<TypeID,size_t> typeid2size;
-
-void init_typeid2size();
-
-//conversion map from Type IDs to numpy type codes
-static std::map<TypeID,int> typeid2numpytc;
-
-void init_typeid2numpytc();
-
-//conversion map from Type IDs to numpy type strings
-static std::map<TypeID,std::string> typeid2numpystr;
-
-void init_typeid2numpystr();
 
 /*!
 \ingroup type_classes

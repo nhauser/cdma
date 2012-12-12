@@ -48,12 +48,13 @@ object cdma2numpy_array(const ArrayWrapper &array,bool copyflag)
     {
         nparray = PyArray_SimpleNewFromData(array.rank(),
                                   dims,
-                                  typeid2numpytc[array.type()],
+                                  TypeUtility::typeid2numpytc(array.type()),
                                   const_cast<void *>(array.ptr()));
     }
     else
     {
-        nparray = PyArray_SimpleNew(array.rank(),dims,typeid2numpytc[array.type()]);
+        nparray = PyArray_SimpleNew(array.rank(),dims,
+                                    TypeUtility::typeid2numpytc(array.type()));
     }
 
 
