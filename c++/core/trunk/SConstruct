@@ -43,6 +43,7 @@ def create_link_libname(env):
     
 #======================add options=============================================
 AddOption("--with-cpp11",dest="with_cpp11",action="store_true",default=False)
+AddOption("--with-debug",dest="debug",action="store_true",default=False)
 
 
 #===================set build variables========================================
@@ -98,6 +99,9 @@ else:
 #set default compiler flags
 if GetOption("with_cpp11"):
     core_env.AppendUnique(CPPFLAGS=["-std=c++0x"])
+
+if GetOption("debug"):
+    core_env.AppendUnique(CPPFLAGS=["-g","-O0"])
 
 #===================start here with configuration==============================
 conf = Configure(core_env)
