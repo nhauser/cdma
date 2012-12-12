@@ -28,7 +28,7 @@ size_t size(const Selection &sel)
 {
     size_t s=0;
     std::vector<size_t> sh = sel.shape();
-    for(std::vector<size_t>::iteraotr iter = sh.begin();
+    for(std::vector<size_t>::iterator iter = sh.begin();
              iter != sh.end();++iter)
         s += *iter;
 
