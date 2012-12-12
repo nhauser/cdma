@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 std::ostream &operator<<(std::ostream &o,const TypeID &tid)
 {
-    return o<<typeid2numpystr[tid];
+    return o<<TypeUtility::typeid2numpystr(tid);
 }
 
 //-----------------------------------------------------------------------------
@@ -19,61 +19,76 @@ bool operator<=(TypeID a,TypeID b) { return int(a)<=int(b); }
 //-----------------------------------------------------------------------------
 bool operator>=(TypeID a,TypeID b) { return int(a)>=int(b); }
 
-void init_typename2typeid()
+//-----------------------------------------------------------------------------
+TypeID TypeUtility::typename2typeid(const std::string &tname)
 {
-    typename2typeid[typeid(int8_t).name()  ]  = BYTE;
-    typename2typeid[typeid(uint8_t).name() ]  = UBYTE;
-    typename2typeid[typeid(int16_t).name() ]  = SHORT;
-    typename2typeid[typeid(uint16_t).name()]  = USHORT;
-    typename2typeid[typeid(int32_t).name() ]  = INT;
-    typename2typeid[typeid(uint32_t).name()]  = UINT;
-    typename2typeid[typeid(int64_t).name() ]  = LONG;
-    typename2typeid[typeid(uint64_t).name()]  = ULONG;
-    typename2typeid[typeid(float).name()   ]  = FLOAT;
-    typename2typeid[typeid(double).name()  ]  = DOUBLE;
-    typename2typeid[typeid(std::string).name() ]  = STRING;
+    if(tname == typeid(int8_t).name()) return BYTE;
+    if(tname == typeid(uint8_t).name()) return UBYTE;
+    if(tname == typeid(int16_t).name()) return SHORT;
+    if(tname == typeid(uint16_t).name()) return USHORT;
+    if(tname == typeid(int32_t).name()) return INT;
+    if(tname == typeid(uint32_t).name()) return UINT;
+    if(tname == typeid(int64_t).name()) return LONG;
+    if(tname == typeid(uint64_t).name()) return ULONG;
+    if(tname == typeid(float).name()) return FLOAT;
+    if(tname == typeid(double).name()) return DOUBLE;
+    if(tname == typeid(std::string).name()) return STRING;
 }
 
-void init_typeid2size()
+//-----------------------------------------------------------------------------
+size_t TypeUtility::typeid2size(const TypeID &tid)
 {
-    typeid2size[BYTE] = sizeof(int8_t);
-    typeid2size[UBYTE] =  sizeof(uint8_t);
-    typeid2size[SHORT] = sizeof(int16_t);
-    typeid2size[USHORT] = sizeof(uint16_t);
-    typeid2size[INT]  = sizeof(int32_t);
-    typeid2size[UINT]  = sizeof(uint32_t);
-    typeid2size[LONG]  = sizeof(int64_t);
-    typeid2size[ULONG] = sizeof(uint64_t);
-    typeid2size[FLOAT] = sizeof(float);
-    typeid2size[DOUBLE] = sizeof(double);
-    typeid2size[STRING] = sizeof(std::string);
+    switch(tid)
+    {
+        case(BYTE):  return sizeof(int8_t);
+        case(UBYTE): return sizeof(uint8_t);
+        case(SHORT): return sizeof(int16_t);
+        case(USHORT): return sizeof(uint16_t);
+        case(INT): return sizeof(int32_t);
+        case(UINT): return sizeof(uint32_t);
+        case(LONG): return sizeof(int64_t);
+        case(ULONG): return sizeof(uint64_t);
+        case(FLOAT): return sizeof(float);
+        case(DOUBLE): return sizeof(double);
+        case(STRING): return sizeof(std::string);
+    }
 }
 
-void init_typeid2numpytc()
+//-----------------------------------------------------------------------------
+int TypeUtility::typeid2numpytc(const TypeID &tid)
 {
-    typeid2numpytc[BYTE] = NPY_BYTE;
-    typeid2numpytc[UBYTE] = NPY_UBYTE;
-    typeid2numpytc[SHORT] = NPY_SHORT;
-    typeid2numpytc[USHORT] = NPY_USHORT;
-    typeid2numpytc[INT] = NPY_INT;
-    typeid2numpytc[UINT] = NPY_UINT;
-    typeid2numpytc[LONG]  = NPY_LONG;
-    typeid2numpytc[ULONG] = NPY_ULONG;
-    typeid2numpytc[FLOAT] = NPY_FLOAT;
-    typeid2numpytc[DOUBLE] = NPY_DOUBLE;
+    switch(tid)
+    {
+        case(BYTE): return NPY_BYTE;
+        case(UBYTE): return NPY_UBYTE;
+        case(SHORT): return NPY_SHORT;
+        case(USHORT): return NPY_USHORT;
+        case(INT): return NPY_INT;
+        case(UINT): return NPY_UINT;
+        case(LONG): return NPY_LONG;
+        case(ULONG): return NPY_ULONG;
+        case(FLOAT): return NPY_FLOAT;
+        case(DOUBLE): return NPY_DOUBLE;
+    } 
 }
 
-void init_typeid2numpystr()
+//-----------------------------------------------------------------------------
+std::string TypeUtility::typeid2numpystr(const TypeID &tid)
 {
-    typeid2numpystr[BYTE] = "int8";
-    typeid2numpystr[UBYTE] = "uint8";
-    typeid2numpystr[SHORT] = "int16";
-    typeid2numpystr[USHORT] = "uint16";
-    typeid2numpystr[INT] = "int32";
-    typeid2numpystr[UINT] = "uint32";
-    typeid2numpystr[LONG] = "int64";
-    typeid2numpystr[ULONG] = "uint64";
-    typeid2numpystr[FLOAT] = "float32";
-    typeid2numpystr[DOUBLE]  = "float64";
-    typeid2numpystr[STRING] = "string";
+    switch(tid)
+    {
+        case(BYTE): return "int8";
+        case(UBYTE): return "uint8";
+        case(SHORT): return "int16";
+        case(USHORT): return "uint16";
+        case(INT): return "int32";
+        case(UINT): return "uint32";
+        case(LONG): return "int64";
+        case(ULONG): return "uint64";
+        case(FLOAT): return "float32";
+        case(DOUBLE): return  "float64";
+        case(STRING): return "string";
+    }
 }
+
+

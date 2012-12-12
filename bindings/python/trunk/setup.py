@@ -47,11 +47,13 @@ cliopts =[]
 cliopts.append(("boostlibdir=",None,"BOOST library path"))
 cliopts.append(("boostincdir=",None,"BOOST header path"))
 cliopts.append(("with-debug",None,"append debuging options"))
+cliopts.append(("with-cpp11",None,"add C++11 support"))
 
 op = FancyGetopt(option_table=cliopts)
 args,opts = op.getopt()
 
 debug = False
+cpp_11_support = False
 for o,v in op.get_option_order():
     if o == "with-debug":
         debug = True
@@ -62,12 +64,18 @@ for o,v in op.get_option_order():
     if o == "boostincdir":
         boost_inc_dir = v
 
+    if o == "with-cpp11":
+        cpp_11_support = True
+
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
     for token in commands.getoutput("pkg-config --libs --cflags %s" % ' '.join(packages)).split():
         kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
 
-    kw["libraries"].append("boost_python")
+    try:
+        kw["libraries"].append("boost_python")
+    except:
+        kw["libraries"] = ["boost_python"]
 
     try:
         kw["library_dirs"].append(boost_library_dir)
@@ -85,6 +93,9 @@ def pkgconfig(*packages, **kw):
 
     kw["include_dirs"].append(misc_util.get_numpy_include_dirs()[0])
     #kw["extra_compile_args"].append('-std=c++0x')
+
+    if cpp_11_support:
+        kw["extra_compile_args"].append("-std=c++0x")
 
     if debug:
         kw["extra_compile_args"].append('-O0')

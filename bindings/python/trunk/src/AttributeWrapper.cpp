@@ -29,7 +29,7 @@ TypeID AttributeWrapper::type() const
 {
     //if(_ptr->isString()) return TypeID::STRING;
     
-    return typename2typeid[_ptr->getType().name()];
+    return TypeUtility::typename2typeid(_ptr->getType().name());
 }
 
 //-----------------------------------------------------------------------------
@@ -74,7 +74,7 @@ template<> std::string AttributeWrapper::get<std::string>() const
 std::string AttributeWrapper::__str__() const
 {
     std::stringstream ss;
-    ss<<"Attribute ["<<name()<<"] type="<<typeid2numpystr[type()];
+    ss<<"Attribute ["<<name()<<"] type="<<TypeUtility::typeid2numpystr(type());
     ss<<" shape=( ";
     std::vector<size_t> s = shape();
     for(std::vector<size_t>::iterator iter = s.begin(); iter!=s.end();++iter)

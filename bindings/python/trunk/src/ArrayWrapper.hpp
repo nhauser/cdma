@@ -111,7 +111,7 @@ class ArrayWrapper
         */
         TypeID type() const 
         { 
-            return typename2typeid[_ptr->getValueType().name()]; 
+            return TypeUtility::typename2typeid(_ptr->getValueType().name()); 
         }
 
         //----------------------------------------------------------------------
