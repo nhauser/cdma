@@ -48,12 +48,15 @@ cliopts.append(("boostlibdir=",None,"BOOST library path"))
 cliopts.append(("boostincdir=",None,"BOOST header path"))
 cliopts.append(("with-debug",None,"append debuging options"))
 cliopts.append(("with-cpp11",None,"add C++11 support"))
+cliopts.append(("plugin-path",None,"sets the default plugin search path"))
+
 
 op = FancyGetopt(option_table=cliopts)
 args,opts = op.getopt()
 
 debug = False
 cpp_11_support = False
+default_plugin_path = "/usr/lib/cdma/plugins"
 for o,v in op.get_option_order():
     if o == "with-debug":
         debug = True
@@ -66,6 +69,9 @@ for o,v in op.get_option_order():
 
     if o == "with-cpp11":
         cpp_11_support = True
+
+    if o == "plugin-path":
+        default_plugin_path = v
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', '-L': 'library_dirs', '-l': 'libraries'}
@@ -102,6 +108,11 @@ def pkgconfig(*packages, **kw):
         kw["extra_compile_args"].append('-g')
 
     return kw
+
+#create the configuration file
+config = open("cdma/config.py","w")
+config.write("default_plugin_path = \"%s\"\n" %(default_plugin_path))
+config.close()
 
 
 
