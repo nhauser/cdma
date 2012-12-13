@@ -33,7 +33,13 @@ $> python setup.py install --home=<INSTALLATION PATH>
 where <INSTALLATION PATH> denotes the location on the file system where the
 package should be installed.
 
-1.2.) INstallation on Windows
+For a successful build cdmacore must have its pkg-config file installed at the
+right place. This is usually not a problem if cdmacore is installed in default
+locations. However, if the cdmacore library is installed in some custom location
+you need to add the path to its cdmacore.pc file to the PKG_CONFIG_PATH in your
+environment.
+
+1.2.) Installation on Windows
       -----------------------
 
 

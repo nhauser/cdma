@@ -21,6 +21,7 @@
 #     Author: Eugen Wintersberger <eugen.wintersberger@desy.de>
 #
 
+from config import default_plugin_path
 from cdmacore import _factory
 from cdmacore import Group
 from cdmacore import Dataset
@@ -30,8 +31,14 @@ from cdmautil import get_dimensions
 from cdmautil import get_groups
 from cdmautil import get_dataitems
 
+#need to add some code here to evaluate the CDMA_PLUGIN_PATH environment 
+#variable
+
+#need to add some code here to evaluate the CDMA_DICTIONARY_PATH environment
+#variable
+
 #here we need most probably a more sophisticated configuration facility
-_factory.init("/usr/lib/cdma/plugins")
+_factory.init(default_plugin_path)
 print _factory
 
 
