@@ -33,6 +33,10 @@ $> python setup.py install --home=<INSTALLATION PATH>
 where <INSTALLATION PATH> denotes the location on the file system where the
 package should be installed.
 
+If you want to compile the code with C++11 support use 
+
+$> python setup.py --with-cpp11 install
+
 For a successful build cdmacore must have its pkg-config file installed at the
 right place. This is usually not a problem if cdmacore is installed in default
 locations. However, if the cdmacore library is installed in some custom location
