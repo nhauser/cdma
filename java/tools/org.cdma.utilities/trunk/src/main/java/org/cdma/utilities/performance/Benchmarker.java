@@ -89,6 +89,7 @@ public class Benchmarker {
                     60)
                     + print( " nb calls: " + nbcalls.get(label), 20 )
                     + print( " max thread: " +  nbthread.get(label), 20)
+                    + ( " canonical cost: " + ( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label) ) + " ms")
                     + "\n";
         }
         return result;
