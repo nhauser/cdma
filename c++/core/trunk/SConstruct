@@ -64,6 +64,7 @@ vars.Add("PREFIX","Installation prefix","/usr/local")
 
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
+env["ENV"]["PKG_CONFIG_PATH"] = os.environ["PKG_CONFIG_PATH"]
 env.ParseConfig('pkg-config --libs --cflags libxml-2.0')
 env.ParseConfig('pkg-config --libs --cflags yat')
 
@@ -105,6 +106,10 @@ if GetOption("debug"):
 
 #===================start here with configuration==============================
 conf = Configure(core_env)
+
+if not conf.CheckLib("pthread"):
+    print "pthread not installed"
+    Exit(1)
 
 if not conf.CheckLib("yat",language="C++"):
     print "YAT library not installed!"
