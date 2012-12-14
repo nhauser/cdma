@@ -58,6 +58,7 @@ vars.Add("PREFIX","Installation prefix","/usr")
 
 #=====================create the basic build environment=======================
 env = Environment(variables=vars,tools=["default","textfile"])
+env["ENV"]["PKG_CONFIG_PATH"] = os.environ["PKG_CONFIG_PATH"]
 env.ParseConfig('pkg-config --cflags --libs cdmaengine_nexus')
 
 if GetOption("with_cpp11"):
