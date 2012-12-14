@@ -48,7 +48,7 @@ cliopts.append(("boostlibdir=",None,"BOOST library path"))
 cliopts.append(("boostincdir=",None,"BOOST header path"))
 cliopts.append(("with-debug",None,"append debuging options"))
 cliopts.append(("with-cpp11",None,"add C++11 support"))
-cliopts.append(("plugin-path",None,"sets the default plugin search path"))
+cliopts.append(("plugin-path=",None,"sets the default plugin search path"))
 
 
 op = FancyGetopt(option_table=cliopts)
