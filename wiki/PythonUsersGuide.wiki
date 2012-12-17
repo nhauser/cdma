@@ -1,7 +1,207 @@
-#Python user documentation
-
 = Introduction =
 
-Python bindings user guide.
+Welcome to the users documentation of the CDMA Python bindings. If you only want
+to use CDMA in your Python code you are at the right place. If you have already
+had a look on the C++ and Java API documentation you may find that the Python
+bindings look entirely different from what you have seen there. The reason for
+this is simple: the primary design goal for the Python binding was
+to keep the interface as simple and pythonic as possible. Consequently, I have
+stripped down the C++ API to a very simple Python API which treats most of
+the objects in CDMA as containers. If you find that some things look quite
+similar to h5py (a Python interface to HDf5) then you are entirely right: h5py
+was quite an inspiration for this binding. This manual is split into several
+parts. In the next section a short introduction to CDMA will be given. 
+Section \ref udoc_basics shows gives an overview over the different types
+provided by the CDMA Python bindings. Finally section \ref udoc_examples 
+shows some real world examples.
+
+= CDMA at a glance = 
+<div align="right" 
+style="width:500;float:right;border-width:20px;margin-right:20px">
+\image html tree.png "CDMA data tree"
+</div>
+
+Lets start with a quick introduction to CDMA. CDMA maps one or more files and 
+the data stored in them on a tree consisting of `Groups`, `DataItems`, 
+`Dimensions`, and `Attributes` as shown in the figure on the right. 
+For users acquainted with HDF5 this picture fill look quite familiar. 
+Indeed, except for \c Dimensions, CDMA provides you with a data organization
+quite similar to HDF5. Groups and DataItems can additionally hold attributes 
+with additional meta-data. Access to data is provided in two different ways
+
+* raw access - is just what you see in the figure above
+* a dictionary based approach 
+
+As the Python bindings do not yet support dictionary access a detailed
+description will be omitted. In the  \a raw mode, data is accessed directly by
+traversing through the data tree.
+To represent the data tree the Python bindings provide a couple of types
+(classes). Namely
+    \li \c Group 
+    \li \c DataItem
+    \li \c Attribute
+    \li \c Dimension
+    \li and \c Dataset
+
+where the later one acts only as an entry level type to the data-tree. 
 
 
+\section udoc_basics Baisc usage
+
+To use CDMA from python the \c cdma module must be loaded with
+\code
+import cdma
+\endcode
+CDMA organizes data in so called datasets. To open a dataset use
+\code
+dataset = cdma.open_dataset("file:/path/to/file")
+\endcode
+\c open_dataset takes one argument which is the URL to the dataset (here a file). 
+Datasets are the entry level objects for the data tree. To get access to the
+tree use the \c root_group attribute of the \c Dataset instance.
+\code
+dataset.root_group
+\endcode
+
+
+\subsection udoc_groups Group objects
+Groups are the fundamental container types in CDMA you can iterate over a
+group with
+\code
+for o in dataset.root_group:
+    print o 
+\endcode
+This code will iterate over all child objects of the root group. There exist
+some convenience functions to filter for a particular type of child objects
+\code
+
+#iterate over all children of type DataItem
+for o in cdma.get_dataitems(dataset.root_group):
+    print o
+
+#iterate over all children of type Group
+for g in cdma.get_groups(dataset.root_group):
+    print g
+
+#iterate over all children of type Dimension
+for d in cdma.get_dimensions(dataset.root_group):
+    print d
+
+\endcode
+To access a particular item below a group the \c [] operator can be used with
+\code
+root = dataset.root_group
+group = root["groupname"]
+item  = root["dataitemname"]
+dim   = root["dimensionname"]
+\endcode
+Unlike for instance \c h5py the Python bindings to CDMA do not support access
+via a path as the argument to \c []. Only children linked directly below the
+group can be accessed using their name. 
+A group object has several read only attributes that can be used to obtain some
+more detailed information about an object.
+\code
+group = dataset.root_group["datagroup"]
+group.parent     #reference to the parent group (in this case the root group)
+group.root       #a reference to the root group of the data tree
+group.name       #the full name of the group
+group.location   #path to the group within the tree
+group.short_name #the key of the group (in this case "datagroup")
+\endcode
+There is one more member attribute to \c Group which will be discussed in the 
+\ref udoc_attributes section of this manual.
+
+\subsection udoc_dataitesm DataItem objects
+Instances of \c DataItem are possible child nodes of groups. Unlike groups a
+data item cannot hold child objects (they are leaves in the terminology of
+trees) except attributes. 
+Data items contain the data stored in the tree. This data can be either of a
+numerical or a string type. In addition data can be stored either as a scalar
+value or as a multidimensional array. An instance of \c DataItem possesses the 
+same attributes as an instance of \c Group (see the previous section) along 
+with some additional attributes
+\code
+item = group["itemname"]
+
+item.rank        #number of dimensions
+item.shape       #tuple with the number of elements along each dimension
+item.size        #total number of elements stored in the item
+item.unit        #physical unit of the data stored in the item
+item.type        #data type as numpy type string
+item.description #description of the item as string
+\endcode
+To obtain all data from an object use the \c [...] like in this example
+\code
+item = group["itemname"]
+
+data = item[...]
+\endcode
+In the case of a string item the returned value will be a string. Scalar numeric
+items return data as single instances of a native Python data type. 
+Multidimensional data is returned as numpy array which makes it easy to use the
+data. For numerical multidimensional data more sophisticated slicing operations
+can be used. The following code for instance reads only a portion of the total
+data 
+\code
+item = group["itemname"]
+
+data = item[256:512,1]
+\endcode
+All slicing operations that can be done with numpy arrays can be used. 
+
+\subsection udoc_attributes Managing attributes
+
+Group and data item objects have an attribute \c attrs attribute. This is an
+instance to an \c AttributeManager object. It is used to retrieve attributes
+attached to a group or data-item. 
+The usage of this attribute is fairly simple you can either iterate over all
+attributes
+\code
+g = dataset.root_group("datagroup")
+
+for a in g.attrs:
+    print a
+\endcode
+or access attributes directly by there name
+\code
+g = dataset.root_group("datagroup")
+a = g.attrs["attrname"]
+\endcode
+In either case attributes are returned as instances of type \c Attribute. 
+Obtaining the data from such an object is like reading the data from a data item
+(see above). Each instance of \c Attribute provides some attributes which hold
+further information about the attribute
+\code
+a = g.attrs["attrname"]
+
+a.size      #the total number of elements in the attribute
+a.shape     #number of dimensions along each dimension of the attribute
+a.type      #data type as numpy type string
+a.name      #name of the attribute           
+\endcode
+
+\subsection udoc_dimensions Dimensions
+TO DO
+
+\section udoc_examples Examples
+
+In this section we will discuss the examples shipped with the source
+distribution. 
+
+\subsection udoc_ex1 ex1.py
+
+This examples shows basic navigation and iteration over all entities in a CDMA
+tree.
+\includelineno ex1.py
+
+Line 4 imports the CDMA Python bindings. In Line 7 a handler to a dataset is
+opened using the \c open_dataset function. The dataset has a read-only attribute
+referring to is root group. 
+
+\subsection udoc_ex2 ex2.py
+\includelineno ex2.py
+
+\subsection udoc_ex3 ex3.py
+\includelineno ex3.py
+
+*/
