@@ -15,6 +15,23 @@ Section \ref udoc_basics shows gives an overview over the different types
 provided by the CDMA Python bindings. Finally section \ref udoc_examples 
 shows some real world examples.
 
+= Installation =
+The installation procedure of the CDMA Python bindings follow the standard Python 
+distutils procedure. After downloading and unpacking the tarball change to the 
+source directory and install with 
+{{{
+$> python setup.py install
+}}}
+This will install everything in your default Python package directory. To install to a custom location use the  `--prefix` option like this
+{{{
+$> python setup.py install --prefix=$HOME/myapps/
+}}}
+If you have compiled the CDMA C++ libraries with C++11 support you can use this with the Python bindings too using 
+{{{
+$> python setup.py --with-cpp11 install 
+}}}
+It is important to note that setup.py fetches the installation directory of the header files and libraries for CDMA C++ from its `pkg-config` file. Thus you should have `pkg-config` installed and the environment variable `PKG_CONFIG_PATH` set to the directory where your `.pc` files are stored (if they are not in a default location). 
+
 = CDMA at a glance = 
 
 http://code.google.com/p/cdma/w/images/tree.png
