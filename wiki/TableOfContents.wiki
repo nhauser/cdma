@@ -29,7 +29,7 @@
      * [JavaPlugin Plug-in development]
      * [JavaReference API Reference guide]
      * [JavaTools CDMA Utilities]
-   * [Python]
+   * [PythonBindings Python]
      * [PythonUsersGuide Python users guide]
      * [Python bindings API]
    * [DataFormatEngines Data format engines]
