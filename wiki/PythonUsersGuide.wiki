@@ -1,0 +1,7 @@
+#Python user documentation
+
+= Introduction =
+
+Python bindings user guide.
+
+
