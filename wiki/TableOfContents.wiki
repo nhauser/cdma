@@ -30,7 +30,7 @@
      * [JavaReference API Reference guide]
      * [JavaTools CDMA Utilities]
    * [Python]
-     *[Python users guide]
+     *[PythonUsersGuide Python users guide]
      *[Python bindings API]
    * [DataFormatEngines Data format engines]
      * [JavaEngines Java]
