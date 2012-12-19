@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma</groupId>
   <artifactId>CdmaCore-${aol}-shared-${mode}</artifactId>
-  <version>1.7.12-SNAPSHOT</version>
+  <version>2.0.1-SNAPSHOT</version>
   <packaging>nar</packaging>
   <name>CdmaCore</name>
   <description>CDMA Core Cpp library</description>
