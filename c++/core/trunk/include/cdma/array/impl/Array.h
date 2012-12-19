@@ -20,6 +20,8 @@
 // See AUTHORS file 
 //******************************************************************************
 
+/// @cond excluded_from_doxygen_generation
+
 #ifndef __CDMA_ARRAY_H__
 #define __CDMA_ARRAY_H__
 
@@ -29,8 +31,6 @@
 #include <cdma/exception/Exception.h>
 #include <cdma/array/impl/ArrayStorage.h>
 #include <cdma/array/IArray.h>
-
-/// @cond clientAPI
 
 namespace cdma
 {

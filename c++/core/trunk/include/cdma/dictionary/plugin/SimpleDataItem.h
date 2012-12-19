@@ -34,6 +34,8 @@
 #include <cdma/navigation/IDataset.h>
 #include <cdma/array/IArray.h>
 
+/// @cond pluginAPI
+
 namespace cdma
 {
 
@@ -194,4 +196,7 @@ class CDMA_DECL TwoDimArrayDataItem : public SimpleDataItem
 };
 
 }
+
+/// @endcond pluginAPI
+
 #endif
