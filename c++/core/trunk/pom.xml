@@ -153,6 +153,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <dependency>
     <groupId>fr.soleil.lib</groupId>
     <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+    <version>1.7.11</version>
   </dependency>
 </dependencies>
 
