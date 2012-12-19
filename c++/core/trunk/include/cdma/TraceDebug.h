@@ -29,6 +29,8 @@
 #include <yat/threading/Utilities.h>
 #include <yat/threading/Mutex.h>
 
+/// @cond internal
+
 namespace cdma
 {
 
@@ -98,5 +100,7 @@ namespace cdma
 #endif
 
 } // namespace
+
+/// @endcond internal
 
 #endif // __CDMA_TRACE_DEBUG_H__

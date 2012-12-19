@@ -26,7 +26,7 @@
 #include <cdma/Common.h>
 #include <cdma/exception/Exception.h>
 
-/// @cond dictAPI
+/// @cond clientAPI
 
 namespace cdma
 {
@@ -102,6 +102,6 @@ DECLARE_CLASS_SHARED_PTR(IKey);
 
 } //namespace
 
-/// @endcond dictAPI
+/// @endcond clientAPI
 
 #endif //__CDMA_IKEY_H__

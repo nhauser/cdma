@@ -27,6 +27,8 @@
 #include "cdma/exception/Exception.h"
 #include <iostream>
 
+/// @cond internal
+
 namespace cdma
 {
 
@@ -161,4 +163,7 @@ DECLARE_EXCEPTION_IMPL(TypeMismatch, "TYPE_MISMATCH");
   throw NotImplementedExceptionImpl("Operation cannot be performed", o)
 
 } //namespace cdma
+
+/// @endcond
+
 #endif //__CDMA_EXCEPTION_H__
