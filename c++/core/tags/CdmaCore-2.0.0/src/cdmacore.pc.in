@@ -1,0 +1,11 @@
+prefix = @PREFIX@ 
+exec_prefix = ${prefix}
+includedir = @INCDIR@
+libdir = ${prefix}/lib
+
+Name: @LIBNAME@
+Description: CDMA core library
+Version: @VERSION@
+Cflags: -I${includedir} @INCPATHS@
+Requires: 
+Libs: -L${libdir} -l@LIBNAME@ @LIBPATHS@
