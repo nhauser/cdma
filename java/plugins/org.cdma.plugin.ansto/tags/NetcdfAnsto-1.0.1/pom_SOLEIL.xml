@@ -1,0 +1,80 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.cdma.plugins</groupId>
+    <artifactId>NetcdfAnsto</artifactId>
+    <version>1.0.1</version>
+    <name>ANSTO NetCDF</name>
+    <description>CDMA Plug-in: ANSTO using NetCDF</description>
+
+    <scm>
+        <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/tags/NetcdfAnsto-1.0.1</connection>
+        <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.ansto/tags/NetcdfAnsto-1.0.1</developerConnection>
+    </scm>
+
+    <parent>
+        <groupId>fr.soleil</groupId>
+        <artifactId>super-pom-java</artifactId>
+        <version>RELEASE</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.cdma</groupId>
+            <artifactId>Core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.cdma.engines</groupId>
+            <artifactId>netcdf</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>META-INF</directory>
+                <targetPath>META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>OSGI-INF</directory>
+                <targetPath>OSGI-INF</targetPath>
+            </resource>
+        </resources>
+    </build>
+
+    <developers>
+        <developer>
+            <name>LAM</name>
+            <email>tla@ansto.gov.au</email>
+            <url>http://www.synchrotron-soleil.fr</url>
+            <organization>Australian Nuclear Science and Technology Organisation</organization>
+            <organizationUrl>http://www.ansto.gov.au</organizationUrl>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>XIONG</name>
+            <email>nxi@ansto.gov.au</email>
+            <url>http://www.synchrotron-soleil.fr</url>
+            <organization>Australian Nuclear Science and Technology Organisation</organization>
+            <organizationUrl>http://www.ansto.gov.au</organizationUrl>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>rodriguez</id>
+            <name>rodriguez</name>
+            <email>clement.rodriguez@synchrotron-soleil.fr</email>
+            <url>http://www.synchrotron-soleil.fr</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
+</project>
