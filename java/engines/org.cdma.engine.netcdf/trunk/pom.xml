@@ -10,7 +10,7 @@
 
 	<groupId>org.cdma.engines</groupId>
 	<artifactId>netcdf</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>CDMA Engine NetCDF</name>
 	<description>CDMA Engine: NetCDF</description>
 
@@ -23,6 +23,7 @@
 		<dependency>
 			<groupId>org.cdma</groupId>
 			<artifactId>Core</artifactId>
+			<version>3.2.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.hdfgroup</groupId>
