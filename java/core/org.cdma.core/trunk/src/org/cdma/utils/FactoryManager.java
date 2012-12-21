@@ -44,7 +44,6 @@ public class FactoryManager implements IFactoryManager {
 
     public void registerFactory(String name, IFactory factory) {
     	int[] cdmaVersion = parseVersion( factory.getCDMAVersion() );
-    	int[] plugVersion = parseVersion( factory.getPluginVersion() );
     	
     	// Check if a version is mentioned for registry
     	boolean register = true;
@@ -54,25 +53,6 @@ public class FactoryManager implements IFactoryManager {
     		
     		if( coreVersion[0] != cdmaVersion[0] ) {
     			register = false;
-    		}
-    	}
-    	
-    	if( register ) {
-    		// Check that plug-in hasn't been load in a previous version
-    		IFactory found = factoryRegistry.get(name);
-    		if( found != null && register) {
-    			int[] prevVersion = parseVersion( found.getPluginVersion() );
-    			
-    			for( int i = 0; i < 3; i++ ) {
-    				if( prevVersion[i] > plugVersion[i] ) {
-    					register = false;
-    					break;
-    				}
-    				else if( prevVersion[i] < plugVersion[i] ) {
-    					break;
-    				}
-    				
-    			}
     		}
     	}
 

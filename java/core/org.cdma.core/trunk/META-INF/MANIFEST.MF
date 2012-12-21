@@ -1,19 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Gumtree Data Core
-Bundle-SymbolicName: org.gumtree.data.core
+Bundle-Name: Common Data Model API Core
+Bundle-SymbolicName: org.cdma.core
 Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.gumtree.data,
- org.gumtree.data.dictionary,
- org.gumtree.data.dictionary.impl,
- org.gumtree.data.exception,
- org.gumtree.data.interfaces,
- org.gumtree.data.io,
- org.gumtree.data.math,
- org.gumtree.data.utils
+Export-Package: org.cdma,
+ org.cdma.dictionary,
+ org.cdma.exception,
+ org.cdma.interfaces,
+ org.cdma.io,
+ org.cdma.math,
+ org.cdma.utils
 Import-Package: org.jdom;version="1.1.0";resolution:=optional,
  org.jdom.input;version="1.1.0";resolution:=optional,
  org.osgi.framework;version="1.5.0";resolution:=optional
-Bundle-Activator: org.gumtree.data.internal.Activator
+Bundle-Activator: org.cdma.internal.Activator
 Bundle-ActivationPolicy: lazy

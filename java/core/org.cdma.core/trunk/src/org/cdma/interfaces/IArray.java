@@ -103,36 +103,36 @@ public interface IArray extends IModelObject {
     IArrayMath getArrayMath();
 
     /**
-     * Get the array element at the current element offset of ima, as a boolean.
+     * Get the array element at the current element offset of index, as a boolean.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to boolean if necessary.
      */
-    boolean getBoolean(IIndex ima);
+    boolean getBoolean(IIndex index);
 
     /**
-     * Get the array element at the current element offset of ima, as a byte.
+     * Get the array element at the current element offset of index, as a byte.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to float if necessary.
      */
-    byte getByte(IIndex ima);
+    byte getByte(IIndex index);
 
     /**
-     * Get the array element at the current element offset of ima, as a char.
+     * Get the array element at the current element offset of index, as a char.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to char if necessary.
      */
-    char getChar(IIndex ima);
+    char getChar(IIndex index);
 
     /**
-     * Get the array element at the current element offset of ima, as a double.
+     * Get the array element at the current element offset of index, as a double.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to double if necessary.
      */
-    double getDouble(IIndex ima);
+    double getDouble(IIndex index);
 
     /**
      * Get the element class type of this IArray.
@@ -142,12 +142,12 @@ public interface IArray extends IModelObject {
     Class<?> getElementType();
 
     /**
-     * Get the array element at the current element offset of ima, as a float.
+     * Get the array element at the current element offset of index, as a float.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to float if necessary.
      */
-    float getFloat(IIndex ima);
+    float getFloat(IIndex index);
 
     /**
      * Get an IIndex object used for indexed access of this IArray.
@@ -158,12 +158,12 @@ public interface IArray extends IModelObject {
     IIndex getIndex();
 
     /**
-     * Get the array element at the current element offset of ima, as a int.
+     * Get the array element at the current element offset of index, as a int.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to int if necessary.
      */
-    int getInt(IIndex ima);
+    int getInt(IIndex index);
 
     /**
      * Get Iterator to traverse the IArray.
@@ -173,21 +173,21 @@ public interface IArray extends IModelObject {
     IArrayIterator getIterator();
 
     /**
-     * Get the array element at the current element offset of ima, as a long.
+     * Get the array element at the current element offset of index, as a long.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to long if necessary.
      */
-    long getLong(IIndex ima);
+    long getLong(IIndex index);
 
     /**
      * Get the array element at index as an Object. The returned value is
      * wrapped in an object, eg Double for double
      * 
-     * @param ima element Index
+     * @param index element Index
      * @return Object value at <code>index</code>
      */
-    Object getObject(IIndex ima);
+    Object getObject(IIndex index);
 
     /**
      * Get the number of dimensions of the array.
@@ -205,8 +205,7 @@ public interface IArray extends IModelObject {
      * @return IArrayIterator
      * @throws InvalidRangeException
      */
-    IArrayIterator getRegionIterator(int[] reference, int[] range)
-            throws InvalidRangeException;
+    IArrayIterator getRegionIterator(int[] reference, int[] range) throws InvalidRangeException;
 
     /**
      * Get the shape: length of array in each dimension.
@@ -217,12 +216,12 @@ public interface IArray extends IModelObject {
     int[] getShape();
 
     /**
-     * Get the array element at the current element offset of ima, as a short.
+     * Get the array element at the current element offset of index, as a short.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @return value at <code>index</code> cast to short if necessary.
      */
-    short getShort(IIndex ima);
+    short getShort(IIndex index);
 
     /**
      * Get the total number of elements in the array.
@@ -240,77 +239,77 @@ public interface IArray extends IModelObject {
     Object getStorage();
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setBoolean(IIndex ima, boolean value);
+    void setBoolean(IIndex index, boolean value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setByte(IIndex ima, byte value);
+    void setByte(IIndex index, byte value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setChar(IIndex ima, char value);
+    void setChar(IIndex index, char value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setDouble(IIndex ima, double value);
+    void setDouble(IIndex index, double value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setFloat(IIndex ima, float value);
+    void setFloat(IIndex index, float value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setInt(IIndex ima, int value);
+    void setInt(IIndex index, int value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setLong(IIndex ima, long value);
+    void setLong(IIndex index, long value);
 
     /**
      * Set the array element at index to the specified value. the value must be
      * passed wrapped in the appropriate Object (eg Double for double)
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value.
      */
-    void setObject(IIndex ima, Object value);
+    void setObject(IIndex index, Object value);
 
     /**
-     * Set the array element at the current element offset of ima.
+     * Set the array element at the current element offset of index.
      * 
-     * @param ima IIndex with current element set
+     * @param index IIndex with current element set
      * @param value the new value; cast to underlying data type if necessary.
      */
-    void setShort(IIndex ima, short value);
+    void setShort(IIndex index, short value);
 
     /**
      * Convert the shape information to String type.

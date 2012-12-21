@@ -362,16 +362,6 @@ public abstract class ArrayUtils implements IArrayUtils {
     @Override
     public IArrayUtils section(final int[] origin, final int[] shape)
             throws InvalidRangeException {
-        /*
-         * try { IArray newArray =
-         * Factory.createArrayNoCopy(getArray().getStorage()); IIndex newIndex =
-         * newArray.getIndex();
-         * 
-         * newIndex.set(origin); newIndex.setShape(shape); newIndex.reduce();
-         * 
-         * return new ArrayUtils(newArray); } catch (Exception e) { throw new
-         * InvalidRangeException(e); }
-         */
         return sectionNoReduce(origin, shape, null).reduce();
     }
 
@@ -429,9 +419,10 @@ public abstract class ArrayUtils implements IArrayUtils {
     @Override
     public IArrayUtils sectionNoReduce(int[] origin, int[] shape, long[] stride)
             throws InvalidRangeException {
-        int i = 0;
-        for( int or : origin ) {
-            if( getArray().getIndex().getShape()[i++] < or ) {
+    	// Check the starting point and shape are fit the array
+    	int[] arrayShape = getArray().getIndex().getShape();
+        for( int dim = 0; dim < origin.length; dim++ ) {
+            if( arrayShape[dim] < origin[dim] + shape[dim] ) {
                 throw new InvalidRangeException("Unable to get a section at that position!");
             }
         }
