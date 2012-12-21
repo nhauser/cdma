@@ -63,7 +63,7 @@ public class VcDataset implements IDataset {
 		String port   = System.getProperty("HDB_PORT",     System.getenv("HDB_PORT"));
 		String name   = System.getProperty("HDB_NAME",     System.getenv("HDB_NAME"));
 		String schema = System.getProperty("HDB_SCHEMA",   System.getenv("HDB_SCHEMA"));
-		String rac    = System.getProperty("HDB_RAC",      System.getenv("HDB_RAC"));
+		//String rac    = System.getProperty("HDB_RAC",      System.getenv("HDB_RAC"));
 		String user   = System.getProperty("HDB_USER",     System.getenv("HDB_USER"));
 		String pwd    = System.getProperty("HDB_PASSWORD", System.getenv("HDB_PASSWORD"));
 		String url    = driver + ":@" + host +
@@ -77,7 +77,7 @@ public class VcDataset implements IDataset {
 		port   = System.getProperty("TDB_PORT",     System.getenv("TDB_PORT"));
 		name   = System.getProperty("TDB_NAME",     System.getenv("TDB_NAME"));
 		schema = System.getProperty("TDB_SCHEMA",   System.getenv("TDB_SCHEMA"));
-		rac    = System.getProperty("TDB_RAC",      System.getenv("TDB_RAC"));
+		//rac    = System.getProperty("TDB_RAC",      System.getenv("TDB_RAC"));
 		user   = System.getProperty("TDB_USER",     System.getenv("TDB_USER"));
 		pwd    = System.getProperty("TDB_PASSWORD", System.getenv("TDB_PASSWORD"));
 		url    = driver + ":@" + host +

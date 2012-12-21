@@ -68,7 +68,6 @@ public class VcDataSource implements IDatasource {
 				}
 			}
 		}
-		System.out.println("getValidURI: " + result.size() );		
 		return result;
 	}
 

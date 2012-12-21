@@ -3,7 +3,6 @@ package org.cdma.plugin.archiving.array;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
-import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.ShapeNotMatchException;
@@ -25,7 +24,6 @@ public class VcArray implements IArray {
 	private Object mStorage;
 	private DefaultIndex mView;
 	private boolean mIsRawArray;
-	//private SqlArray mSqlArray;
 
 	public VcArray(Object storage, int[] shape) {
 		mView = new DefaultIndex(VcFactory.NAME, shape);
