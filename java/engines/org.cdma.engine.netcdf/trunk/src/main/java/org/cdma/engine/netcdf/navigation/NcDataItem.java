@@ -14,7 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.engine.netcdf.array.NcArray;
 import org.cdma.engine.netcdf.array.NcRange;
 import org.cdma.exception.DimensionNotSupportedException;
@@ -180,7 +182,7 @@ public class NcDataItem extends VariableDS implements IDataItem {
 	protected ucar.ma2.Array _read() throws IOException {
 		if (cache != null && cache.data != null) {
 			if (debugCaching) {
-				System.out.println("got data from cache " + getName());
+				Factory.getLogger().log(Level.INFO, "got data from cache " + getName());
 			}
 			return cache.data;
 		} else {
@@ -196,7 +198,6 @@ public class NcDataItem extends VariableDS implements IDataItem {
 
 	@Override
 	public boolean isCaching() {
-		System.out.println("called");
 		return true;
 	}
 	

@@ -143,7 +143,6 @@ public class NcArray implements IArray {
 	@Override
 	public void releaseStorage() throws BackupException {
 		if (isDirty) {
-			System.out.println("write data to backup file");
 			if (Register.getInstance().backupArray(registerId, this)) {
 				array = null;
 			}

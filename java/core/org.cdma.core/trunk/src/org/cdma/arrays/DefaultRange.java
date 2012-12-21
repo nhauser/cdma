@@ -1,13 +1,14 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
-package org.cdma.utilities.memory;
+// ****************************************************************************
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0 
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html
+// 
+// Contributors: 
+//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
+// ****************************************************************************
+package org.cdma.arrays;
 
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.interfaces.IRange;
@@ -20,7 +21,7 @@ public final class DefaultRange implements IRange, Cloneable {
     private long      mLast;     // number of elements
     private long      mFirst;    // first value in range
     private long      mStride;   // stride, must be >= 1
-    private String    mName;     // optional name
+    private String     mName;     // optional name
     private boolean   mReduced;  // was this ranged reduced or not
 
     /// Constructors

@@ -1,6 +1,7 @@
 package org.cdma.utilities.conversion;
 
-import org.cdma.utilities.memory.ArrayTools;
+import org.cdma.utils.ArrayTools;
+
 
 /**
  * Tools to convert cells of a String array into an array of another type with same dimension.

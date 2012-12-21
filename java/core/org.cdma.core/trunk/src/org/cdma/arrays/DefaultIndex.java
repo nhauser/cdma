@@ -1,13 +1,14 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
-package org.cdma.utilities.memory;
+// ****************************************************************************
+// Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
+// All rights reserved. This program and the accompanying materials
+// are made available under the terms of the Eclipse Public License v1.0 
+// which accompanies this distribution, and is available at
+// http://www.eclipse.org/legal/epl-v10.html
+// 
+// Contributors: 
+//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
+// ****************************************************************************
+package org.cdma.arrays;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +18,18 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 
 public class DefaultIndex implements IIndex, Cloneable {
-	private int mRank;
-	private int[] mICurPos; // Current position pointed by this index
-	private DefaultRange[] mRanges; // Ranges that constitute the index global
-									// view in each dimension
-	private boolean mIsUpToDate; // Does the overall shape has changed
-	private int mLastIndex;
-	private int[] mProjShape; // shape without considering reduced range
-	private int[] mProjOrigin; // origin without considering reduced range
-	private long[] mProjStride; // stride without considering reduced range
-	private String mFactory;
+	private int            mRank;         // Rank of this index
+	private int[]          mICurPos;      // Current position pointed by this index
+	private DefaultRange[] mRanges;       // Ranges that constitute the index global view in each dimension
+	private boolean       mIsUpToDate;   // Does the overall shape has changed
+	private String         mFactory;      // plug-in's factory name
+	private int            mFirstIndex;   // starting offset
+	private int            mLastIndex;    // endin offset
+	
+	private int[]  mProjShape;    // shape without considering reduced range
+	private int[]  mProjOrigin;   // origin without considering reduced range
+	private long[] mProjStride;  // stride without considering reduced range
+	
 
 	// / Constructors
 	public DefaultIndex(String factoryName, int[] shape) {
@@ -35,6 +38,10 @@ public class DefaultIndex implements IIndex, Cloneable {
 	
 	public DefaultIndex(String factoryName, final IIndex index) {
 		this(factoryName, index.getShape().clone(), index.getOrigin(), index.getShape().clone());
+	}
+	
+	public DefaultIndex(IIndex index) {
+		this(index.getFactoryName(), index.getShape(), index.getOrigin(), index.getShape() );
 	}
 
 	public DefaultIndex(DefaultIndex index) {
@@ -100,13 +107,54 @@ public class DefaultIndex implements IIndex, Cloneable {
 	// ---------------------------------------------------------
 	@Override
 	public long currentElement() {
+		return elementOffset( mICurPos );
+	}
+	
+	public long elementOffset(int[] position) {
 		long value = 0;
 		try {
-			for (int i = 0; i < mICurPos.length; i++) {
-				value += (mRanges[i]).element(mICurPos[i]);
+			int j = 0;
+			for (int i = 0; i < position.length; i++) {
+				if( ! mRanges[j].reduced() ) {
+					value += (mRanges[j]).element(position[i]);
+				}
+				else {
+					value += (mRanges[j]).element(0);
+				}
+				j++;
+				
 			}
 		} catch (InvalidRangeException e) {
 			value = -1;
+		}
+		return value;
+	}
+	
+	/**
+	 * Returns the cell's coordinates in the storage, that the given position
+	 * corresponds to, according this defined view of the storage.
+	 * 
+	 * @param position
+	 * @return
+	 */
+	public int[] elementOffsetCoordinates(int[] position) {
+		int[] value = new int[mRanges.length];
+		try {
+			int j = 0;
+			int length = 1;
+			for (int i = position.length - 1; i >= 0 ; i--) {
+				if( ! mRanges[j].reduced() ) {
+					value[i] = (mRanges[j]).element(position[i]) / length;
+					length  *= mRanges[j].length();
+//					value[i] = position[i] * mRanges[i].stride() + mRanges[i].first();
+				}
+				else {
+					value[i] = (mRanges[j]).element(0);
+				}
+				j--;
+			}
+		} catch (InvalidRangeException e) {
+			value = new int[] {};
 		}
 		return value;
 	}
@@ -516,7 +564,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		str.append("]  <=> Index: " + currentElement() + "\nRanges:\n");
 		shp.append("Shape [");
 		for (DefaultRange r : mRanges) {
-			if (!r.reduced()) {
+			//if (!r.reduced()) {
 				if (i != 0) {
 					shp.append(", ");
 				}
@@ -525,7 +573,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 				if (i < mRanges.length) {
 					str.append("\n");
 				}
-			}
+			//}
 			i++;
 		}
 		shp.append("]\n");
@@ -570,14 +618,16 @@ public class DefaultIndex implements IIndex, Cloneable {
 	@Override
 	public long lastElement() {
 		if (!mIsUpToDate) {
-			int last = 0;
-			for (IRange range : mRanges) {
-				last += range.last();
-			}
-			mLastIndex = last;
-			mIsUpToDate = true;
+			updateOffset();
 		}
 		return mLastIndex;
+	}
+	
+	public long firstElement() {
+		if (!mIsUpToDate) {
+			updateOffset();
+		}
+		return mFirstIndex;
 	}
 
 	@Override
@@ -585,8 +635,8 @@ public class DefaultIndex implements IIndex, Cloneable {
 		return new DefaultIndex(this);
 	}
 
-	public List<IRange> getRangeList() {
-		ArrayList<IRange> list = new ArrayList<IRange>();
+	public List<DefaultRange> getRangeList() {
+		ArrayList<DefaultRange> list = new ArrayList<DefaultRange>();
 
 		for (DefaultRange range : mRanges) {
 			if (!range.reduced()) {
@@ -624,7 +674,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		int value = 0;
 
 		for (int i = 0; i < mICurPos.length; i++) {
-			value += mICurPos[i] * (mRanges[i]).stride();
+			value += mICurPos[i] * (mRanges[i]).stride() + (mRanges[i]).first();
 		}
 		return value;
 	}
@@ -645,6 +695,18 @@ public class DefaultIndex implements IIndex, Cloneable {
 			mProjShape[i] = range.length();
 			stride *= range.reduced() ? 1 : range.length();
 		}
+	}
+	
+	private void updateOffset() {
+		int last = 0;
+		int first = 0;
+		for (IRange range : mRanges) {
+			last += range.last();
+			first += range.first();
+		}
+		mFirstIndex = first;
+		mLastIndex = last;
+		mIsUpToDate = true;
 	}
 
 	private static final int DIM0 = 0;

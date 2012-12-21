@@ -249,7 +249,6 @@ public class NcDataset implements IDataset {
 	@Override
 	public void save(IContainer object) throws WriterException {
 		try {
-			System.out.println("save called");
 			readAll(getRootGroup());
 			netcdfDataset.close();
 		} catch (IOException e) {
