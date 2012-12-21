@@ -1,7 +1,6 @@
 package org.cdma.plugin.archiving.navigation;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,11 +27,6 @@ import org.cdma.plugin.archiving.internal.sql.DbUtils.BaseType;
 import org.cdma.plugin.xml.navigation.XmlGroup;
 import org.cdma.utilities.memory.ArrayTools;
 
-//import fr.esrf.Tango.DevFailed;
-//import fr.soleil.commonarchivingapi.ArchivingTools.Tools.DbData;
-//import fr.soleil.hdbtdbArchivingApi.ArchivingApi.DataBaseUtils.DbUtils;
-//import fr.soleil.hdbtdbArchivingApi.ArchivingTools.Tools.SamplingType;
-
 public class VcGroup extends XmlGroup {
 
     public static final int INVALID_INDEX = -1;
@@ -41,8 +35,6 @@ public class VcGroup extends XmlGroup {
     public static final String ATTRIBUTE_SINGLE_DATA_LABEL = "data";
     public static final int READ_ATTRIBUTE_DB_INDEX = 0; 
     public static final int WRITE_ATTRIBUTE_DB_INDEX = 1;
-
-//    private static SamplingType sampling = SamplingType.getSamplingType(SamplingType.ALL);
 
 	private String mHiddenAttribute;
 	private boolean mHiddenAttributeLoaded;
@@ -170,7 +162,6 @@ public class VcGroup extends XmlGroup {
 			    
 				try {
 				    // Get the tango-attribute's properties
-				    //int[] properties = initAttributeProperties( dbDataset, dbType, dbName );
 					AttributeProperties attribute = new AttributeProperties(mHiddenAttribute, dbDataset, dbName);
 					
 					// Construct the dataitem
@@ -199,27 +190,22 @@ public class VcGroup extends XmlGroup {
 			    SqlCdmaCursor cursor = dbDataset.execute_query(query);
 			    
 			    // Prepare items for each found column
-			    //while( cursor.next() ) {
-			    	List<SqlDataItem> sql_items = cursor.getDataItemList();
-			    	IDimension dimension;
-			    	IDataItem child;
-			    	for( SqlDataItem item : sql_items ) {
-			    		if( attribute.isDimension( item.getShortName() ) ) {
-			    			IArray data = constructVcArray( attribute, (SqlArray) item.getData() );
-							dimension = new VcDimension( data, item.getShortName());
-							addOneDimension(dimension);
-			    		}
-			    		else {
-			    			IArray data = constructVcArray( attribute, (SqlArray) item.getData() );
-			    			child = new VcDataItem(item.getShortName(), this, data);
-			    			addDataItem(child);
-			    		}
-			    	}
-			   // }
+		    	List<SqlDataItem> sql_items = cursor.getDataItemList();
+		    	IDimension dimension;
+		    	IDataItem child;
+		    	for( SqlDataItem item : sql_items ) {
+		    		if( attribute.isDimension( item.getShortName() ) ) {
+		    			IArray data = constructVcArray( attribute, (SqlArray) item.getData() );
+						dimension = new VcDimension( data, item.getShortName());
+						addOneDimension(dimension);
+		    		}
+		    		else {
+		    			IArray data = constructVcArray( attribute, (SqlArray) item.getData() );
+		    			child = new VcDataItem(item.getShortName(), this, data);
+		    			addDataItem(child);
+		    		}
+		    	}
 		    }
-		    
-	   // } catch( SQLException e ) {
-	    //	Factory.getLogger().log(Level.SEVERE, "Unable to execute query", e);
 		} catch (ParseException e) {
 			Factory.getLogger().log(Level.SEVERE, "Unable to interprete dates in query", e);
 		} catch (IOException e) {
@@ -243,7 +229,7 @@ public class VcGroup extends XmlGroup {
 		return result;
 	}
 
-	private String prepareQueryDataItem( BaseType dbType, String dbName, AttributeProperties attribute,/*int[] properties,*/ IAttribute startTime, IAttribute endTime ) throws ParseException {
+	private String prepareQueryDataItem( BaseType dbType, String dbName, AttributeProperties attribute, IAttribute startTime, IAttribute endTime ) throws ParseException {
 		StringBuffer query = new StringBuffer();
 		
 		if( attribute != null ) {

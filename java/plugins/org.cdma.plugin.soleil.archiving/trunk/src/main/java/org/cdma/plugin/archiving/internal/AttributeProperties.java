@@ -217,7 +217,7 @@ public class AttributeProperties {
 		    try {
 				cursor.close();
 			} catch (SQLException e) {
-				Factory.getLogger().log(Level.INFO, e.getMessage(), e);
+				Factory.getLogger().log(Level.WARNING, e.getMessage(), e);
 			}
 		}
 		else {
