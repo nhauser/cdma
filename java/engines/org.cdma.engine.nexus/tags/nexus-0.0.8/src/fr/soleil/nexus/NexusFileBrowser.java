@@ -808,7 +808,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     
     protected void pushNodeInBuffer(String sCurName, String sCurClass) {
         boolean bIsGroup = !(sCurName.equals("SDS") || sCurName.equals("NXtechnical_data"));
-        NexusNode node = new NexusNode( sCurName, sCurName, bIsGroup );
+        NexusNode node = new NexusNode( sCurName, sCurClass, bIsGroup );
         m_tNodeTab.add( node );
         getBuffer().pushNodeInPath(m_pRealPath, node);
     }
