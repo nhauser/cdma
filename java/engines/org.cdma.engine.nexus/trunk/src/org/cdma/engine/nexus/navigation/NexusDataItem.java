@@ -96,7 +96,11 @@ public final class NexusDataItem implements IDataItem, Cloneable {
             mArray = new NexusArray((NexusArray) dataItem.getData());
         }
         catch (IOException e) {
-        }
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+        } 
+        catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
     }
 
     public NexusDataItem(String factoryName, DataItem data, NexusDataset handler) {
@@ -135,9 +139,15 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
         Entry<String, Data<?>> sAttr;
         Iterator<Entry<String, Data<?>>> iter = inList.entrySet().iterator();
+        String name;
+        Object value;
+        Data<?> data;
         while (iter.hasNext()) {
             sAttr = iter.next();
-            tmpAttr = new NexusAttribute(mFactory, sAttr.getKey(), sAttr.getValue().getValue());
+            name = sAttr.getKey();
+            data = sAttr.getValue();
+            value = data.getValue();
+            tmpAttr = new NexusAttribute(mFactory, name, value);
             outList.add(tmpAttr);
         }
 
@@ -147,7 +157,12 @@ public final class NexusDataItem implements IDataItem, Cloneable {
     @Override
     public IArray getData() throws IOException {
         if (mArray == null) {
-            mArray = new NexusArray(mFactory, mn4tDataItem);
+            try {
+				mArray = new NexusArray(mFactory, mn4tDataItem);
+			}
+            catch (InvalidArrayTypeException e) {
+            	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+    		}
         }
         return mArray;
     }
@@ -379,22 +394,26 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public List<IRange> getRangeList() {
-        List<IRange> list = null;
+        List<IRange> list = new ArrayList<IRange>();
         try {
-            list = new NexusIndex(mFactory, getData().getShape()).getRangeList();
+        	NexusIndex index = (NexusIndex) getData().getIndex();
+            list.addAll(index.getRangeList());
         }
         catch (IOException e) {
+        	list = null;
         }
         return list;
     }
 
     @Override
     public List<IRange> getSectionRanges() {
-        List<IRange> list = null;
+        List<IRange> list = new ArrayList<IRange>();
         try {
-            list = ((NexusIndex) getData().getIndex()).getRangeList();
+        	NexusIndex index = (NexusIndex) getData().getIndex();
+            list.addAll(index.getRangeList());
         }
         catch (IOException e) {
+        	list = null;
         }
         return list;
     }

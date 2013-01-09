@@ -9,13 +9,12 @@
 //******************************************************************************
 package org.cdma.engine.nexus.array;
 
-import java.util.List;
-
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.interfaces.IIndex;
-import org.cdma.interfaces.IRange;
-import org.cdma.utilities.memory.DefaultIndex;
 
 public final class NexusIndex extends DefaultIndex implements Cloneable {
+	private long mLast = -1;
+	
     /// Constructors
     public NexusIndex(String factoryName, fr.soleil.nexus.DataItem ds) {
         super(factoryName, ds.getSize(), new int[ds.getSize().length], ds.getSize());
@@ -33,12 +32,73 @@ public final class NexusIndex extends DefaultIndex implements Cloneable {
         super( factoryName, shape, start, length );
     }
 
+    /*
     public NexusIndex(String factoryName, List<IRange> ranges) {
         super(factoryName, ranges);
     }
+    */
 
     @Override
     public IIndex clone() {
         return new NexusIndex(this);
     }
+    
+	@Override
+	public long lastElement() {
+		if( mLast < 0 ) {
+			int[] position = getShape();
+			for( int dim = 0; dim < position.length; dim++ ) {
+				position[dim]--;
+			}
+			mLast = elementOffset( position );
+		}
+		return mLast;
+	}
+	
+	@Override
+	public void setOrigin(int[] origins) {
+		mLast = -1;
+		super.setOrigin(origins);
+	}
+	
+	@Override
+	public void setShape(int[] value) {
+		mLast = -1;
+		super.setShape(value);
+	}
+
+	@Override
+	public void setStride(long[] stride) {
+		mLast = -1;
+		super.setStride(stride);
+	}
+    
+	@Override
+	public long firstElement() {
+		return 0;
+	}
+
+	@Override
+    public long elementOffset(int[] position) {
+		long value = super.elementOffset(position) - super.elementOffset( new int[position.length] );
+		if( value < 0 ) {
+			value = -1;
+		}
+		return value;
+	}
+	
+	
+/*
+    @Override
+	public int[] elementOffsetCoordinates(int[] position) {
+		int[] value = super.elementOffsetCoordinates(position);
+		int[] origin = getOrigin();
+		
+		for( int dim = 0; dim < origin.length; dim++ ) {
+			value[dim] -= origin[dim];
+		}
+
+    	return value;
+	}
+		*/
 }

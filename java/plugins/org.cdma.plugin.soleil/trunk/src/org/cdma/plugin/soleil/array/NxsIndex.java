@@ -12,14 +12,15 @@ package org.cdma.plugin.soleil.array;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.engine.nexus.array.NexusIndex;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.soleil.NxsFactory;
 
 public final class NxsIndex implements IIndex, Cloneable {
-    private NexusIndex mIndexArrayData;
-    private NexusIndex mIndexStorage;
+    private DefaultIndex mIndexArrayData;  // View describing the matrix of arrays
+    private NexusIndex mIndexStorage;      // View describing each array storage 
 
 
     /// Constructors
@@ -31,7 +32,7 @@ public final class NxsIndex implements IIndex, Cloneable {
      * The first matrixRank values concern the matrix of index.
      */
     public NxsIndex(int matrixRank, int[] shape, int[] start, int[] length) {
-        mIndexArrayData = new NexusIndex(
+        mIndexArrayData = new DefaultIndex(
                 NxsFactory.NAME, 
                 java.util.Arrays.copyOfRange(shape, 0, matrixRank),
                 java.util.Arrays.copyOfRange(start, 0, matrixRank),
@@ -51,17 +52,17 @@ public final class NxsIndex implements IIndex, Cloneable {
     }
 
     public NxsIndex(NxsIndex index) {
-        mIndexArrayData = (NexusIndex) index.mIndexArrayData.clone();
+        mIndexArrayData = (DefaultIndex) index.mIndexArrayData.clone();
         mIndexStorage = (NexusIndex) index.mIndexStorage.clone();
     }
 
     public NxsIndex(int[] storage) {
-        mIndexArrayData = new NexusIndex( NxsFactory.NAME, new int[] {} );
+        mIndexArrayData = new DefaultIndex( NxsFactory.NAME, new int[] {} );
         mIndexStorage   = new NexusIndex( NxsFactory.NAME, storage.clone() );
     }
 
     public NxsIndex(int[] matrix, int[] storage) {
-        mIndexArrayData = new NexusIndex( NxsFactory.NAME, matrix.clone() );
+        mIndexArrayData = new DefaultIndex( NxsFactory.NAME, matrix.clone() );
         mIndexStorage   = new NexusIndex( NxsFactory.NAME, storage.clone() );
     }
 
@@ -151,12 +152,14 @@ public final class NxsIndex implements IIndex, Cloneable {
         if( index.length != getRank() ) {
             throw new IllegalArgumentException();
         }
-        mIndexArrayData.set(
-                java.util.Arrays.copyOfRange(index, 0, mIndexArrayData.getRank())
-                );
-
+        int matrixArrayRank = mIndexArrayData.getRank();
+        if( matrixArrayRank > 0 ) {
+        	mIndexArrayData.set(
+        			java.util.Arrays.copyOfRange(index, 0, matrixArrayRank)
+        			);
+        }
         mIndexStorage.set(
-                java.util.Arrays.copyOfRange(index, mIndexArrayData.getRank(), index.length)
+                java.util.Arrays.copyOfRange(index, matrixArrayRank, index.length)
                 );
 
         return this;
@@ -364,12 +367,16 @@ public final class NxsIndex implements IIndex, Cloneable {
 
     @Override
     public long currentElement() {
-        return mIndexArrayData.currentElement() * mIndexStorage.getSize() + mIndexStorage.currentElement();
+    	long offsetArray  = mIndexArrayData.currentElement() * mIndexStorage.getSize();
+    	long offsetMatrix = mIndexStorage.currentElement();
+        return offsetArray + offsetMatrix;
     }
 
     @Override
     public long lastElement() {
-        return mIndexArrayData.lastElement() * mIndexStorage.getSize() + mIndexStorage.lastElement();
+    	long lastArray  = mIndexArrayData.lastElement() * mIndexStorage.getSize();
+    	long lastMatrix = mIndexStorage.lastElement();
+        return lastArray + lastMatrix;
     }
 
     @Override
@@ -429,7 +436,7 @@ public final class NxsIndex implements IIndex, Cloneable {
     // ---------------------------------------------------------
     /// Protected methods
     // ---------------------------------------------------------
-    public NexusIndex getIndexMatrix() {
+    public DefaultIndex getIndexMatrix() {
         return mIndexArrayData;
     }
 

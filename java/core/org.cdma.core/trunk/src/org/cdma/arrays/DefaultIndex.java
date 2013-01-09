@@ -88,20 +88,6 @@ public class DefaultIndex implements IIndex, Cloneable {
 		updateProjection();
 	}
 
-	public DefaultIndex(String factoryName, List<IRange> ranges) {
-		mFactory = factoryName;
-		mIsUpToDate = false;
-		mRank = ranges.size();
-		mICurPos = new int[mRank];
-		mRanges = new DefaultRange[mRank];
-		int i = 0;
-		for (IRange range : ranges) {
-			mRanges[i] = new DefaultRange(range);
-			i++;
-		}
-		updateProjection();
-	}
-
 	// ---------------------------------------------------------
 	// / Public methods
 	// ---------------------------------------------------------
@@ -109,19 +95,19 @@ public class DefaultIndex implements IIndex, Cloneable {
 	public long currentElement() {
 		return elementOffset( mICurPos );
 	}
-	
+
 	public long elementOffset(int[] position) {
 		long value = 0;
 		try {
-			int j = 0;
-			for (int i = 0; i < position.length; i++) {
-				if( ! mRanges[j].reduced() ) {
-					value += (mRanges[j]).element(position[i]);
+			int dim = 0;
+			for ( DefaultRange range : mRanges ) {
+				if( ! range.reduced() ) {
+					value += range.element(position[dim]);
+					dim++;
 				}
 				else {
-					value += (mRanges[j]).element(0);
+					value += range.element(0);
 				}
-				j++;
 				
 			}
 		} catch (InvalidRangeException e) {
@@ -146,7 +132,6 @@ public class DefaultIndex implements IIndex, Cloneable {
 				if( ! mRanges[j].reduced() ) {
 					value[i] = (mRanges[j]).element(position[i]) / length;
 					length  *= mRanges[j].length();
-//					value[i] = position[i] * mRanges[i].stride() + mRanges[i].first();
 				}
 				else {
 					value[i] = (mRanges[j]).element(0);
@@ -161,17 +146,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 
 	@Override
 	public int[] getCurrentCounter() {
-		int[] curPos = new int[mRank];
-		int i = 0;
-		int j = 0;
-		for (DefaultRange range : mRanges) {
-			if (!range.reduced()) {
-				curPos[i] = mICurPos[j];
-				i++;
-			}
-			j++;
-		}
-		return curPos;
+		return mICurPos.clone();
 	}
 
 	@Override
@@ -304,7 +279,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		while (i < index.length) {
 			range = mRanges[j];
 			if (!range.reduced()) {
-				mICurPos[j] = index[i];
+				mICurPos[i] = index[i];
 				i++;
 			}
 			j++;
@@ -437,21 +412,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		if (dim >= mRank) {
 			throw new IllegalArgumentException();
 		}
-
-		DefaultRange range;
-		int i = 0;
-		int j = 0;
-		while (j < mRanges.length) {
-			range = mRanges[j];
-			if (!range.reduced()) {
-				if (i == dim) {
-					mICurPos[j] = value;
-					return;
-				}
-				i++;
-			}
-			j++;
-		}
+		mICurPos[dim] = value;
 	}
 
 	@Override
@@ -492,9 +453,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 
 	public IIndex unReduce() {
 		for (DefaultRange range : mRanges) {
-			// if range reduced
 			if (range.reduced()) {
-				// un-reduce it
 				range.reduced(false);
 				mRank++;
 			}
@@ -508,8 +467,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 	 * Create a new Index based on current one by eliminating the specified
 	 * dimension;
 	 * 
-	 * @param dim
-	 *            : dimension to eliminate: must be of length one, else
+	 * @param dim : dimension to eliminate: must be of length one, else
 	 *            IllegalArgumentException
 	 * @return the new Index
 	 */
@@ -536,9 +494,10 @@ public class DefaultIndex implements IIndex, Cloneable {
 					+ " : reduced dimension must be have length=1");
 		}
 
-		// Reduce proper range
+		// Reduce the proper range
 		range.reduced(true);
 		mRank--;
+		mICurPos = new int[mRank];
 		updateProjection();
 		return this;
 	}
@@ -564,16 +523,14 @@ public class DefaultIndex implements IIndex, Cloneable {
 		str.append("]  <=> Index: " + currentElement() + "\nRanges:\n");
 		shp.append("Shape [");
 		for (DefaultRange r : mRanges) {
-			//if (!r.reduced()) {
-				if (i != 0) {
-					shp.append(", ");
-				}
-				shp.append(r.length());
-				str.append("- n°" + i + " " + (DefaultRange) r);
-				if (i < mRanges.length) {
-					str.append("\n");
-				}
-			//}
+			if (i != 0) {
+				shp.append(", ");
+			}
+			shp.append(r.length());
+			str.append("- n°" + i + " " + (DefaultRange) r);
+			if (i < mRanges.length) {
+				str.append("\n");
+			}
 			i++;
 		}
 		shp.append("]\n");

@@ -658,6 +658,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     }
 
     @Override
+    public String toString() {
+    	return getName();
+    }
+    
+    @Override
     public String toStringDebug() {
         StringBuffer strDebug = new StringBuffer();
         strDebug.append(getName());

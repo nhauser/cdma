@@ -127,10 +127,10 @@ public class NexusFileReader extends NexusFileBrowser {
         }
 
         // Get infos on DataItem (data type, rank, dimsize)
-        int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
-                                     // iDataInf[1]= data type
         int[] iNodeSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
-        int[] iDimSize; // signal dimension's sizes
+        int[] iDimSize;                       // data dimension's sizes
+        int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
+                                      // iDataInf[1]= data type
 
         getNexusFile().getinfo(iNodeSize, iDataInf);
 
@@ -315,7 +315,7 @@ public class NexusFileReader extends NexusFileBrowser {
                 // Set to "data" as description attribute the "description" node
                 // beside
                 openData("description");
-                dataItem.setDesc(readDataItem(iRank).getData().toString());
+                dataItem.setDesc(readDataItem(iRank).getData());
                 closeData();
             }
             catch (NexusException ne) {
@@ -388,16 +388,16 @@ public class NexusFileReader extends NexusFileBrowser {
     @SuppressWarnings("unchecked")
     protected Stack<DataItem> getChildrenDatas() throws NexusException {
         // Defining variables
-        NexusNode nnCurNode;
+        NexusNode node;
         ArrayList<NexusNode> alNodeList;
         Stack<DataItem> alDataItem = new Stack<DataItem>();
 
         // Parse children
         alNodeList = (ArrayList<NexusNode>) listChildren().clone();
         for (int iIndex = 0; iIndex < alNodeList.size(); iIndex++) {
-            nnCurNode = alNodeList.get(iIndex);
-            if (!nnCurNode.isGroup()) {
-                openData(nnCurNode.getNodeName());
+            node = alNodeList.get(iIndex);
+            if (!node.isGroup()) {
+                openData(node.getNodeName());
                 alDataItem.push(getDataItem());
                 closeData();
             }
@@ -501,11 +501,11 @@ public class NexusFileReader extends NexusFileBrowser {
      */
     protected void checkDataMatch(DataItem dsData) throws NexusException {
         // Get infos on DataItem (data type, rank, dimsize)
-        int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
-                                     // iDataInf[1] = data type
-        int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
-        int[] iDimSize = dsData.getSize(); // DataItem dimension's sizes
-
+    	int[] iDimSize = dsData.getSize(); // DataItem dimension's sizes
+    	int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
+    	int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
+                                      // iDataInf[1] = data type
+        
         getNexusFile().getinfo(iNodSize, iDataInf);
 
         // Checking type compatibility
@@ -830,12 +830,12 @@ public class NexusFileReader extends NexusFileBrowser {
 
     // ---------------------------------------------------------
     // ---------------------------------------------------------
-    // / Private methods
+    // Private methods
     // ---------------------------------------------------------
     // ---------------------------------------------------------
 
     // ---------------------------------------------------------
-    // / Conversion methods
+    // Conversion methods
     // ---------------------------------------------------------
     /**
      * convertArray Fills the oOutput array with oInput's values converted into (oOutput's) type.

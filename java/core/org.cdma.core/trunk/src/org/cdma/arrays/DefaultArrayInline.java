@@ -26,20 +26,27 @@ public class DefaultArrayInline extends DefaultArray {
 	private Object mData;  // Memory storage (always a java inline array)
 
     // Constructors
+	protected DefaultArrayInline(String factoryName, Class<?> clazz, int[] iShape) throws InvalidArrayTypeException {
+    	this( factoryName, clazz, null, iShape.clone() );
+	}
+	
     protected DefaultArrayInline(String factoryName, Object inlineArray, int[] iShape) throws InvalidArrayTypeException {
-    	super( factoryName, inlineArray, iShape.clone() );
-    	
-    	Class<?> clazz = getElementType();
-    	if( clazz == null || clazz.isArray() ) {
-    		throw new InvalidArrayTypeException("Only inline array is permitted!");
-		}
-    	
-		mData = inlineArray;
+    	this( factoryName, inlineArray.getClass().getComponentType(), inlineArray, iShape.clone() );
     }
     
     protected DefaultArrayInline( DefaultArrayInline array ) throws InvalidArrayTypeException {
     	super( array );
     	mData = array.mData;
+    }
+    
+    protected DefaultArrayInline(String factoryName, Class<?> clazz, Object inlineArray, int[] iShape) throws InvalidArrayTypeException {
+    	super( factoryName, clazz, iShape.clone() );
+    	
+    	if( clazz == null || clazz.isArray() ) {
+    		throw new InvalidArrayTypeException("Only inline array is permitted!");
+		}
+    	
+		mData = inlineArray;
     }
     
     // ---------------------------------------------------------
@@ -48,7 +55,10 @@ public class DefaultArrayInline extends DefaultArray {
     // / IArray underlying data access
     @Override
     public Object getStorage() {
-        return getData();
+    	if( ! isLocked() ) {
+    		mData = loadData();
+    	}
+    	return getData();
     }
 
     @Override
@@ -62,7 +72,7 @@ public class DefaultArrayInline extends DefaultArray {
         boolean result;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -83,7 +93,7 @@ public class DefaultArrayInline extends DefaultArray {
         IIndex idx;
         idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -104,7 +114,7 @@ public class DefaultArrayInline extends DefaultArray {
         IIndex idx;
         idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -124,7 +134,7 @@ public class DefaultArrayInline extends DefaultArray {
         double result;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
             result = (Double) oData;
@@ -143,7 +153,7 @@ public class DefaultArrayInline extends DefaultArray {
         float result = 0;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -163,7 +173,7 @@ public class DefaultArrayInline extends DefaultArray {
         int result = 0;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -183,7 +193,7 @@ public class DefaultArrayInline extends DefaultArray {
         long result = 0;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -203,7 +213,7 @@ public class DefaultArrayInline extends DefaultArray {
         Object result = new Object();
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -223,7 +233,7 @@ public class DefaultArrayInline extends DefaultArray {
         short result = 0;
         IIndex idx = getIndex().clone();
         idx.set( index.getCurrentCounter() );
-        Object oData = getData();
+        Object oData = getStorage();
 
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -240,7 +250,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setBoolean(IIndex index, boolean value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -253,7 +263,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setByte(IIndex index, byte value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -266,7 +276,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setChar(IIndex index, char value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -279,7 +289,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setDouble(IIndex index, double value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -292,7 +302,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setFloat(IIndex index, float value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -305,7 +315,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setInt(IIndex index, int value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -318,7 +328,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setLong(IIndex index, long value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -331,7 +341,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setObject(IIndex index, Object value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -344,7 +354,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void setShort(IIndex index, short value) {
-    	Object data = getData();
+    	Object data = getStorage();
     	IIndex idx = getIndex().clone();
     	int pos = (int) idx.currentElement();
     	if( getElementType().equals( Boolean.TYPE ) ) {
@@ -358,7 +368,7 @@ public class DefaultArrayInline extends DefaultArray {
     @Override
     public IArray setDouble(double value) {
     	IIndex index = getIndex();
-        Object data = getData();
+        Object data = getStorage();
         if( getElementType().equals( Double.TYPE ) ) {
         	java.util.Arrays.fill((double[]) data, value);
         }
@@ -379,6 +389,7 @@ public class DefaultArrayInline extends DefaultArray {
 				result.mData = this.copyTo1DJavaArray();
 	        }
 		} catch (InvalidArrayTypeException e) {
+			// Should not occur
 			Factory.getLogger().log(Level.SEVERE, "Unable to copy the array!", e);
 		}
 
@@ -412,7 +423,7 @@ public class DefaultArrayInline extends DefaultArray {
         int start = ((Long) index.currentElement()).intValue();
 
         // Copy the visible part of the array
-        System.arraycopy( getData(), start, array, 0, length);
+        System.arraycopy( getStorage(), start, array, 0, length);
 
 
         return array;
@@ -466,10 +477,13 @@ public class DefaultArrayInline extends DefaultArray {
 
     /**
      * Override this method in case of specific need (use of SoftReference for instance).
-     * It is called each time the memory is accessed when (the array isn't locked)
+     * It is called each time the memory is accessed when (the array isn't locked).
      * 
-     * @return the backing storage of the array
+     * The storage of this array, will be replaced by the object returned by this method.
+     * 
+     * @return the backing storage (as it is) of the array
      */
+    @Override
     protected Object loadData() {
         return mData;
     }
@@ -485,14 +499,14 @@ public class DefaultArrayInline extends DefaultArray {
     	mData = data;
     }
     
+    /**
+     * Returns a direct access on the underlying data.
+     * 
+     * @return the backing storage of the array (as it is)
+     * @note override this method to prepare the data
+     */
+    @Override
     protected Object getData() {
-    	Object result;
-    	if( isLocked() ) {
-    		result = mData;
-    	}
-    	else {
-    		result = loadData();
-    	}
-    	return result;
+    	return mData;
     }
 }

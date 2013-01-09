@@ -11,6 +11,7 @@ package org.cdma.plugin.soleil.utils;
 
 import java.util.List;
 
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.engine.nexus.array.NexusIndex;
 import org.cdma.engine.nexus.utils.NexusArrayUtils;
 import org.cdma.exception.InvalidRangeException;
@@ -37,16 +38,24 @@ public final class NxsArrayUtils implements IArrayUtils {
         Class<?> type = getArray().getElementType();
         Object array = java.lang.reflect.Array.newInstance(type, length);
 
+        NexusIndex storageIndex = ((NxsIndex) getArray().getIndex()).getIndexStorage();
+        DefaultIndex matrixIndex = ((NxsIndex) getArray().getIndex()).getIndexMatrix();
+        
         // If the storing array is a stack of DataItem
-        Long size = ((NxsIndex) getArray().getIndex()).getIndexMatrix().getSize();
+        Long size = matrixIndex.getSize();
         Long nbMatrixCells  = size == 0 ? 1 : size;
-        Long nbStorageCells = ((NxsIndex) getArray().getIndex()).getIndexStorage().getSize();
-
+        Long nbStorageCells = storageIndex.getSize();
+        
+        Long startPos = storageIndex.elementOffset( new int[storageIndex.getRank()] );
         Object fullArray = getArray().getStorage();
         Object partArray = null;
+        int[] posMatrix = new int[1];
+        Long offsetMatrix;
         for( int i = 0; i < nbMatrixCells; i++ ) {
-            partArray = java.lang.reflect.Array.get(fullArray, i);
-            System.arraycopy(partArray, 0, array, i * nbStorageCells.intValue(), nbStorageCells.intValue());
+        	posMatrix[0] = i;
+        	offsetMatrix = matrixIndex.elementOffset( posMatrix );
+            partArray = java.lang.reflect.Array.get(fullArray, offsetMatrix.intValue() );
+            System.arraycopy(partArray, startPos.intValue(), array, i * nbStorageCells.intValue(), nbStorageCells.intValue());
         }
 
         return array;
@@ -240,7 +249,7 @@ public final class NxsArrayUtils implements IArrayUtils {
         int[] shape  = array.getShape();
         int[] current;
         int   length;
-        int   startCell;
+        Long  startCell;
         Object result = java.lang.reflect.Array.newInstance(array.getElementType(), shape);
         Object slab;
         Object dataset;
@@ -249,9 +258,10 @@ public final class NxsArrayUtils implements IArrayUtils {
             ISliceIterator iter = array.getSliceIterator(1);
             NxsIndex startIdx   = (NxsIndex) array.getIndex();
             NexusIndex storage  = startIdx.getIndexStorage();
-            NexusIndex items    = startIdx.getIndexMatrix();
-            startIdx.setOrigin(new int[startIdx.getRank()]);
+            DefaultIndex items    = startIdx.getIndexMatrix();
+            //startIdx.setOrigin(new int[startIdx.getRank()]);
             IArray next;
+            storage.set( new int[storage.getRank()] );
             while( iter.hasNext() ) {
                 next = iter.getArrayNext();
                 
@@ -266,9 +276,9 @@ public final class NxsArrayUtils implements IArrayUtils {
                     slab = java.lang.reflect.Array.get(slab, current[pos]);
                 }
                 
-                dataset = java.lang.reflect.Array.get(values, items.currentProjectionElement());
-                startCell = storage.currentProjectionElement();
-                System.arraycopy(dataset, startCell, slab, 0, length);
+                dataset = java.lang.reflect.Array.get(values, new Long( items.currentElement() ).intValue() );
+                startCell = storage.currentElement();
+                System.arraycopy(dataset, startCell.intValue(), slab, 0, length);
             }
         } catch (ShapeNotMatchException e) {
         } catch (InvalidRangeException e) {

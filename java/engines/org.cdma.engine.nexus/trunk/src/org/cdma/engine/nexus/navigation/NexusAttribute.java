@@ -9,7 +9,11 @@
 //******************************************************************************
 package org.cdma.engine.nexus.navigation;
 
+import java.util.logging.Level;
+
+import org.cdma.Factory;
 import org.cdma.engine.nexus.array.NexusArray;
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 
@@ -27,15 +31,22 @@ public final class NexusAttribute implements IAttribute {
     
     public NexusAttribute(String factoryName, String name, Object value) {
         int[] shape;
+        Object data = value;
         if (value.getClass().isArray()) {
         	shape = new int[] { java.lang.reflect.Array.getLength(value) };
         }
         else {
         	shape = new int[] {};
+        	data = java.lang.reflect.Array.newInstance( value.getClass(), 1);
+        	java.lang.reflect.Array.set(data, 0, value);
         }
         mFactory = factoryName;
         mName = name;
-        mValue = new NexusArray(mFactory, value, shape);
+        try {
+			mValue = new NexusArray(mFactory, data, shape);
+		} catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
     }
 
 
@@ -121,7 +132,11 @@ public final class NexusAttribute implements IAttribute {
 
     @Override
     public void setStringValue(String val) {
-        mValue = new NexusArray(mFactory, val, new int[] { 1 });
+        try {
+			mValue = new NexusArray(mFactory, val, new int[] { 1 });
+		} catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
     }
 
     @Override
