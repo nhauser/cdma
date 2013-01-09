@@ -10,11 +10,12 @@
 package org.cdma.plugin.soleil.array;
 
 
+import org.cdma.arrays.DefaultArrayIterator;
+import org.cdma.arrays.DefaultSliceIterator;
 import org.cdma.engine.nexus.array.NexusArray;
-import org.cdma.engine.nexus.array.NexusArrayIterator;
 import org.cdma.engine.nexus.array.NexusIndex;
-import org.cdma.engine.nexus.array.NexusSliceIterator;
 import org.cdma.exception.BackupException;
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.ShapeNotMatchException;
@@ -24,8 +25,8 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.soleil.NxsFactory;
-import org.cdma.utilities.memory.ArrayTools;
-import org.cdma.utilities.performance.Benchmarker;
+import org.cdma.plugin.soleil.utils.NxsArrayUtils;
+import org.cdma.utils.ArrayTools;
 import org.cdma.utils.IArrayUtils;
 
 import fr.soleil.nexus.DataItem;
@@ -60,11 +61,11 @@ public final class NxsArray implements IArray {
         }
     }
 
-    public NxsArray(DataItem item) {
+    public NxsArray(DataItem item) throws InvalidArrayTypeException {
         this( new IArray[] { new NexusArray(NxsFactory.NAME, item) });
     }
 
-    public NxsArray(Object oArray, int[] iShape) {
+    public NxsArray(Object oArray, int[] iShape) throws InvalidArrayTypeException {
         this( new IArray[] { new NexusArray(NxsFactory.NAME, oArray, iShape) });
     }
 
@@ -83,7 +84,7 @@ public final class NxsArray implements IArray {
         NxsArray result = new NxsArray(this);
 
         if( data ) {
-            result.mData = NexusArray.copyJavaArray(mData);
+            result.mData = ArrayTools.copyJavaArray(mData);
         }
 
         return result;
@@ -96,7 +97,7 @@ public final class NxsArray implements IArray {
 
     @Override
     public IArrayUtils getArrayUtils() {
-        return NxsFactory.createArrayUtils(this);
+    	return new NxsArrayUtils(this);
     }
 
     @Override
@@ -181,11 +182,8 @@ public final class NxsArray implements IArray {
     @Override
     public IArrayIterator getIterator() {
         NxsIndex index = (NxsIndex) mIndex.clone();
-        NexusIndex storage = index.getIndexStorage();
-        storage.unReduce();
-        storage.setOrigin( new int[storage.getRank()] );
-        storage.reduce();
-        return new NexusArrayIterator(this, index );
+        index.set( new int[index.getRank()] );
+        return new DefaultArrayIterator(this, index );
     }
 
     @Override
@@ -198,14 +196,12 @@ public final class NxsArray implements IArray {
             throws InvalidRangeException {
         int[] shape = mIndex.getShape();
         IIndex index = new NexusIndex( NxsFactory.NAME, shape, reference, range );
-        return new NexusArrayIterator(this, index);
+        return new DefaultArrayIterator(this, index);
     }
 
     @Override
     public int[] getShape() {
-    	Benchmarker.start("Array.getShape");
     	int[] result = mIndex.getShape();
-    	Benchmarker.stop("Array.getShape");
     	return result;
     }
 
@@ -218,26 +214,11 @@ public final class NxsArray implements IArray {
     public Object getStorage() {
         Object result = mData;
         if( mData == null && mArrays != null ) {
-            NexusIndex matrixIndex = (NexusIndex) mIndex.getIndexMatrix().clone();
-            //matrixIndex.set(new int[matrixIndex.getRank()]);
-
-            Long nbMatrixCells  = matrixIndex.getSize() == 0 ? 1 : matrixIndex.getSize();
-            Long nbStorageCells = mIndex.getIndexStorage().getSize();
-
-            
-            // Create an array storage compound of all sub-arrays' storage
-            // doing so will permit to share the memory without copy
-            int[] shape = new int[] { nbMatrixCells.intValue(), nbStorageCells.intValue() };
-            result = java.lang.reflect.Array.newInstance(getElementType(), shape);
-            
-            // Set fill the array with references of sub-arrays' storages 
-            int[] counter = matrixIndex.getCurrentCounter();
-            shape = matrixIndex.getShape();
-            for( int i = 0; i < nbMatrixCells; i++ ) {
-            	Object o = mArrays[(int) matrixIndex.currentElement()].getStorage();
-                java.lang.reflect.Array.set(result, i, o );
-                ArrayTools.incrementCounter(counter, shape);
+        	Object[] array = new Object[ mArrays.length ];
+            for( int i = 0; i < mArrays.length; i++ ) {
+            	array[i] = mArrays[i].getStorage();
             }
+            result = array;
         }
 
         return result;
@@ -324,7 +305,7 @@ public final class NxsArray implements IArray {
     @Override
     public ISliceIterator getSliceIterator(int rank)
             throws ShapeNotMatchException, InvalidRangeException {
-        return new NexusSliceIterator(this, rank);
+        return new DefaultSliceIterator(this, rank);
     }
 
     @Override
@@ -445,11 +426,13 @@ public final class NxsArray implements IArray {
                 idx = (NxsIndex) index;
             }
             nodeIndex = (int) idx.currentElementMatrix();
-            itemIdx = idx.getIndexStorage();
+            itemIdx = mIndex.getIndexStorage().clone();
+            itemIdx.set(idx.getIndexStorage().getCurrentCounter());
         }
         else {
             nodeIndex = 0;
-            itemIdx = index;
+            itemIdx = mIndex.getIndexStorage().clone();
+            itemIdx.set(index.getCurrentCounter());
         }
         return new IndexNode(itemIdx, nodeIndex);
     }

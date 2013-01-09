@@ -12,7 +12,9 @@ package org.cdma.plugin.soleil;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
@@ -36,8 +38,7 @@ import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.plugin.soleil.navigation.NxsGroup;
 import org.cdma.plugin.soleil.utils.NxsArrayMath;
-import org.cdma.plugin.soleil.utils.NxsArrayUtils;
-import org.cdma.utils.IArrayUtils;
+import org.nexusformat.NexusException;
 
 import fr.soleil.nexus.DataItem;
 import fr.soleil.nexus.PathGroup;
@@ -69,7 +70,13 @@ public final class NxsFactory implements IFactory {
     @Override
     public IArray createArray(Class<?> clazz, int[] shape) {
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
-        return new NxsArray( o, shape);
+        IArray result = null;
+		try {
+			result = new NxsArray( o,shape );
+		} catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
+        return result;
     }
 
     @Override
@@ -79,10 +86,18 @@ public final class NxsFactory implements IFactory {
             result = new NxsArray( (IArray[]) storage );
         }
         else if( storage instanceof DataItem ) {
-            result = new NxsArray( (DataItem) storage );
+            try {
+				result = new NxsArray( (DataItem) storage );
+			} catch (InvalidArrayTypeException e) {
+	        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+			}
         }
         else {
-            result = new NxsArray( storage, shape);
+            try {
+				result = new NxsArray( storage, shape);
+			} catch (InvalidArrayTypeException e) {
+	        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+			}
         }
         return result;
     }
@@ -94,7 +109,11 @@ public final class NxsFactory implements IFactory {
         // [SOLEIL][clement][2012-04-18] as the supported array is a primitive type the "instanceof" won't be correct 
         if (javaArray != null && javaArray.getClass().isArray()) {
             int size = Array.getLength(javaArray);
-            result = new NxsArray(javaArray, new int[] { size });
+            try {
+				result = new NxsArray(javaArray, new int[] { size });
+			} catch (InvalidArrayTypeException e) {
+	        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+			}
         }
         return result;
     }
@@ -106,7 +125,11 @@ public final class NxsFactory implements IFactory {
             result = new NxsArray( (IArray[]) array);
         }
         else if( array instanceof DataItem ) {
-            result = new NxsArray( (DataItem) array);
+            try {
+				result = new NxsArray( (DataItem) array);
+			} catch (InvalidArrayTypeException e) {
+	        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+			}
         }
         else {
             DataItem dataset = null;
@@ -139,23 +162,31 @@ public final class NxsFactory implements IFactory {
     @Override
     public IArray createDoubleArray(double[] javaArray) {
         DataItem data;
+        IArray result = null;
         try {
             data = new DataItem(javaArray);
-        } catch( Exception e ) {
-            data = null;
-        }
-        return new NxsArray(data);
+            result = new NxsArray(data);
+        } catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		} catch (NexusException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
+        return result;
     }
 
     @Override
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
         DataItem data;
+        IArray result = null;
         try {
             data = new DataItem(javaArray);
-        } catch( Exception e ) {
-            data = null;
-        }
-        return new NxsArray(data);
+            result = new NxsArray(data);
+        } catch (InvalidArrayTypeException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		} catch (NexusException e) {
+        	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+		}
+        return result;
     }
 
     @Override
@@ -246,10 +277,6 @@ public final class NxsFactory implements IFactory {
     @Override
     public IDictionary createDictionary() {
         throw new UnsupportedOperationException();
-    }
-
-    public static IArrayUtils createArrayUtils(NxsArray array) {
-        return new NxsArrayUtils(array);
     }
 
     public static IArrayMath createArrayMath(NxsArray array) {

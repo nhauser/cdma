@@ -22,11 +22,11 @@ public class NexusFileInstance {
     protected final static int    RANK_MAX       = 32; // Maximum dimension  rank
 
     // Member attributes
-    private String                m_sFilePath;         // Path to current file
-    private NexusFileHandler      m_nfFile;            // Current file
-    private int                   m_iAccessMode;       // The current access mode to the file: read / write
-    private static ReentrantLock  g_mutex;             // Mutex for thread safety
-    public static String          g_curFile;
+    private int                   m_iAccessMode;  // The current access mode to the file: read / write
+    private String                m_sFilePath;     // Path to current file
+    private NexusFileHandler      m_nfFile;        // Current file
+    private static ReentrantLock g_mutex;         // Mutex for thread safety
+    private static String        g_curFile;       // File currently opened
 
     // Constructors
     protected NexusFileInstance() {
@@ -133,7 +133,7 @@ public class NexusFileInstance {
     public void closeFile() throws NexusException {
         try {
             if (m_nfFile != null) {
-                m_nfFile.close();
+            	m_nfFile.close();
                 m_nfFile.finalize();
             }
             m_nfFile = null;

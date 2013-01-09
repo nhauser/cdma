@@ -10,7 +10,6 @@
 package fr.soleil.nexus;
 
 // Tools lib
-import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -853,6 +852,7 @@ public class AcquisitionData {
      * @return a cleaned DataItem ready to be used after.
      */
     private DataItem prepareReadDataItem(DataItem dsData) throws NexusException {
+    	/*
         if (dsData.getType() == NexusFile.NX_CHAR) {
             String sTmpStr = (String) dsData.getData();
             int iSize = sTmpStr.length();
@@ -867,7 +867,7 @@ public class AcquisitionData {
             dsData.setData(new SoftReference<Object>(sTmpStr));
             dsData.getSize()[dsData.getSize().length - 1] = iSize;
             dsData.getSlabSize()[dsData.getSize().length - 1] = iSize;
-        }
+        }*/
         return dsData;
     }
 

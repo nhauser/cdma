@@ -12,6 +12,9 @@ package org.cdma.utilities.performance;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+
+import org.cdma.Factory;
 
 public class Benchmarker {
     private static Map<String, Long> timers   = new TreeMap<String, Long>();
@@ -64,14 +67,14 @@ public class Benchmarker {
                     starters.put(label, (long) 0);
                     counters.put(label, counter);
                 } else {
-                    System.out.println(">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                    System.out.println("To much stop for: " + label);
-                    System.out.println(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                    Factory.getLogger().log( Level.INFO, "To much stop for: " + label);
+                    Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 }
             } else {
-                System.out.println(">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                System.out.println("Stoping inexistent timer: " + label);
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log( Level.INFO, "Stoping inexistent timer: " + label);
+                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
         }
     }
@@ -123,9 +126,9 @@ public class Benchmarker {
                 nbthread = new TreeMap<String, Long>();
             }
             else {
-                System.out.println(">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                System.out.println("Timers are still running!!!!");
-                System.out.println(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log( Level.INFO, "Timers are still running!!!!");
+                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
         }
     }

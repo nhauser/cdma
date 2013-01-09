@@ -262,6 +262,7 @@ public class NexusFileWriter extends NexusFileReader {
             // Return to document root
             closeAll();
         }
+        getNexusFile().flush();
     }
 
     /**

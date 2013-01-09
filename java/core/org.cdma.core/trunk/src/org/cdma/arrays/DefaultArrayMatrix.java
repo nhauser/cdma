@@ -20,10 +20,9 @@ import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IIndex;
-import org.cdma.interfaces.IRange;
 import org.cdma.interfaces.ISliceIterator;
 
-public class DefaultArrayMatrix extends  DefaultArray {
+public class DefaultArrayMatrix extends DefaultArray {
     private Object mData; // Memory storage: an array of Object or primitive
 	
     /**
@@ -56,7 +55,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		boolean result;
 		if( Boolean.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (boolean[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((boolean[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -70,7 +69,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		byte result;
 		if( Byte.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (byte[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((byte[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -84,7 +83,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		char result;
 		if( Character.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (char[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((char[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -98,7 +97,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		double result;
 		if( Double.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (double[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((double[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -113,7 +112,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		float result;
 		if( Double.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (float[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((float[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -128,7 +127,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		int result;
 		if( Integer.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((int[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -143,7 +142,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		long result;
 		if( Long.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (long[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((long[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -158,7 +157,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		Object result = null;
 
 		if( index.getRank() == index.getRank() ) {
-			result = mData;
+			result = getStorage();
 			int[] counter = index.getCurrentCounter();
 			for( int position : counter ) {
 				result = java.lang.reflect.Array.get( result, position );
@@ -173,7 +172,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		short result;
 		if( Short.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (short[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			result = ((short[]) array)[ pos[ pos.length - 1 ] ];
 		}
 		else {
@@ -187,7 +186,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setBoolean(IIndex index, boolean value) {
 		if( Boolean.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (boolean[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((boolean[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -199,7 +198,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setByte(IIndex index, byte value) {
 		if( Byte.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (byte[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((byte[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -211,7 +210,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setChar(IIndex index, char value) {
 		if( Character.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (char[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((char[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -223,7 +222,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setDouble(IIndex index, double value) {
 		if( Double.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (double[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((double[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -235,7 +234,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setFloat(IIndex index, float value) {
 		if( Float.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (float[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((float[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -247,7 +246,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setInt(IIndex index, int value) {
 		if( Integer.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (int[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((int[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -259,7 +258,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setLong(IIndex index, long value) {
 		if( Long.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (long[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((long[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -270,7 +269,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	@Override
 	public void setObject(IIndex index, Object value) {
 		int[] pos = projectCoordinates(index);
-		Object array = getMostVaryingRaw( pos, (boolean[]) mData );
+		Object array = getMostVaryingRaw( pos, getStorage() );
 		java.lang.reflect.Array.set(array, pos[ pos.length - 1 ], value);
 	}
 
@@ -278,7 +277,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	public void setShort(IIndex index, short value) {
 		if( Short.TYPE.equals( getElementType() ) ) {
 			int[] pos = projectCoordinates(index);
-			Object array = getMostVaryingRaw( pos, (short[]) mData );
+			Object array = getMostVaryingRaw( pos, getStorage() );
 			((short[]) array)[ pos[ pos.length - 1 ] ] = value;
 		}
 		else {
@@ -302,7 +301,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	        	position = iter.getSlicePosition();
 	        	
 	        	// select the right slab
-	        	slab = getData();
+	        	slab = getStorage();
 	        	for( int index = 0; index < position.length - 1; index++ ) {
 	        		slab = java.lang.reflect.Array.get(slab, position[index]);
 	        	}
@@ -334,10 +333,17 @@ public class DefaultArrayMatrix extends  DefaultArray {
         return result;
 	}
 
-	@Override
-	public Object getStorage() {
-		return mData;
-	}
+    @Override
+    public Object getStorage() {
+    	Object result;
+    	if( isLocked() ) {
+    		result = getData();
+    	}
+    	else {
+    		result = loadData();
+    	}
+    	return result;
+    }
 
 	@Override
 	public void releaseStorage() throws BackupException {
@@ -353,19 +359,14 @@ public class DefaultArrayMatrix extends  DefaultArray {
      * 
      * @return the backing storage of the array
      */
+	@Override
     protected Object loadData() {
         return mData;
     }
     
+	@Override
     protected Object getData() {
-    	Object result;
-    	if( isLocked() ) {
-    		result = mData;
-    	}
-    	else {
-    		result = loadData();
-    	}
-    	return result;
+    	return mData;
     }
 	
 	@Override
@@ -394,7 +395,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 	        	position = iter.getSlicePosition();
 	        	
 	        	// select the right slab in memory storage
-	        	slabSrc = getData();
+	        	slabSrc = getStorage();
 	        	for( int index = 0; index < position.length - 1; index++ ) {
 	        		slabSrc = java.lang.reflect.Array.get(slabSrc, position[index] + origin[index]);
 	        	}
@@ -490,6 +491,7 @@ public class DefaultArrayMatrix extends  DefaultArray {
 		return getMostVaryingRaw( position, data, 0 );
 	}
 	
+	@SuppressWarnings("unchecked")
 	private <T, C> Object getMostVaryingRaw( int[] coordinates, T data, int depth ) {
 		Object result = data;
 		

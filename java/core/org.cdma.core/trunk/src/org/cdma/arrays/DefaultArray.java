@@ -87,19 +87,16 @@ public abstract class DefaultArray implements IArray {
 		return result;
 	}
     
-    private DefaultIndex mIndex;        // IIndex corresponding to this IArray (dimension sizes defining the viewable part of the array)
-    private boolean     mIsDirty;      // Is the array synchronized with the handled file
-    private String       mFactory;      // Name of the instantiating factory 
-    private Class<?>     mClazz;        // Type of the array's element
-    private boolean     mLock;
+    // private members
+    private DefaultIndex mIndex;    // IIndex corresponding to this IArray (dimension sizes defining the viewable part of the array)
+    private boolean     mIsDirty;  // Is the array synchronized with the handled file
+    private String       mFactory;  // Name of the instantiating factory 
+    private Class<?>     mClazz;    // Type of the array's element
+    private boolean     mLock;     // Is the array locked
     
-    protected DefaultArray( String factory, Object inlineArray, int[] shape ) throws InvalidArrayTypeException {
-    	if( inlineArray == null ) {
-    		throw new InvalidArrayTypeException("Null backing storage is not permitted!");
-    	}
-
+    protected DefaultArray( String factory, Class<?> clazz, int[] shape ) throws InvalidArrayTypeException {
     	mLock    = false;
-    	mClazz   = inlineArray.getClass().getComponentType();
+    	mClazz   = clazz;
 		mIndex   = new DefaultIndex(mFactory, shape.clone());
 		mIsDirty = false;
 		mFactory = factory;
@@ -184,7 +181,7 @@ public abstract class DefaultArray implements IArray {
         return sb.toString();
     }
 
-    // / IArray data manipulation
+    // IArray data manipulation
     @Override
     public DefaultIndex getIndex() {
         return mIndex;
@@ -259,17 +256,20 @@ public abstract class DefaultArray implements IArray {
 
     /**
      * Override this method in case of specific need (use of SoftReference for instance).
-     * It is called each time the memory is accessed when (the array isn't locked)
+     * It is called each time the memory is accessed when (the array isn't locked).
      * 
-     * @return the backing storage of the array
+     * The storage of this array, will be replaced by the object returned by this method.
+     * 
+     * @return the backing storage (as it is) of the array
+     * @note override this method to prepare the data
      */
     protected abstract Object loadData();
 
     /**
-     * Override this method in case of specific need (use of SoftReference for instance).
-     * It is called each time the memory is accessed when (the array isn't locked)
+     * Returns a direct access on the underlying data.
      * 
-     * @return the backing storage of the array
+     * @return the backing storage of the array (as it is)
+     * @note override this method to prepare the data
      */
     protected abstract Object getData();
 
