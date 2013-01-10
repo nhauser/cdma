@@ -2,12 +2,12 @@ package org.cdma.plugin.xml.util;
 
 import java.util.List;
 
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.xml.array.XmlArray;
-import org.cdma.utilities.memory.DefaultIndex;
 import org.cdma.utils.ArrayUtils;
 import org.cdma.utils.IArrayUtils;
 
