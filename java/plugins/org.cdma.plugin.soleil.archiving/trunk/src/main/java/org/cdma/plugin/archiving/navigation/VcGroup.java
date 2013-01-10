@@ -25,7 +25,7 @@ import org.cdma.plugin.archiving.internal.sql.DateFormat;
 import org.cdma.plugin.archiving.internal.sql.DbUtils;
 import org.cdma.plugin.archiving.internal.sql.DbUtils.BaseType;
 import org.cdma.plugin.xml.navigation.XmlGroup;
-import org.cdma.utilities.memory.ArrayTools;
+import org.cdma.utils.ArrayTools;
 
 public class VcGroup extends XmlGroup {
 
