@@ -12,15 +12,13 @@
 	<artifactId>sql</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>CDMA SQL engine</name>
-	<description>
-    This project is a SQL engine for the CDMA.
-   </description>
+	<description>This project is a SQL engine for the CDMA.</description>
 
 	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</connection> 
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</developerConnection> 
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</developerConnection>
 	</scm>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.cdma</groupId>
@@ -29,7 +27,6 @@
 		<dependency>
 			<groupId>org.cdma</groupId>
 			<artifactId>utilities</artifactId>
-			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>
