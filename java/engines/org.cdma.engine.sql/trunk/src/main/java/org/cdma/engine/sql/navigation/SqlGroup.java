@@ -1,8 +1,16 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -31,42 +39,13 @@ import org.cdma.utils.Utilities.ModelType;
 public class SqlGroup implements IGroup, Cloneable {
 	private String mFactory;
 	private SqlGroup mParent;
-	// private SqlConnector mConnector;
 	private SqlDataset mDataset;
 	private String[] mDepth;
 	private String mName;
 	
-	private String mGroupID;
-	
 	private List<IGroup> mChildGroups;
 	private List<IDataItem> mChildItems;
-	/*
-	public SqlGroup(String factoryName, SqlDataset dataset) {
-		this(null, "", "");
-		mDataset = dataset;
-		mFactory = factoryName;
-	}
 
-	public SqlGroup(SqlGroup parent, String shortName, String query) {
-		mParent = parent;
-		int depth = 0;
-		if (parent != null) {
-			mFactory = parent.mFactory;
-			mDataset = parent.mDataset;
-			depth = parent.mDepth.length + 1;
-		}
-		mDepth = new String[depth];
-		if ( depth > 0 ) {
-			System.arraycopy(parent.mDepth, 0, mDepth, 0, depth - 1);
-			mDepth[depth - 1] = query;
-		}
-		
-		mName = shortName;
-		mChildGroups = null;
-		mChildItems  = null;
-	}
-*/
-	
 	
 	public SqlGroup(SqlDataset dataset, String name, ResultSet sql_set) {
 		mFactory = dataset.getFactoryName();
@@ -83,16 +62,7 @@ public class SqlGroup implements IGroup, Cloneable {
 		mChildItems = group.mChildItems;
 		mChildGroups = new ArrayList<IGroup>();
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 
 	@Override
 	public ModelType getModelType() {
@@ -288,44 +258,6 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public List<IDataItem> getDataItemList() {
-		/*
-		List<IDataItem> result = mChildItems;
-		if( result == null ) {
-			mChildItems = new ArrayList<IDataItem>();
-			SqlConnector connector = mDataset.getSqlConnector();
-			try {
-				String query = getDataItemListQuery( );
-				//Statement statement = connector.createStatement();
-				PreparedStatement statement = connector.prepareStatement(query);
-				if (statement != null) {
-					List<IDataItem> items = new ArrayList<IDataItem>();
-					System.out.println(">>>>>>>>>>>>>>>>>>>> query:\n" + query);
-					ResultSet set = statement.executeQuery(query);
-					if( set.next() ) {
-						IDataItem item;
-						ResultSetMetaData meta = set.getMetaData();
-						String name;
-						for( int col = 2; col < meta.getColumnCount(); col++ ) {
-							name = meta.getColumnName(col);
-							
-							item = new SqlDataItem(mFactory, this, name, set, col);
-							items.add( item );
-						}
-					}
-					if( ! set.next() ) {
-						mChildItems.addAll( items );
-					}
-					set.close();
-					statement.close();
-				}
-			} catch (IOException e) {
-				Factory.getLogger().log(Level.SEVERE, "Unable to list group", e);
-			} catch (SQLException e) {
-				Factory.getLogger().log(Level.SEVERE, "Unable to list group", e);
-			}
-			result = mChildItems;
-		}
-		*/
 		return mChildItems;
 	}
 
@@ -352,32 +284,6 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public List<IGroup> getGroupList() {
-		/*
-		if (mChildGroups == null) {
-			mChildGroups = new ArrayList<IGroup>();
-			SqlConnector connector = mDataset.getSqlConnector();
-			try {
-				String query = getGroupListQuery();
-				if (query != null && !query.isEmpty()) {
-					Statement statement = connector.prepareStatement(query);
-					if (statement != null) {
-						int depth = mDepth.length;
-						System.out.println(">>>>>>>>>>>>>>>>>>>> query:\n" + query);
-						ResultSet rset = statement.executeQuery(query);
-						addGroups(rset, query, depth > 0);
-						rset.close();
-					}
-					statement.close();
-				}
-			} catch (IOException e) {
-				Factory.getLogger().log(Level.SEVERE, "Unable to list group", e);
-			} catch (SQLException e) {
-				Factory.getLogger().log(Level.SEVERE, "Unable to list group", e);
-			}
-		}
-
-		return mChildGroups;
-		*/
 		return mChildGroups;
 	}
 	
@@ -403,22 +309,7 @@ public class SqlGroup implements IGroup, Cloneable {
 			}
 		}
 	}
-/*
-	private void addGroups( ResultSet set, String query, boolean addItems ) throws SQLException {
-		if( set != null ) {
-			String name;
-			SqlGroup group;
-			while (set.next()) {
-				name = set.getString(1);
-				group = new SqlGroup(this, name, query);
-				mChildGroups.add(group);
-				if( addItems ) {
-					group.addItems(set);
-				}
-			}
-		}
-	}
-*/
+
 	@Override
 	public IContainer findContainer(String shortName) {
 		throw new NotImplementedException();
@@ -515,12 +406,6 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IGroup clone() {
-		/*
-		String query = mDepth.length > 0 ? mDepth[mDepth.length - 1] : "";
-		return new SqlGroup( mParent, mName, query );
-		*/
-		
-		
 		return new SqlGroup( this );
 	}
 
@@ -555,58 +440,11 @@ public class SqlGroup implements IGroup, Cloneable {
 		}
 		// Get the sub-group from the table
 		else if( mDepth.length == 1 ) {
-			//query = "SELECT concat('group_', cdma_group_id ) from (SELECT row_number() over (order by 1) as cdma_group_id FROM " + mName + ")";
-			//query = "SELECT concat('row_', cdma_group_num )," + mName +".* from (SELECT row_number() over (order by 1) as cdma_group_num," + mName +".* FROM " + mName + ")";
-			//query = "SELECT concat('row_', num ) from (SELECT row_number() over (order by 1) as num FROM " + mName + ".*)";
-
 			query = "SELECT row_number() over (order by 1) as row_number, " + mName + ".* FROM " + mName;
-/*
-			StringBuffer tmp1 = new StringBuffer();
-			StringBuffer tmp2 = new StringBuffer();
-			StringBuffer tmp3 = new StringBuffer();
-			String drop;
-			String select = "select table_name from user_tables";
-			String create;
-			for( int i = mDepth.length - 1; i >= 0; i-- ) {
-				create = "create view " + SQL_VIEW + i + " as (" + select + ")";
-				//select = "SELECT " + SQL_VIEW + i + ".* FROM SQL"
-				select = "select row_number(), " + SQL_VIEW + i + ".* over (order by 1) as " + SQL_VIEW_GROUP_ID + ", " + SQL_VIEW + i + ".* from " + SQL_VIEW + (i + 1);
-				drop = "DROP VIEW " + SQL_VIEW + i + ";";
-			}
-*/
-//			System.out.println(getGroupViewQuery());
 		}
 		
 		return query;
 	}
-	/*
-	private String getGroupViewQuery() {
-		int depth = mDepth.length;
-		
-		String query = "create view " + SQL_VIEW + depth + " as (" + getSelectViewQuery() + ")";
-		return query;
-	}
-	
-	private String getSelectViewQuery() {
-		int depth = mDepth.length;
-		String query = "";
-		
-		if( depth == 0 ) {
-			query = "select row_number() over (order by 1) as " + SQL_VIEW_GROUP_ID + ", table_name from user_tables";
-		}
-		if( depth == 1 ) {
-			query = "select row_number() over (order by 1) as " + SQL_VIEW_GROUP_ID + ", " + SQL_VIEW + (depth - 1) + ".* " +
-					"from " + SQL_VIEW + (depth - 1) + " where " + SQL_VIEW_GROUP_ID + "='" + mGroupID + "'";
-		}
-		else {
-			query = mParent.getGroupViewQuery() + " where " ;
-		}
-		
-		return query;
-	}
-	*/
-	
-
 	
 	private String getDataItemListQuery(String[] selectors) {
 		String query = "";

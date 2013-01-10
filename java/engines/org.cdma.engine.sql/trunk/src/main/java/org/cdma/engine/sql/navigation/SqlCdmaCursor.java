@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
@@ -13,11 +22,9 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.exception.InvalidArrayTypeException;
-import org.cdma.interfaces.IDataItem;
 
 public class SqlCdmaCursor {
 	private String mQuery;

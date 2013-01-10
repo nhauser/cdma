@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.sql.array;
 
 import java.math.BigDecimal;
@@ -10,6 +19,7 @@ import java.sql.Types;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.engine.sql.utils.SqlArrayMath;
 import org.cdma.engine.sql.utils.SqlArrayUtils;
 import org.cdma.exception.BackupException;
@@ -21,9 +31,8 @@ import org.cdma.interfaces.IArrayIterator;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
-import org.cdma.utilities.memory.ArrayTools;
-import org.cdma.utilities.memory.DefaultIndex;
 import org.cdma.utilities.performance.Benchmarker;
+import org.cdma.utils.ArrayTools;
 import org.cdma.utils.IArrayUtils;
 
 public class SqlArray implements IArray {
@@ -692,6 +701,7 @@ public class SqlArray implements IArray {
 		return getMostVaryingRaw( shape, data, 0 );
 	}
 	
+	@SuppressWarnings("unchecked")
 	private <T, C> Object getMostVaryingRaw( int[] coordinates, T data, int depth ) {
 		Object result = data;
 		

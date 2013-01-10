@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
@@ -16,7 +25,6 @@ import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
-import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -38,13 +46,7 @@ public class SqlDataItem implements IDataItem {
 		mDataset = parent.getDataset();
 		mName    = name;
 	}
-	/*
-	protected SqlDataItem(String factory, SqlGroup parent, String name, ResultSet set, int column, int nbRows) {
-		this( factory, parent, name );
-		init( set, column, nbRows );
-	}
-	*/
-	
+
 	protected void init( ResultSet set, int column, int rows ) {
 		mArray = new SqlArray(mFactory, set, column, rows);
 	}
