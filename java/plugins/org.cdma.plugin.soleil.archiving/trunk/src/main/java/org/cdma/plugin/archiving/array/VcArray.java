@@ -3,6 +3,7 @@ package org.cdma.plugin.archiving.array;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.arrays.DefaultIndex;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.ShapeNotMatchException;
@@ -13,7 +14,6 @@ import org.cdma.interfaces.ISliceIterator;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.archiving.VcFactory;
 import org.cdma.plugin.xml.util.XmlArrayMath;
-import org.cdma.utilities.memory.DefaultIndex;
 import org.cdma.utils.IArrayUtils;
 
 public class VcArray implements IArray {

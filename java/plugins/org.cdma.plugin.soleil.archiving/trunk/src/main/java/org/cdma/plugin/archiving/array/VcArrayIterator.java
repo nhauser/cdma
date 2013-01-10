@@ -3,7 +3,7 @@ package org.cdma.plugin.archiving.array;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IArrayIterator;
 import org.cdma.interfaces.IIndex;
-import org.cdma.utilities.memory.ArrayTools;
+import org.cdma.utils.ArrayTools;
 
 public final class VcArrayIterator implements IArrayIterator {
 	// / Members
