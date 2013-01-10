@@ -33,11 +33,10 @@
 		<dependency>
 			<groupId>org.cdma</groupId>
 			<artifactId>utilities</artifactId>
-			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src/</sourceDirectory>
+		<sourceDirectory>src/main/java</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>META-INF</directory>
