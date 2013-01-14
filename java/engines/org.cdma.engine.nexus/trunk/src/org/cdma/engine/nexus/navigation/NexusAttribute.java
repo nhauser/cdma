@@ -25,15 +25,19 @@ public final class NexusAttribute implements IAttribute {
     private String  mFactory; // factory name that attribute depends on
 
     /// Constructors
-    public NexusAttribute(String factoryName, String name, String value) {
-    	this( factoryName, name, value.toCharArray());
+    public NexusAttribute(String factoryName, String name, char[] value) {
+    	this( factoryName, name, new String(value) );
     }
     
     public NexusAttribute(String factoryName, String name, Object value) {
         int[] shape;
         Object data = value;
+        
         if (value.getClass().isArray()) {
-        	shape = new int[] { java.lang.reflect.Array.getLength(value) };
+            if( data instanceof char[] ) {
+            	data = new String[] {new String( (char[]) value)};
+            }
+        	shape = new int[] { java.lang.reflect.Array.getLength(data) };
         }
         else {
         	shape = new int[] {};
@@ -85,7 +89,7 @@ public final class NexusAttribute implements IAttribute {
         }
 
         if (isString()) {
-            return (Double) value;
+            value = Double.parseDouble( (String) value );
         }
 
         return (Number) value;
@@ -93,11 +97,18 @@ public final class NexusAttribute implements IAttribute {
 
     @Override
     public String getStringValue() {
+    	String result;
         if (isString()) {
-            return new String( (char[]) mValue.getStorage() );
+        	if( Character.TYPE.equals( getType() ) ) {
+        		result = new String( (char[]) mValue.getStorage() );
+        	}
+        	else {
+        		result = mValue.getStorage().toString();
+        	}
         } else {
-            return getNumericValue().toString();
+            result = getNumericValue().toString();
         }
+        return result;
     }
 
     @Override
@@ -127,7 +138,7 @@ public final class NexusAttribute implements IAttribute {
     @Override
     public boolean isString() {
         Class<?> container = mValue.getElementType();
-        return (container.equals( Character.TYPE ));
+        return (container.equals( Character.TYPE ) || container.equals( String.class ) );
     }
 
     @Override
