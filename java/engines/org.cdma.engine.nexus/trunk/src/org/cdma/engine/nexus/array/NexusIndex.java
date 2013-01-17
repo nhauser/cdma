@@ -32,12 +32,6 @@ public final class NexusIndex extends DefaultIndex implements Cloneable {
         super( factoryName, shape, start, length );
     }
 
-    /*
-    public NexusIndex(String factoryName, List<IRange> ranges) {
-        super(factoryName, ranges);
-    }
-    */
-
     @Override
     public IIndex clone() {
         return new NexusIndex(this);
@@ -86,19 +80,4 @@ public final class NexusIndex extends DefaultIndex implements Cloneable {
 		}
 		return value;
 	}
-	
-	
-/*
-    @Override
-	public int[] elementOffsetCoordinates(int[] position) {
-		int[] value = super.elementOffsetCoordinates(position);
-		int[] origin = getOrigin();
-		
-		for( int dim = 0; dim < origin.length; dim++ ) {
-			value[dim] -= origin[dim];
-		}
-
-    	return value;
-	}
-		*/
 }

@@ -50,12 +50,10 @@ public final class NxsArrayUtils implements IArrayUtils {
         Object fullArray = getArray().getStorage();
         Object partArray = null;
         int[] posMatrix = new int[1];
-        Long offsetMatrix;
-        for( int i = 0; i < nbMatrixCells; i++ ) {
-        	posMatrix[0] = i;
-        	offsetMatrix = matrixIndex.elementOffset( posMatrix );
-            partArray = java.lang.reflect.Array.get(fullArray, offsetMatrix.intValue() );
-            System.arraycopy(partArray, startPos.intValue(), array, i * nbStorageCells.intValue(), nbStorageCells.intValue());
+        for( int cell = 0; cell < nbMatrixCells; cell++ ) {
+        	posMatrix[0] = cell;
+            partArray = java.lang.reflect.Array.get(fullArray, cell );
+            System.arraycopy(partArray, startPos.intValue(), array, cell * nbStorageCells.intValue(), nbStorageCells.intValue());
         }
 
         return array;
@@ -245,38 +243,53 @@ public final class NxsArrayUtils implements IArrayUtils {
      * corresponding Java primitive array
      */
     private Object copyMatrixItemsToMultiDim() {
+    	// Create an array corresponding to the shape
         NxsArray array = (NxsArray) getArray();
-        int[] shape  = array.getShape();
+        int[] shape   = array.getShape();
+        Object result  = java.lang.reflect.Array.newInstance(array.getElementType(), shape);
+        
+        // Get the array's storage
+        Object values = array.getStorage();
+        
         int[] current;
         int   length;
         Long  startCell;
-        Object result = java.lang.reflect.Array.newInstance(array.getElementType(), shape);
-        Object slab;
-        Object dataset;
+        
         try {
-            Object values       = array.getStorage();
+            
             ISliceIterator iter = array.getSliceIterator(1);
             NxsIndex startIdx   = (NxsIndex) array.getIndex();
             NexusIndex storage  = startIdx.getIndexStorage();
-            DefaultIndex items    = startIdx.getIndexMatrix();
-            //startIdx.setOrigin(new int[startIdx.getRank()]);
-            IArray next;
+            DefaultIndex items  = startIdx.getIndexMatrix();
+            startIdx.setOrigin(new int[startIdx.getRank()]);
+            
+            length = startIdx.getShape()[ startIdx.getRank() - 1 ];
+            
             storage.set( new int[storage.getRank()] );
+
+            // Turning buffers
+            Object slab = null;
+            Object dataset = null;
+            
+            // Copy each slice
+            int last = -1;
+            int cell = (int) (items.currentElement() - items.firstElement());
             while( iter.hasNext() ) {
-                next = iter.getArrayNext();
-                
-                Long l = next.getSize();
-                length = l.intValue();
+                iter.next();
                 slab = result;
 
-                // Getting the right slab in the multidim result array
+                // Getting the right slab in the multidimensional resulting array
                 current = iter.getSlicePosition();
                 startIdx.set(current);
                 for( int pos = 0;  pos < current.length - 1; pos++ ) {
                     slab = java.lang.reflect.Array.get(slab, current[pos]);
                 }
                 
-                dataset = java.lang.reflect.Array.get(values, new Long( items.currentElement() ).intValue() );
+                cell = (int) (items.currentElement() - items.firstElement());
+                if( last != cell ) {
+                	dataset = java.lang.reflect.Array.get(values, cell );
+                	last = cell;
+                }
                 startCell = storage.currentElement();
                 System.arraycopy(dataset, startCell.intValue(), slab, 0, length);
             }
