@@ -17,9 +17,10 @@ import org.cdma.utils.ArrayTools;
 
 public class DefaultArrayIterator implements IArrayIterator {
 	/// Members
-	private IArray mArray;    // Array that supports the storage and a view on it
-	private IIndex mIndex;    // Iterator's view of the array (as described in mArray)
-	private boolean mAccess; // Indicates that this can access the storage memory or not
+	private IArray mArray;     // Array that supports the storage and a view on it
+	private IIndex mIndex;     // Iterator's view of the array (as described in mArray)
+	private boolean mAccess;  // Indicates that this can access the storage memory or not
+	private boolean mStarted; // Has the next method been called at least one time
 
 	public DefaultArrayIterator(IArray array) {
 		this( array, array.getIndex(), true );
@@ -36,12 +37,15 @@ public class DefaultArrayIterator implements IArrayIterator {
 		} catch (CloneNotSupportedException e) {
 			mIndex = index;
 		}
-		mAccess = accessData;
+		mAccess  = accessData;
+		mStarted = false;
 		
 		// set the current starting point
 		int[] count = index.getCurrentCounter();
-		count[mIndex.getRank() - 1]--;
-		mIndex.set(count);
+		if( index.getRank() > 0 ) {
+			count[count.length - 1]--;
+			mIndex.set(count);
+		}
 		mArray.setIndex(mIndex);
 	}
 
@@ -105,9 +109,16 @@ public class DefaultArrayIterator implements IArrayIterator {
 
 	@Override
 	public boolean hasNext() {
-		long index = mIndex.currentElement();
-		long last = mIndex.lastElement();
-		return (index < last && index >= -1);
+		boolean result;
+		if( mStarted ) {
+			long index = mIndex.currentElement();
+			long last = mIndex.lastElement();
+			result = (index < last && index >= -1);
+		}
+		else {
+			result = true;
+		}
+		return result;
 	}
 
 	@Override
@@ -180,6 +191,7 @@ public class DefaultArrayIterator implements IArrayIterator {
 
 	/// protected method
 	protected void incrementIndex() {
+		mStarted = true;
 		int[] current = mIndex.getCurrentCounter();
 		int[] shape = mIndex.getShape();
 		ArrayTools.incrementCounter(current, shape);

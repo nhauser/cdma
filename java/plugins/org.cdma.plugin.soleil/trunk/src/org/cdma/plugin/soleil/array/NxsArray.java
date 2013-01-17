@@ -213,17 +213,40 @@ public final class NxsArray implements IArray {
     @Override
     public Object getStorage() {
         Object result = mData;
-        if( mData == null && mArrays != null ) {
-        	Object[] array = new Object[ mArrays.length ];
-            for( int i = 0; i < mArrays.length; i++ ) {
-            	array[i] = mArrays[i].getStorage();
+        IIndex index = mIndex.getIndexMatrix().clone();
+        int rank = index.getRank();
+        
+        if ( mData == null && mArrays != null ) {
+            Object[] array;
+            int offset;
+            
+            // Case of several NexusArray in the visible part of the matrix
+            if (rank != 0) {
+            	int[] pos = new int[1];
+            	int size = (int) index.getSize();
+                array = new Object[size];
+                for (int i = 0; i < size; i++) {
+            		pos[0] = i;
+            		index.set(pos);
+                    offset = (int) index.currentElement();
+                    if (offset < 0) {
+                        array = null;
+                        break;
+                    }
+                    array[i] = mArrays[offset].getStorage();
+                }
+            }
+            // Case of one NexusArray in the visible part of the matrix
+            else {
+            	offset = (int) index.currentElement();
+                array = new Object[1];
+                array[0] = mArrays[offset].getStorage();
             }
             result = array;
         }
-
         return result;
     }
-
+    
     @Override
     public void setBoolean(IIndex ima, boolean value) {
         set(ima, value);
