@@ -33,9 +33,9 @@ public final class NexusAttribute implements IAttribute {
         int[] shape;
         Object data = value;
         
-        if (value.getClass().isArray()) {
+        if ( value.getClass().isArray() ) {
             if( data instanceof char[] ) {
-            	data = new String[] {new String( (char[]) value)};
+            	data = new String[] { new String( (char[]) value) };
             }
         	shape = new int[] { java.lang.reflect.Array.getLength(data) };
         }
@@ -67,25 +67,20 @@ public final class NexusAttribute implements IAttribute {
 
     @Override
     public Number getNumericValue() {
-        if (isString()) {
-            return null;
+    	Number result = null;
+        if ( ! isString()) {
+            result = getNumericValue(0);
         }
-
-        if (isArray()) {
-            return getNumericValue(0);
-        } else {
-            return (Number) mValue.getStorage();
-
-        }
-    }
+        return result;
+   }
 
     @Override
     public Number getNumericValue(int index) {
         Object value;
         if (isArray()) {
-            value = java.lang.reflect.Array.get(mValue.getStorage(), index);
+            value = java.lang.reflect.Array.get( mValue.getArrayUtils().copyTo1DJavaArray(), index);
         } else {
-            value = mValue.getStorage();
+            value = java.lang.reflect.Array.get( mValue.getStorage(), index);
         }
 
         if (isString()) {
@@ -103,7 +98,7 @@ public final class NexusAttribute implements IAttribute {
         		result = new String( (char[]) mValue.getStorage() );
         	}
         	else {
-        		result = mValue.getStorage().toString();
+        		result = getStringValue(0);
         	}
         } else {
             result = getNumericValue().toString();
@@ -144,7 +139,7 @@ public final class NexusAttribute implements IAttribute {
     @Override
     public void setStringValue(String val) {
         try {
-			mValue = new NexusArray(mFactory, val, new int[] { 1 });
+			mValue = new NexusArray(mFactory, new String[] { val }, new int[] { 1 });
 		} catch (InvalidArrayTypeException e) {
         	Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
 		}
@@ -156,7 +151,9 @@ public final class NexusAttribute implements IAttribute {
     }
 
     public String toString() {
-        return mName + "=" + mValue;
+    	String result = mName + "=";
+   		result += isString()? getStringValue() : getNumericValue();
+    	return result;
     }
 
     @Override
