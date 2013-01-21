@@ -24,11 +24,12 @@
   </dataset-model>
 
 <!-- ============================================
-==  CONFIG 2: all beamlines quickexafs         ==
+==  CONFIG 10: SAMBA quickexafs                       ==
 ============================================= -->
-  <dataset-model name="generic_quickexafs">
+  <dataset-model name="samba_quickexafs">
     <criteria>
-      <if exist="true" target="/QuickEXAFS*{NXentry}"/>
+      <if exist="true" target="/{NXentry}/{NXdata}/DeltaTheta"/>
+      <if exist="true" target="/{NXentry}/{NXdata}/channel0_RAW"/>
     </criteria>
     
     <parameters>
@@ -43,6 +44,7 @@
       </java>
     </plugin>
   </dataset-model>
+
 
 <!-- ============================================
 ==  CONFIG 3: all beamlines scanserver         ==
@@ -207,6 +209,28 @@
       <parameter name="MODEL" type="constant" constant="local_files" />
     </parameters>
     
+    <plugin>
+      <java>
+        <set name="log_debug" value="true"/>
+        <set name="N4T_buffer_size" value="300"/>
+      </java>
+    </plugin>
+  </dataset-model>
+
+<!-- ============================================
+==  CONFIG 10: SAMBA quickexafs                       ==
+============================================= -->
+  <dataset-model name="samba_quickexafs">
+    <criteria>
+      <if exist="true" target="/{NXentry}/{NXdata}/DeltaTheta"/>
+      <if exist="true" target="/{NXentry}/{NXdata}/channel0_RAW"/>
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE" type="constant" constant="samba"/>
+      <parameter name="MODEL" type="constant" constant="quickexafs"/>
+    </parameters>
+
     <plugin>
       <java>
         <set name="log_debug" value="true"/>
