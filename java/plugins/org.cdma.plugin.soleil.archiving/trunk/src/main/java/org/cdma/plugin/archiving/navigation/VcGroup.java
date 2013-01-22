@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.arrays.DefaultArray;
 import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.navigation.SqlCdmaCursor;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -17,7 +19,6 @@ import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.archiving.VcFactory;
-import org.cdma.plugin.archiving.array.VcArray;
 import org.cdma.plugin.archiving.internal.AttributeProperties;
 import org.cdma.plugin.archiving.internal.VcSqlConstants;
 import org.cdma.plugin.archiving.internal.VcXmlConstants;
@@ -133,7 +134,6 @@ public class VcGroup extends XmlGroup {
 	}
 	
 	
-	
 	///////////////////////////////////////////////////////////////////////////////
 	private void initDataItems() {
 		if( mHiddenAttribute != null ) {
@@ -146,7 +146,7 @@ public class VcGroup extends XmlGroup {
 			    	historic = Boolean.parseBoolean( historicProperty.getStringValue() );
 			    }
 			    
-			    // Determines on which DB to execute query on HDB / TDB
+			    // Determines on which DB to execute query: HDB / TDB
 			    VcDataset dataset = getDataset();
 			    SqlDataset dbDataset;
 			    
@@ -175,15 +175,10 @@ public class VcGroup extends XmlGroup {
 	}
 	
 	private void constructDataItem(AttributeProperties attribute, SqlDataset dbDataset, String dbName) {
-		// Get the starting and ending dates of the archiving
-		IGroup rootGroup     = getRootGroup();
-	    IAttribute startTime = rootGroup.getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
-	    IAttribute endTime   = rootGroup.getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
-	    
 	    try {
 		    // Prepare the query (between dates)
 	    	BaseType dbType = DbUtils.detectDb( dbDataset );
-		    String query = prepareQueryDataItem(dbType, dbName, attribute, startTime, endTime);
+	    	String query = prepareQueryDataItem(dbType, dbName, attribute);
 
 		    if( query != null && ! query.isEmpty() ) {
 			    // Execute the query
@@ -213,8 +208,8 @@ public class VcGroup extends XmlGroup {
 		}
 	}
 	
-	private VcArray constructVcArray(AttributeProperties attribute, SqlArray array) {
-		VcArray result = null;
+	private IArray constructVcArray(AttributeProperties attribute, SqlArray array) {
+		IArray result = null;
 		if( array != null ) {
 			int[] shape = array.getShape();
 			Class<?> clazz = array.getElementType();
@@ -223,22 +218,28 @@ public class VcGroup extends XmlGroup {
 				storage = DbUtils.extractDataFromReader(attribute, (java.io.Reader[]) storage, VcSqlConstants.CELL_SEPARATOR );
 				shape = ArrayTools.detectShape(storage);
 			}
-			result = new VcArray( storage, shape );
+			try {
+				result = DefaultArray.instantiateDefaultArray( VcFactory.NAME , storage, shape);
+			} catch (InvalidArrayTypeException e) {
+				Factory.getLogger().log( Level.SEVERE, "Unable to create array!", e );
+			}
 		}
 		
 		return result;
 	}
 
-	private String prepareQueryDataItem( BaseType dbType, String dbName, AttributeProperties attribute, IAttribute startTime, IAttribute endTime ) throws ParseException {
+	private String prepareQueryDataItem( BaseType dbType, String dbName, AttributeProperties attribute ) throws ParseException {
 		StringBuffer query = new StringBuffer();
 		
 		if( attribute != null ) {
 			String tableName = attribute.getDbTable();
 			VcDataset dataset = getDataset();
-			boolean frFormat = ! dataset.isUSDateFormat();
+			boolean frFormat = ! dataset.getUSDateFormat();
 			String[] fields = attribute.getDbFields();
-			String start  = DateFormat.convertDate(startTime.getStringValue(), dbType, frFormat );
-			String end    = DateFormat.convertDate(endTime.getStringValue(), dbType, frFormat );
+
+			// Compute starting and ending dates (if null then '01/01/1970' and 'now')
+			String start  = prepareStartDate( dbType, frFormat );
+			String end    = prepareEndDate( dbType, frFormat );
 			String select = "SELECT " + DateFormat.dateToSqlString( VcSqlConstants.ATT_FIELD_TIME, dbType, frFormat) + " as " + VcSqlConstants.ATT_FIELD_TIME;
 			String from   = " FROM " + dbName + "." + tableName;
 			String where  = " WHERE (time BETWEEN '" + start + "' AND '" + end + "')";
@@ -254,5 +255,62 @@ public class VcGroup extends XmlGroup {
 			query.append( order );
 		}
 		return query.toString();
+	}
+	
+	private String prepareStartDate(BaseType dbType, boolean frFormat) throws ParseException {
+		// Get the starting and ending dates of the archiving
+		IGroup rootGroup = getRootGroup();
+		
+		// Check if this has 'start' date attribute
+		IAttribute startTime = getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
+		
+		if( startTime == null ) {
+			startTime = rootGroup.getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
+		}
+		
+		// Compute starting date (if null then 01/01/1970)
+		String start;
+		if( startTime != null ) {
+			Class<?> clazz = startTime.getType();
+			if( Number.class.isAssignableFrom(clazz) ) {
+				start = DateFormat.convertDate((Long) startTime.getNumericValue(), dbType, frFormat );
+			}
+			else {
+				start = DateFormat.convertDate(startTime.getStringValue(), dbType, frFormat );
+			}
+		}
+		else {
+			start = DateFormat.convertDate(0, dbType, frFormat);
+		}
+		
+		return start;
+	}
+	
+	private String prepareEndDate(BaseType dbType, boolean frFormat) throws ParseException {
+		// Get the starting and ending dates of the archiving
+		IGroup rootGroup = getRootGroup();
+
+		// Check if this has 'end' date attribute
+		IAttribute endTime = getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
+		if( endTime == null ) {
+			endTime = rootGroup.getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
+		}
+		
+		// Compute starting date (if null then 01/01/1970)
+		String end;
+		if( endTime != null ) {
+			Class<?> clazz = endTime.getType();
+			if( Number.class.isAssignableFrom(clazz) ) {
+				end = DateFormat.convertDate((Long) endTime.getNumericValue(), dbType, frFormat );
+			}
+			else {
+				end = DateFormat.convertDate(endTime.getStringValue(), dbType, frFormat );
+			}
+		}
+		else {
+			end = DateFormat.convertDate(0, dbType, frFormat);
+		}
+		
+		return end;
 	}
 }

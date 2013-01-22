@@ -38,22 +38,7 @@ public class DetectedSource {
     private boolean mIsProducer;
     private boolean mIsReadable;
     private URI mURI;
-/*
-    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment, boolean datasetFolder) {
-    	if( mFilter == null ) {
-    		synchronized( DetectedSource.class ) {
-    			if( mFilter == null ) {
-    				mFilter = new ViewConfigurationFilter();
-    			}
-    		}
-    	}
-        mIsReadable = readable;
-        mIsProducer = producer;
-        mIsBrowsable = browsable;
-        mIsExperiment = experiment;
-        mURI = uri;
-    }
-*/
+
     public DetectedSource(URI uri) {
     	if( mFilter == null ) {
     		synchronized( DetectedSource.class ) {
@@ -98,7 +83,7 @@ public class DetectedSource {
             // Check if the URI is considered as browsable
             mIsBrowsable = initBrowsable(uri);
         	
-        	// Check it is a NeXus file
+        	// Check it is a Vc file
             mIsReadable = initReadable(uri);
 
             // Check if we are producer of the source
@@ -112,12 +97,17 @@ public class DetectedSource {
     private boolean initReadable(URI target) {
 		boolean result = false;
 		if ( ! mIsBrowsable) {
-			File file = new File(target);
-			String name = file.getName();
+			try {
+				File file = new File(target);
+				String name = file.getName();
 			
-			// Check if the URI is a ViewConfiguration file
-			if ( mFilter.accept(file, name)) {
-				result = true;
+				// Check if the URI is a ViewConfiguration file
+				if ( mFilter.accept(file, name)) {
+					result = true;
+				}
+			}
+			catch( IllegalArgumentException e ) {
+				// nothing to do
 			}
 		}
 		return result;
@@ -132,14 +122,11 @@ public class DetectedSource {
 				if (dataset.isOpen()) {
 					IGroup rootGroup = dataset.getRootGroup();
 					if (rootGroup != null) {
-						IAttribute startDate = rootGroup
-								.getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
-						IAttribute endDate = rootGroup
-								.getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
+						IAttribute startDate = rootGroup.getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
+						IAttribute endDate = rootGroup.getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
 						result = ((startDate != null) && (endDate != null));
 					}
 				}
-
 			} catch (IOException e) {
 				// nothing to do
 			} catch (Exception e) {
@@ -151,10 +138,14 @@ public class DetectedSource {
 
 	private boolean initBrowsable(URI target) {
 		boolean result = false;
-
-		File file = new File(target);
-		if (file.exists() && file.isDirectory()) {
-			result = true;
+		try {
+			File file = new File(target);
+			if (file.exists() && file.isDirectory()) {
+				result = true;
+			}
+		}
+		catch( IllegalArgumentException e ) {
+			// nothing to do
 		}
 		return result;
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import org.cdma.exception.DimensionNotSupportedException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -16,6 +17,7 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.archiving.VcFactory;
 import org.cdma.plugin.xml.navigation.XmlContainer;
+import org.cdma.utils.IArrayUtils;
 import org.cdma.utils.Utilities.ModelType;
 
 public class VcDataItem extends XmlContainer implements IDataItem {
@@ -65,60 +67,6 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 		return attributeDataItem;
 	}
 
-/*	
-	protected void initArrayFromDatabase(DbData data) {
-		if (data != null) {
-			NullableTimedData[] subDatas = data.getData_timed();
-			if (subDatas != null) {
-				int[] shape;
-				Object storage = null;
-				if (data.getMax_x() > 1) {
-					// if max_x > 1, the data is a spectrum
-					shape = new int[3];
-					shape[0] = data.size();
-					shape[1] = 2;
-					shape[2] = data.getMax_x();
-
-					Object[][] tempStorage = new Object[shape[0]][shape[1]];
-					for (int i = 0; i < shape[0]; ++i) {
-						Object valueSample = subDatas[i].value;
-						if (valueSample != null
-								&& valueSample.getClass().isArray()) {
-							Object[] arraySample = (Object[]) valueSample;
-							if (arraySample.length > 0) {
-								tempStorage[i][VcArray.VALUE_INDEX] = Arrays
-										.copyOf(arraySample, arraySample.length);
-								tempStorage[i][VcArray.TIME_INDEX] = subDatas[i].time;
-							}
-						}
-					}
-					storage = tempStorage;
-				} else {
-					// else it is a scalar (image are not handle)
-					shape = new int[2];
-					shape[0] = data.size();
-					shape[1] = 2;
-
-					Object[] tempStorage = new Object[shape[0] * shape[1]];
-
-					for (int i = 0; i < shape[0]; ++i) {
-						tempStorage[i * 2] = subDatas[i].time;
-						Object valueSample = subDatas[i].value;
-						if (valueSample != null
-								&& valueSample.getClass().isArray()) {
-							Object[] arraySample = (Object[]) valueSample;
-							if (arraySample.length == 1) {
-								tempStorage[i * 2 + 1] = arraySample[0];
-							}
-						}
-					}
-					storage = tempStorage;
-				}
-				mData = new VcArray(storage, shape);
-			}
-		}
-	}
-	 */
 	@Override
 	public IAttribute findAttributeIgnoreCase(String name) {
 		IAttribute result = null;
@@ -134,12 +82,37 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public int findDimensionIndex(String name) {
-		return 0;
+		int index = -1;
+		IGroup parent = getParentGroup();
+		
+		if( parent != null && name != null ) {
+			int i = 0;
+			for( IDimension dimension : parent.getDimensionList() ) {
+				if( name.equalsIgnoreCase( dimension.getName() ) ) {
+					index = i;
+				}
+				i++;
+			}
+		}
+		
+		return index;
 	}
 
 	@Override
 	public IDataItem getASlice(int dimension, int value) throws InvalidRangeException {
-		return null;
+		IDataItem result = this.clone();
+		
+		try {
+			IArray array = result.getData();
+			IArrayUtils util = array.getArrayUtils().slice(dimension, value);
+			result.setCachedData( util.getArray(), false );
+		} catch (IOException e) {
+			throw new InvalidRangeException(e);
+		} catch (InvalidArrayTypeException e) {
+			throw new InvalidRangeException(e);
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -149,7 +122,10 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
-		return null;
+		IArray result = getData();
+		IArrayUtils util = result.getArrayUtils().section(origin, shape);
+		result = util.getArray();
+		return result;
 	}
 
 	@Override
@@ -180,26 +156,55 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public String getDimensionsString() {
-		return null;
+		StringBuffer result = new StringBuffer();
+		int i = 0;
+		for( IDimension dimension : getDimensionList() ) {
+			if( i != 0 ) {
+				result.append( " " );
+			}
+			result.append( dimension.getName() );
+		}
+		
+		return result.toString();
 	}
 
 	@Override
 	public int getElementSize() {
-		return -1;
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public String getNameAndDimensions() {
-		return null;
+		StringBuffer result = new StringBuffer();
+		getNameAndDimensions(result, false, false);
+		return result.toString();
 	}
 
 	@Override
 	public void getNameAndDimensions(StringBuffer buf, boolean longName, boolean length) {
+		int i = 0;
+		if( longName ) {
+			buf.append( getName() );
+		}
+		else {
+			buf.append( getShortName() );
+		}
+		for( IDimension dimension : getDimensionList() ) {
+			if( i != 0 ) {
+				buf.append( " " );
+			}
+			buf.append( dimension.getName() );
+			if( length ) {
+				buf.append( "(" );
+				buf.append( dimension.getLength() );
+				buf.append( ")" );
+			}
+		}
 	}
 
 	@Override
 	public List<IRange> getRangeList() {
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -209,11 +214,13 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public IDataItem getSection(List<IRange> section) throws InvalidRangeException {
+		// TODO
 		return null;
 	}
 
 	@Override
 	public List<IRange> getSectionRanges() {
+		// TODO
 		return null;
 	}
 
@@ -229,12 +236,32 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public int getSizeToCache() {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
-		return null;
+		int[] shape = getShape();
+		int[] origin = new int[getRank()];
+		if( dim > getRank() - 1 && value > shape[dim] ) {
+			throw new InvalidRangeException("Unable to create slice at the given position!");
+		}
+		shape[dim] = 1;
+		origin[dim] = value;
+		IArray array = null;
+		IDataItem result = null;
+		try {
+			array = getData( origin, shape );
+			result = clone();
+			result.setCachedData(array, isMetadata() );
+		} catch (IOException e) {
+			throw new InvalidRangeException("Unable to create slice at the given position!");
+		} catch (InvalidArrayTypeException e) {
+			// Should not happen
+		}
+
+		return result;
 	}
 
 	@Override
@@ -244,25 +271,34 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public String getUnitsString() {
-		return null;
+		String result = "";
+		IAttribute attr = findAttributeIgnoreCase("unit");
+		if( attr != null ) {
+			result = attr.getStringValue();
+		}
+		return result;
 	}
 
 	@Override
 	public boolean hasCachedData() {
+		// Nothing to do because there is no cache
 		return false;
 	}
 
 	@Override
 	public void invalidateCache() {
+		// Nothing to do because there is no cache
 	}
 
 	@Override
 	public boolean isCaching() {
+		// Nothing to do because there is no cache
 		return false;
 	}
 
 	@Override
 	public boolean isMemberOfStructure() {
+		// Nothing to do because there is no cache
 		return false;
 	}
 
@@ -278,88 +314,106 @@ public class VcDataItem extends XmlContainer implements IDataItem {
 
 	@Override
 	public boolean isUnlimited() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isUnsigned() {
+		// TODO
 		return false;
 	}
 
 	@Override
 	public byte readScalarByte() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public double readScalarDouble() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public float readScalarFloat() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public int readScalarInt() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public long readScalarLong() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public short readScalarShort() throws IOException {
+		// TODO
 		return 0;
 	}
 
 	@Override
 	public String readScalarString() throws IOException {
+		// TODO
 		return null;
 	}
 
 	@Override
 	public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
+		mData = cacheData;
 	}
 
 	@Override
 	public void setCaching(boolean caching) {
+		// Nothing to do: no cache
 	}
 
 	@Override
 	public void setDataType(Class<?> dataType) {
+		// TODO		
 	}
 
 	@Override
 	public void setDimensions(String dimString) {
+		// TODO
 	}
 
 	@Override
 	public void setDimension(IDimension dim, int ind) throws DimensionNotSupportedException {
+		// TODO
 	}
 
 	@Override
 	public void setElementSize(int elementSize) {
+		// TODO
 	}
 
 	@Override
 	public void setSizeToCache(int sizeToCache) {
+		// Nothing to do: no cache
 	}
 
 	@Override
 	public void setUnitsString(String units) {
+		// TODO
 	}
 
 	@Override
 	public String toStringDebug() {
+		// TODO
 		return null;
 	}
 
 	@Override
 	public String writeCDL(String indent, boolean useFullName, boolean strict) {
+		// TODO
 		return null;
 	}
 

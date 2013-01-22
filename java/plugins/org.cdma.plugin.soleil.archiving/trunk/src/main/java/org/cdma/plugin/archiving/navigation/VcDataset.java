@@ -26,7 +26,6 @@ public class VcDataset implements IDataset {
 	private String mTitle;
 
 	private VcGroup mRootGroup;
-//	private DbConnectionInfo dbConnectionInfo;
 	private boolean mDbInitialized;
 	private SqlDataset mHdbDataset;
 	private SqlDataset mTdbDataset;
@@ -207,7 +206,7 @@ public class VcDataset implements IDataset {
 
 	@Override
 	public LogicalGroup getLogicalRoot() {
-		return null;
+		return new LogicalGroup(null, this);
 	}
 
 	@Override
@@ -292,7 +291,7 @@ public class VcDataset implements IDataset {
 		return result;
 	}
 
-	public boolean isUSDateFormat() {
+	public boolean getUSDateFormat() {
 		return mIsUSFormat;
 	}
 	
