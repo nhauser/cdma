@@ -3,7 +3,9 @@ package org.cdma.plugin.xml.navigation;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.DimensionNotSupportedException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -24,7 +26,11 @@ public class XmlDataItem extends XmlContainer implements IDataItem, Cloneable {
 	public XmlDataItem(String factory, String name, int index,
 			IDataset dataset, IGroup parent) {
 		super(factory, name, index, dataset, parent);
-		mArrayValue = new XmlArray(factory, "");
+		try {
+			mArrayValue = new XmlArray(factory, "");
+		} catch (InvalidArrayTypeException e) {
+			Factory.getLogger().log(Level.SEVERE, "Unable to initialize array!", e);
+		}
 	}
 
 	public XmlDataItem(XmlDataItem copy) {

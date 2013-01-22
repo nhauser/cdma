@@ -58,7 +58,7 @@ public class DbUtils {
 	}
 	
 	/**
-	 * Returns the sampling date format according the given database and the given sampling identifiant. 
+	 * Returns the sampling date format according the given database and the given sampling identifier. 
 	 * @param samplingType
 	 * @param type
 	 * @return

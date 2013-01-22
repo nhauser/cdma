@@ -3,8 +3,11 @@ package org.cdma.plugin.archiving;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
+import org.cdma.arrays.DefaultArray;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
@@ -19,7 +22,6 @@ import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
-import org.cdma.plugin.archiving.array.VcArray;
 import org.cdma.plugin.archiving.navigation.VcDataItem;
 import org.cdma.plugin.archiving.navigation.VcDataset;
 
@@ -50,28 +52,37 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public IArray createArray(Class<?> clazz, int[] shape) {
-		Object o = java.lang.reflect.Array.newInstance(clazz, shape);
-		return new VcArray(o, shape);
+		Object storage = java.lang.reflect.Array.newInstance(clazz, shape);
+		return this.createArray( clazz, shape, storage );
 	}
 
 	@Override
 	public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
-		throw new NotImplementedException();
-	}
-
-	@Override
-	public IArray createArray(Object javaArray) {
-		IArray result = null;
-		if (javaArray != null && javaArray.getClass().isArray()) {
-			int size = Array.getLength(javaArray);
-			result = new VcArray(javaArray, new int[] { size });
+		IArray result;
+		try {
+			result = DefaultArray.instantiateDefaultArray( VcFactory.NAME, storage, shape);
+		} catch (InvalidArrayTypeException e) {
+			result = null;
+			Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
 		}
 		return result;
 	}
 
 	@Override
-	public IArray createStringArray(String string) {
-		throw new NotImplementedException();
+	public IArray createArray(Object storage) {
+		IArray result = null;
+		try {
+			result = DefaultArray.instantiateDefaultArray( VcFactory.NAME, storage );
+		} catch (InvalidArrayTypeException e) {
+			result = null;
+			Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
+		}
+		return result;
+	}
+
+	@Override
+	public IArray createStringArray(String value) {
+		return this.createArray( value );
 	}
 
 	@Override

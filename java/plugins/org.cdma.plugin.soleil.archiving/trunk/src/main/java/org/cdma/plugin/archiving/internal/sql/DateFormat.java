@@ -70,17 +70,25 @@ public class DateFormat {
 				// Concert string to time value
 				long time = stringToMilli(date);
 				
-				// Select localized time formater
-				SimpleDateFormat format = US_FORMAT;
-				
-				if( toFrSqlFormat ) {
-					format = FR_FORMAT;
-				}
-				// Formate the date
-				result = formatDate(time, format);
+				result = convertDate(time, type, toFrSqlFormat);
 			}
 			return result;
 	}
+	
+	static public String convertDate(final long timeInMillis, BaseType type, boolean toFrSqlFormat ) throws ParseException {
+		String result;
+		synchronized( CALENDAR ) {
+			// Select localized time formater
+			SimpleDateFormat format = US_FORMAT;
+			
+			if( toFrSqlFormat ) {
+				format = FR_FORMAT;
+			}
+			// Formate the date
+			result = formatDate(timeInMillis, format);
+		}
+		return result;
+}
 	
 	/**
      * Cast a string format date (dd-MM-yyyy HH:mm:ss or yyyy-MM-dd HH:mm:ss)
