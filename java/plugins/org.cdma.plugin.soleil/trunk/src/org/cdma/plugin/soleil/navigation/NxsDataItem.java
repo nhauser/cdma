@@ -33,20 +33,16 @@ import org.cdma.interfaces.IRange;
 import org.cdma.plugin.soleil.NxsFactory;
 import org.cdma.plugin.soleil.array.NxsArray;
 import org.cdma.plugin.soleil.array.NxsIndex;
-import org.cdma.plugin.soleil.utils.NxsConstant;
-import org.cdma.utilities.configuration.internal.ConfigParameter.CriterionValue;
-import org.cdma.utilities.performance.Benchmarker;
 import org.cdma.utils.Utilities.ModelType;
 
 import fr.soleil.nexus.DataItem;
 
 public final class NxsDataItem implements IDataItem, Cloneable {
-
     // Inner class
     // Associate a IDimension to an order of the array
     private static class DimOrder {
         // Members
-        private int mOrder; // order of the corresponding dimension in the NxsDataItem
+        private int mOrder;            // order of the corresponding dimension in the NxsDataItem
         private IDimension mDimension; // dimension object
 
         public DimOrder(int order, IDimension dim) {
