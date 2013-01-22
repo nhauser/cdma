@@ -1,0 +1,28 @@
+var interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer =
+[
+    [ "close", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#af61d029e29b4236689078a836b104033", null ],
+    [ "isAttributeExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a2e6c63848b5f94409adac8205e32f165", null ],
+    [ "isAttributeExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a8a678d02f35db67c3b9ce7cc9bb0791a", null ],
+    [ "isDataItemExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a45b82a000593952ddd783f4ca9733fe3", null ],
+    [ "isDataItemExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#aa1f2658800f0b91bbb170d0bad940d8e", null ],
+    [ "isGroupExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a08ea4f3757e868e2b25c04d68bfb1057", null ],
+    [ "isGroupExist", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a3e17c345d9e772043a73ef6b631a9513", null ],
+    [ "isOpen", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a4d5e5d2058e1b50533345c682d4eddfc", null ],
+    [ "open", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#aaaedb508337eb8d976f167d974165041", null ],
+    [ "removeAttribute", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#ae4e6a9b886eda79884a60e89dbae3e67", null ],
+    [ "removeDataItem", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a012172cd85ff9e9dd71b333bba34cf25", null ],
+    [ "removeGroup", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#aa19eac1ba982196aa23abe037f6f7b6e", null ],
+    [ "writeAttribute", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#aa37dbbfd72be3ad823926d2a7b8c221b", null ],
+    [ "writeAttribute", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a7894204228ab0817d9ff831d88bb2efe", null ],
+    [ "writeDataItem", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#ab9d81ac4fff7097a3762006fa155f5a0", null ],
+    [ "writeDataItem", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#ad79363c5aef1bffa5cd1b2ef89186cff", null ],
+    [ "writeEmptyGroup", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a85d5f9866910e783f58e47bdf3a54ce5", null ],
+    [ "writeGroup", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#afb982ce5c3a22ee69eef43e0c643868d", null ],
+    [ "writeGroup", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a5bf5a1737f5936d36c908f39db978ad9", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#aa00a75a2e9b7c23d2fad0454a853c39f", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a5be35bba559e2b7e8827c5be7c0225af", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a7cb2f89e5c172bae8af4b1105ff7ffd0", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#ac71d165298d50017851d65a9a9597bc4", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#ade93f03ea7f966a41a577b5e7f8adcf8", null ],
+    [ "writeToRoot", "interfaceorg_1_1gumtree_1_1data_1_1io_1_1_i_writer.html#a751b8c7459ecd67ec8614205e36132f8", null ]
+];
