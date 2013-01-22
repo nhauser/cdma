@@ -65,19 +65,23 @@ public final class ExtendedDictionary implements IModelObject, Cloneable{
      * @param factory
      */
     public ExtendedDictionary(IFactory factory) {
-        mFactory      = factory; 
-        mView         = Factory.getActiveView();
-        mKeyFile      = null;
-        mMapFile      = null;
-        mKeyPath      = new IKey[] {};
+        mFactory = factory; 
+        mView    = Factory.getActiveView();
+        mKeyFile = null;
+        mMapFile = null;
+        mKeyPath = new IKey[] {};
+        mKeys    = null;
+        mMaps    = null;
     }
     
     public ExtendedDictionary(IFactory factory, String keyFile, String mapFile) {
-        mFactory      = factory; 
-        mView         = null;
-        mKeyFile      = keyFile;
-        mMapFile      = mapFile;
-        mKeyPath      = new IKey[] {};
+        mFactory = factory; 
+        mView    = null;
+        mKeyFile = keyFile;
+        mMapFile = mapFile;
+        mKeyPath = new IKey[] {};
+        mKeys    = null;
+        mMaps    = null;
     }
 
     /**
