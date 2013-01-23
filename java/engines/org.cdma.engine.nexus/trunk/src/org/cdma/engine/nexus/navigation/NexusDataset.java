@@ -26,6 +26,7 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
+import fr.soleil.nexus.NexusFileHandler;
 import fr.soleil.nexus.NexusFileWriter;
 import fr.soleil.nexus.NexusNode;
 import fr.soleil.nexus.PathData;
@@ -33,9 +34,21 @@ import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.PathNexus;
 
 public abstract class NexusDataset implements IDataset, Cloneable {
-
-    public static final String ERR_NOT_SUPPORTED = "Method not supported yet in this plug-in!";
-
+	
+	static public boolean checkNeXusAPI() {
+		// Check library can be fully loaded (specially the native part)
+		boolean result = false;
+    	try {
+    		NexusFileHandler.loadAPI();
+            result = true;
+		} catch (Exception exception) {
+			// Nothing to be done API hasn't been found
+		} catch( Error error ) {
+			// Nothing to be done but API isn't valid
+		}
+		return result;
+	}
+	
     public NexusDataset(String factoryName, File nexusFile, int bufferSize, boolean resetBuffer) throws FileAccessException {
         mFactory      = factoryName;
         mRootPhysical = null;

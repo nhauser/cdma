@@ -40,7 +40,7 @@ public class DetectedSource {
             return (name.endsWith(EXTENSION));
         }
     }
-
+    
     private boolean mIsDataset;
     private boolean mIsExperiment;
     private boolean mIsBrowsable;
@@ -137,9 +137,6 @@ public class DetectedSource {
                 // Check if the URI is a NeXus file
                 if (length > EXTENSION_LENGTH && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
                     result = true;
-                }
-                else {
-                    result = false;
                 }
             }
         }

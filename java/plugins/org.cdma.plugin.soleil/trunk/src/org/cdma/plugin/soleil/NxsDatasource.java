@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.engine.nexus.navigation.NexusDataset;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IGroup;
@@ -37,7 +38,13 @@ public final class NxsDatasource implements IDatasource {
     public static NxsDatasource getInstance() {
         synchronized (NxsDatasource.class ) {
             if( datasource == null ) {
-                datasource  = new NxsDatasource();
+            	boolean checkNeXusAPI = NexusDataset.checkNeXusAPI();
+                if( ! checkNeXusAPI ) {
+                	Factory.getManager().unregisterFactory( NxsFactory.NAME );
+                }
+                else {
+                	datasource  = new NxsDatasource();
+                }
             }
         }
         return datasource;

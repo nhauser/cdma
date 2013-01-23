@@ -33,12 +33,21 @@ public class NexusFileHandler extends NexusFile {
     	while(nextentry(handle,names) != -1)
     	{
     	    if( names[1].equals(sNodeClass) ) {
-    		if( i == iIndex ) {
-    		    return names[0];
-    		}
-    		i++;
+	    		if( i == iIndex ) {
+	    		    return names[0];
+	    		}
+	    		i++;
     	    }
     	}
     	return null;
+    }
+    
+    /**
+     * Will make the loading of the NeXusAPI without crashing the whole system.
+     * Send an error if the NeXus API can't be found physiqcally
+     * Send an exception if the API has'nt been installed  
+     */
+    static public void loadAPI() {
+    	// do nothing
     }
 }

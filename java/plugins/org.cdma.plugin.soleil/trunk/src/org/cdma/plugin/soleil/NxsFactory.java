@@ -20,6 +20,7 @@ import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.nexus.navigation.NexusAttribute;
+import org.cdma.engine.nexus.navigation.NexusDataset;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
@@ -59,9 +60,14 @@ public final class NxsFactory implements IFactory {
 
     public static NxsFactory getInstance() {
         synchronized (NxsFactory.class ) {
-            if( factory == null ) {
+        	boolean checkNeXusAPI = NexusDataset.checkNeXusAPI();
+            if( factory == null && checkNeXusAPI ) {
                 factory  = new NxsFactory();
                 detector = NxsDatasource.getInstance();
+            }
+            
+            if( ! checkNeXusAPI ) {
+            	Factory.getManager().unregisterFactory(NAME);
             }
         }
         return factory;
