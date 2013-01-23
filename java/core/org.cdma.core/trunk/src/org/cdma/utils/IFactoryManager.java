@@ -25,6 +25,8 @@ import org.cdma.IFactory;
 public interface IFactoryManager {
 
     public void registerFactory(String name, IFactory factory);
+    
+    public void unregisterFactory(String name);
 
     public IFactory getFactory();
 

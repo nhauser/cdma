@@ -27,7 +27,7 @@ public class FactoryManager implements IFactoryManager {
     private static final String CLASS_OSGI_BUNDLE_CONTEXT = "org.osgi.framework.BundleContext";
 
     // System property for default factory 
-    private static final String PROP_DEFAULT_FACTORY = "gumtree.data.defaultFactory";
+    private static final String PROP_DEFAULT_FACTORY = "cdma.data.defaultFactory";
 
     private Map<String, IFactory> factoryRegistry;
     private String version;
@@ -58,6 +58,12 @@ public class FactoryManager implements IFactoryManager {
 
     	if( register ) {
     		factoryRegistry.put(name, factory);
+    	}
+    }
+    
+    public void unregisterFactory(String name) {
+    	if( factoryRegistry.containsKey(name) ) {
+    		factoryRegistry.remove(name);
     	}
     }
 
