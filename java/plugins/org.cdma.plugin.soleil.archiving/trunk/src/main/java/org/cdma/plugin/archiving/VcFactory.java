@@ -1,7 +1,6 @@
 package org.cdma.plugin.archiving;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.logging.Level;
 
