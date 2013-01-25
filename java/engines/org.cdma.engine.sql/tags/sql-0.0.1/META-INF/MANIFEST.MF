@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CDMA XML Engine
+Bundle-SymbolicName: org.cdma.engine.sql
+Bundle-Version: 3.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.cdma.core;bundle-version="3.0.0";visibility:=reexport
+Import-Package: org.jdom,
+ org.jdom.input
+Export-Package:
+ org.cdma.engine.sql.array,
+ org.cdma.engine.sql.navigation,
+ org.cdma.engine.sql.utils
+Bundle-Vendor: SOLEIL
