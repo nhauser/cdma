@@ -4,8 +4,10 @@
     	<item key="intensity0"/>    <!-- current before sample -->
 	<item key="intensity1"/>    <!-- current after sample -->
 	<item key="intensity2"/>    <!-- current after sample -->
-	<item key="direction"/>    <!-- current after sample -->
+	<item key="mono2_direction"/>
+	<item key="mono3_direction"/>
 	<item key ="cristal_inter_reticular_distance"/>
 	<item key ="delta_theta0"/>
 	<item key ="theta"/>
+	<item key ="monochromator_name"/>
 </data-def>

@@ -13,8 +13,11 @@
     <item key="intensity2">
         <path>/{NXentry}/{NXdata}/channel2*</path>
     </item>
-    <item key="direction">
-        <path>/{NXentry}/{NXdata}/channel3*</path>
+    <item key="mono2_direction">
+        <path>/{NXentry}/{NXdata}/mono2Direction*</path>
+    </item>
+    <item key="mono3_direction">
+        <path>/{NXentry}/{NXdata}/mono3Direction*</path>
     </item>
     <item key="cristal_inter_reticular_distance">
         <path>/{NXentry}/QuickEXAFS/cristal_inter_reticular_distance</path>
@@ -24,5 +27,8 @@
     </item>
     <item key="theta">
         <path>/{NXentry}/QuickEXAFS/theta</path>
+    </item>
+    <item key="monochromator_name">
+        <path>/{NXentry}/QuickEXAFS/monochromator_name</path>
     </item>
 </map-def>
