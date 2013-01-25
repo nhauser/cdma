@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>fr.soleil</groupId>
+		<artifactId>super-pom-java</artifactId>
+		<version>RELEASE</version>
+	</parent>
+
+	<groupId>org.cdma.plugins</groupId>
+	<artifactId>ArchivingSoleil</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>CDMA Archiving Soleil Plug-in</name>
+
+	<description>
+    This project is Soleil's Archiving plugin for the CDMA.
+    </description>
+	<scm>
+		<connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.archiving/trunk</connection>
+		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.archiving/trunk</developerConnection>
+	</scm>
+	<dependencies>
+		<dependency>
+			<groupId>org.cdma</groupId>
+			<artifactId>Core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.cdma</groupId>
+			<artifactId>utilities</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.cdma.engines</groupId>
+			<artifactId>sql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.cdma.engines</groupId>
+			<artifactId>xml</artifactId>
+		</dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>META-INF</directory>
+				<targetPath>META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>OSGI-INF</directory>
+				<targetPath>OSGI-INF</targetPath>
+			</resource>
+		</resources>
+	</build>
+
+	<developers>
+		<developer>
+			<id>rodriguez</id>
+			<name>rodriguez</name>
+			<email>clement.rodriguez@synchrotron-soleil.fr</email>
+			<url>http://www.synchrotron-soleil.fr</url>
+			<organization>Synchrotron Soleil</organization>
+			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+		<developer>
+			<id>huriez</id>
+			<name>huriez</name>
+			<email>yann.huriez@synchrotron-soleil.fr</email>
+			<url>http://www.synchrotron-soleil.fr</url>
+			<organization>Synchrotron Soleil</organization>
+			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+	</developers>
+</project>
