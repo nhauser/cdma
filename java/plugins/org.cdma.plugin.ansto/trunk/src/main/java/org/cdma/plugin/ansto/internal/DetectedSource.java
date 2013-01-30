@@ -10,9 +10,7 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.ansto.AnstoFactory;
 
 public class DetectedSource {
-	private static final String NEXUS_EXTENSION = ".nxs";
-	private static final String HDF_EXTENSION   = ".nx.hdf";
-    private static final String EXTENSION[]     = new String[] { NEXUS_EXTENSION, HDF_EXTENSION };
+	private static final String EXTENSION[] = new String[] { "nxs", "hdf", "h4", "hdf4", "he4", "h5", "hdf5", "he5" };
 
     public static final class NetCDFFilter implements FileFilter {
     	private boolean mAllowFolder;
@@ -149,7 +147,7 @@ public class DetectedSource {
         	// TODO [SOLEIL][clement] make a real test case
         	{
 	        	File file = new File(uri.getPath());
-	        	if ( file.getName().endsWith( HDF_EXTENSION ) ) {
+	        	if ( accept(file.getName()) ) {
 	        		return true;
 	        	}
 	        	else {
@@ -190,5 +188,20 @@ public class DetectedSource {
             }
         }
         return result;
+    }
+    
+    private static boolean accept( String filename ) {
+    	boolean result = false;
+    	if( filename != null ) {
+    		int length = filename.length();
+    		for( String extension : EXTENSION ) {
+    			if( length >= extension.length() && filename.endsWith(extension) ) {
+    				result = true;
+    				break;
+    			}
+    		}
+    	}
+    	
+    	return result;
     }
 }
