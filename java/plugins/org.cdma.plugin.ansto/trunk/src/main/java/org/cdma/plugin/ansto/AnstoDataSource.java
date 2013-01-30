@@ -1,7 +1,6 @@
 package org.cdma.plugin.ansto;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
