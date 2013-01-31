@@ -47,6 +47,7 @@ public class DetectedSource {
     private boolean mIsBrowsable;
     private boolean mIsProducer;
     private boolean mIsReadable;
+    private boolean mInitialized;
     private URI mURI;
     private boolean mIsFolder;
 
@@ -68,14 +69,23 @@ public class DetectedSource {
     }
 
     public boolean isExperiment() {
+    	if( ! mInitialized ) {
+    		fullInit();
+    	}
         return mIsExperiment;
     }
 
     public boolean isBrowsable() {
+    	if( ! mInitialized ) {
+    		fullInit();
+    	}
         return mIsBrowsable;
     }
 
     public boolean isProducer() {
+    	if( ! mInitialized ) {
+    		fullInit();
+    	}
         return mIsProducer;
     }
 
@@ -106,18 +116,26 @@ public class DetectedSource {
 
                 // Check it is a NeXus file
                 mIsReadable = initReadable(uri);
-
-                // Check if we are producer of the source
-                mIsProducer = initProducer(uri);
-
-                // Check if the uri corresponds to dataset experiment
-                mIsExperiment = initExperiment(uri);
-
-                // Check if the URI is considered as browsable
-                mIsBrowsable = initBrowsable(uri);
             }
         }
 
+    }
+    
+    private void fullInit() {
+    	synchronized( this ) {
+    		if( ! mInitialized ) {
+	    		// Check if we are producer of the source
+		        mIsProducer = initProducer(mURI);
+		
+		        // Check if the uri corresponds to dataset experiment
+		        mIsExperiment = initExperiment(mURI);
+		
+		        // Check if the URI is considered as browsable
+		        mIsBrowsable = initBrowsable(mURI);
+		        
+		        mInitialized = true;
+    		}
+    	}
     }
 
     private boolean initReadable(URI uri) {

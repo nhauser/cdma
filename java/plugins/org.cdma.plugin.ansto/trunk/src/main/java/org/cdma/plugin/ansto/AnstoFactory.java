@@ -27,6 +27,7 @@ import org.cdma.interfaces.IKey;
 public class AnstoFactory implements IFactory {
     public static final String NAME  = "AnstoNetCDF";
     public static final String LABEL = "ANSTO's NetCDF plug-in";
+    private static final String DESC = "That plug-in's manages NetCDF data files. Main files' extensions are: .nxs, .hdf, .h4, .hdf4, .he4, .h5, .hdf5, .he5";
     private static final String CDMA_VERSION = "3_2_0";
     private static final String PLUG_VERSION = "1.0.0";
     
@@ -219,6 +220,11 @@ public class AnstoFactory implements IFactory {
 	@Override
 	public String getCDMAVersion() {
 		return CDMA_VERSION;
+	}
+
+	@Override
+	public String getPluginDescription() {
+		return AnstoFactory.DESC;
 	}
 
 }

@@ -240,6 +240,13 @@ public interface IFactory {
      * @return the plug-in's label
      */
     public String getPluginLabel();
+    
+    /**
+     * Shortly describes the specificities of the plug-in for instance the underlying format,
+     * managed file's extension, or protocol.
+     * @return a plug-in's description
+     */
+    public String getPluginDescription();
 
     /**
      * Returns the URI detector of the instantiated plug-in. 
