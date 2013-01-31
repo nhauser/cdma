@@ -34,10 +34,9 @@ public class DetectedSource {
             "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2",
             "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
 
-    public static final class NeXusFilter implements FilenameFilter {
-
+    public static class NeXusFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {
-            return (name.endsWith(EXTENSION));
+            return DetectedSource.accept(name);
         }
     }
     
@@ -131,11 +130,10 @@ public class DetectedSource {
         else {
             File file = new File(uri.getPath());
             String name = file.getName();
-            int length = name.length();
 
             if( file.exists() && file.length() != 0L ) {
                 // Check if the URI is a NeXus file
-                if (length > EXTENSION_LENGTH && name.substring(length - EXTENSION_LENGTH).equals(EXTENSION)) {
+            	if( DetectedSource.accept( name ) ) {
                     result = true;
                 }
             }
@@ -152,11 +150,11 @@ public class DetectedSource {
             try {
                 // instantiate
                 dataset = NxsDataset.instanciate(file.toURI());
-
                 // open file
                 dataset.open();
 
                 // seek at root for 'creator' attribute
+                
                 IGroup group = dataset.getRootGroup();
                 if (group.hasAttribute("creator", CREATOR)) {
                     result = true;
@@ -178,7 +176,6 @@ public class DetectedSource {
                         }
                     }
                 }
-
                 // close file
                 dataset.close();
 
@@ -202,7 +199,6 @@ public class DetectedSource {
 
     private boolean initExperiment(URI uri) {
         boolean result = false;
-
         // Check if the URI is a NeXus file
         if (mIsProducer) {
             try {
@@ -244,7 +240,7 @@ public class DetectedSource {
 
         NeXusFilter filter = new NeXusFilter();
         File[] files = file.listFiles(filter);
-        if (files.length > 0) {
+        if (files != null && files.length > 0) {
             try {
                 IDataset dataset = new NexusDatasetImpl(files[0], false);
                 IGroup group = dataset.getRootGroup();
@@ -264,5 +260,10 @@ public class DetectedSource {
         }
         
         return result;
+    }
+    
+    private static boolean accept( String filename ) {
+    	int length = filename.length();
+    	return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
     }
 }

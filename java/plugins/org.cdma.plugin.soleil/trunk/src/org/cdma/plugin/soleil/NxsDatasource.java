@@ -10,6 +10,7 @@
 package org.cdma.plugin.soleil;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -48,6 +49,18 @@ public final class NxsDatasource implements IDatasource {
             }
         }
         return datasource;
+    }
+    
+    private static class ValidURIFilter extends DetectedSource.NeXusFilter implements FileFilter {
+
+		@Override
+		public boolean accept(File pathname) {
+			boolean result = pathname.isDirectory();
+			if( ! result ) {
+				result = accept(pathname.getParentFile(), pathname.getName());
+			}
+			return result;
+		}
     }
     
     @Override
@@ -103,8 +116,11 @@ public final class NxsDatasource implements IDatasource {
         if (source != null) {
             if (source.isFolder() && !source.isDatasetFolder()) {
                 File folder = new File(target.getPath());
-                for (File file : folder.listFiles()) {
-                    result.add(file.toURI());
+                File[] files = folder.listFiles( (FileFilter) new ValidURIFilter() );
+                if( files != null ) {
+                	for (File file : files) {
+                		result.add(file.toURI());
+                	}
                 }
             }
             else {
@@ -116,8 +132,7 @@ public final class NxsDatasource implements IDatasource {
                         NxsDataset dataset = NxsDataset.instanciate(target);
                         IGroup group = dataset.getRootGroup();
                         for (IGroup node : group.getGroupList()) {
-                            result.add(URI.create(uri + sep
-                                    + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+                            result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
                         }
 
                     }
@@ -177,27 +192,25 @@ public final class NxsDatasource implements IDatasource {
     @Override
     public String[] getURIParts(URI target) {
         List<String> parts = new ArrayList<String>();
-//        if ( isBrowsable(target) || isReadable(target) ) {
-            String path = target.getPath();
-            String fragment = target.getFragment();
-            for( String part : path.split( "/" ) ) {
-                if( part != null && ! part.isEmpty() ) {
-                    parts.add(part);
-                }
+        String path = target.getPath();
+        String fragment = target.getFragment();
+        for( String part : path.split( "/" ) ) {
+            if( part != null && ! part.isEmpty() ) {
+                parts.add(part);
             }
+        }
 
-            if (fragment != null) {
-                try {
-                    fragment = URLDecoder.decode(fragment, "UTF-8");
-                    NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
-                    for (NexusNode node : nodes ) {
-                        parts.add( node.getNodeName() );
-                    }
-                }
-                catch (UnsupportedEncodingException e) {
+        if (fragment != null) {
+            try {
+                fragment = URLDecoder.decode(fragment, "UTF-8");
+                NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
+                for (NexusNode node : nodes ) {
+                    parts.add( node.getNodeName() );
                 }
             }
-//        }
+            catch (UnsupportedEncodingException e) {
+            }
+        }
 
         return parts.toArray(new String[] {});
     }
@@ -215,7 +228,7 @@ public final class NxsDatasource implements IDatasource {
     }
 
     // ---------------------------------------------------------
-    // / private methods
+    // private methods
     // ---------------------------------------------------------
     private DetectedSource getSource(URI uri) {
         DetectedSource source = null;
