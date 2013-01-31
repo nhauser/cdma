@@ -78,8 +78,9 @@ public class ConfigCriteria {
      */
     public boolean match( IDataset dataset ) {
         boolean result = true;
+        String falseTest = CriterionValue.FALSE.toString();
         for( ConfigParameterCriterion criterion : mCriterion ) {
-            if( criterion.getValue(dataset).equals(CriterionValue.FALSE.toString()) ) {
+            if( criterion.getValue(dataset).equals( falseTest ) ) {
                 result = false;
                 break;
             }

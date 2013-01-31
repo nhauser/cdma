@@ -10,7 +10,10 @@
 //******************************************************************************
 package org.cdma.utilities.performance;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
@@ -112,10 +115,11 @@ public class Benchmarker {
     public static void reset() {
         synchronized (Benchmarker.class) {
             boolean reset = true;
-            for( Long counter : counters.values() ) {
-                if( counter > 0 ) {
+            List<String> running = new ArrayList<String>();
+            for( Entry<String,Long> counter : counters.entrySet() ) {
+                if( counter.getValue() > 0 ) {
+                	running.add(counter.getKey());
                     reset = false;
-                    break;
                 }
             }
             if( reset ) {
@@ -126,9 +130,15 @@ public class Benchmarker {
                 nbthread = new TreeMap<String, Long>();
             }
             else {
-                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                Factory.getLogger().log( Level.INFO, "Timers are still running!!!!");
-                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            	StringBuffer log = new StringBuffer();
+            	log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
+            	log.append( "Timers are still running!!!!\n" );
+            	log.append( "Please stop the following timers:\n" );
+                for( String timer : running ) {
+                	log.append( "   - " + timer + "\n" );
+                }
+                log.append( ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<" );
+                Factory.getLogger().log( Level.INFO, log.toString() );
             }
         }
     }
