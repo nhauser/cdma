@@ -19,9 +19,9 @@ public class NexusNode implements Cloneable {
     private static final String CLASS_SEPARATOR_START2 = "{";
     private static final String CLASS_SEPARATOR_END2   = "}";
 
-    private String              m_sNodeName            = "";
-    private String              m_sClassName           = "";
-    private boolean             m_bIsGroup             = false;
+    private String   m_sNodeName  = "";
+    private String   m_sClassName = "";
+    private boolean m_bIsGroup   = false;
 
     public NexusNode() {
     }

@@ -182,7 +182,7 @@ public class PathNexus implements Cloneable {
         String result = buf.toString();
         return result;
     }
-
+    
     /**
      * getDataItemName returns the name of the DataItem in path (node having
      * isGroup == false)
@@ -304,13 +304,19 @@ public class PathNexus implements Cloneable {
         return false;
     }
 
-    public static String[] splitStringPath(String sPath) {
-        if (sPath.startsWith(NexusFileInstance.PATH_SEPARATOR))
-            return sPath.substring(1).split(NexusFileInstance.PATH_SEPARATOR);
-        else
-            return sPath.split(NexusFileInstance.PATH_SEPARATOR);
+    /**
+     * Split a string representing a NexusPath to extract each node name 
+     * @param path
+     */
+    public static String[] splitStringPath(String path) {
+        if (path.startsWith(NexusFileInstance.PATH_SEPARATOR)) {
+            return path.substring(1).split(NexusFileInstance.PATH_SEPARATOR);
+        }
+        else {
+            return path.split(NexusFileInstance.PATH_SEPARATOR);
+        }
     }
-
+    
     public static NexusNode[] splitStringToNode(String sPath) {
         String[] names = splitStringPath(sPath);
         NexusNode[] nodes = null;
@@ -362,6 +368,27 @@ public class PathNexus implements Cloneable {
                 return Collator.getInstance().compare(arg0, arg1);
         }
     }
+    
+    /**
+     * Return the string representation of a NeuxsPath
+     * @param path 
+     * @param showClass do the node's class has to be displayed
+     */
+    public static String toString(PathNexus path, boolean showClass) {
+    	StringBuilder result = new StringBuilder();
+    	
+    	for( NexusNode node : path.getNodes() ) {
+    		result.append(NexusFileInstance.PATH_SEPARATOR);
+    		if( showClass ) {
+    			result.append(node.toString());
+    		}
+    		else {
+    			result.append( node.getNodeName() );
+    		}
+    	}
+    	return result.toString();
+    }
+
     
     // ---------------------------------------------------------
     // ---------------------------------------------------------
