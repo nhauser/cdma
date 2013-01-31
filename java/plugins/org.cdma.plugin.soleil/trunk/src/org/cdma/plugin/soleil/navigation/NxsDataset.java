@@ -289,9 +289,12 @@ public final class NxsDataset implements IDataset {
         NexusDatasetImpl datafile;
         if (destination.exists() && destination.isDirectory()) {
             NeXusFilter filter = new NeXusFilter();
-            for (File file : destination.listFiles(filter)) {
-                datafile = new NexusDatasetImpl(file, resetBuffer);
-                mDatasets.add((NexusDatasetImpl) datafile);
+            File[] files = destination.listFiles(filter);
+            if (files != null && files.length > 0) {
+            	for (File file : files) {
+            		datafile = new NexusDatasetImpl(file, resetBuffer);
+            		mDatasets.add((NexusDatasetImpl) datafile);
+            	}
             }
         }
         else {
