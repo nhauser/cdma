@@ -479,7 +479,7 @@ public class DefaultArrayMatrix extends DefaultArray {
     }
 
 	// ---------------------------------------------------------
-    /// Private methods
+    // Private methods
     // ---------------------------------------------------------
 	/**
 	 * Return the most varying raw of the given data, positioned at the given coordinates.
