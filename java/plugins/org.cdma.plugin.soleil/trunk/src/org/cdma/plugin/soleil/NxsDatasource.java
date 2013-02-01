@@ -39,30 +39,30 @@ public final class NxsDatasource implements IDatasource {
     public static NxsDatasource getInstance() {
         synchronized (NxsDatasource.class ) {
             if( datasource == null ) {
-            	boolean checkNeXusAPI = NexusDataset.checkNeXusAPI();
+                boolean checkNeXusAPI = NexusDataset.checkNeXusAPI();
                 if( ! checkNeXusAPI ) {
-                	Factory.getManager().unregisterFactory( NxsFactory.NAME );
+                    Factory.getManager().unregisterFactory( NxsFactory.NAME );
                 }
                 else {
-                	datasource  = new NxsDatasource();
+                    datasource  = new NxsDatasource();
                 }
             }
         }
         return datasource;
     }
-    
+
     private static class ValidURIFilter extends DetectedSource.NeXusFilter implements FileFilter {
 
-		@Override
-		public boolean accept(File pathname) {
-			boolean result = pathname.isDirectory();
-			if( ! result ) {
-				result = accept(pathname.getParentFile(), pathname.getName());
-			}
-			return result;
-		}
+        @Override
+        public boolean accept(File pathname) {
+            boolean result = pathname.isDirectory();
+            if( ! result ) {
+                result = accept(pathname.getParentFile(), pathname.getName());
+            }
+            return result;
+        }
     }
-    
+
     @Override
     public String getFactoryName() {
         return NxsFactory.NAME;
@@ -118,9 +118,9 @@ public final class NxsDatasource implements IDatasource {
                 File folder = new File(target.getPath());
                 File[] files = folder.listFiles( (FileFilter) new ValidURIFilter() );
                 if( files != null ) {
-                	for (File file : files) {
-                		result.add(file.toURI());
-                	}
+                    for (File file : files) {
+                        result.add(file.toURI());
+                    }
                 }
             }
             else {
@@ -147,17 +147,17 @@ public final class NxsDatasource implements IDatasource {
         }
         return result;
     }
-    
+
     @Override
     public URI getParentURI( URI target ) {
         URI result = null;
-        
-        if ( isBrowsable(target) || isReadable(target) ) {
+
+        if (isReadable(target) || isBrowsable(target)) {
 
             File current = new File(target.getPath());
             String fragment = target.getFragment();
             String filePath = "";
-            
+
             if( fragment == null ) {
                 current = current.getParentFile();
                 filePath = current.toURI().toString();
@@ -165,7 +165,7 @@ public final class NxsDatasource implements IDatasource {
             }
             else {
                 filePath = current.toURI().toString();
-                
+
                 try {
                     fragment = URLDecoder.decode(fragment, "UTF-8");
                     NexusNode[] nodes = PathNexus.splitStringToNode(fragment);
@@ -180,12 +180,12 @@ public final class NxsDatasource implements IDatasource {
                 } catch (UnsupportedEncodingException e) {
                     Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
-                
+
             }
-            
+
             result = URI.create(filePath + fragment);
         }
-        
+
         return result;
     }
 
@@ -255,7 +255,7 @@ public final class NxsDatasource implements IDatasource {
         }
         return source;
     }
-    
+
     private NxsDatasource() {
         if (mDetectedSources == null) {
             synchronized (NxsDatasource.class) {
