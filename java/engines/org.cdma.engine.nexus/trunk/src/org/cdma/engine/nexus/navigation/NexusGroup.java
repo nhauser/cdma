@@ -458,7 +458,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     private String getClassName() {
         NexusNode nnNode = mN4TCurPath.getCurrentNode();
         if (nnNode != null) {
-            return nnNode.getNodeName();
+            return nnNode.getClassName();
         } else {
             return "";
         }
