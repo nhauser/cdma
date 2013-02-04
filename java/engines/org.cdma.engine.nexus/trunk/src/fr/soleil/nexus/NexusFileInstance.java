@@ -96,7 +96,7 @@ public class NexusFileInstance {
         m_sFilePath = null;
         m_nfFile = null;
     }
-    
+
     public long getLastModificationDate() {
         long last = 0;
         if( m_sFilePath != null ) {
@@ -125,7 +125,7 @@ public class NexusFileInstance {
     public void openFile() throws NexusException {
         openFile(m_sFilePath, NexusFile.NXACC_READ);
     }
-    
+
     /**
      * closeFile Close the current file, but keep its path so we can easily open
      * it again.
@@ -133,7 +133,7 @@ public class NexusFileInstance {
     public void closeFile() throws NexusException {
         try {
             if (m_nfFile != null) {
-            	m_nfFile.close();
+                m_nfFile.close();
                 m_nfFile.finalize();
             }
             m_nfFile = null;

@@ -26,10 +26,10 @@ import java.util.Map;
  */
 
 public class BufferNodeManager {
-    private Map<String, BufferNode> mBuffers;
+    private final Map<String, BufferNode> mBuffers;
     private static BufferNodeManager mManager;
-    
-    
+
+
     /**
      * Return the buffer corresponding to the given file
      * 
@@ -39,7 +39,7 @@ public class BufferNodeManager {
         if( mManager == null ) {
             mManager = new BufferNodeManager();
         }
-        
+
         BufferNode result = mManager.mBuffers.get(file.getFilePath());
         if( result == null ) {
             result = new BufferNode(100);
@@ -47,7 +47,7 @@ public class BufferNodeManager {
         }
         return result;
     }
-    
+
     private BufferNodeManager() {
         mBuffers = new HashMap<String, BufferNode>();
     }

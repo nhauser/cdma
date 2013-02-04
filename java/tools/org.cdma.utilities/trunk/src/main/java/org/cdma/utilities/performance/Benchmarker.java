@@ -88,15 +88,17 @@ public class Benchmarker {
 
     public static String print() {
         String result = "";
-        for (String label : timers.keySet()) {
-            result += print( label
-                    + ": "
-                    + ((Benchmarker.getTimers().get(label)) / (float) 1000) + " s",
-                    60)
-                    + print( " nb calls: " + nbcalls.get(label), 20 )
-                    + print( " max thread: " +  nbthread.get(label), 20)
-                    + ( " canonical cost: " + ( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label) ) + " ms")
-                    + "\n";
+        synchronized (Benchmarker.class) {
+            for (String label : timers.keySet()) {
+                result += print( label
+                        + ": "
+                        + ((Benchmarker.getTimers().get(label)) / (float) 1000) + " s",
+                        60)
+                        + print( " nb calls: " + nbcalls.get(label), 20 )
+                        + print( " max thread: " +  nbthread.get(label), 20)
+                        + ( " canonical cost: " + ( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label) ) + " ms")
+                        + "\n";
+            }
         }
         return result;
     }
@@ -118,24 +120,23 @@ public class Benchmarker {
             List<String> running = new ArrayList<String>();
             for( Entry<String,Long> counter : counters.entrySet() ) {
                 if( counter.getValue() > 0 ) {
-                	running.add(counter.getKey());
+                    running.add(counter.getKey());
                     reset = false;
                 }
             }
-            if( reset ) {
-                timers   = new TreeMap<String, Long>();
-                counters = new TreeMap<String, Long>();
-                starters = new TreeMap<String, Long>();
-                nbcalls  = new TreeMap<String, Long>();
-                nbthread = new TreeMap<String, Long>();
-            }
-            else {
-            	StringBuffer log = new StringBuffer();
-            	log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
-            	log.append( "Timers are still running!!!!\n" );
-            	log.append( "Please stop the following timers:\n" );
+            System.out.println("reset!!");
+            timers   = new TreeMap<String, Long>();
+            counters = new TreeMap<String, Long>();
+            starters = new TreeMap<String, Long>();
+            nbcalls  = new TreeMap<String, Long>();
+            nbthread = new TreeMap<String, Long>();
+            if (!reset) {
+                StringBuffer log = new StringBuffer();
+                log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
+                log.append( "Timers are still running!!!!\n" );
+                log.append( "Please stop the following timers:\n" );
                 for( String timer : running ) {
-                	log.append( "   - " + timer + "\n" );
+                    log.append( "   - " + timer + "\n" );
                 }
                 log.append( ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<" );
                 Factory.getLogger().log( Level.INFO, log.toString() );
