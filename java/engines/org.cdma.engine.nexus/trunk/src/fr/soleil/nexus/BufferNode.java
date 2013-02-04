@@ -15,34 +15,35 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
+
 import fr.soleil.nexus.NexusNode.NameCollator;
 
 /**
  * @brief The BufferNode class stores in memory the physical tree structure of a NexusFileInstance.
  * 
- * The aim is to prevent accessible multiple time to a file when not needed. It 
+ * The aim is to prevent accessible multiple time to a file when not needed. It
  * avoids some issues of the NexusAPI such as lack of performance when largely populated groups
  * or to avoid the fact that iterators are not reseted when listing children or attributes.
  * <p>
  * Each path are associated to each nodes' name below it. When the buffer is starting to get
- * full, its lighter half is automatically flushed. Indeed, a cost in time is generated, 
+ * full, its lighter half is automatically flushed. Indeed, a cost in time is generated,
  * while accessing each path. When a flush is needed the costlier path are kept,
  * whereas the other are removed.
- *  
+ * 
  * @author rodriguez
  */
 
 public class BufferNode {
-   
+
     // Maximum size of the buffer (number of available slots)
-    private int m_iBufferSize; 
-    
+    private int m_iBufferSize;
+
     // TreeMap containing all node for a specific path (path in file => [node name => node class])
     private final Map<String, TreeMap<String, NexusNode>> m_tNodeInPath;
-    
+
     // TreeMap containing path usage count (used to remove less used path when cleaning buffer)
     private final Map<String, Integer> m_hPathUsageWeigth;
-    
+
     // Constructor
     public BufferNode(int size) {
         m_iBufferSize      = size;
@@ -56,25 +57,26 @@ public class BufferNode {
     public int getBufferSize() {
         return m_iBufferSize;
     }
-    
+
     /**
      * Set the current maximum size of the node buffer (in number of slots)
      * 
      * @param iSize new number of available slots in the node buffer
      */
     public void setBufferSize(int iSize) {
-        if (iSize > 10)
+        if (iSize > 10) {
             m_iBufferSize = iSize;
+        }
     }
 
     /**
-     * Reset all information stored into that buffer 
+     * Reset all information stored into that buffer
      */
     public void resetBuffer() {
         m_tNodeInPath.clear();
         m_hPathUsageWeigth.clear();
     }
-    
+
     // ---------------------------------------------------------
     // ---------------------------------------------------------
     // Protected methods
@@ -83,7 +85,7 @@ public class BufferNode {
     /**
      * Returns the buffered nodes' collection for the given path
      * 
-     * @param path where the nodes are requested 
+     * @param path where the nodes are requested
      * @return node collection (or null if not found)
      */
     protected Collection<NexusNode> getNodeInPath(PathNexus path) {
@@ -96,7 +98,7 @@ public class BufferNode {
         }
         m_hPathUsageWeigth.put(path.toString(), value);
 
-        
+
         if( m_tNodeInPath.containsKey(path.toString()) ) {
             Collection<NexusNode> result = m_tNodeInPath.get(path.toString()).values();
             return result;
@@ -121,7 +123,7 @@ public class BufferNode {
      * 
      * @param path the nodes belong to
      * @param nodes found at the given path
-     * @param time spent to get the list of children 
+     * @param time spent to get the list of children
      */
     protected void putNodesInPath(PathNexus path, ArrayList<NexusNode> nodes, int time) {
         TreeMap<String, NexusNode> tmpSet = m_tNodeInPath.get(path.toString());
@@ -133,8 +135,8 @@ public class BufferNode {
         }
         putNodesInPath(path, tmpSet, time);
     }
-    
-    
+
+
     // ---------------------------------------------------------
     // ---------------------------------------------------------
     // Private methods
@@ -153,7 +155,7 @@ public class BufferNode {
         m_hPathUsageWeigth.put(path.toString(), value);
         m_tNodeInPath.put(path.toString(), tmNodes);
     }
-    
+
     private void pushNodeInPath(PathNexus path, NexusNode node, int iTimeToAccessNode) {
         TreeMap<String, NexusNode> tmpSet = m_tNodeInPath.get(path.toString());
         if (tmpSet == null) {
@@ -165,7 +167,7 @@ public class BufferNode {
             tmpSet.put( node.getNodeName(), node );
         }
     }
-    
+
     private void freeBufferSpace() {
         if (m_tNodeInPath.size() > m_iBufferSize) {
             int iNumToRemove = (m_iBufferSize / 2), iRemovedItem = 0, iInfLimit;

@@ -47,13 +47,13 @@ public final class NxsDataset implements IDataset {
     private boolean           mOpen;         // is the dataset open
     private URI                mPath;         // URI of this dataset
     private ConfigDataset      mConfig;       // Configuration associated to this dataset
-    private List<NexusDataset> mDatasets;     // NexusDataset compounding this NxsDataset
+    private final List<NexusDataset> mDatasets;     // NexusDataset compounding this NxsDataset
     private IGroup             mRootPhysical; // Physical root of the document
     private NxsLogicalGroup    mRootLogical;  // Logical root of the document
-    
+
     // SoftReference of dataset associated to their URI
     private static Map<String, SoftReference<NxsDataset>> datasets;
-    
+
     // datasets' URIs associated to the last modification
     private static Map<String, Long> lastModifications;
 
@@ -87,7 +87,7 @@ public final class NxsDataset implements IDataset {
                 try {
                     dataset = new NxsDataset(new File(destination.getPath()), resetBuffer);
                     String fragment = destination.getFragment();
-    
+
                     if (fragment != null && !fragment.isEmpty()) {
                         IGroup group = dataset.getRootGroup();
                         try {
@@ -264,7 +264,7 @@ public final class NxsDataset implements IDataset {
     public long getLastModificationDate() {
         long last = 0;
         long temp = 0;
-        
+
         File path = new File( mPath.getPath() );
         if( path.exists() && path.isDirectory() ) {
             last = path.lastModified();
@@ -291,10 +291,10 @@ public final class NxsDataset implements IDataset {
             NeXusFilter filter = new NeXusFilter();
             File[] files = destination.listFiles(filter);
             if (files != null && files.length > 0) {
-            	for (File file : files) {
-            		datafile = new NexusDatasetImpl(file, resetBuffer);
-            		mDatasets.add((NexusDatasetImpl) datafile);
-            	}
+                for (File file : files) {
+                    datafile = new NexusDatasetImpl(file, resetBuffer);
+                    mDatasets.add(datafile);
+                }
             }
         }
         else {
@@ -303,6 +303,6 @@ public final class NxsDataset implements IDataset {
         }
         mOpen = false;
     }
-    
-    
+
+
 }
