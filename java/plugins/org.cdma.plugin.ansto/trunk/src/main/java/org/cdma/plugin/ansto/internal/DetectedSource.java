@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.engine.netcdf.navigation.NcDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.ansto.AnstoFactory;
@@ -164,11 +166,11 @@ public class DetectedSource {
         if ( mIsReadable ) {
         	// TODO [SOLEIL][clement] make a real test case
         	{
-	        	File file = new File(uri.getPath());
-	        	if ( accept(file.getName()) ) {
-	        		return true;
-	        	}
-	        	else {
+        		File file = new File(uri.getPath());
+//	        	if ( accept(file.getName()) ) {
+//	        		return true;
+//	        	}
+//	        	else {
 	        		try {
 						NcDataset dataset = new NcDataset(file.getAbsolutePath(), AnstoFactory.NAME);
 						IGroup grp = dataset.getRootGroup().getGroup("entry1");
@@ -176,9 +178,9 @@ public class DetectedSource {
 							result = grp.getDataItem("program_name") != null;
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						Factory.getLogger().log(Level.WARNING, "Unable to test if a producer or not!", e);
 					}
-	        	}
+//	        	}
         	}
         }
         return result;
