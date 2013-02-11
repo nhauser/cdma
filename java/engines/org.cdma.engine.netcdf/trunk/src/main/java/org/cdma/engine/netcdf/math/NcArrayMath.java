@@ -103,22 +103,6 @@ public class NcArrayMath extends ArrayMath {
         return matrix.getDeterminant();
     }
 
-//    /**
-//     * @return double value
-//     * @see org.gumtree.data.interfaces.IArray#getMaximum()
-//     */
-//    public double getMaximum() {
-//        return MAMath.getMaximum(getNcArray().getArray());
-//    }
-//
-//    /**
-//     * @return double value
-//     * @see org.gumtree.data.interfaces.IArray#getMinimum()
-//     */
-//    public double getMinimum() {
-//        return MAMath.getMinimum(getNcArray().getArray());
-//    }
-
     /**
      * @return double value
      * @see org.gumtree.data.interfaces.IArray#getNorm()
