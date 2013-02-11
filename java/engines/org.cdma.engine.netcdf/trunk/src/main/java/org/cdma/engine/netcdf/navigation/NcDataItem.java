@@ -64,7 +64,10 @@ public class NcDataItem extends VariableDS implements IDataItem {
 	 *            Netcdf Variable
 	 */
 	public NcDataItem(final VariableDS from, String factoryName) {
-		super(from);
+		//[SOLEIL] 11/02/2013 changed to fit edu.ucar.netcdf version 4.2.20
+		super(null, from, false);
+		
+		
 		Cache oldCache = cache;
 		cache = new Cache();
 		cache.cachingSet = oldCache.cachingSet;
@@ -517,7 +520,7 @@ public class NcDataItem extends VariableDS implements IDataItem {
     
     @Override
     public int[] getShape() {
-    	int[] shape = super.getShape();
+    	/*int[] shape = super.getShape();
     	if( dataType == DataType.STRING ) {
     		shape = new int[] {1};
     	}
@@ -525,7 +528,7 @@ public class NcDataItem extends VariableDS implements IDataItem {
     		if( super.getShape().length == 2 && super.getShape()[0] == 1 ) {
     			shape = new int[] {1};
     		}
-    	}
-    	return shape;
+    	}*/
+    	return super.getShape();
     }
 }
