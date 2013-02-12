@@ -1,11 +1,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //    Tony Lam (nxi@Bragg Institute) - initial API and implementation
 //    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
@@ -28,41 +28,41 @@ import org.cdma.utils.IFactoryManager;
 /**
  * @brief The Core factory is the entry point of the CDMA API
  * 
- * The Factory class in common data model is a tools to create CDMA objects.. It manages all plug-ins 
- * instances.
- * <p>
- * According to an URI, it will detect which plug-in is relevant to that data source.
- * It can take an URI as a parameter to instantiate a plug-in in order to get an
- * access of the targeted data source using CDMA objects.
- * <p>
- * Abbreviation: Common Data Model Access -- CDMA
+ *        The Factory class in common data model is a tools to create CDMA objects.. It manages all
+ *        plug-ins instances.
+ *        <p>
+ *        According to an URI, it will detect which plug-in is relevant to that data source. It can
+ *        take an URI as a parameter to instantiate a plug-in in order to get an access of the
+ *        targeted data source using CDMA objects.
+ *        <p>
+ *        Abbreviation: Common Data Model Access -- CDMA
  * 
  * @author XIONG Norman
  * @contributor RODRIGUEZ Clément
  * @version 1.1
  */
 public final class Factory {
-	// Version of the current CDMA API
+    // Version of the current CDMA API
     private static final String CDMA_VERSION = "3_2_0";
-	
-	// Plugin manager
+
+    // Plugin manager
     private static volatile IFactoryManager manager;
 
     // Dictionary view
     private static String CDM_VIEW = "";
     private static final String DICO_PATH_PROP       = "CDM_DICTIONARY_PATH";
-    
+
     // Files' suffix / prefix
     private static final String FILE_CONCEPT_NAME    = "concepts";
     private static final String FILE_CONCEPT_CORE    = "core_";
     private static final String FILE_VIEW_SUFFIX     = "view";
-    
+
     // Dictionaries
     private static final String PATH_FOLDER_MAPS     = "mappings";
     private static final String PATH_FOLDER_VIEWS    = "views";
     private static final String PATH_FOLDER_CONCEPTS = "concepts";
-    
-    // Global logger for the CDMA 
+
+    // Global logger for the CDMA
     private static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     /**
@@ -81,7 +81,7 @@ public final class Factory {
      * mechanism.
      * 
      * @param uri URI object
-     * @param useProducer only 
+     * @param useProducer only
      * @return CDMA Dataset
      * @throws Exception
      */
@@ -96,16 +96,16 @@ public final class Factory {
         }
         return dataset;
     }
-    
+
     /**
      * Returns the logger that will be used by the CDMA.
      * 
-     * @return java.util.logging.Logger 
+     * @return java.util.logging.Logger
      */
     public static Logger getLogger() {
         return LOGGER;
     }
-    
+
     /**
      * Set the logger that the CDMA have to use for messages.
      * 
@@ -124,7 +124,7 @@ public final class Factory {
     public static void setActiveView(String application) {
         CDM_VIEW = application;
     }
-    
+
     /**
      * Returns the name of the current view that is active for
      * the Extended Dictionary mechanism.
@@ -144,20 +144,20 @@ public final class Factory {
      * @return the path to the standard declarative file
      */
     public static String getPathKeyDictionary() {
-    	String file  = null;
-    	String sDict = getDictionariesFolder();
+        String file  = null;
+        String sDict = getDictionariesFolder();
         String view  = getActiveView();
-        
+
         if( ! view.trim().isEmpty() ) {
-        	String vFile = ( view + "_" + FILE_VIEW_SUFFIX + ".xml" ).toLowerCase();
-        	file = sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + vFile;
+            String vFile = ( view + "_" + FILE_VIEW_SUFFIX + ".xml" ).toLowerCase();
+            file = sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + vFile;
         }
 
         return file;
     }
 
     /**
-     * This method will return the path to reach the <b>common concept dictionary</b>. 
+     * This method will return the path to reach the <b>common concept dictionary</b>.
      * It means the file where is defined every physical concepts.
      * 
      * @return the path to the common concept file or null if not found
@@ -180,7 +180,7 @@ public final class Factory {
 
     /**
      * According to the given factory this method will return the path to reach
-     * the folder containing mapping dictionaries. This file associate entry 
+     * the folder containing mapping dictionaries. This file associate entry
      * keys to paths that are plug-in dependent.
      * 
      * @param factory of the plug-in instance from which we want to load the dictionary
@@ -191,9 +191,9 @@ public final class Factory {
 
         return sDict + File.separator + PATH_FOLDER_MAPS + File.separator + factory.getName() + File.separator;
     }
-    
+
     /**
-     * This method will return the path to reach the <b>specific concept dictionary</b>. 
+     * This method will return the path to reach the <b>specific concept dictionary</b>.
      * It means the file where is defined every specific physical concepts defined by the view.
      * 
      * @return the path to the specific concept folder or null if not found
@@ -218,7 +218,9 @@ public final class Factory {
      * @param path targeting a folder
      */
     public static void setDictionariesFolder(String path) {
-        System.setProperty(DICO_PATH_PROP, path);
+        if (path != null) {
+            System.setProperty(DICO_PATH_PROP, path);
+        }
     }
 
     /**
@@ -247,8 +249,8 @@ public final class Factory {
     }
 
     /**
-     * Return the IFactory of the first available plug-in that was loaded 
-     * @return first loaded IFactory 
+     * Return the IFactory of the first available plug-in that was loaded
+     * @return first loaded IFactory
      */
     public static IFactory getFactory() {
         return getManager().getFactory();
@@ -279,13 +281,13 @@ public final class Factory {
 
         // Get the list of data source detector
         List<IDatasource> sources = getDatasources();
-        
+
         // For each check if it can read the given source
         for ( IDatasource source : sources ) {
             // Can read ?
             if( source.isReadable(uri) ) {
                 reader.add( source.getFactoryName() );
-                
+
                 // Does it have the ownership on the source
                 if( source.isProducer(uri) ) {
                     result = getFactory( source.getFactoryName() );
@@ -293,7 +295,7 @@ public final class Factory {
                 }
             }
         }
-        
+
         // No ownership detected, so return the first reader
         if( result == null && reader.size() > 0 ) {
             result = getFactory( reader.get(0) );
@@ -310,10 +312,10 @@ public final class Factory {
     public static List<IDatasource> getDatasources() {
         List<IDatasource> result = new ArrayList<IDatasource>();
         IDatasource source;
-        
+
         // Ensure a factory manager has been loaded
         IFactoryManager mngr = getManager();
-        
+
         // Get the registry of factories
         Map<String, IFactory> registry = mngr.getFactoryRegistry();
         for( Entry<String, IFactory> entry : registry.entrySet() ) {
@@ -325,7 +327,7 @@ public final class Factory {
 
         return result;
     }
-    
+
 
     /**
      * Hide default constructor.
