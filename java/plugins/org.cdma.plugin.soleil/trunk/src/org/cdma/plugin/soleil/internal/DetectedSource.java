@@ -30,16 +30,17 @@ public class DetectedSource {
     private static final String EXTENSION = ".nxs";
     private static final String CREATOR = "Synchrotron SOLEIL";
     private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES",
-            "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA",
-            "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2",
-            "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
+        "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA",
+        "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2",
+        "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
 
     public static class NeXusFilter implements FilenameFilter {
+        @Override
         public boolean accept(File dir, String name) {
             return DetectedSource.accept(name);
         }
     }
-    
+
     private boolean mIsDataset;
     private boolean mIsExperiment;
     private boolean mIsBrowsable;
@@ -47,7 +48,7 @@ public class DetectedSource {
     private boolean mIsReadable;
     private boolean mIsFolder;
     private boolean mInitialized;
-    private URI mURI;
+    private final URI mURI;
 
     public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment, boolean datasetFolder) {
         mIsReadable = readable;
@@ -72,23 +73,23 @@ public class DetectedSource {
     }
 
     public boolean isExperiment() {
-    	if( ! mInitialized ) {
-    		fullInit();
-    	}
+        if( ! mInitialized ) {
+            fullInit();
+        }
         return mIsExperiment;
     }
 
     public boolean isBrowsable() {
-    	if( ! mInitialized ) {
-    		fullInit();
-    	}
+        if( ! mInitialized ) {
+            fullInit();
+        }
         return mIsBrowsable;
     }
 
     public boolean isProducer() {
-    	if( ! mInitialized ) {
-    		fullInit();
-    	}
+        if( ! mInitialized ) {
+            fullInit();
+        }
         return mIsProducer;
     }
 
@@ -121,22 +122,22 @@ public class DetectedSource {
         }
 
     }
-    
+
     private void fullInit() {
-    	synchronized( this ) {
-    		if( ! mInitialized ) {
-	    		// Check if we are producer of the source
-		        mIsProducer = initProducer(mURI);
-		
-		        // Check if the uri corresponds to dataset experiment
-		        mIsExperiment = initExperiment(mURI);
-		
-		        // Check if the URI is considered as browsable
-		        mIsBrowsable = initBrowsable(mURI);
-		        
-		        mInitialized = true;
-    		}
-    	}
+        synchronized( this ) {
+            if( ! mInitialized ) {
+                // Check if we are producer of the source
+                mIsProducer = initProducer(mURI);
+
+                // Check if the uri corresponds to dataset experiment
+                mIsExperiment = initExperiment(mURI);
+
+                // Check if the URI is considered as browsable
+                mIsBrowsable = initBrowsable(mURI);
+
+                mInitialized = true;
+            }
+        }
     }
 
     private boolean initReadable(URI uri) {
@@ -151,7 +152,7 @@ public class DetectedSource {
 
             if( file.exists() && file.length() != 0L ) {
                 // Check if the URI is a NeXus file
-            	if( DetectedSource.accept( name ) ) {
+                if( DetectedSource.accept( name ) ) {
                     result = true;
                 }
             }
@@ -172,7 +173,7 @@ public class DetectedSource {
                 dataset.open();
 
                 // seek at root for 'creator' attribute
-                
+
                 IGroup group = dataset.getRootGroup();
                 if (group.hasAttribute("creator", CREATOR)) {
                     result = true;
@@ -262,7 +263,7 @@ public class DetectedSource {
             try {
                 IDataset dataset = new NexusDatasetImpl(files[0], false);
                 IGroup group = dataset.getRootGroup();
-    
+
                 IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
                 if( groups instanceof IGroup ) {
                     for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
@@ -276,12 +277,12 @@ public class DetectedSource {
             } catch (FileAccessException e) {
             }
         }
-        
+
         return result;
     }
-    
+
     private static boolean accept( String filename ) {
-    	int length = filename.length();
-    	return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
+        int length = filename.length();
+        return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
     }
 }
