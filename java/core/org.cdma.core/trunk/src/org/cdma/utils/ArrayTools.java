@@ -10,6 +10,8 @@
 // ****************************************************************************
 package org.cdma.utils;
 
+import java.util.Arrays;
+
 
 public class ArrayTools {
 	/**
@@ -28,6 +30,7 @@ public class ArrayTools {
         }
         else {
 	        // Determine rank of array (by parsing data array class name)
+/*
 	        String sClassName = data.getClass().getName();
 	        int iRank = 0;
 	        int iIndex = 0;
@@ -39,15 +42,29 @@ public class ArrayTools {
 	                iRank++;
 	            }
 	        }
-
+*/
+        	int iRank = 0;
+        	Class<?> clazz = data.getClass();
+        	while( clazz != null && clazz.isArray() ) {
+        		clazz = clazz.getComponentType();
+        		iRank++;
+        	}
+        	
 	        // Set dimension rank
 	        shape = new int[iRank];
 
 	        // Fill dimension size array
 	        Object array = data;
+	        int length;
+	        
 	        for (int i = 0; i < iRank; i++) {
-	            shape[i] = java.lang.reflect.Array.getLength(array);
-	            array    = java.lang.reflect.Array.get(array, 0);
+	        	length = java.lang.reflect.Array.getLength(array);
+	            if( length < 1 ) {
+	            	Arrays.fill( shape, 0 );
+	            	break;
+	            }
+	            array = java.lang.reflect.Array.get(array, 0);
+	            shape[i] = length;
 	        }
         }
         return shape;
