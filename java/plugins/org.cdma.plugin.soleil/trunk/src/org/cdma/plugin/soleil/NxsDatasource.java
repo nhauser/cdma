@@ -250,7 +250,9 @@ public final class NxsDatasource implements IDatasource {
                 }
 
                 source = new DetectedSource(uri);
-                mDetectedSources.put(uri.toString(), source);
+                if( source.isStable() ) {
+                	mDetectedSources.put(uri.toString(), source);
+                }
             }
         }
         return source;

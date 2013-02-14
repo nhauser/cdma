@@ -100,6 +100,7 @@ public interface IGroup extends IContainer {
      * 
      * @return the first encountered IDataItem that match the key
      */
+    @Deprecated
     IDataItem findDataItem(IKey key);
 
     /**
@@ -121,6 +122,7 @@ public interface IGroup extends IContainer {
      * @param value the attribute value
      * @return IDataItem object 
      */
+    @Deprecated
     IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) throws NoResultException;
 
     /**
@@ -131,6 +133,7 @@ public interface IGroup extends IContainer {
      * @param name name of the attribute the group must have
      * @param value the attribute value
      */
+    @Deprecated
     IGroup findGroupWithAttribute(IKey key, String name, String value);
 
     /**
@@ -181,6 +184,7 @@ public interface IGroup extends IContainer {
      * @param shortName in String type
      * @return CDMA IDataItem 
      */
+    @Deprecated
     IDataItem findDataItem(String shortName);
 
     /**
@@ -220,6 +224,7 @@ public interface IGroup extends IContainer {
      * 
      * @param key entry name of the dictionary
      */
+    @Deprecated
     IGroup findGroup(IKey key);
 
     /**
@@ -240,6 +245,7 @@ public interface IGroup extends IContainer {
      * @param shortName in String type
      * @return IContainer 
      */
+    @Deprecated
     IContainer findContainer(String shortName);
 
     /**
@@ -365,6 +371,7 @@ public interface IGroup extends IContainer {
      * @param key Key object
      * @return a list of CDMA IContainer
      */
+    @Deprecated
     List<IContainer> findAllContainers(IKey key) throws NoResultException;
 
     /**
@@ -376,6 +383,7 @@ public interface IGroup extends IContainer {
      * @return a list of CDMA IContainer
      * @throws NoResultException 
      */
+    @Deprecated
     List<IContainer> findAllOccurrences(IKey key) throws NoResultException;
 
     /**

@@ -148,7 +148,7 @@ public interface IDataset extends IModelObject {
     /**
      * Return the last modification of the dataset.
      * 
-     * @return long representing the last modification
+     * @return long representing the last modification (in milliseconds)
      */
     long getLastModificationDate();
 }
