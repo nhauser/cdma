@@ -4,7 +4,7 @@
 
     <groupId>org.cdma.plugins</groupId>
     <artifactId>NetcdfAnsto</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <name>ANSTO NetCDF</name>
     <description>CDMA Plug-in: ANSTO using NetCDF</description>
 
