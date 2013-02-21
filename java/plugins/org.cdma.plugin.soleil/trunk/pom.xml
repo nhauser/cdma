@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.plugins</groupId>
   <artifactId>NexusSoleil</artifactId>
-  <version>1.4.11</version>
+  <version>1.4.12-SNAPSHOT-SNAPSHOT</version>
   <name>CDMA NeXus Soleil Plugin</name>
   <description>This project is Soleil's NeXus plugin for the CDMA</description>
   <developers>
