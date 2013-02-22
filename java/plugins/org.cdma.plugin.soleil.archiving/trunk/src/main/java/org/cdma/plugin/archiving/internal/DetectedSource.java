@@ -14,10 +14,12 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 
+import org.cdma.engine.archiving.internal.Constants;
+import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
-import org.cdma.plugin.archiving.navigation.VcDataset;
+import org.cdma.plugin.archiving.VcFactory;
 
 public class DetectedSource {
 	public static final class ViewConfigurationFilter implements FilenameFilter {
@@ -116,14 +118,14 @@ public class DetectedSource {
 	private boolean initProducer(URI target) {
 		boolean result = false;
 		if ( mIsReadable ) {
-			IDataset dataset = new VcDataset(target);
+			IDataset dataset = new ArchivingDataset(VcFactory.NAME, target);
 			try {
 				dataset.open();
 				if (dataset.isOpen()) {
 					IGroup rootGroup = dataset.getRootGroup();
 					if (rootGroup != null) {
-						IAttribute startDate = rootGroup.getAttribute(VcXmlConstants.VC_START_DATE_PROPERTY_XML_TAG);
-						IAttribute endDate = rootGroup.getAttribute(VcXmlConstants.VC_END_DATE_PROPERTY_XML_TAG);
+						IAttribute startDate = rootGroup.getAttribute(Constants.START_DATE);
+						IAttribute endDate = rootGroup.getAttribute(Constants.END_DATE);
 						result = ((startDate != null) && (endDate != null));
 					}
 				}

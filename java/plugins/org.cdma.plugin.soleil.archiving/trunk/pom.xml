@@ -66,11 +66,8 @@
     </dependency>
     <dependency>
       <groupId>org.cdma.engines</groupId>
-      <artifactId>sql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.cdma.engines</groupId>
-      <artifactId>xml</artifactId>
+      <artifactId>archiving</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
