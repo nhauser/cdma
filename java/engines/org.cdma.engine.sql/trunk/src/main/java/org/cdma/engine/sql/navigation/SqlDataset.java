@@ -137,20 +137,49 @@ public final class SqlDataset implements IDataset {
 		throw new NotImplementedException();
 	}
 	
+	/**
+	 * Return the SqlConnector that handles the database
+	 */
 	public SqlConnector getSqlConnector() {
 		return mConnector;
 	}
 	
+	/**
+	 * Set the maximum time in seconds a driver can wait when attempting to log into a database.
+	 * 
+	 * @param timeout in seconds
+	 */
 	public void setLoginTimeout( int timeout ) {
 		DriverManager.setLoginTimeout(timeout);
 	}
 	
+	/**
+	 * Get the maximum time in seconds a driver can wait when attempting to log into a database.
+	 * 
+	 * @return time in seconds
+	 */
 	public int getLogintimeout() {
 		return DriverManager.getLoginTimeout();
 	}
 	
-	public SqlCdmaCursor execute_query( String query ) {
-		return new SqlCdmaCursor(this, query);
+	/**
+	 * Prepare the query for execution and return a SqlCdmaCursor.
+	 * 
+	 * @param query to be executed
+	 * @note the execution is delayed: it will be triggered when a result will b e asked
+	 */
+	public SqlCdmaCursor executeQuery( String query ) {
+		return executeQuery( query, new Object[] {} );
+	}
+	
+	/**
+	 * Prepare the query for execution and return a SqlCdmaCursor.
+	 * 
+	 * @param query to be executed
+	 * @note the execution is delayed: it will be triggered when a result will b e asked
+	 */
+	public SqlCdmaCursor executeQuery( String query, Object[] params ) {
+		return new SqlCdmaCursor(this, query, params);
 	}
 	
 }

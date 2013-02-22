@@ -81,14 +81,12 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IAttribute getAttribute(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
 	public List<IAttribute> getAttributeList() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -124,8 +122,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -142,8 +139,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public long getLastModificationDate() {
-		// TODO Auto-generated method stub
-		return 0;
+		return mDataset!= null ? mDataset.getLastModificationDate() : 0;
 	}
 
 	@Override
@@ -203,8 +199,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IDataItem getDataItemWithAttribute(String name, String value) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -215,8 +210,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IGroup findGroupWithAttribute(IKey key, String name, String value) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -247,8 +241,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IGroup getGroupWithAttribute(String attributeName, String value) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -268,8 +261,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public List<IDimension> getDimensionList() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -321,10 +313,8 @@ public class SqlGroup implements IGroup, Cloneable {
 	}
 
 	@Override
-	public List<IContainer> findAllContainerByPath(String path)
-			throws NoResultException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -349,8 +339,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public boolean removeGroup(String name) {
-		// TODO Auto-generated method stub
-		return false;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -381,15 +370,12 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public boolean isEntry() {
-		// TODO Auto-generated method stub
-		return false;
+		return mParent != null && mParent.isRoot();
 	}
 
 	@Override
-	public List<IContainer> findAllContainers(IKey key)
-			throws NoResultException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<IContainer> findAllContainers(IKey key) throws NoResultException {
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -400,8 +386,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public IContainer findObjectByPath(Path path) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
@@ -425,25 +410,6 @@ public class SqlGroup implements IGroup, Cloneable {
 		}
 
 		return result;
-	}
-	
-	private static String SQL_VIEW = "CDMA_GROUP_VIEW_";
-	private static String SQL_VIEW_GROUP_ID = "CDMA_GROUP_ID";
-	private static String SQL_VIEW_GROUP_NAME = "CDMA_GROUP_NAME";
-
-	private String getGroupListQuery() {
-		String query = "";
-		
-		// Get the tables' names
-		if( mDepth.length == 0 ) {
-			query = "select table_name from user_tables";
-		}
-		// Get the sub-group from the table
-		else if( mDepth.length == 1 ) {
-			query = "SELECT row_number() over (order by 1) as row_number, " + mName + ".* FROM " + mName;
-		}
-		
-		return query;
 	}
 	
 	private String getDataItemListQuery(String[] selectors) {

@@ -11,8 +11,11 @@ package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.exception.DimensionNotSupportedException;
 import org.cdma.exception.InvalidArrayTypeException;
@@ -43,17 +46,23 @@ public class SqlDataItem implements IDataItem {
 	public SqlDataItem(String factory, SqlGroup parent, String name) {
 		mFactory = factory;
 		mParent  = parent;
-		mDataset = parent.getDataset();
+		mDataset = parent != null ? parent.getDataset() : null;
 		mName    = name;
 	}
 
 	protected void init( ResultSet set, int column, int rows ) {
-		mArray = new SqlArray(mFactory, set, column, rows);
+		try {
+			mArray = SqlArray.instantiate(mFactory, set, column, rows);
+			((SqlArray) mArray).appendData(set);
+		} catch( SQLException e ) {
+			mArray = null;
+			Factory.getLogger().log(Level.SEVERE, "Unable to initialize data item's value!", e);
+		}
 	}
 	
 	@Override
 	public ModelType getModelType() {
-		throw new NotImplementedException();
+		return ModelType.DataItem;
 	}
 
 	@Override
@@ -80,7 +89,7 @@ public class SqlDataItem implements IDataItem {
 
 	@Override
 	public IDataset getDataset() {
-		throw new NotImplementedException();
+		return mDataset;
 	}
 
 	@Override
