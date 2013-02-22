@@ -97,21 +97,7 @@ public class SqlConnector {
 		}
 		return result;
 	}
-/*
-	public Statement createStatement() throws IOException {
-		Statement statement = null;
-		Connection connection = open();
-		if (connection != null) {
-			try {
-				statement = connection.createStatement();
-			} catch (SQLException e) {
-				throw new IOException(e);
-			}
-		}
-		return statement;
 
-	}
-*/
 	public PreparedStatement prepareStatement(String sql) throws IOException {
 		PreparedStatement statement = null;
 		Connection connection = open();

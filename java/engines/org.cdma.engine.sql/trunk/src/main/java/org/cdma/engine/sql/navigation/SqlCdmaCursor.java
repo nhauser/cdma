@@ -16,7 +16,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -31,25 +30,28 @@ public class SqlCdmaCursor {
 	private SqlDataset mDataset;
 	private SoftReference<ResultSet> mResult;
 	private int mCurRow;
-	private Statement mStatement;
+	private PreparedStatement mStatQuery;
+	private PreparedStatement mStatCount;
 	private boolean mClose;
-	private String[] mParams;
+	private Object[] mParams;
 	private int mNbRows;
-
-	public SqlCdmaCursor( SqlDataset dataset, String query, String[] params ) {
+	private boolean mInitialized;
+	
+	public SqlCdmaCursor( SqlDataset dataset, String query ) {
+		this( dataset, query, new Object[] {} );
+	}
+	
+	public SqlCdmaCursor( SqlDataset dataset, String query, Object[] params ) {
 		mDataset = dataset;
 		mCurRow  = 0;
 		mQuery   = query;
 		mResult  = new SoftReference<ResultSet>(null);
 		mClose   = false;
 		mParams  = params;
-		mNbRows  = -1; 
+		mNbRows  = -1;
+		mInitialized = false;
 	}
-	
-	public SqlCdmaCursor( SqlDataset dataset, String query) {
-		this( dataset, query, null );
-	}
-	
+
 	public SqlGroup getGroup() throws SQLException {
 		SqlGroup result = null;
 		
@@ -71,7 +73,7 @@ public class SqlCdmaCursor {
 			try {
 				next();
 			} catch (SQLException e) {
-				Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
+				Factory.getLogger().log(Level.WARNING, "Unable to initialize group's data items children", e);
 			}
 		}
 		
@@ -88,7 +90,8 @@ public class SqlCdmaCursor {
 					names[col - 1] = meta.getColumnName(col);
 
 					// Prepare the internal array
-					SqlArray array = new SqlArray(mDataset.getFactoryName(), set, col, mNbRows);
+					SqlArray array = SqlArray.instantiate(mDataset.getFactoryName(), set, col, mNbRows);
+					array.appendData( set );
 					
 					// Create the data item
 					try {
@@ -105,7 +108,7 @@ public class SqlCdmaCursor {
 				while( next() ) {
 					for( int col = 1; col <= count; col++ ) {
 						array = (SqlArray) items[col - 1].getData();
-						array.appendData( getResultSet() );
+						array.appendData( set );
 					}
 				}
 			}
@@ -157,8 +160,11 @@ public class SqlCdmaCursor {
 	}
 	
 	public void close() throws SQLException {
-		if( ! mStatement.isClosed() ) {
-			mStatement.close();
+		if( mStatQuery != null && ! mStatQuery.isClosed() ) {
+			mStatQuery.close();
+		}
+		if( mStatCount != null && ! mStatCount.isClosed() ) {
+			mStatCount.close();
 		}
 		mClose = true;
 	}
@@ -166,44 +172,57 @@ public class SqlCdmaCursor {
 	private ResultSet executeQuery() throws SQLException {
 		ResultSet result = null;
 		
+		if( ! mInitialized ) {
+			prepareStatement();
+		}
+		
 		// Get the SQL connection
 		SqlConnector sql_connector = mDataset.getSqlConnector();
 		if (sql_connector != null) {
-			try {
-				Connection connection = sql_connector.getConnection();
-				
-				// Check statement is still valid
-				if( mStatement == null || mStatement.isClosed() ) {
-					if( mParams == null ) {
-						mStatement = connection.createStatement();
-					}
-					else {
-						mStatement = connection.prepareStatement(mQuery);
-						int i = 1;
-						for( String param : mParams ) {
-							((PreparedStatement) mStatement).setString(i++, param);
-						}
-					}
-				}
-				
 				// Count number of result
 				if( mNbRows < 0 ) {
-					ResultSet tmp = mStatement.executeQuery( "SELECT COUNT(*) FROM (" + mQuery + ")" );
+					setParams(mStatCount);
+					ResultSet tmp = mStatCount.executeQuery();
 					if( tmp.next() ) {
 						mNbRows = tmp.getInt(1);
 					}
 				}
 				
+				
 				// Execute the query
-				result = mStatement.executeQuery(mQuery);
+				setParams(mStatQuery);
+				result = mStatQuery.executeQuery();
+		}
+		
+		return result;
+	}
+	
+	private void prepareStatement() throws SQLException {
+		
+		// Get the SQL connection
+		SqlConnector sql_connector = mDataset.getSqlConnector();
+		if (sql_connector != null) {
+			try {
+				Connection connection = sql_connector.getConnection();
+				// Check statements are still valid
+				if( mStatQuery == null || mStatQuery.isClosed() ) {
+					// Create the query statement
+					mStatQuery = connection.prepareStatement(mQuery);
+				}
+				if( mStatCount == null || mStatCount.isClosed() ) {
+					// Create the count statement
+					mStatCount = connection.prepareStatement( "SELECT COUNT(*) FROM (" + mQuery + ")" );
+				}
+				
 			} catch (IOException e) {
 				mNbRows = -1;
 				Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
 				close();
 			}
 		}
+				
 		
-		return result;
+		mInitialized = true;
 	}
 	
 	private void initResultSet(ResultSet sql_set) throws SQLException {
@@ -218,6 +237,20 @@ public class SqlCdmaCursor {
 		}
 
 		mResult = new SoftReference<ResultSet>( sql_set );
+	}
+	
+	private void setParams( PreparedStatement statement ) {
+		if( mParams != null && mParams.length > 0 ) {
+			Object param = null;
+			for( int i = 0; i < mParams.length; i++ ) {
+				param = mParams[i];
+				try {
+					statement.setObject( i + 1, param );
+				} catch (SQLException e) {
+					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query!", e);
+				}
+			}
+		}
 	}
 	
 	@Override
