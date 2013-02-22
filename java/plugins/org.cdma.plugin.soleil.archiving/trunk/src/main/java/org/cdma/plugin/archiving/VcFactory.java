@@ -10,6 +10,10 @@ import org.cdma.arrays.DefaultArray;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
+import org.cdma.engine.archiving.navigation.ArchivingAttribute;
+import org.cdma.engine.archiving.navigation.ArchivingDataItem;
+import org.cdma.engine.archiving.navigation.ArchivingDataset;
+import org.cdma.engine.archiving.navigation.ArchivingGroup;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NotImplementedException;
@@ -21,20 +25,23 @@ import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
-import org.cdma.plugin.archiving.navigation.VcDataItem;
-import org.cdma.plugin.archiving.navigation.VcDataset;
 
 public class VcFactory implements IFactory {
 
-	public static final String NAME = "SoleilArchiving";
-    public static final String LABEL = "SOLEIL's Archiving plug-in";
-	public static final String API_VERS = "3.2.1";
-	public static final String PLUG_VERS = "1.0.0";
+	private static final String DESC = "That plug-in aims to access an archiving database to extract archived attributes.";
+	public static final  String NAME = "SoleilArchiving";
+    public static final  String LABEL = "SOLEIL's Archiving plug-in";
+	public static final  String API_VERS = "3.2.3";
+	public static final  String PLUG_VERS = "1.0.0";
 
 	@Override
 	public IDataset openDataset(URI uri) {
-		VcDataset dataset = new VcDataset(uri);
-		dataset.open();
+		ArchivingDataset dataset = new ArchivingDataset(NAME, uri);
+		try {
+			dataset.open();
+		} catch (IOException e) {
+			Factory.getLogger().log(Level.SEVERE, "Unable to open dataset!", e);
+		}
 		return dataset;
 	}
 
@@ -101,14 +108,29 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-		IDataset dataset = parent != null ? parent.getDataset() : null;
-		IDataItem result = new VcDataItem(shortName, dataset, parent, null);
+		IDataItem result = new ArchivingDataItem(NAME, shortName, parent, array);
 		return result;
 	}
 
 	@Override
 	public IGroup createGroup(String shortName) throws IOException {
-		throw new NotImplementedException();
+		return new ArchivingGroup(NAME, null, null, shortName );
+	}
+	
+	@Override
+	public IGroup createGroup(IGroup parent, String shortName) {
+		ArchivingGroup group = null;
+		if( shortName != null && !shortName.isEmpty() ) {
+			if( parent != null ) {
+				if( parent instanceof ArchivingGroup ) {
+					group = new ArchivingGroup(NAME, (ArchivingDataset) parent.getDataset(), (ArchivingGroup) parent, shortName);
+				}
+			}
+			else {
+				group = new ArchivingGroup(NAME, null, null, shortName );
+			}
+		}
+		return group;
 	}
 
 	@Override
@@ -118,12 +140,13 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public IAttribute createAttribute(String name, Object value) {
-		throw new NotImplementedException();
+		return new ArchivingAttribute(NAME, name, value);
+		
 	}
 
 	@Override
 	public IDataset createDatasetInstance(URI uri) throws Exception {
-		return new VcDataset(uri);
+		return new ArchivingDataset(NAME, uri);
 	}
 
 	@Override
@@ -162,11 +185,6 @@ public class VcFactory implements IFactory {
 	}
 
 	@Override
-	public IGroup createGroup(IGroup parent, String shortName) {
-		throw new NotImplementedException();
-	}
-
-	@Override
 	public String getPluginVersion() {
 		return PLUG_VERS;
 	}
@@ -174,6 +192,11 @@ public class VcFactory implements IFactory {
 	@Override
 	public String getCDMAVersion() {
 		return API_VERS;
+	}
+
+	@Override
+	public String getPluginDescription() {
+		return VcFactory.DESC;
 	}
 
 }
