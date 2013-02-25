@@ -35,6 +35,16 @@ import org.cdma.internal.IModelObject;
  */
 public interface IDatasource extends IModelObject 
 {
+	/**
+	 * Returns a human friendly short text describing the kind of URI managed by this plug-in.
+	 * URIs targeting a file-system, a data base or using a specific network protocol, are
+	 * very different.<br/>
+	 * This method is a helper to guide the user when selecting an URI.
+	 * 
+	 * @return short text describing the expected type of URI
+	 */
+	String getTypeDescription();
+	
     /**
      * Returns true if the target has a compatible data format with that plug-in instance.
      * Can that plug-in read the targeted data source ?

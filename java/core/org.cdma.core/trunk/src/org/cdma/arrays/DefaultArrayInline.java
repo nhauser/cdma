@@ -446,7 +446,6 @@ public class DefaultArrayInline extends DefaultArray {
             length = shape[shape.length - 1];
 
             DefaultIndex startIdx = (DefaultIndex) getIndex().clone();
-            //startIdx.setOrigin(new int[startIdx.getRank()]);
             Object values = this.getStorage();
             while (iter.hasNext()) {
             	// Increment the slice iterator
