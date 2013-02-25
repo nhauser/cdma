@@ -226,6 +226,13 @@ public final class NxsDatasource implements IDatasource {
         }
         return last;
     }
+    
+    private static final String URI_DESC = "File system: folders and NeXus files";
+    
+	@Override
+	public String getTypeDescription() {
+		return URI_DESC;
+	}
 
     // ---------------------------------------------------------
     // private methods
