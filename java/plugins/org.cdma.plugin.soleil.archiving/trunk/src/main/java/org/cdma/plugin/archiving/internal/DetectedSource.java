@@ -19,7 +19,7 @@ import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
-import org.cdma.plugin.archiving.VcFactory;
+import org.cdma.plugin.archiving.SoleilArcFactory;
 
 public class DetectedSource {
 	public static final class ViewConfigurationFilter implements FilenameFilter {
@@ -118,7 +118,7 @@ public class DetectedSource {
 	private boolean initProducer(URI target) {
 		boolean result = false;
 		if ( mIsReadable ) {
-			IDataset dataset = new ArchivingDataset(VcFactory.NAME, target);
+			IDataset dataset = new ArchivingDataset(SoleilArcFactory.NAME, target);
 			try {
 				dataset.open();
 				if (dataset.isOpen()) {
