@@ -10,15 +10,16 @@ import java.util.List;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.plugin.archiving.internal.DetectedSource;
 
-public class VcDataSource implements IDatasource {
+public class SoleilArcDataSource implements IDatasource {
 	private static final int MAX_SOURCE_BUFFER_SIZE = 200;
+	
     private static HashMap<String, DetectedSource> detectedSources; // map of analyzed URIs
-    private static VcDataSource datasource;
+    private static SoleilArcDataSource datasource;
 
-    public static VcDataSource getInstance() {
-        synchronized (VcDataSource.class ) {
+    public static SoleilArcDataSource getInstance() {
+        synchronized (SoleilArcDataSource.class ) {
             if( datasource == null ) {
-                datasource  = new VcDataSource();
+                datasource  = new SoleilArcDataSource();
                 detectedSources = new HashMap<String, DetectedSource>();
             }
         }
@@ -27,7 +28,7 @@ public class VcDataSource implements IDatasource {
     
 	@Override
 	public String getFactoryName() {
-		return VcFactory.NAME;
+		return SoleilArcFactory.NAME;
 	}
 	
 	@Override
@@ -124,4 +125,11 @@ public class VcDataSource implements IDatasource {
         }
         return source;
     }
+
+    private static final String URI_DESC = "URI must target an Archiving database";
+    
+	@Override
+	public String getTypeDescription() {
+		return URI_DESC;
+	}
 }

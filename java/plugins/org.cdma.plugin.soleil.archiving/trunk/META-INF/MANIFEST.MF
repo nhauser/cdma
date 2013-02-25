@@ -7,9 +7,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/factory.xml
 Export-Package: 
- org.cdma.plugin.archiving,
- org.cdma.plugin.archiving.array,
- org.cdma.plugin.archiving.navigation
-Require-Bundle: org.cdma.engine.xml;bundle-version="3.0.0";visibility:=reexport,
- org.cdma.engine.sql;bundle-version="3.0.0";visibility:=reexport,
+ org.cdma.plugin.archiving
+Require-Bundle: org.cdma.engine.sql;bundle-version="3.0.0";visibility:=reexport,
  org.cdma.utilities;bundle-version="3.0.0";visibility:=reexport

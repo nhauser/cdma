@@ -26,7 +26,7 @@ import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 
-public class VcFactory implements IFactory {
+public class SoleilArcFactory implements IFactory {
 
 	private static final String DESC = "That plug-in aims to access an archiving database to extract archived attributes.";
 	public static final  String NAME = "SoleilArchiving";
@@ -66,7 +66,7 @@ public class VcFactory implements IFactory {
 	public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
 		IArray result;
 		try {
-			result = DefaultArray.instantiateDefaultArray( VcFactory.NAME, storage, shape);
+			result = DefaultArray.instantiateDefaultArray( SoleilArcFactory.NAME, storage, shape);
 		} catch (InvalidArrayTypeException e) {
 			result = null;
 			Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -78,7 +78,7 @@ public class VcFactory implements IFactory {
 	public IArray createArray(Object storage) {
 		IArray result = null;
 		try {
-			result = DefaultArray.instantiateDefaultArray( VcFactory.NAME, storage );
+			result = DefaultArray.instantiateDefaultArray( SoleilArcFactory.NAME, storage );
 		} catch (InvalidArrayTypeException e) {
 			result = null;
 			Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -166,7 +166,7 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public String getName() {
-		return VcFactory.NAME;
+		return SoleilArcFactory.NAME;
 	}
 
 	@Override
@@ -176,7 +176,7 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public IDatasource getPluginURIDetector() {
-		return VcDataSource.getInstance();
+		return SoleilArcDataSource.getInstance();
 	}
 
 	@Override
@@ -196,7 +196,7 @@ public class VcFactory implements IFactory {
 
 	@Override
 	public String getPluginDescription() {
-		return VcFactory.DESC;
+		return SoleilArcFactory.DESC;
 	}
 
 }
