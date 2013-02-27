@@ -98,5 +98,4 @@ public class ArchivingDimension implements IDimension {
 	public void setCoordinateVariable(IArray array) throws ShapeNotMatchException {
 		mArray = array;
 	}
-
 }

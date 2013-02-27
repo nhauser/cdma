@@ -9,6 +9,14 @@ public class Constants {
 	public static final String END_DATE    = "endDate";    // ending date for an extraction of an archived attribute
 	public static final String ORIGIN_DATE = "originDate"; // when the archived attribute has been recorded for the first time
 	
+	public static final String INTERPRETATION = "interpretation";
+	
+	
+	// Constant values
+	public static final String INTERPRETATION_SCALAR   = "scalar";
+	public static final String INTERPRETATION_SPECTRUM = "spectrum";
+	public static final String INTERPRETATION_IMAGE    = "image";
+	
 	/*
     // View Configuration main descriptors
     public static final String VC_XML_TAG = "viewConfiguration";

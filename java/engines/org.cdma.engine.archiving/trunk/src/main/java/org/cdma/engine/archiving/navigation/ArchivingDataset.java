@@ -76,7 +76,7 @@ public class ArchivingDataset implements IDataset {
 	@Override
 	public LogicalGroup getLogicalRoot() {
 		// TODO Auto-generated method stub
-		return null;
+		throw new NotImplementedException();
 	}
 
 	@Override
