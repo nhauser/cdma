@@ -43,7 +43,7 @@ public interface IDatasource extends IModelObject
 	 * 
 	 * @return short text describing the expected type of URI
 	 */
-	String getTypeDescription();
+	String getURITypeDescription();
 	
     /**
      * Returns true if the target has a compatible data format with that plug-in instance.
