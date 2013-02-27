@@ -33,9 +33,15 @@ import fr.soleil.nexus.PathNexus;
 
 public final class NxsDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
-    private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
+    private static final HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
     private static NxsDatasource datasource;
 
+    static {
+        synchronized (NxsDatasource.class) {
+            mDetectedSources = new HashMap<String, DetectedSource>();
+        }
+    }
+    
     public static NxsDatasource getInstance() {
         synchronized (NxsDatasource.class ) {
             if( datasource == null ) {
@@ -266,12 +272,5 @@ public final class NxsDatasource implements IDatasource {
     }
 
     private NxsDatasource() {
-        if (mDetectedSources == null) {
-            synchronized (NxsDatasource.class) {
-                if (mDetectedSources == null) {
-                    mDetectedSources = new HashMap<String, DetectedSource>();
-                }
-            }
-        }
     }
 }
