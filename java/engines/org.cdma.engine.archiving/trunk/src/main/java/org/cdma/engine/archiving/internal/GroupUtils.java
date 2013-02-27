@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 import org.cdma.engine.archiving.internal.attribute.Attribute;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
+import org.cdma.engine.archiving.internal.attribute.AttributeProperties;
 import org.cdma.engine.archiving.internal.sql.ArchivingQueries;
 import org.cdma.engine.archiving.navigation.ArchivingDataItem;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
@@ -24,16 +25,7 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IGroup;
 
 public class GroupUtils {
-/*
-	private ArchivingGroup group;
-	
-	public GroupUtils( ArchivingGroup group ) {
-		if( group == null ) {
-			throw new IllegalArgumentException("group can't be null!");
-		}
-		this.group = group;
-	}
-*/	
+
 	private GroupUtils() {}
 	
 	/**
@@ -108,7 +100,7 @@ public class GroupUtils {
 			Attribute dbAttr = group.getArchivedAttribute();
 			AttributePath path = dbAttr.getPath();
 			if( path != null && path.isFullyQualified() ) {
-				
+				AttributeProperties properties = dbAttr.getProperties();
 			    // Get starting, ending dates and time format
 			    Timestamp start = getStartDate(group);
 			    Timestamp end   = getEndDate(group);
@@ -132,6 +124,7 @@ public class GroupUtils {
 			    	
 				    // For each SQL items
 			    	List<SqlDataItem> sql_items = cursor.getDataItemList();
+			    	String interp;
 			    	for( SqlDataItem item : sql_items ) {
 			    		try {
 			    			// Get the array of values
@@ -142,11 +135,16 @@ public class GroupUtils {
 				    			// Create a child dimension 
 								dimension = new ArchivingDimension( group.getFactoryName(), array, item.getShortName());
 								group.addOneDimension(dimension);
+								
 				    		}
 				    		// The found item is a data item
 				    		else {
 				    			// Create a child data item
 			    				child = new ArchivingDataItem(group.getFactoryName(), item.getShortName(), group, array);
+			    				interp = getInterpretationFormat( properties );
+			    				if( interp != null ) {
+			    					child.addStringAttribute( Constants.INTERPRETATION, interp );
+			    				}
 			    				group.addDataItem(child);
 				    		}
 						} catch (IOException e) {
@@ -250,5 +248,22 @@ public class GroupUtils {
 			}
 		}
 		return end;
+	}
+	
+	public static String getInterpretationFormat(AttributeProperties properties) {
+		int format = properties.getFormat();
+		String result = null;
+		switch( format ) {
+			case 0:
+				result = Constants.INTERPRETATION_SCALAR;
+				break;
+			case 1:
+				result = Constants.INTERPRETATION_SPECTRUM;
+				break;
+			case 2:
+				result = Constants.INTERPRETATION_IMAGE;
+				break;
+		}
+		return result;
 	}
 }
