@@ -520,15 +520,12 @@ public class NcDataItem extends VariableDS implements IDataItem {
     
     @Override
     public int[] getShape() {
-    	/*int[] shape = super.getShape();
-    	if( dataType == DataType.STRING ) {
-    		shape = new int[] {1};
-    	}
-    	else if( dataType == DataType.CHAR ) {
+    	int[] shape = super.getShape();
+    	if( dataType == DataType.CHAR ) {
     		if( super.getShape().length == 2 && super.getShape()[0] == 1 ) {
     			shape = new int[] {1};
     		}
-    	}*/
-    	return super.getShape();
+    	}
+    	return shape;
     }
 }

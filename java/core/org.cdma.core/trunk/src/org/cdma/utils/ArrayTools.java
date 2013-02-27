@@ -30,19 +30,6 @@ public class ArrayTools {
         }
         else {
 	        // Determine rank of array (by parsing data array class name)
-/*
-	        String sClassName = data.getClass().getName();
-	        int iRank = 0;
-	        int iIndex = 0;
-	        char cChar;
-	        while (iIndex < sClassName.length()) {
-	            cChar = sClassName.charAt(iIndex);
-	            iIndex++;
-	            if (cChar == '[') {
-	                iRank++;
-	            }
-	        }
-*/
         	int iRank = 0;
         	Class<?> clazz = data.getClass();
         	while( clazz != null && clazz.isArray() ) {

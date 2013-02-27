@@ -17,20 +17,25 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.ansto.internal.DetectedSource;
 import org.cdma.plugin.ansto.internal.DetectedSource.NetCDFFilter;
 
-public class AnstoDataSource implements IDatasource {
+public final class AnstoDataSource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
     private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
     private static AnstoDataSource datasource;
 
-    public static AnstoDataSource getInstance() {
+    static {
         synchronized (AnstoDataSource.class ) {
             if( datasource == null ) {
                 datasource  = new AnstoDataSource();
             }
+            if (mDetectedSources == null) {
+                mDetectedSources = new HashMap<String, DetectedSource>();
+            }
         }
-        return datasource;
     }
     
+    public static AnstoDataSource getInstance() {
+        return datasource;
+    }
     
     public String getFactoryName() {
         return AnstoFactory.NAME;
@@ -235,12 +240,5 @@ public class AnstoDataSource implements IDatasource {
     }
     
     private AnstoDataSource() {
-        if (mDetectedSources == null) {
-            synchronized (AnstoDataSource.class) {
-                if (mDetectedSources == null) {
-                    mDetectedSources = new HashMap<String, DetectedSource>();
-                }
-            }
-        }
     }
 }
