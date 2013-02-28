@@ -69,11 +69,6 @@ public class NcDimension extends ucar.nc2.Dimension implements IDimension {
 		this.factoryName = factoryName;
 	}
 
-	// public void addCoordinateDataItem(final DataItem item) {
-	// if (item instanceof CachedVariable)
-	// addCoordinateVariable((CachedVariable) item);
-	// }
-
 	@Override
 	public int compareTo(final Object o) {
 		return super.compareTo(o);
