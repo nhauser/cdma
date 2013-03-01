@@ -57,6 +57,7 @@ public class DetectedSource {
         mIsExperiment = experiment;
         mIsDataset = datasetFolder;
         mURI = uri;
+        mInitialized = true;
     }
 
     public DetectedSource(URI uri) {
@@ -106,14 +107,16 @@ public class DetectedSource {
      */
 	public boolean isStable() {
 		boolean result = true;
-		
-		File file = new File( mURI.getPath() );
-        if( file.exists() && ! file.isDirectory() ) {
-        	long lastModTime;
-        	long current = System.currentTimeMillis();
-        	lastModTime = current - file.lastModified();
-        	result = MIN_LAST_MODIF_TIME < lastModTime;
-        }
+		String path = mURI.getPath();
+		if( path != null ) {
+			File file = new File( path );
+	        if( file.exists() && ! file.isDirectory() ) {
+	        	long lastModTime;
+	        	long current = System.currentTimeMillis();
+	        	lastModTime = current - file.lastModified();
+	        	result = MIN_LAST_MODIF_TIME < lastModTime;
+	        }
+		}
 		return result;
 	}
 
@@ -123,18 +126,29 @@ public class DetectedSource {
     private void init(URI uri) {
         if (uri != null) {
             // Check if the uri is a folder
-            File file = new File(uri.getPath());
-            if (file.isDirectory()) {
-                mIsDataset = isDatasetFolder(file);
-                mIsFolder = true;
-            }
-            else {
-                mIsDataset = false;
-                mIsFolder = false;
-            }
-
-            // Check it is a NeXus file
-            mIsReadable = initReadable(uri);
+        	String path = uri.getPath();
+        	if( path != null ) {
+	            File file = new File(path);
+	            if (file.isDirectory()) {
+	                mIsDataset = isDatasetFolder(file);
+	                mIsFolder = true;
+	            }
+	            else {
+	                mIsDataset = false;
+	                mIsFolder = false;
+	            }
+	
+	            // Check it is a NeXus file
+	            mIsReadable = initReadable(uri);
+        	}
+        	else {
+                mIsReadable   = false;
+                mIsProducer   = false;
+                mIsBrowsable  = false;
+                mIsExperiment = false;
+                mIsDataset    = false;
+                mInitialized  = true;
+        	}
         }
 
     }

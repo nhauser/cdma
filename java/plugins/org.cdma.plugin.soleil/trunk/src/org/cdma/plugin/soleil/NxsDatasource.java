@@ -200,12 +200,13 @@ public final class NxsDatasource implements IDatasource {
         List<String> parts = new ArrayList<String>();
         String path = target.getPath();
         String fragment = target.getFragment();
-        for( String part : path.split( "/" ) ) {
-            if( part != null && ! part.isEmpty() ) {
-                parts.add(part);
-            }
+        if( path != null ) {
+	        for( String part : path.split( "/" ) ) {
+	            if( part != null && ! part.isEmpty() ) {
+	                parts.add(part);
+	            }
+	        }
         }
-
         if (fragment != null) {
             try {
                 fragment = URLDecoder.decode(fragment, "UTF-8");
