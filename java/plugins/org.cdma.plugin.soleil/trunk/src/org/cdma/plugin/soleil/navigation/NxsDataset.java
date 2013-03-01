@@ -84,31 +84,34 @@ public final class NxsDataset implements IDataset {
             }
 
             if (dataset == null) {
-                try {
-                    dataset = new NxsDataset(new File(destination.getPath()), resetBuffer);
-                    String fragment = destination.getFragment();
-
-                    if (fragment != null && !fragment.isEmpty()) {
-                        IGroup group = dataset.getRootGroup();
-                        try {
-                            String path = URLDecoder.decode(fragment, "UTF-8");
-                            for (IContainer container : group.findAllContainerByPath(path)) {
-                                if (container.getModelType().equals(ModelType.Group)) {
-                                    dataset.mRootPhysical = (IGroup) container;
-                                    break;
-                                }
-                            }
-                        }
-                        catch (UnsupportedEncodingException e) {
-                            Factory.getLogger().log( Level.WARNING, e.getMessage());
-                        }
-                    }
-                    datasets.put( uri, new SoftReference<NxsDataset>(dataset));
-                    lastModifications.put( uri, dataset.getLastModificationDate());
-                }
-                catch ( FileAccessException e ) {
-                    throw new NoResultException( e );
-                }
+            	String filePath = destination.getPath();
+            	if( filePath != null ) {
+	                try {
+	                    dataset = new NxsDataset(new File(filePath), resetBuffer);
+	                    String fragment = destination.getFragment();
+	
+	                    if (fragment != null && !fragment.isEmpty()) {
+	                        IGroup group = dataset.getRootGroup();
+	                        try {
+	                            String path = URLDecoder.decode(fragment, "UTF-8");
+	                            for (IContainer container : group.findAllContainerByPath(path)) {
+	                                if (container.getModelType().equals(ModelType.Group)) {
+	                                    dataset.mRootPhysical = (IGroup) container;
+	                                    break;
+	                                }
+	                            }
+	                        }
+	                        catch (UnsupportedEncodingException e) {
+	                            Factory.getLogger().log( Level.WARNING, e.getMessage());
+	                        }
+	                    }
+	                    datasets.put( uri, new SoftReference<NxsDataset>(dataset));
+	                    lastModifications.put( uri, dataset.getLastModificationDate());
+	                }
+	                catch ( FileAccessException e ) {
+	                    throw new NoResultException( e );
+	                }
+	            }
             }
         }
         return dataset;
