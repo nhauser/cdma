@@ -28,7 +28,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     // Member attributes
     // members concerning current path in file
     private PathNexus m_pVirtualPath; // Current path into the Nexus File
-    private PathNexus m_pRealPath;    // Current path into the Nexus File (full real path)
+    private PathNexus m_pRealPath; // Current path into the Nexus File (full real path)
 
     // members concerning link mechanism
     private boolean m_bFileChanged = true; // True if the file has been changed since last open
@@ -36,7 +36,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 
     // members concerning nodes' buffer
     private ArrayList<NexusNode> m_tNodeTab; // TreeMap of all node belonging to last listed group's children (node name => node class)
-    
+
     // members concerning nodes' attributes buffer
     private String m_sAttrPath; // Path in string format of the last read attribute
     private Hashtable<String, AttributeEntry> m_hAttrTab; // Hashtable of all attributes lastly read (attribute name => attribute value)
@@ -57,12 +57,12 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * Reset all information stored into that buffer 
+     * Reset all information stored into that buffer
      */
     public void resetBuffer() {
         getBuffer().resetBuffer();
     }
-    
+
     /**
      * Set the current maximum size of the node buffer (in number of slots)
      * 
@@ -71,7 +71,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     public void setBufferSize(int iSize) {
         getBuffer().setBufferSize(iSize);
     }
-    
+
     /**
      * Get the current maximum size of the node buffer (in number of slots)
      */
@@ -80,24 +80,21 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * getCurrentPath return the current visible path inside the opened Nexus
-     * file
+     * getCurrentPath return the current visible path inside the opened Nexus file
      */
     public PathNexus getCurrentPath() {
         return m_pVirtualPath;
     }
 
     /**
-     * getCurrentRealPath return the current real path inside the opened Nexus
-     * file
+     * getCurrentRealPath return the current real path inside the opened Nexus file
      */
     protected PathNexus getCurrentRealPath() {
         return m_pRealPath;
     }
 
     /**
-     * openFile Set specified file as the current one and open it with
-     * appropriate access mode
+     * openFile Set specified file as the current one and open it with appropriate access mode
      */
     @Override
     public void openFile(String sFilePath, int iAccessMode) throws NexusException {
@@ -122,8 +119,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * closeFile Close the current file, but keep its path so we can easily open
-     * it again.
+     * closeFile Close the current file, but keep its path so we can easily open it again.
      */
     @Override
     public void closeFile() throws NexusException {
@@ -145,11 +141,10 @@ public class NexusFileBrowser extends NexusFileInstance {
     // / Navigation through nodes
     // ---------------------------------------------------------
     /**
-     * openPath opens groups and DataItems according to the path (PathNexus) in
-     * the opened file given. All objects of the path must exist.
+     * openPath opens groups and DataItems according to the path (PathNexus) in the opened file
+     * given. All objects of the path must exist.
      * 
-     * @param paPath
-     *            The path string
+     * @param paPath The path string
      */
     public void openPath(PathNexus pnPath) throws NexusException {
         if (!pnPath.isRelative())
@@ -179,14 +174,11 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * openGroup opens the group name with class nxclass. The group must exist,
-     * otherwise an exception is thrown. opengroup is similar to a cd name in a
-     * filesystem.
+     * openGroup opens the group name with class nxclass. The group must exist, otherwise an
+     * exception is thrown. opengroup is similar to a cd name in a filesystem.
      * 
-     * @param sNodeName
-     *            the name of the group to open.
-     * @param sNodeClass
-     *            the classname of the group to open.
+     * @param sNodeName the name of the group to open.
+     * @param sNodeClass the classname of the group to open.
      * @note this method is case insensitive for the node's name
      */
     protected void openGroup(String sNodeName, String sNodeClass) throws NexusException {
@@ -228,18 +220,13 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * openData opens the DataItem name with class SDS. The DataItem must exist,
-     * otherwise an exception is thrown. opendata is similar to a 'cd' command
-     * in a file system.
+     * openData opens the DataItem name with class SDS. The DataItem must exist, otherwise an
+     * exception is thrown. opendata is similar to a 'cd' command in a file system.
      * 
-     * @param sNodeName
-     *            the name of the group to open.
-     * @param bCaseSensitive
-     *            true if node name corresponds exactly to the requested node
+     * @param sNodeName the name of the group to open.
+     * @param bCaseSensitive true if node name corresponds exactly to the requested node (optional)
+     * @param bJumpNodes true if the NXtechnical_data are not considered as DataItem but as group
      *            (optional)
-     * @param bJumpNodes
-     *            true if the NXtechnical_data are not considered as DataItem
-     *            but as group (optional)
      * @note the pattern ".." means close current node
      */
     protected void openData(String sNodeName) throws NexusException {
@@ -279,8 +266,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     /**
      * openNode Open the requested node of the currently opened file.
      * 
-     * @param nnNode
-     *            node to be opened
+     * @param nnNode node to be opened
      */
     public void openNode(NexusNode nnNode) throws NexusException {
         if (nnNode == null) {
@@ -300,17 +286,17 @@ public class NexusFileBrowser extends NexusFileInstance {
                     sNodeClass = getNodeClassName(sNodeName);
                 }
                 openGroup(sNodeName, sNodeClass);
-            } 
+            }
             else {
                 boolean found = false;
-                for( NexusNode node : listChildren() ) {
-                    if( node.getClassName().equals(sNodeClass) ) {
+                for (NexusNode node : listChildren()) {
+                    if (node.getClassName().equals(sNodeClass)) {
                         found = true;
-                        openGroup(node.getNodeName(), node.getClassName() );
+                        openGroup(node.getNodeName(), node.getClassName());
                         break;
                     }
                 }
-                if( ! found ) {
+                if (!found) {
                     throw new NexusException("Failed to open node: " + nnNode.toString());
                 }
             }
@@ -322,17 +308,12 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * openSubItem Open the iIndex sub-item of current group having the sClass
-     * as class name
+     * openSubItem Open the iIndex sub-item of current group having the sClass as class name
      * 
-     * @param nfFile
-     *            NexusFile to explore
-     * @param iIndex
-     *            index of the sub-item to open (class name dependent)
-     * @param sNodeClass
-     *            class name of the sub-item to open
-     * @param sPatternName
-     *            pattern name for nodes to be considered
+     * @param nfFile NexusFile to explore
+     * @param iIndex index of the sub-item to open (class name dependent)
+     * @param sNodeClass class name of the sub-item to open
+     * @param sPatternName pattern name for nodes to be considered
      * @throws NexusException
      * @note the first item has index number 0
      */
@@ -346,9 +327,9 @@ public class NexusFileBrowser extends NexusFileInstance {
 
         // Get all direct descendants
         List<NexusNode> nodes = listChildren();
-        
+
         // Get the item number iIndex according to nodes (which is correctly sorted)
-        for( NexusNode node : nodes ) {
+        for (NexusNode node : nodes) {
             // Check class name and index to open write node
             if (sNodeClass.equals(node.getClassName()) && node.getNodeName().matches(sPatternName)) {
                 if (iIndex == iCurIndex) {
@@ -362,8 +343,8 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * openSignalDataNode Open the DataItem containing the signal data. This
-     * node must be direct descendant of current group
+     * openSignalDataNode Open the DataItem containing the signal data. This node must be direct
+     * descendant of current group
      * 
      * @throws NexusException
      */
@@ -372,7 +353,7 @@ public class NexusFileBrowser extends NexusFileInstance {
 
         // Parse children
         ArrayList<NexusNode> mNodeMap = listGroupChild();
-        for (NexusNode node : mNodeMap ) {
+        for (NexusNode node : mNodeMap) {
             sNodeName = node.getNodeName();
             sNodeClass = node.getClassName();
 
@@ -400,15 +381,11 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * fastOpenSubItem Open the item number iIndex having sNodeClass for class
-     * name
+     * fastOpenSubItem Open the item number iIndex having sNodeClass for class name
      * 
-     * @param iIndex
-     *            index of the item that matches the class
-     * @param sNodeClass
-     *            node class that we want to open
-     * @throws NexusException
-     *             if node was not found
+     * @param iIndex index of the item that matches the class
+     * @param sNodeClass node class that we want to open
+     * @throws NexusException if node was not found
      * @note THE NODE BUFFER LIST ISN'T UPDATED
      */
     public void fastOpenSubItem(int iIndex, String sNodeClass) throws NexusException {
@@ -461,8 +438,8 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * closeAll Close every opened DataItem and/or groups to step back until the
-     * Nexus file root is reached
+     * closeAll Close every opened DataItem and/or groups to step back until the Nexus file root is
+     * reached
      * 
      * @note the NeXus file is kept opened
      */
@@ -499,20 +476,17 @@ public class NexusFileBrowser extends NexusFileInstance {
     // / Nodes informations
     // ---------------------------------------------------------
     /**
-     * getNodeClassName Return the class name of a specified node in currently
-     * opened group
+     * getNodeClassName Return the class name of a specified node in currently opened group
      * 
-     * @param sNodeName
-     *            name of the node from which we want to know the class name
-     * @throws NexusException
-     *             if no corresponding node was found
+     * @param sNodeName name of the node from which we want to know the class name
+     * @throws NexusException if no corresponding node was found
      */
     protected String getNodeClassName(String sNodeName) throws NexusException {
         // Parse children
         String sItemName = sNodeName.toUpperCase();
         listGroupChild();
 
-        for( NexusNode node : listChildren() ) {
+        for (NexusNode node : listChildren()) {
             // Check if names are equals
             if (sItemName.equals(node.getNodeName().toUpperCase())) {
                 return node.getClassName();
@@ -522,8 +496,8 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * getNode Create a new NexusNode by scanning child of the current path
-     * according to given node name
+     * getNode Create a new NexusNode by scanning child of the current path according to given node
+     * name
      */
     public NexusNode getNode(String sNodeName) throws NexusException {
         if (sNodeName == null || sNodeName.trim().equals(""))
@@ -535,7 +509,7 @@ public class NexusFileBrowser extends NexusFileInstance {
         String sCurName, sCurFullName, sCurClass;
         listGroupChild();
 
-        for( NexusNode node : listChildren() ) {
+        for (NexusNode node : listChildren()) {
             // Check if names are equals
             sCurName = node.getNodeName();
             sCurClass = node.getClassName();
@@ -551,23 +525,20 @@ public class NexusFileBrowser extends NexusFileInstance {
     /**
      * isOpenedDataItem Return true if the opened item is a DataItem
      * 
-     * @param sNodeName
-     *            name of the node from which we want to know the class name
+     * @param sNodeName name of the node from which we want to know the class name
      */
     public boolean isOpenedDataItem() {
         return m_pRealPath.getDataItemName() != null;
     }
 
     /**
-     * tryGuessNodeName Try to find a node corresponding to given name. The
-     * method will try name, then replace '/' by '__', then will try to add '__'
-     * in end of name, or try adding '__#1'... The method will return first
-     * matching pattern
+     * tryGuessNodeName Try to find a node corresponding to given name. The method will try name,
+     * then replace '/' by '__', then will try to add '__' in end of name, or try adding '__#1'...
+     * The method will return first matching pattern
      * 
-     * @param sNodeName
-     *            approximative node name
-     * @return a string array containing the write name of a node as first
-     *         element and classname as second element
+     * @param sNodeName approximative node name
+     * @return a string array containing the write name of a node as first element and classname as
+     *         second element
      */
     protected String[] tryGuessNodeName(String sNodeName) throws NexusException {
         String[] sFoundNode = { "", "" };
@@ -613,13 +584,13 @@ public class NexusFileBrowser extends NexusFileInstance {
     // / Browsing nodes
     // ---------------------------------------------------------
     /**
-     * listChildren List all direct descendants of the node ending the given
-     * path and returns it as a list of NexusNode
+     * listChildren List all direct descendants of the node ending the given path and returns it as
+     * a list of NexusNode
      * 
      * @throws NexusException
      */
     public NexusNode[] listChildren(PathNexus pnPath) throws NexusException {
-        
+
         // Open the requested node
         openPath(pnPath);
 
@@ -634,8 +605,8 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * listChildren List all direct descendants of an opened node and returns it
-     * as a list of NexusNode
+     * listChildren List all direct descendants of an opened node and returns it as a list of
+     * NexusNode
      * 
      * @throws NexusException
      */
@@ -651,11 +622,11 @@ public class NexusFileBrowser extends NexusFileInstance {
     // / Link nodes
     // ---------------------------------------------------------
     /**
-     * listAttribute List all attributes of the currently opened node and store
-     * it into a hashtable member variable.
+     * listAttribute List all attributes of the currently opened node and store it into a hashtable
+     * member variable.
      * 
-     * @note A Hashtable which will hold the names of the attributes as keys.
-     *       For each key there is an AttributeEntry class as value.
+     * @note A Hashtable which will hold the names of the attributes as keys. For each key there is
+     *       an AttributeEntry class as value.
      */
     @SuppressWarnings("unchecked")
     public Hashtable<String, AttributeEntry> listAttribute() throws NexusException {
@@ -743,19 +714,18 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * getCaseInsensitiveNodeName Scan children of the currently opened group to
-     * determine the write node's name
+     * getCaseInsensitiveNodeName Scan children of the currently opened group to determine the write
+     * node's name
      * 
-     * @param sNodeName
-     *            The name of the node we want to find (case insensitive)
+     * @param sNodeName The name of the node we want to find (case insensitive)
      */
     private String getCaseInsensitiveNodeName(String sNodeName) throws NexusException {
         // Parse children nodes to get real node's name
         listGroupChild();
 
         String sItemName = sNodeName;
-        for( NexusNode node : listChildren() ) {
-            if( sNodeName.equalsIgnoreCase( node.getNodeName() )) {
+        for (NexusNode node : listChildren()) {
+            if (sNodeName.equalsIgnoreCase(node.getNodeName())) {
                 sItemName = node.getNodeName();
                 break;
             }
@@ -765,11 +735,9 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * listGroupChild Stores in a buffer all children of the currently opened
-     * group
+     * listGroupChild Stores in a buffer all children of the currently opened group
      * 
-     * @note this method is here to avoid JVM crash due to Nexus API (in version
-     *       4.2.0)
+     * @note this method is here to avoid JVM crash due to Nexus API (in version 4.2.0)
      * @throws NexusException
      */
     @SuppressWarnings("unchecked")
@@ -785,9 +753,9 @@ public class NexusFileBrowser extends NexusFileInstance {
                 m_tNodeTab.clear();
                 Hashtable<String, String> map = getNexusFile().groupdir();
                 boolean bIsGroup;
-                for( Entry<String, String> entry : map.entrySet() ) {
+                for (Entry<String, String> entry : map.entrySet()) {
                     bIsGroup = !(entry.getValue().equals("SDS") || entry.getValue().equals("NXtechnical_data"));
-                    m_tNodeTab.add( new NexusNode( entry.getKey(), entry.getValue(), bIsGroup ) );
+                    m_tNodeTab.add(new NexusNode(entry.getKey(), entry.getValue(), bIsGroup));
                 }
                 time = System.currentTimeMillis() - time;
                 getBuffer().putNodesInPath(m_pRealPath, m_tNodeTab, time.intValue());
@@ -799,20 +767,19 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     /**
-     * isListGroupChildUpToDate return true if the children buffer node list has
-     * to be updated
+     * isListGroupChildUpToDate return true if the children buffer node list has to be updated
      */
     private boolean isListGroupChildUpToDate() {
         return getBuffer().getNodeInPath(m_pRealPath) != null;
     }
-    
+
     protected void pushNodeInBuffer(String sCurName, String sCurClass) {
-        boolean bIsGroup = !(sCurName.equals("SDS") || sCurName.equals("NXtechnical_data"));
-        NexusNode node = new NexusNode( sCurName, sCurClass, bIsGroup );
-        m_tNodeTab.add( node );
+        boolean bIsGroup = !(sCurClass.equals("SDS") || sCurClass.equals("NXtechnical_data"));
+        NexusNode node = new NexusNode(sCurName, sCurClass, bIsGroup);
+        m_tNodeTab.add(node);
         getBuffer().pushNodeInPath(m_pRealPath, node);
     }
-    
+
     private BufferNode getBuffer() {
         return BufferNodeManager.getBuffer(this);
     }
