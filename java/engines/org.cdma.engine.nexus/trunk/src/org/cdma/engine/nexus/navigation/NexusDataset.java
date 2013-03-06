@@ -79,23 +79,11 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 
     @Override
     public void open() throws IOException {
-        try {
-            mN4TWriter.closeFile();
-            mN4TWriter.openFile(mN4TCurPath.getFilePath(), NexusFile.NXACC_READ);
-            mN4TWriter.openPath(mN4TCurPath);
-        } catch (NexusException ne) {
-            throw new IOException(ne);
-        }
     }
 
     /// Methods
     @Override
     public void close() throws IOException {
-        try {
-            mN4TWriter.closeFile();
-        } catch (NexusException ne) {
-            throw new IOException(ne);
-        }
     }
 
     @Override
@@ -116,9 +104,6 @@ public abstract class NexusDataset implements IDataset, Cloneable {
         List<IDataItem> items = new ArrayList<IDataItem>();
         NexusGroup.getDescendentDataItem(items, mRootPhysical);
         try {
-            // Open the destination file
-            mN4TWriter.openFile(mN4TWriter.getFilePath(), NexusFile.NXACC_RDWR);
-
             // Save each IDataItem
             DataItem data;
             for (IDataItem item : items) {
@@ -126,9 +111,6 @@ public abstract class NexusDataset implements IDataset, Cloneable {
                 mN4TWriter.writeData(data, data.getPath());
 
             }
-
-            // Close the file
-            mN4TWriter.closeFile();
         } catch (NexusException e) {
             throw new WriterException(e.getMessage(), e);
         }

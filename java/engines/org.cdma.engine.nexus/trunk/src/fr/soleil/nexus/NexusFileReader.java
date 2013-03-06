@@ -121,7 +121,7 @@ public class NexusFileReader extends NexusFileBrowser {
      * 
      */
     public DataItem readDataInfo() throws NexusException {
-        NexusNode nnNode = getCurrentRealPath().getCurrentNode();
+        NexusNode nnNode = getCurrentPath().getCurrentNode();
         if (!nnNode.isGroup() && nnNode.getClassName().equals("NXtechnical_data")) {
             return getDataItem();
         }
@@ -132,8 +132,10 @@ public class NexusFileReader extends NexusFileBrowser {
         int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
                                       // iDataInf[1]= data type
 
+        openFile();
         getNexusFile().getinfo(iNodeSize, iDataInf);
-
+        closeFile();
+        
         // Initialize dimension's sizes
         iDimSize = new int[iDataInf[0]];
         System.arraycopy(iNodeSize, 0, iDimSize, 0, iDataInf[0]);
@@ -144,8 +146,8 @@ public class NexusFileReader extends NexusFileBrowser {
         dsData.setSize(iDimSize);
         dsData.setSlabSize(iDimSize);
         dsData.setStart(new int[iDimSize.length]);
-        dsData.setNodeName(getCurrentRealPath().getDataItemName());
-        dsData.setPath(getCurrentRealPath().clone());
+        dsData.setNodeName(getCurrentPath().getDataItemName());
+        dsData.setPath(getCurrentPath().clone());
         dsData.isSingleRawArray(m_bResultAsSingleRaw);
 
         // Initialize DataItem's attributes
@@ -179,8 +181,10 @@ public class NexusFileReader extends NexusFileBrowser {
         Object oInput = defineArrayObject(iDataInf[1], length);
 
         // Set data into temporary array having a single raw shape
+        openFile();
         getNexusFile().getdata(oInput);
-
+        closeFile();
+        
         if (m_bResultAsSingleRaw) {
             oOutput = oInput;
         }
@@ -214,8 +218,8 @@ public class NexusFileReader extends NexusFileBrowser {
     private DataItem readDataItem(int iDataRank) throws NexusException {
         DataItem dsData = readDataInfo();
 
-        Object data = readNodeValue(new int[] { dsData.getSize().length, dsData.getType() },
-                dsData.getSize(), iDataRank);
+        int[] dataInf = new int[] { dsData.getSize().length, dsData.getType() };
+        Object data = readNodeValue(dataInf, dsData.getSize(), iDataRank);
 
         if (dsData.getType() == NexusFile.NX_CHAR) {
             dsData.setData(data);
@@ -291,7 +295,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
     protected DataItem getDataItem(int iRank) throws NexusException {
         DataItem dataItem;
-        NexusNode nnNode = getCurrentRealPath().getCurrentNode();
+        NexusNode nnNode = getCurrentPath().getCurrentNode();
         String sNodeName = nnNode.getNodeName();
         String sNodeClass = nnNode.getClassName();
 
@@ -319,19 +323,21 @@ public class NexusFileReader extends NexusFileBrowser {
                 closeData();
             }
             catch (NexusException ne) {
+            	closeData();
             }
-            dataItem.setPath(getCurrentRealPath().clone());
+            dataItem.setPath(getCurrentPath().clone());
 
             return dataItem;
         }
-        else
+        else {
             return null;
+        }
     }
 
     protected DataItem getDataItem(int[] iStartPos, int[] iShape) throws NexusException {
         DataItem dsData = readDataInfo();
 
-        NexusNode nnNode = getCurrentRealPath().getCurrentNode();
+        NexusNode nnNode = getCurrentPath().getCurrentNode();
         String sNodeClass = nnNode.getClassName();
         if (!sNodeClass.equals("NXtechnical_data")) {
             dsData.setStart(iStartPos);
@@ -352,8 +358,10 @@ public class NexusFileReader extends NexusFileBrowser {
             Object oInput = defineArrayObject(iDataInf[1], length);
 
             // Set data into temporary array having a single raw shape
+            openFile();
             getNexusFile().getslab(iStartPos, iShape, oInput);
-
+            closeFile();
+            
             if (m_bResultAsSingleRaw) {
                 oOutput = oInput;
             }
@@ -444,9 +452,6 @@ public class NexusFileReader extends NexusFileBrowser {
      */
     protected Object getAttributeValue(String sAttrName) throws NexusException {
         // Check that a file is opened
-        if (!isFileOpened())
-            throw new NexusException("No file opened!");
-
         Object oOutput = null;
         Object oTmpOut = null;
 
@@ -505,9 +510,9 @@ public class NexusFileReader extends NexusFileBrowser {
     	int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
     	int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
                                       // iDataInf[1] = data type
-        
+        openFile();
         getNexusFile().getinfo(iNodSize, iDataInf);
-
+        closeFile();
         // Checking type compatibility
         if (dsData.getType() != iDataInf[1])
             throw new NexusException("Datas and target node do not have compatible type!");
@@ -741,9 +746,9 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Converting boolean to byte because Nexus API don't accept it
         if (sClassName.startsWith("Ljava.lang.Boolean") || sClassName.equals("Z"))
-            oOutput = java.lang.reflect.Array.newInstance(Byte.class, iShape);
+            oOutput = java.lang.reflect.Array.newInstance(Byte.TYPE, iShape);
         else if (sClassName.startsWith("Ljava.lang.Byte") || sClassName.equals("B"))
-            oOutput = java.lang.reflect.Array.newInstance(Boolean.class, iShape);
+            oOutput = java.lang.reflect.Array.newInstance(Boolean.TYPE, iShape);
 
         /*
          * ******** Warning: jnexus API doesn't support NX_INT64 for writing
@@ -819,7 +824,7 @@ public class NexusFileReader extends NexusFileBrowser {
             }
 
             openPath(pnTarget);
-            pnTarget = getCurrentRealPath().clone();
+            pnTarget = getCurrentPath().clone();
             closeAll();
             return pnTarget;
         }
