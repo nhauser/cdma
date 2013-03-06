@@ -79,14 +79,14 @@ public class NexusFileWriter extends NexusFileReader {
             sCurClass = nnNode.getClassName();
 
             // Create appropriate group and open it
-            nCurStep = getCurrentRealPath().getCurrentNode();
+            nCurStep = getCurrentPath().getCurrentNode();
             if (nnNode.isGroup() || "NXtechnical_data".equals(nnNode.getClassName())) {
                 try {
                     openGroup(sCurName, sCurClass);
                 }
                 catch (NexusException ne) {
                     // Ensure we are still in the expected group
-                    if (nCurStep != null && !nCurStep.equals(getCurrentRealPath().getCurrentNode()))
+                    if (nCurStep != null && !nCurStep.equals(getCurrentPath().getCurrentNode()))
                         closeGroup();
 
                     // Create the requested group
@@ -373,14 +373,14 @@ public class NexusFileWriter extends NexusFileReader {
      */
     protected void copyNode(NexusFileReader nfrSource) throws NexusException {
         // Keep in buffer current path (used for recursion process)
-        PathNexus pnSrcPath = nfrSource.getCurrentRealPath().clone();
-        PathNexus pnTgtPath = getCurrentRealPath().clone();
+        PathNexus pnSrcPath = nfrSource.getCurrentPath().clone();
+        PathNexus pnTgtPath = getCurrentPath().clone();
         NexusNode nnCurNode = pnSrcPath.getCurrentNode();
 
-        if (getCurrentRealPath().getCurrentNode() != null
-                && !getCurrentRealPath().getCurrentNode().isRealGroup())
+        if (getCurrentPath().getCurrentNode() != null
+                && !getCurrentPath().getCurrentNode().isRealGroup())
             throw new NexusException("Invalid destination path: only a group can contain nodes!\n"
-                    + getCurrentRealPath());
+                    + getCurrentPath());
 
         // Check the kind of the node
         if (nnCurNode == null || nnCurNode.isGroup()
@@ -436,9 +436,9 @@ public class NexusFileWriter extends NexusFileReader {
      * @param nfrSource handler on the opened source file
      */
     protected void copyAttr(String sAttrName, NexusFileReader nfrSource) throws NexusException {
-        PathNexus pnSrcPath = nfrSource.getCurrentRealPath().clone();
-        PathNexus pnTgtPath = getCurrentRealPath().clone();
-        writeAttr(sAttrName, nfrSource.readAttr(sAttrName, pnSrcPath), getCurrentRealPath());
+        PathNexus pnSrcPath = nfrSource.getCurrentPath().clone();
+        PathNexus pnTgtPath = getCurrentPath().clone();
+        writeAttr(sAttrName, nfrSource.readAttr(sAttrName, pnSrcPath), getCurrentPath());
         openPath(pnTgtPath);
         nfrSource.openPath(pnSrcPath);
     }

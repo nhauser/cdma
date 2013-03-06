@@ -27,16 +27,22 @@ public class NexusFileInstance {
     private NexusFileHandler      m_nfFile;        // Current file
     private static ReentrantLock g_mutex;         // Mutex for thread safety
     private static String        g_curFile;       // File currently opened
+    
+    private static ReentrantLock g_mutexCanonicOp; // mutex for canonical operations
 
-    // Constructors
-    protected NexusFileInstance() {
-        m_sFilePath = "";
+    static {
         synchronized (NexusFileInstance.class) {
             if (g_mutex == null) {
                 g_mutex = new ReentrantLock();
                 g_curFile = "";
+                g_mutexCanonicOp = new ReentrantLock();
             }
         }
+    }
+    
+    // Constructors
+    protected NexusFileInstance() {
+        m_sFilePath = "";
     }
 
     protected NexusFileInstance(String sFilePath) {
@@ -81,10 +87,12 @@ public class NexusFileInstance {
      *             if no file opened
      */
     public int getFileAccessMode() throws NexusException {
-        if (isFileOpened())
+        if (isFileOpened()) {
             return m_iAccessMode;
-        else
+        }
+        else {
             throw new NexusException("No file currently opened!");
+        }
     }
 
     /**
@@ -108,6 +116,14 @@ public class NexusFileInstance {
         return last;
     }
 
+    public void open() {
+    	g_mutexCanonicOp.lock();
+    }
+    
+    public void close() {
+    	g_mutexCanonicOp.unlock();
+    }
+    
     // ---------------------------------------------------------
     // Protected methods
     // ---------------------------------------------------------
@@ -122,7 +138,7 @@ public class NexusFileInstance {
      * @note if access mode isn't, the default will be read-only
      * @throws NexusException
      */
-    public void openFile() throws NexusException {
+    protected void openFile() throws NexusException {
         openFile(m_sFilePath, NexusFile.NXACC_READ);
     }
 
@@ -130,7 +146,7 @@ public class NexusFileInstance {
      * closeFile Close the current file, but keep its path so we can easily open
      * it again.
      */
-    public void closeFile() throws NexusException {
+    protected void closeFile() throws NexusException {
         try {
             if (m_nfFile != null) {
                 m_nfFile.close();
@@ -156,7 +172,6 @@ public class NexusFileInstance {
             if (g_mutex.getHoldCount() - 1 == 0) {
                 g_curFile = "";
             }
-
             g_mutex.unlock();
         }
     }

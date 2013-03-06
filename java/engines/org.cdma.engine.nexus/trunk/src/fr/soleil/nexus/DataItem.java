@@ -295,7 +295,7 @@ public class DataItem implements Cloneable {
     @Override
     public String toString() {
         StringBuffer str = new StringBuffer();
-        str.append("     - Node name: " + mNodeName + "   Type: " + mType + "\n     - Node Size: [");
+        str.append("     - NodeParent name: " + mNodeName + "   Type: " + mType + "\n     - NodeParent Size: [");
         if (mDimSize != null) {
             for (int i = 0; i < mDimSize.length; i++) {
                 str.append(String.valueOf(mDimSize[i]) + ((i < mDimSize.length - 1) ? ", " : " "));
@@ -322,7 +322,7 @@ public class DataItem implements Cloneable {
                 str.append("\n     - " + sAttrName + ": " + getAttribute(sAttrName));
             }
         }
-        str.append("\n     - Node Path: " + mPath);
+        str.append("\n     - NodeParent Path: " + mPath);
         Object data = getData();
         if (mType == NexusFile.NX_CHAR && null != data) {
             str.append("\n     - Value: " + new String( (char[]) data) );
@@ -465,6 +465,7 @@ public class DataItem implements Cloneable {
         NexusFileReader nfrFile = new NexusFileReader(mPath.getFilePath());
         nfrFile.isSingleRawResult(mSingleRaw);
         try {
+        	nfrFile.open();
             nfrFile.openFile(NexusFile.NXACC_READ);
             if (mStart == null) {
                 mData = new SoftReference<Object>(nfrFile.readData(mPath).getRawData());
@@ -476,13 +477,14 @@ public class DataItem implements Cloneable {
                 mPrevStart = mStart;
                 mPrevShape = mDimData;
             }
-
             nfrFile.closeFile();
+            nfrFile.close();
         }
         catch (NexusException ne) {
             mData = new SoftReference<Object>(null);
             try {
                 nfrFile.closeFile();
+                nfrFile.close();
             }
             catch (NexusException e) {
                 Factory.getLogger().log( Level.SEVERE, e.getMessage() );

@@ -12,9 +12,11 @@ package fr.soleil.nexus;
 // Tools lib
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
+import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
@@ -271,7 +273,7 @@ public class AcquisitionData {
         // Open the required Acquisition (i.e. NXentry) then its NXinstrument
         try {
             m_nfwFile.openGroup(sAcquiName, "NXentry");
-            m_nfwFile.fastOpenSubItem(0, "NXinstrument");
+            m_nfwFile.openGroup("", "NXinstrument");
         } catch (NexusException ne) {
             return sOutputList;
         }
@@ -334,7 +336,7 @@ public class AcquisitionData {
             else {
                 m_nfwFile.openGroup(sNodeName, "NXdata");
                 try {
-                    m_nfwFile.openSignalDataNode();
+                    openSignalDataNode(m_nfwFile);
                     m_nfwFile.closeData();
                     iIndex++;
                 } catch (NexusException ne) {
@@ -372,10 +374,10 @@ public class AcquisitionData {
         m_nfwFile.openGroup(sAcquiName, "NXentry");
 
         // Open the required DataItem
-        m_nfwFile.openSubItem(iImageIndex, "NXdata", "image#.*");
-        m_nfwFile.openSignalDataNode();
+        openSubItem(m_nfwFile, iImageIndex, "NXdata", "image#.*");
+        openSignalDataNode(m_nfwFile);
 
-        pPath = new PathData(m_nfwFile.getCurrentRealPath().getGroupsName(), m_nfwFile.getCurrentRealPath().getDataItemName());
+        pPath = new PathData(m_nfwFile.getCurrentPath().getGroupsName(), m_nfwFile.getCurrentPath().getDataItemName());
 
         // Close file
         m_nfwFile.closeFile();
@@ -428,8 +430,8 @@ public class AcquisitionData {
         m_nfwFile.openFile();
         m_nfwFile.closeAll();
         m_nfwFile.openGroup(sAcquiName, "NXentry");
-        m_nfwFile.openSubItem(iImageIndex, "NXdata", "image#.*");
-        m_nfwFile.openSignalDataNode();
+        openSubItem(m_nfwFile, iImageIndex, "NXdata", "image#.*");
+        openSignalDataNode(m_nfwFile);
 
         // Get 2D data from opened DataItem
         DataItem dsData = m_nfwFile.getDataItem(2);
@@ -476,7 +478,7 @@ public class AcquisitionData {
         try {
             // Open the required Acquisition (i.e. NXentry) then its NXinstrument
             m_nfwFile.openGroup(sAcquiName, "NXentry");
-            m_nfwFile.openSubItem(0, "NXinstrument");
+            m_nfwFile.openGroup("", "NXinstrument");
 
             // Defining variables
             Stack<DataItem> hsDataItem;
@@ -933,4 +935,79 @@ public class AcquisitionData {
         return alNameList;
     }
 
+    
+    /**
+     * openSignalDataNode Open the DataItem containing the signal data. This
+     * node must be direct descendant of current group
+     * 
+     * @throws NexusException
+     */
+    private void openSignalDataNode(NexusFileBrowser handler) throws NexusException {
+        String sNodeName = "", sNodeClass = "";
+
+        // Parse children
+        ArrayList<NexusNode> mNodeMap = handler.listChildren();
+        for (NexusNode node : mNodeMap ) {
+            sNodeName = node.getNodeName();
+            sNodeClass = node.getClassName();
+
+            // Seek DataItem nodes (class name = SDS)
+            if (sNodeClass.equals("SDS")) {
+                // open DataItem
+            	handler.openData(sNodeName);
+            	
+            	Hashtable<String, AttributeEntry> attributes = handler.listAttribute();
+            	
+            	for( String name : attributes.keySet() ) {
+            		if( "signal".equals(name) ) {
+            			return;
+            		}
+            	}
+
+                // Signal DataItem not found, so we continue parsing children
+                handler.closeData();
+            }
+        }
+        throw new NexusException("No signal data item found!");
+    }
+    
+    /**
+     * openSubItem Open the iIndex sub-item of current group having the sClass
+     * as class name
+     * 
+     * @param nfFile
+     *            NexusFile to explore
+     * @param iIndex
+     *            index of the sub-item to open (class name dependent)
+     * @param sNodeClass
+     *            class name of the sub-item to open
+     * @param sPatternName
+     *            pattern name for nodes to be considered
+     * @throws NexusException
+     * @note the first item has index number 0
+     */
+    private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass) throws NexusException {
+        openSubItem(handler, iIndex, sNodeClass, ".*");
+    }
+
+    private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass, String sPatternName) throws NexusException {
+        // Index of the currently examined node in list
+        int iCurIndex = 0;
+
+        // Get all direct descendants
+        List<NexusNode> nodes = handler.listChildren();
+        
+        // Get the item number iIndex according to nodes (which is correctly sorted)
+        for( NexusNode node : nodes ) {
+            // Check class name and index to open write node
+            if (sNodeClass.equals(node.getClassName()) && node.getNodeName().matches(sPatternName)) {
+                if (iIndex == iCurIndex) {
+                	handler.openNode(node);
+                    return;
+                }
+                iCurIndex++;
+            }
+        }
+        throw new NexusException("Failed to open sub-item " + iIndex + " of " + sNodeClass);
+    }
 }

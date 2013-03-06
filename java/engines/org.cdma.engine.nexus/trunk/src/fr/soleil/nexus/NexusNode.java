@@ -19,17 +19,20 @@ public class NexusNode implements Cloneable {
     private static final String CLASS_SEPARATOR_START2 = "{";
     private static final String CLASS_SEPARATOR_END2   = "}";
 
-    private String   m_sNodeName  = "";
-    private String   m_sClassName = "";
-    private boolean m_bIsGroup   = false;
+    private String   m_sNodeName;
+    private String   m_sClassName;
+    private boolean m_bIsGroup;
 
     public NexusNode() {
+    	m_sNodeName  = "";
+        m_sClassName = "";
+        m_bIsGroup   = false;
     }
 
     public NexusNode(String sNodeName, String sClassName) {
         m_sNodeName = sNodeName;
         m_sClassName = sClassName;
-        m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName));
+        m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName) ) && !"NXtechnical_data".equals(sClassName);
     }
 
     public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) {
@@ -63,7 +66,7 @@ public class NexusNode implements Cloneable {
     }
 
     public boolean isRealGroup() {
-        return !m_sClassName.equals("SDS");
+        return (m_sClassName != null && !m_sClassName.isEmpty() && !m_sClassName.equals("SDS") );
     }
 
     protected NexusNode clone() {

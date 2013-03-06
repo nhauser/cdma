@@ -581,31 +581,25 @@ public final class NexusGroup implements IGroup, Cloneable {
     @Override
     public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
         List<IContainer> list = new ArrayList<IContainer>();
-
+        NexusFileWriter handler = mDataset.getHandler();
+        
         // Try to list all nodes matching the path
         try {
             // Transform path into a NexusNode array
             NexusNode[] nodes = PathNexus.splitStringToNode(path);
-            // PathNexus pnPath = new PathNexus(nodes);
-            // pnPath.popNode();
 
             // Open path from root
-            NexusFileWriter handler = mDataset.getHandler();
-            handler.openFile();
-            handler.closeAll();
+            handler.open();
 
             // Call recursive method
             int level = 0;
             list = findAllContainer(handler, nodes, level);
 
             // Close the file
-            handler.closeFile();
+            handler.close();
         } catch (NexusException ne) {
-            try {
-                list.clear();
-                mDataset.getHandler().closeFile();
-            } catch (NexusException e) {
-            }
+            list.clear();
+            handler.close();
             throw new NoResultException("Requested path doesn't exist!");
         }
         return list;
@@ -614,33 +608,35 @@ public final class NexusGroup implements IGroup, Cloneable {
     private List<IContainer> findAllContainer(NexusFileWriter handler, NexusNode[] nodes, int level) throws NexusException {
         List<IContainer> list = new ArrayList<IContainer>();
 
-        // List current node children
-        List<NexusNode> child = handler.listChildren();
-
-        NexusNode current = nodes[level];
-        IContainer item;
-        for (NexusNode node : child) {
-            if (node.matchesPartNode(current)) {
-                // Open the node
-                handler.openNode(node);
-
-                // Recursive call
-                if (level < nodes.length - 1) {
-                    list.addAll(findAllContainer(handler, nodes, level + 1));
-                }
-                // Create IContainer and add it to result list
-                else {
-                    if (handler.getCurrentPath().getCurrentNode().isGroup()) {
-                        item = new NexusGroup(mFactory, this, handler.getCurrentPath().clone(), mDataset);
-                    } else {
-                        item = new NexusDataItem(mFactory, handler.readDataInfo(), this, mDataset);
-                    }
-                    list.add(item);
-                }
-
-                // Close node
-                handler.closeData();
-            }
+        if( nodes.length > level ) {
+	        // List current node children
+	        List<NexusNode> child = handler.listChildren();
+	
+	        NexusNode current = nodes[level];
+	        IContainer item;
+	        for (NexusNode node : child) {
+	            if (node.matchesPartNode(current)) {
+	                // Open the node
+	                handler.openNode(node);
+	
+	                // Recursive call
+	                if (level < nodes.length - 1) {
+	                    list.addAll(findAllContainer(handler, nodes, level + 1));
+	                }
+	                // Create IContainer and add it to result list
+	                else {
+	                    if (handler.getCurrentPath().getCurrentNode().isGroup()) {
+	                        item = new NexusGroup(mFactory, this, handler.getCurrentPath().clone(), mDataset);
+	                    } else {
+	                        item = new NexusDataItem(mFactory, handler.readDataInfo(), this, mDataset);
+	                    }
+	                    list.add(item);
+	                }
+	
+	                // Close node
+	                handler.closeData();
+	            }
+	        }
         }
         return list;
     }
@@ -729,12 +725,13 @@ public final class NexusGroup implements IGroup, Cloneable {
         NexusNode[] nexusNodes;
         NexusFileWriter handler = mDataset.getHandler();
         try {
-            handler.openFile();
+            handler.open();
             nexusNodes = handler.listChildren(mN4TCurPath);
         } catch (NexusException ne) {
             try {
-                if (handler.isFileOpened())
+                if (handler.isFileOpened()) {
                     handler.closeAll();
+                }
             } catch (NexusException e) {
             }
             return null;
@@ -764,10 +761,7 @@ public final class NexusGroup implements IGroup, Cloneable {
                 }
             }
         }
-        try {
-            handler.closeFile();
-        } catch (NexusException e) {
-        }
+        handler.close();
 
         return (List<IContainer>) listItem;
     }
@@ -818,28 +812,25 @@ public final class NexusGroup implements IGroup, Cloneable {
         Hashtable<String, AttributeEntry> inList;
         NexusAttribute tmpAttr;
         String sAttrName;
-
+        NexusFileWriter handler = mDataset.getHandler();
         try {
-            mDataset.getHandler().openFile();
-            mDataset.getHandler().openPath(mN4TCurPath);
-            inList = mDataset.getHandler().listAttribute();
+            handler.open();
+            handler.openPath(mN4TCurPath);
+            inList = handler.listAttribute();
 
             Iterator<String> iter = inList.keySet().iterator();
             while (iter.hasNext()) {
                 sAttrName = iter.next();
                 try {
-                    tmpAttr = new NexusAttribute(mFactory, sAttrName, mDataset.getHandler().readAttr(sAttrName, null));
+                    tmpAttr = new NexusAttribute(mFactory, sAttrName, handler.readAttr(sAttrName, null));
                     mAttributes.add(tmpAttr);
                 } catch (NexusException e) {
                     Factory.getLogger().log( Level.WARNING, e.getMessage());
                 }
             }
-            mDataset.getHandler().closeFile();
+            handler.close();
         } catch (NexusException ne) {
-            try {
-                mDataset.getHandler().closeFile();
-            } catch (NexusException e) {
-            }
+        	handler.close();
         }
     }
     
