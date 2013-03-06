@@ -794,7 +794,7 @@ public final class NxsGroup implements IGroup, Cloneable {
     
     @Override
     public String toString() {
-        String res = getShortName() + "\n";
+        String res = "";
         
         for( IGroup group : mGroups ) {
             res +=  group.getLocation() + "\n";
