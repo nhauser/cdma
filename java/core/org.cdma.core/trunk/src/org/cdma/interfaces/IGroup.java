@@ -51,7 +51,13 @@ public interface IGroup extends IContainer {
     void addDataItem(IDataItem item);
 
     /**
+     * Find in the dataset all the values associated to their name according to 
+     * the given standard name.
      * 
+     * @param mdStandard name of the searched metadata
+     * @return a map containing metadata classification name associated to its value
+     * 
+     * @note those metadata aren't necessarily to be descendant of this group
      */
     Map<String, String> harvestMetadata(final String mdStandard) throws IOException;
 
