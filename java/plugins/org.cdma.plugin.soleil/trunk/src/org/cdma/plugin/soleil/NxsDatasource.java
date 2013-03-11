@@ -137,8 +137,10 @@ public final class NxsDatasource implements IDatasource {
 
                         NxsDataset dataset = NxsDataset.instanciate(target);
                         IGroup group = dataset.getRootGroup();
-                        for (IGroup node : group.getGroupList()) {
-                            result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+                        if( group != null ) {
+	                        for (IGroup node : group.getGroupList()) {
+	                            result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+	                        }
                         }
 
                     }
@@ -242,9 +244,9 @@ public final class NxsDatasource implements IDatasource {
 	}
 
     // ---------------------------------------------------------
-    // private methods
+    // Plug-in specific methods
     // ---------------------------------------------------------
-    private DetectedSource getSource(URI uri) {
+    public DetectedSource getSource(URI uri) {
         DetectedSource source = null;
         synchronized (mDetectedSources) {
             source = mDetectedSources.get(uri.toString());
