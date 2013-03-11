@@ -22,11 +22,13 @@ import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
+import org.cdma.plugin.soleil.NxsDatasource;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.utilities.configuration.ConfigDataset;
+import org.cdma.utilities.performance.Benchmarker;
 
 public class DetectedSource {
-	private static final long MIN_LAST_MODIF_TIME = 10000;
+	private static final long MIN_LAST_MODIF_TIME = 5000;
 	private static final int EXTENSION_LENGTH = 4;
     private static final String EXTENSION = ".nxs";
     private static final String CREATOR = "Synchrotron SOLEIL";
@@ -291,18 +293,23 @@ public class DetectedSource {
         File[] files = file.listFiles(filter);
         if (files != null && files.length > 0) {
             try {
-                IDataset dataset = new NexusDatasetImpl(files[0], false);
-                IGroup group = dataset.getRootGroup();
-    
-                IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
-                if( groups instanceof IGroup ) {
-                    for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
-                        if( item.getAttribute( "dataset_part" ) != null ) {
-                            result = true;
-                            break;
+            	NxsDatasource source = NxsDatasource.getInstance();
+            	DetectedSource detect = source.getSource(files[0].toURI());
+            	
+            	if( detect.isProducer() ) {
+            		IDataset dataset = new NexusDatasetImpl(files[0], false);
+                    IGroup group = dataset.getRootGroup();
+
+                    IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
+                    if( groups instanceof IGroup ) {
+                        for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
+                            if( item.getAttribute( "dataset_part" ) != null ) {
+                                result = true;
+                                break;
+                            }
                         }
                     }
-                }
+            	}
             } catch (NoResultException e) {
             } catch (FileAccessException e) {
             }
