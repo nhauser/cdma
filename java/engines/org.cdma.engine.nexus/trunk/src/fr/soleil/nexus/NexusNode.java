@@ -77,11 +77,18 @@ public class NexusNode implements Cloneable {
 
         return nNewNode;
     }
-
+    
     @Override
     public boolean equals(Object node) {
-        return (node instanceof NexusNode && m_sNodeName.equals(((NexusNode) node).m_sNodeName)
-                && m_sClassName.equals(((NexusNode) node).m_sClassName) && m_bIsGroup == ((NexusNode) node).m_bIsGroup);
+        if (node == this) {
+            return true;
+        }
+        if (node == null || node.getClass() != this.getClass()) {
+            return false;
+        }
+
+        NexusNode n = (NexusNode) node;
+        return (m_sNodeName.equals(n.m_sNodeName) && m_sClassName.equals(n.m_sClassName) && m_bIsGroup == n.m_bIsGroup);
     }
 
     @Override

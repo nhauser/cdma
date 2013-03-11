@@ -281,15 +281,16 @@ public final class Factory {
 
         // Get the list of data source detector
         List<IDatasource> sources = getDatasources();
-
         // For each check if it can read the given source
         for ( IDatasource source : sources ) {
             // Can read ?
-            if( source.isReadable(uri) ) {
+        	boolean canRead = source.isReadable(uri);
+            if( canRead ) {
                 reader.add( source.getFactoryName() );
 
                 // Does it have the ownership on the source
-                if( source.isProducer(uri) ) {
+                boolean isProd = source.isProducer(uri);
+                if( isProd ) {
                     result = getFactory( source.getFactoryName() );
                     break;
                 }
@@ -300,7 +301,6 @@ public final class Factory {
         if( result == null && reader.size() > 0 ) {
             result = getFactory( reader.get(0) );
         }
-
         return result;
     }
 

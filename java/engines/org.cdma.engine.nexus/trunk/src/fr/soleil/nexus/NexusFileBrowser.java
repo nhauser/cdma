@@ -12,11 +12,14 @@ package fr.soleil.nexus;
 // Tools lib
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map.Entry;
 
 import ncsa.hdf.hdflib.HDFNativeData;
 
+import org.cdma.utilities.performance.Buffer;
 import org.nexusformat.AttributeEntry;
 import org.nexusformat.NXlink;
 import org.nexusformat.NexusException;
@@ -31,11 +34,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     private boolean m_bFileChanged; // True if the file has been changed since last open
 
     // members concerning nodes' buffer
-    private ArrayList<NexusNode> m_tNodeTab; // TreeMap of all node belonging to last listed group's children (node name => node class)
-    
-    // members concerning nodes' attributes buffer
-    private String m_sAttrPath; // Path in string format of the last read attribute
-    private Hashtable<String, AttributeEntry> m_hAttrTab; // Hashtable of all attributes lastly read (attribute name => attribute value)
+    private Collection<NexusNode> m_tNodeTab; // TreeMap of all node belonging to last listed group's children (node name => node class)
     
     private boolean m_autoOpen;
 
@@ -61,7 +60,7 @@ public class NexusFileBrowser extends NexusFileInstance {
      * Reset all information stored into that buffer 
      */
     public void resetBuffer() {
-        getBuffer().resetBuffer();
+        getBufferNode().resetBuffer();
     }
     
     /**
@@ -70,14 +69,14 @@ public class NexusFileBrowser extends NexusFileInstance {
      * @param iSize new number of available slots in the node buffer
      */
     public void setBufferSize(int iSize) {
-        getBuffer().setBufferSize(iSize);
+        getBufferNode().setBufferSize(iSize);
     }
     
     /**
      * Get the current maximum size of the node buffer (in number of slots)
      */
     public int getBufferSize() {
-        return getBuffer().getBufferSize();
+        return getBufferNode().getBufferSize();
     }
 
     /**
@@ -445,22 +444,31 @@ public class NexusFileBrowser extends NexusFileInstance {
      *       For each key there is an AttributeEntry class as value.
      */
     @SuppressWarnings("unchecked")
-    public Hashtable<String, AttributeEntry> listAttribute() throws NexusException {
-        // Check we have to update the list
-        if (m_hAttrTab == null || !m_sAttrPath.equals(m_pVirtualPath.toString())) {
-            // Clear previous attributes
-            if (m_hAttrTab != null) {
-                m_hAttrTab.clear();
-            }
-
-            // Update the map
+    public Collection<Attribute> listAttribute() throws NexusException {
+    	// Check we have to update the list
+    	Collection<Attribute> attributes = getBufferAttribute().get(m_pVirtualPath);
+    	if( attributes == null ) {
+            // List attribute name and their properties
             openFile();
-            m_hAttrTab = getNexusFile().attrdir();
-            m_sAttrPath = m_pVirtualPath.toString();
+            Hashtable<String, AttributeEntry> attrTab = getNexusFile().attrdir();
             closeFile();
+            
+            // Create as many attribute
+            Attribute attribute;
+            attributes = getBufferAttribute().getEmptyCollection();
+            for( Entry<String, AttributeEntry> entry : attrTab.entrySet() ) {
+            	attribute = new Attribute(
+            						entry.getKey(), 
+            						entry.getValue().length,
+            						entry.getValue().type,
+            						null
+            						);
+            	attributes.add( attribute );
+            }
+            // Add them to the buffer
+            getBufferAttribute().push(m_pVirtualPath.clone(), attributes, attributes.size());
         }
-
-        return m_hAttrTab;
+        return attributes;
     }
 
     public static String getStringValue(Byte[] reference) {
@@ -484,18 +492,14 @@ public class NexusFileBrowser extends NexusFileInstance {
     protected NexusFileHandler getNexusFile() throws NexusException {
     	NexusFileHandler handler = super.getNexusFile();
     	
-    	if( handler != null && ! m_pRealPath.toString().equals(m_pVirtualPath.toString() ) ) {
-    		for( NexusNode node : m_pRealPath.getNodes() ) {
+    	if( handler != null ) {
+    		List<NexusNode> nodes = m_pRealPath.getShortestWayTo(m_pVirtualPath);
+    		for( NexusNode node : nodes ) {
     			if( node != null ) {
-    				physicallyCloseNode();
+    				physicallyOpenNode(node);
     			}
     		}
-    		
-    		for( NexusNode node : m_pVirtualPath.getNodes() ) {
-    			physicallyOpenNode(node);
-    		}
     	}
-    	
     	return handler;
     }
     
@@ -522,34 +526,50 @@ public class NexusFileBrowser extends NexusFileInstance {
     }
 
     protected Object getAttribute(String sAttrName) throws NexusException {
-        Object oAttrVal;
         int[] iAttrInf = { 0, 0 };
 
-        // Get a map of attribute
-        Hashtable<String, AttributeEntry> hAttrList = listAttribute();
-
-        if (!hAttrList.containsKey(sAttrName))
-            throw new NexusException("No corresponding attribute found: " + sAttrName + "!");
-
-        // Get infos on attribut
-        iAttrInf[0] = m_hAttrTab.get(sAttrName).length;
-        iAttrInf[1] = m_hAttrTab.get(sAttrName).type;
-
-        // Initialize an array of proper type with enough space to store
-        // attribute value
-        oAttrVal = HDFNativeData.defineDataObject(iAttrInf[1], iAttrInf[0] + (iAttrInf[1] == NexusFile.NX_CHAR ? 1 : 0));
-
-        // Get attribute value
-        openFile();
-        getNexusFile().getattr(sAttrName, oAttrVal, iAttrInf);
-        closeFile();
-        // Convert bytes array (representing chars) to string
-        if (iAttrInf[1] == NexusFile.NX_CHAR) {
-            oAttrVal = new String((byte[]) oAttrVal);
-            oAttrVal = ((String) oAttrVal).substring(0, ((String) oAttrVal).length() - 1).toCharArray();
+        // Get the list of attributes
+        Collection<Attribute> attributes = listAttribute();
+        
+        // Seek the given one
+        Attribute attribute = null;
+        for( Attribute tmp : attributes ) {
+        	if( tmp.name.equals(sAttrName) ) {
+        		attribute = tmp;
+        		break;
+        	}
         }
-
-        return oAttrVal;
+        
+        // If not found
+        if (attribute == null ) {
+            throw new NexusException("No corresponding attribute found: " + sAttrName + "!");
+        }
+        
+        // Get its value
+        Object result = attribute.value;
+        
+        // If not already loaded
+        if( result == null ) {
+            // Get infos on attribut
+	        iAttrInf[0] = attribute.length;
+	        iAttrInf[1] = attribute.type;
+	
+	        // Initialize an array of proper type with enough space to store
+	        // attribute value
+	        result = HDFNativeData.defineDataObject(iAttrInf[1], iAttrInf[0] + (iAttrInf[1] == NexusFile.NX_CHAR ? 1 : 0));
+	
+	        // Get attribute value
+	        openFile();
+	        getNexusFile().getattr(sAttrName, result, iAttrInf);
+	        closeFile();
+	        // Convert bytes array (representing chars) to string
+	        if (iAttrInf[1] == NexusFile.NX_CHAR) {
+	        	result = new String((byte[]) result);
+	        	result = ((String) result).substring(0, ((String) result).length() - 1).toCharArray();
+	        }
+	        attribute.value = result;
+        }
+        return result;
     }
 
     /**
@@ -560,17 +580,14 @@ public class NexusFileBrowser extends NexusFileInstance {
      * @throws NexusException
      */
     @SuppressWarnings("unchecked")
-    private ArrayList<NexusNode> listGroupChild() throws NexusException {
+    private Collection<NexusNode> listGroupChild() throws NexusException {
         if (!isListGroupChildUpToDate()) {
+        	m_tNodeTab = new ArrayList<NexusNode>();
         	try {
-            // Case we are in a DataItem
-            if (m_pVirtualPath.getGroupsName() == null) {
-                m_tNodeTab.clear();
-            }
-            // Case we are in a group
-            else {
+    		// Case we are in a group
+            if (m_pVirtualPath.getGroupsName() != null) {
                 Long time = System.currentTimeMillis();
-                m_tNodeTab.clear();
+                m_tNodeTab = getBufferNode().getEmptyCollection();
                 openFile();
                 Hashtable<String, String> map = getNexusFile().groupdir();
                 closeFile();
@@ -580,7 +597,7 @@ public class NexusFileBrowser extends NexusFileInstance {
                     m_tNodeTab.add( new NexusNode( entry.getKey(), entry.getValue(), bIsGroup ) );
                 }
                 time = System.currentTimeMillis() - time;
-                getBuffer().putNodesInPath(m_pVirtualPath, m_tNodeTab, time.intValue());
+                getBufferNode().push(m_pVirtualPath.clone(), m_tNodeTab, time.intValue());
             }
         	}catch( NexusException e ) {
         		try {
@@ -589,8 +606,9 @@ public class NexusFileBrowser extends NexusFileInstance {
         		throw e;
         	}
         } else {
-            m_tNodeTab = new ArrayList<NexusNode>(getBuffer().getNodeInPath(m_pVirtualPath));
+            m_tNodeTab = new ArrayList<NexusNode>(getBufferNode().get(m_pVirtualPath));
         }
+        
         return m_tNodeTab;
     }
 
@@ -599,23 +617,24 @@ public class NexusFileBrowser extends NexusFileInstance {
      * to be updated
      */
     private boolean isListGroupChildUpToDate() {
-        return getBuffer().getNodeInPath(m_pVirtualPath) != null;
+        return getBufferNode().get(m_pVirtualPath) != null;
     }
     
     protected void pushNodeInBuffer(String sCurName, String sCurClass) {
         boolean bIsGroup = !(sCurClass.equals("SDS") || sCurClass.equals("NXtechnical_data"));
         NexusNode node = new NexusNode( sCurName, sCurClass, bIsGroup );
         m_tNodeTab.add( node );
-        getBuffer().pushNodeInPath(m_pVirtualPath, node);
+        getBufferNode().push(m_pVirtualPath.clone(), node, 1);
     }
     
-    private BufferNode getBuffer() {
-        return BufferNodeManager.getBuffer(this);
+    private Buffer<PathNexus, NexusNode> getBufferNode() {
+        return NexusBufferManager.getBufferNode(this);
     }
     
-    
-    
-    
+    private Buffer<PathNexus, Attribute> getBufferAttribute() {
+        return NexusBufferManager.getBufferAttribute(this);
+    }
+
     // ------------------------------------------------------------------------
     // new methods
     // ------------------------------------------------------------------------
@@ -632,18 +651,24 @@ public class NexusFileBrowser extends NexusFileInstance {
     	if (node == null) {
             throw new NexusException("Invalid node to open: can't open a null node!");
         }
+    	
         String sNodeName = node.getNodeName();
         String sNodeClass = node.getClassName();
-
-        // Open the requested node
-        if ( node.isRealGroup() ) {
-        	super.getNexusFile().opengroup(sNodeName, sNodeClass);
-        }
-        // Open the DataItem
-        else {
-        	super.getNexusFile().opendata(sNodeName);
-        }
-        m_pRealPath.pushNode(node);
+    	
+    	if( sNodeName.equals(PathNexus.PARENT_NODE ) ) {
+    		physicallyCloseNode();
+    	}
+    	else {
+	        // Open the requested node
+	        if ( node.isRealGroup() ) {
+	        	super.getNexusFile().opengroup(sNodeName, sNodeClass);
+	        }
+	        // Open the DataItem
+	        else {
+	        	super.getNexusFile().opendata(sNodeName);
+	        }
+	        m_pRealPath.pushNode(node);
+    	}
 	}
     
     @Override
