@@ -12,11 +12,10 @@ package fr.soleil.nexus;
 // Tools lib
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Stack;
 
-import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
@@ -956,10 +955,10 @@ public class AcquisitionData {
                 // open DataItem
             	handler.openData(sNodeName);
             	
-            	Hashtable<String, AttributeEntry> attributes = handler.listAttribute();
+            	Collection<Attribute> attributes = handler.listAttribute();
             	
-            	for( String name : attributes.keySet() ) {
-            		if( "signal".equals(name) ) {
+            	for( Attribute attribute : attributes ) {
+            		if( "signal".equals(attribute.name) ) {
             			return;
             		}
             	}

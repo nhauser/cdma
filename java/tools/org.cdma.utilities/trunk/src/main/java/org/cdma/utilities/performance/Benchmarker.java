@@ -56,7 +56,7 @@ public class Benchmarker {
                 long run  = Runtime.getRuntime().freeMemory();
                 long free = memFree.get(label);
                 if( free != 0 ) {
-                	long cost = memCost.get(label) + (free - run);
+                	long cost = memCost.get(label) + (run - free);
                 	memCost.put(label, cost);
                 }
                 memFree.put(label, run);
@@ -88,7 +88,7 @@ public class Benchmarker {
                     long run  = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
                     if( free != 0 ) {
-                    	long cost = memCost.get(label) + (free - run);
+                    	long cost = memCost.get(label) + (run - free);
                     	memCost.put(label, cost);
                     }
                     memFree.put(label, run);
@@ -104,7 +104,7 @@ public class Benchmarker {
                     long run  = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
                     if( free != 0 ) {
-                    	long cost = memCost.get(label) + (free - run);
+                    	long cost = memCost.get(label) + (run - free);
                     	memCost.put(label, cost);
                     }
                     memFree.put(label, 0L);
@@ -171,7 +171,7 @@ public class Benchmarker {
 	        for( String label : timers.keySet() ) {
 	        	String lines[] = label.split("\n");
 	        	for( String line : lines ) {
-	        		if( line.length() > max ) {
+	        		if( line.length() + 2 > max ) {
 	        			max = line.length() + 2;
 	        		}
 	        	}
@@ -179,26 +179,16 @@ public class Benchmarker {
 	        
 	        for (String label : timers.keySet()) {
 	            result.append( print( label + ": ", max ) );
-	            result.append( print( roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s", 10) );
-	            result.append( print( " nb calls: " + nbcalls.get(label), 20 ) );
-	            result.append( print( " max thread: " +  nbthread.get(label), 20) );
-	            result.append( print( " canonical cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ..", 30 )  );
-	            result.append( print( " used mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
+	            result.append( print( " spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ", 20) );
+	            result.append( print( " nb calls: " + nbcalls.get(label), 20 ) + " " );
+	            result.append( print( " max thread: " +  nbthread.get(label), 20) + " " );
+	            result.append( print( " canonical cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
+	            result.append( print( " free mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
 	        }
     	}
-    	
         return result.toString();
     }
     
-    private static String roundNumber( Number num, int nbDigits ) {
-    	String format = "#.";
-    	char[] digits = new char[nbDigits];
-    	Arrays.fill(digits, '#');
-    	format += String.copyValueOf(digits);
-    	DecimalFormat df = new DecimalFormat(format);
-    	return df.format(num);
-    }
-
     /**
      * Reset all informations
      */
@@ -267,4 +257,14 @@ public class Benchmarker {
 	    }
 	    return sb.toString();
     }
+    
+    private static String roundNumber( Number num, int nbDigits ) {
+    	String format = "#.";
+    	char[] digits = new char[nbDigits];
+    	Arrays.fill(digits, '#');
+    	format += String.copyValueOf(digits);
+    	DecimalFormat df = new DecimalFormat(format);
+    	return df.format(num);
+    }
+
 }

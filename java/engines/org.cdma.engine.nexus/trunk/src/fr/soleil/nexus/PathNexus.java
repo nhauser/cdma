@@ -35,7 +35,7 @@ public class PathNexus implements Cloneable {
     protected PathNexus(NexusNode[] nnNodes, String sNodeName) {
         m_nnNode = new ArrayList<NexusNode>();
         setPath(nnNodes);
-        m_nnNode.add(new NexusNode(sNodeName, "", false));
+        m_nnNode.add(new NexusNode(sNodeName, ""));
     }
 
     protected PathNexus(String[] sGroups, String sDataName) {
@@ -356,6 +356,43 @@ public class PathNexus implements Cloneable {
         paPath.m_sFilePath = m_sFilePath;
         return paPath;
     }
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        boolean result = false;
+        PathNexus path = (PathNexus) obj;
+        if( path.m_nnNode.size() == m_nnNode.size() ) {
+        	if( path.m_sFilePath.equals(m_sFilePath) ) {
+        		result = true;
+        		for( int i = 0; i < m_nnNode.size(); i++ ) {
+        			if(! m_nnNode.get(i).equals(path.m_nnNode.get(i)) ) {
+        				result = false;
+        				break;
+        			}
+        		}
+        	}
+        }
+        return result;
+    }
+   
+    @Override
+    public int hashCode() {
+        int code = 0x9A74;
+        int mult = 0x20DE;
+        code = code * mult + getClass().hashCode();
+        for( NexusNode node : m_nnNode ) {
+        	code = code * mult + node.hashCode();
+        }
+        return code;
+    }
 
     static public class PathCollator implements Comparator<String> {
         @Override
@@ -389,6 +426,43 @@ public class PathNexus implements Cloneable {
     	return result.toString();
     }
 
+    public List<NexusNode> getShortestWayTo(PathNexus destination) {
+    	List<NexusNode> result = new ArrayList<NexusNode>();
+    	
+    	if( ! destination.equals( this ) ) {
+    		int depth = 0;
+    		int depthSource = m_nnNode.size();
+    		int depthTarget = destination.m_nnNode.size();
+    		
+    		// find deepest common ancestor
+    		boolean depthOk = depth < depthSource && depth < depthTarget;
+    		NexusNode source; 
+    		NexusNode target;
+    		while( depthOk ) {
+    			source = m_nnNode.get(depth);
+    			target = destination.m_nnNode.get(depth);
+    			
+    			if( ! source.equals(target) ) {
+    				break;
+    			}
+    			depth++;
+				depthOk = depth < depthSource && depth < depthTarget;
+    		}
+    		
+    		// close source nodes until to reach deepest common ancestor
+    		for( int i = depthSource - 1; i >= depth; i-- ) {
+    			result.add( new NexusNode( PARENT_NODE, "" ) );
+    		}
+    		
+    		// open nodes from deepest common ancestor to last target one
+    		for( int i = depth; i < depthTarget; i++ ) {
+    			result.add( destination.m_nnNode.get(i) );
+    		}
+    	}
+    	
+    	return result;
+    }
+    
     
     // ---------------------------------------------------------
     // ---------------------------------------------------------

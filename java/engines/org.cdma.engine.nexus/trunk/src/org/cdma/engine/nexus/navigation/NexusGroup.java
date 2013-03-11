@@ -12,7 +12,7 @@ package org.cdma.engine.nexus.navigation;
 // Standard import
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +32,9 @@ import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 import org.cdma.utils.Utilities.ModelType;
-import org.nexusformat.AttributeEntry;
 import org.nexusformat.NexusException;
 
+import fr.soleil.nexus.Attribute;
 import fr.soleil.nexus.DataItem;
 import fr.soleil.nexus.NexusFileWriter;
 import fr.soleil.nexus.NexusNode;
@@ -809,20 +809,16 @@ public final class NexusGroup implements IGroup, Cloneable {
     }
     
     private void readAttributes() {
-        Hashtable<String, AttributeEntry> inList;
         NexusAttribute tmpAttr;
-        String sAttrName;
         NexusFileWriter handler = mDataset.getHandler();
         try {
             handler.open();
             handler.openPath(mN4TCurPath);
-            inList = handler.listAttribute();
-
-            Iterator<String> iter = inList.keySet().iterator();
-            while (iter.hasNext()) {
-                sAttrName = iter.next();
+            Collection<Attribute> attributes = handler.listAttribute();
+            
+            for( Attribute attribute : attributes) {
                 try {
-                    tmpAttr = new NexusAttribute(mFactory, sAttrName, handler.readAttr(sAttrName, null));
+                    tmpAttr = new NexusAttribute(mFactory, attribute.name, handler.readAttr(attribute.name, null));
                     mAttributes.add(tmpAttr);
                 } catch (NexusException e) {
                     Factory.getLogger().log( Level.WARNING, e.getMessage());

@@ -12,11 +12,10 @@ package fr.soleil.nexus;
 // Tools lib
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.Stack;
 
-import org.nexusformat.AttributeEntry;
+import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
@@ -152,12 +151,10 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Initialize DataItem's attributes
         getDataItemAttribute(dsData);
-
         return dsData;
     }
 
     private Object readNodeValue(int[] iDataInf, int[] iDimSize, int iRank) throws NexusException {
-
         // We want a iNbDim dimension array of data, so dimensions are the
         // iNbDim last ones of the opened DataItem
         int[] length = { 1 };
@@ -204,7 +201,6 @@ public class NexusFileReader extends NexusFileBrowser {
         if (iDataInf[1] == NexusFile.NX_BOOLEAN) {
             oOutput = convertArray(new DataItem(oOutput));
         }
-
         return oOutput;
     }
 
@@ -483,15 +479,13 @@ public class NexusFileReader extends NexusFileBrowser {
      */
     protected void getDataItemAttribute(DataItem dsData) throws NexusException {
         // Get a map of DataItem's attributs
-        Hashtable<String, AttributeEntry> hAttrList = listAttribute();
-        Object oAttrVal;
-        String sAttrName;
-
+        Collection<Attribute> attributes = listAttribute();
+        
         // Storing all encountered attributes
-        for (Iterator<String> iter = hAttrList.keySet().iterator(); iter.hasNext();) {
-            sAttrName = (String) iter.next();
-            oAttrVal = getAttributeValue(sAttrName);
-            dsData.setAttribute(sAttrName, oAttrVal);
+        Object value;
+        for (Attribute attribute : attributes ) {
+        	value = getAttributeValue(attribute.name);
+            dsData.setAttribute(attribute.name, value);
         }
     }
 
@@ -514,12 +508,13 @@ public class NexusFileReader extends NexusFileBrowser {
         getNexusFile().getinfo(iNodSize, iDataInf);
         closeFile();
         // Checking type compatibility
-        if (dsData.getType() != iDataInf[1])
+        if (dsData.getType() != iDataInf[1]) {
             throw new NexusException("Datas and target node do not have compatible type!");
-
+        }
         // Checking rank compatibility
-        if (iDimSize.length > iDataInf[0])
+        if (iDimSize.length > iDataInf[0]) {
             throw new NexusException("Datas and target node do not have compatible rank!");
+        }
 
         // Checking dimensions sizes compatibility
         {
@@ -533,6 +528,7 @@ public class NexusFileReader extends NexusFileBrowser {
                             "Datas and target node do not have compatible dimension sizes!");
             }
         }
+        
     }
 
     /**

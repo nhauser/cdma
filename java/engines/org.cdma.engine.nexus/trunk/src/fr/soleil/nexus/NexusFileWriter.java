@@ -12,11 +12,10 @@ package fr.soleil.nexus;
 // Nexus lib
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.nexusformat.AttributeEntry;
 import org.nexusformat.NXlink;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
@@ -422,10 +421,9 @@ public class NexusFileWriter extends NexusFileReader {
      */
     protected void copyAllAttr(NexusFileReader nfrSource) throws NexusException {
         String sAttrName;
-        Hashtable<String, AttributeEntry> listAttr = nfrSource.listAttribute();
-        for (Iterator<String> iter = listAttr.keySet().iterator(); iter.hasNext();) {
-            sAttrName = (String) iter.next();
-            copyAttr(sAttrName, nfrSource);
+        Collection<Attribute> attributes = nfrSource.listAttribute();
+        for (Attribute attribute : attributes) {
+            copyAttr(attribute.name, nfrSource);
         }
     }
 
