@@ -65,7 +65,7 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     // / Constructors
     public NexusGroup(String factoryName, IGroup parent, PathNexus from, NexusDataset dataset) {
-        mFactory = factoryName;
+    	mFactory = factoryName;
         mDictionary = null;
         mN4TCurPath = from;
         mDataset = dataset;
@@ -74,7 +74,6 @@ public final class NexusGroup implements IGroup, Cloneable {
         mDimensions = new ArrayList<IDimension>();
         readAttributes = false;
         mLastLoadChild = 0L;
-        setParent(parent);
     }
 
     public NexusGroup(String factoryName, PathNexus from, NexusDataset dataset) {
