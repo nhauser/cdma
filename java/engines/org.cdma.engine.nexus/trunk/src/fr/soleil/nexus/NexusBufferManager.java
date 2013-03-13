@@ -48,7 +48,7 @@ public class NexusBufferManager {
     	synchronized (mManager.mNodes) {
     		result = mManager.mNodes.get(file.getFilePath());
     		if( result == null ) {
-    			result = new Buffer<PathNexus, NexusNode>(100);
+    			result = new Buffer<PathNexus, NexusNode>(100, new NexusNode.NodeCollator() );
     			mManager.mNodes.put(file.getFilePath(), result);
     		}
     	}

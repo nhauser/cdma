@@ -164,7 +164,46 @@ public class NexusNode implements Cloneable {
         return (classMatch && nameMatch);
     }
     
+    static public class NodeCollator implements Comparator<NexusNode> {
+
+		@Override
+		public int compare(NexusNode arg0, NexusNode arg1) {
+			int result;
+			// if arg0 is null
+			if( arg0 == null ) {
+				// equals if arg1 is null else negative
+				result = arg1 == null ? 0 : -1;
+			}
+			// Check they are equals
+			else if( arg0.equals(arg1) ) {
+				result = 0;
+			}
+			// Lesser or greater test
+			else {
+				// If one is group and other not: group is greater
+				if( arg0.isGroup() != arg1.isGroup() ) {
+					result = arg0.isGroup() ? 1 : -1;
+				}
+				else {
+					String class0 = arg0.getClassName();
+					String class1 = arg1.getClassName();
+					if( class0.equals( class1 ) ) {
+						String name0 = arg0.getNodeName();
+						String name1 = arg1.getNodeName();
+						result = new NameCollator().compare( name0, name1 );
+					}
+					else {
+						result = Collator.getInstance().compare( class0, class1 );
+					}
+				}
+			}
+			return result;
+		}
+    	
+    }
+    
     static public class NameCollator implements Comparator<String> {
+    	
         @Override
         public int compare(final String arg0, final String arg1) {
             int iCmp;

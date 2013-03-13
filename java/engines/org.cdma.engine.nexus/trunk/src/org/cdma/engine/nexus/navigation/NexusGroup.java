@@ -43,6 +43,8 @@ import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.PathNexus;
 
 public final class NexusGroup implements IGroup, Cloneable {
+	public long MINIMUM_REFRESH_TIME = 1000;
+	
     // / Members
     private String           mFactory;       // Name of the factory plugin that instantiate
 
@@ -50,7 +52,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     private NexusDataset     mDataset;       // File handler
     private IGroup           mParent = null; // Parent group
     private List<IContainer> mChild;         // Children nodes (group,
-                                             // dataitem...)
+                                              // dataitem...)
 
     // Internal members
     private PathNexus        mN4TCurPath;    // Current path
@@ -59,6 +61,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     private List<IAttribute> mAttributes;    // Attributes belonging to this
     private List<IDimension> mDimensions;    // Dimensions direct child of this
     private boolean readAttributes;          // have attributes been read
+    private long mLastLoadChild;
 
     // / Constructors
     public NexusGroup(String factoryName, IGroup parent, PathNexus from, NexusDataset dataset) {
@@ -70,6 +73,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mAttributes = new ArrayList<IAttribute>();
         mDimensions = new ArrayList<IDimension>();
         readAttributes = false;
+        mLastLoadChild = 0L;
         setParent(parent);
     }
 
@@ -82,6 +86,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mAttributes = new ArrayList<IAttribute>();
         mDimensions = new ArrayList<IDimension>();
         readAttributes = false;
+        mLastLoadChild = 0L;
         if (from != null && dataset != null) {
             createFamilyTree();
         }
@@ -96,6 +101,7 @@ public final class NexusGroup implements IGroup, Cloneable {
         mAttributes = new ArrayList<IAttribute>(group.mAttributes);
         mDimensions = new ArrayList<IDimension>(group.mDimensions);
         readAttributes = group.readAttributes;
+        mLastLoadChild = group.mLastLoadChild;
         try {
             if( group.mDictionary != null ) {
                 mDictionary = (IDictionary) group.mDictionary.clone();
@@ -305,20 +311,15 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public List<IDataItem> getDataItemList() {
-        List<IContainer> listItem = getGroupNodes(false);
-        List<IDataItem> dataItemList = new ArrayList<IDataItem>();
-        if (listItem != null) {
-            for (IContainer variable : listItem) {
-                dataItemList.add((IDataItem) variable);
-            }
-    
-            for (IContainer variable : mChild) {
-                if (variable.getModelType().equals(ModelType.DataItem)) {
-                    dataItemList.add((IDataItem) variable);
-                }
+    	initChildren();
+        
+        List<IDataItem> result = new ArrayList<IDataItem>();
+        for (IContainer variable : mChild) {
+            if (variable.getModelType().equals(ModelType.DataItem)) {
+            	result.add((IDataItem) variable);
             }
         }
-        return dataItemList;
+        return result;
     }
 
     @Override
@@ -367,17 +368,15 @@ public final class NexusGroup implements IGroup, Cloneable {
 
     @Override
     public List<IGroup> getGroupList() {
-        List<IContainer> listItem = getGroupNodes(true);
-        List<IGroup> groupList = new ArrayList<IGroup>();
-        if (listItem != null) {
-            for (IContainer variable : listItem) {
-                if (!mChild.contains(variable)) {
-                    mChild.add((IGroup) variable);
-                }
-                groupList.add((IGroup) variable);
+        initChildren();
+        
+        List<IGroup> result = new ArrayList<IGroup>();
+        for (IContainer variable : mChild) {
+            if (variable.getModelType().equals(ModelType.Group)) {
+            	result.add((IGroup) variable);
             }
         }
-        return groupList;
+        return result;
     }
 
     @Override
@@ -720,50 +719,53 @@ public final class NexusGroup implements IGroup, Cloneable {
     // ---------------------------------------------------------
     // / private methods
     // ---------------------------------------------------------
-    private List<IContainer> getGroupNodes(boolean bGroup) {
-        List<IContainer> listItem = new ArrayList<IContainer>();
-        NexusNode[] nexusNodes;
-        NexusFileWriter handler = mDataset.getHandler();
-        try {
-            handler.open();
-            nexusNodes = handler.listChildren(mN4TCurPath);
-        } catch (NexusException ne) {
-            try {
-                if (handler.isFileOpened()) {
-                    handler.closeAll();
-                }
-            } catch (NexusException e) {
-            }
-            return null;
-        }
-
-        IContainer item;
-        DataItem dataInfo;
-        PathNexus path;
-        for (int i = 0; i < nexusNodes.length; i++) {
-            if (nexusNodes[i].isGroup() == bGroup) {
-                try {
-                    path = mN4TCurPath.clone();
-                    path.pushNode(nexusNodes[i]);
-                    if (bGroup) {
-                        item = new NexusGroup(mFactory, PathGroup.Convert(path), mDataset);
-                    } else {
-                        if (nexusNodes[i].getClassName().equals("NXtechnical_data")) {
-                            dataInfo = handler.readData(PathData.Convert(path));
-                        } else {
-                            handler.openPath(path);
-                            dataInfo = handler.readDataInfo();
-                        }
-                        item = new NexusDataItem(mFactory, dataInfo, this, mDataset);
-                    }
-                    listItem.add(item);
-                } catch (NexusException e) {
-                }
-            }
-        }
-        handler.close();
-
-        return (List<IContainer>) listItem;
+    private void initChildren() {
+    	if( System.currentTimeMillis() - mLastLoadChild > MINIMUM_REFRESH_TIME ) {
+    		long lastMod = mDataset.getLastModificationDate();
+    		if(  lastMod > mLastLoadChild ) {
+	    		mLastLoadChild = mDataset.getLastModificationDate();
+		        NexusNode[] nexusNodes;
+		        NexusFileWriter handler = mDataset.getHandler();
+		        try {
+		            handler.open();
+		            nexusNodes = handler.listChildren(mN4TCurPath);
+		        } catch (NexusException ne) {
+		            try {
+		                if (handler.isFileOpened()) {
+		                    handler.closeAll();
+		                }
+		            } catch (NexusException e) {
+		            }
+		            return;
+		        }
+		
+		        IContainer item;
+		        DataItem dataInfo;
+		        PathNexus path;
+		        for (int i = 0; i < nexusNodes.length; i++) {
+		                try {
+		                    path = mN4TCurPath.clone();
+		                    path.pushNode(nexusNodes[i]);
+		                    if (nexusNodes[i].isGroup()) {
+		                        item = new NexusGroup(mFactory, PathGroup.Convert(path), mDataset);
+		                    } else {
+		                        if (nexusNodes[i].getClassName().equals("NXtechnical_data")) {
+		                            dataInfo = handler.readData(PathData.Convert(path));
+		                        } else {
+		                            handler.openPath(path);
+		                            dataInfo = handler.readDataInfo();
+		                        }
+		                        item = new NexusDataItem(mFactory, dataInfo, this, mDataset);
+		                    }
+		                    if( ! mChild.contains(item) ) {
+		                    	mChild.add(item);
+		                    }
+		                } catch (NexusException e) {
+		                }
+		        }
+		        handler.close();
+    		}
+    	}
     }
 
     private void createFamilyTree() {
