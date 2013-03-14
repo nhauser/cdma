@@ -66,7 +66,15 @@ public class NexusNode implements Cloneable {
     }
 
     public boolean isRealGroup() {
-        return (m_sClassName != null && !m_sClassName.isEmpty() && !m_sClassName.equals("SDS") );
+    	boolean result;
+        if( m_sClassName != null && !m_sClassName.isEmpty() ) {
+        	result = !m_sClassName.equals("SDS");
+        }
+        else {
+        	result = m_bIsGroup;
+        }
+        
+        return result;
     }
 
     protected NexusNode clone() {
