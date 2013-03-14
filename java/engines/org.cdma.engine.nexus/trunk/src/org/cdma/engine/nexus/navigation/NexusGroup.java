@@ -722,7 +722,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     		long lastMod = mDataset.getLastModificationDate();
     		if(  lastMod > mLastLoadChild ) {
 	    		mLastLoadChild = mDataset.getLastModificationDate();
-		        NexusNode[] nexusNodes;
+		        NexusNode[] nexusNodes = new NexusNode[]{};
 		        NexusFileWriter handler = mDataset.getHandler();
 		        try {
 		            handler.open();
@@ -734,6 +734,7 @@ public final class NexusGroup implements IGroup, Cloneable {
 		                }
 		            } catch (NexusException e) {
 		            }
+		            handler.close();
 		            return;
 		        }
 		
