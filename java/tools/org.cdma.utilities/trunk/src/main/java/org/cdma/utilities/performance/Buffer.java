@@ -12,6 +12,7 @@ package org.cdma.utilities.performance;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.TreeSet;
 
 public class Buffer<U, V> {
 
-	private Collator mCollator;
+	private Comparator<V> mCollator;
 	
     // Maximum size of the buffer (number of available slots)
     private int mBufferSize;
@@ -51,11 +52,11 @@ public class Buffer<U, V> {
      * @note if 'size' is negative then auto free mechanism is disabled
      * @note if 'collator' is null then sorting is disabled
      */
-    public Buffer(int size, Collator collator) {
+    public Buffer(int size, Comparator<V> comparator) {
     	mKeyUsageWeigth = new HashMap<U, Integer>();
     	mKeyValues      = new HashMap<U, Collection<V> >();
         mBufferSize     = size;
-        mCollator       = collator; 
+        mCollator       = comparator; 
     }
     
     public Buffer(int size) {
@@ -159,14 +160,14 @@ public class Buffer<U, V> {
      * Returns the currently used collator to sort buffer.
      * @return
      */
-    public Collator getCollator() {
+    public Comparator<V> getCollator() {
     	return mCollator;
     }
     
     /**
      * Set the collator to be used when storing object.
      */
-    public void setCollator(Collator collator) {
+    public void setCollator(Comparator<V> collator) {
     	mCollator = collator;
     }
 
