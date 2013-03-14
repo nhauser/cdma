@@ -24,6 +24,8 @@ import org.cdma.Factory;
 
 public class Benchmarker {
     private static Map<String, Long> timers   = new TreeMap<String, Long>();
+    private static Map<String, Long> maxTimer = new TreeMap<String, Long>();
+    private static Map<String, Long> minTimer = new TreeMap<String, Long>();
     private static Map<String, Long> counters = new TreeMap<String, Long>();
     private static Map<String, Long> starters = new TreeMap<String, Long>();
     private static Map<String, Long> nbcalls  = new TreeMap<String, Long>();
@@ -64,6 +66,8 @@ public class Benchmarker {
                 counters.put(label, 1L);
                 starters.put(label, currentTime);
                 timers.put(label, 0L);
+                maxTimer.put(label, 0L);
+                minTimer.put(label, System.currentTimeMillis());
                 nbcalls.put(label, 1L);
                 nbthread.put(label, 1L);
                 memFree.put(label, Runtime.getRuntime().freeMemory());
@@ -100,6 +104,15 @@ public class Benchmarker {
                     timers.put(label, time);
                     starters.put(label, 0L);
                     counters.put(label, counter);
+
+                    Long max = maxTimer.get(label);
+                    if( currentTime - starter > max ) {
+                    	maxTimer.put(label, currentTime - starter );
+                    }
+                    Long min = minTimer.get(label);
+                    if( currentTime - starter < min ) {
+                    	minTimer.put(label, currentTime - starter );
+                    }
                     
                     long run  = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
@@ -150,6 +163,8 @@ public class Benchmarker {
                 nbthread.put(label, 0L);
                 memCost.put(label, 0L);
                 memFree.put(label, 0L);
+                maxTimer.put(label, 0L);
+                minTimer.put(label, 0L);
             }
         }
     }
@@ -182,7 +197,9 @@ public class Benchmarker {
 	            result.append( print( " spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ", 20) );
 	            result.append( print( " nb calls: " + nbcalls.get(label), 20 ) + " " );
 	            result.append( print( " max thread: " +  nbthread.get(label), 20) + " " );
-	            result.append( print( " canonical cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
+	            result.append( print( " maximum cost: " + maxTimer.get(label) + " ms ", 28 )  );
+	            result.append( print( " average cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
+	            result.append( print( " minimum cost: " + minTimer.get(label) + " ms ", 28 )  );
 	            result.append( print( " free mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
 	        }
     	}
@@ -210,6 +227,8 @@ public class Benchmarker {
                 nbthread = new TreeMap<String, Long>();
                 memFree  = new TreeMap<String, Long>();
                 memCost  = new TreeMap<String, Long>();
+                maxTimer = new TreeMap<String, Long>();
+                minTimer = new TreeMap<String, Long>();
             }
             else {
             	StringBuffer log = new StringBuffer();
