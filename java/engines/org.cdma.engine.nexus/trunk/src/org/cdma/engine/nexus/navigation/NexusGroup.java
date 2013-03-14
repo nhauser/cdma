@@ -51,8 +51,7 @@ public final class NexusGroup implements IGroup, Cloneable {
     // API CDMA tree need
     private NexusDataset     mDataset;       // File handler
     private IGroup           mParent = null; // Parent group
-    private List<IContainer> mChild;         // Children nodes (group,
-                                              // dataitem...)
+    private List<IContainer> mChild;         // Children nodes (group, dataitem...)
 
     // Internal members
     private PathNexus        mN4TCurPath;    // Current path
