@@ -193,14 +193,14 @@ public class NexusNode implements Cloneable {
 					result = arg0.isGroup() ? 1 : -1;
 				}
 				else {
-					String class0 = arg0.getClassName();
-					String class1 = arg1.getClassName();
-					if( class0.equals( class1 ) ) {
-						String name0 = arg0.getNodeName();
-						String name1 = arg1.getNodeName();
+					String name0 = arg0.getNodeName();
+					String name1 = arg1.getNodeName();
+					if( ! name0.equals( name1 ) ) {
 						result = new NameCollator().compare( name0, name1 );
 					}
 					else {
+						String class0 = arg0.getClassName();
+						String class1 = arg1.getClassName();
 						result = Collator.getInstance().compare( class0, class1 );
 					}
 				}

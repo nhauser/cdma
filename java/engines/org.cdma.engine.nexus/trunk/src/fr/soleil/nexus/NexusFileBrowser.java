@@ -455,7 +455,7 @@ public class NexusFileBrowser extends NexusFileInstance {
             
             // Create as many attribute
             Attribute attribute;
-            attributes = getBufferAttribute().getEmptyCollection();
+            attributes = new ArrayList<Attribute>();
             for( Entry<String, AttributeEntry> entry : attrTab.entrySet() ) {
             	attribute = new Attribute(
             						entry.getKey(), 
@@ -467,6 +467,7 @@ public class NexusFileBrowser extends NexusFileInstance {
             }
             // Add them to the buffer
             getBufferAttribute().push(m_pVirtualPath.clone(), attributes, attributes.size());
+            attributes = getBufferAttribute().get(m_pVirtualPath);
         }
         return attributes;
     }
@@ -587,7 +588,7 @@ public class NexusFileBrowser extends NexusFileInstance {
     		// Case we are in a group
             if (m_pVirtualPath.getGroupsName() != null) {
                 Long time = System.currentTimeMillis();
-                m_tNodeTab = getBufferNode().getEmptyCollection();
+                m_tNodeTab = new ArrayList<NexusNode>();
                 openFile();
                 Hashtable<String, String> map = getNexusFile().groupdir();
                 closeFile();
@@ -598,6 +599,7 @@ public class NexusFileBrowser extends NexusFileInstance {
                 }
                 time = System.currentTimeMillis() - time;
                 getBufferNode().push(m_pVirtualPath.clone(), m_tNodeTab, time.intValue());
+                m_tNodeTab = getBufferNode().get(m_pVirtualPath);
             }
         	}catch( NexusException e ) {
         		try {
