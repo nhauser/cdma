@@ -133,7 +133,6 @@ public class NexusFileReader extends NexusFileBrowser {
 
         openFile();
         getNexusFile().getinfo(iNodeSize, iDataInf);
-        closeFile();
         
         // Initialize dimension's sizes
         iDimSize = new int[iDataInf[0]];
@@ -148,6 +147,11 @@ public class NexusFileReader extends NexusFileBrowser {
         dsData.setNodeName(getCurrentPath().getDataItemName());
         dsData.setPath(getCurrentPath().clone());
         dsData.isSingleRawArray(m_bResultAsSingleRaw);
+        
+        if( dsData.getType() == NexusFile.NX_CHAR ) {
+        	dsData.setData( readNodeValue(iDataInf, dsData.getSize(), iDimSize.length ) );
+        }
+        closeFile();
 
         // Initialize DataItem's attributes
         getDataItemAttribute(dsData);

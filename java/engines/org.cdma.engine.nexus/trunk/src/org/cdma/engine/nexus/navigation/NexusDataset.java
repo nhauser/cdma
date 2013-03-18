@@ -13,7 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
@@ -44,6 +46,7 @@ public abstract class NexusDataset implements IDataset, Cloneable {
 		} catch (Exception exception) {
 			// Nothing to be done API hasn't been found
 		} catch( Error error ) {
+			Factory.getLogger().log(Level.SEVERE, error.getMessage() );
 			// Nothing to be done but API isn't valid
 		}
 		return result;
