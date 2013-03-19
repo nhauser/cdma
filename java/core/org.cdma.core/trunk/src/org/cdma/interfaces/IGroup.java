@@ -270,7 +270,8 @@ public interface IGroup extends IContainer {
      * can be a IGroups, IDataItems.
      * 
      * @param path full path of objects in String type
-     * @return a list of CDMA IContainer 
+     * @return a list of CDMA IContainer
+     * @note only the last path's node will be considered in the resulting list.
      */
     List<IContainer> findAllContainerByPath(String path) throws NoResultException;
 
