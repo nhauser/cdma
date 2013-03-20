@@ -21,8 +21,8 @@ import org.nexusformat.NexusFile;
 
 public class DataItem implements Cloneable {
     public class Data<T> {
-        private T m_tValue;
-        private Class<T> m_cType;
+        private final T m_tValue;
+        private final Class<T> m_cType;
 
         @SuppressWarnings("unchecked")
         protected Data(T tValue) {
@@ -55,7 +55,7 @@ public class DataItem implements Cloneable {
     private SoftReference<Object> mPrevSlab;
 
     private HashMap<String, Data<?>> mAttribs; // Map containing all node's attributes having name
-                                               // as key associated to value
+    // as key associated to value
 
     // Constructors
     public DataItem() {
@@ -75,6 +75,7 @@ public class DataItem implements Cloneable {
 
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public DataItem clone() throws CloneNotSupportedException {
         DataItem result = new DataItem();
@@ -220,11 +221,11 @@ public class DataItem implements Cloneable {
         }
 
         if( oValue != null ) {
-        	Data<T> tValue = new Data<T>(oValue);
-        	mAttribs.put(sAttrName, tValue);
+            Data<T> tValue = new Data<T>(oValue);
+            mAttribs.put(sAttrName, tValue);
         }
         else {
-        	mAttribs.remove(sAttrName);
+            mAttribs.remove(sAttrName);
         }
     }
 
@@ -318,7 +319,7 @@ public class DataItem implements Cloneable {
         String sAttrName;
         if (mAttribs != null) {
             for (Iterator<String> iter = mAttribs.keySet().iterator(); iter.hasNext();) {
-                sAttrName = (String) iter.next();
+                sAttrName = iter.next();
                 str.append("\n     - " + sAttrName + ": " + getAttribute(sAttrName));
             }
         }
@@ -465,7 +466,7 @@ public class DataItem implements Cloneable {
         NexusFileReader nfrFile = new NexusFileReader(mPath.getFilePath());
         nfrFile.isSingleRawResult(mSingleRaw);
         try {
-        	nfrFile.open();
+            nfrFile.open();
             nfrFile.openFile(NexusFile.NXACC_READ);
             if (mStart == null) {
                 mData = new SoftReference<Object>(nfrFile.readData(mPath).getRawData());
@@ -497,11 +498,11 @@ public class DataItem implements Cloneable {
 
         if (result) {
             for (int i = 0; i < mDimData.length; i++) {
-                if (mPrevStart[i] > pos[i]) {
+                if (mPrevStart[i] != pos[i]) {
                     result = false;
                     break;
                 }
-                if ((pos[i] + shape[i]) > mPrevShape[i] + mPrevStart[i]) {
+                if (shape[i] != mPrevShape[i]) {
                     result = false;
                     break;
                 }
