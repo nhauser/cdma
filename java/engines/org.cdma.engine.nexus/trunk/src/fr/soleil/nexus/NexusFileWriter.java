@@ -65,7 +65,7 @@ public class NexusFileWriter extends NexusFileReader {
         NexusNode nCurStep = null; // Currently opened node name in the NexusFile
         int iCurDepth = 0; // Current depth in the path
         int iPathDepth = paPath.getDepth();
-
+        boolean isGroup;
         // Return to root node
         closeAll();
 
@@ -76,21 +76,22 @@ public class NexusFileWriter extends NexusFileReader {
             nnNode = paPath.getNode(iCurDepth);
             sCurName = nnNode.getNodeName();
             sCurClass = nnNode.getClassName();
-
+            isGroup = nnNode.isGroup();
             // Create appropriate group and open it
             nCurStep = getCurrentPath().getCurrentNode();
-            if (nnNode.isGroup() || "NXtechnical_data".equals(nnNode.getClassName())) {
+            if ( nnNode.isRealGroup() ) {
                 try {
-                    openGroup(sCurName, sCurClass);
+                    openNode( new NexusNode(sCurName, sCurClass, isGroup) );
                 }
                 catch (NexusException ne) {
                     // Ensure we are still in the expected group
-                    if (nCurStep != null && !nCurStep.equals(getCurrentPath().getCurrentNode()))
+                    if (nCurStep != getCurrentPath().getCurrentNode() || (nCurStep != null && !nCurStep.equals(getCurrentPath().getCurrentNode())))
                         closeGroup();
 
                     // Create the requested group
+                    openFile(NexusFile.NXACC_RDWR);
                     getNexusFile().makegroup(sCurName, sCurClass);
-
+                    closeFile();
                     // Force the buffer node list to be updated
                     pushNodeInBuffer(sCurName, sCurClass);
 
@@ -122,8 +123,11 @@ public class NexusFileWriter extends NexusFileReader {
     protected boolean createDataItem(DataItem dsData, PathNexus pnPath, boolean bKeepOpen)
             throws NexusException {
         // Checking path contains a DataItem name
-        String sDataItemName = pnPath.getDataItemName();
-        if (sDataItemName == null)
+    	NexusNode item   = pnPath.getCurrentNode();
+        String itemName  = item.getNodeName();
+        String itemClass = item.getClassName();
+        
+        if (itemName == null)
             throw new NexusException("Path is invalid: no DataItem name specified to store data!");
 
         // Open path (or create it if needed)
@@ -131,13 +135,16 @@ public class NexusFileWriter extends NexusFileReader {
 
         // Open DataItem (or create it if needed)
         boolean bCheckData;
+        if( "NXtechnical_data".equals(itemClass) ) {
+        	itemName = "data";
+        }
         try {
-            openData(sDataItemName);
+            openNode( new NexusNode(itemName, "SDS", false) );
             bCheckData = true;
         }
         catch (NexusException ne) {
-            makeData(sDataItemName, dsData);
-            openData(sDataItemName);
+            makeData(itemName, dsData);
+            openData(itemName);
             bCheckData = false;
         }
 
@@ -420,7 +427,6 @@ public class NexusFileWriter extends NexusFileReader {
      * @param nfrSource handler on the opened source file
      */
     protected void copyAllAttr(NexusFileReader nfrSource) throws NexusException {
-        String sAttrName;
         Collection<Attribute> attributes = nfrSource.listAttribute();
         for (Attribute attribute : attributes) {
             copyAttr(attribute.name, nfrSource);

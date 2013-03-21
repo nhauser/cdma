@@ -112,7 +112,6 @@ public abstract class NexusDataset implements IDataset, Cloneable {
             for (IDataItem item : items) {
                 data = ((NexusDataItem) item).getN4TDataItem();
                 mN4TWriter.writeData(data, data.getPath());
-
             }
         } catch (NexusException e) {
             throw new WriterException(e.getMessage(), e);

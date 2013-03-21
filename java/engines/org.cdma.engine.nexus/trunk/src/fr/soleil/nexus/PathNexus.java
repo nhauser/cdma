@@ -35,7 +35,7 @@ public class PathNexus implements Cloneable {
     protected PathNexus(NexusNode[] nnNodes, String sNodeName) {
         m_nnNode = new ArrayList<NexusNode>();
         setPath(nnNodes);
-        m_nnNode.add(new NexusNode(sNodeName, ""));
+        m_nnNode.add(new NexusNode(sNodeName, "SDS"));
     }
 
     protected PathNexus(String[] sGroups, String sDataName) {
@@ -493,6 +493,7 @@ public class PathNexus implements Cloneable {
      * @note for each node to be processed that is, deeper than the sGroupsClass
      *       array the last class name will be set
      */
+   /*
     protected void applyClassPattern(String[] sGroupsClass) {
         for (int i = 0; i < m_nnNode.size(); i++) {
             if (m_nnNode.get(i).isGroup() && "".equals(m_nnNode.get(i).getClassName())) {
@@ -503,7 +504,7 @@ public class PathNexus implements Cloneable {
             }
         }
     }
-
+*/
     /**
      * determinePath Return the shortest path from file fFrom to reach file
      * fTarget
