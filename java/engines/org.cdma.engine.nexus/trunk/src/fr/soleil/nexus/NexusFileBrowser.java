@@ -164,9 +164,14 @@ public class NexusFileBrowser extends NexusFileInstance {
      * 
      * @param name the name of the group to open.
      * @param nodeClass the classname of the group to open.
+     * @param immediate try to open it now
      * @note this method is case insensitive for the node's name
      */
     protected void openGroup(String nodeName, String nodeClass) throws NexusException {
+    	openGroup(nodeName, nodeClass, false);
+    }
+    
+    protected void openGroup(String nodeName, String nodeClass, boolean immediate) throws NexusException {
     	String name = nodeName;
     	if( name == null ) {
     		name = "";
@@ -252,6 +257,18 @@ public class NexusFileBrowser extends NexusFileInstance {
 	        }
 	        // Create a new fully defined corresponding group
 	        NexusNode node = new NexusNode(sNodeName, sNodeClass);
+	        
+	        
+	        boolean found = false;
+            for( NexusNode tmp : listChildren() ) {
+                if( tmp.matchesPartNode(node) ) {
+                    found = true;
+                    break;
+                }
+            }
+            if( ! found ) {
+                throw new NexusException("Failed to open node: " + nnNode.toString());
+            }
         	m_pVirtualPath.pushNode( node );
         }
     }

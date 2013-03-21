@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Stack;
 
-import org.cdma.utilities.performance.Benchmarker;
 import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 

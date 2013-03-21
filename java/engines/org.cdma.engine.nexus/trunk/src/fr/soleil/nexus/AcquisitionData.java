@@ -537,9 +537,6 @@ public class AcquisitionData {
         try {
             // Read data from DataItem
             oOutput = m_nfwFile.readData(pdPath);
-
-            // Prepare data for reading
-            oOutput = prepareReadDataItem(oOutput);
         } catch (NexusException ne) {
             // Close file
             m_nfwFile.closeFile();
@@ -621,6 +618,7 @@ public class AcquisitionData {
      */
     public void writeData(DataItem dsData, PathData pdPath) throws NexusException {
         // Open the file if exists else create it
+    	m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         try {
@@ -628,7 +626,7 @@ public class AcquisitionData {
             dsData = prepareWriteDataItem(dsData);
 
             // Put data
-            pdPath.applyClassPattern(FREE_PATTERN);
+            //pdPath.applyClassPattern(FREE_PATTERN);
             m_nfwFile.writeData(dsData, pdPath);
         } catch (NexusException ne) {
             // Close file
@@ -640,6 +638,7 @@ public class AcquisitionData {
 
         // Close file
         m_nfwFile.closeFile();
+        m_nfwFile.close();
     }
 
     /**
@@ -677,6 +676,7 @@ public class AcquisitionData {
      */
     public void writeData(DataItem... datas) throws NexusException {
         // Open the file
+    	m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // For each DataItem in the given array
@@ -693,7 +693,6 @@ public class AcquisitionData {
                 currentDataItem = prepareWriteDataItem(currentDataItem);
 
                 // Put data
-                currentDataItem.getPath().applyClassPattern(FREE_PATTERN);
                 m_nfwFile.writeData(currentDataItem, currentDataItem.getPath());
                 fireGroupSubDataWrited(i, datas.length);
             } catch (NexusException ne) {
@@ -707,6 +706,7 @@ public class AcquisitionData {
 
         // Close the file
         m_nfwFile.closeFile();
+        m_nfwFile.close();
     }
 
     /**
@@ -718,6 +718,7 @@ public class AcquisitionData {
      */
     public <type> void writeAttr(String sAttrName, type tData, PathNexus pnPath) throws NexusException {
         // Open the file if exists else create it
+    	m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // Write the attribute
@@ -725,6 +726,7 @@ public class AcquisitionData {
 
         // Close the file
         m_nfwFile.closeFile();
+        m_nfwFile.close();
     }
 
     /**
@@ -745,6 +747,7 @@ public class AcquisitionData {
             nfrSource.openPath(pnSrcPath);
 
             // Open the file if exists else create it
+            m_nfwFile.open();
             m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
             try {
@@ -760,6 +763,7 @@ public class AcquisitionData {
         } catch (NexusException e) {
             // Close the file
             m_nfwFile.closeFile();
+            m_nfwFile.close();
             nfrSource.closeFile();
 
             // Propagate the exception
@@ -768,6 +772,7 @@ public class AcquisitionData {
 
         // Close the file
         m_nfwFile.closeFile();
+        m_nfwFile.close();
         nfrSource.closeFile();
     }
 
@@ -782,6 +787,7 @@ public class AcquisitionData {
      */
     public void writeLink(PathNexus pgTargPath, PathNexus pgDestPath) throws NexusException {
         // Open the file if exists else create it
+    	m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // Write the link
@@ -789,6 +795,7 @@ public class AcquisitionData {
 
         // Close the file
         m_nfwFile.closeFile();
+        m_nfwFile.close();
     }
 
     // ---------------------------------------------------------
@@ -816,11 +823,6 @@ public class AcquisitionData {
     };
 
     // ---------------------------------------------------------
-    // / Private definitions
-    // ---------------------------------------------------------
-    private final static String[] FREE_PATTERN = new String[] { "NXentry", "NXdata" };
-
-    // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
     /**
@@ -837,38 +839,9 @@ public class AcquisitionData {
      */
     private DataItem prepareWriteDataItem(DataItem dsData) throws NexusException {
         // Checking if data is null
-        if (null == dsData || null == dsData.getData())
+        if (null == dsData || null == dsData.getData()) {
             dsData = new DataItem(NexusFileWriter.NULL_VALUE);
-
-        return dsData;
-    }
-
-    /**
-     * prepareReadDataItem Clean the end of a NX_CHAR DataItem's value, by
-     * deleting undesired chars. Indeed END_STRING_CHAR have been added till the
-     * string reach the MAX_LEN_CHAR size. If the type isn't NX_CHAR is returned
-     * as it was.
-     * 
-     * @param dsData a DataItem to be clean
-     * @return a cleaned DataItem ready to be used after.
-     */
-    private DataItem prepareReadDataItem(DataItem dsData) throws NexusException {
-    	/*
-        if (dsData.getType() == NexusFile.NX_CHAR) {
-            String sTmpStr = (String) dsData.getData();
-            int iSize = sTmpStr.length();
-
-            // Checking if data is null
-            if (NexusFileWriter.NULL_VALUE.equals(sTmpStr)) {
-                sTmpStr = null;
-                iSize = 0;
-            }
-
-            // Update data and its dimension
-            dsData.setData(new SoftReference<Object>(sTmpStr));
-            dsData.getSize()[dsData.getSize().length - 1] = iSize;
-            dsData.getSlabSize()[dsData.getSize().length - 1] = iSize;
-        }*/
+        }
         return dsData;
     }
 
@@ -985,10 +958,6 @@ public class AcquisitionData {
      * @throws NexusException
      * @note the first item has index number 0
      */
-    private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass) throws NexusException {
-        openSubItem(handler, iIndex, sNodeClass, ".*");
-    }
-
     private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass, String sPatternName) throws NexusException {
         // Index of the currently examined node in list
         int iCurIndex = 0;

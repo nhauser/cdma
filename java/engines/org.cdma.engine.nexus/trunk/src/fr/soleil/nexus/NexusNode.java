@@ -32,7 +32,7 @@ public class NexusNode implements Cloneable {
     public NexusNode(String sNodeName, String sClassName) {
         m_sNodeName = sNodeName;
         m_sClassName = sClassName;
-        m_bIsGroup = (!"SDS".equals(sClassName) || "".equals(sNodeName) ) && !"NXtechnical_data".equals(sClassName);
+        m_bIsGroup = ((!"SDS".equals(sClassName) && !"".equals(sClassName)) || "".equals(sNodeName) ) && !"NXtechnical_data".equals(sClassName);
     }
 
     public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) {
