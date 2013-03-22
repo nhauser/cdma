@@ -717,7 +717,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public String getLocation() {
-        return mParent.getLocation();
+    	String result = null;
+    	if( mDataItems != null && mDataItems.length > 0 ) {
+    		result = mDataItems[0].getLocation();
+    	}
+    	return result;
     }
 
     @Override
