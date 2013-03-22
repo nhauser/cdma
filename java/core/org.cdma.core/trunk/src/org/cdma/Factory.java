@@ -18,10 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cdma.exception.FileAccessException;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDatasource;
+import org.cdma.internal.dictionary.readers.DictionaryReader;
 import org.cdma.utils.FactoryManager;
 import org.cdma.utils.IFactoryManager;
 
@@ -135,6 +138,41 @@ public final class Factory {
         return CDM_VIEW;
     }
 
+    /**
+     * Returns the list of all available views for the dictionary mechanism.
+     * 
+     * @return views' names
+     */
+    public static List<String> getAvailableViews() {
+    	List<String> result = new ArrayList<String>();
+    	
+    	// Get the fictionary folder
+        String path = getDictionariesFolder();
+        if( path != null ) {
+        	File folder = new File( path + File.separator + PATH_FOLDER_VIEWS );
+        	if( folder.exists() && folder.isDirectory() ) {
+        		// List folder's files
+        		File[] files = folder.listFiles();
+        		String name, fileName;
+        		for( File file : files ) {
+        			fileName = file.getPath();
+        			// Check files name
+        			if( fileName.endsWith("_" + FILE_VIEW_SUFFIX + ".xml" ) ) {
+        				try {
+        					// Get the view name
+							name = DictionaryReader.getDictionaryName(fileName);
+							result.add( name );
+						} catch (FileAccessException e) {
+							Factory.getLogger().log(Level.INFO, "Unable to get the view name for: " + fileName, e);
+						}
+        			}
+        		}
+        	}
+        }
+
+    	return result;
+    }
+    
     /**
      * According to the currently defined experiment, this method will return the path
      * to reach the declarative dictionary. It means the file where

@@ -66,6 +66,14 @@ public class DictionaryReader {
 		readSynonyms();
 	}
 	
+	public static String getDictionaryName(String file) throws FileAccessException {
+		Element root = saxBuildFile(file);
+		return root.getAttributeValue("name");
+	}
+	
+	// ---------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------
 	protected void readConceptsFile() throws FileAccessException {
 		// Check the need of reading concepts file
 		if( mDataManager.getConcept( mViewSrc ) == null ) {
@@ -269,7 +277,7 @@ public class DictionaryReader {
      * @return Sax element that is the root of the XML file
      * @throws FileAccessException
      */
-    private Element saxBuildFile(String filePath) throws FileAccessException {
+    static private Element saxBuildFile(String filePath) throws FileAccessException {
     	Element result;
     	// Check the file path isn't empty
         if( filePath == null || filePath.isEmpty() ) {

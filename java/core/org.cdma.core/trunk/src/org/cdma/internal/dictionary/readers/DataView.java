@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class DataView implements Cloneable {
 	private List<String>          mKeyItem;    
-//	private List<String>          mKeyView; 
-//	private Map<String, String>   mLink;
 	private Map<String, DataView> mViews;
 	private List<String>          mAllKeys;
 	private String                mName;
@@ -20,12 +18,10 @@ public class DataView implements Cloneable {
 	}
 	
 	public DataView() {
-//		mLink    = new HashMap<String, String>();
 		mViews   = new HashMap<String, DataView>();
 		mKeyItem = new ArrayList<String>();
 		mAllKeys = new ArrayList<String>();
 		mName    = "";
-//		mKeyView = new ArrayList<String>();
 	}
 	
 	public void addKey( String key ) {
@@ -36,7 +32,6 @@ public class DataView implements Cloneable {
 	}
 	
 	public void addView( String key, DataView view ) {
-//		mKeyView.add(key);
 		if( ! mAllKeys.contains( key ) ) {
 			mViews.put( key, view );
 			mAllKeys.add( key );
