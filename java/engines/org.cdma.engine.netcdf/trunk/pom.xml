@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>netcdf</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.5</version>
   <name>CDMA Engine NetCDF</name>
   <description>CDMA Engine: NetCDF</description>
   <developers>
@@ -54,29 +54,29 @@
     <sourceDirectory>src/main/java</sourceDirectory>
   </build>
   <dependencies>
-	<dependency>
-		<groupId>org.cdma</groupId>
-		<artifactId>Core</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>org.hdfgroup</groupId>
-		<artifactId>hdf-java</artifactId>
-		<version>2.6.1</version>
-	</dependency>
-	<dependency>
-		<groupId>edu.ucar</groupId>
-		<artifactId>netcdf</artifactId>
-		<version>4.2.20</version>
-	</dependency>
-	<dependency>
-		<groupId>org.jdom</groupId>
-		<artifactId>jdom</artifactId>
-		<version>1.1</version>
-	</dependency>
-	<dependency>
-		<groupId>commons-httpclient</groupId>
-		<artifactId>commons-httpclient</artifactId>
-		<version>3.1</version>
-	</dependency>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>Core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.hdfgroup</groupId>
+      <artifactId>hdf-java</artifactId>
+      <version>2.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>netcdf</artifactId>
+      <version>4.2.20</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+    </dependency>
   </dependencies>
 </project>
