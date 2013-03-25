@@ -1,19 +1,12 @@
 package org.cdma.plugin.ansto;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
-import org.cdma.Factory;
-import org.cdma.engine.netcdf.navigation.Constants;
 import org.cdma.interfaces.IDatasource;
-import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.ansto.internal.DetectedSource;
 import org.cdma.plugin.ansto.internal.DetectedSource.NetCDFFilter;
 
@@ -97,27 +90,6 @@ public final class AnstoDataSource implements IDatasource {
                     }
                 }
             }
-            else {
-                if (source.isReadable() && source.isBrowsable()) {
-                    try {
-                        // Extract the path internal of file from the given target
-                        String uri = target.toString();
-                        String sep = target.getFragment() == null ? "#" : "";
-
-                        // List all sub-groups if the it is browsable
-                        AnstoDataset dataset = AnstoDataset.instantiate(target);
-                        IGroup group = dataset.getRootGroup();
-                        for (IGroup node : group.getGroupList()) {
-                            result.add(URI.create(uri + sep
-                                    + URLEncoder.encode(Constants.PATH_SEPARATOR + node.getShortName(), "UTF-8")));
-                        }
-
-                    }
-                    catch (UnsupportedEncodingException e) {
-                        Factory.getLogger().log( Level.WARNING, e.getMessage());
-                    }
-                }
-            }
         }
         return result;
     }
@@ -129,35 +101,11 @@ public final class AnstoDataSource implements IDatasource {
         if ( isBrowsable(target) || isReadable(target) ) {
 
             File current = new File(target.getPath());
-            String fragment = target.getFragment();
             String filePath = "";
+            current = current.getParentFile();
+            filePath = current.toURI().toString();
             
-            if( fragment == null ) {
-                current = current.getParentFile();
-                filePath = current.toURI().toString();
-                fragment = "";
-            }
-            else {
-                filePath = current.toURI().toString();
-                
-                try {
-                    fragment = URLDecoder.decode(fragment, "UTF-8");
-                    String[] nodes = fragment.split( Constants.PATH_SEPARATOR );
-                    fragment = "";
-                    for ( int i = 0; i < nodes.length - 1; i++ ) {
-                        fragment += Constants.PATH_SEPARATOR + nodes[i];
-                    }
-
-                    if( ! fragment.isEmpty() ) {
-                        fragment = "#" + URLEncoder.encode(fragment, "UTF-8");
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    Factory.getLogger().log( Level.WARNING, e.getMessage());
-                }
-                
-            }
-            
-            result = URI.create(filePath + fragment);
+            result = URI.create(filePath);
         }
         
         return result;
@@ -166,28 +114,17 @@ public final class AnstoDataSource implements IDatasource {
     @Override
     public String[] getURIParts(URI target) {
         List<String> parts = new ArrayList<String>();
-        if ( isBrowsable(target) || isReadable(target) ) {
-            String path = target.getPath();
-            String fragment = target.getFragment();
-            for( String part : path.split( Constants.PATH_SEPARATOR ) ) {
-                if( part != null && ! part.isEmpty() ) {
-                    parts.add(part);
-                }
-            }
-
-            if (fragment != null) {
-                try {
-                    fragment = URLDecoder.decode(fragment, "UTF-8");
-                    String[] nodes = fragment.split( Constants.PATH_SEPARATOR );
-                    for (String node : nodes ) {
-                        parts.add( node );
-                    }
-                }
-                catch (UnsupportedEncodingException e) {
-                }
-            }
+        if( target != null ) {
+	        String path = target.getPath();
+	        File file = new File(target);
+	        if( path != null && file.exists() ) {
+		        for( String part : path.split( File.separator ) ) {
+		            if( part != null && ! part.isEmpty() ) {
+		                parts.add(part);
+		            }
+		        }
+	        }
         }
-
         return parts.toArray(new String[] {});
     }
 
@@ -233,7 +170,9 @@ public final class AnstoDataSource implements IDatasource {
                 }
 
                 source = new DetectedSource(uri);
-                mDetectedSources.put(uri.toString(), source);
+                if( source.isStable() ) {
+                	mDetectedSources.put(uri.toString(), source);
+                }
             }
         }
         return source;

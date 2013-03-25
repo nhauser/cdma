@@ -12,6 +12,7 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.ansto.AnstoFactory;
 
 public class DetectedSource {
+	private static final long MIN_LAST_MODIF_TIME = 5000;
 	private static final String EXTENSION[] = new String[] { "nxs", "hdf", "h4", "hdf4", "he4", "h5", "hdf5", "he5" };
 
     public static final class NetCDFFilter implements FileFilter {
@@ -99,6 +100,24 @@ public class DetectedSource {
         return mIsFolder;
     }
     
+    /**
+     * Return true if the source hasn't been modified since a while and is considered as stable.
+     */
+	public boolean isStable() {
+		boolean result = true;
+		String path = mURI.getPath();
+		if( path != null ) {
+			File file = new File( path );
+	        if( file.exists() && ! file.isDirectory() ) {
+	        	long lastModTime;
+	        	long current = System.currentTimeMillis();
+	        	lastModTime = current - file.lastModified();
+	        	result = MIN_LAST_MODIF_TIME < lastModTime;
+	        }
+		}
+		return result;
+	}
+    
     // ---------------------------------------------------------
     // / private methods
     // ---------------------------------------------------------
@@ -125,7 +144,7 @@ public class DetectedSource {
     
     private void fullInit() {
     	synchronized( this ) {
-    		if( ! mInitialized ) {
+    		if( ! mInitialized && isStable() ) {
 	    		// Check if we are producer of the source
 		        mIsProducer = initProducer(mURI);
 		
@@ -141,7 +160,6 @@ public class DetectedSource {
     }
 
     private boolean initReadable(URI uri) {
-
         boolean result = false;
         File file = new File(uri.getPath());
         String name = file.getName();
