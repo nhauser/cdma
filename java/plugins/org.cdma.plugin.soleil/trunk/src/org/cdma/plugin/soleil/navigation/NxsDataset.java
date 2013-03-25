@@ -51,6 +51,14 @@ public final class NxsDataset implements IDataset {
     private IGroup             mRootPhysical; // Physical root of the document
     private NxsLogicalGroup    mRootLogical;  // Logical root of the document
 
+    @Override
+    public int hashCode() {
+        int code = 0xDA7A;
+        int mult = 0x60131;
+        code = code * mult + new File(mPath.getPath()).hashCode();
+        return code;
+    }
+    
     // SoftReference of dataset associated to their URI
     private static Map<String, SoftReference<NxsDataset>> datasets;
 
@@ -282,6 +290,8 @@ public final class NxsDataset implements IDataset {
 
         return last;
     }
+    
+    
 
     // ---------------------------------------------------------
     // / Private methods
