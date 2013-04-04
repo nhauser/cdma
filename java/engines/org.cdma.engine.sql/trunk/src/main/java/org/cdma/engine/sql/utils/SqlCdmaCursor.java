@@ -7,9 +7,10 @@
 // Contributors :
 // See AUTHORS file
 //******************************************************************************
-package org.cdma.engine.sql.navigation;
+package org.cdma.engine.sql.utils;
 
 import java.io.IOException;
+import java.lang.Thread.State;
 import java.lang.ref.SoftReference;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -23,7 +24,11 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.internal.SqlConnector;
+import org.cdma.engine.sql.navigation.SqlDataItem;
+import org.cdma.engine.sql.navigation.SqlDataset;
+import org.cdma.engine.sql.navigation.SqlGroup;
 import org.cdma.exception.InvalidArrayTypeException;
+import org.cdma.utilities.performance.PostTreatmentManager;
 
 public class SqlCdmaCursor {
 	private String mQuery;
@@ -86,35 +91,35 @@ public class SqlCdmaCursor {
 				// prepare columns names
 				String[]      names = new String[count];
 				SqlDataItem[] items = new SqlDataItem[count];
+				SqlArray[] arrays   = new SqlArray[count];
 				for( int col = 1; col <= count; col++ ) {
 					names[col - 1] = meta.getColumnName(col);
 
 					// Prepare the internal array
-					SqlArray array = SqlArray.instantiate(mDataset.getFactoryName(), set, col, mNbRows);
-					array.appendData( set );
+					arrays[col - 1] = SqlArray.instantiate(mDataset.getFactoryName(), set, col, mNbRows);
+					arrays[col - 1].appendData( set );
 					
 					// Create the data item
 					try {
 						items[col - 1] = new SqlDataItem(mDataset.getFactoryName(), (SqlGroup) mDataset.getRootGroup(), names[ col -1 ]);
 						result.add( items[col - 1] );
-						items[col - 1].setCachedData(array, false);
+						items[col - 1].setCachedData(arrays[col - 1], false);
 					} catch (InvalidArrayTypeException e) {
 						Factory.getLogger().log( Level.SEVERE, "Unable to initialize data for the data item", e);
 					}
 				}
 
-				// Agregate results from the resultset
-				SqlArray array; 
-				while( next() ) {
-					for( int col = 1; col <= count; col++ ) {
-						array = (SqlArray) items[col - 1].getData();
-						array.appendData( set );
+				// Fill the array asynchronously
+				Thread thread = PostTreatmentManager.launchParallelTreatment(new SqlArrayLoader( arrays, this));
+				while( thread.getState() != State.RUNNABLE && thread.getState() != State.TERMINATED ) {
+					try {
+						wait(100);
+					} catch (InterruptedException e) {
+						Factory.getLogger().log(Level.SEVERE, "Aie aie aie", e);
 					}
 				}
 			}
 			catch( SQLException e ) {
-				Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
-			} catch (IOException e) {
 				Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
 			}
 		}

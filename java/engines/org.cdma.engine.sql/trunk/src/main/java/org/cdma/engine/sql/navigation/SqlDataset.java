@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.sql.internal.SqlConnector;
+import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -27,11 +28,13 @@ import org.cdma.interfaces.IGroup;
 public final class SqlDataset implements IDataset {
 	private SqlConnector mConnector;
 	private String mFactory;
+	private boolean mNumericalDate;
 
 	
 	public SqlDataset( String factoryName, String host, String user, String password ) {
 		mFactory = factoryName;
 		mConnector = new SqlConnector(host, user, password);
+		mNumericalDate = false;
 	}
 	
 	@Override
@@ -181,5 +184,19 @@ public final class SqlDataset implements IDataset {
 	public SqlCdmaCursor executeQuery( String query, Object[] params ) {
 		return new SqlCdmaCursor(this, query, params);
 	}
+
+	/**
+	 * Should date be stored as long or should they be stored as string.
+	 * @param numerical
+	 */
+	public void setNumericalDate(boolean numerical) {
+		mNumericalDate = numerical;
+	}
 	
+	/**
+	 * Return true if date are stored as long, else they are stored as string.
+	 */
+	public boolean getNumericalDate() {
+		return mNumericalDate;
+	}
 }

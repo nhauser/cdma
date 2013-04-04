@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.engine.sql.utils;
 
 import java.text.ParseException;
@@ -10,16 +19,6 @@ import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 
 public class DateFormat {
 
-/*
-    public static final String FR_DATE_PATTERN  = "dd-MM-yyyy HH:mm:ss.SSS";
-    public static final String US_DATE_PATTERN  = "MM-dd-yyyy HH:mm:ss.SSS";
-    public static final String ISO_DATE_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";
-    
-    public static final java.util.GregorianCalendar CALENDAR = new java.util.GregorianCalendar();
-    public static final java.text.SimpleDateFormat FR_FORMAT = new java.text.SimpleDateFormat(FR_DATE_PATTERN);
-    public static final java.text.SimpleDateFormat US_FORMAT = new java.text.SimpleDateFormat(US_DATE_PATTERN);
-    public static final java.text.SimpleDateFormat ISO_FORMAT = new java.text.SimpleDateFormat(ISO_DATE_PATTERN);
-*/
 	static private final ConcurrentHashMap<String, SimpleDateFormat> DATE_FORMATS;
 	
     /**
@@ -76,9 +75,6 @@ public class DateFormat {
 		return result;
 	}
 	
-	// ------------------------------------------------------------------------
-	// protected methods
-	// ------------------------------------------------------------------------
 	/**
      * Cast a string format date (dd-MM-yyyy HH:mm:ss or yyyy-MM-dd HH:mm:ss)
      * into long (number of milliseconds since January 1, 1970)
@@ -86,7 +82,7 @@ public class DateFormat {
      * @param date
      * @return
      */
-	static protected synchronized long stringToMilli(String date, String pattern) throws ParseException {
+	static public synchronized long stringToMilli(String date, String pattern) throws ParseException {
 		long result = 0;
 		if( pattern != null ) {
 			SimpleDateFormat format = getDateFormater(pattern);
@@ -97,6 +93,9 @@ public class DateFormat {
 		return result;
     }
 	
+	// ------------------------------------------------------------------------
+	// protected methods
+	// ------------------------------------------------------------------------
 	static protected String formatDate(final long timeInMillis, final SimpleDateFormat format) {
 		String date = null;
 		if (format != null) {
