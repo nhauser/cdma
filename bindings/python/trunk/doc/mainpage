@@ -1,38 +1,47 @@
 /*! 
-\mainpage CDMA Python manual
+\mainpage CDMA Python API developer documentation 
 
-This Python module provides bindings to the CDMA C++ library. 
-The documentation consists into two parts: 
- - \ref developer_doc
- - and \ref user_doc
+This part of the CDMA Python documentation is inteded for binding developers
+only. So if you do not want to contribute C++ code to the Python binding you are
+entirely wrong here. 
 
-The former one is only interesting for you if you plan to contribute code to
-this Python binding. If you only want to use the binding from Python read the
-user documentation.
+This page tries to collate some of the design ideas behind the C++ code creating
+the Python bindings. For a detailed documentation of the different classes see
+    \li \ref utility_classes    
+    \li \ref wrapper_classes
 
-\section installation Installation
 
-\subsection installation_sources Installing from sources
-The module follows the standard Python installation procedure using distutils. 
-To build the code run 
-\verbatim
-$> python setup.py build 
-\endverbatim
-in the root of the modules source directory. Installation starts with 
-\verbatim
-$> python setup.py install
-\endverbatim
-which installs the module in the default location of your Python installation.
-In most cases this would require you to have administrative permissions on the
-system you want to install the module. 
-If you want the module installed in your local home directory (without admin
-permissions required) you can use 
-\verbatim
-$> python setup.py install --home=<PATH TO YOUR LOCAL DIRECTORY> 
-\endverbatim
-which will install the module to a user defined location. 
-In the later case you may need to add the installation path to the PYTHONPATH
-environment variable to make the module available to your Python interpreter. 
+\section devdoc_interace Common interface for data objects
+
+While going through the original CDMA C++ API documentation realized that some
+of the data holding types, namely \c Array, \c Attribute, and \c DataItem, all
+serve a similar if not equal purpose. However, all these classes showed a
+different interface which pretty bad because it increases the amount of work I
+would have to do to create the wrappers. Consequently I packed all these objects
+in wrapper classes that expose a common interface as shown here.
+\code
+class DataInterface
+{
+    public:
+    size rank() const;
+    size size() const;
+    TypeID type() const;
+    std::vector<size_t> shape() const;
+
+    //read scalar data 
+    template<typename T> T get() const;
+    //read data from position
+    template<typename T> T get(const std::vecotr<size_t> &pos) const; 
+    //read region 
+    ArrayWrapper get(const std::vector<size_t> offset,
+                     const std::vector<size_t> shape) const;
+      
+
+};
+\endcode
+Do not expect to find somewhere a class named DataInterface - this is just a
+name for the interface I use here.
+
 */
 
 
