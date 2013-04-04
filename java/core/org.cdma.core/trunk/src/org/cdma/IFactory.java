@@ -278,6 +278,14 @@ public interface IFactory {
      * @return String representation of the CDMA core's version
      */
     String getCDMAVersion();
+
+    /**
+     * This method is called by the main API when the plug-in is loaded during the plug-in 
+     * discovering process.<br/>
+     * The method should check that all requirement are present to make the plug-in fully 
+     * functional. If it's not the case it should use the {@link FactoryManager.unregisterFactory} method.
+     */
+	void processPostRecording();
 }
 
 /// @endcond pluginAPIclientAPI

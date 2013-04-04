@@ -32,6 +32,7 @@ public class OsgiFactoryResolver implements IFactoryResolver {
             for (ServiceReference ref : refs) {
                 IFactory factory = (IFactory) context.getService(ref);
                 manager.registerFactory(factory.getName(), factory);
+                factory.processPostRecording();
             }
         }
     }

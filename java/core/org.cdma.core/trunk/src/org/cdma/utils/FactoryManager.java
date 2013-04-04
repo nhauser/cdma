@@ -31,6 +31,7 @@ public class FactoryManager implements IFactoryManager {
 
     private Map<String, IFactory> factoryRegistry;
     private String version;
+    private boolean initialized;
 
     /**
      * 
@@ -39,10 +40,16 @@ public class FactoryManager implements IFactoryManager {
     public FactoryManager(String cdmaVersion) {
         factoryRegistry = new TreeMap<String, IFactory>();
         version = cdmaVersion;
-        discoverFactories();
+        initialized = false;
     }
 
     public void registerFactory(String name, IFactory factory) {
+    	synchronized (FactoryManager.class) {
+    		if( ! initialized ) {
+    			initialized = true;
+    			discoverFactories();
+    		}
+		}
     	int[] cdmaVersion = parseVersion( factory.getCDMAVersion() );
     	
     	// Check if a version is mentioned for registry
@@ -62,12 +69,26 @@ public class FactoryManager implements IFactoryManager {
     }
     
     public void unregisterFactory(String name) {
+    	synchronized (FactoryManager.class) {
+    		if( ! initialized ) {
+    			initialized = true;
+    			discoverFactories();
+    		}
+		}
+    	
     	if( factoryRegistry.containsKey(name) ) {
     		factoryRegistry.remove(name);
     	}
     }
 
     public IFactory getFactory() {
+    	synchronized (FactoryManager.class) {
+    		if( ! initialized ) {
+    			initialized = true;
+    			discoverFactories();
+    		}
+		}
+    	
         IFactory factory = null;
         String defaultFactoryName = System.getProperty(PROP_DEFAULT_FACTORY);
         if (defaultFactoryName != null) {
@@ -82,10 +103,24 @@ public class FactoryManager implements IFactoryManager {
     }
 
     public IFactory getFactory(String name) {
+    	synchronized (FactoryManager.class) {
+    		if( ! initialized ) {
+    			initialized = true;
+    			discoverFactories();
+    		}
+		}
+    	
         return factoryRegistry.get(name);
     }
 
     public Map<String, IFactory> getFactoryRegistry() {
+    	synchronized (FactoryManager.class) {
+    		if( ! initialized ) {
+    			initialized = true;
+    			discoverFactories();
+    		}
+		}
+    	
         return Collections.unmodifiableMap(factoryRegistry);
     }
 
