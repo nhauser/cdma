@@ -31,9 +31,9 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.mambo.SoleilMamboFactory;
 import org.cdma.plugin.mambo.internal.MamboConstants;
 import org.cdma.plugin.xml.navigation.XmlGroup;
-import org.cdma.utilities.navigation.DefaultGroup;
+import org.cdma.utilities.navigation.AbstractGroup;
 
-public class SoleilMamboGroup extends DefaultGroup {
+public class SoleilMamboGroup extends AbstractGroup {
 	private static final String PATH_SEPARATOR = "/";
 	private XmlGroup       mXmlGroup;
 	private ArchivingGroup mArcGroup;

@@ -14,9 +14,9 @@ import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDimension;
 import org.cdma.plugin.mambo.SoleilMamboFactory;
 import org.cdma.plugin.xml.navigation.XmlDataItem;
-import org.cdma.utilities.navigation.DefaultDataItem;
+import org.cdma.utilities.navigation.AbstractDataItem;
 
-public class SoleilMamboDataItem extends DefaultDataItem {
+public class SoleilMamboDataItem extends AbstractDataItem {
 	private ArchivingDataItem item;
 	
 	public SoleilMamboDataItem(SoleilMamboDataset dataset, SoleilMamboGroup parent, XmlDataItem item) throws BackupException {
