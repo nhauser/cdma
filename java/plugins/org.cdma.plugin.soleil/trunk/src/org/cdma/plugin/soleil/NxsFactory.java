@@ -304,6 +304,17 @@ public final class NxsFactory implements IFactory {
 	public String getPluginDescription() {
 		return NxsFactory.DESC;
 	}
+
+	@Override
+	public void processPostRecording() {
+        synchronized (NxsFactory.class ) {
+        	boolean checkNeXusAPI = NexusDataset.checkNeXusAPI();
+            if( ! checkNeXusAPI ) {
+            	Factory.getManager().unregisterFactory(NAME);
+            	factory = null;
+            }
+        }		
+	}
 	
 	
 }
