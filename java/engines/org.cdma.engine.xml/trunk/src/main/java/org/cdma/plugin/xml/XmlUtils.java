@@ -1,45 +1,12 @@
-// +======================================================================
-// $Source: /cvsroot/tango-cs/tango/tools/mambo/tools/xmlhelpers/XMLUtils.java,v
-// $
-//
-// Project: Tango Archiving Service
-//
-// Description: Java source code for the class XMLUtils.
-// (Claisse Laurent) - 5 juil. 2005
-//
-// $Author: pierrejoseph $
-//
-// $Revision: 1.1 $
-//
-// $Log: XMLUtils.java,v $
-// Revision 1.1 2007/02/01 14:07:17 pierrejoseph
-// getAttributesToDedicatedArchiver
-//
-// Revision 1.5 2006/11/22 10:44:14 ounsy
-// corrected a NullPointer bug in loadAttributes()
-//
-// Revision 1.4 2006/09/22 14:52:23 ounsy
-// minor changes
-//
-// Revision 1.3 2006/05/19 15:05:29 ounsy
-// minor changes
-//
-// Revision 1.2 2005/11/29 18:28:26 chinkumo
-// no message
-//
-// Revision 1.1.2.3 2005/09/26 07:52:25 chinkumo
-// Miscellaneous changes...
-//
-// Revision 1.1.2.2 2005/09/14 15:41:44 chinkumo
-// Second commit !
-//
-//
-// copyleft : Synchrotron SOLEIL
-// L'Orme des Merisiers
-// Saint-Aubin - BP 48
-// 91192 GIF-sur-YVETTE CEDEX
-//
-// -======================================================================
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.xml;
 
 import java.io.File;
@@ -89,8 +56,16 @@ public class XmlUtils {
 	 */
 	public static boolean isAFakeNode(Node noeudATester) {
 		int typeNode = noeudATester.getNodeType();
-
-		return (typeNode != Node.ELEMENT_NODE);
+		boolean result = (typeNode != Node.ELEMENT_NODE);
+		// Consider text node with data
+		if( Node.TEXT_NODE == typeNode ) {
+			String value = noeudATester.getNodeValue();
+			if( value != null ) {
+				value = value.trim();
+				result = value.isEmpty();
+			}
+		}
+		return result;
 
 	}
 

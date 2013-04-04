@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.xml.navigation;
 
 import java.io.File;
@@ -59,26 +68,32 @@ public class XmlDataset implements IDataset {
 				}
 				String currentChildType = currentChild.getNodeName().trim();
 
-				XmlContainer container = null;
-				if (currentChild.hasChildNodes()) {
-					container = new XmlGroup(mFactoryName, currentChildType,
-							groupIndex, this, parentContainer);
-					loadChildNodes(currentChild, (XmlGroup) container);
-					groupIndex++;
-				} else if (parentContainer instanceof IGroup) {
-					container = new XmlDataItem(mFactoryName, currentChildType,
+				// Add data item when a text value is available
+				String data = currentChild.getNodeValue();
+				if ( data != null && ! data.trim().isEmpty() ) {
+					System.out.println(data);
+					XmlDataItem item = new XmlDataItem(mFactoryName, "data_item",
 							itemIndex, this, parentContainer);
-					((IDataItem) container).setCachedData(new XmlArray(
-							mFactoryName, currentChild.getNodeValue()), false);
+					item.setCachedData(new XmlArray( mFactoryName, data), false);
+					parentContainer.addContainer(item);
 					itemIndex++;
 				}
-
-				if (parentContainer != null
-						&& parentContainer instanceof XmlGroup) {
-					parentContainer.addContainer(container);
+				// The node is a group
+				else {
+					XmlGroup container = null;
+					if (parentContainer instanceof IGroup) {
+						container = new XmlGroup(mFactoryName, currentChildType,
+								groupIndex, this, parentContainer);
+						loadChildNodes(currentChild, container);
+						groupIndex++;
+					}
+	
+					if (parentContainer != null
+							&& parentContainer instanceof XmlGroup) {
+						parentContainer.addContainer(container);
+					}
+					loadAttributes(currentChild, container);
 				}
-
-				loadAttributes(currentChild, container);
 			}
 		}
 	}

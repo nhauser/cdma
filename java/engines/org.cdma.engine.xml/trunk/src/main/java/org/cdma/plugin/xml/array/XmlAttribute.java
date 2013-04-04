@@ -1,3 +1,12 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.xml.array;
 
 import org.cdma.interfaces.IArray;
@@ -102,4 +111,7 @@ public class XmlAttribute implements IAttribute {
 		mArrayValue = value;
 	}
 
+    public String toString() {
+        return mName + "=" + mValue;
+    }
 }

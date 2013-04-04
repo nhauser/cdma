@@ -1,8 +1,17 @@
+//******************************************************************************
+// Copyright (c) 2011 Synchrotron Soleil.
+// The CDMA library is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your option)
+// any later version.
+// Contributors :
+// See AUTHORS file
+//******************************************************************************
 package org.cdma.plugin.xml.navigation;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
@@ -22,10 +31,12 @@ import org.cdma.utils.Utilities.ModelType;
 public class XmlDataItem extends XmlContainer implements IDataItem, Cloneable {
 
 	private IArray mArrayValue;
+	private List<IDimension> mDimensions;
 
 	public XmlDataItem(String factory, String name, int index,
 			IDataset dataset, IGroup parent) {
 		super(factory, name, index, dataset, parent);
+		mDimensions = new ArrayList<IDimension>();
 		try {
 			mArrayValue = new XmlArray(factory, "");
 		} catch (InvalidArrayTypeException e) {
@@ -119,14 +130,13 @@ public class XmlDataItem extends XmlContainer implements IDataItem, Cloneable {
 
 	@Override
 	public List<IDimension> getDimensions(int index) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO implement a real behaviour
+		return mDimensions;
 	}
 
 	@Override
 	public List<IDimension> getDimensionList() {
-		// TODO Auto-generated method stub
-		return null;
+		return mDimensions;
 	}
 
 	@Override
