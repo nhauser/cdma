@@ -72,6 +72,21 @@ public class ConfigDataset {
     public String getParameter(String label) {
         return mConfig.getParameter(label, mDataset);
     }
+    
+    /**
+     * Return true if the given parameter name is present in the configuration.
+     * @param label
+     */
+    public boolean hasParameter(String label) {
+    	boolean result = false;
+    	
+    	for( ConfigParameter param : mConfig.getParameters() ) {
+    		if( param.getName().equals(label) ) {
+    			result = true;
+    		}
+    	}
+    	return result;
+    }
 
     /**
      * Returns the criteria a IDataset must respect to match that configuration.
