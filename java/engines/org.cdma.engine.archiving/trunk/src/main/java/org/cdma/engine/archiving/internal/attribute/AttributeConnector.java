@@ -26,4 +26,13 @@ public class AttributeConnector {
 	public SqlDataset getSqlDataset() {
 		return dataset;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("Location: " + dataset.getLocation());
+		result.append("\nDb name: " + dbName );
+		result.append("\nDb type: " + dbType );
+		return result.toString();
+	}
 }

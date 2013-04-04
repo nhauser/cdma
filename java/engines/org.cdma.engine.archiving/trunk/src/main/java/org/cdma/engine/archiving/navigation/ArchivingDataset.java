@@ -1,13 +1,17 @@
 package org.cdma.engine.archiving.navigation;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.archiving.internal.Constants;
+import org.cdma.engine.archiving.internal.attribute.Attribute;
+import org.cdma.engine.archiving.internal.sql.ArchivingQueries;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
@@ -30,25 +34,33 @@ public class ArchivingDataset implements IDataset {
         public  String getName()           { return mName; }
 	}
 	
-	private URI           mURI;
-	private String        mUser;
-	private String        mPassword;
-	private String        mTitle;
-	private ArchivingGroup       mRootGroup;
-	private ArchivingMode mArchivingMode;
-	private SqlDataset    mSqlDataset;
-	private boolean      mIsUSFormat;
-	private boolean      mIsOpen;
-	private String        mSchemaName;
-	private String        mFactory;
+	private URI            mURI;
+	private String         mUser;
+	private String         mPassword;
+	private String         mTitle;
+	private ArchivingGroup mRootGroup;
+	private ArchivingMode  mArchivingMode;
+	private SqlDataset     mSqlDataset;
+	private boolean       mIsUSFormat;
+	private boolean       mIsOpen;
+	private String         mSchemaName;
+	private String         mFactory;
+	private boolean mNumDate;
 	
+	/**
+	 * At opening, the given uri will be decoded using UTF-8 URLDecoder.
+	 * @param factory name of the plug-in
+	 * @param uri of the targeted archiving database
+	 */
 	public ArchivingDataset(String factory, URI uri) {
-		mIsUSFormat = false;
-		mRootGroup  = null;
-		mURI        = uri;
-		mIsOpen     = false;
-		mTitle      = "";
-		mFactory    = factory;
+		mIsUSFormat    = false;
+		mRootGroup     = null;
+		mURI           = uri;
+		mIsOpen        = false;
+		mTitle         = "";
+		mFactory       = factory;
+		mArchivingMode = ArchivingMode.HDB;
+		mSqlDataset    = null;
 	}
 	
 	@Override
@@ -67,8 +79,12 @@ public class ArchivingDataset implements IDataset {
 	@Override
 	public IGroup getRootGroup() {
 		if( mRootGroup == null && isOpen() ) {
-			mRootGroup = new ArchivingGroup(mFactory, this);
-			mRootGroup.addOneAttribute( new ArchivingAttribute( mFactory, Constants.DATE_FORMAT, Constants.ISO_DATE_PATTERN) );
+			ArchivingGroup group = new ArchivingGroup(mFactory, this);
+			Attribute attribute = group.getArchivedAttribute();
+			if( ArchivingQueries.checkDatabaseConformity(attribute) ) {
+				mRootGroup = group;
+				mRootGroup.addOneAttribute( new ArchivingAttribute( mFactory, Constants.DATE_FORMAT, Constants.ISO_DATE_PATTERN) );
+			}
 		}
 		return mRootGroup;
 	}
@@ -121,9 +137,17 @@ public class ArchivingDataset implements IDataset {
 		synchronized( this ) {
 			mIsOpen = true;
 			
+			String value;
+			try {
+				value = URLDecoder.decode(mURI.toString(), "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				value = mURI.toString();
+			}
+			
 			// Check that the SqlDataset is set
 			if( mSqlDataset == null ) {
-				mSqlDataset = new SqlDataset(mFactory, mURI.toString(), getUser(), getPassword() );
+				mSqlDataset = new SqlDataset(mFactory, value, getUser(), getPassword() );
+				mSqlDataset.setNumericalDate(mNumDate);
 			}
 			// Check it is the same
 			else if( getLocation().equals( mSqlDataset.getLocation() ) ) {
@@ -133,8 +157,8 @@ public class ArchivingDataset implements IDataset {
 				} catch( IOException e) {
 				}
 				// Create a new SqlDataset
-				mSqlDataset = new SqlDataset(mFactory, mURI.toString(), getUser(), getPassword() );
-				
+				mSqlDataset = new SqlDataset(mFactory, value, getUser(), getPassword() );
+				mSqlDataset.setNumericalDate(mNumDate);
 			}
 			
 			// open the connection
@@ -207,6 +231,17 @@ public class ArchivingDataset implements IDataset {
 	
 	public void setUSdateFormat(boolean isUS ) {
 		mIsUSFormat = isUS;
+	}
+	
+	public void setNumericalDate(boolean numerical) {
+		mNumDate = numerical;
+		if( mSqlDataset != null ) {
+			mSqlDataset.setNumericalDate(mNumDate);
+		}
+	}
+	
+	public boolean getNumericalDate() {
+		return mNumDate;
 	}
 	
     // ---------------------------------------------------------

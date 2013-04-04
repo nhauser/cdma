@@ -16,10 +16,10 @@ import org.cdma.engine.archiving.navigation.ArchivingDataItem;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDimension;
 import org.cdma.engine.archiving.navigation.ArchivingGroup;
-import org.cdma.engine.sql.navigation.SqlCdmaCursor;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
+import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IGroup;
@@ -100,7 +100,6 @@ public class GroupUtils {
 			Attribute dbAttr = group.getArchivedAttribute();
 			AttributePath path = dbAttr.getPath();
 			if( path != null && path.isFullyQualified() ) {
-				AttributeProperties properties = dbAttr.getProperties();
 			    // Get starting, ending dates and time format
 			    Timestamp start = getStartDate(group);
 			    Timestamp end   = getEndDate(group);
@@ -108,45 +107,22 @@ public class GroupUtils {
 			    
 			    Object[] params = new Object[] {start, end};
 			    // Prepare query for child items
-			    String query = null;
-			    if( format != null ) {
-			    	query = ArchivingQueries.queryChildItems( dbAttr, format );
-			    }
+		    	ArchivingDataset dataset = group.getDataset();
+		    	if( dataset != null && dataset.getNumericalDate() ) {
+		    		format = null;
+		    	}
+		    	String query = ArchivingQueries.queryChildItems( dbAttr, format );
 			    if( query != null && ! query.isEmpty() ) {
-			    	SqlDataset dataset = dbAttr.getDbConnector().getSqlDataset();
+			    	SqlDataset sqlDataset = dbAttr.getDbConnector().getSqlDataset();
 	
 			    	// Execute the query
-			    	SqlCdmaCursor cursor = dataset.executeQuery(query, params);
-			    	
-			    	// Temporary items
-			    	ArchivingDataItem child;
-			    	ArchivingDimension dimension;
-			    	
-				    // For each SQL items
+			    	SqlCdmaCursor cursor = sqlDataset.executeQuery(query, params);
+
+			    	// For each SQL items
 			    	List<SqlDataItem> sql_items = cursor.getDataItemList();
-			    	String interp;
 			    	for( SqlDataItem item : sql_items ) {
 			    		try {
-			    			// Get the array of values
-			    			IArray array = item.getData();
-			    			
-			    			// Check if the found item is a dimension
-				    		if( dbAttr.isDimension( item.getShortName() ) ) {
-				    			// Create a child dimension 
-								dimension = new ArchivingDimension( group.getFactoryName(), array, item.getShortName());
-								group.addOneDimension(dimension);
-								
-				    		}
-				    		// The found item is a data item
-				    		else {
-				    			// Create a child data item
-			    				child = new ArchivingDataItem(group.getFactoryName(), item.getShortName(), group, array);
-			    				interp = getInterpretationFormat( properties );
-			    				if( interp != null ) {
-			    					child.addStringAttribute( Constants.INTERPRETATION, interp );
-			    				}
-			    				group.addDataItem(child);
-				    		}
+			    			initDataItem(group, item, dbAttr);
 						} catch (IOException e) {
 							Factory.getLogger().log(Level.SEVERE, "Unable to initialize item list!", e);
 						}
@@ -265,5 +241,31 @@ public class GroupUtils {
 				break;
 		}
 		return result;
+	}
+	
+	static private void initDataItem(ArchivingGroup group, SqlDataItem item, Attribute dbAttr) throws IOException {
+		// Temporary items
+    	AttributeProperties properties = dbAttr.getProperties();
+    	
+		// Get the array of values
+		IArray array = item.getData();
+    			
+		// Check if the found item is a dimension
+		if( dbAttr.isDimension( item.getShortName() ) ) {
+			// Create a child dimension 
+			ArchivingDimension dimension = new ArchivingDimension( group.getFactoryName(), array, item.getShortName());
+			group.addOneDimension(dimension);
+			
+		}
+		// The found item is a data item
+		else {
+			// Create a child data item
+			ArchivingDataItem child = new ArchivingDataItem(group.getFactoryName(), item.getShortName(), group, array);
+			String interp = getInterpretationFormat( properties );
+			if( interp != null ) {
+				child.addStringAttribute( Constants.INTERPRETATION, interp );
+			}
+			group.addDataItem(child);
+		}
 	}
 }

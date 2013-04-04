@@ -9,9 +9,9 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 import org.cdma.engine.archiving.internal.SqlFieldConstants;
 import org.cdma.engine.archiving.internal.sql.ArchivingQueries;
-import org.cdma.engine.sql.navigation.SqlCdmaCursor;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.navigation.SqlGroup;
+import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IDataItem;
 
 public class AttributeProperties implements Cloneable {
@@ -147,17 +147,17 @@ public class AttributeProperties implements Cloneable {
 		}
 		
 		switch( mFormat ) {
-		case 0:
-			break;
-		case 1:
-			result.add( SqlFieldConstants.ATT_FIELD_DIMX );
-			break;
-		case 2:
-			result.add( SqlFieldConstants.ATT_FIELD_DIMX );
-			result.add( SqlFieldConstants.ATT_FIELD_DIMY );
-			break;
-		default:
-			break;
+			case 0:
+				break;
+			case 1:
+				result.add( SqlFieldConstants.ATT_FIELD_DIMX );
+				break;
+			case 2:
+				result.add( SqlFieldConstants.ATT_FIELD_DIMX );
+				result.add( SqlFieldConstants.ATT_FIELD_DIMY );
+				break;
+			default:
+				break;
 		}
 		
 		return result.toArray(new String[] {});
@@ -224,4 +224,18 @@ public class AttributeProperties implements Cloneable {
 			throw new IOException( "Invalid parameters: no null values are allowed!" );
 		}
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("Name : " + mName);
+		result.append("\nFormat: " + mFormat);
+		result.append("\nId : " + mId);
+		result.append("\nOrigin : " + mOrigin);
+		result.append("\nType : " + mType);
+		result.append("\nWritable : " + mWritable);
+		
+		return result.toString();
+	}
+	
 }
