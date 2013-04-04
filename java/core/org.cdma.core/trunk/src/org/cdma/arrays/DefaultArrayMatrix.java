@@ -333,6 +333,9 @@ public class DefaultArrayMatrix extends DefaultArray {
         return result;
 	}
 
+	/**
+	 * @note this version uses abstract methods: getData() and loadData()
+	 */
     @Override
     public Object getStorage() {
     	Object result;

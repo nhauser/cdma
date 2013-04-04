@@ -23,6 +23,7 @@ public class BasicFactoryResolver implements IFactoryResolver {
         ServiceLoader<IFactory> factories = ServiceLoader.load(IFactory.class);
         for (IFactory factory : factories) {
             manager.registerFactory(factory.getName(), factory);
+            factory.processPostRecording();
         }
     }
 
