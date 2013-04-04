@@ -49,8 +49,8 @@
       <artifactId>Core</artifactId>
     </dependency>
     <dependency>
-  <groupId>org.cdma</groupId>
-  <artifactId>utilities</artifactId>
+	  <groupId>org.cdma</groupId>
+	  <artifactId>utilities</artifactId>
     </dependency>
     <dependency>
       <groupId>org.cdma.engines</groupId>
