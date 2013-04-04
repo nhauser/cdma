@@ -2,8 +2,12 @@ package org.cdma.engine.archiving.navigation;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.exception.DimensionNotSupportedException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -24,7 +28,7 @@ public class ArchivingDataItem implements IDataItem {
 	private IArray mData;
 	private IGroup mParent;
 	private String mFactory;
-	private List<IAttribute> mAttributes;
+	private Map<String, IAttribute> mAttributes;
 
 	// Constructor
 	public ArchivingDataItem(String factory, String name, IGroup parent, IArray data) {
@@ -32,13 +36,15 @@ public class ArchivingDataItem implements IDataItem {
 		mName = name;
 		mData = data;
 		mParent = parent;
-		mAttributes = new ArrayList<IAttribute>();
+		mAttributes = new HashMap<String, IAttribute>();
 	}
 	
 	@Override
 	public ArchivingDataItem clone() {
 		ArchivingDataItem clone = new ArchivingDataItem( mFactory, mName, mParent, mData);
-		clone.mAttributes.addAll( mAttributes );
+		for ( Entry<String, IAttribute> entry : mAttributes.entrySet() ) {
+			clone.mAttributes.put(entry.getKey(), entry.getValue() );
+		}
 		return clone;
 	}
 
@@ -281,7 +287,7 @@ public class ArchivingDataItem implements IDataItem {
 
 	@Override
 	public boolean isMemberOfStructure() {
-		// Nothing to do because there is no cache
+		// Nothing to do no structure managed
 		return false;
 	}
 
@@ -302,8 +308,7 @@ public class ArchivingDataItem implements IDataItem {
 
 	@Override
 	public boolean isUnsigned() {
-		// TODO
-		throw new NotImplementedException();
+		return false;
 	}
 
 	@Override
@@ -405,70 +410,55 @@ public class ArchivingDataItem implements IDataItem {
 		throw new NotImplementedException();
 	}
 
-	public void printHierarchy(int level) {
-
-		String tabFormatting = "";
-		for (int i = 0; i < level; ++i) {
-			tabFormatting += "\t";
-		}
-		// Tag beginning
-		System.out.print(tabFormatting);
-		System.out.print("<");
-		System.out.print(getShortName());
-
-		// Attributes of this group
-		for (IAttribute attr : getAttributeList()) {
-			System.out.print(" ");
-			System.out.print(attr.getName());
-			System.out.print("=\"");
-			System.out.print(attr.getStringValue());
-			System.out.print("\"");
-		}
-		// Tag Ending
-		System.out.print("/>\n");
-	}
-
 	@Override
 	public void addOneAttribute(IAttribute attribute) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		if( attribute != null ) {
+			mAttributes.put(attribute.getName(), attribute);
+		}
 		
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
-		
+		addOneAttribute( new ArchivingAttribute(mFactory, name, value) );
 	}
 
 	@Override
 	public IAttribute getAttribute(String name) {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		return mAttributes.get(name);
 	}
 
 	@Override
 	public List<IAttribute> getAttributeList() {
-		return mAttributes;
+		return new ArrayList<IAttribute>( mAttributes.values() );
 	}
 
 	@Override
 	public IDataset getDataset() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		IDataset result = null;
+		if( getParentGroup() != null ) {
+			result = getParentGroup().getDataset();
+		}
+		return result;
 	}
 
 	@Override
 	public String getLocation() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		String result = "";
+		if( getParentGroup() != null ) {
+			result = getParentGroup().getDataset().getLocation();
+		}
+		return result;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		String result = "";
+		if( mParent != null ) {
+			result += mParent.getName();
+		}
+		result += AttributePath.SEPARATOR + getShortName();
+		return result;
 	}
 
 	@Override
@@ -495,15 +485,13 @@ public class ArchivingDataItem implements IDataItem {
 	public boolean hasAttribute(String name, String value) {
 		boolean result = false;
 		if( name != null && value != null ) {
-			for( IAttribute attr : mAttributes ) {
-				if( 
-					attr.isString() && 
-					! attr.isArray() &&
-					name.equals( attr.getName() ) && 
-					value.equals( attr.getStringValue() ) 
-				) {
-					result = true;
-				}
+			IAttribute attr = mAttributes.get(name);
+			if( 
+				attr != null && attr.isString() && 
+				! attr.isArray() && name.equals( attr.getName() ) && 
+				value.equals( attr.getStringValue() ) 
+			) {
+				result = true;
 			}
 		}
 		return result;
@@ -527,8 +515,12 @@ public class ArchivingDataItem implements IDataItem {
 
 	@Override
 	public long getLastModificationDate() {
-		// TODO Auto-generated method stub
-		throw new NotImplementedException();
+		long result = 0;
+		IDataset dataset = getDataset();
+		if( dataset != null ) {
+			result = dataset.getLastModificationDate();
+		}
+		return result;
 	}
 
 	@Override
@@ -541,11 +533,8 @@ public class ArchivingDataItem implements IDataItem {
 		boolean result = false;
 		if( attribute != null ) {
 			String name = attribute.getName();
-			for( IAttribute attr : mAttributes ) {
-				if( name.equals( attr.getName() ) ) {
-					result = mAttributes.remove( attr );
-				}
-			}
+			IAttribute attr = mAttributes.remove( name );
+			result = ( attr != null );
 		}
 		return result;
 	}

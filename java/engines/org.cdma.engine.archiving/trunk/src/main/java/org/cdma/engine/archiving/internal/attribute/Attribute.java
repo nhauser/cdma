@@ -68,4 +68,15 @@ public class Attribute implements Cloneable {
 
 		return result;
 	}
+	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append("connection: " + dbCon.toString() + "\n" );
+		result.append("path: " + path + "\n");
+		result.append("prop: " + prop );
+		return result.toString();
+		
+		
+	}
 }

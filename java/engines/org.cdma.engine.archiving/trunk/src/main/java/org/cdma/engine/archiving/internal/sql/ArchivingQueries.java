@@ -1,5 +1,10 @@
 package org.cdma.engine.archiving.internal.sql;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -10,6 +15,8 @@ import org.cdma.engine.archiving.internal.attribute.Attribute;
 import org.cdma.engine.archiving.internal.attribute.AttributeConnector;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.engine.archiving.internal.attribute.AttributeProperties;
+import org.cdma.engine.sql.internal.SqlConnector;
+import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
 import org.cdma.engine.sql.utils.DbUtils.BaseType;
 
@@ -136,10 +143,18 @@ public class ArchivingQueries {
 				
 				// Compute starting and ending dates (if null then '01/01/1970' and 'now')
 				try {
+					// Check if date are expected as numerical
+					String time;
+					if( datePattern == null ) {
+						time = SqlFieldConstants.ATT_FIELD_TIME;
+					}
+					else {
+						time =  DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbType, datePattern);
+						time += " as " + SqlFieldConstants.ATT_FIELD_TIME + " ";
+					}
+					
 					// Prepare each part of the query (SELECT, FROM, WHERE, ORDER)
-					String select = "SELECT " 
-									+ DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbType, datePattern) 
-									+ " as " + SqlFieldConstants.ATT_FIELD_TIME + " ";
+					String select = "SELECT " + time;
 					String from   = " FROM " + dbName + tableName;
 					String where = " WHERE (time BETWEEN ? AND ?)";
 
@@ -160,49 +175,48 @@ public class ArchivingQueries {
 				}
 			}
 		}
-		
 		return query.toString();
 	}
-	/*
-	static private String prepareStartDate(IAttribute startTime, BaseType dbType, boolean frFormat) throws ParseException {
-		// Compute starting date (if null then 01/01/1970)
+	
+	/**
+	 * Check the database contains the right tables for an archiving database
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	static public boolean checkDatabaseConformity(Attribute attribute) {
+		boolean result = true;
+		
+		if( attribute != null ) {
+			AttributeConnector dbCon = attribute.getDbConnector();
+			SqlDataset dataset   = dbCon.getSqlDataset();
+			SqlConnector connector = dataset.getSqlConnector();
+			try {
+				Connection connection  = connector.getConnection();
+				for( String table : SqlFieldConstants.ARC_TABLES ) {
+					if( !ArchivingQueries.existe(connection, table) ) {
+						result = false;
+						break;
+					}
+				}
+			} catch( SQLException e ) {
+				result = false;
+			} catch (IOException e) {
+				result = false;
+			}
+			
+			
+		}
+		return result;
+	}
+	
+	private static boolean existe(Connection connection, String nomTable) throws SQLException{
+		   boolean existe;
+		   DatabaseMetaData dmd = connection.getMetaData();
+		   ResultSet tables = dmd.getTables(connection.getCatalog(),null,nomTable,null);
+		   existe = tables.next();
+		   tables.close();
+		   return existe;
+		}
 
-		String start;
-		if( startTime != null ) {
-			Class<?> clazz = startTime.getType();
-			if( Number.class.isAssignableFrom(clazz) ) {
-				//Long time = startTime.getNumericValue();
-				start = DateFormat.convertDate((Long) startTime.getNumericValue(), dbType, frFormat );
-			}
-			else {
-				start = DateFormat.convertDate(startTime.getStringValue(), dbType, frFormat );
-			}
-		}
-		else {
-			start = DateFormat.convertDate(System.currentTimeMillis() - 3600*1000, dbType, frFormat);
-		}
-		
-		return start;
-	}
-	
-	static private String prepareEndDate(IAttribute endTime, BaseType dbType, boolean frFormat) throws ParseException {
-		// Compute starting date (if null then now)
-		String end;
-		if( endTime != null ) {
-			Class<?> clazz = endTime.getType();
-			if( Number.class.isAssignableFrom(clazz) ) {
-				end = DateFormat.convertDate((Long) endTime.getNumericValue(), dbType, frFormat );
-			}
-			else {
-				end = DateFormat.convertDate(endTime.getStringValue(), dbType, frFormat );
-			}
-		}
-		else {
-			end = DateFormat.convertDate(System.currentTimeMillis(), dbType, frFormat);
-		}
-		
-		return end;
-	}
-	*/
-	
 }

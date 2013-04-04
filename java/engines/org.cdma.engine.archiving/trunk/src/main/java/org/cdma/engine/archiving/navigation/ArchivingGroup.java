@@ -3,6 +3,7 @@ package org.cdma.engine.archiving.navigation;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,11 +32,11 @@ public class ArchivingGroup implements IGroup {
     private List<IAttribute> mAttributes; // list of attributes 
     private List<IContainer> mChildren;   // list of container both items and groups 
     private List<IDimension> mDimensions; // list of dimension associated to this group
-    private boolean  mInitialized; // has this group been initialized
-    private ArchivingDataset mDataset;     // handler on the dataset
-    private ArchivingGroup   mParent;      // parent group of this
+    private boolean  mInitialized;       // has this group been initialized
+    private ArchivingDataset mDataset;    // handler on the dataset
+    private ArchivingGroup   mParent;     // parent group of this
     private Attribute mDbAttr;      // Archiving attribute object (path, properties and connection)
-    private String    mFactory;
+    private String    mFactory;     // Plug-in factory name
     
     private Timestamp mDateStart;   // Last starting date used for extraction
     private Timestamp mDateEnd;     // Last ending date used for extraction
@@ -130,6 +131,7 @@ public class ArchivingGroup implements IGroup {
 			for( IContainer container : mChildren ) {
 				if( shortName.equals( container.getShortName() ) ) {
 					result = container;
+					break;
 				}
 			}
 		}
@@ -150,14 +152,6 @@ public class ArchivingGroup implements IGroup {
 	
 	public final Attribute getArchivedAttribute() {
 		return mDbAttr;
-	}
-	
-	public final AttributePath getAttrPath() {
-		return mDbAttr.getPath();
-	}
-	
-	public final AttributeProperties getAttrProp() {
-		return mDbAttr.getProperties();
 	}
 	
 	@Override
@@ -199,12 +193,12 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public String getName() {
-		return getAttrPath().getName();
+		return getArchivedAttribute().getPath().getName();
 	}
 
 	@Override
 	public String getShortName() {
-		return getAttrPath().getShortName();
+		return getArchivedAttribute().getPath().getShortName();
 	}
 
 	@Override
@@ -244,7 +238,7 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public void setShortName(String name) {
-		 getAttrPath().setShortName(name);
+		getArchivedAttribute().getPath().setShortName(name);
 	}
 
 	@Override
@@ -271,10 +265,8 @@ public class ArchivingGroup implements IGroup {
 	}
 
 	@Override
-	public Map<String, String> harvestMetadata(String mdStandard)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, String> harvestMetadata(String mdStandard) throws IOException {
+		return new HashMap<String, String>();
 	}
 
 	@Override
@@ -367,6 +359,7 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public List<IDimension> getDimensionList() {
+		initChildren();
 		return mDimensions;
 	}
 
@@ -399,8 +392,26 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public IContainer findContainerByPath(String path) throws NoResultException {
-		// TODO Auto-generated method stub
-		return null;
+		IContainer result = null;
+
+		// Split the path into nodes
+		String[] nodes = path.split(AttributePath.SEPARATOR);
+		IGroup group = getRootGroup();
+		
+		// For each one try to get its child
+		for( String node : nodes ) {
+			if( group != null && node != null && !node.isEmpty() ) {
+				result = group.getContainer(node);
+				if( result != null && result.getModelType().equals(ModelType.Group) ) {
+					group = (IGroup) result;
+				}
+				else {
+					break;
+				}
+			}
+		}
+		
+		return result;
 	}
 
 	@Override
@@ -482,7 +493,7 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public boolean isRoot() {
-		return (mParent == null && getAttrPath().isEmpty());
+		return (mParent == null && getArchivedAttribute().getPath().isEmpty());
 	}
 
 	@Override
@@ -611,10 +622,10 @@ public class ArchivingGroup implements IGroup {
 	 */
 	private void initProperties() {
 		// Get the archived attribute's properties
-		if( getAttrPath().isFullyQualified() && ! mInitialized ) {
+		if( getArchivedAttribute().getPath().isFullyQualified() && ! mInitialized ) {
 			mInitialized = true;
 			try {
-				String name = getAttrPath().getName();
+				String name = getArchivedAttribute().getPath().getName();
 				String dbName = mDataset.getSchema();
 				SqlDataset dataset = mDataset.getSqldataset();
 				AttributeProperties properties = new AttributeProperties(name, dataset, dbName);
