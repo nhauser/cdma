@@ -67,7 +67,11 @@
     <dependency>
       <groupId>org.cdma.engines</groupId>
       <artifactId>archiving</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>11.2.0.2.0</version>
     </dependency>
   </dependencies>
 </project>
