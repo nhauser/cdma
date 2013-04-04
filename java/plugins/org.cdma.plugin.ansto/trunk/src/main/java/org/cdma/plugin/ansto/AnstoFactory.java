@@ -227,4 +227,9 @@ public class AnstoFactory implements IFactory {
 		return AnstoFactory.DESC;
 	}
 
+	@Override
+	public void processPostRecording() {
+		// Nothing to do!
+	}
+
 }
