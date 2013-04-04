@@ -9,32 +9,17 @@
 //******************************************************************************
 package org.cdma.plugin.archiving.internal;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-import org.cdma.engine.archiving.internal.Constants;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
-import org.cdma.interfaces.IAttribute;
-import org.cdma.interfaces.IDataset;
-import org.cdma.interfaces.IGroup;
+import org.cdma.engine.archiving.navigation.ArchivingDataset.ArchivingMode;
 import org.cdma.plugin.archiving.SoleilArcFactory;
 
 public class DetectedSource {
-	public static final class ViewConfigurationFilter implements FilenameFilter {
-
-		private final String EXTENSION = ".vc";
-
-		@Override
-		public boolean accept(File dir, String name) {
-			return (name.endsWith(EXTENSION));
-		}
-		
-		private ViewConfigurationFilter() {}
-	}
-	
-	private static ViewConfigurationFilter mFilter;
     private boolean mIsExperiment;
     private boolean mIsBrowsable;
     private boolean mIsProducer;
@@ -42,21 +27,10 @@ public class DetectedSource {
     private URI mURI;
 
     public DetectedSource(URI uri) {
-    	if( mFilter == null ) {
-    		synchronized( DetectedSource.class ) {
-    			if( mFilter == null ) {
-    				mFilter = new ViewConfigurationFilter();
-    			}
-    		}
-    	}
         mURI = uri;
         init(uri);
     }
 
-    public FilenameFilter getFilenameFilter() {
-    	return mFilter;
-    }
-    
     public URI getURI() {
         return mURI;
     }
@@ -82,79 +56,43 @@ public class DetectedSource {
     // ---------------------------------------------------------
     private void init(URI uri) {
         if (uri != null) {
-            // Check if the URI is considered as browsable
-            mIsBrowsable = initBrowsable(uri);
+        	String scheme = uri.getScheme();
         	
-        	// Check it is a Vc file
-            mIsReadable = initReadable(uri);
-
-            // Check if we are producer of the source
-            mIsProducer = initProducer(uri);
-
-            // Check if the uri corresponds to dataset experiment
-            mIsExperiment = initExperiment(uri);
+    		mIsBrowsable = false;
+    		mIsExperiment = false;
+    		mIsProducer = false;
+    		mIsReadable = false;
+        	
+        	if( scheme != null && scheme.equals("jdbc") && uri.getSchemeSpecificPart() != null ) {
+        		try {
+					Driver driver = DriverManager.getDriver(uri.toString());
+					if( driver != null ) {
+			    		ArchivingDataset dataset = new ArchivingDataset(SoleilArcFactory.NAME, uri);
+			    		for( ArchivingMode mode : ArchivingMode.values() ) {
+			    			try {
+			    				dataset.setArchivingMode(mode);
+			    				dataset.open();
+			    				if( dataset.getRootGroup() != null ) {
+			    					mIsBrowsable = true;
+						    		mIsExperiment = true;
+						    		mIsProducer = true;
+						    		mIsReadable = true;
+						    		dataset.close();
+						    		break;
+			    				}
+			    				else {
+			    					dataset.close();
+			    				}
+			    			}
+			    			catch( IOException e ) {
+			    				// Nothing to do
+			    			}
+			    		}
+					}
+				} catch (SQLException e) {
+					// Nothing to do: no suitable driver for the given URI 
+				}
+        	}
         }
     }
-
-    private boolean initReadable(URI target) {
-		boolean result = false;
-		if ( ! mIsBrowsable) {
-			try {
-				File file = new File(target);
-				String name = file.getName();
-			
-				// Check if the URI is a ViewConfiguration file
-				if ( mFilter.accept(file, name)) {
-					result = true;
-				}
-			}
-			catch( IllegalArgumentException e ) {
-				// nothing to do
-			}
-		}
-		return result;
-	}
-
-	private boolean initProducer(URI target) {
-		boolean result = false;
-		if ( mIsReadable ) {
-			IDataset dataset = new ArchivingDataset(SoleilArcFactory.NAME, target);
-			try {
-				dataset.open();
-				if (dataset.isOpen()) {
-					IGroup rootGroup = dataset.getRootGroup();
-					if (rootGroup != null) {
-						IAttribute startDate = rootGroup.getAttribute(Constants.START_DATE);
-						IAttribute endDate = rootGroup.getAttribute(Constants.END_DATE);
-						result = ((startDate != null) && (endDate != null));
-					}
-				}
-			} catch (IOException e) {
-				// nothing to do
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	private boolean initBrowsable(URI target) {
-		boolean result = false;
-		try {
-			File file = new File(target);
-			if (file.exists() && file.isDirectory()) {
-				result = true;
-			}
-		}
-		catch( IllegalArgumentException e ) {
-			// nothing to do
-		}
-		return result;
-	}
-
-	private boolean initExperiment(URI target) {
-		boolean result = mIsProducer;
-		return result;
-	}
-    
 }

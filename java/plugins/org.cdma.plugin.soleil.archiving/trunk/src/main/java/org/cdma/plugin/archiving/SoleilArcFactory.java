@@ -2,6 +2,8 @@ package org.cdma.plugin.archiving;
 
 import java.io.IOException;
 import java.net.URI;
+import java.sql.Driver;
+import java.util.Enumeration;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
@@ -199,4 +201,11 @@ public class SoleilArcFactory implements IFactory {
 		return SoleilArcFactory.DESC;
 	}
 
+	@Override
+	public void processPostRecording() {
+		Enumeration<Driver> drivers = java.sql.DriverManager.getDrivers();
+		if( drivers != null && !drivers.hasMoreElements() ) {
+			Factory.getManager().unregisterFactory(SoleilArcFactory.NAME);
+		}
+	}
 }

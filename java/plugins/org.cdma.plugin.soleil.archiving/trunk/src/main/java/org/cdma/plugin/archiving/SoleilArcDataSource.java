@@ -53,28 +53,13 @@ public class SoleilArcDataSource implements IDatasource {
 
 	@Override
 	public List<URI> getValidURI(URI target) {
-		List<URI> result = new ArrayList<URI>();
-		DetectedSource source = getSource(target);
-		
-		if ( source.isReadable() ) {
-			result.add(target);
-		}
-		else if ( source.isBrowsable() ) {
-			File file = new File(target);
-			File[] files = file.listFiles( source.getFilenameFilter() );
-			for (File subFile : files) {
-				URI fileURI = subFile.toURI();
-				if (isReadable(fileURI)) {
-					result.add(fileURI);
-				}
-			}
-		}
-		return result;
+		return new ArrayList<URI>();
 	}
 
 	@Override
 	public String[] getURIParts(URI target) {
-		return target.getPath().split("/");
+		// No parts for URI
+		return new String[] {target.toString()};
 	}
 
 	@Override
@@ -85,19 +70,8 @@ public class SoleilArcDataSource implements IDatasource {
 
 	@Override
 	public URI getParentURI(URI target) {
-		String[] elements = target.getPath().split("/");
-		String stringResult = "";
-		URI result = null;
-		for (int i = 0; i < elements.length - 1; ++i) {
-			stringResult += elements[i];
-		}
-
-		try {
-			result = new URI(stringResult);
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return result;
+		// No parent URI are available
+		return null;
 	}
 	
     private DetectedSource getSource(URI uri) {
@@ -129,7 +103,7 @@ public class SoleilArcDataSource implements IDatasource {
     private static final String URI_DESC = "URI must target an Archiving database";
     
 	@Override
-	public String getTypeDescription() {
+	public String getURITypeDescription() {
 		return URI_DESC;
 	}
 }
