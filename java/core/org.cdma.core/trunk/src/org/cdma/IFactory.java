@@ -1,11 +1,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //    Tony Lam (nxi@Bragg Institute) - initial API and implementation
 //    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
@@ -27,6 +27,7 @@ import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
+import org.cdma.utils.FactoryManager;
 
 /// @cond pluginAPIclientAPI
 
@@ -34,7 +35,7 @@ import org.cdma.interfaces.IKey;
 /**
  * @brief The plug-in factory is the entry point of the CDMA plug-in.
  * 
- * The IFactory interface is implemented by each plug-in. It permits to instantiate the IDataset and 
+ * The IFactory interface is implemented by each plug-in. It permits to instantiate the IDataset and
  * all the CDMA plug-in's object that will be used during the process.
  */
 
@@ -74,7 +75,7 @@ public interface IFactory {
      * 
      * @param clazz Class type
      * @param shape java array of integer
-     * @return CDMA IArray 
+     * @return CDMA IArray
      */
     public IArray createArray(final Class<?> clazz, final int[] shape);
 
@@ -84,7 +85,7 @@ public interface IFactory {
      * @param clazz in Class type
      * @param shape java array of integer
      * @param storage a 1D java array in the type reference by clazz
-     * @return CDMA IArray 
+     * @return CDMA IArray
      */
     public IArray createArray(final Class<?> clazz, final int[] shape,
             final Object storage);
@@ -96,7 +97,7 @@ public interface IFactory {
      * java array.
      * 
      * @param javaArray one to many dimensional java array
-     * @return CDMA IArray 
+     * @return CDMA IArray
      */
     public IArray createArray(final Object javaArray);
 
@@ -114,7 +115,7 @@ public interface IFactory {
      * storage. The rank of the generated IArray object will be 1.
      * 
      * @param javaArray java double array in one dimension
-     * @return new IArray object 
+     * @return new IArray object
      */
     public IArray createDoubleArray(final double[] javaArray);
 
@@ -123,7 +124,7 @@ public interface IFactory {
      * 
      * @param javaArray java double array in one dimension
      * @param shape java integer array
-     * @return new IArray object 
+     * @return new IArray object
      */
     public IArray createDoubleArray(final double[] javaArray, final int[] shape);
 
@@ -133,7 +134,7 @@ public interface IFactory {
      * java array. The storage of the new array will be the supplied java array.
      * 
      * @param javaArray java primary array
-     * @return CDMA array 
+     * @return CDMA array
      */
     public IArray createArrayNoCopy(final Object javaArray);
 
@@ -157,7 +158,7 @@ public interface IFactory {
      * 
      * @param parent CDMA Group
      * @param shortName in String type
-     * @return CDMA Group 
+     * @return CDMA Group
      */
     public IGroup createGroup(final IGroup parent, final String shortName);
 
@@ -173,7 +174,7 @@ public interface IFactory {
     public IGroup createGroup(final String shortName) throws IOException;
 
     /**
-     * Create an empty CDMA Logical Group with a given key. 
+     * Create an empty CDMA Logical Group with a given key.
      * 
      * @param dataset an IDataset that this group will belong to
      * @param key an IKey that this group will correspond to
@@ -187,7 +188,7 @@ public interface IFactory {
      * 
      * @param name in String type
      * @param value in String type
-     * @return CDMA Attribute 
+     * @return CDMA Attribute
      */
     public IAttribute createAttribute(final String name, final Object value);
 
@@ -207,14 +208,14 @@ public interface IFactory {
      * 
      * @return a CDMA Dataset
      * @throws IOException
-     *             I/O error 
+     *             I/O error
      */
     public IDataset createEmptyDatasetInstance() throws IOException;
 
     /**
      * Create a IKey having the given name.
      * 
-     * @param name of the key  
+     * @param name of the key
      * @return a new IKey
      */
     public IKey createKey(String name);
@@ -222,7 +223,7 @@ public interface IFactory {
     /**
      * Create a IPath having the given value.
      * 
-     * @param path interpreted by the plug-in  
+     * @param path interpreted by the plug-in
      * @return a new IPath
      */
     public Path createPath( String path );
@@ -240,7 +241,7 @@ public interface IFactory {
      * @return the plug-in's label
      */
     public String getPluginLabel();
-    
+
     /**
      * Shortly describes the specificities of the plug-in for instance the underlying format,
      * managed file's extension, or protocol.
@@ -249,7 +250,7 @@ public interface IFactory {
     public String getPluginDescription();
 
     /**
-     * Returns the URI detector of the instantiated plug-in. 
+     * Returns the URI detector of the instantiated plug-in.
      * @return IPluginURIDetector
      */
     public IDatasource getPluginURIDetector();
@@ -261,15 +262,15 @@ public interface IFactory {
      */
     @Deprecated
     public IDictionary createDictionary();
-    
-    /** 
+
+    /**
      * Returns the plug-ins version number with under the form
      * of 3 digits: X_Y_Z
      * 
      * @return String representation of the plug-in's version
      */
     String getPluginVersion();
-    
+
     /**
      * Returns the CDMA core's version this plug-in is expected to work with.
      * The version will be represented under the form of 3 digits:
@@ -280,12 +281,19 @@ public interface IFactory {
     String getCDMAVersion();
 
     /**
-     * This method is called by the main API when the plug-in is loaded during the plug-in 
+     * This method is called by the main API when the plug-in is loaded during the plug-in
      * discovering process.<br/>
-     * The method should check that all requirement are present to make the plug-in fully 
+     * The method should check that all requirement are present to make the plug-in fully
      * functional. If it's not the case it should use the {@link FactoryManager.unregisterFactory} method.
      */
-	void processPostRecording();
+    void processPostRecording();
+
+    /**
+     * Tells if this plug-in can use or not the Dictionary mechanism is available
+     * 
+     * @return true if the Dictionary mechanism can be enabled
+     */
+    boolean isLogicalModeAvailable();
 }
 
 /// @endcond pluginAPIclientAPI
