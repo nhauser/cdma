@@ -26,7 +26,6 @@ import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.internal.dictionary.readers.DictionaryReader;
 import org.cdma.utils.FactoryManager;
-import org.cdma.utils.IFactoryManager;
 
 /**
  * @brief The Core factory is the entry point of the CDMA API
@@ -49,11 +48,11 @@ public final class Factory {
     private static final String CDMA_VERSION = "3_2_0";
 
     // Plugin manager
-    private static volatile IFactoryManager manager;
+    private static volatile FactoryManager manager;
 
     // Dictionary view
     private static String CDM_VIEW = "";
-    private static final String DICO_PATH_PROP       = "CDM_DICTIONARY_PATH";
+    private static final String DICTIONARY_PATH      = "CDM_DICTIONARY_PATH";
 
     // Files' suffix / prefix
     private static final String FILE_CONCEPT_NAME    = "concepts";
@@ -144,35 +143,35 @@ public final class Factory {
      * @return views' names
      */
     public static List<String> getAvailableViews() {
-    	List<String> result = new ArrayList<String>();
-    	
-    	// Get the fictionary folder
+        List<String> result = new ArrayList<String>();
+
+        // Get the fictionary folder
         String path = getDictionariesFolder();
         if( path != null ) {
-        	File folder = new File( path + File.separator + PATH_FOLDER_VIEWS );
-        	if( folder.exists() && folder.isDirectory() ) {
-        		// List folder's files
-        		File[] files = folder.listFiles();
-        		String name, fileName;
-        		for( File file : files ) {
-        			fileName = file.getPath();
-        			// Check files name
-        			if( fileName.endsWith("_" + FILE_VIEW_SUFFIX + ".xml" ) ) {
-        				try {
-        					// Get the view name
-							name = DictionaryReader.getDictionaryName(fileName);
-							result.add( name );
-						} catch (FileAccessException e) {
-							Factory.getLogger().log(Level.INFO, "Unable to get the view name for: " + fileName, e);
-						}
-        			}
-        		}
-        	}
+            File folder = new File( path + File.separator + PATH_FOLDER_VIEWS );
+            if( folder.exists() && folder.isDirectory() ) {
+                // List folder's files
+                File[] files = folder.listFiles();
+                String name, fileName;
+                for( File file : files ) {
+                    fileName = file.getPath();
+                    // Check files name
+                    if( fileName.endsWith("_" + FILE_VIEW_SUFFIX + ".xml" ) ) {
+                        try {
+                            // Get the view name
+                            name = DictionaryReader.getDictionaryName(fileName);
+                            result.add( name );
+                        } catch (FileAccessException e) {
+                            Factory.getLogger().log(Level.INFO, "Unable to get the view name for: " + fileName, e);
+                        }
+                    }
+                }
+            }
         }
 
-    	return result;
+        return result;
     }
-    
+
     /**
      * According to the currently defined experiment, this method will return the path
      * to reach the declarative dictionary. It means the file where
@@ -186,7 +185,7 @@ public final class Factory {
         String sDict = getDictionariesFolder();
         String view  = getActiveView();
 
-        if( ! view.trim().isEmpty() ) {
+        if (view != null && !view.trim().isEmpty()) {
             String vFile = ( view + "_" + FILE_VIEW_SUFFIX + ".xml" ).toLowerCase();
             file = sDict + File.separator + PATH_FOLDER_VIEWS + File.separator + vFile;
         }
@@ -257,7 +256,7 @@ public final class Factory {
      */
     public static void setDictionariesFolder(String path) {
         if (path != null) {
-            System.setProperty(DICO_PATH_PROP, path);
+            System.setProperty(DICTIONARY_PATH, path);
         }
     }
 
@@ -268,14 +267,14 @@ public final class Factory {
      * @return path targeting a folder
      */
     public static String getDictionariesFolder() {
-        return System.getProperty(DICO_PATH_PROP, System.getenv(DICO_PATH_PROP));
+        return System.getProperty(DICTIONARY_PATH, System.getenv(DICTIONARY_PATH));
     }
 
     /**
      * Return the singleton instance of the plug-ins factory manager
      * @return IFactoryManager unique instance
      */
-    public static IFactoryManager getManager() {
+    public static FactoryManager getManager() {
         if (manager == null) {
             synchronized (Factory.class) {
                 if (manager == null) {
@@ -290,6 +289,7 @@ public final class Factory {
      * Return the IFactory of the first available plug-in that was loaded
      * @return first loaded IFactory
      */
+    @Deprecated
     public static IFactory getFactory() {
         return getManager().getFactory();
     }
@@ -322,7 +322,7 @@ public final class Factory {
         // For each check if it can read the given source
         for ( IDatasource source : sources ) {
             // Can read ?
-        	boolean canRead = source.isReadable(uri);
+            boolean canRead = source.isReadable(uri);
             if( canRead ) {
                 reader.add( source.getFactoryName() );
 
@@ -352,7 +352,7 @@ public final class Factory {
         IDatasource source;
 
         // Ensure a factory manager has been loaded
-        IFactoryManager mngr = getManager();
+        FactoryManager mngr = getManager();
 
         // Get the registry of factories
         Map<String, IFactory> registry = mngr.getFactoryRegistry();
@@ -361,6 +361,26 @@ public final class Factory {
             if( source != null ) {
                 result.add( source );
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the list of all available IFactory implementations.
+     * 
+     * @return list of found IFactory
+     */
+    public static List<IFactory> getFactories() {
+        List<IFactory> result = new ArrayList<IFactory>();
+
+        // Ensure a factory manager has been loaded
+        FactoryManager mngr = getManager();
+
+        // Get the registry of factories
+        Map<String, IFactory> registry = mngr.getFactoryRegistry();
+        for (Entry<String, IFactory> entry : registry.entrySet()) {
+            result.add(entry.getValue());
         }
 
         return result;

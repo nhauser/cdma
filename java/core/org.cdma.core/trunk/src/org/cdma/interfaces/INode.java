@@ -5,24 +5,35 @@
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
 //
-// Contributors:
-//    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+// Authors:
+//     - Gregouze The Tarlouze at synchrotron-soleil.fr
+//     - Rodriguez The Merguez at synchrotron-soleil.fr
 // ****************************************************************************
-package org.cdma.utils;
+package org.cdma.interfaces;
 
-/// @cond internal
 
 /**
- * @brief The IFactoryResolver is used to discover factories that will be used by the CDMA.
  * 
- * The factory resolver aims to find all factories.
- *
  */
+public interface INode {
 
-public interface IFactoryResolver {
+    /**
+     * 
+     */
+    public String getNodeName();
 
-    public void discoverFactories(FactoryManager manager);
+    /**
+     * 
+     */
+    public boolean matchesNode(INode node);
 
+    /**
+     * 
+     */
+    public boolean matchesPartNode(INode node);
+
+    /**
+     * 
+     */
+    public boolean isGroup();
 }
-
-/// @endcond internal
