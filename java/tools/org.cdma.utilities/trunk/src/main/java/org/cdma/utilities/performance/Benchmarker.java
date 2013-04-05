@@ -32,7 +32,7 @@ public class Benchmarker {
     private static Map<String, Long> nbthread = new TreeMap<String, Long>();
     private static Map<String, Long> memFree  = new TreeMap<String, Long>();
     private static Map<String, Long> memCost  = new TreeMap<String, Long>();
-    
+
 
     /**
      * Start a timer with the given label.
@@ -58,8 +58,8 @@ public class Benchmarker {
                 long run  = Runtime.getRuntime().freeMemory();
                 long free = memFree.get(label);
                 if( free != 0 ) {
-                	long cost = memCost.get(label) + (run - free);
-                	memCost.put(label, cost);
+                    long cost = memCost.get(label) + (run - free);
+                    memCost.put(label, cost);
                 }
                 memFree.put(label, run);
             } else {
@@ -85,15 +85,15 @@ public class Benchmarker {
         synchronized (Benchmarker.class) {
             if (counters.containsKey(label)) {
                 Long counter = counters.get(label);
-                
+
                 if (counter > 1) {
                     counter--;
                     counters.put(label, counter);
                     long run  = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
                     if( free != 0 ) {
-                    	long cost = memCost.get(label) + (run - free);
-                    	memCost.put(label, cost);
+                        long cost = memCost.get(label) + (run - free);
+                        memCost.put(label, cost);
                     }
                     memFree.put(label, run);
                 } else if (counter > 0) {
@@ -107,21 +107,21 @@ public class Benchmarker {
 
                     Long max = maxTimer.get(label);
                     if( currentTime - starter > max ) {
-                    	maxTimer.put(label, currentTime - starter );
+                        maxTimer.put(label, currentTime - starter );
                     }
                     Long min = minTimer.get(label);
                     if( currentTime - starter < min ) {
-                    	minTimer.put(label, currentTime - starter );
+                        minTimer.put(label, currentTime - starter );
                     }
-                    
+
                     long run  = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
                     if( free != 0 ) {
-                    	long cost = memCost.get(label) + (run - free);
-                    	memCost.put(label, cost);
+                        long cost = memCost.get(label) + (run - free);
+                        memCost.put(label, cost);
                     }
                     memFree.put(label, 0L);
-                    
+
                 } else {
                     Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
                     Factory.getLogger().log( Level.INFO, "To much stop for: " + label);
@@ -134,23 +134,23 @@ public class Benchmarker {
             }
         }
     }
-    
+
     /**
      * Trace the calling sequence with the full stack trace.
      */
     public static void traceCall() {
-    	traceCall(-1);
+        traceCall(-1);
     }
-    
+
     /**
      * Trace the calling sequence with the 'depthOfCall' last stack trace.
      * 
      * @param depthOfCall depth of the stack trace to be considered
      */
     public static void traceCall(int depthOfCall) {
-    	Exception trace = new Exception();
-    	String label = buildStringFromThrowable(trace, depthOfCall);
-    	
+        Exception trace = new Exception();
+        String label = buildStringFromThrowable(trace, depthOfCall);
+
         synchronized (Benchmarker.class) {
             if (counters.containsKey(label)) {
                 Long call = nbcalls.get(label);
@@ -175,37 +175,43 @@ public class Benchmarker {
     public static Map<String, Long> getTimers() {
         return Collections.unmodifiableMap(timers);
     }
-    
+
     /**
      * Return a String representation of all the static
      */
     public static String print() {
-    	StringBuilder result = new StringBuilder();
-    	synchronized (Benchmarker.class) {
-	        int max = 0;
-	        for( String label : timers.keySet() ) {
-	        	String lines[] = label.split("\n");
-	        	for( String line : lines ) {
-	        		if( line.length() + 2 > max ) {
-	        			max = line.length() + 2;
-	        		}
-	        	}
-	        }
-	        
-	        for (String label : timers.keySet()) {
-	            result.append( print( label + ": ", max ) );
-	            result.append( print( " spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ", 20) );
-	            result.append( print( " nb calls: " + nbcalls.get(label), 20 ) + " " );
-	            result.append( print( " max thread: " +  nbthread.get(label), 20) + " " );
-	            result.append( print( " maximum cost: " + maxTimer.get(label) + " ms ", 28 )  );
-	            result.append( print( " average cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
-	            result.append( print( " minimum cost: " + minTimer.get(label) + " ms ", 28 )  );
-	            result.append( print( " free mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
-	        }
-    	}
+        StringBuilder result = new StringBuilder();
+        synchronized (Benchmarker.class) {
+            int max = 0;
+            for( String label : timers.keySet() ) {
+                String lines[] = label.split("\n");
+                for( String line : lines ) {
+                    if( line.length() + 2 > max ) {
+                        max = line.length() + 2;
+                    }
+                }
+            }
+
+            for (String label : timers.keySet()) {
+                result.append( print( label + ": ", max ) );
+                result.append( print( " spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ", 20) );
+                result.append( print( " nb calls: " + nbcalls.get(label), 20 ) + " " );
+                result.append( print( " max thread: " +  nbthread.get(label), 20) + " " );
+                result.append( print( " maximum cost: " + maxTimer.get(label) + " ms ", 28 )  );
+                result.append( print( " average cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
+                result.append( print( " minimum cost: " + minTimer.get(label) + " ms ", 28 )  );
+                result.append( print( " free mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
+            }
+        }
         return result.toString();
     }
-    
+
+    public static String getTimeSpent(String label) {
+        String result = null;
+        result = roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ";
+        return result;
+    }
+
     /**
      * Reset all informations
      */
@@ -215,7 +221,7 @@ public class Benchmarker {
             List<String> running = new ArrayList<String>();
             for( Entry<String,Long> counter : counters.entrySet() ) {
                 if( counter.getValue() > 0 ) {
-                	running.add(counter.getKey());
+                    running.add(counter.getKey());
                     reset = false;
                 }
             }
@@ -231,12 +237,12 @@ public class Benchmarker {
                 minTimer = new TreeMap<String, Long>();
             }
             else {
-            	StringBuffer log = new StringBuffer();
-            	log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
-            	log.append( "Timers are still running!!!!\n" );
-            	log.append( "Please stop the following timers:\n" );
+                StringBuffer log = new StringBuffer();
+                log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
+                log.append( "Timers are still running!!!!\n" );
+                log.append( "Please stop the following timers:\n" );
                 for( String timer : running ) {
-                	log.append( "   - " + timer + "\n" );
+                    log.append( "   - " + timer + "\n" );
                 }
                 log.append( ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<" );
                 Factory.getLogger().log( Level.INFO, log.toString() );
@@ -257,33 +263,33 @@ public class Benchmarker {
         }
         return result;
     }
-    
+
     private static String buildStringFromThrowable(Throwable e, int depth) {
-	    StringBuilder sb = new StringBuilder();
-	    int i = -1;
-	    int depthCall = depth > e.getStackTrace().length ? e.getStackTrace().length : depth;
-	    for (StackTraceElement element : e.getStackTrace()) {
-	    	if( i > -1 && ( i < depthCall || depth < 0 ) ) {
-	    		sb.append(element.toString());
-	    	}
-	    	else if( i == depth && depth >= 0 ) {
-	    		break;
-	    	}
-	    	if( i < depthCall - 1 && i > -1 ) {
-	    		sb.append("\n");
-	    	}
-	    	i++;
-	    }
-	    return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        int i = -1;
+        int depthCall = depth > e.getStackTrace().length ? e.getStackTrace().length : depth;
+        for (StackTraceElement element : e.getStackTrace()) {
+            if( i > -1 && ( i < depthCall || depth < 0 ) ) {
+                sb.append(element.toString());
+            }
+            else if( i == depth && depth >= 0 ) {
+                break;
+            }
+            if( i < depthCall - 1 && i > -1 ) {
+                sb.append("\n");
+            }
+            i++;
+        }
+        return sb.toString();
     }
-    
+
     private static String roundNumber( Number num, int nbDigits ) {
-    	String format = "#.";
-    	char[] digits = new char[nbDigits];
-    	Arrays.fill(digits, '#');
-    	format += String.copyValueOf(digits);
-    	DecimalFormat df = new DecimalFormat(format);
-    	return df.format(num);
+        String format = "#.";
+        char[] digits = new char[nbDigits];
+        Arrays.fill(digits, '#');
+        format += String.copyValueOf(digits);
+        DecimalFormat df = new DecimalFormat(format);
+        return df.format(num);
     }
 
 }
