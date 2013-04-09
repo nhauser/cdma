@@ -109,13 +109,15 @@ public class DateFormat {
 	
 	static protected SimpleDateFormat getDateFormater(String pattern) {
 		// Select localized time formater
-		SimpleDateFormat formater;
-		if( DATE_FORMATS.containsKey( pattern ) ) {
-			formater = DATE_FORMATS.get(pattern);
-		}
-		else {
-			formater = new SimpleDateFormat(pattern);
-			DATE_FORMATS.putIfAbsent( pattern, formater );
+		SimpleDateFormat formater = null;
+		if( pattern != null ) {
+			if( DATE_FORMATS.containsKey( pattern ) ) {
+				formater = DATE_FORMATS.get(pattern);
+			}
+			else {
+				formater = new SimpleDateFormat(pattern);
+				DATE_FORMATS.putIfAbsent( pattern, formater );
+			}
 		}
 		return formater;
 	}

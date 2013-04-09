@@ -52,9 +52,9 @@ public final class NxsFactory implements IFactory {
     public static final String LABEL       = "SOLEIL's NeXus plug-in";
     public static final String DEBUG_INF   = "CDMA_DEBUG";
     public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
-    private static final String CDMA_VERSION = "3_2_0";
-    private static final String PLUG_VERSION = "1.4.12";
-    private static final String DESC = "That plug-in's manages NeXus data files (having 'nxs' for extension).";
+    private static final String CDMA_VERSION = "3.2.5";
+    private static final String PLUG_VERSION = "1.4.13";
+    private static final String DESC = "Manages NeXus data files (with ‘nxs’ extension)";
     
     public NxsFactory() {
     }
@@ -315,6 +315,10 @@ public final class NxsFactory implements IFactory {
             }
         }		
 	}
-	
-	
+
+	@Override
+    public boolean isLogicalModeAvailable() {
+        String dictPath = Factory.getDictionariesFolder();
+        return (dictPath != null && !dictPath.isEmpty());
+    }
 }
