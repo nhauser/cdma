@@ -65,8 +65,7 @@ public abstract class XmlContainer implements IContainer, Cloneable {
 	@Override
 	public void addStringAttribute(String name, String value) {
 		if (name != null && value != null) {
-			mListAttributes.put(name, new XmlAttribute(mFactoryName, name,
-					value));
+			mListAttributes.put(name, new XmlAttribute(mFactoryName, name, value));
 		}
 	}
 
@@ -89,8 +88,7 @@ public abstract class XmlContainer implements IContainer, Cloneable {
 
 	@Override
 	public List<IAttribute> getAttributeList() {
-		ArrayList<IAttribute> result = new ArrayList<IAttribute>(
-				mListAttributes.values());
+		ArrayList<IAttribute> result = new ArrayList<IAttribute>( mListAttributes.values());
 		return result;
 	}
 

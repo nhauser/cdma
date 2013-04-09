@@ -29,7 +29,7 @@ import org.cdma.interfaces.IKey;
 import org.cdma.utils.Utilities.ModelType;
 
 public class ArchivingGroup implements IGroup {
-    private List<IAttribute> mAttributes; // list of attributes 
+    private Map<String, IAttribute> mAttributes; // map of attributes 
     private List<IContainer> mChildren;   // list of container both items and groups 
     private List<IDimension> mDimensions; // list of dimension associated to this group
     private boolean  mInitialized;       // has this group been initialized
@@ -48,7 +48,7 @@ public class ArchivingGroup implements IGroup {
     
 	public ArchivingGroup(String factory, ArchivingDataset dataset, ArchivingGroup parent, String name) {
 		mFactory    = factory;
-		mAttributes = new ArrayList<IAttribute>();
+		mAttributes = new HashMap<String, IAttribute>();
 		mChildren   = new ArrayList<IContainer>();
 		mDimensions = new ArrayList<IDimension>();
 		mDataset    = dataset;
@@ -143,7 +143,7 @@ public class ArchivingGroup implements IGroup {
 		ArchivingGroup result = new ArchivingGroup(mFactory, mDataset);
 		result.mParent = this.mParent;
 		result.mDbAttr = this.mDbAttr.clone();
-		result.mAttributes = new ArrayList<IAttribute>(this.mAttributes);
+		result.mAttributes = new HashMap<String, IAttribute>(this.mAttributes);
 		result.mChildren = new ArrayList<IContainer>(this.mChildren);
 		result.mDimensions = new ArrayList<IDimension>(this.mDimensions);
 		result.mDbAttr = this.mDbAttr.clone();
@@ -161,29 +161,25 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public void addOneAttribute(IAttribute attribute) {
-		mAttributes.add(attribute);
+		if( attribute != null ) {
+			mAttributes.put(attribute.getName(), attribute);
+		}
 	}
 
 	@Override
 	public void addStringAttribute(String name, String value) {
-		mAttributes.add( new ArchivingAttribute( mFactory, name, value ) );
+		addOneAttribute( new ArchivingAttribute( mFactory, name, value ) );
 	}
 
 	@Override
 	public IAttribute getAttribute(String name) {
-		IAttribute result = null;
-		for( IAttribute attr : mAttributes ) {
-			if( attr.getName().equalsIgnoreCase( name ) ) {
-				result = attr;
-				break;
-			}
-		}
+		IAttribute result = mAttributes.get(name);
 		return result;
 	}
 
 	@Override
 	public List<IAttribute> getAttributeList() {
-		return mAttributes;
+		return new ArrayList<IAttribute>(mAttributes.values());
 	}
 
 	@Override
@@ -204,14 +200,9 @@ public class ArchivingGroup implements IGroup {
 	@Override
 	public boolean hasAttribute(String name, String value) {
 		boolean result = false;
-		for( IAttribute attr : mAttributes ) {
-			if( 
-					attr.getName().equalsIgnoreCase( name ) && 
-					attr.getStringValue().equalsIgnoreCase( value) 
-			) {
-				result = true;
-				break;
-			}
+		IAttribute attr = getAttribute(name);
+		if( attr != null && attr.isString() && attr.getStringValue().equalsIgnoreCase( value) ) {
+			result = true;
 		}
 		return result;
 	}
@@ -220,12 +211,8 @@ public class ArchivingGroup implements IGroup {
 	public boolean removeAttribute(IAttribute attribute) {
 		boolean removed = false;
 		if( attribute != null ) {
-			String name = attribute.getName();
-			for( IAttribute attr : mAttributes ) {
-				if( attr.getName().equalsIgnoreCase( name ) ) {
-					removed = mAttributes.remove(attr);
-				}
-			}
+			IAttribute attr = mAttributes.remove(attribute.getName());
+			removed = (attr != null);
 		}
 		return removed;
 	}
@@ -549,7 +536,13 @@ public class ArchivingGroup implements IGroup {
 
 	@Override
 	public String toString() {
-		return getName();
+		StringBuffer result = new StringBuffer();
+		result.append( getName() );
+		result.append("\nattrib: \n" );
+		for( IAttribute attr : getAttributeList() ) {
+			result.append("  - " + attr.toString() + "\n" );
+		}
+		return result.toString();
 	}
 	
 	// ------------------------------------------------------------------------
@@ -570,6 +563,8 @@ public class ArchivingGroup implements IGroup {
 
 	private void initChildren() {
 		if( ! isInitialized() ) {
+			mInitialized = true;
+			
 			// remove children and dimensions
 			mChildren.clear();
 			mDimensions.clear();
@@ -579,8 +574,6 @@ public class ArchivingGroup implements IGroup {
 			
 			// Initialize child items if any
 			GroupUtils.initItemList(this);
-			
-			mInitialized = true;
 		}
 	}
 	

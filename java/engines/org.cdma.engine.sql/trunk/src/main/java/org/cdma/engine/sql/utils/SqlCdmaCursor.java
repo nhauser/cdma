@@ -184,19 +184,18 @@ public class SqlCdmaCursor {
 		// Get the SQL connection
 		SqlConnector sql_connector = mDataset.getSqlConnector();
 		if (sql_connector != null) {
-				// Count number of result
-				if( mNbRows < 0 ) {
-					setParams(mStatCount);
-					ResultSet tmp = mStatCount.executeQuery();
-					if( tmp.next() ) {
-						mNbRows = tmp.getInt(1);
-					}
+			// Count number of result
+			if( mNbRows < 0 ) {
+				setParams(mStatCount);
+				ResultSet tmp = mStatCount.executeQuery();
+				if( tmp.next() ) {
+					mNbRows = tmp.getInt(1);
 				}
-				
-				
-				// Execute the query
-				setParams(mStatQuery);
-				result = mStatQuery.executeQuery();
+			}
+			
+			// Execute the query
+			setParams(mStatQuery);
+			result = mStatQuery.executeQuery();
 		}
 		
 		return result;

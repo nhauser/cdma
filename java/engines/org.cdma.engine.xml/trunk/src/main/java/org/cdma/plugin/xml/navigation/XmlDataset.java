@@ -71,7 +71,6 @@ public class XmlDataset implements IDataset {
 				// Add data item when a text value is available
 				String data = currentChild.getNodeValue();
 				if ( data != null && ! data.trim().isEmpty() ) {
-					System.out.println(data);
 					XmlDataItem item = new XmlDataItem(mFactoryName, "data_item",
 							itemIndex, this, parentContainer);
 					item.setCachedData(new XmlArray( mFactoryName, data), false);

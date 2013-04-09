@@ -225,14 +225,6 @@ public class ArchivingDataset implements IDataset {
 		mPassword = password;
 	}
 	
-	public boolean getUSDateFormat() {
-		return mIsUSFormat;
-	}
-	
-	public void setUSdateFormat(boolean isUS ) {
-		mIsUSFormat = isUS;
-	}
-	
 	public void setNumericalDate(boolean numerical) {
 		mNumDate = numerical;
 		if( mSqlDataset != null ) {
@@ -242,6 +234,14 @@ public class ArchivingDataset implements IDataset {
 	
 	public boolean getNumericalDate() {
 		return mNumDate;
+	}
+	
+	static public String[] getDrivingAttributes() {
+		return Constants.DRIVING_ATTRIBUTE;
+	}
+	
+	static public String[] getDatedAttributes() {
+		return Constants.DATE_ATTRIBUTE;
 	}
 	
     // ---------------------------------------------------------

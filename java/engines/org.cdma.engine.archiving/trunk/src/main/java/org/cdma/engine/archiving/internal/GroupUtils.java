@@ -35,7 +35,7 @@ public class GroupUtils {
 	 * @param name of the IAttribute to look for
 	 * @return IAttribute object or null if not found
 	 */
-	public static IAttribute seekAttributeInAncestors(ArchivingGroup group, String name) {
+	public static IAttribute seekAttributeInAncestors(IGroup group, String name) {
 		IAttribute result = null;
 		if ( name != null && group != null ) {
 			IGroup tmpGrp = group;
@@ -138,7 +138,7 @@ public class GroupUtils {
 	 * @return string representation of the date format
 	 * @note the 'end' date is carried by  IAttribute {@link Constants.DATE_FORMAT}
 	 */
-	public static String getDateFormat(ArchivingGroup group) {
+	public static String getDateFormat(IGroup group) {
 		String format = null;
 		if( group != null ) {
 		    IAttribute dateFormat = seekAttributeInAncestors(group, Constants.DATE_FORMAT);
