@@ -10,13 +10,16 @@
 package org.cdma.plugin.mambo.navigation;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.engine.archiving.internal.GroupUtils;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
+import org.cdma.engine.archiving.navigation.ArchivingAttribute;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingGroup;
 import org.cdma.exception.BackupException;
@@ -32,12 +35,12 @@ import org.cdma.plugin.mambo.SoleilMamboFactory;
 import org.cdma.plugin.mambo.internal.MamboConstants;
 import org.cdma.plugin.xml.navigation.XmlGroup;
 import org.cdma.utilities.navigation.AbstractGroup;
+import org.cdma.engine.sql.utils.DateFormat;
 
 public class SoleilMamboGroup extends AbstractGroup {
 	private static final String PATH_SEPARATOR = "/";
 	private XmlGroup       mXmlGroup;
 	private ArchivingGroup mArcGroup;
-	
 	
 	public SoleilMamboGroup(SoleilMamboDataset dataset, SoleilMamboGroup parent, String name) throws BackupException {
 		super( SoleilMamboFactory.NAME, dataset, parent, name );
@@ -57,7 +60,6 @@ public class SoleilMamboGroup extends AbstractGroup {
 		mArcGroup = arcGroup;
 	}
 	
-
 	@Override
 	public long getLastModificationDate() {
 		long result = 0;
@@ -92,6 +94,60 @@ public class SoleilMamboGroup extends AbstractGroup {
 
 		return result;
 	}
+	
+	@Override
+	public void addOneAttribute(IAttribute attribute) {
+		if( attribute != null ) {
+			IAttribute attr = prepareAttributeForAdd(attribute);
+			super.addOneAttribute( attr );
+
+			if( mArcGroup != null ) {
+				String[] attributes = ArchivingDataset.getDrivingAttributes();
+				String name = attribute.getName();
+				for( String tmp : attributes ) {
+					if( tmp.equals( name ) ) {
+						mArcGroup.addOneAttribute(attr);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Prepare an a given IAttribute for being added to this group. Mainly,
+	 * it will convert a long timestamp into the properly formated String date
+	 * representation
+	 *  
+	 * @param attribute to be converted
+	 * @return attribute of the right format
+	 */
+	private IAttribute prepareAttributeForAdd(IAttribute attribute) {
+		IAttribute result = attribute;
+		
+		// If attribute is a number
+		if( attribute != null && !attribute.isString() ) {
+			String name = attribute.getName();
+			
+			// If attribute is matching a dated expected attribute
+			for( String dateAttr : ArchivingDataset.getDatedAttributes() ) {
+				if( dateAttr.equals(name) ) {
+					String dateFormat = GroupUtils.getDateFormat(this);
+					if( dateFormat != null ) {
+						try {
+							String date = DateFormat.convertDate( attribute.getNumericValue().longValue(), dateFormat );
+							result = new ArchivingAttribute(SoleilMamboFactory.NAME, name, date);
+						} catch (ParseException e) {
+							// Let the attribute as it is and return it
+						}
+					}
+					break;
+				}
+			}
+			
+		}
+		return result;
+	}
 
 	// ------------------------------------------------------------------------
 	// protected methods
@@ -103,16 +159,18 @@ public class SoleilMamboGroup extends AbstractGroup {
 
 	@Override
 	protected void initAttributes() {
-		IGroup group = null;
-		if( mXmlGroup != null ) {
-			group = mXmlGroup;
-		}
-		else if( mArcGroup != null ) {
-			group = mArcGroup;
+		List<IGroup> groups = new ArrayList<IGroup>();
+		if( mArcGroup != null ) {
+			groups.add(mArcGroup);
 		}
 		
-		if( group != null ) {
-			List<IAttribute> attributes = group.getAttributeList();
+		if( mXmlGroup != null ) {
+			groups.add(mXmlGroup);
+		}
+		
+		List<IAttribute> attributes;
+		for( IGroup group : groups ) {
+			attributes = group.getAttributeList();
 			for( IAttribute attribute : attributes ) {
 				addOneAttribute(attribute);
 			}
@@ -137,15 +195,28 @@ public class SoleilMamboGroup extends AbstractGroup {
 		if( mArcGroup != null ) {
 			groups.add(mArcGroup);
 		}
-		
+
+		List<IDataItem> items;
+		List<IAttribute> attributes;
+		IDataItem child;
 		for( IGroup group : groups ) {
 			SoleilMamboDataset dataset = (SoleilMamboDataset) getDataset();
-			List<IDataItem> items = group.getDataItemList();
+			items = group.getDataItemList();
 			try {
 				for( IDataItem item : items ) {
+					// Create a child data item with loaded data
 					IArray data = item.getData();
 					String name = item.getShortName();
-					addDataItem( new SoleilMamboDataItem( dataset, this, name, data) );
+					child = new SoleilMamboDataItem( dataset, this, name, data);
+					
+					// Set its attributes
+					attributes = item.getAttributeList();
+					for( IAttribute attribute : attributes ) {
+						child.addOneAttribute(attribute);
+					}
+					
+					addDataItem( child );
+					
 				}
 			} catch (BackupException e) {
 				Factory.getLogger().log(Level.SEVERE, "Unable to initialize item child", e);
@@ -197,12 +268,12 @@ public class SoleilMamboGroup extends AbstractGroup {
 		SoleilMamboGroup parent = this;
 		SoleilMamboGroup group = null;
 		
+		// Get the archiving root group
 		ArchivingDataset arcDataset = dataset.getArchivingDataset();
 		IGroup arcGroup = arcDataset.getRootGroup();
 		
 		// Split the path into nodes
 		String[] nodes = path.split(AttributePath.SEPARATOR);
-		
 		// For each node construct a SoleilMamboGroup
 		for( String node : nodes ) {
 			if( node != null ) {
@@ -233,6 +304,13 @@ public class SoleilMamboGroup extends AbstractGroup {
 		group.mXmlGroup = xmlGroup;
 		group.mArcGroup = (ArchivingGroup) arcGroup;
 
+		// Add attributes from VC files
+		if( result != null ) {
+			for( IAttribute attribute : mArcGroup.getAttributeList() ) {
+				result.addOneAttribute(attribute);
+			}
+		}
+		
 		// Add dimension to that last group
 		List<IDimension> dimensions = arcGroup.getDimensionList();
 		for( IDimension dimension : dimensions ) {
@@ -240,6 +318,17 @@ public class SoleilMamboGroup extends AbstractGroup {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append( getName() );
+		result.append("\nattrib: \n" );
+		for( IAttribute attr : getAttributeList() ) {
+			result.append("  - " + attr.toString() + "\n" );
+		}
+		return result.toString();
 	}
 	
 }

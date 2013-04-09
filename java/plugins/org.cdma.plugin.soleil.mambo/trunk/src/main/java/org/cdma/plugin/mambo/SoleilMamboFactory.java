@@ -32,30 +32,14 @@ import org.cdma.interfaces.IKey;
 import org.cdma.plugin.mambo.navigation.SoleilMamboDataset;
 
 public class SoleilMamboFactory implements IFactory {
-
-	static private boolean isPluginValid() {
-		boolean isValid = false;
-		
-		// Check the plug-in has it's environment or system propserties set
-		String hdbEnv = ArchivingMode.HDB.getName() + "_USER";
-		String tdbEnv = ArchivingMode.TDB.getName() + "_USER";
-		
-		String hdbUsr = System.getProperty(hdbEnv, System.getenv(hdbEnv));
-		String tdbUsr = System.getProperty(tdbEnv, System.getenv(tdbEnv));
-		if( 
-			( hdbUsr != null && !hdbUsr.isEmpty() ) || 
-			( tdbUsr != null && !tdbUsr.isEmpty() )
-		) {
-			isValid = true;
-		}
-		
-		Enumeration<Driver> drivers = java.sql.DriverManager.getDrivers();
-		if( drivers != null && !drivers.hasMoreElements() ) {
-			isValid = false;
-		}
-
-		return isValid;
-	}
+	public static final String DESC = "Manages a Mambo file to extract archived attributes.";
+	public static final String NAME = "MamboSoleil";
+    public static final String LABEL = "SOLEIL's Mambo plug-in";
+	public static final String API_VERS = "3.2.5";
+	public static final String PLUG_VERS = "0.0.1";
+	public static final String CONFIG_FILE = "cdma_mambosoleil_config.xml";
+	
+	private static SoleilMamboFactory factory;
 	
     static public SoleilMamboFactory getInstance() {
         synchronized (SoleilMamboFactory.class ) {
@@ -70,15 +54,6 @@ public class SoleilMamboFactory implements IFactory {
         return factory;
     }
     
-	public static final String DESC = "That plug-in aims to access a Mambo file to extract archived attributes.";
-	public static final String NAME = "MamboSoleil";
-    public static final String LABEL = "SOLEIL's Mambo plug-in";
-	public static final String API_VERS = "3.2.3";
-	public static final String PLUG_VERS = "1.0.0";
-	public static final String CONFIG_FILE = "cdma_mambosoleil_config.xml";
-	
-	private static SoleilMamboFactory factory;
-
 	@Override
 	public IDataset openDataset(URI uri) {
 		SoleilMamboDataset dataset = null;
@@ -274,5 +249,35 @@ public class SoleilMamboFactory implements IFactory {
             	Factory.getManager().unregisterFactory(SoleilMamboFactory.NAME);
             }
         }		
+	}
+
+	@Override
+	public boolean isLogicalModeAvailable() {
+		// No logical mode for this plug-in
+		return false;
+	}
+	
+	static private boolean isPluginValid() {
+		boolean isValid = false;
+		
+		// Check the plug-in has it's environment or system propserties set
+		String hdbEnv = ArchivingMode.HDB.getName() + "_USER";
+		String tdbEnv = ArchivingMode.TDB.getName() + "_USER";
+		
+		String hdbUsr = System.getProperty(hdbEnv, System.getenv(hdbEnv));
+		String tdbUsr = System.getProperty(tdbEnv, System.getenv(tdbEnv));
+		if( 
+			( hdbUsr != null && !hdbUsr.isEmpty() ) || 
+			( tdbUsr != null && !tdbUsr.isEmpty() )
+		) {
+			isValid = true;
+		}
+		
+		Enumeration<Driver> drivers = java.sql.DriverManager.getDrivers();
+		if( drivers != null && !drivers.hasMoreElements() ) {
+			isValid = false;
+		}
+
+		return isValid;
 	}
 }
