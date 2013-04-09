@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
@@ -27,9 +28,9 @@ import org.cdma.interfaces.IKey;
 public class AnstoFactory implements IFactory {
     public static final String NAME  = "AnstoNetCDF";
     public static final String LABEL = "ANSTO's NetCDF plug-in";
-    private static final String DESC = "That plug-in's manages NetCDF data files. Main files' extensions are: .nxs, .hdf, .h4, .hdf4, .he4, .h5, .hdf5, .he5";
-    private static final String CDMA_VERSION = "3_2_0";
-    private static final String PLUG_VERSION = "1.0.0";
+    private static final String DESC = "Manages NetCDF data files (main extensions are: .nxs, .hdf, .h4, .hdf4, .he4, .h5, .hdf5, .he5)";
+    private static final String CDMA_VERSION = "3.2.5";
+    private static final String PLUG_VERSION = "1.0.4";
     
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
@@ -231,5 +232,11 @@ public class AnstoFactory implements IFactory {
 	public void processPostRecording() {
 		// Nothing to do!
 	}
+
+	@Override
+    public boolean isLogicalModeAvailable() {
+        String dictPath = Factory.getDictionariesFolder();
+        return (dictPath != null && !dictPath.isEmpty());
+    }
 
 }

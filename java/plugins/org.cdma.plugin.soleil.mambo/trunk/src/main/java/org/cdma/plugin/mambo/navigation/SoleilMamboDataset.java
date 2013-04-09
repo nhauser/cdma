@@ -12,6 +12,7 @@ import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDataset.ArchivingMode;
+import org.cdma.engine.archiving.navigation.ArchivingGroup;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
@@ -59,15 +60,29 @@ public class SoleilMamboDataset implements IDataset {
 	public IGroup getRootGroup() {
 		if( mPhyRoot == null ) {
 			try {
+				XmlGroup xmlRoot = (XmlGroup) mXmlDataset.getRootGroup();
+				ArchivingGroup arcRoot = (ArchivingGroup) mArcDataset.getRootGroup();
+				mPhyRoot = new SoleilMamboGroup( this, null, xmlRoot, arcRoot );
+				
+				/*
 				// Get the XML root group and initialize child
 				XmlGroup group = (XmlGroup) mXmlDataset.getRootGroup();
 				mPhyRoot = new SoleilMamboGroup( this, null, group );
 				
-				// Parameterize archiving dataset according xml dataset
+				// Get archiving attributes
 				IGroup arcRoot = mArcDataset.getRootGroup();
+				
+				// Parameterize archiving dataset according xml dataset
 				for( IAttribute attribute : mPhyRoot.getAttributeList() ) {
 					arcRoot.addOneAttribute(attribute);
 				}
+				
+				// Set attributes from archiving root group
+				List<IAttribute> arcAttr = arcRoot.getAttributeList();
+				for( IAttribute attr : arcAttr ) {
+					mPhyRoot.addOneAttribute(attr);
+				}
+				*/
 			} catch (BackupException e) {
 				e.printStackTrace();
 			}

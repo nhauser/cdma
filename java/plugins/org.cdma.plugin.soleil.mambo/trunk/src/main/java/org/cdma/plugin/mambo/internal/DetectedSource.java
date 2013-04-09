@@ -57,54 +57,21 @@ public class DetectedSource {
 
     	if (uri != null) {
         	String path = uri.getPath();
-        	File file = new File(path);
-        	if( file.exists() ) {
-        		mIsBrowsable = file.isDirectory();
-        		
-        		if( ! mIsBrowsable ) {
-        			ValidURIFilter filter = new ValidURIFilter();
-        			if( filter.accept( file ) ) {
-        				mIsReadable = true;
-        				mIsProducer = true;
-        				mIsExperiment = true;
-        			}
-        		}
+        	if( path != null ) {
+	        	File file = new File(path);
+	        	if( file.exists() ) {
+	        		mIsBrowsable = file.isDirectory();
+	        		
+	        		if( ! mIsBrowsable ) {
+	        			ValidURIFilter filter = new ValidURIFilter();
+	        			if( filter.accept( file ) ) {
+	        				mIsReadable = true;
+	        				mIsProducer = true;
+	        				mIsExperiment = true;
+	        			}
+	        		}
+	        	}
         	}
-        	
-    		
-    		
-    		/*
-        	if( scheme != null && scheme.equals("jdbc") && uri.getSchemeSpecificPart() != null ) {
-        		try {
-					Driver driver = DriverManager.getDriver(uri.toString());
-					if( driver != null ) {
-			    		ArchivingDataset dataset = new ArchivingDataset(SoleilMamboFactory.NAME, uri);
-			    		for( ArchivingMode mode : ArchivingMode.values() ) {
-			    			try {
-			    				dataset.setArchivingMode(mode);
-			    				dataset.open();
-			    				if( dataset.getRootGroup() != null ) {
-			    					mIsBrowsable = true;
-						    		mIsExperiment = true;
-						    		mIsProducer = true;
-						    		mIsReadable = true;
-						    		dataset.close();
-						    		break;
-			    				}
-			    				else {
-			    					dataset.close();
-			    				}
-			    			}
-			    			catch( IOException e ) {
-			    				// Nothing to do
-			    			}
-			    		}
-					}
-				} catch (SQLException e) {
-					// Nothing to do: no suitable driver for the given URI 
-				}
-        	}
-        	*/
         }
     }
 }

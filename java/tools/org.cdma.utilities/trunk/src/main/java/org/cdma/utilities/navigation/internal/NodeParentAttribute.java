@@ -11,7 +11,9 @@
 package org.cdma.utilities.navigation.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cdma.IFactory;
 import org.cdma.exception.BackupException;
@@ -21,64 +23,54 @@ import org.cdma.interfaces.IGroup;
 
 public abstract class NodeParentAttribute extends NodeParent {
 
-	private List<IAttribute> mAttributes;  // Attributes of this
+	private Map<String, IAttribute> mAttributes;  // Attributes of this
 	private boolean mInitialized;
 	
 	public NodeParentAttribute(String factory, IDataset dataset, IGroup parent, String name) throws BackupException {
 		super( factory, dataset, parent, name );
-		mAttributes = new ArrayList<IAttribute>();
+		mAttributes = new HashMap<String, IAttribute>();
 	}
 	
 	public NodeParentAttribute( NodeParentAttribute object ) throws BackupException {
 		super( object );
-		mAttributes = new ArrayList<IAttribute>( object.mAttributes );
+		mAttributes = new HashMap<String, IAttribute>( object.mAttributes );
 	}
 	
 	public void addOneAttribute(IAttribute attribute) {
-		initialize();
-		mAttributes.add(attribute);
+		if( attribute != null ) {
+			initialize();
+			mAttributes.put( attribute.getName(), attribute );
+		}
 	}
 
 	public void addStringAttribute(String name, String value) {
 		initialize();
 		IFactory factory = getFactory();
 		IAttribute attr = factory.createAttribute(name, value);
-		if( attr != null ) {
-			mAttributes.add(attr);
-		}
+		addOneAttribute(attr);
 	}
 
 	public IAttribute getAttribute(String name) {
 		initialize();
-		IAttribute result = null;
-		if( name != null ) {
-			for( IAttribute attribute : mAttributes ) {
-				if( name.equals(attribute.getName()) ) {
-					result = attribute;
-					break;
-				}
-			}
-		}
+		IAttribute result = mAttributes.get(name);
 		return result;
 	}
 
 	public final List<IAttribute> getAttributeList() {
 		initialize();
-		return mAttributes;
+		List<IAttribute> result = new ArrayList<IAttribute>(mAttributes.values());
+		return result;
 	}
 
 	public boolean hasAttribute(String name, String value) {
 		initialize();
 		boolean result = false;
 		if( name != null ) {
-			String attrVal;
-			for( IAttribute attribute : mAttributes ) {
-				attrVal = attribute.getStringValue();
-				if( attribute != null && name.equals( attribute.getName() ) ) {
-					if( ( value == null && attrVal == null ) || value.equals( attrVal ) ) {
+			IAttribute attribute = getAttribute(name);
+			if( attribute != null ) {
+				String attrVal = attribute.getStringValue();
+				if( ( value == null && attrVal == null ) || value.equals( attrVal ) ) {
 						result = true;
-						break;
-					}
 				}
 			}
 		}
@@ -87,7 +79,12 @@ public abstract class NodeParentAttribute extends NodeParent {
 
 	public boolean removeAttribute(IAttribute attribute) {
 		initialize();
-		return mAttributes.remove(attribute);
+		boolean result = false;
+		if( attribute != null ) {
+			IAttribute attr = mAttributes.remove(attribute.getName());
+			result = attr != null; 
+		}
+		return result;
 	}
 	
 	private void initialize() {

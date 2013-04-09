@@ -2,18 +2,12 @@ package org.cdma.plugin.mambo;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
-import org.cdma.Factory;
-import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IDatasource;
-import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.mambo.internal.DetectedSource;
 
 public class SoleilMamboDataSource implements IDatasource {
@@ -93,8 +87,18 @@ public class SoleilMamboDataSource implements IDatasource {
 
 	@Override
 	public String[] getURIParts(URI target) {
-		// No parts for URI
-		return new String[] {target.toString()};
+        List<String> parts = new ArrayList<String>();
+        if( target != null ) {
+	        String path = target.getPath();
+	        if( path != null ) {
+		        for( String part : path.split( File.pathSeparator ) ) {
+		            if( part != null && ! part.isEmpty() ) {
+		                parts.add(part);
+		            }
+		        }
+	        }
+        }
+        return parts.toArray(new String[] {});
 	}
 
 	@Override
@@ -111,8 +115,19 @@ public class SoleilMamboDataSource implements IDatasource {
 
 	@Override
 	public URI getParentURI(URI target) {
-		// No parent URI are available
-		return null;
+        URI result = null;
+
+        if (isReadable(target) || isBrowsable(target)) {
+            File current = new File(target.getPath());
+            if( current != null ) {
+                if( current != null ) {
+                	current = current.getParentFile();
+                }
+            }
+            result = current.toURI();
+        }
+
+        return result;
 	}
 	
     private DetectedSource getSource(URI uri) {
@@ -141,7 +156,7 @@ public class SoleilMamboDataSource implements IDatasource {
         return source;
     }
 
-    private static final String URI_DESC = "URI must target an Archiving database";
+    private static final String URI_DESC = "URI must target a Mambo's view configuration file";
     
 	@Override
 	public String getURITypeDescription() {

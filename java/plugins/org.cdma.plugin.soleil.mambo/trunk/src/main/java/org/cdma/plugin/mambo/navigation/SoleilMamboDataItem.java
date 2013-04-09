@@ -103,4 +103,15 @@ public class SoleilMamboDataItem extends AbstractDataItem {
 		return result;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuffer result = new StringBuffer();
+		result.append( getName() );
+		result.append("\nattrib: \n" );
+		for( IAttribute attr : getAttributeList() ) {
+			result.append("  - " + attr.toString() + "\n" );
+		}
+		return result.toString();
+	}
+	
 }
