@@ -30,7 +30,7 @@ import org.cdma.interfaces.IKey;
 
 public class SoleilArcFactory implements IFactory {
 
-	private static final String DESC = "That plug-in aims to access an archiving database to extract archived attributes.";
+	private static final String DESC = "Attempts to access an archiving database to extract archived attributes.";
 	public static final  String NAME = "SoleilArchiving";
     public static final  String LABEL = "SOLEIL's Archiving plug-in";
 	public static final  String API_VERS = "3.2.3";
@@ -207,5 +207,11 @@ public class SoleilArcFactory implements IFactory {
 		if( drivers != null && !drivers.hasMoreElements() ) {
 			Factory.getManager().unregisterFactory(SoleilArcFactory.NAME);
 		}
+	}
+
+	@Override
+	public boolean isLogicalModeAvailable() {
+		// No logical mode for this plug-in
+		return false;
 	}
 }
