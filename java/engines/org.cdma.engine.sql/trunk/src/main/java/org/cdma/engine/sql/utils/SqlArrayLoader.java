@@ -39,23 +39,28 @@ public class SqlArrayLoader implements PostTreatment {
 	public void process() {
 		if( cursor != null && arrays != null ) {
 			// Load data from SQL cursor
+			ResultSet set = null;
 			try {
-				ResultSet set = cursor.getResultSet();
+				set = cursor.getResultSet();
 				ResultSetMetaData meta = set.getMetaData();
 				int count = meta.getColumnCount();
+				int[] types = new int[count];
+				for( int i = 0; i < types.length; i++ ) {
+					types[i] = meta.getColumnType(i + 1);
+				}
 				
 				// Aggregate results from the result set
 				SqlArray array; 
 				while( cursor.next() ) {
-					for( int col = 1; col <= count; col++ ) {
-						array = arrays[col - 1];
-						array.appendData( set );
+					for( int col = 0; col < count; col++ ) {
+						array = arrays[col];
+						array.appendData( set, types[col] );
 					}
 				}
+				set.close();
 			} catch (SQLException e) {
 				Factory.getLogger().log(Level.SEVERE, "Unable to load data from SQL cursor!", e);
 			}
-			
 			for( SqlArray array : arrays ) {
 				array.unlock();
 			}

@@ -36,9 +36,9 @@ public class DataArray<T> {
 	private boolean mIsIntegerNumber;
 
 	@SuppressWarnings("unchecked")
-	public DataArray(T tValue) {
-		mValue = tValue;
-		mType = (Class<T>) tValue.getClass();
+	public DataArray(T value) {
+		mValue = value;
+		mType = (Class<T>) value.getClass();
 
 		// Try to determine if the type can be associated to an integer 
 		Class<?> clazz = mType;
@@ -47,6 +47,8 @@ public class DataArray<T> {
 		}
 		mIsIntegerNumber = (clazz.equals(Integer.TYPE) || clazz.equals(Long.TYPE) || clazz.equals(Short.TYPE));
 	}
+	
+	
 
 	/**
 	 * Getter on the memory storage
@@ -133,16 +135,15 @@ public class DataArray<T> {
 					array = DataArray.allocate(set.getLong(column), rows);
 					break;
 				case Types.DOUBLE:
-				case Types.FLOAT:
 					array = DataArray.allocate(set.getDouble(column), rows);
 					break;
+				case Types.FLOAT:
 				case Types.REAL:
 					array = DataArray.allocate(set.getFloat(column), rows);
 					break;
 				case Types.DECIMAL:
 				case Types.NUMERIC:
 					BigDecimal decimal = set.getBigDecimal(column);
-	
 					if (decimal != null) {
 						if (decimal.scale() == 0) {
 							array = DataArray.allocate(decimal.intValue(), rows);
@@ -210,13 +211,15 @@ public class DataArray<T> {
 		}
 		return array;
 	}
-
+	
 	public void append(ResultSet set, int column, int row) throws SQLException {
 		ResultSetMetaData meta = set.getMetaData();
-		int nb_column = meta.getColumnCount();
-		if (column <= nb_column) {
-			int type = meta.getColumnType(column);
-			switch (type) {
+		int type = meta.getColumnType(column);
+		append(set, column, row, type);
+	}
+
+	public void append(ResultSet set, int column, int row, int type) throws SQLException {
+		switch (type) {
 			case Types.ARRAY:
 				setData(set.getArray(column).getArray(), row);
 				break;
@@ -249,22 +252,18 @@ public class DataArray<T> {
 				setData(set.getLong(column), row);
 				break;
 			case Types.DOUBLE:
-			case Types.FLOAT:
 				setData(set.getDouble(column), row);
 				break;
+			case Types.FLOAT:
 			case Types.REAL:
 				setData(set.getFloat(column), row);
 				break;
 			case Types.DECIMAL:
 			case Types.NUMERIC:
-				BigDecimal decimal = set.getBigDecimal(column);
-
-				if (decimal != null ) {
-					if ( isDecimalNumber()) {
-						setData(decimal.intValue(), row);
-					} else {
-						setData(decimal.doubleValue(), row);
-					}
+				if ( isIntegerNumber()) {
+					setData( set.getInt(column), row );
+				} else {
+					setData( set.getDouble(column), row);
 				}
 				break;
 			case Types.DATE: {
@@ -282,7 +281,7 @@ public class DataArray<T> {
 				setData( time.getTime(), row);
 				break;
 			}
-				case Types.BLOB: {
+			case Types.BLOB: {
 				Blob blob = set.getBlob(column);
 				if( blob != null ) {
 					// Allocate a byte buffer
@@ -336,10 +335,6 @@ public class DataArray<T> {
 				setData(value, row);
 				break;
 			}
-			}
-		} else {
-			throw new SQLException(
-					"Unable to init array: out of range column index!");
 		}
 	}
 
@@ -474,7 +469,7 @@ public class DataArray<T> {
 		}
 	}
 
-	private boolean isDecimalNumber() {
+	private boolean isIntegerNumber() {
 		return mIsIntegerNumber;
 	}
 }

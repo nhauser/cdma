@@ -154,7 +154,7 @@ public class SqlCdmaCursor {
 		if( sql_set == null || sql_set.isClosed() ) {
 			// Get the result set of the query
 			sql_set = executeQuery( );
-			
+
 			// Set the cursor to the right position
 			if( sql_set != null ) {
 				initResultSet(sql_set);
@@ -212,10 +212,12 @@ public class SqlCdmaCursor {
 				if( mStatQuery == null || mStatQuery.isClosed() ) {
 					// Create the query statement
 					mStatQuery = connection.prepareStatement(mQuery);
+					mStatQuery.setFetchSize(1000);
 				}
 				if( mStatCount == null || mStatCount.isClosed() ) {
 					// Create the count statement
 					mStatCount = connection.prepareStatement( "SELECT COUNT(*) FROM (" + mQuery + ")" );
+					mStatCount.setFetchSize(1000);
 				}
 				
 			} catch (IOException e) {
