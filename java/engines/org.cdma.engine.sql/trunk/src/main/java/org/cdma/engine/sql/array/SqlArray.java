@@ -64,6 +64,12 @@ public class SqlArray extends DefaultArrayMatrix {
 		}
 	}
 	
+	public void appendData(ResultSet resultSet, int type) throws SQLException {
+		if( mDataArray != null && mNbRows != 1 ) {
+			mDataArray.append( resultSet, mColumn, mCurRow++, type);
+		}
+	}
+	
 	@Override
 	protected Object loadData() {
 		Object result = null;
