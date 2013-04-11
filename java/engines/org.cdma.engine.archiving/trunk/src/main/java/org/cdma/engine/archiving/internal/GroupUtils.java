@@ -1,13 +1,17 @@
 package org.cdma.engine.archiving.internal;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.IFactory;
+import org.cdma.engine.archiving.internal.Constants.DataType;
 import org.cdma.engine.archiving.internal.attribute.Attribute;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.engine.archiving.internal.attribute.AttributeProperties;
@@ -21,8 +25,11 @@ import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IArray;
+import org.cdma.interfaces.IArrayIterator;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IGroup;
+import org.cdma.utilities.conversion.ArrayConverters;
+import org.cdma.utilities.conversion.ArrayConverters.StringArrayConverter;
 
 public class GroupUtils {
 
@@ -246,9 +253,10 @@ public class GroupUtils {
 	static private void initDataItem(ArchivingGroup group, SqlDataItem item, Attribute dbAttr) throws IOException {
 		// Temporary items
     	AttributeProperties properties = dbAttr.getProperties();
-    	
-		// Get the array of values
-		IArray array = item.getData();
+
+    	// Get the array of values and transform it if necessary
+		IArray array = prepareArray(item.getData(), dbAttr);
+		
     			
 		// Check if the found item is a dimension
 		if( dbAttr.isDimension( item.getShortName() ) ) {
@@ -267,5 +275,91 @@ public class GroupUtils {
 			}
 			group.addDataItem(child);
 		}
+	}
+
+	/**
+	 * Check that the returned SQL array has the expected element type.
+	 * If not, will convert it into the expected one.
+	 * 
+	 * @param data array to be checked and converted
+	 * @param dbAttr attribute this array corresponds to
+	 * @return a IArray of the right type according archiving conventions
+	 */
+	private static IArray prepareArray(IArray data, Attribute dbAttr) {
+		IArray result = data;
+		if( data != null ) {
+			IFactory factory = Factory.getFactory(data.getFactoryName()); 
+			// Check type 
+			if( String.class.equals( result.getElementType() ) ) {
+				// Get the right type
+				DataType type = dbAttr.getProperties().getType();
+				Class<?> clazz = null;
+				switch( type ) {
+					case DOUBLE: {
+						clazz = Double.TYPE;
+						break;
+					}
+					case FLOAT: {
+						clazz = Float.TYPE;
+						break;
+					}
+					case ULONG:
+					case LONG: {
+						clazz = Long.TYPE;
+						break;
+					}
+					case USHORT:
+					case SHORT: {
+						clazz = Short.TYPE;
+						break;
+					}
+					default: {
+						break;
+					}
+				}
+				
+				// Convert data
+				if( clazz != null ) {
+					StringArrayConverter converter = ArrayConverters.detectConverter(clazz);
+					int[] shape = Arrays.copyOf(data.getShape(), data.getShape().length + 1);
+					int length = -1;
+					IArrayIterator iterator = data.getIterator();
+					String tmpStr;
+					Object tmpOut;
+					String[] stringArray;
+					Object output = null;
+					while( iterator.hasNext() ) {
+						// Get the next string that corresponds to spectrum of values
+						tmpStr = (String) iterator.next();
+						
+						// Split the String to get a String[]
+						stringArray = tmpStr.split(SqlFieldConstants.CELL_SEPARATOR);
+						
+						// Calculate the length of the array to create
+						if( length < 0 ) {
+							length = stringArray.length;
+							shape[shape.length - 1] = length;
+							output = Array.newInstance(clazz, shape);
+						}
+						
+						// Get the slab the iterator is currently targeting at
+						tmpOut = output;
+						for( int pos : iterator.getCounter() ) {
+							tmpOut = java.lang.reflect.Array.get(tmpOut, pos);
+						}
+						
+						// Convert the slab
+						converter.convert(stringArray, tmpOut);
+					}
+					
+					// Instantiate a new IArray
+					if( output != null ) {
+						//result = DefaultArray.instantiateDefaultArray(data.getFactoryName(), output, shape);
+						result = factory.createArray(clazz, shape, output);
+					}
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -403,4 +403,8 @@ public class XmlDataItem extends XmlContainer implements IDataItem, Cloneable {
 		System.out.print("/>\n");
 	}
 
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.engine.archiving.internal.Constants.DataType;
 import org.cdma.engine.archiving.internal.SqlFieldConstants;
 import org.cdma.engine.archiving.internal.sql.ArchivingQueries;
 import org.cdma.engine.sql.navigation.SqlDataset;
@@ -16,7 +17,8 @@ import org.cdma.interfaces.IDataItem;
 
 public class AttributeProperties implements Cloneable {
 	private int mId; 
-	private int mType;
+//	private int mType;
+	private DataType mType;
 	private int mFormat;
 	private int mWritable;
 	private String mName;
@@ -24,6 +26,10 @@ public class AttributeProperties implements Cloneable {
 	private long mOrigin;
 	
 	public AttributeProperties( int ID, int type, int format, int writable, String name, Class<?> clazz) {
+		this(ID, DataType.ValueOf(type), format, writable, name, clazz);
+	}
+	
+	public AttributeProperties( int ID, DataType type, int format, int writable, String name, Class<?> clazz) {
 		mId       = ID;
 		mType     = type;
 		mFormat   = format;
@@ -35,7 +41,7 @@ public class AttributeProperties implements Cloneable {
 	public AttributeProperties( String attrName, SqlDataset dbDataset, String dbName ) throws IOException {
 		mName     = attrName;
 		mId       = -1;
-		mType     = -1;
+		mType     = DataType.UNKNOWN;
 		mFormat   = -1;
 		mWritable = -1;
 		initialize(dbDataset, dbName);
@@ -71,7 +77,7 @@ public class AttributeProperties implements Cloneable {
 	 * 
 	 * @return int value: 1=bool; 2=short; 3=long; 4=float; 5=double; 6=ushort; 7=ulong; 8=string
 	 */
-	public int getType() {
+	public DataType getType() {
 		return mType;
 	}
 	
@@ -90,26 +96,28 @@ public class AttributeProperties implements Cloneable {
 	public Class<?> getTypeClass() {
 		if( mClass == null ) {
 			switch( mType ) {
-				case 1:
+				case BOOLEAN:
 					mClass = Boolean.TYPE;
 					break;
-				case 2:
-				case 6:
+				case SHORT:
+				case USHORT:
 					mClass = Short.TYPE;
 					break;
-				case 3:
-				case 7:
+				case LONG:
+				case ULONG:
 					mClass = Long.TYPE;
 					break;
-				case 4:
+				case FLOAT:
 					mClass = Float.TYPE;
 					break;
-				case 5:
+				case DOUBLE:
 					mClass = Double.TYPE;
 					break;
-				case 8:
-				default:
+				case STRING:
 					mClass = String.class;
+					break;
+				default:
+					mClass = null;
 					break;
 			}
 		}
@@ -197,7 +205,7 @@ public class AttributeProperties implements Cloneable {
 			    	
 			    	// Read attribute data type
 			    	item = group.getDataItem( SqlFieldConstants.ADT_FIELDS_TYPE );
-			    	mType = item.readScalarInt();
+			    	mType = DataType.ValueOf(item.readScalarInt());
 			    	
 			    	// Read attribute data format
 			    	item = group.getDataItem( SqlFieldConstants.ADT_FIELDS_FORMAT );
