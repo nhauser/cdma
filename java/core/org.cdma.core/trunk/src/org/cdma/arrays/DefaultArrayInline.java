@@ -395,12 +395,14 @@ public class DefaultArrayInline extends DefaultArray {
     public IArray copy(boolean data) {
         IArray result = null;
         IFactory factory = Factory.getFactory(getFactoryName());
-        if (!data) {
-            result = factory.createArray(getElementType(), getShape(), mData);
-        }
-        else {
-            Object store = this.copyTo1DJavaArray();
-            result = factory.createArray(getElementType(), getShape(), store);
+        if( factory != null ) {
+	        if (!data) {
+	            result = factory.createArray(getElementType(), getShape(), mData);
+	        }
+	        else {
+	            Object store = this.copyTo1DJavaArray();
+	            result = factory.createArray(getElementType(), getShape(), store);
+	        }
         }
 
         return result;

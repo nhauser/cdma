@@ -28,8 +28,8 @@ public class DefaultIndex implements IIndex, Cloneable {
 	
 	private int[]  mProjShape;    // shape without considering reduced range
 	private int[]  mProjOrigin;   // origin without considering reduced range
-	private long[] mProjStride;  // stride without considering reduced range
-	
+	private int[]  mProjPos;     // position without considering reduced range
+	private long[] mProjStride;  // stride without considering reduced range	
 
 	// / Constructors
 	public DefaultIndex(String factoryName, int[] shape) {
@@ -54,6 +54,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		mLastIndex = index.mLastIndex;
 		mIsUpToDate = index.mIsUpToDate;
 		mFactory = index.mFactory;
+		mProjPos = index.mProjPos.clone();
 		for (int i = 0; i < index.mRanges.length; i++) {
 			mRanges[i] = (DefaultRange) index.mRanges[i].clone();
 		}
@@ -606,8 +607,8 @@ public class DefaultIndex implements IIndex, Cloneable {
 	/**
 	 * Reduced ranges will also be considered
 	 */
-	public int[] getCurrentPos() {
-		return mICurPos.clone();
+	public int[] getCurrentCounterProjection() {
+		return mProjPos.clone();
 	}
 
 	/**
@@ -644,13 +645,20 @@ public class DefaultIndex implements IIndex, Cloneable {
 		mProjStride = new long[realRank];
 		mProjShape = new int[realRank];
 		mProjOrigin = new int[realRank];
+		mProjPos = new int[realRank];
 		long stride = 1;
+		boolean reduced;
+		int j = mRank - 1;
 		for (int i = realRank - 1; i >= 0; i--) {
 			DefaultRange range = mRanges[i];
+			reduced = range.reduced();
 			mProjStride[i] = stride;
 			mProjOrigin[i] = (int) (range.first() / range.stride());
 			mProjShape[i] = range.length();
-			stride *= range.reduced() ? 1 : range.length();
+			if( !reduced )  {
+				 mProjPos[i] = mICurPos[j--];
+				stride *= range.length();
+			}
 		}
 	}
 	
