@@ -507,5 +507,10 @@ public class XmlGroup extends XmlContainer implements IGroup, Cloneable {
 			return 0;
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
 
 }

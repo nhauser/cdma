@@ -23,6 +23,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+
 /**
  * Parameterized class that aims to ease the memory allocation for a SQL result
  * set. It allows to have a type erasure pattern and to deal with primitive
