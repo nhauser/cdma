@@ -30,6 +30,7 @@ import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IRange;
 import org.cdma.utilities.navigation.internal.NodeParentAttribute;
+import org.cdma.utils.IArrayUtils;
 import org.cdma.utils.Utilities.ModelType;
 
 public abstract class AbstractDataItem extends NodeParentAttribute implements IDataItem {
@@ -94,8 +95,10 @@ public abstract class AbstractDataItem extends NodeParentAttribute implements ID
 
 	@Override
 	public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
-		// TODO Auto-generated method stub
-		return null;
+		IArray result = getData();
+		IArrayUtils util = result.getArrayUtils().section(origin, shape);
+		result = util.getArray();
+		return result;
 	}
 
 	@Override

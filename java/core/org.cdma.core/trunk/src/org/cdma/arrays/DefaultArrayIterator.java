@@ -18,35 +18,48 @@ import org.cdma.utils.ArrayTools;
 public class DefaultArrayIterator implements IArrayIterator {
     /// Members
     private final IArray mArray;     // Array that supports the storage and a view on it
-    private IIndex mIndex;     // Iterator's view of the array (as described in mArray)
+    private DefaultIndex mIndex;     // Iterator's view of the array (as described in mArray)
     private final boolean mAccess;  // Indicates that this can access the storage memory or not
     private boolean mStarted; // Has the next method been called at least one time
 
     public DefaultArrayIterator(IArray array) {
-        this( array, array.getIndex(), true );
+        this( array, array.getIndex() );
+    }
+
+    public DefaultArrayIterator(IIndex index) {
+        this(null, index);
     }
 
     public DefaultArrayIterator(IArray array, IIndex index) {
-        this(array, index, true);
-    }
-
-    public DefaultArrayIterator(IArray array, IIndex index, boolean accessData) {
-        mArray = array.copy(false);
-        try {
-            mIndex = index.clone();
-        } catch (CloneNotSupportedException e) {
-            mIndex = index;
-        }
-        mAccess  = accessData;
-        mStarted = false;
-
+    	mAccess = array != null;
+    	
+    	// Initialize index
+    	if( index instanceof DefaultIndex ) {
+    		try {
+				mIndex = (DefaultIndex) index.clone();
+			} catch (CloneNotSupportedException e) {
+				mIndex = new DefaultIndex(index);
+			}
+    	}
+    	else {
+    		mIndex = new DefaultIndex(index);
+    	}
+    	
         // set the current starting point
         int[] count = index.getCurrentCounter();
         if( index.getRank() > 0 ) {
             count[count.length - 1]--;
             mIndex.set(count);
         }
-        mArray.setIndex(mIndex);
+    	
+    	if( mAccess ) {
+	        mArray = array.copy(false);
+	        mArray.setIndex(mIndex);
+    	}
+    	else {
+    		mArray = array;
+    	}
+        mStarted = false;
     }
 
     @Override
@@ -72,6 +85,10 @@ public class DefaultArrayIterator implements IArrayIterator {
         return mIndex.getCurrentCounter();
     }
 
+    public int[] getCounterProjection() {
+        return mIndex.getCurrentCounterProjection();
+    }
+    
     @Override
     public double getDoubleNext() {
         incrementIndex();

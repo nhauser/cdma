@@ -47,7 +47,7 @@ public class DefaultArrayMatrix extends DefaultArray {
 	
     protected DefaultArrayMatrix( DefaultArrayMatrix array ) throws InvalidArrayTypeException {
     	super( array );
-    	mData = array.mData;
+    	mData = array.getStorage();
     }
 
 	@Override
@@ -386,7 +386,7 @@ public class DefaultArrayMatrix extends DefaultArray {
         Object array = java.lang.reflect.Array.newInstance( type, length.intValue() );
         
         // Use an iterator to run through all slices of the array
-        ISliceIterator iter;
+        DefaultSliceIterator iter;
         int start = 0;
 		try {
 			iter = getSliceIterator(1);
@@ -395,7 +395,7 @@ public class DefaultArrayMatrix extends DefaultArray {
 	        	iter.next();
 	        	
 	        	// get the slice position
-	        	position = iter.getSlicePosition();
+	        	position = iter.getSlicePositionProjection();
 	        	
 	        	// select the right slab in memory storage
 	        	slabSrc = getStorage();

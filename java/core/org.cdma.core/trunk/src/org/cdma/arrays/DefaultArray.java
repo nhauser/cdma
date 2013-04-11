@@ -219,7 +219,7 @@ public abstract class DefaultArray implements IArray {
     }
 
     @Override
-    public ISliceIterator getSliceIterator(int rank) throws ShapeNotMatchException, InvalidRangeException {
+    public DefaultSliceIterator getSliceIterator(int rank) throws ShapeNotMatchException, InvalidRangeException {
         return new DefaultSliceIterator(this, rank);
     }
     
