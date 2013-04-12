@@ -35,11 +35,13 @@ public class SoleilMamboDataset implements IDataset {
 	private ArchivingMode    mArchivingMode;
 	private SoleilMamboGroup mPhyRoot;
 	private LogicalGroup     mLogRoot;
+	private boolean         mNumDate;
 	
 	public SoleilMamboDataset( File file) {
 		mXmlDataset = new XmlDataset(SoleilMamboFactory.NAME, file);
 		mArcDataset = null;
 		mArchivingMode = ArchivingMode.HDB;
+		mNumDate = true;
 	}
 
 	@Override
@@ -63,26 +65,6 @@ public class SoleilMamboDataset implements IDataset {
 				XmlGroup xmlRoot = (XmlGroup) mXmlDataset.getRootGroup();
 				ArchivingGroup arcRoot = (ArchivingGroup) mArcDataset.getRootGroup();
 				mPhyRoot = new SoleilMamboGroup( this, null, xmlRoot, arcRoot );
-				
-				/*
-				// Get the XML root group and initialize child
-				XmlGroup group = (XmlGroup) mXmlDataset.getRootGroup();
-				mPhyRoot = new SoleilMamboGroup( this, null, group );
-				
-				// Get archiving attributes
-				IGroup arcRoot = mArcDataset.getRootGroup();
-				
-				// Parameterize archiving dataset according xml dataset
-				for( IAttribute attribute : mPhyRoot.getAttributeList() ) {
-					arcRoot.addOneAttribute(attribute);
-				}
-				
-				// Set attributes from archiving root group
-				List<IAttribute> arcAttr = arcRoot.getAttributeList();
-				for( IAttribute attr : arcAttr ) {
-					mPhyRoot.addOneAttribute(attr);
-				}
-				*/
 			} catch (BackupException e) {
 				e.printStackTrace();
 			}
@@ -137,8 +119,7 @@ public class SoleilMamboDataset implements IDataset {
 				mArcDataset.setArchivingMode(mArchivingMode);
 				mArcDataset.setUser(user);
 				mArcDataset.setPassword(pwrd);
-				mArcDataset.setNumericalDate(true);
-				
+				mArcDataset.setNumericalDate(mNumDate);
 			} catch (URISyntaxException e) {
 				mArcDataset = null;
 				throw new IOException("Unable to connect to: " + uri, e);
@@ -205,6 +186,26 @@ public class SoleilMamboDataset implements IDataset {
 		return mArcDataset;
 	}
 
+	/**
+	 * Are dates expressed as numerical timestamp or as String
+	 * 
+	 * @param is true if dates are expressed as timestamps
+	 */
+	public void setNumericalDate(boolean numerical) {
+		mNumDate = numerical;
+		if( mArcDataset != null ) {
+			mArcDataset.setNumericalDate(mNumDate);
+		}
+	}
+	
+	/**
+	 * Are dates expressed as numerical timestamp or as String
+	 * 
+	 * @return true if dates are returned as timestamps
+	 */
+	public boolean getNumericalDate() {
+		return mNumDate;
+	}
 	
 	// ------------------------------------------------------------------------
 	// Private methods
