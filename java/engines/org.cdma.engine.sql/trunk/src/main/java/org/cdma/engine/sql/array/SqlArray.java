@@ -100,4 +100,11 @@ public class SqlArray extends DefaultArrayMatrix {
 	public void unlock() {
 		mLock.release();
 	}
+
+	/**
+	 * Without considering lock() it will return the first cell of the array when it has been loaded
+	 */
+	public Object getSample() {
+		return mDataArray.getSample();
+	}
 }
