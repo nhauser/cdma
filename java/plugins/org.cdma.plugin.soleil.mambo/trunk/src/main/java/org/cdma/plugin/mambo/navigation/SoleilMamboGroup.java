@@ -306,8 +306,12 @@ public class SoleilMamboGroup extends AbstractGroup {
 
 		// Add attributes from VC files
 		if( result != null ) {
-			for( IAttribute attribute : mArcGroup.getAttributeList() ) {
-				result.addOneAttribute(attribute);
+			String[] attributes = ArchivingDataset.getDrivingAttributes();
+			for( String name : attributes ) {
+				IAttribute attribute = this.getAttribute(name);
+				if( attribute != null ) {
+					mArcGroup.addOneAttribute(attribute);
+				}
 			}
 		}
 		
