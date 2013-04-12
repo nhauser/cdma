@@ -235,8 +235,12 @@ public class AnstoFactory implements IFactory {
 
 	@Override
     public boolean isLogicalModeAvailable() {
+		// TODO use this code when the mapping files would be availables
+		/*
         String dictPath = Factory.getDictionariesFolder();
         return (dictPath != null && !dictPath.isEmpty());
+        */
+		return false;
     }
 
 }
