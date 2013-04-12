@@ -20,16 +20,15 @@ import org.cdma.engine.archiving.navigation.ArchivingDataItem;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDimension;
 import org.cdma.engine.archiving.navigation.ArchivingGroup;
+import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IArray;
-import org.cdma.interfaces.IArrayIterator;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IGroup;
-import org.cdma.utilities.conversion.ArrayConverters;
-import org.cdma.utilities.conversion.ArrayConverters.StringArrayConverter;
+import org.cdma.utilities.performance.PostTreatmentManager;
 
 public class GroupUtils {
 
@@ -113,6 +112,7 @@ public class GroupUtils {
 			    String format   = getDateFormat(group);
 			    
 			    Object[] params = new Object[] {start, end};
+			    
 			    // Prepare query for child items
 		    	ArchivingDataset dataset = group.getDataset();
 		    	if( dataset != null && dataset.getNumericalDate() ) {
@@ -269,10 +269,14 @@ public class GroupUtils {
 		else {
 			// Create a child data item
 			ArchivingDataItem child = new ArchivingDataItem(group.getFactoryName(), item.getShortName(), group, array);
+			
+			// Set interpretation attribute
 			String interp = getInterpretationFormat( properties );
 			if( interp != null ) {
 				child.addStringAttribute( Constants.INTERPRETATION, interp );
 			}
+			
+			// Add child to this group
 			group.addDataItem(child);
 		}
 	}
@@ -287,10 +291,16 @@ public class GroupUtils {
 	 */
 	private static IArray prepareArray(IArray data, Attribute dbAttr) {
 		IArray result = data;
-		if( data != null ) {
-			IFactory factory = Factory.getFactory(data.getFactoryName()); 
-			// Check type 
-			if( String.class.equals( result.getElementType() ) ) {
+		if( data != null && data instanceof SqlArray ) {
+			// Get the factory of the current plug-in
+			SqlArray array = (SqlArray) data;
+			IFactory factory = Factory.getFactory(array.getFactoryName()); 
+
+			// Check current type and expected one
+			Class<?> current  = data.getElementType();
+			Class<?> expected = dbAttr.getProperties().getTypeClass();
+			if( current != null && !current.equals(expected) ) {
+				
 				// Get the right type
 				DataType type = dbAttr.getProperties().getType();
 				Class<?> clazz = null;
@@ -318,46 +328,20 @@ public class GroupUtils {
 					}
 				}
 				
-				// Convert data
-				if( clazz != null ) {
-					StringArrayConverter converter = ArrayConverters.detectConverter(clazz);
-					int[] shape = Arrays.copyOf(data.getShape(), data.getShape().length + 1);
-					int length = -1;
-					IArrayIterator iterator = data.getIterator();
-					String tmpStr;
-					Object tmpOut;
-					String[] stringArray;
-					Object output = null;
-					while( iterator.hasNext() ) {
-						// Get the next string that corresponds to spectrum of values
-						tmpStr = (String) iterator.next();
-						if( tmpStr != null ) {
-							// Split the String to get a String[]
-							stringArray = tmpStr.split(SqlFieldConstants.CELL_SEPARATOR);
-							
-							// Calculate the length of the array to create
-							if( length < 0 ) {
-								length = stringArray.length;
-								shape[shape.length - 1] = length;
-								output = Array.newInstance(clazz, shape);
-							}
-							
-							// Get the slab the iterator is currently targeting at
-							tmpOut = output;
-							for( int pos : iterator.getCounter() ) {
-								tmpOut = java.lang.reflect.Array.get(tmpOut, pos);
-							}
-							
-							// Convert the slab
-							converter.convert(stringArray, tmpOut);
-						}
-					}
+				// Check type 
+				if( String.class.equals( result.getElementType() ) ) {
+					// Detect expected shape
+					String sample = (String) array.getSample();
+					int[] shape = Arrays.copyOf( array.getShape(), array.getShape().length + 1);
+					shape[shape.length - 1] = sample.split(SqlFieldConstants.CELL_SEPARATOR).length;
 					
 					// Instantiate a new IArray
-					if( output != null ) {
-						//result = DefaultArray.instantiateDefaultArray(data.getFactoryName(), output, shape);
-						result = factory.createArray(clazz, shape, output);
-					}
+					Object storage = Array.newInstance(clazz, shape);
+					result = factory.createArray(clazz, shape, storage);
+					
+					// Convert array asynchronously
+					ConvertStringArray converter = new ConvertStringArray(array, result, SqlFieldConstants.CELL_SEPARATOR);
+					PostTreatmentManager.launchParallelTreatment(converter);
 				}
 			}
 		}

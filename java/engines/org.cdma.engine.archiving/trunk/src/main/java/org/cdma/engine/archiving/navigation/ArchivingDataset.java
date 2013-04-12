@@ -41,11 +41,10 @@ public class ArchivingDataset implements IDataset {
 	private ArchivingGroup mRootGroup;
 	private ArchivingMode  mArchivingMode;
 	private SqlDataset     mSqlDataset;
-	private boolean       mIsUSFormat;
 	private boolean       mIsOpen;
 	private String         mSchemaName;
 	private String         mFactory;
-	private boolean mNumDate;
+	private boolean       mNumDate;
 	
 	/**
 	 * At opening, the given uri will be decoded using UTF-8 URLDecoder.
@@ -53,7 +52,6 @@ public class ArchivingDataset implements IDataset {
 	 * @param uri of the targeted archiving database
 	 */
 	public ArchivingDataset(String factory, URI uri) {
-		mIsUSFormat    = false;
 		mRootGroup     = null;
 		mURI           = uri;
 		mIsOpen        = false;
@@ -147,7 +145,6 @@ public class ArchivingDataset implements IDataset {
 			// Check that the SqlDataset is set
 			if( mSqlDataset == null ) {
 				mSqlDataset = new SqlDataset(mFactory, value, getUser(), getPassword() );
-				mSqlDataset.setNumericalDate(mNumDate);
 			}
 			// Check it is the same
 			else if( getLocation().equals( mSqlDataset.getLocation() ) ) {
@@ -225,6 +222,11 @@ public class ArchivingDataset implements IDataset {
 		mPassword = password;
 	}
 	
+	/**
+	 * Are dates expressed as numerical timestamp or as String
+	 * 
+	 * @param is true if dates are expressed as timestamps
+	 */
 	public void setNumericalDate(boolean numerical) {
 		mNumDate = numerical;
 		if( mSqlDataset != null ) {
@@ -232,14 +234,29 @@ public class ArchivingDataset implements IDataset {
 		}
 	}
 	
+	/**
+	 * Are dates expressed as numerical timestamp or as String
+	 * 
+	 * @return true if dates are returned as timestamps
+	 */
 	public boolean getNumericalDate() {
 		return mNumDate;
 	}
 	
+	/**
+	 * Return the name of all IAttributes that have meaning for the extraction of data.
+	 * 
+	 * @return a String array of attributes' names
+	 */
 	static public String[] getDrivingAttributes() {
 		return Constants.DRIVING_ATTRIBUTE;
 	}
 	
+	/**
+	 * Return the name of all IAttributes that have a date representation
+	 * 
+	 * @return a String array of attributes' names
+	 */
 	static public String[] getDatedAttributes() {
 		return Constants.DATE_ATTRIBUTE;
 	}

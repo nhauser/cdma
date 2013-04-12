@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.concurrent.Semaphore;
 
 
 /**
@@ -35,18 +36,21 @@ public class DataArray<T> {
 	private T mValue;       // Data storage
 	private Class<T> mType; // Data type
 	private boolean mIsIntegerNumber;
+	private int mPos;
+	private Semaphore mLock;
 
 	@SuppressWarnings("unchecked")
-	public DataArray(T value) {
+	private DataArray(T value) {
 		mValue = value;
 		mType = (Class<T>) value.getClass();
-
+		mPos = -1;
 		// Try to determine if the type can be associated to an integer 
 		Class<?> clazz = mType;
 		while( clazz.isArray() ) {
 			clazz = clazz.getComponentType();
 		}
 		mIsIntegerNumber = (clazz.equals(Integer.TYPE) || clazz.equals(Long.TYPE) || clazz.equals(Short.TYPE));
+		mLock = new Semaphore(1);
 	}
 	
 	
@@ -67,6 +71,10 @@ public class DataArray<T> {
 	 */
 	public Class<T> getType() {
 		return mType;
+	}
+	
+	public int getLastAppendPosition() {
+		return mPos;
 	}
 
 	/**
@@ -213,6 +221,25 @@ public class DataArray<T> {
 		return array;
 	}
 	
+	/**
+	 * Without it will return the first defined cell of the array when it has been loaded
+	 */
+	public Object getSample() {
+		Object result = null;
+		boolean available = true;
+		lock();
+		if( available ) {
+			if( mValue.getClass().isArray() ) {
+				result = java.lang.reflect.Array.get(mValue, mPos);
+			}
+			else {
+				result = mValue;
+			}
+		}
+		unlock();
+		return result;
+	}
+	
 	public void append(ResultSet set, int column, int row) throws SQLException {
 		ResultSetMetaData meta = set.getMetaData();
 		int type = meta.getColumnType(column);
@@ -337,6 +364,8 @@ public class DataArray<T> {
 				break;
 			}
 		}
+		mPos = row;
+		unlock();
 	}
 
 	// ---------------------------------------------------------
@@ -349,6 +378,7 @@ public class DataArray<T> {
 			if (nbRows > 0) {
 				Object[] storage = new Object[nbRows];
 				array = new DataArray<Object[]>(storage);
+				array.lock();
 			} else {
 				array = new DataArray<Object>(data);
 			}
@@ -357,6 +387,7 @@ public class DataArray<T> {
 			if (nbRows > 0) {
 				T[] storage = (T[]) java.lang.reflect.Array.newInstance(data.getClass(), nbRows);
 				array = new DataArray<T[]>(storage);
+				array.lock();
 			} else {
 				array = new DataArray<T>(data);
 			}
@@ -368,6 +399,7 @@ public class DataArray<T> {
 		DataArray<int[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<int[]>(new int[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<int[]>(new int[1]);
 		}
@@ -378,6 +410,7 @@ public class DataArray<T> {
 		DataArray<long[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<long[]>(new long[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<long[]>(new long[1]);
 		}
@@ -388,6 +421,7 @@ public class DataArray<T> {
 		DataArray<double[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<double[]>(new double[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<double[]>(new double[1]);
 		}
@@ -398,6 +432,7 @@ public class DataArray<T> {
 		DataArray<short[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<short[]>(new short[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<short[]>(new short[1]);
 		}
@@ -408,6 +443,7 @@ public class DataArray<T> {
 		DataArray<float[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<float[]>(new float[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<float[]>(new float[1]);
 		}
@@ -418,6 +454,7 @@ public class DataArray<T> {
 		DataArray<boolean[]> array;
 		if (nbRows > 0) {
 			array = new DataArray<boolean[]>(new boolean[nbRows]);
+			array.lock();
 		} else {
 			array = new DataArray<boolean[]>(new boolean[1]);
 		}
@@ -472,5 +509,16 @@ public class DataArray<T> {
 
 	private boolean isIntegerNumber() {
 		return mIsIntegerNumber;
+	}
+
+	private void lock() {
+		try {
+			mLock.acquire();
+		} catch (InterruptedException e) {
+		}
+	}
+
+	private void unlock() {
+		mLock.release();
 	}
 }
