@@ -12,6 +12,7 @@ import org.cdma.plugin.ansto.internal.DetectedSource.NetCDFFilter;
 
 public final class AnstoDataSource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
+	private static final String FILE_SEPARATOR = "/";
     private static HashMap<String, DetectedSource> mDetectedSources; // map of analyzed URIs
     private static AnstoDataSource datasource;
 
@@ -118,7 +119,7 @@ public final class AnstoDataSource implements IDatasource {
 	        String path = target.getPath();
 	        File file = new File(target);
 	        if( path != null && file.exists() ) {
-		        for( String part : path.split( File.separator ) ) {
+		        for( String part : path.split( FILE_SEPARATOR ) ) {
 		            if( part != null && ! part.isEmpty() ) {
 		                parts.add(part);
 		            }
