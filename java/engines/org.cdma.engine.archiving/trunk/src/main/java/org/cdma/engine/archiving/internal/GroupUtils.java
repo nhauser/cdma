@@ -331,25 +331,26 @@ public class GroupUtils {
 					while( iterator.hasNext() ) {
 						// Get the next string that corresponds to spectrum of values
 						tmpStr = (String) iterator.next();
-						
-						// Split the String to get a String[]
-						stringArray = tmpStr.split(SqlFieldConstants.CELL_SEPARATOR);
-						
-						// Calculate the length of the array to create
-						if( length < 0 ) {
-							length = stringArray.length;
-							shape[shape.length - 1] = length;
-							output = Array.newInstance(clazz, shape);
+						if( tmpStr != null ) {
+							// Split the String to get a String[]
+							stringArray = tmpStr.split(SqlFieldConstants.CELL_SEPARATOR);
+							
+							// Calculate the length of the array to create
+							if( length < 0 ) {
+								length = stringArray.length;
+								shape[shape.length - 1] = length;
+								output = Array.newInstance(clazz, shape);
+							}
+							
+							// Get the slab the iterator is currently targeting at
+							tmpOut = output;
+							for( int pos : iterator.getCounter() ) {
+								tmpOut = java.lang.reflect.Array.get(tmpOut, pos);
+							}
+							
+							// Convert the slab
+							converter.convert(stringArray, tmpOut);
 						}
-						
-						// Get the slab the iterator is currently targeting at
-						tmpOut = output;
-						for( int pos : iterator.getCounter() ) {
-							tmpOut = java.lang.reflect.Array.get(tmpOut, pos);
-						}
-						
-						// Convert the slab
-						converter.convert(stringArray, tmpOut);
 					}
 					
 					// Instantiate a new IArray
