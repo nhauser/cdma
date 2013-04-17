@@ -23,7 +23,8 @@ public enum SamplingTypeMySQL implements SamplingType {
     MINUTE     ("%Y-%m-%d %H:%i"),
     SECOND     ("%Y-%m-%d %H:%i:%s"),
     FRACTIONAL ("%Y-%m-%d %H:%i:%s.%f"),
-    ALL        ("%Y-%m-%d %H:%i:%s.%f");
+    ALL        ("%Y-%m-%d %H:%i:%s.%f"),
+    NONE       ("%Y-%m-%d %H:%i:%s.%f");
     
     private String mSampling;
     static private HashMap<String, String> mCorrespondance;

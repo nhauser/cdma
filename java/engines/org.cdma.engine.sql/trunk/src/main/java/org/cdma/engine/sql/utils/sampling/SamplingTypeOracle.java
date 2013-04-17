@@ -25,7 +25,8 @@ public enum SamplingTypeOracle implements SamplingType {
     MINUTE     ("YYYY-MM-DD HH24:MI"),
     SECOND     ("YYYY-MM-DD HH24:MI:SS"),
     FRACTIONAL ("YYYY-MM-DD HH24:MI:SS.FF"),
-    ALL        ("YYYY-MM-DD HH24:MI:SS.FF");
+    ALL        ("YYYY-MM-DD HH24:MI:SS.FF"),
+    NONE       ("YYYY-MM-DD HH24:MI:SS.FF");
     
     private String mSampling;
     static private HashMap<String, String> mCorrespondance;
