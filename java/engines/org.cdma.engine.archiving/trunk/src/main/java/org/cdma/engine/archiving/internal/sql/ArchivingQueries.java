@@ -140,7 +140,6 @@ public class ArchivingQueries {
 				// Get the sampling type
 				SamplingPeriod sampling = prop.getSampling();
 				SamplingType samplingType = DbUtils.getSqlSamplingType(sampling, dbType);
-				sampling = SamplingPeriod.HOUR;
 				
 				// Check the db name is specified
 				if( dbName != null && !dbName.isEmpty() ) {
@@ -175,7 +174,6 @@ public class ArchivingQueries {
 					
 					if( datePattern != null) {
 						time = DateFormat.dateToSqlString( time, dbType, datePattern);
-						
 					}
 					
 					if( datePattern != null || sampling != SamplingPeriod.ALL ) {

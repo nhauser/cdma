@@ -19,14 +19,13 @@ import org.cdma.interfaces.IDataItem;
 
 public class AttributeProperties implements Cloneable {
 	private int mId; 
-//	private int mType;
 	private DataType mType;
 	private Interpretation mFormat;
 	private int mWritable;
 	private String mName;
 	private Class<?> mClass;
 	private long mOrigin;
-	private SamplingPeriod sampling;
+	private SamplingPeriod mSampling;
 	
 	public AttributeProperties( int ID, int type, int format, int writable, String name, Class<?> clazz) {
 		this(ID, DataType.ValueOf(type), format, writable, name, clazz);
@@ -39,7 +38,7 @@ public class AttributeProperties implements Cloneable {
 		mWritable = writable;
 		mName     = name;
 		mClass    = clazz;
-		sampling  = SamplingPeriod.ALL;
+		mSampling = SamplingPeriod.ALL;
 	}
 	
 	public AttributeProperties( String attrName, SqlDataset dbDataset, String dbName ) throws IOException {
@@ -48,7 +47,7 @@ public class AttributeProperties implements Cloneable {
 		mType     = DataType.UNKNOWN;
 		mFormat   = Interpretation.UNKNWON;
 		mWritable = -1;
-		sampling  = SamplingPeriod.ALL;
+		mSampling  = SamplingPeriod.ALL;
 		initialize(dbDataset, dbName);
 	}
 	
@@ -96,21 +95,21 @@ public class AttributeProperties implements Cloneable {
 	}
 	
 	/**
-	 * Return the sampling period
+	 * Return the mSampling period
 	 * 
-	 * @return sampling period {@link SamplingPeriod}
+	 * @return mSampling period {@link SamplingPeriod}
 	 */
 	public SamplingPeriod getSampling() {
-		return sampling;
+		return mSampling;
 	}
 
 	/**
-	 * Set the sampling period of the extracted attribute
+	 * Set the mSampling period of the extracted attribute
 	 * 
-	 * @param sampling {@link SamplingPeriod}
+	 * @param mSampling {@link SamplingPeriod}
 	 */
 	public void setSampling(SamplingPeriod sampling) {
-		this.sampling = sampling;
+		this.mSampling = sampling;
 	}
 	
 	/**
@@ -228,7 +227,9 @@ public class AttributeProperties implements Cloneable {
 	
 	
 	public AttributeProperties clone() {
-		return new AttributeProperties(mId, mType, mFormat.getType(), mWritable, mName, mClass );
+		AttributeProperties result = new AttributeProperties(mId, mType, mFormat.getType(), mWritable, mName, mClass );
+		result.mSampling = mSampling;
+		return result;
 	}
 	
 	// ------------------------------------------------------------------------
