@@ -46,8 +46,14 @@ public enum SamplingTypeMySQL implements SamplingType {
     	mSampling = sampling;
     }
     
-    public String getSQLRepresentation() {
-    	return mSampling;
+    public String getPattern(SamplingPeriod period) {
+    	String result = SamplingTypeMySQL.valueOf(period.name()).mSampling;
+    	
+    	for( Entry<String, String> entry : mCorrespondance.entrySet() ) {
+    		result = result.replace(entry.getValue(), entry.getKey());
+    	}
+    	
+    	return result;
     }
     
     public SamplingType getType(SamplingPeriod time) {
@@ -63,5 +69,36 @@ public enum SamplingTypeMySQL implements SamplingType {
     	}
     	
     	return result;
+    }
+    
+	@Override
+    public String getSQLRepresentation() {
+    	return mSampling;
+    }
+    
+    public String getSamplingSelector(String field, SamplingPolicy policy, String name) {
+    	String result = field;
+    	//", to_clob (MIN(to_char(" + field + "))) as " + field;
+    	switch( policy ) {
+    		case NONE:
+    			break;
+    		case AVERAGE:
+    			result = "AVG(" + field + " AS CHAR) AS " + name;
+    			break;
+    		case MAX:
+    			result = "MAX(" + field + " AS CHAR) AS " + name;
+    			break;
+    		case MIN:
+    			result = "MIN(" + field + " AS CHAR) AS " + name;
+    			break;
+    		default:
+    			break;
+    	}
+    	
+    	return result;
+    }
+    
+    public String getFieldAsStringSelector( String field ) {
+    	return "CAST(" + field + " AS CHAR)";
     }
 }

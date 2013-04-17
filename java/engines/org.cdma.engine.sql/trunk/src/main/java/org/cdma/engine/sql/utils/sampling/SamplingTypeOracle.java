@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.cdma.engine.sql.utils.SamplingType;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPolicy;
 
 
 public enum SamplingTypeOracle implements SamplingType {
@@ -46,6 +48,16 @@ public enum SamplingTypeOracle implements SamplingType {
     	mSampling = sampling;
     }
     
+    public String getPattern(SamplingPeriod period) {
+    	String result = SamplingTypeOracle.valueOf(period.name()).mSampling;
+    	
+    	for( Entry<String, String> entry : mCorrespondance.entrySet() ) {
+    		result = result.replace(entry.getValue(), entry.getKey());
+    	}
+    	
+    	return result;
+    }
+    
     public String getSQLRepresentation() {
     	return mSampling;
     }
@@ -63,5 +75,30 @@ public enum SamplingTypeOracle implements SamplingType {
     public SamplingType getType(SamplingPeriod time) {
     	SamplingType result = SamplingTypeOracle.valueOf(time.name());
     	return result;
+    }
+    
+    public String getSamplingSelector(String field, SamplingPolicy policy, String name) {
+    	String result = field;
+    	switch( policy ) {
+    		case NONE:
+    			break;
+    		case AVERAGE:
+    			result = "AVG(" + field + ") as " + name;
+    			break;
+    		case MAX:
+    			result = "MAX(" + field + ") as " + name;
+    			break;
+    		case MIN:
+    			result = "MIN(" + field + ") as " + name;
+    			break;
+    		default:
+    			break;
+    	}
+    	
+    	return result;
+    }
+    
+    public String getFieldAsStringSelector( String field ) {
+    	return "to_char(" + field + ")";
     }
 }

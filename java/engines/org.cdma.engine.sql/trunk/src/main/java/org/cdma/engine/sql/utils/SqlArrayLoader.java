@@ -22,17 +22,31 @@ public class SqlArrayLoader implements PostTreatment {
 	private SqlCdmaCursor cursor;
 	private SqlArray[] arrays;
 	
-	public SqlArrayLoader( SqlArray[] arrays, SqlCdmaCursor cursor ) {
-		this.arrays = arrays;
+	public SqlArrayLoader( SqlCdmaCursor cursor ) throws SQLException {
 		this.cursor = cursor;
 		
+		// Get information from SQL cursor
+		ResultSet set = cursor.getResultSet();
+		ResultSetMetaData meta = set.getMetaData();
+		int count = meta.getColumnCount();
+		int nbRow = cursor.getNumberOfResults();
+		String factory = cursor.getDataset().getFactoryName();
 		
-		if( this.arrays != null && this.cursor != null ) {
-			for( SqlArray array : this.arrays ) {
-				array.lock();
-			}
+		// Get the SQL array post treatment
+		ISqlArrayAppender appender = cursor.getAppender();
+		
+		// Prepare the internal array
+		arrays = new SqlArray[count];
+		for( int col = 1; col <= count; col++ ) {
+			arrays[col - 1] = SqlArray.instantiate(factory, set, col, nbRow, appender);
+			arrays[col - 1].appendData( set );
+			arrays[col - 1].lock();
 		}
-		
+	}
+
+	@Override
+	public String getName() {
+		return "CDMA SQL array loading";
 	}
 	
 	@Override
@@ -42,6 +56,7 @@ public class SqlArrayLoader implements PostTreatment {
 			ResultSet set = null;
 			try {
 				set = cursor.getResultSet();
+				//ISqlArrayAppender treatment = cursor.getTreatment();
 				ResultSetMetaData meta = set.getMetaData();
 				int count = meta.getColumnCount();
 				int[] types = new int[count];
@@ -65,6 +80,12 @@ public class SqlArrayLoader implements PostTreatment {
 				array.unlock();
 			}
 		}
+	}
+
+
+
+	public SqlArray[] getArrays() {
+		return arrays;
 	}
 
 }

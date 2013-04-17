@@ -56,6 +56,33 @@ public class DateFormat {
 		return result;
 	}
 	
+
+	static public String stringToSqlDate( final String field, BaseType type, String pattern ) throws ParseException {
+		return stringToSqlDate( field, type, pattern, SamplingPeriod.instantiate((short) -1) );
+	}
+
+	static public String stringToSqlDate( final String field, BaseType type, String pattern, SamplingPeriod period ) throws ParseException {
+		String result;
+		
+		SimpleDateFormat formater = getDateFormater(pattern);
+		
+		// Get the DBMS (generic) time pattern
+		SamplingType sampler = DbUtils.getSqlSamplingType(period, type);
+		String datePattern = sampler.getSQLRepresentation(formater);
+		
+		// Insert formated date into SQL query
+		switch( type ) {
+			case MYSQL:
+				result = "STR_TO_DATE(" + field + " , '" + datePattern + "')";
+				break;
+			case ORACLE:
+			default:
+				result = "to_timestamp(" + field + " , '" + datePattern + "')";
+				break;
+		}
+		return result;
+	}
+
 	static public String convertDate( String date, String pattern ) throws ParseException {
 			// Concert string to time value
 			long time = stringToMilli(date, pattern);
@@ -67,7 +94,6 @@ public class DateFormat {
 	static public String convertDate(final long timeInMillis, String pattern ) throws ParseException {
 		String result;
 
-		// Select localized time formater
 		SimpleDateFormat format = getDateFormater(pattern);
 			
 		// Formate the date

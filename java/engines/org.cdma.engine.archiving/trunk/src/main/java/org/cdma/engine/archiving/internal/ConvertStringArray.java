@@ -34,6 +34,11 @@ public class ConvertStringArray implements PostTreatment {
 	}
 	
 	@Override
+	public String getName() {
+		return "String array convertion";
+	}
+	
+	@Override
 	public void process() {
 		// Convert source
 		if( clazz != null ) {

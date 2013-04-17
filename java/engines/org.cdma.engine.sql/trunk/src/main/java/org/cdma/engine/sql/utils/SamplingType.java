@@ -18,6 +18,8 @@ public interface SamplingType {
 	 */
 	public String getSQLRepresentation();
 	
+	public String getPattern(SamplingPeriod period);
+	
 	/**
 	 * The DBMS string representation for the date transformation
 	 * according the given format.
@@ -31,6 +33,16 @@ public interface SamplingType {
 	 */
 	public SamplingType getType(SamplingPeriod sample);
 	
+	/**
+	 * Return the SQL representation for a sampling on the specified field
+	 * @param field
+	 * @param policy
+	 * @param name
+	 * @return
+	 */
+	public String getSamplingSelector(String field, SamplingPolicy policy, String name);
+	
+    public String getFieldAsStringSelector( String field );
 	
 	/**
 	 * The SamplingPeriod of a date determine which is the precision of the date. More precisely
@@ -90,7 +102,21 @@ public interface SamplingType {
 	        return result;
 	    }
 	}
-	
 
-	
+	public enum SamplingPolicy {
+		NONE   (-1),
+		MIN     (0),
+	    MAX     (1),
+	    AVERAGE (2);
+	    
+	    private int mSampling;
+	    
+	    private SamplingPolicy( int sampling ) {
+	    	mSampling = sampling;
+	    }
+	    
+	    public int value() {
+	    	return mSampling;
+	    }
+	}
 }

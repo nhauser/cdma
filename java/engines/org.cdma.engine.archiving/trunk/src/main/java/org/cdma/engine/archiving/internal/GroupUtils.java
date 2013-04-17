@@ -24,6 +24,7 @@ import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
+import org.cdma.engine.sql.utils.ISqlArrayAppender;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
@@ -124,7 +125,9 @@ public class GroupUtils {
 	
 			    	// Execute the query
 			    	SqlCdmaCursor cursor = sqlDataset.executeQuery(query, params);
-
+			    	ISqlArrayAppender appender = new ArchivingArrayAppender(dbAttr, SqlFieldConstants.CELL_SEPARATOR);
+			    	cursor.setAppender(appender);
+			    	
 			    	// For each SQL items
 			    	List<SqlDataItem> sql_items = cursor.getDataItemList();
 			    	for( SqlDataItem item : sql_items ) {
@@ -234,20 +237,7 @@ public class GroupUtils {
 	}
 	
 	public static String getInterpretationFormat(AttributeProperties properties) {
-		int format = properties.getFormat();
-		String result = null;
-		switch( format ) {
-			case 0:
-				result = Constants.INTERPRETATION_SCALAR;
-				break;
-			case 1:
-				result = Constants.INTERPRETATION_SPECTRUM;
-				break;
-			case 2:
-				result = Constants.INTERPRETATION_IMAGE;
-				break;
-		}
-		return result;
+		return properties.getFormat().getName();
 	}
 	
 	static private void initDataItem(ArchivingGroup group, SqlDataItem item, Attribute dbAttr) throws IOException {
@@ -255,7 +245,7 @@ public class GroupUtils {
     	AttributeProperties properties = dbAttr.getProperties();
 
     	// Get the array of values and transform it if necessary
-		IArray array = prepareArray(item.getData(), dbAttr);
+		IArray array = item.getData();
 		
     			
 		// Check if the found item is a dimension
@@ -279,72 +269,5 @@ public class GroupUtils {
 			// Add child to this group
 			group.addDataItem(child);
 		}
-	}
-
-	/**
-	 * Check that the returned SQL array has the expected element type.
-	 * If not, will convert it into the expected one.
-	 * 
-	 * @param data array to be checked and converted
-	 * @param dbAttr attribute this array corresponds to
-	 * @return a IArray of the right type according archiving conventions
-	 */
-	private static IArray prepareArray(IArray data, Attribute dbAttr) {
-		IArray result = data;
-		if( data != null && data instanceof SqlArray ) {
-			// Get the factory of the current plug-in
-			SqlArray array = (SqlArray) data;
-			IFactory factory = Factory.getFactory(array.getFactoryName()); 
-
-			// Check current type and expected one
-			Class<?> current  = data.getElementType();
-			Class<?> expected = dbAttr.getProperties().getTypeClass();
-			if( current != null && !current.equals(expected) ) {
-				
-				// Get the right type
-				DataType type = dbAttr.getProperties().getType();
-				Class<?> clazz = null;
-				switch( type ) {
-					case DOUBLE: {
-						clazz = Double.TYPE;
-						break;
-					}
-					case FLOAT: {
-						clazz = Float.TYPE;
-						break;
-					}
-					case ULONG:
-					case LONG: {
-						clazz = Long.TYPE;
-						break;
-					}
-					case USHORT:
-					case SHORT: {
-						clazz = Short.TYPE;
-						break;
-					}
-					default: {
-						break;
-					}
-				}
-				
-				// Check type 
-				if( String.class.equals( result.getElementType() ) ) {
-					// Detect expected shape
-					String sample = (String) array.getSample();
-					int[] shape = Arrays.copyOf( array.getShape(), array.getShape().length + 1);
-					shape[shape.length - 1] = sample.split(SqlFieldConstants.CELL_SEPARATOR).length;
-					
-					// Instantiate a new IArray
-					Object storage = Array.newInstance(clazz, shape);
-					result = factory.createArray(clazz, shape, storage);
-					
-					// Convert array asynchronously
-					ConvertStringArray converter = new ConvertStringArray(array, result, SqlFieldConstants.CELL_SEPARATOR);
-					PostTreatmentManager.launchParallelTreatment(converter);
-				}
-			}
-		}
-		return result;
 	}
 }

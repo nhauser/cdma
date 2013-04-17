@@ -8,10 +8,12 @@ import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.engine.archiving.internal.Constants.DataType;
+import org.cdma.engine.archiving.internal.Constants.Interpretation;
 import org.cdma.engine.archiving.internal.SqlFieldConstants;
 import org.cdma.engine.archiving.internal.sql.ArchivingQueries;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.navigation.SqlGroup;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IDataItem;
 
@@ -19,11 +21,12 @@ public class AttributeProperties implements Cloneable {
 	private int mId; 
 //	private int mType;
 	private DataType mType;
-	private int mFormat;
+	private Interpretation mFormat;
 	private int mWritable;
 	private String mName;
 	private Class<?> mClass;
 	private long mOrigin;
+	private SamplingPeriod sampling;
 	
 	public AttributeProperties( int ID, int type, int format, int writable, String name, Class<?> clazz) {
 		this(ID, DataType.ValueOf(type), format, writable, name, clazz);
@@ -32,18 +35,20 @@ public class AttributeProperties implements Cloneable {
 	public AttributeProperties( int ID, DataType type, int format, int writable, String name, Class<?> clazz) {
 		mId       = ID;
 		mType     = type;
-		mFormat   = format;
+		mFormat   = Interpretation.ValueOf(format);
 		mWritable = writable;
 		mName     = name;
 		mClass    = clazz;
+		sampling  = SamplingPeriod.ALL;
 	}
 	
 	public AttributeProperties( String attrName, SqlDataset dbDataset, String dbName ) throws IOException {
 		mName     = attrName;
 		mId       = -1;
 		mType     = DataType.UNKNOWN;
-		mFormat   = -1;
+		mFormat   = Interpretation.UNKNWON;
 		mWritable = -1;
+		sampling  = SamplingPeriod.ALL;
 		initialize(dbDataset, dbName);
 	}
 	
@@ -68,7 +73,7 @@ public class AttributeProperties implements Cloneable {
 	 * 
 	 * @return rank of a single element of this attribute
 	 */
-	public int getFormat() {
+	public Interpretation getFormat() {
 		return mFormat;
 	}
 	
@@ -88,6 +93,24 @@ public class AttributeProperties implements Cloneable {
 	 */
 	public long getOrigin() {
 		return mOrigin;
+	}
+	
+	/**
+	 * Return the sampling period
+	 * 
+	 * @return sampling period {@link SamplingPeriod}
+	 */
+	public SamplingPeriod getSampling() {
+		return sampling;
+	}
+
+	/**
+	 * Set the sampling period of the extracted attribute
+	 * 
+	 * @param sampling {@link SamplingPeriod}
+	 */
+	public void setSampling(SamplingPeriod sampling) {
+		this.sampling = sampling;
 	}
 	
 	/**
@@ -137,42 +160,75 @@ public class AttributeProperties implements Cloneable {
 	 * Return an array of the available fields in database for that attribute
 	 * @return
 	 */
-	public String[] getDbFields() {
+	public List<String> getDbFields() {
 		List<String> result = new ArrayList<String>();
+	
+		result.addAll(getDbClobFields());
+		result.addAll(getDbNumericalFields());
 		
-		switch( mWritable ) {
-			case 0:
-			case 2:
-				result.add( SqlFieldConstants.ATT_FIELD_VALUE );
-				break;
-			case 1:
-			case 3:
-				result.add( SqlFieldConstants.ATT_FIELD_READ );
-				result.add( SqlFieldConstants.ATT_FIELD_WRITE );
-				break;
-			default:
-				break;
+		return result;
+	}
+	
+	
+	public List<String> getDbClobFields() {
+		List<String> result = new ArrayList<String>();
+
+		if( mFormat.equals(Interpretation.SPECTRUM) ) {
+			switch( mWritable ) {
+				case 0:
+				case 2:
+					result.add( SqlFieldConstants.ATT_FIELD_VALUE );
+					break;
+				case 1:
+				case 3:
+					result.add( SqlFieldConstants.ATT_FIELD_READ );
+					result.add( SqlFieldConstants.ATT_FIELD_WRITE );
+					break;
+				default:
+					break;
+			}
+		}
+		return result;
+	}
+	
+	public List<String> getDbNumericalFields() {
+		List<String> result = new ArrayList<String>();
+
+		if( !mFormat.equals(Interpretation.SPECTRUM) ) {
+			switch( mWritable ) {
+				case 0:
+				case 2:
+					result.add( SqlFieldConstants.ATT_FIELD_VALUE );
+					break;
+				case 1:
+				case 3:
+					result.add( SqlFieldConstants.ATT_FIELD_READ );
+					result.add( SqlFieldConstants.ATT_FIELD_WRITE );
+					break;
+				default:
+					break;
+			}
 		}
 		
 		switch( mFormat ) {
-			case 0:
-				break;
-			case 1:
+			case SPECTRUM:
 				result.add( SqlFieldConstants.ATT_FIELD_DIMX );
 				break;
-			case 2:
+			case IMAGE:
 				result.add( SqlFieldConstants.ATT_FIELD_DIMX );
 				result.add( SqlFieldConstants.ATT_FIELD_DIMY );
 				break;
+			case UNKNWON:
+			case SCALAR:
 			default:
 				break;
 		}
-		
-		return result.toArray(new String[] {});
+		return result;
 	}
 	
+	
 	public AttributeProperties clone() {
-		return new AttributeProperties(mId, mType, mFormat, mWritable, mName, mClass );
+		return new AttributeProperties(mId, mType, mFormat.getType(), mWritable, mName, mClass );
 	}
 	
 	// ------------------------------------------------------------------------
@@ -209,7 +265,7 @@ public class AttributeProperties implements Cloneable {
 			    	
 			    	// Read attribute data format
 			    	item = group.getDataItem( SqlFieldConstants.ADT_FIELDS_FORMAT );
-			    	mFormat = item.readScalarInt();
+			    	mFormat = Interpretation.ValueOf(item.readScalarInt());
 			    	
 			    	// Read attribute data write capability
 			    	item = group.getDataItem( SqlFieldConstants.ADT_FIELDS_WRITABLE );
