@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
+import org.cdma.engine.archiving.internal.Constants;
 import org.cdma.engine.archiving.internal.GroupUtils;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.engine.archiving.navigation.ArchivingAttribute;
@@ -36,6 +37,7 @@ import org.cdma.plugin.mambo.internal.MamboConstants;
 import org.cdma.plugin.xml.navigation.XmlGroup;
 import org.cdma.utilities.navigation.AbstractGroup;
 import org.cdma.engine.sql.utils.DateFormat;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 
 public class SoleilMamboGroup extends AbstractGroup {
 	private static final String PATH_SEPARATOR = "/";
@@ -94,7 +96,7 @@ public class SoleilMamboGroup extends AbstractGroup {
 
 		return result;
 	}
-	
+
 	@Override
 	public void addOneAttribute(IAttribute attribute) {
 		if( attribute != null ) {
@@ -112,6 +114,11 @@ public class SoleilMamboGroup extends AbstractGroup {
 				}
 			}
 		}
+	}
+	
+	public void setSamplingPeriod(SamplingPeriod period) {
+		IAttribute attribute = new ArchivingAttribute(SoleilMamboFactory.NAME, Constants.SAMPLING_TYPE, period.value());
+		addOneAttribute( attribute );
 	}
 	
 	/**
@@ -144,7 +151,6 @@ public class SoleilMamboGroup extends AbstractGroup {
 					break;
 				}
 			}
-			
 		}
 		return result;
 	}
