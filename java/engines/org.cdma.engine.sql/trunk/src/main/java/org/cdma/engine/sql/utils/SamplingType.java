@@ -62,7 +62,8 @@ public interface SamplingType {
 	    MINUTE   (2),
 	    SECOND   (1),
 	    FRACTION (0),
-	    ALL      (-1);
+	    ALL      (-1),
+	    NONE     (-1);
 	    
 	    private int mSampling;
 	    
