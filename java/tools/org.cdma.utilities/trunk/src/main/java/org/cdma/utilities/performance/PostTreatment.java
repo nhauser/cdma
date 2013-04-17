@@ -10,5 +10,10 @@ public interface PostTreatment {
 	 * Method containing the code that should be executed asynchronously
 	 */
 	public void process();
+	
+	/**
+	 * Name of the treatment
+	 */
+	public String getName();
 
 }
