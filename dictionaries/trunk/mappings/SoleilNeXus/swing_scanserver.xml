@@ -40,6 +40,7 @@
     <item key="spectrums">
         <path>/{NXdata}/data*</path>
         <call>DataItemStacker</call>
+        <attribute name="interpretation" value="spectrum"/>
     </item>
     <item key="comments">
         <path>/{NXsample}/comments/data</path>
