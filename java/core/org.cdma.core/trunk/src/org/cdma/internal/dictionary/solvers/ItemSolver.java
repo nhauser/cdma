@@ -179,24 +179,33 @@ public class ItemSolver {
             else if (node.getName().equals("attribute")) {
                 // For each children of the mapping attribute
                 attrs = node.getChildren();
-                String attrName = node.getAttributeValue("name");
-                // Create a list of solver for that particular attribute
-                List<Solver> attrSolv = new ArrayList<Solver>();
-                for (Element subNode : (List<Element>) attrs) {
-                    // If path open the path
-                    if (subNode.getName().equals("path")) {
-                        current = new Solver(mFactory.createPath(subNode.getText()));
-                        attrSolv.add(current);
-                    }
-                    // If call on a method
-                    else if (subNode.getName().equals("call")) {
-                        method = manager.getPluginMethod(mFactory.getName(), subNode.getText());
-                        current = new Solver(method);
-                        attrSolv.add(current);
-                    }
+                String attrName  = node.getAttributeValue("name");
+                String attrValue = node.getAttributeValue("value");
+                
+                AttributeSolver attr = null;
+                if( attrValue != null ) {
+                	attr = new AttributeSolver(attrName, attrValue);;
+                }
+                else {
+	                // Create a list of solver for that particular attribute
+	                List<Solver> attrSolv = new ArrayList<Solver>();
+	                for (Element subNode : (List<Element>) attrs) {
+	                    // If path open the path
+	                    if (subNode.getName().equals("path")) {
+	                        current = new Solver(mFactory.createPath(subNode.getText()));
+	                        attrSolv.add(current);
+	                    }
+	                    // If call on a method
+	                    else if (subNode.getName().equals("call")) {
+	                        method = manager.getPluginMethod(mFactory.getName(), subNode.getText());
+	                        current = new Solver(method);
+	                        attrSolv.add(current);
+	                    }
+	                }
+	                attr = new AttributeSolver(attrName, attrSolv);
                 }
                 // Store the attribute into a list
-                mAttributes.add(new AttributeSolver(mFactory, attrName, attrSolv));
+                mAttributes.add(attr);
             }
         }
     }

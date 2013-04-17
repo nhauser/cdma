@@ -14,6 +14,7 @@ package org.cdma.internal.dictionary.solvers;
 
 import java.util.List;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Context;
 import org.cdma.interfaces.IAttribute;
@@ -40,13 +41,21 @@ import org.cdma.interfaces.IContainer;
 public class AttributeSolver {
     List<Solver> mSolver;   // List of solvers to process to get IContainer attributes
     String       mName;     // Attribute name
+    String       mValue;
     
-    public AttributeSolver( IFactory factory, String name, List<Solver> solvers ) {
+    public AttributeSolver( String name, List<Solver> solvers ) {
         mName    = name;
         mSolver  = solvers;
+        mValue   = null;
     }
     
-    /**
+    public AttributeSolver(String name, String value) {
+    	mName   = name;
+    	mValue  = value;
+    	mSolver = null;
+	}
+
+	/**
      * Return a IAttribute generated using the given Context.
      * 
      * @param context of attribute resolution
@@ -59,17 +68,25 @@ public class AttributeSolver {
         // Give this attribute solver as a parameter of the context
         //context.setParams( new AttributeSolver[] {this} );
         
-        // Get IContainer matching to this solver to seek the named attribute
-        for( Solver solver : mSolver ) {
-            list = solver.solve(context);
-            context.setContainers(list);
+        if( mValue != null ) {
+        	String plugin = context.getCaller().getFactoryName();
+        	IFactory factory = Factory.getFactory(plugin);
+        	if( factory != null ) {
+        		attribute = factory.createAttribute(mName, mValue);
+        	}
         }
-        
-        // Return the named IAttribute of the found IContainer
-        if( list != null && ! list.isEmpty() ) {
-            attribute = list.get(0).getAttribute(mName);
+        else {
+	        // Get IContainer matching to this solver to seek the named attribute
+	        for( Solver solver : mSolver ) {
+	            list = solver.solve(context);
+	            context.setContainers(list);
+	        }
+	        
+	        // Return the named IAttribute of the found IContainer
+	        if( list != null && ! list.isEmpty() ) {
+	            attribute = list.get(0).getAttribute(mName);
+	        }
         }
-        
         return attribute;
     }
     
