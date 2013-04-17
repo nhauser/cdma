@@ -78,7 +78,6 @@ public enum SamplingTypeMySQL implements SamplingType {
     
     public String getSamplingSelector(String field, SamplingPolicy policy, String name) {
     	String result = field;
-    	//", to_clob (MIN(to_char(" + field + "))) as " + field;
     	switch( policy ) {
     		case NONE:
     			break;

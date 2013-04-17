@@ -16,6 +16,7 @@ import org.cdma.engine.archiving.internal.attribute.Attribute;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.engine.archiving.internal.attribute.AttributeProperties;
 import org.cdma.engine.sql.navigation.SqlDataset;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
@@ -545,6 +546,11 @@ public class ArchivingGroup implements IGroup {
 		return result.toString();
 	}
 	
+	public void setSamplingPeriod(SamplingPeriod period) {
+		IAttribute attribute = new ArchivingAttribute(mFactory, Constants.SAMPLING_TYPE, period.value());
+		addOneAttribute( attribute );
+	}
+	
 	// ------------------------------------------------------------------------
 	// Private methods
 	// ------------------------------------------------------------------------
@@ -622,6 +628,9 @@ public class ArchivingGroup implements IGroup {
 				String dbName = mDataset.getSchema();
 				SqlDataset dataset = mDataset.getSqldataset();
 				AttributeProperties properties = new AttributeProperties(name, dataset, dbName);
+				SamplingPeriod sampling = GroupUtils.getSampling(this);
+				properties.setSampling(sampling);
+				
 				mDbAttr.setProperties( properties );
 				
 				ArchivingAttribute startArchiving = new ArchivingAttribute(mFactory, Constants.ORIGIN_DATE, properties.getOrigin() );

@@ -25,6 +25,7 @@ import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
 import org.cdma.engine.sql.utils.ISqlArrayAppender;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
@@ -112,6 +113,10 @@ public class GroupUtils {
 			    Timestamp end   = getEndDate(group);
 			    String format   = getDateFormat(group);
 			    
+			    // Get the sampling type
+			    SamplingPeriod sampling = getSampling(group);
+			    dbAttr.getProperties().setSampling(sampling);
+
 			    Object[] params = new Object[] {start, end};
 			    
 			    // Prepare query for child items
@@ -140,6 +145,35 @@ public class GroupUtils {
 			    }
 			}
 		}
+	}
+	
+	/**
+	 * Seek in the hierarchy if a sampling attribute has been set.
+	 * 
+	 * @return string representation of the date format
+	 * @note the 'end' date is carried by  IAttribute {@link Constants.DATE_FORMAT}
+	 */
+	public static SamplingPeriod getSampling(IGroup group) {
+		SamplingPeriod type = SamplingPeriod.ALL;
+		if( group != null ) {
+		    IAttribute dateFormat = seekAttributeInAncestors(group, Constants.SAMPLING_TYPE);
+		    if( dateFormat != null ) {
+		    	Number sampNum = dateFormat.getNumericValue();
+		    	if( sampNum != null ) {
+		    		type = SamplingPeriod.instantiate( sampNum.intValue() );
+		    	}
+		    	else if( dateFormat.isString() ) {
+		    		String value = dateFormat.getStringValue();
+		    		try {
+		    		type = SamplingPeriod.valueOf(value);
+		    		} 
+		    		catch(IllegalArgumentException e) {
+		    			Factory.getLogger().log(Level.SEVERE, "Unable to get the sampling type!", e);
+		    		}
+		    	}
+		    }
+		}
+	    return type;
 	}
 	
 	/**
