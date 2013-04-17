@@ -39,6 +39,7 @@ dataset_model
 <!ELEMENT attribute ( (path | call)* )>
 <!ATTLIST attribute
     name CDATA #REQUIRED
+    value CDATA #IMPLIED
 >
     
 
