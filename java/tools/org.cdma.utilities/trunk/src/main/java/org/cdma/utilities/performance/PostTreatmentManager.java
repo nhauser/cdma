@@ -98,6 +98,7 @@ public final class PostTreatmentManager {
 			};
 			// create a new thread and start it
     		result = new Thread( runner );
+    		result.setName(treatment.getName() + " " + result.getId() );
     		result.start();
     	}
     	return result;
