@@ -52,7 +52,7 @@ public class SqlDataItem implements IDataItem {
 
 	protected void init( ResultSet set, int column, int rows ) {
 		try {
-			mArray = SqlArray.instantiate(mFactory, set, column, rows);
+			mArray = SqlArray.instantiate(mFactory, set, column, rows, null);
 			((SqlArray) mArray).appendData(set);
 		} catch( SQLException e ) {
 			mArray = null;

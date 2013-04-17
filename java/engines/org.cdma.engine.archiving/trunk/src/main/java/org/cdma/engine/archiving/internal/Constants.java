@@ -17,12 +17,58 @@ public class Constants {
 	public static final String[] DATE_ATTRIBUTE    = new String[] { START_DATE, END_DATE, ORIGIN_DATE };
 	public static final String[] DRIVING_ATTRIBUTE = new String[] { DATE_FORMAT, START_DATE, END_DATE, ORIGIN_DATE };
 	
-	
 	// Constant values
-	public static final String INTERPRETATION_SCALAR   = "scalar";
-	public static final String INTERPRETATION_SPECTRUM = "spectrum";
-	public static final String INTERPRETATION_IMAGE    = "image";
+	public enum Interpretation {
+		UNKNWON  ("unknown", -1),
+		SCALAR   ("scalar",   0),
+		SPECTRUM ("spectrum", 1),
+		IMAGE    ("image",    2);
+		
+		
+        private int mType;
+        private String mName;
+
+        private Interpretation(String name, int type) {  mName = name; mType = type; }
+        
+        public String getName() { return mName; }
+        public int getType() { return mType; }
+        
+        public static Interpretation ValueOf(int format) {
+        	Interpretation result = null;
+        	
+    		switch( format ) {
+			case 0:
+				result = SCALAR;
+				break;
+			case 1:
+				result = SPECTRUM;
+				break;
+			case 2:
+				result = IMAGE;
+				break;
+    		}
+        	
+        	return result;
+        }
+        
+        public static Interpretation ValueOf(String format) {
+        	Interpretation result = null;
+        	
+    		if( format.equalsIgnoreCase( SCALAR.getName() ) ) {
+    			result = SCALAR;
+    		}
+    		else if( format.equalsIgnoreCase( SPECTRUM.getName() ) ) {
+    			result = SPECTRUM;
+    		}
+    		else if( format.equalsIgnoreCase( IMAGE.getName() ) ) {
+    			result = IMAGE;
+    		}
+        	
+        	return result;
+        }
+	}
 	
+
 	// Type values 
     public enum DataType {
         BOOLEAN  (1),

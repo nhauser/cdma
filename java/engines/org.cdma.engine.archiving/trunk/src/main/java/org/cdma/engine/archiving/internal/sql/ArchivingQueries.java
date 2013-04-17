@@ -6,6 +6,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
@@ -18,7 +19,11 @@ import org.cdma.engine.archiving.internal.attribute.AttributeProperties;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.navigation.SqlDataset;
 import org.cdma.engine.sql.utils.DateFormat;
+import org.cdma.engine.sql.utils.DbUtils;
 import org.cdma.engine.sql.utils.DbUtils.BaseType;
+import org.cdma.engine.sql.utils.SamplingType;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPolicy;
 
 /**
  * This helper class contains all executed queries in the Soleil's Archiving plug-in.
@@ -129,9 +134,13 @@ public class ArchivingQueries {
 			AttributeProperties prop = attribute.getProperties();
 			if( dbCon != null && prop != null ) {
 				String tableName = prop.getDbTable();
-				String[] fields  = prop.getDbFields();
 				String dbName    = dbCon.getDbName();
 				BaseType dbType  = dbCon.getDbType();
+				
+				// Get the sampling type
+				SamplingPeriod sampling = prop.getSampling();
+				SamplingType samplingType = DbUtils.getSqlSamplingType(sampling, dbType);
+				sampling = SamplingPeriod.HOUR;
 				
 				// Check the db name is specified
 				if( dbName != null && !dbName.isEmpty() ) {
@@ -144,32 +153,55 @@ public class ArchivingQueries {
 				// Compute starting and ending dates (if null then '01/01/1970' and 'now')
 				try {
 					// Check if date are expected as numerical
+					String group = "";
 					String time;
-					if( datePattern == null ) {
-						time = SqlFieldConstants.ATT_FIELD_TIME;
+					// Case of sampling
+					if( sampling != SamplingPeriod.ALL ) {
+						// Get pattern of sampling
+						String pattern = samplingType.getPattern(sampling);
+						
+						// Convert dates to string (truncated dates according sampling)
+						String tmp = DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbType, pattern);
+						
+						// Reconstruct timestamp using truncated dates
+						time = DateFormat.stringToSqlDate(tmp, dbType, pattern);
+						
+						// Sort by truncated dates
+						group = " GROUP BY " + tmp;
 					}
 					else {
-						time =  DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbType, datePattern);
+						time = SqlFieldConstants.ATT_FIELD_TIME ;
+					}
+					
+					if( datePattern != null) {
+						time = DateFormat.dateToSqlString( time, dbType, datePattern);
+						
+					}
+					
+					if( datePattern != null || sampling != SamplingPeriod.ALL ) {
 						time += " as " + SqlFieldConstants.ATT_FIELD_TIME + " ";
 					}
+					
 					
 					// Prepare each part of the query (SELECT, FROM, WHERE, ORDER)
 					String select = "SELECT " + time;
 					String from   = " FROM " + dbName + tableName;
-					String where = " WHERE (time BETWEEN ? AND ?)";
-
-					String order  = " ORDER BY time";
+					String where  = " WHERE (" + SqlFieldConstants.ATT_FIELD_TIME + " BETWEEN ? AND ?)";
+					String order  = " ORDER BY " + SqlFieldConstants.ATT_FIELD_TIME;
 					
-					// Populate the SELECT section
-					for( String field : fields ) {
-						select += ", " + field;
-					}
+					
+					// Populate the SELECT section according sampling
+					select = populateSelectClause(prop, sampling, select, samplingType);
 					
 					// Assembly the  query
 					query.append( select );
 					query.append( from );
 					query.append( where);
+					if( sampling != SamplingPeriod.ALL ) {
+						query.append( group );						
+					}
 					query.append( order );
+					System.out.println(query);
 				} catch (ParseException e) {
 					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query to get item list!", e );
 				}
@@ -177,7 +209,7 @@ public class ArchivingQueries {
 		}
 		return query.toString();
 	}
-	
+
 	/**
 	 * Check the database contains the right tables for an archiving database
 	 * 
@@ -211,12 +243,48 @@ public class ArchivingQueries {
 	}
 	
 	private static boolean existe(Connection connection, String nomTable) throws SQLException{
-		   boolean existe;
-		   DatabaseMetaData dmd = connection.getMetaData();
-		   ResultSet tables = dmd.getTables(connection.getCatalog(),null,nomTable,null);
-		   existe = tables.next();
-		   tables.close();
-		   return existe;
+	   boolean existe;
+	   DatabaseMetaData dmd = connection.getMetaData();
+	   ResultSet tables = dmd.getTables(connection.getCatalog(),null,nomTable,null);
+	   existe = tables.next();
+	   tables.close();
+	   return existe;
+	}
+	
+	/**
+	 * Will populate the SELECT SQL clause according to the db type, the sampling policy...
+	 * @param prop
+	 * @param sampling
+	 * @param select
+	 * @param samplingType
+	 * @return
+	 */
+	private static String populateSelectClause(AttributeProperties prop, SamplingPeriod sampling, String select, SamplingType samplingType) {
+		String result = select;
+		
+		List<String> fields = prop.getDbFields();
+		
+		if( sampling == SamplingPeriod.ALL ) {
+			for( String field : fields ) {
+				result += ", " + field;
+			}
 		}
+		else {
+			// Manages CLOB fields
+			String stringField;
+			fields = prop.getDbClobFields();
+			for( String field : fields ) {
+				stringField = samplingType.getFieldAsStringSelector(field);
+				result += ", " + samplingType.getSamplingSelector(stringField, SamplingPolicy.MIN, field);
+			}
+			
+			// Manages numerical fields
+			fields = prop.getDbNumericalFields();
+			for( String field : fields ) {
+				result += ", " + samplingType.getSamplingSelector(field, SamplingPolicy.AVERAGE, field);
+			}
+		}
+		return result;
+	}
 
 }

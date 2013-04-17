@@ -10,32 +10,41 @@
 package org.cdma.engine.sql.array;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.concurrent.Semaphore;
 
 import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.engine.sql.internal.DataArray;
+import org.cdma.engine.sql.internal.ArrayDefaultAppender;
+import org.cdma.engine.sql.utils.ISqlArrayAppender;
 import org.cdma.exception.InvalidArrayTypeException;
 
 public class SqlArray extends DefaultArrayMatrix {
 
-
-	private Semaphore mLock;
-	private DataArray<?>  mDataArray;
-	private int     mNbRows;
-	private int     mCurRow;
-	private int     mColumn;
+	private DataArray<?> mDataArray; // Storage that permits to append data
+	private Semaphore mLock;         // Lock the array storage for external users
+	private int mNbRows;  // Nb of rows expected in the array
+	private int mCurRow;  // Current processed row while appending data
+	private int mColumn;  // Number of the column this array corresponds to in the SQL result set
+	private ISqlArrayAppender mTreatment; // Appender for SqlArray
 	
-	static public SqlArray instantiate( String factory, ResultSet set, int column, int nbRows ) throws SQLException {
+	static public SqlArray instantiate( String factory, ResultSet set, int column, int nbRows, ISqlArrayAppender appender ) throws SQLException {
 		SqlArray array = null;
+		
+		if( appender == null ) {
+			appender = new ArrayDefaultAppender();
+		}
+		
 		synchronized( SqlArray.class ) {
 			try {
 				// Allocate the memory
-				DataArray<?> memory = DataArray.allocate( set, column, nbRows );
+				DataArray<?> memory = appender.allocate( set, column, nbRows );
 
 				// Instantiate the array with the allocated memory
 				array = new SqlArray(factory, memory);
 				array.mColumn = column;
+				array.mTreatment = appender;
 			} catch( InvalidArrayTypeException e ) {
 				throw new SQLException(e);
 			}
@@ -45,11 +54,11 @@ public class SqlArray extends DefaultArrayMatrix {
 	}
 	
 	static public SqlArray instantiate( String factory, ResultSet set, int column ) throws SQLException {
-		return SqlArray.instantiate( factory, set, column, -1 );
+		return SqlArray.instantiate( factory, set, column, -1, null );
 	}
 	
 	
-	public SqlArray(String factory, DataArray<?> data ) throws InvalidArrayTypeException {
+	private SqlArray(String factory, DataArray<?> data ) throws InvalidArrayTypeException {
 		super( factory, data.getValue() );
 		mDataArray = data;
 		mCurRow    = 0;
@@ -58,15 +67,18 @@ public class SqlArray extends DefaultArrayMatrix {
 		mLock = new Semaphore(1);
 	}
 	
+	
 	public void appendData(ResultSet resultSet) throws SQLException {
 		if( mDataArray != null && mNbRows != 1 ) {
-			mDataArray.append( resultSet, mColumn, mCurRow++);
+			ResultSetMetaData meta = resultSet.getMetaData();
+			int type = meta.getColumnType(mColumn);
+			mTreatment.append( mDataArray, resultSet, mColumn, mCurRow++, type);
 		}
 	}
 	
 	public void appendData(ResultSet resultSet, int type) throws SQLException {
 		if( mDataArray != null && mNbRows != 1 ) {
-			mDataArray.append( resultSet, mColumn, mCurRow++, type);
+			mTreatment.append( mDataArray, resultSet, mColumn, mCurRow++, type);
 		}
 	}
 	
@@ -93,6 +105,7 @@ public class SqlArray extends DefaultArrayMatrix {
 		try {
 			mLock.acquire();
 		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	

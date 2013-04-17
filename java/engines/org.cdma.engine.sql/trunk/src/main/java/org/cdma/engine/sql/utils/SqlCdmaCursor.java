@@ -23,6 +23,7 @@ import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.engine.sql.array.SqlArray;
+import org.cdma.engine.sql.internal.DataArray;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlDataset;
@@ -41,6 +42,7 @@ public class SqlCdmaCursor {
 	private Object[] mParams;
 	private int mNbRows;
 	private boolean mInitialized;
+	private ISqlArrayAppender mTreatment;
 	
 	public SqlCdmaCursor( SqlDataset dataset, String query ) {
 		this( dataset, query, new Object[] {} );
@@ -91,31 +93,29 @@ public class SqlCdmaCursor {
 				// prepare columns names
 				String[]      names = new String[count];
 				SqlDataItem[] items = new SqlDataItem[count];
-				SqlArray[] arrays   = new SqlArray[count];
+				
+				// Create a SQL array loader
+				SqlArrayLoader loader = new SqlArrayLoader(this);
+				SqlArray[] arrays     = loader.getArrays();				
+				
+				// Get name for each items 
 				for( int col = 1; col <= count; col++ ) {
+					// Get the name of the column
 					names[col - 1] = meta.getColumnName(col);
-
-					// Prepare the internal array
-					arrays[col - 1] = SqlArray.instantiate(mDataset.getFactoryName(), set, col, mNbRows);
-					arrays[col - 1].appendData( set );
-					
+				}
+				
+				// Fill the array asynchronously
+				Thread thread = PostTreatmentManager.launchParallelTreatment(loader);
+				
+				// Create items for each arrays
+				for( int col = 1; col <= count; col++ ) {
 					// Create the data item
 					try {
 						items[col - 1] = new SqlDataItem(mDataset.getFactoryName(), (SqlGroup) mDataset.getRootGroup(), names[ col -1 ]);
 						result.add( items[col - 1] );
 						items[col - 1].setCachedData(arrays[col - 1], false);
 					} catch (InvalidArrayTypeException e) {
-						Factory.getLogger().log( Level.SEVERE, "Unable to initialize data for the data item", e);
-					}
-				}
-
-				// Fill the array asynchronously
-				Thread thread = PostTreatmentManager.launchParallelTreatment(new SqlArrayLoader( arrays, this));
-				while( thread.getState() != State.RUNNABLE && thread.getState() != State.TERMINATED ) {
-					try {
-						wait(100);
-					} catch (InterruptedException e) {
-						Factory.getLogger().log(Level.SEVERE, "Aie aie aie", e);
+						Factory.getLogger().log( Level.SEVERE, "Unable to initialize data for the data item: " + names[col - 1], e);
 					}
 				}
 			}
@@ -263,5 +263,32 @@ public class SqlCdmaCursor {
 	protected void finalize() throws Throwable {
 		close();
 		super.finalize();
+	}
+	
+	public int getNumberOfResults() {
+		return mNbRows;
+	}
+
+	/**
+	 * Permit to set a ISqlArrayAppender implementation that will be executed on each appended data
+	 * @param iSqlArrayAppender
+	 */
+	public void setAppender( ISqlArrayAppender iSqlArrayAppender ) {
+		mTreatment = iSqlArrayAppender;
+	}
+	
+	/**
+	 * Permit to get the currently used ISqlArrayAppender implementation that will be executed 
+	 * on each appended data
+	 */
+	public ISqlArrayAppender getAppender() {
+		return mTreatment;
+	}
+	
+	/**
+	 * Returns the currently used SQL dataset
+	 */
+	protected SqlDataset getDataset() {
+		return mDataset;
 	}
 }
