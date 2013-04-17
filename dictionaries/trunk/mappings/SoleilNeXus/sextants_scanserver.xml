@@ -41,6 +41,7 @@
     <item key="images">
         <path>/{NXdata}/data_01</path>
 	    <call>HarvestSignalAttributes</call>
+	    <attribute name="interpretation" value="image"/>
     </item>
     <item key="comments">
         <path>/{NXsample}/comments/data</path>
