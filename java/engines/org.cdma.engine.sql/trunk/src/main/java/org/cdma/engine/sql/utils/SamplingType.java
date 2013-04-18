@@ -12,6 +12,7 @@ package org.cdma.engine.sql.utils;
 import java.text.SimpleDateFormat;
 
 
+
 public interface SamplingType {
 	/**
 	 * The DBMS string representation for the date transformation
@@ -40,7 +41,7 @@ public interface SamplingType {
 	 * @param name
 	 * @return
 	 */
-	public String getSamplingSelector(String field, SamplingPolicy policy, String name);
+	public String getSamplingSelectClause(String field, SamplingPolicy policy, String name);
 	
     public String getFieldAsStringSelector( String field );
 	
@@ -104,6 +105,17 @@ public interface SamplingType {
 	    }
 	}
 
+	/**
+	 * Return a condition in the WHERE clause for the given field that will be selected
+	 * according the period and the factor.
+	 * 
+	 * @param field 
+	 * @param period
+	 * @param factor
+	 * @return a String or null if period or factor are wrong
+	 */
+	public String getDateSampling(String field, SamplingPeriod period, int factor);
+	
 	public enum SamplingPolicy {
 		NONE   (-1),
 		MIN     (0),

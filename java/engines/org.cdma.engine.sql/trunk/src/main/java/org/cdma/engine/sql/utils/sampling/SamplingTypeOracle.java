@@ -49,6 +49,7 @@ public enum SamplingTypeOracle implements SamplingType {
     	mSampling = sampling;
     }
     
+    @Override
     public String getPattern(SamplingPeriod period) {
     	String result = SamplingTypeOracle.valueOf(period.name()).mSampling;
     	
@@ -59,10 +60,12 @@ public enum SamplingTypeOracle implements SamplingType {
     	return result;
     }
     
+    @Override
     public String getSQLRepresentation() {
     	return mSampling;
     }
     
+    @Override
     public String getSQLRepresentation(SimpleDateFormat format) {
     	String result = format.toPattern();
     	
@@ -73,12 +76,14 @@ public enum SamplingTypeOracle implements SamplingType {
     	return result;
     }
     
+    @Override
     public SamplingType getType(SamplingPeriod time) {
     	SamplingType result = SamplingTypeOracle.valueOf(time.name());
     	return result;
     }
     
-    public String getSamplingSelector(String field, SamplingPolicy policy, String name) {
+    @Override
+    public String getSamplingSelectClause(String field, SamplingPolicy policy, String name) {
     	String result = field;
     	switch( policy ) {
     		case NONE:
@@ -99,7 +104,39 @@ public enum SamplingTypeOracle implements SamplingType {
     	return result;
     }
     
+    @Override
     public String getFieldAsStringSelector( String field ) {
     	return "to_char(" + field + ")";
+    }
+    
+    @Override
+    public String getDateSampling(String field, SamplingPeriod period, int factor) {
+    	String result = "";
+    	String periodPattern = null;
+    	
+    	switch (period) {
+		case SECOND:
+			periodPattern = "SS";
+			break;
+    	case MINUTE:
+    		periodPattern = "MI";
+			break;
+    	case HOUR:
+    		periodPattern = "HH24";
+			break;
+		case DAY:
+			periodPattern = "DD";
+			break;
+		case MONTH:
+			periodPattern = "MM";
+			break;
+		}
+    	
+    	if( periodPattern != null ) {
+    		result = "MOD(to_number(to_char(" + field + " , '" + periodPattern + "')), " + factor + ") = 0";
+    	}
+    	
+		return result;
+    	
     }
 }

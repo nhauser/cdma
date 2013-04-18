@@ -47,6 +47,7 @@ public enum SamplingTypeMySQL implements SamplingType {
     	mSampling = sampling;
     }
     
+    @Override
     public String getPattern(SamplingPeriod period) {
     	String result = SamplingTypeMySQL.valueOf(period.name()).mSampling;
     	
@@ -57,11 +58,13 @@ public enum SamplingTypeMySQL implements SamplingType {
     	return result;
     }
     
+    @Override
     public SamplingType getType(SamplingPeriod time) {
     	SamplingType result = SamplingTypeMySQL.valueOf( time.name() );
     	return result;
     }
     
+    @Override
     public String getSQLRepresentation(SimpleDateFormat format) {
     	String result = format.toPattern();
     	
@@ -77,7 +80,8 @@ public enum SamplingTypeMySQL implements SamplingType {
     	return mSampling;
     }
     
-    public String getSamplingSelector(String field, SamplingPolicy policy, String name) {
+	@Override
+    public String getSamplingSelectClause(String field, SamplingPolicy policy, String name) {
     	String result = field;
     	switch( policy ) {
     		case NONE:
@@ -98,7 +102,38 @@ public enum SamplingTypeMySQL implements SamplingType {
     	return result;
     }
     
+	@Override
     public String getFieldAsStringSelector( String field ) {
     	return "CAST(" + field + " AS CHAR)";
+    }
+    
+    @Override
+    public String getDateSampling(String field, SamplingPeriod period, int factor) {
+    	String result = "";
+    	String periodPattern = null;
+    	
+    	switch (period) {
+		case SECOND:
+			periodPattern = "%s";
+			break;
+    	case MINUTE:
+    		periodPattern = "%i";
+			break;
+    	case HOUR:
+    		periodPattern = "%H";
+			break;
+		case DAY:
+			periodPattern = "%d";
+			break;
+		case MONTH:
+			periodPattern = "%m";
+			break;
+		}
+    	
+    	if( periodPattern != null ) {
+    		result = "DATE_FORMAT(" + field + " , '" + periodPattern + "') % " + factor + " = 0";
+    	}
+    	
+		return result;
     }
 }

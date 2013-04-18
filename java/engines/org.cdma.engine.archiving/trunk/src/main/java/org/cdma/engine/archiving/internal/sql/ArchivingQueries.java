@@ -140,6 +140,7 @@ public class ArchivingQueries {
 				// Get the sampling type
 				SamplingPeriod sampling = prop.getSampling();
 				SamplingType samplingType = DbUtils.getSqlSamplingType(sampling, dbType);
+				int factor = prop.getSamplingFactor();
 				
 				// Check the db name is specified
 				if( dbName != null && !dbName.isEmpty() ) {
@@ -180,16 +181,12 @@ public class ArchivingQueries {
 						time += " as " + SqlFieldConstants.ATT_FIELD_TIME + " ";
 					}
 					
-					
 					// Prepare each part of the query (SELECT, FROM, WHERE, ORDER)
-					String select = "SELECT " + time;
+					String select = populateSelectClause(prop, sampling, samplingType, time);
 					String from   = " FROM " + dbName + tableName;
-					String where  = " WHERE (" + SqlFieldConstants.ATT_FIELD_TIME + " BETWEEN ? AND ?)";
+					String where  = populateWhereClause(prop, sampling, samplingType, factor);
 					String order  = " ORDER BY " + SqlFieldConstants.ATT_FIELD_TIME;
 					
-					
-					// Populate the SELECT section according sampling
-					select = populateSelectClause(prop, sampling, select, samplingType);
 					
 					// Assembly the  query
 					query.append( select );
@@ -199,6 +196,7 @@ public class ArchivingQueries {
 						query.append( group );						
 					}
 					query.append( order );
+					System.out.println(query);
 				} catch (ParseException e) {
 					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query to get item list!", e );
 				}
@@ -256,32 +254,49 @@ public class ArchivingQueries {
 	 * @param samplingType
 	 * @return
 	 */
-	private static String populateSelectClause(AttributeProperties prop, SamplingPeriod sampling, String select, SamplingType samplingType) {
-		String result = select;
+	private static String populateSelectClause(AttributeProperties prop, SamplingPeriod sampling, SamplingType samplingType, String field) {
+		String result = "SELECT " + (field != null ? field : "");
 		
 		List<String> fields = prop.getDbFields();
 		
 		if( sampling == SamplingPeriod.ALL ) {
-			for( String field : fields ) {
-				result += ", " + field;
+			for( String name : fields ) {
+				result += ", " + name;
 			}
 		}
 		else {
 			// Manages CLOB fields
 			String stringField;
 			fields = prop.getDbClobFields();
-			for( String field : fields ) {
-				stringField = samplingType.getFieldAsStringSelector(field);
-				result += ", " + samplingType.getSamplingSelector(stringField, SamplingPolicy.MIN, field);
+			for( String name : fields ) {
+				stringField = samplingType.getFieldAsStringSelector(name);
+				result += ", " + samplingType.getSamplingSelectClause(stringField, SamplingPolicy.MIN, name);
 			}
 			
 			// Manages numerical fields
 			fields = prop.getDbNumericalFields();
-			for( String field : fields ) {
-				result += ", " + samplingType.getSamplingSelector(field, SamplingPolicy.AVERAGE, field);
+			for( String name : fields ) {
+				result += ", " + samplingType.getSamplingSelectClause(name, SamplingPolicy.AVERAGE, name);
 			}
 		}
 		return result;
 	}
 
+	/**
+	 * Will populate the SELECT SQL clause according to the db type, the sampling policy...
+	 * @param prop
+	 * @param sampling
+	 * @param select
+	 * @param samplingType
+	 * @return
+	 */
+	private static String populateWhereClause(AttributeProperties prop, SamplingPeriod period, SamplingType samplingType, int factor) {
+		String result = " WHERE (" + SqlFieldConstants.ATT_FIELD_TIME + " BETWEEN ? AND ?)";
+		
+		if( period != SamplingPeriod.ALL && period != SamplingPeriod.NONE && factor > 1 ) {
+			result += " AND " + samplingType.getDateSampling(SqlFieldConstants.ATT_FIELD_TIME, period, factor);
+		}
+		
+		return result;
+	}
 }
