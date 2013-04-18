@@ -22,6 +22,9 @@ public final class ArrayConverters {
 		else if( clazz.equals( Double.TYPE ) ) {
 			result = new StringArrayToDoubleArray();
 		}
+		else if( clazz.equals( Float.TYPE ) ) {
+			result = new StringArrayToFloatArray();
+		}
 		else if( clazz.equals( Short.TYPE ) ) {
 			result = new StringArrayToShortArray();
 		}
@@ -139,6 +142,44 @@ public final class ArrayConverters {
 		@Override
 		public Class<?> primitiveType() {
 			return Double.TYPE;
+		}
+	}
+	
+	/**
+	 * Convert String[] to double[]
+	 */
+	public static class StringArrayToFloatArray implements StringArrayConverter {
+		@Override
+		public void convert( String[] source, Object destination ) { 
+			float[] out = (float[]) destination;
+			
+			int cell = 0;
+			for( String value : source ) {
+				out[cell] = Float.valueOf( value );
+				cell++;
+			}
+		}
+
+		@Override
+		public String[] convert( Object source ) {
+			int[] shape = ArrayTools.detectShape(source);
+			
+			String[] result = null;
+			if( shape.length == 1 ) {
+				result = (String[]) java.lang.reflect.Array.newInstance( String.class, shape[0] );
+				int index = 0;
+				for( float value : (float[]) source ) {
+					result[index] = String.valueOf(value);
+					index++;
+				}
+			}
+			
+			return result;
+		}
+
+		@Override
+		public Class<?> primitiveType() {
+			return Float.TYPE;
 		}
 	}
 	
