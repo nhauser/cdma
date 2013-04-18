@@ -199,7 +199,6 @@ public class ArchivingQueries {
 						query.append( group );						
 					}
 					query.append( order );
-					System.out.println(query);
 				} catch (ParseException e) {
 					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query to get item list!", e );
 				}
