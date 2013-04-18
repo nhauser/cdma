@@ -26,6 +26,7 @@ public class AttributeProperties implements Cloneable {
 	private Class<?> mClass;
 	private long mOrigin;
 	private SamplingPeriod mSampling;
+	private int mFactor;
 	
 	public AttributeProperties( int ID, int type, int format, int writable, String name, Class<?> clazz) {
 		this(ID, DataType.ValueOf(type), format, writable, name, clazz);
@@ -39,6 +40,7 @@ public class AttributeProperties implements Cloneable {
 		mName     = name;
 		mClass    = clazz;
 		mSampling = SamplingPeriod.ALL;
+		setSamplingFactor(1);
 	}
 	
 	public AttributeProperties( String attrName, SqlDataset dbDataset, String dbName ) throws IOException {
@@ -48,6 +50,7 @@ public class AttributeProperties implements Cloneable {
 		mFormat   = Interpretation.UNKNWON;
 		mWritable = -1;
 		mSampling  = SamplingPeriod.ALL;
+		setSamplingFactor(1);
 		initialize(dbDataset, dbName);
 	}
 	
@@ -95,21 +98,37 @@ public class AttributeProperties implements Cloneable {
 	}
 	
 	/**
-	 * Return the mSampling period
+	 * Return the sampling period
 	 * 
-	 * @return mSampling period {@link SamplingPeriod}
+	 * @return sampling period {@link SamplingPeriod}
 	 */
 	public SamplingPeriod getSampling() {
 		return mSampling;
 	}
 
 	/**
-	 * Set the mSampling period of the extracted attribute
+	 * Set the sampling period of the extracted attribute
 	 * 
-	 * @param mSampling {@link SamplingPeriod}
+	 * @param sampling {@link SamplingPeriod}
 	 */
 	public void setSampling(SamplingPeriod sampling) {
 		this.mSampling = sampling;
+	}
+	
+	/**
+	 * Get the sampling factor for the period. For instance every 2 DAY
+	 * @return the factor
+	 */
+	public int getSamplingFactor() {
+		return mFactor;
+	}
+
+	/**
+	 * Set the sampling factor for the period. For instance every 2 DAY
+	 * @param factor the factor to set
+	 */
+	public void setSamplingFactor(int factor) {
+		this.mFactor = factor;
 	}
 	
 	/**
@@ -302,5 +321,5 @@ public class AttributeProperties implements Cloneable {
 		
 		return result.toString();
 	}
-	
+
 }

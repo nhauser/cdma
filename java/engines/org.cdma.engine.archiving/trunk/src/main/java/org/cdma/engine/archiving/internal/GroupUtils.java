@@ -114,8 +114,10 @@ public class GroupUtils {
 			    String format   = getDateFormat(group);
 			    
 			    // Get the sampling type
-			    SamplingPeriod sampling = getSampling(group);
+			    SamplingPeriod sampling = getSamplingType(group);
+			    int factor = getSamplingFactor(group);
 			    dbAttr.getProperties().setSampling(sampling);
+			    dbAttr.getProperties().setSamplingFactor(factor);
 
 			    Object[] params = new Object[] {start, end};
 			    
@@ -150,10 +152,10 @@ public class GroupUtils {
 	/**
 	 * Seek in the hierarchy if a sampling attribute has been set.
 	 * 
-	 * @return string representation of the date format
-	 * @note the 'end' date is carried by  IAttribute {@link Constants.DATE_FORMAT}
+	 * @return SamplingPeriod expected for attribute extraction
+	 * @note the 'samplingType' type is carried by IAttribute {@link Constants.SAMPLING_TYPE}
 	 */
-	public static SamplingPeriod getSampling(IGroup group) {
+	public static SamplingPeriod getSamplingType(IGroup group) {
 		SamplingPeriod type = SamplingPeriod.ALL;
 		if( group != null ) {
 		    IAttribute dateFormat = seekAttributeInAncestors(group, Constants.SAMPLING_TYPE);
@@ -174,6 +176,26 @@ public class GroupUtils {
 		    }
 		}
 	    return type;
+	}
+	
+	/**
+	 * Seek in the hierarchy if a sampling factor attribute has been set.
+	 * 
+	 * @return int representation of the date format
+	 * @note the 'samplingFactor' type is carried by IAttribute {@link Constants.SAMPLING_FACTOR}
+	 */
+	public static int getSamplingFactor(IGroup group) {
+		int result = 1;
+		if( group != null ) {
+		    IAttribute dateFormat = seekAttributeInAncestors(group, Constants.SAMPLING_FACTOR);
+		    if( dateFormat != null ) {
+		    	Number sampNum = dateFormat.getNumericValue();
+		    	if( sampNum != null ) {
+		    		result = sampNum.intValue();
+		    	}
+		    }
+		}
+	    return result;
 	}
 	
 	/**

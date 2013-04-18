@@ -628,8 +628,12 @@ public class ArchivingGroup implements IGroup {
 				String dbName = mDataset.getSchema();
 				SqlDataset dataset = mDataset.getSqldataset();
 				AttributeProperties properties = new AttributeProperties(name, dataset, dbName);
-				SamplingPeriod sampling = GroupUtils.getSampling(this);
+				
+				// Init sampling properties from IAttribute in hierarchy
+			    int factor = GroupUtils.getSamplingFactor(this);
+				SamplingPeriod sampling = GroupUtils.getSamplingType(this);
 				properties.setSampling(sampling);
+				properties.setSamplingFactor(factor);
 				
 				mDbAttr.setProperties( properties );
 				
