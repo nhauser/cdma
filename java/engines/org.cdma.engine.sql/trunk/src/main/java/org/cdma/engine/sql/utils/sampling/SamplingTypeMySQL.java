@@ -14,15 +14,16 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.cdma.engine.sql.utils.SamplingType;
+import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 
 
 public enum SamplingTypeMySQL implements SamplingType {
-    MONTH      ("%Y-%m"),
-    DAY        ("%Y-%m-%d"),
-    HOUR       ("%Y-%m-%d %H"),
-    MINUTE     ("%Y-%m-%d %H:%i"),
-    SECOND     ("%Y-%m-%d %H:%i:%s"),
-    FRACTIONAL ("%Y-%m-%d %H:%i:%s.%f"),
+    MONTH      ("%Y-"),
+    DAY        ("%Y-%m-"),
+    HOUR       ("%Y-%m-%d "),
+    MINUTE     ("%Y-%m-%d %H:"),
+    SECOND     ("%Y-%m-%d %H:%i:"),
+    FRACTIONAL ("%Y-%m-%d %H:%i:%s."),
     ALL        ("%Y-%m-%d %H:%i:%s.%f"),
     NONE       ("%Y-%m-%d %H:%i:%s.%f");
     
@@ -110,30 +111,58 @@ public enum SamplingTypeMySQL implements SamplingType {
     @Override
     public String getDateSampling(String field, SamplingPeriod period, int factor) {
     	String result = "";
-    	String periodPattern = null;
+    	String periodPattern = getSamplingPeriodUnit(period);
     	
-    	switch (period) {
-		case SECOND:
-			periodPattern = "%s";
-			break;
-    	case MINUTE:
-    		periodPattern = "%i";
-			break;
-    	case HOUR:
-    		periodPattern = "%H";
-			break;
-		case DAY:
-			periodPattern = "%d";
-			break;
-		case MONTH:
-			periodPattern = "%m";
-			break;
-		}
+    	
     	
     	if( periodPattern != null ) {
-    		result = "DATE_FORMAT(" + field + " , '" + periodPattern + "') % " + factor + " = 0";
+    		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
+    			result = "IF(";
+    		}
+    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
+    			result += "=0,1,";
+    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    			result += ")";
+    		}
     	}
     	
 		return result;
     }
+
+    @Override
+    public String getPatternPeriodUnit(SamplingPeriod period) {
+    	String result = getSamplingPeriodUnit(period);
+    	
+    	for( Entry<String, String> entry : mCorrespondance.entrySet() ) {
+    		result = result.replace(entry.getValue(), entry.getKey());
+    	}
+    	
+    	return result;
+    }
+    
+	@Override
+	public String getSamplingPeriodUnit(SamplingPeriod period) {
+		String result = null;
+		switch (period) {
+		case FRACTION:
+			result = "%f";
+			break;
+		case SECOND:
+			result = "%s";
+    	case MINUTE:
+    		result = "%i";
+			break;
+    	case HOUR:
+    		result = "%H";
+			break;
+		case DAY:
+			result = "%d";
+			break;
+		case MONTH:
+			result = "%m";
+			break;
+		}
+		return result;
+	}
 }

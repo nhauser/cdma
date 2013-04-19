@@ -128,7 +128,7 @@ public class ArchivingQueries {
 	
 	static 	public String queryChildItems( Attribute attribute, String datePattern ) {
 		StringBuffer query = new StringBuffer();
-		
+		String result = "";
 		if( attribute != null ) {
 			AttributeConnector dbCon = attribute.getDbConnector();
 			AttributeProperties prop = attribute.getProperties();
@@ -160,14 +160,18 @@ public class ArchivingQueries {
 						// Get pattern of sampling
 						String pattern = samplingType.getPattern(sampling);
 						
+						// Construct sampled part of the date
+						String sam = getDateSampling(prop, sampling, samplingType, factor);
+						time = sam + " AS " + SqlFieldConstants.ATT_FIELD_SAMPLE + ", ";
+
 						// Convert dates to string (truncated dates according sampling)
 						String tmp = DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbType, pattern);
 						
 						// Reconstruct timestamp using truncated dates
-						time = DateFormat.stringToSqlDate(tmp, dbType, pattern);
+						time += DateFormat.stringToSqlDate(tmp, dbType, pattern);
 						
-						// Sort by truncated dates
-						group = " GROUP BY " + tmp;
+						// Sort by truncated dates and sampled dates
+						group = " GROUP BY " + tmp + ", " + sam;
 					}
 					else {
 						time = SqlFieldConstants.ATT_FIELD_TIME ;
@@ -184,11 +188,11 @@ public class ArchivingQueries {
 					// Prepare each part of the query (SELECT, FROM, WHERE, ORDER)
 					String select = populateSelectClause(prop, sampling, samplingType, time);
 					String from   = " FROM " + dbName + tableName;
-					String where  = populateWhereClause(prop, sampling, samplingType, factor);
+					String where  = " WHERE (" + SqlFieldConstants.ATT_FIELD_TIME + " BETWEEN ? AND ?)";
 					String order  = " ORDER BY " + SqlFieldConstants.ATT_FIELD_TIME;
 					
 					
-					// Assembly the  query
+					// Assembly the main query
 					query.append( select );
 					query.append( from );
 					query.append( where);
@@ -196,13 +200,23 @@ public class ArchivingQueries {
 						query.append( group );						
 					}
 					query.append( order );
-					System.out.println(query);
+					
+					// Assembly a top query to reconstruct split dates
+					if( sampling != SamplingPeriod.ALL ) {
+						result = queryAssemblySampledDates(attribute, sampling, samplingType, query.toString());
+					}
+					else {
+						result = query.toString();
+					}
+					
+					
+					System.out.println(result);
 				} catch (ParseException e) {
 					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query to get item list!", e );
 				}
 			}
 		}
-		return query.toString();
+		return result;
 	}
 
 	/**
@@ -290,11 +304,53 @@ public class ArchivingQueries {
 	 * @param samplingType
 	 * @return
 	 */
-	private static String populateWhereClause(AttributeProperties prop, SamplingPeriod period, SamplingType samplingType, int factor) {
-		String result = " WHERE (" + SqlFieldConstants.ATT_FIELD_TIME + " BETWEEN ? AND ?)";
+	private static String getDateSampling(AttributeProperties prop, SamplingPeriod period, SamplingType samplingType, int factor) {
+		String result = "";
 		
 		if( period != SamplingPeriod.ALL && period != SamplingPeriod.NONE && factor > 1 ) {
-			result += " AND " + samplingType.getDateSampling(SqlFieldConstants.ATT_FIELD_TIME, period, factor);
+			result += samplingType.getDateSampling(SqlFieldConstants.ATT_FIELD_TIME, period, factor);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Construct a top query to concat split dates
+	 * @param prop
+	 * @param sampling
+	 * @param samplingType
+	 * @param string
+	 * @return
+	 */
+	private static String queryAssemblySampledDates(Attribute attribute,
+			SamplingPeriod sampling, SamplingType samplingType, String query) {
+		String result = "";
+		try {
+		if( query != null && !query.isEmpty() ) {
+			AttributeConnector dbCon = attribute.getDbConnector();
+			AttributeProperties prop = attribute.getProperties();
+			
+			String pattern = samplingType.getPattern(sampling);
+			String sampUnit = samplingType.getPatternPeriodUnit(sampling);
+			
+			String time = DateFormat.dateToSqlString( SqlFieldConstants.ATT_FIELD_TIME, dbCon.getDbType(), pattern);
+			String fields = "concat(" + time + ", " + SqlFieldConstants.ATT_FIELD_SAMPLE + " )";
+			fields = DateFormat.stringToSqlDate(fields, dbCon.getDbType(), pattern + sampUnit);
+			fields += " AS " + SqlFieldConstants.ATT_FIELD_TIME;
+			// Add all fields but time
+			for( String field : prop.getDbFields() ) {
+				if( !field.equals( SqlFieldConstants.ATT_FIELD_TIME ) &&
+					!field.equals(SqlFieldConstants.ATT_FIELD_SAMPLE) ) {
+					fields += ", " + field;	
+				}
+			}
+			
+			result = "SELECT " + fields + " FROM (" + query + ") ORDER BY " + SqlFieldConstants.ATT_FIELD_TIME;
+		}
+		}
+		catch( ParseException e) {
+			Factory.getLogger().log(Level.SEVERE, "Unable to construct SQL query!", e);
+			result = "";
 		}
 		
 		return result;

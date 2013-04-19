@@ -10,30 +10,28 @@
 package org.cdma.engine.sql.utils.sampling;
 
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
 import org.cdma.engine.sql.utils.SamplingType;
-import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
-import org.cdma.engine.sql.utils.SamplingType.SamplingPolicy;
 
 
 public enum SamplingTypeOracle implements SamplingType {
-    MONTH      ("YYYY-MM"),
-    DAY        ("YYYY-MM-DD"),
-    HOUR       ("YYYY-MM-DD HH24"),
-    MINUTE     ("YYYY-MM-DD HH24:MI"),
-    SECOND     ("YYYY-MM-DD HH24:MI:SS"),
-    FRACTIONAL ("YYYY-MM-DD HH24:MI:SS.FF"),
+    MONTH      ("YYYY-"),
+    DAY        ("YYYY-MM-"),
+    HOUR       ("YYYY-MM-DD "),
+    MINUTE     ("YYYY-MM-DD HH24:"),
+    SECOND     ("YYYY-MM-DD HH24:MI:"),
+    FRACTIONAL ("YYYY-MM-DD HH24:MI:SS."),
     ALL        ("YYYY-MM-DD HH24:MI:SS.FF"),
     NONE       ("YYYY-MM-DD HH24:MI:SS.FF");
     
     private String mSampling;
-    static private HashMap<String, String> mCorrespondance;
+    static private LinkedHashMap<String, String> mCorrespondance;
     
     static {
     	synchronized( SamplingTypeMySQL.class ) {
-    		mCorrespondance = new HashMap<String, String>();
+    		mCorrespondance = new LinkedHashMap<String, String>();
     		mCorrespondance.put("yyyy", "YYYY");
     		mCorrespondance.put("MM", "MM");
     		mCorrespondance.put("dd", "DD");
@@ -114,29 +112,57 @@ public enum SamplingTypeOracle implements SamplingType {
     	String result = "";
     	String periodPattern = null;
     	
-    	switch (period) {
-		case SECOND:
-			periodPattern = "SS";
-			break;
-    	case MINUTE:
-    		periodPattern = "MI";
-			break;
-    	case HOUR:
-    		periodPattern = "HH24";
-			break;
-		case DAY:
-			periodPattern = "DD";
-			break;
-		case MONTH:
-			periodPattern = "MM";
-			break;
-		}
+    	periodPattern = getSamplingPeriodUnit(period);
     	
     	if( periodPattern != null ) {
-    		result = "MOD(to_number(to_char(" + field + " , '" + periodPattern + "')), " + factor + ") = 0";
+    		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
+    			result = "decode(";
+    		}
+    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
+    			result += ",0,1,";
+    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    			result += ")";
+    		}
     	}
     	
 		return result;
     	
     }
+
+    @Override
+    public String getPatternPeriodUnit(SamplingPeriod period) {
+    	String result = getSamplingPeriodUnit(period);
+    	
+    	for( Entry<String, String> entry : mCorrespondance.entrySet() ) {
+    		result = result.replace(entry.getValue(), entry.getKey());
+    	}
+    	
+    	return result;
+    }
+    
+	public String getSamplingPeriodUnit(SamplingPeriod period) {
+		String result = null;
+		switch (period) {
+		case FRACTION:
+			result = "FF";
+			break;
+		case SECOND:
+			result = "SS";
+			break;
+    	case MINUTE:
+    		result = "MI";
+			break;
+    	case HOUR:
+    		result = "HH24";
+			break;
+		case DAY:
+			result = "DD";
+			break;
+		case MONTH:
+			result = "MM";
+			break;
+		}
+		return result;
+	}
 }

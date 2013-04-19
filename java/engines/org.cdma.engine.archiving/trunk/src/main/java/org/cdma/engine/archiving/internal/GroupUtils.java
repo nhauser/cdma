@@ -11,7 +11,6 @@ import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
-import org.cdma.engine.archiving.internal.Constants.DataType;
 import org.cdma.engine.archiving.internal.attribute.Attribute;
 import org.cdma.engine.archiving.internal.attribute.AttributePath;
 import org.cdma.engine.archiving.internal.attribute.AttributeProperties;

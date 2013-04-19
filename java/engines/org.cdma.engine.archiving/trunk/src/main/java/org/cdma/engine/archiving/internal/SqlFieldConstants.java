@@ -41,6 +41,8 @@ public class SqlFieldConstants {
 	public static final String ATT_FIELD_READ   = "READ_VALUE";
 	public static final String ATT_FIELD_WRITE  = "WRITE_VALUE";
 	public static final String CELL_SEPARATOR   = ", ";
+
+	public static final String ATT_FIELD_SAMPLE = "SAMPLED_DATE";
 	
 	
 }
