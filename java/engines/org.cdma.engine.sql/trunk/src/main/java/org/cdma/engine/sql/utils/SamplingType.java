@@ -10,6 +10,7 @@
 package org.cdma.engine.sql.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Map.Entry;
 
 
 
@@ -132,4 +133,8 @@ public interface SamplingType {
 	    	return mSampling;
 	    }
 	}
+	
+	public String getSamplingPeriodUnit(SamplingPeriod period);
+	
+    public String getPatternPeriodUnit(SamplingPeriod period);
 }

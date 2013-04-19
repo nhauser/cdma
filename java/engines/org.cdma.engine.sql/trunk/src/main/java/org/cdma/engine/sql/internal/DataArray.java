@@ -186,10 +186,14 @@ public class DataArray<T> {
 	// ---------------------------------------------------------
 	@SuppressWarnings("unchecked")
 	public <U> void setData(U data, int row) {
+		try {
 		if (mValue != null) {
 			((U[]) mValue)[row] = data;
 			mPos = row;
 			unlock();
+		}
+		} catch( ArrayStoreException e) {
+			e.printStackTrace();
 		}
 	}
 
