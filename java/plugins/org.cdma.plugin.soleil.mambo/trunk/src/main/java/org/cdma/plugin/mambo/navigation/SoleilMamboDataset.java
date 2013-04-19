@@ -77,7 +77,8 @@ public class SoleilMamboDataset implements IDataset {
 		if( mLogRoot == null ) {
 			mLogRoot = new LogicalGroup(null, this);
 		}
-		return mLogRoot;
+		throw new NotImplementedException();
+		//return mLogRoot;
 	}
 
 	@Override
@@ -256,27 +257,27 @@ public class SoleilMamboDataset implements IDataset {
 	}
 	
 	private String getDriver() {
-		return getParam("_DRIVER", mArchivingMode, false);
+		return getParam("_DRIVER", mArchivingMode, true);
 	}
 	
 	private String getHost() {
-		return getParam("_HOST", mArchivingMode, false);
+		return getParam("_HOST", mArchivingMode, true);
 	}
 	
 	private String getPort() {
-		return getParam("_PORT", mArchivingMode, false);
+		return getParam("_PORT", mArchivingMode, true);
 	}
 	
 	private String getRac() {
-		return getParam("_RAC", mArchivingMode, false);
+		return getParam("_RAC", mArchivingMode, true);
 	}
 	
 	private String getSchema() {
-		return getParam("_SCHEMA", mArchivingMode, false);
+		return getParam("_SCHEMA", mArchivingMode, true);
 	}
 	
 	private String getDbName() {
-		return getParam("_NAME", mArchivingMode, false);
+		return getParam("_NAME", mArchivingMode, true);
 	}
 	
 	private String getPassword(ArchivingMode mode) {
@@ -309,8 +310,12 @@ public class SoleilMamboDataset implements IDataset {
 			// Check in config file
 			if( result == null || forceConfig ) {
 				ConfigDataset conf = getConfiguration();
+				String tmp = null;
 				if( conf != null && conf.hasParameter(fullName) ) {
-					result = conf.getParameter(fullName);
+					tmp = conf.getParameter(fullName);
+					if( tmp != null && !tmp.isEmpty() ) {
+						result = tmp;
+					}
 				}
 			}
 		}

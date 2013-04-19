@@ -213,7 +213,7 @@ public class SoleilMamboGroup extends AbstractGroup {
 					// Create a child data item with loaded data
 					IArray data = item.getData();
 					String name = item.getShortName();
-					child = new SoleilMamboDataItem( dataset, this, name, data);
+					child = new SoleilMamboDataItem( dataset, this, name, data );
 					
 					// Set its attributes
 					attributes = item.getAttributeList();
