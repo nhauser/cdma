@@ -208,9 +208,6 @@ public class ArchivingQueries {
 					else {
 						result = query.toString();
 					}
-					
-					
-					System.out.println(result);
 				} catch (ParseException e) {
 					Factory.getLogger().log(Level.SEVERE, "Unable to prepare query to get item list!", e );
 				}
