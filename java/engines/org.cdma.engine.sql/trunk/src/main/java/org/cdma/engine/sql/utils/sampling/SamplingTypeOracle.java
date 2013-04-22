@@ -23,7 +23,6 @@ public enum SamplingTypeOracle implements SamplingType {
     MINUTE     ("YYYY-MM-DD HH24:"),
     SECOND     ("YYYY-MM-DD HH24:MI:"),
     FRACTIONAL ("YYYY-MM-DD HH24:MI:SS."),
-    ALL        ("YYYY-MM-DD HH24:MI:SS.FF"),
     NONE       ("YYYY-MM-DD HH24:MI:SS.FF");
     
     private String mSampling;
@@ -118,10 +117,22 @@ public enum SamplingTypeOracle implements SamplingType {
     		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
     			result = "decode(";
     		}
-    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern;
+
+    		// Add the sampling factor in SQL
+    		String factorSQL = ""; 
+    		if( factor > 1) {
+    			factorSQL += "')) / " + factor + ") * " + factor;
+    		}
+    		else {
+    			factorSQL += "')))";
+    		}
+    		result += factorSQL;
+    		
     		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
     			result += ",0,1,";
-    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern;
+    			result += factorSQL;
     			result += ")";
     		}
     	}

@@ -64,7 +64,6 @@ public interface SamplingType {
 	    MINUTE   (2),
 	    SECOND   (1),
 	    FRACTION (0),
-	    ALL      (-1),
 	    NONE     (-1);
 	    
 	    private int mSampling;
@@ -99,7 +98,7 @@ public interface SamplingType {
 	        	result = FRACTION;
 	        case -1:
     		default:
-	        	result = ALL;
+	        	result = NONE;
 	            break;
 	        }
 	        return result;
