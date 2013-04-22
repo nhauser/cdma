@@ -39,7 +39,7 @@ public class AttributeProperties implements Cloneable {
 		mWritable = writable;
 		mName     = name;
 		mClass    = clazz;
-		mSampling = SamplingPeriod.ALL;
+		mSampling = SamplingPeriod.NONE;
 		setSamplingFactor(1);
 	}
 	
@@ -49,7 +49,7 @@ public class AttributeProperties implements Cloneable {
 		mType     = DataType.UNKNOWN;
 		mFormat   = Interpretation.UNKNWON;
 		mWritable = -1;
-		mSampling  = SamplingPeriod.ALL;
+		mSampling  = SamplingPeriod.NONE;
 		setSamplingFactor(1);
 		initialize(dbDataset, dbName);
 	}

@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.cdma.engine.sql.utils.SamplingType;
-import org.cdma.engine.sql.utils.SamplingType.SamplingPeriod;
 
 
 public enum SamplingTypeMySQL implements SamplingType {
@@ -24,7 +23,6 @@ public enum SamplingTypeMySQL implements SamplingType {
     MINUTE     ("%Y-%m-%d %H:"),
     SECOND     ("%Y-%m-%d %H:%i:"),
     FRACTIONAL ("%Y-%m-%d %H:%i:%s."),
-    ALL        ("%Y-%m-%d %H:%i:%s.%f"),
     NONE       ("%Y-%m-%d %H:%i:%s.%f");
     
     private String mSampling;
@@ -113,16 +111,27 @@ public enum SamplingTypeMySQL implements SamplingType {
     	String result = "";
     	String periodPattern = getSamplingPeriodUnit(period);
     	
-    	
-    	
     	if( periodPattern != null ) {
     		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
     			result = "IF(";
     		}
-    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    		result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern;
+    		
+    		// Add the sampling factor in SQL
+    		String factorSQL = ""; 
+    		if( factor > 1) {
+    			factorSQL += "')) / " + factor + ") * " + factor;
+    		}
+    		else {
+    			factorSQL += "')))";
+    		}
+    		result += factorSQL;
+    		
+    		
     		if( period.equals(SamplingPeriod.MONTH) || period.equals(SamplingPeriod.DAY) ) {
     			result += "=0,1,";
-    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern + "')) / " + factor + ") * " + factor;
+    			result += "FLOOR(to_number(to_char(" + field + " , '" + periodPattern;
+    			result += factorSQL;
     			result += ")";
     		}
     	}

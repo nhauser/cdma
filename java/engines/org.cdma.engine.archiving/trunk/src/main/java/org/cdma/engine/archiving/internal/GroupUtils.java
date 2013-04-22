@@ -155,7 +155,7 @@ public class GroupUtils {
 	 * @note the 'samplingType' type is carried by IAttribute {@link Constants.SAMPLING_TYPE}
 	 */
 	public static SamplingPeriod getSamplingType(IGroup group) {
-		SamplingPeriod type = SamplingPeriod.ALL;
+		SamplingPeriod type = SamplingPeriod.NONE;
 		if( group != null ) {
 		    IAttribute dateFormat = seekAttributeInAncestors(group, Constants.SAMPLING_TYPE);
 		    if( dateFormat != null ) {

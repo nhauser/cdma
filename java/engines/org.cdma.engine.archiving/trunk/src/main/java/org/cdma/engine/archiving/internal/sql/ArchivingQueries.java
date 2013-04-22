@@ -156,7 +156,7 @@ public class ArchivingQueries {
 					String group = "";
 					String time;
 					// Case of sampling
-					if( sampling != SamplingPeriod.ALL ) {
+					if( sampling != SamplingPeriod.NONE ) {
 						// Get pattern of sampling
 						String pattern = samplingType.getPattern(sampling);
 						
@@ -181,7 +181,7 @@ public class ArchivingQueries {
 						time = DateFormat.dateToSqlString( time, dbType, datePattern);
 					}
 					
-					if( datePattern != null || sampling != SamplingPeriod.ALL ) {
+					if( datePattern != null || sampling != SamplingPeriod.NONE ) {
 						time += " as " + SqlFieldConstants.ATT_FIELD_TIME + " ";
 					}
 					
@@ -196,13 +196,13 @@ public class ArchivingQueries {
 					query.append( select );
 					query.append( from );
 					query.append( where);
-					if( sampling != SamplingPeriod.ALL ) {
+					if( sampling != SamplingPeriod.NONE ) {
 						query.append( group );						
 					}
 					query.append( order );
 					
 					// Assembly a top query to reconstruct split dates
-					if( sampling != SamplingPeriod.ALL ) {
+					if( sampling != SamplingPeriod.NONE ) {
 						result = queryAssemblySampledDates(attribute, sampling, samplingType, query.toString());
 					}
 					else {
@@ -270,7 +270,7 @@ public class ArchivingQueries {
 		
 		List<String> fields = prop.getDbFields();
 		
-		if( sampling == SamplingPeriod.ALL ) {
+		if( sampling == SamplingPeriod.NONE ) {
 			for( String name : fields ) {
 				result += ", " + name;
 			}
@@ -304,7 +304,7 @@ public class ArchivingQueries {
 	private static String getDateSampling(AttributeProperties prop, SamplingPeriod period, SamplingType samplingType, int factor) {
 		String result = "";
 		
-		if( period != SamplingPeriod.ALL && period != SamplingPeriod.NONE && factor > 1 ) {
+		if( period != SamplingPeriod.NONE ) {
 			result += samplingType.getDateSampling(SqlFieldConstants.ATT_FIELD_TIME, period, factor);
 		}
 		
