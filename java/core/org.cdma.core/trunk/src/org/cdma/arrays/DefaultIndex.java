@@ -30,6 +30,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 	private int[]  mProjOrigin;   // origin without considering reduced range
 	private int[]  mProjPos;     // position without considering reduced range
 	private long[] mProjStride;  // stride without considering reduced range	
+	private boolean mChangedPos;
 
 	// / Constructors
 	public DefaultIndex(String factoryName, int[] shape) {
@@ -55,6 +56,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 		mIsUpToDate = index.mIsUpToDate;
 		mFactory = index.mFactory;
 		mProjPos = index.mProjPos.clone();
+		mChangedPos = index.mChangedPos;
 		for (int i = 0; i < index.mRanges.length; i++) {
 			mRanges[i] = (DefaultRange) index.mRanges[i].clone();
 		}
@@ -285,7 +287,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 			}
 			j++;
 		}
-
+		mChangedPos = true;
 		return this;
 	}
 
@@ -369,42 +371,49 @@ public class DefaultIndex implements IIndex, Cloneable {
 	@Override
 	public IIndex set0(int v) {
 		mICurPos[DIM0] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set1(int v) {
 		mICurPos[DIM1] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set2(int v) {
 		mICurPos[DIM2] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set3(int v) {
 		mICurPos[DIM3] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set4(int v) {
 		mICurPos[DIM4] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set5(int v) {
 		mICurPos[DIM5] = v;
+		mChangedPos = true;
 		return this;
 	}
 
 	@Override
 	public IIndex set6(int v) {
 		mICurPos[DIM6] = v;
+		mChangedPos = true;
 		return this;
 	}
 
@@ -414,6 +423,7 @@ public class DefaultIndex implements IIndex, Cloneable {
 			throw new IllegalArgumentException();
 		}
 		mICurPos[dim] = value;
+		mChangedPos = true;
 	}
 
 	@Override
@@ -608,6 +618,18 @@ public class DefaultIndex implements IIndex, Cloneable {
 	 * Reduced ranges will also be considered
 	 */
 	public int[] getCurrentCounterProjection() {
+		if( mChangedPos ) {
+			int realRank = mRanges.length;
+			boolean reduced;
+			int j = mRank - 1;
+			for (int i = realRank - 1; i >= 0; i--) {
+				DefaultRange range = mRanges[i];
+				reduced = range.reduced();
+				if( !reduced )  {
+					 mProjPos[i] = mICurPos[j--];
+				}
+			}
+		}
 		return mProjPos.clone();
 	}
 
@@ -656,10 +678,10 @@ public class DefaultIndex implements IIndex, Cloneable {
 			mProjOrigin[i] = (int) (range.first() / range.stride());
 			mProjShape[i] = range.length();
 			if( !reduced )  {
-				 mProjPos[i] = mICurPos[j--];
 				stride *= range.length();
 			}
 		}
+		mChangedPos = false;
 	}
 	
 	private void updateOffset() {
