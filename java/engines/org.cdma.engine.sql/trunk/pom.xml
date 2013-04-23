@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>sql</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3-SNAPSHOT-SNAPSHOT</version>
   <name>CDMA SQL engine</name>
   <description>This project is a SQL engine for the CDMA.</description>
   <developers>
