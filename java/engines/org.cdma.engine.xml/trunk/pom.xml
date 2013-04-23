@@ -1,66 +1,61 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>fr.soleil</groupId>
-		<artifactId>super-pom-java</artifactId>
-		<version>RELEASE</version>
-	</parent>
-
-	<groupId>org.cdma.engines</groupId>
-	<artifactId>xml</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
-	<name>CDMA Xml engine</name>
-	<description>
-    This project is a XML engine for the CDMA. It only manages strings file, no bynary data.
-   </description>
-   
-	<scm>
-		<connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</connection>
-		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</developerConnection>
-	</scm>
-	<dependencies>
-		<dependency>
-			<groupId>org.cdma</groupId>
-			<artifactId>Core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom2</artifactId>
-			<version>2.0.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.cdma</groupId>
-			<artifactId>utilities</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<sourceDirectory>src/main/java</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>META-INF</directory>
-				<targetPath>META-INF</targetPath>
-			</resource>
-			<resource>
-				<directory>OSGI-INF</directory>
-				<targetPath>OSGI-INF</targetPath>
-			</resource>
-		</resources>
-	</build>
-
-	<developers>
-		<developer>
-			<id>rodriguez</id>
-			<name>rodriguez</name>
-			<email>clement.rodriguez@synchrotron-soleil.fr</email>
-			<url>http://www.synchrotron-soleil.fr</url>
-			<organization>Synchrotron Soleil</organization>
-			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>1</timezone>
-		</developer>
-	</developers>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>super-pom-java</artifactId>
+    <groupId>fr.soleil</groupId>
+    <version>RELEASE</version>
+  </parent>
+  <groupId>org.cdma.engines</groupId>
+  <artifactId>xml</artifactId>
+  <version>0.0.2</version>
+  <name>CDMA Xml engine</name>
+  <description>This project is a XML engine for the CDMA. It only manages strings file, no bynary data.</description>
+  <developers>
+    <developer>
+      <id>rodriguez</id>
+      <name>rodriguez</name>
+      <email>clement.rodriguez@synchrotron-soleil.fr</email>
+      <url>http://www.synchrotron-soleil.fr</url>
+      <organization>Synchrotron Soleil</organization>
+      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.xml/trunk</developerConnection>
+  </scm>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <targetPath>META-INF</targetPath>
+        <directory>META-INF</directory>
+      </resource>
+      <resource>
+        <targetPath>OSGI-INF</targetPath>
+        <directory>OSGI-INF</directory>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>Core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+      <version>2.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>utilities</artifactId>
+    </dependency>
+  </dependencies>
 </project>
