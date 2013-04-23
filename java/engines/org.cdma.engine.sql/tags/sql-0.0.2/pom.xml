@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>super-pom-java</artifactId>
+    <groupId>fr.soleil</groupId>
+    <version>RELEASE</version>
+  </parent>
+  <groupId>org.cdma.engines</groupId>
+  <artifactId>sql</artifactId>
+  <version>0.0.2</version>
+  <name>CDMA SQL engine</name>
+  <description>This project is a SQL engine for the CDMA.</description>
+  <developers>
+    <developer>
+      <id>rodriguez</id>
+      <name>rodriguez</name>
+      <email>clement.rodriguez@synchrotron-soleil.fr</email>
+      <url>http://www.synchrotron-soleil.fr</url>
+      <organization>Synchrotron Soleil</organization>
+      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/engines/org.cdma.engine.sql/trunk</developerConnection>
+  </scm>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <targetPath>META-INF</targetPath>
+        <directory>META-INF</directory>
+      </resource>
+      <resource>
+        <targetPath>OSGI-INF</targetPath>
+        <directory>OSGI-INF</directory>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>Core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>utilities</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>
