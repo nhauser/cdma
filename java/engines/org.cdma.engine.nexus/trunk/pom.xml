@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>nexus</artifactId>
-  <version>0.0.12</version>
+  <version>0.0.13-SNAPSHOT-SNAPSHOT</version>
   <name>CDMA Engine Nexus</name>
   <description>CDMA Engine: NeXus based on Soleil's API</description>
   <developers>
