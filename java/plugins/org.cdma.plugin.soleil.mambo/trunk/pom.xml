@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.plugins</groupId>
   <artifactId>MamboSoleil</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>CDMA Mambo Soleil Plug-in</name>
   <description>This project is Soleil's Mambo plugin for the CDMA.</description>
   <developers>
@@ -49,8 +49,8 @@
       <artifactId>Core</artifactId>
     </dependency>
     <dependency>
-  <groupId>org.cdma</groupId>
-  <artifactId>utilities</artifactId>
+      <groupId>org.cdma</groupId>
+      <artifactId>utilities</artifactId>
     </dependency>
     <dependency>
       <groupId>org.cdma.engines</groupId>
