@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>netcdf</artifactId>
-  <version>0.0.7-SNAPSHOT-SNAPSHOT</version>
+  <version>0.0.7-SNAPSHOT</version>
   <name>CDMA Engine NetCDF</name>
   <description>CDMA Engine: NetCDF</description>
   <developers>
