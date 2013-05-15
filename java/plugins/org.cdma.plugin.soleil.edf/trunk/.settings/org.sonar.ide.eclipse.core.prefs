@@ -1,0 +1,5 @@
+analyseLocally=false
+eclipse.preferences.version=1
+projectKey=org.cdma.engines\:EdfEngine
+serverUrl=http\://calypso/sonar
+version=2
