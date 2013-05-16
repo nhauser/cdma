@@ -60,13 +60,27 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape) {
+        IArray result = null;
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
-        return new BasicArray(o, shape);
+        try {
+            result = new BasicArray(o, shape);
+        }
+        catch (InvalidArrayTypeException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
-        return new BasicArray(storage, shape);
+        IArray result = null;
+        try {
+            result = new BasicArray(storage, shape);
+        }
+        catch (InvalidArrayTypeException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override
@@ -86,12 +100,27 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IArray createDoubleArray(double[] javaArray) {
-        return new BasicArray(javaArray, new int[] { javaArray.length });
+        IArray result = null;
+        try {
+            result = new BasicArray(javaArray, new int[] { javaArray.length });
+        }
+        catch (InvalidArrayTypeException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
-        return new BasicArray(javaArray, shape);
+        IArray result = null;
+        try {
+            result = new BasicArray(javaArray, shape);
+        }
+        catch (InvalidArrayTypeException e) {
+
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override

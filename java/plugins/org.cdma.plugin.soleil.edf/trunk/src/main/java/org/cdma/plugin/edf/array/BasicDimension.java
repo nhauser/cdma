@@ -3,6 +3,7 @@ package org.cdma.plugin.edf.array;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IDimension;
+import org.cdma.plugin.edf.EdfFactory;
 
 public class BasicDimension implements IDimension, Cloneable {
 
@@ -112,6 +113,11 @@ public class BasicDimension implements IDimension, Cloneable {
             e.printStackTrace();
             return null;
         }
+    }
+
+    @Override
+    public String getFactoryName() {
+        return EdfFactory.NAME;
     }
 
 }

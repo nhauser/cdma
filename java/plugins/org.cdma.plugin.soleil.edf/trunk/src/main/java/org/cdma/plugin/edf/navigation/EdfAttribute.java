@@ -1,5 +1,6 @@
 package org.cdma.plugin.edf.navigation;
 
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.plugin.edf.abstraction.AbstractAttribute;
 import org.cdma.plugin.edf.array.BasicArray;
 
@@ -11,7 +12,12 @@ public class EdfAttribute extends AbstractAttribute {
         if (value.getClass().isArray()) {
             i = java.lang.reflect.Array.getLength(value);
         }
-        setValue(new BasicArray(value, new int[] { i }));
+        try {
+            setValue(new BasicArray(value, new int[] { i }));
+        }
+        catch (InvalidArrayTypeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

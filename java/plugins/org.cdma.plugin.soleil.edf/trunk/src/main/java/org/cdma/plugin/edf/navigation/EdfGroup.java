@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.swing.filechooser.FileSystemView;
 
 import org.cdma.dictionary.Path;
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.SignalNotAvailableException;
 import org.cdma.interfaces.IAttribute;
@@ -646,10 +647,17 @@ public class EdfGroup extends AbstractGroup {
                 unit = null;
             }
         }
-        EdfDataItem basicItem = new EdfDataItem(name, new BasicArray(value, new int[] { 1 }));
-        if (unit != null) {
-            basicItem.addOneAttribute(unit);
+        EdfDataItem basicItem = null;
+        try {
+            basicItem = new EdfDataItem(name, new BasicArray(value, new int[] { 1 }));
+            if (unit != null) {
+                basicItem.addOneAttribute(unit);
+            }
         }
+        catch (InvalidArrayTypeException e) {
+            e.printStackTrace();
+        }
+
         return basicItem;
     }
 
