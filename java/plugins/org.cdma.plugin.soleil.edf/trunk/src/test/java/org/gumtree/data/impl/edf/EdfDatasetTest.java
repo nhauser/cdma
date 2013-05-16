@@ -2,10 +2,10 @@ package org.gumtree.data.impl.edf;
 
 import java.io.File;
 
+import org.cdma.interfaces.IAttribute;
+import org.cdma.interfaces.IDataItem;
+import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.edf.navigation.EdfDataset;
-import org.gumtree.data.interfaces.IAttribute;
-import org.gumtree.data.interfaces.IDataItem;
-import org.gumtree.data.interfaces.IGroup;
 import org.junit.Ignore;
 
 @Ignore
@@ -99,10 +99,10 @@ public class EdfDatasetTest {
         seconds = timeInSec % 60;
         milli = time % 1000;
         System.out
-                .println(("Ellapsed time: " + (hours > 0 ? hours + "h " : "")
-                        + (minutes > 0 ? minutes + "mn " : "")
-                        + (seconds > 0 ? seconds + "s " : "") + (milli > 0 ? milli + "ms " : ""))
-                        .trim());
+        .println(("Ellapsed time: " + (hours > 0 ? hours + "h " : "")
+                + (minutes > 0 ? minutes + "mn " : "")
+                + (seconds > 0 ? seconds + "s " : "") + (milli > 0 ? milli + "ms " : ""))
+                .trim());
         String unit;
         double readableSize;
         if (size > 1024) {
