@@ -1,6 +1,8 @@
 package org.cdma.plugin.edf.navigation;
 
 import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,9 +16,11 @@ import java.util.Map;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -26,15 +30,20 @@ import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
+import org.cdma.interfaces.INode;
+import org.cdma.plugin.edf.EdfFactory;
 import org.cdma.plugin.edf.abstraction.AbstractGroup;
 import org.cdma.plugin.edf.abstraction.AbstractObject;
-import org.cdma.plugin.edf.array.BasicArray;
 import org.cdma.plugin.edf.utils.FileComparator;
 import org.cdma.plugin.edf.utils.StringUtils;
+import org.cdma.utils.DefaultNode;
+import org.cdma.utils.DefaultPath;
 
 public class EdfGroup extends AbstractGroup {
 
     protected static final String DEFAULT_SHORT_NAME = "data";
+
+    private static final String PATH_SEPARATOR = "/";
 
     private final File referenceFile;
     private final ArrayList<AbstractObject> objectList;
@@ -62,12 +71,13 @@ public class EdfGroup extends AbstractGroup {
     /**
      * Analyzes the bound EDF {@link File} to create children {@link IGroup}s and {@link IDataItem}s
      */
-    private void analyzeEdfFile() {
+    private void analyzeEdfFileOLD() {
         if (referenceFile != null) {
             HashMap<String, String> headerMap = new HashMap<String, String>();
             try {
-                BufferedInputStream reader = new BufferedInputStream(new FileInputStream(
-                        referenceFile.getAbsolutePath()));
+                FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
+                DataInputStream dis = new DataInputStream(fis);
+                BufferedInputStream reader = new BufferedInputStream(fis);
                 int character = -1;
                 int count = 0;
                 StringBuffer headerBuffer = new StringBuffer();
@@ -112,8 +122,8 @@ public class EdfGroup extends AbstractGroup {
                     for (String line : lines) {
                         int separatorIndex = line.lastIndexOf('=');
                         if (separatorIndex > -1) {
-                            headerMap.put(line.substring(0, separatorIndex).trim(), line.substring(
-                                    separatorIndex + 1).trim());
+                            headerMap.put(line.substring(0, separatorIndex).trim(),
+                                    line.substring(separatorIndex + 1).trim());
                         }
                     }
                     // Image Recovery
@@ -123,10 +133,11 @@ public class EdfGroup extends AbstractGroup {
                         int dimY = Integer.valueOf(headerMap.get("Dim_2"));
                         String dataType = headerMap.get("DataType");
                         int y = 0, x = 0;
-                        Number[][] imageValue = null;
+                        Object imageValue = null;
                         boolean unsigned = false;
                         if ("SignedByte".equals(dataType)) {
-                            imageValue = new Byte[dimY][dimX];
+                            imageValue = new byte[dimY][dimX];
+                            byte[][] arrayImageValue = (byte[][]) imageValue;
                             while (y < dimY) {
                                 int read = reader.read();
                                 if (read == -1) {
@@ -134,7 +145,8 @@ public class EdfGroup extends AbstractGroup {
                                     break;
                                 }
                                 else {
-                                    imageValue[y][x] = (byte) read;
+
+                                    arrayImageValue[y][x] = (byte) read;
                                     x++;
                                     if (x >= dimX) {
                                         x = 0;
@@ -145,7 +157,9 @@ public class EdfGroup extends AbstractGroup {
                         }
                         else if ("UnsignedByte".equals(dataType)) {
                             unsigned = true;
-                            imageValue = new Short[dimY][dimX];
+                            imageValue = new short[dimY][dimX];
+                            short[][] arrayImageValue = (short[][]) imageValue;
+
                             while (y < dimY) {
                                 int read = reader.read();
                                 if (read == -1) {
@@ -153,7 +167,7 @@ public class EdfGroup extends AbstractGroup {
                                     break;
                                 }
                                 else {
-                                    imageValue[y][x] = (short) read;
+                                    arrayImageValue[y][x] = (short) read;
                                     x++;
                                     if (x >= dimX) {
                                         x = 0;
@@ -163,7 +177,8 @@ public class EdfGroup extends AbstractGroup {
                             }
                         }
                         else if ("SignedShort".equals(dataType)) {
-                            imageValue = new Short[dimY][dimX];
+                            imageValue = new short[dimY][dimX];
+                            short[][] arrayImageValue = (short[][]) imageValue;
                             byte[] bitPack = new byte[2];
                             int lastBinaryValue;
                             while (y < dimY) {
@@ -171,11 +186,11 @@ public class EdfGroup extends AbstractGroup {
                                 if (lastBinaryValue == bitPack.length) {
                                     if (littleEndian) {
                                         // extract corresponding unsigned short (little endian)
-                                        imageValue[y][x] = (short) (((bitPack[1] << (short) 8)) | (bitPack[0]));
+                                        arrayImageValue[y][x] = (short) (((bitPack[1] << (short) 8)) | (bitPack[0]));
                                     }
                                     else {
                                         // extract corresponding unsigned short (big endian)
-                                        imageValue[y][x] = (short) ((bitPack[0] << (short) 8) | (bitPack[1]));
+                                        arrayImageValue[y][x] = (short) ((bitPack[0] << (short) 8) | (bitPack[1]));
                                     }
                                     x++;
                                     if (x >= dimX) {
@@ -190,21 +205,22 @@ public class EdfGroup extends AbstractGroup {
                             }
                         }
                         else if ("UnsignedShort".equals(dataType)) {
-                            imageValue = new Integer[dimY][dimX];
+                            imageValue = new int[dimY][dimX];
+                            int[][] arrayImageValue = (int[][]) imageValue;
                             byte[] bitPack = new byte[2];
                             int lastBinaryValue;
                             while (y < dimY) {
                                 lastBinaryValue = reader.read(bitPack);
                                 if (lastBinaryValue == bitPack.length) {
-                                    imageValue[y][x] = 0;
+                                    arrayImageValue[y][x] = 0;
                                     if (littleEndian) {
                                         // extract corresponding unsigned short (little endian)
-                                        imageValue[y][x] = ((bitPack[1] & 0xff) << 8)
+                                        arrayImageValue[y][x] = ((bitPack[1] & 0xff) << 8)
                                                 | ((bitPack[0] & 0xff));
                                     }
                                     else {
                                         // extract corresponding unsigned short (big endian)
-                                        imageValue[y][x] = ((bitPack[0] & 0xff) << 8)
+                                        arrayImageValue[y][x] = ((bitPack[0] & 0xff) << 8)
                                                 | ((bitPack[1] & 0xff));
                                     }
                                     x++;
@@ -220,33 +236,74 @@ public class EdfGroup extends AbstractGroup {
                             }
                         }
                         else if ("SignedInteger".equals(dataType) || "SignedLong".equals(dataType)) {
-                            // TODO Integer
+                            imageValue = new int[dimY][dimX];
+                            int[][] arrayImageValue = (int[][]) imageValue;
+                            byte[] bitPack = new byte[2];
+                            int lastBinaryValue;
+                            while (y < dimY) {
+                                while (true) {
+                                    try {
+                                        // if (lastBinaryValue == bitPack.length) {
+                                        // arrayImageValue[y][x] = 0;
+                                        if (littleEndian) {
+                                            // extract corresponding unsigned short (little endian)
+                                            arrayImageValue[y][x] = (dis.readByte())
+                                                    | (dis.readByte() << 8)
+                                                    | (dis.readByte() << 16)
+                                                    | (dis.readByte() << 24);
+                                        }
+                                        else {
+                                            // extract corresponding unsigned short (big endian)
+                                            arrayImageValue[y][x] = (dis.readByte())
+                                                    | (dis.readByte() << 8)
+                                                    | (dis.readByte() << 16)
+                                                    | (dis.readByte() << 24);
+                                        }
+                                        x++;
+                                        if (x >= dimX) {
+                                            x = 0;
+                                            y++;
+                                        }
+                                    }
+                                    catch (EOFException e) {
+                                        break;
+                                    }
+                                }
+                                // else {
+                                // imageValue = null;
+                                // break;
+                                // }
+                            }
+
                         }
                         else if ("UnsignedInteger".equals(dataType)
                                 || "UnsignedLong".equals(dataType)) {
                             unsigned = true;
-                            // TODO unsigned Integer
+                            throw new NotImplementedException();
                         }
                         else if ("Signed64".equals(dataType)) {
-                            // TODO Long
+                            throw new NotImplementedException();
                         }
                         else if ("Unsigned64".equals(dataType)) {
                             unsigned = true;
-                            // TODO unsigned Long
+                            throw new NotImplementedException();
                         }
                         else if ("FloatValue".equals(dataType)) {
-                            // TODO
+                            throw new NotImplementedException();
                         }
                         else if ("DoubleValue".equals(dataType)) {
-                            // TODO
+                            throw new NotImplementedException();
                         }
                         if (imageValue != null) {
-                            EdfDataItem imageDataItem = new EdfDataItem("Image", new BasicArray(
-                                    imageValue, new int[] { dimX, dimY }), unsigned);
+                            EdfDataItem imageDataItem = new EdfDataItem("Image",
+                                    new DefaultArrayMatrix(EdfFactory.NAME, imageValue), unsigned);
+                            // EdfDataItem imageDataItem = new EdfDataItem("Image", new BasicArray(
+                            // imageValue, new int[] { dimX, dimY }), unsigned);
                             addDataItem(imageDataItem);
                         }
                     }
                     catch (Exception e) {
+                        e.printStackTrace();
                         // ignore exceptions for Image Recovery
                     }
                     // Cleaning keys bound to image
@@ -269,6 +326,7 @@ public class EdfGroup extends AbstractGroup {
                             if (subGroup == null) {
                                 subGroup = new EdfGroup(null);
                                 subGroup.setName(groupName);
+                                subGroup.setShortName(groupName);
                                 addSubgroup(subGroup);
                                 subGroupMap.put(groupName, subGroup);
                             }
@@ -296,6 +354,293 @@ public class EdfGroup extends AbstractGroup {
         }
     }
 
+    private void analyzeEdfFileNew() {
+        if (referenceFile != null) {
+            HashMap<String, String> headerMap = new HashMap<String, String>();
+            try {
+                FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
+                DataInputStream dis = new DataInputStream(fis);
+                int character = -1;
+                int count = 0;
+                StringBuffer headerBuffer = new StringBuffer();
+                boolean newLine = false;
+                while (true) {
+                    try {
+                        count++;
+                        character = dis.read();
+                        if (character == -1) {
+                            break;
+                        }
+                        headerBuffer.append((char) character);
+                        if (character == '\n') {
+                            newLine = true;
+                        }
+                        else {
+                            if ((character == '}') && newLine) {
+                                count++;
+                                character = dis.read();
+                                break;
+                            }
+                            newLine = false;
+                        }
+                    }
+                    catch (IOException e) {
+                        character = -1;
+                        break;
+                    }
+                }
+                if (character != -1) {
+                    char toCheck = headerBuffer.charAt(0);
+                    while (Character.isWhitespace(toCheck) || (toCheck == '{')) {
+                        headerBuffer.delete(0, 1);
+                        toCheck = headerBuffer.charAt(0);
+                    }
+                    toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
+                    while (Character.isWhitespace(toCheck) || (toCheck == '}')) {
+                        headerBuffer.delete(headerBuffer.length() - 1, headerBuffer.length());
+                        toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
+                    }
+                    String[] lines = headerBuffer.toString().split(";");
+                    for (String line : lines) {
+                        int separatorIndex = line.lastIndexOf('=');
+                        if (separatorIndex > -1) {
+                            headerMap.put(line.substring(0, separatorIndex).trim(), line.substring(
+                                    separatorIndex + 1).trim());
+                        }
+                    }
+                    // Image Recovery
+                    try {
+                        boolean littleEndian = "LowByteFirst".equals(headerMap.get("ByteOrder"));
+                        int dimX = Integer.valueOf(headerMap.get("Dim_1"));
+                        int dimY = Integer.valueOf(headerMap.get("Dim_2"));
+                        String dataType = headerMap.get("DataType");
+                        int y = 0, x = 0;
+                        Object imageValue = null;
+                        boolean unsigned = false;
+                        if ("SignedByte".equals(dataType)) {
+                            imageValue = new byte[dimY][dimX];
+                            byte[][] arrayImageValue = (byte[][]) imageValue;
+                            while (y < dimY) {
+                                int read = dis.read();
+                                if (read == -1) {
+                                    imageValue = null;
+                                    break;
+                                }
+                                else {
+
+                                    arrayImageValue[y][x] = (byte) read;
+                                    x++;
+                                    if (x >= dimX) {
+                                        x = 0;
+                                        y++;
+                                    }
+                                }
+                            }
+                        }
+                        else if ("UnsignedByte".equals(dataType)) {
+                            unsigned = true;
+                            imageValue = new short[dimY][dimX];
+                            short[][] arrayImageValue = (short[][]) imageValue;
+
+                            while (y < dimY) {
+                                int read = dis.read();
+                                if (read == -1) {
+                                    imageValue = null;
+                                    break;
+                                }
+                                else {
+                                    arrayImageValue[y][x] = (short) read;
+                                    x++;
+                                    if (x >= dimX) {
+                                        x = 0;
+                                        y++;
+                                    }
+                                }
+                            }
+                        }
+                        else if ("SignedShort".equals(dataType)) {
+                            imageValue = new short[dimY][dimX];
+                            short[][] arrayImageValue = (short[][]) imageValue;
+                            byte[] bitPack = new byte[2];
+                            short lastBinaryValue;
+                            while (y < dimY) {
+                                lastBinaryValue = dis.readShort();
+                                if (lastBinaryValue == bitPack.length) {
+                                    if (littleEndian) {
+                                        // extract corresponding unsigned short (little endian)
+                                        arrayImageValue[y][x] = lastBinaryValue;
+                                    }
+                                    else {
+                                        // extract corresponding unsigned short (big endian)
+                                        arrayImageValue[y][x] = lastBinaryValue;
+                                    }
+                                    x++;
+                                    if (x >= dimX) {
+                                        x = 0;
+                                        y++;
+                                    }
+                                }
+                                else {
+                                    imageValue = null;
+                                    break;
+                                }
+                            }
+                        }
+                        else if ("UnsignedShort".equals(dataType)) {
+                            imageValue = new int[dimY][dimX];
+                            int[][] arrayImageValue = (int[][]) imageValue;
+
+                            int lastBinaryValue;
+                            try {
+                                while (y < dimY) {
+
+                                    lastBinaryValue = dis.readChar();
+
+                                    if (littleEndian) {
+                                        // extract corresponding unsigned short (little endian)
+                                        arrayImageValue[y][x] = little2big(lastBinaryValue);
+                                    }
+                                    else {
+                                        // extract corresponding unsigned short (big endian)
+                                        arrayImageValue[y][x] = (lastBinaryValue);
+                                    }
+                                    x++;
+                                    if (x >= dimX) {
+                                        x = 0;
+                                        y++;
+                                    }
+                                }
+                            }
+                            catch (EOFException e) {
+
+                            }
+                        }
+                        else if ("SignedInteger".equals(dataType) || "SignedLong".equals(dataType)) {
+                            imageValue = new int[dimY][dimX];
+                            int[][] arrayImageValue = (int[][]) imageValue;
+                            byte[] bitPack = new byte[2];
+                            int lastBinaryValue;
+                            while (y < dimY) {
+                                while (true) {
+                                    try {
+                                        // if (lastBinaryValue == bitPack.length) {
+                                        // arrayImageValue[y][x] = 0;
+                                        if (littleEndian) {
+                                            // extract corresponding unsigned short (little endian)
+                                            arrayImageValue[y][x] = (dis.readByte())
+                                                    | (dis.readByte() << 8) | (dis.readByte() << 16)
+                                                    | (dis.readByte() << 24);
+                                        }
+                                        else {
+                                            // extract corresponding unsigned short (big endian)
+                                            arrayImageValue[y][x] = (dis.readByte())
+                                                    | (dis.readByte() << 8) | (dis.readByte() << 16)
+                                                    | (dis.readByte() << 24);
+                                        }
+                                        x++;
+                                        if (x >= dimX) {
+                                            x = 0;
+                                            y++;
+                                        }
+                                    }
+                                    catch (EOFException e) {
+                                        break;
+                                    }
+                                }
+                                // else {
+                                // imageValue = null;
+                                // break;
+                                // }
+                            }
+
+
+                        }
+                        else if ("UnsignedInteger".equals(dataType)
+                                || "UnsignedLong".equals(dataType)) {
+                            unsigned = true;
+                            throw new NotImplementedException();
+                        }
+                        else if ("Signed64".equals(dataType)) {
+                            throw new NotImplementedException();
+                        }
+                        else if ("Unsigned64".equals(dataType)) {
+                            unsigned = true;
+                            throw new NotImplementedException();
+                        }
+                        else if ("FloatValue".equals(dataType)) {
+                            throw new NotImplementedException();
+                        }
+                        else if ("DoubleValue".equals(dataType)) {
+                            throw new NotImplementedException();
+                        }
+                        if (imageValue != null) {
+                            EdfDataItem imageDataItem = new EdfDataItem("Image",
+                                    new DefaultArrayMatrix(EdfFactory.NAME,
+                                            imageValue), unsigned);
+                            // EdfDataItem imageDataItem = new EdfDataItem("Image", new BasicArray(
+                            // imageValue, new int[] { dimX, dimY }), unsigned);
+                            addDataItem(imageDataItem);
+                        }
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        // ignore exceptions for Image Recovery
+                    }
+                    // Cleaning keys bound to image
+                    headerMap.remove("ByteOrder");
+                    headerMap.remove("Dim_1");
+                    headerMap.remove("Dim_2");
+                    headerMap.remove("DataType");
+                    // Avoid having another item with the same name as image item
+                    headerMap.remove("Image");
+
+                    // Other DataItems
+                    HashMap<String, EdfGroup> subGroupMap = new HashMap<String, EdfGroup>();
+                    for (String key : headerMap.keySet()) {
+                        int openIndex = key.lastIndexOf('(');
+                        int closeIndex = key.lastIndexOf(')');
+                        if ((openIndex > -1) && (closeIndex > openIndex)) {
+                            // Group items by name
+                            String groupName = key.substring(openIndex + 1, closeIndex);
+                            EdfGroup subGroup = subGroupMap.get(groupName);
+                            if (subGroup == null) {
+                                subGroup = new EdfGroup(null);
+                                subGroup.setName(groupName);
+                                subGroup.setShortName(groupName);
+                                addSubgroup(subGroup);
+                                subGroupMap.put(groupName, subGroup);
+                            }
+                            String itemName = key.substring(0, openIndex).replaceAll("=", "")
+                                    .trim();
+                            subGroup.addDataItem(buildDataItem(itemName, headerMap.get(key)));
+                        }
+                        else {
+                            // Build simple dataItem
+                            addDataItem(buildDataItem(key, headerMap.get(key)));
+                        }
+                    }
+                    subGroupMap.clear();
+
+                    headerMap.clear();
+                    dis.close();
+                }
+            }
+            catch (FileNotFoundException e) {
+                // Just ignore this case
+            }
+            catch (IOException e) {
+                // Just ignore this case
+            }
+        }
+    }
+
+    private void analyzeEdfFile() {
+        analyzeEdfFileNew();
+    }
+    private int little2big(int i) {
+        return ((i & 0xff) << 24) + ((i & 0xff00) << 8) + ((i & 0xff0000) >> 8)
+                + ((i >> 24) & 0xff);
+    }
     @Override
     public void addDataItem(IDataItem v) {
         if ((v instanceof EdfDataItem) && (!itemList.contains(v))) {
@@ -307,7 +652,7 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public void addOneDimension(IDimension dimension) {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
     }
 
     @Override
@@ -322,44 +667,37 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public IDataItem findDataItem(IKey key) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IDataItem findDataItem(String shortName) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IDictionary findDictionary() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IGroup findGroup(String shortName) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IGroup findGroup(IKey key) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IGroup findGroupWithAttribute(IKey key, String name, String value) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
 
@@ -423,14 +761,12 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public IDimension getDimension(String name) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public List<IDimension> getDimensionList() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ArrayList<IDimension>();
     }
 
     @Override
@@ -498,14 +834,12 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public Map<String, String> harvestMetadata(String mdStandard) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isEntry() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -552,66 +886,57 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public boolean removeDataItem(String varName) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeDimension(String dimName) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeDimension(IDimension dimension) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeGroup(IGroup group) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean removeGroup(String shortName) {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void setDictionary(IDictionary dictionary) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public String getLocation() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getShortName() {
-        return DEFAULT_SHORT_NAME;
+        return getName();
     }
 
     @Override
     public void setShortName(String name) {
-        // Not managed
+        setName(name);
     }
 
     /**
@@ -628,6 +953,7 @@ public class EdfGroup extends AbstractGroup {
         Object value = null;
         // Recover Double representation and unit
         Number[] converted = convertStringToDouble(stringValue);
+        Object[] arrayValue = new Object[1];
         EdfAttribute unit = null;
         if (converted == null) {
             // The value is a String
@@ -637,19 +963,23 @@ public class EdfGroup extends AbstractGroup {
             // The value is a numeric value
             value = converted[0];
             try {
+
                 // Construction of "unit" attribute
                 String tempUnit = stringValue.substring(converted[1].intValue()).trim();
                 if (!tempUnit.isEmpty()) {
-                    unit = new EdfAttribute("unit", stringValue.substring(converted[1].intValue()));
+                    unit = new EdfAttribute("unit",
+                            stringValue.substring((converted[1].intValue())));
                 }
             }
             catch (Exception e) {
                 unit = null;
             }
         }
+        arrayValue[0] = value;
         EdfDataItem basicItem = null;
         try {
-            basicItem = new EdfDataItem(name, new BasicArray(value, new int[] { 1 }));
+            basicItem = new EdfDataItem(name, new DefaultArrayMatrix(EdfFactory.NAME, arrayValue));
+            // basicItem = new EdfDataItem(name, new BasicArray(converted, new int[] { 1 }));
             if (unit != null) {
                 basicItem.addOneAttribute(unit);
             }
@@ -714,59 +1044,137 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public IContainer getContainer(String shortName) {
-        // TODO Auto-generated method stub
+        if (shortName != null && shortName.equals("")) {
+            return this;
+        }
+
+        IGroup resultGroupItem = getGroup(shortName);
+        if (resultGroupItem != null) {
+            return resultGroupItem;
+        }
+        IDataItem resultVariableItem = getDataItem(shortName);
+        if (resultVariableItem != null) {
+            return resultVariableItem;
+        }
+
         return null;
     }
 
     @Override
     @Deprecated
     public IContainer findContainer(String shortName) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IContainer findContainerByPath(String path) throws NoResultException {
-        // TODO Auto-generated method stub
-        return null;
+
+        String[] sNodes = DefaultPath.splitStringPath(path);
+        IContainer node = getRootGroup();
+
+        // Try to open each node
+        for (String shortName : sNodes) {
+            if (!shortName.isEmpty() && node != null && node instanceof IGroup) {
+                node = ((IGroup) node).getContainer(shortName);
+            }
+        }
+
+        return node;
     }
 
     @Override
     public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
-        // TODO Auto-generated method stub
-        return null;
+        if ((!isFakeGroup()) && (!isAcquisitionGroup()) && (itemList.isEmpty())) {
+            analyzeEdfFile();
+        }
+        List<IContainer> list = new ArrayList<IContainer>();
+        IGroup root = getRootGroup();
+
+        // Try to list all nodes matching the path
+        // Transform path into a NexusNode array
+        INode[] nodes = DefaultPath.splitStringToNode(path);
+
+        // Call recursive method
+        int level = 0;
+        list = findAllContainer(root, nodes, level);
+
+        return list;
+
     }
+
+    private List<IContainer> findAllContainer(IContainer container, INode[] nodes, int level) {
+        List<IContainer> result = new ArrayList<IContainer>();
+        if (container != null) {
+            if (container instanceof EdfGroup) {
+                EdfGroup group = (EdfGroup) container;
+                if (nodes.length > level) {
+                    // List current node children
+                    List<INode> childs = group.getNodes();
+
+                    INode current = nodes[level];
+
+                    for (INode node : childs) {
+                        if (current.matchesPartNode(node)) {
+
+                            if (level < nodes.length - 1) {
+                                result.addAll(findAllContainer(group.getContainer(node.getName()),
+                                        nodes, level + 1));
+                            }
+                            // Create IContainer and add it to result list
+                            else {
+                                result.add(group.getContainer(node.getName()));
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                EdfDataItem dataItem = (EdfDataItem) container;
+                result.add(dataItem);
+            }
+        }
+        return result;
+    }
+
+    private List<INode> getNodes() {
+        List<INode> nodes = new ArrayList<INode>();
+        for (AbstractObject object : objectList) {
+            nodes.add(new DefaultNode(object.getName()));
+        }
+
+        return nodes;
+    }
+
 
     @Override
     @Deprecated
     public List<IContainer> findAllContainers(IKey key) throws NoResultException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
     public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IContainer findObjectByPath(Path path) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public long getLastModificationDate() {
-        // TODO Auto-generated method stub
-        return 0;
+        long result = 0;
+        if (referenceFile != null) {
+            result = referenceFile.lastModified();
+        }
+        return result;
     }
 
     @Override
     public String getFactoryName() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
 }

@@ -1,60 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>super-pom-java</artifactId>
-    <groupId>fr.soleil</groupId>
-    <version>RELEASE</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.cdma.engines</groupId>
-  <artifactId>EdfEngine</artifactId>
-  <name>EDF CDMA Engine</name>
-  <version>0.0.1-SNAPSHOT</version>
-  <developers>
-    <developer>
-      <id>girardot</id>
-      <name>Raphaël GIRARDOT</name>
-      <email>raphael.girardot@synchrotron-soleil.fr</email>
-      <organization>SOLEIL</organization>
-      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>1</timezone>
-    </developer>
-    <developer>
-      <id>viguier</id>
-      <name>Gregory VIGUIER</name>
-      <email>gregory.viguier@synchrotron-soleil.fr</email>
-      <organization>SOLEIL</organization>
-      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
-      <roles>
-        <role>Java Developer</role>
-      </roles>
-      <timezone>1</timezone>
-    </developer>
-  </developers>
- 
-  <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
-  </build>
-  <dependencies>
-   <dependency>
-      <groupId>org.cdma</groupId>
-      <artifactId>Core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-   
-    <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.0</version>
-    </dependency>
-  </dependencies>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>super-pom-java</artifactId>
+		<groupId>fr.soleil</groupId>
+		<version>RELEASE</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.cdma.engines</groupId>
+	<artifactId>EdfEngine</artifactId>
+	<name>EDF CDMA Engine</name>
+	<version>0.0.2-SNAPSHOT</version>
+	<developers>
+		<developer>
+			<id>girardot</id>
+			<name>Raphaël GIRARDOT</name>
+			<email>raphael.girardot@synchrotron-soleil.fr</email>
+			<organization>SOLEIL</organization>
+			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+			<roles>
+				<role>Java Developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+		<developer>
+			<id>viguier</id>
+			<name>Gregory VIGUIER</name>
+			<email>gregory.viguier@synchrotron-soleil.fr</email>
+			<organization>SOLEIL</organization>
+			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+			<roles>
+				<role>Java Developer</role>
+			</roles>
+			<timezone>1</timezone>
+		</developer>
+	</developers>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>fr.soleil.maven.plugins</groupId>
+				<artifactId>maven-check-plugin</artifactId>
+				<configuration>
+					<enable>false</enable>
+				</configuration>
+			</plugin>
+
+		</plugins>
+		<resources>
+			<resource>
+				<targetPath>META-INF</targetPath>
+				<directory>META-INF</directory>
+			</resource>
+			<resource>
+				<targetPath>OSGI-INF</targetPath>
+				<directory>OSGI-INF</directory>
+			</resource>
+		</resources>
+
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.cdma</groupId>
+			<artifactId>Core</artifactId>
+			<version>3.2.6-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.0</version>
+		</dependency>
+	</dependencies>
 
 </project>

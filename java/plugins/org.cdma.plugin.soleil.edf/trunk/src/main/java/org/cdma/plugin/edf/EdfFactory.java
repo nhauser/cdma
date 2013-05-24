@@ -3,12 +3,17 @@ package org.cdma.plugin.edf;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.logging.Level;
 
+import org.cdma.Factory;
 import org.cdma.IFactory;
+import org.cdma.arrays.DefaultArrayMatrix;
+import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -17,24 +22,24 @@ import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
-import org.cdma.plugin.edf.array.BasicArray;
 import org.cdma.plugin.edf.navigation.EdfAttribute;
 import org.cdma.plugin.edf.navigation.EdfDataItem;
 import org.cdma.plugin.edf.navigation.EdfDataset;
 import org.cdma.plugin.edf.navigation.EdfGroup;
-import org.cdma.plugin.edf.navigation.EdfKey;
 
 public class EdfFactory implements IFactory {
 
-    public static final String NAME = "EDF";
-    public static final String LABEL = "EDF plug-in";
+    public static final String NAME = "SoleilEDF";
+    public static final String LABEL = "SOLEIL's EDF plug-in";
     public static final String DEBUG_INF = "CDMA_DEBUG";
     private static final String CDMA_VERSION = "3.2.5";
-    private static final String PLUG_VERSION = "1.4.13";
+    private static final String PLUG_VERSION = "1.0.0";
     private static final String DESC = "Manages EDF data files";
     private static EdfFactory factory;
+    private EdfDatasource detector;
 
     public EdfFactory() {
+        System.out.println("EdfFactory Constructor");
     }
 
     public static EdfFactory getInstance() {
@@ -63,7 +68,7 @@ public class EdfFactory implements IFactory {
         IArray result = null;
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
         try {
-            result = new BasicArray(o, shape);
+            result = new DefaultArrayMatrix(EdfFactory.NAME, o);
         }
         catch (InvalidArrayTypeException e) {
             e.printStackTrace();
@@ -75,7 +80,7 @@ public class EdfFactory implements IFactory {
     public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
         IArray result = null;
         try {
-            result = new BasicArray(storage, shape);
+            result = new DefaultArrayMatrix(EdfFactory.NAME, storage);
         }
         catch (InvalidArrayTypeException e) {
             e.printStackTrace();
@@ -85,24 +90,29 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IArray createArray(Object javaArray) {
-        if (javaArray instanceof IArray) {
-            return (IArray) javaArray;
+        IArray result = null;
+        if (javaArray != null && javaArray.getClass().isArray()) {
+            try {
+                result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
+            }
+            catch (InvalidArrayTypeException e) {
+                Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
+            }
         }
-        // TODO
-        return null;
+
+        return result;
     }
 
     @Override
     public IArray createStringArray(String string) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IArray createDoubleArray(double[] javaArray) {
         IArray result = null;
         try {
-            result = new BasicArray(javaArray, new int[] { javaArray.length });
+            result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
         }
         catch (InvalidArrayTypeException e) {
             e.printStackTrace();
@@ -114,7 +124,7 @@ public class EdfFactory implements IFactory {
     public IArray createDoubleArray(double[] javaArray, int[] shape) {
         IArray result = null;
         try {
-            result = new BasicArray(javaArray, shape);
+            result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
         }
         catch (InvalidArrayTypeException e) {
 
@@ -125,8 +135,7 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IArray createArrayNoCopy(Object javaArray) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -145,7 +154,7 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IAttribute createAttribute(String name, Object value) {
-        return new EdfAttribute(name, createArray(value));
+        return new EdfAttribute(name, value);
     }
 
     @Override
@@ -155,13 +164,12 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IDataset createEmptyDatasetInstance() throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IKey createKey(String keyName) {
-        return new EdfKey(keyName);
+        return new Key(EdfFactory.getInstance(), keyName);
     }
 
     @Override
@@ -172,65 +180,60 @@ public class EdfFactory implements IFactory {
     @Override
     @Deprecated
     public IDictionary openDictionary(URI uri) throws FileAccessException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
     public IDictionary openDictionary(String filepath) throws FileAccessException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public IGroup createGroup(IGroup parent, String shortName) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public LogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public Path createPath(String path) {
-        // TODO Auto-generated method stub
-        return null;
+        return new Path(this, path);
     }
 
     @Override
     public String getPluginLabel() {
-        // TODO Auto-generated method stub
-        return null;
+        return LABEL;
     }
 
     @Override
     public IDatasource getPluginURIDetector() {
-        // TODO Auto-generated method stub
-        return null;
+        synchronized (EdfDatasource.class) {
+            if (detector == null) {
+                detector = EdfDatasource.getInstance();
+            }
+        }
+        return detector;
     }
 
     @Override
     @Deprecated
     public IDictionary createDictionary() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
 
     @Override
     public void processPostRecording() {
-        // TODO Auto-generated method stub
-
+        // NOTHING TO DO
     }
 
     @Override
     public boolean isLogicalModeAvailable() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -249,3 +252,4 @@ public class EdfFactory implements IFactory {
     }
 
 }
+
