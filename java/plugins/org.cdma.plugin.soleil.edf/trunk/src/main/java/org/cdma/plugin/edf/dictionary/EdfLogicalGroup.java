@@ -30,12 +30,42 @@ public class EdfLogicalGroup extends LogicalGroup {
         super(parent, key, dataset, debug);
     }
 
+    // @Override
+    // public ExtendedDictionary findAndReadDictionary() {
+    // IFactory factory = EdfFactory.getInstance();
+    //
+    // // Detect the key dictionary file and mapping dictionary file
+    // String keyFile = Factory.getPathKeyDictionary();
+    // String mapFile = Factory.getPathMappingDictionaryFolder(factory)
+    // + EdfLogicalGroup.detectDictionaryFile((EdfDataset) getDataset());
+    // ExtendedDictionary dictionary = new ExtendedDictionary(factory, keyFile, mapFile);
+    // try {
+    // dictionary.readEntries();
+    // }
+    // catch (FileAccessException e) {
+    // Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+    // dictionary = null;
+    // }
+    //
+    // return dictionary;
+    // }
+
+    /**
+     * According to the current corresponding dataset, this method will try to guess which XML
+     * dictionary mapping file should be used
+     * 
+     * @return
+     * @throws FileAccessException
+     */
+    public static String detectDictionaryFile(EdfDataset dataset) {
+        return "SoleilEDF_dictionary.xml";
+    }
     @Override
     public ExtendedDictionary findAndReadDictionary() {
         IFactory factory = EdfFactory.getInstance();
 
         // Detect the key dictionary file and mapping dictionary file
-        String keyFile = Factory.getPathKeyDictionary();
+        String keyFile = "/home/viguier/CDMADictionaryRoot/views/edf_view.xml"; // Factory.getPathKeyDictionary();
         String mapFile = Factory.getPathMappingDictionaryFolder(factory)
                 + EdfLogicalGroup.detectDictionaryFile((EdfDataset) getDataset());
         ExtendedDictionary dictionary = new ExtendedDictionary(factory, keyFile, mapFile);
@@ -48,17 +78,5 @@ public class EdfLogicalGroup extends LogicalGroup {
         }
 
         return dictionary;
-    }
-
-    /**
-     * According to the current corresponding dataset, this method will try to guess which XML
-     * dictionary mapping file should be used
-     * 
-     * @return
-     * @throws FileAccessException
-     */
-    public static String detectDictionaryFile(EdfDataset dataset) {
-
-        return "edf.xml";
     }
 }

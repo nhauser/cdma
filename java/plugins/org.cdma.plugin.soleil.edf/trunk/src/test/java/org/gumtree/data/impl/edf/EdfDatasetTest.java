@@ -86,7 +86,7 @@ public class EdfDatasetTest {
             size = getSize(new File(args[0]));
             EdfDataset dataset = new EdfDataset(args[0]);
             time = System.currentTimeMillis();
-            System.out.println("EdfDatasetTest: treating directory " + dataset.getLocation());
+            System.out.println("EdfDatasetTest: treating file " + dataset.getLocation());
             dataset.open();
             printGroup(dataset.getRootGroup(), 0);
         }

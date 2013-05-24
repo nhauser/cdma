@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.cdma.dictionary.LogicalGroup;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -14,14 +15,14 @@ import org.cdma.plugin.edf.dictionary.EdfLogicalGroup;
 
 public class EdfDataset implements IDataset, Cloneable {
 
-    private String directoryPath;
-    private File directory;
+    private String filePath;
+    private File file;
     private EdfGroup rootGroup;
     private EdfLogicalGroup logicalRoot;
 
-    public EdfDataset(String directoryPath) {
+    public EdfDataset(String filePath) {
         super();
-        setLocation(directoryPath);
+        setLocation(filePath);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public synchronized void close() throws IOException {
-        directory = null;
+        file = null;
         rootGroup = null;
     }
 
@@ -42,7 +43,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public String getLocation() {
-        return directoryPath;
+        return filePath;
     }
 
     @Override
@@ -53,8 +54,8 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public synchronized void setLocation(String location) {
-        this.directoryPath = location;
-        this.directory = null;
+        this.filePath = location;
+        this.file = null;
         this.rootGroup = null;
     }
 
@@ -72,27 +73,27 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public void open() throws IOException {
-        if ((directoryPath == null) || (directoryPath.trim().isEmpty())) {
-            directory = null;
+        if ((filePath == null) || (filePath.trim().isEmpty())) {
+            file = null;
             rootGroup = null;
             throw new IOException("No root directory defined");
         }
         else {
-            directory = new File(directoryPath);
+            file = new File(filePath);
             try {
-                if (!directory.isDirectory()) {
-                    directory = null;
+                if (file.isDirectory()) {
+                    file = null;
                     rootGroup = null;
-                    throw new IOException(directoryPath + " is not a directory");
+                    throw new IOException(filePath + " is not a directory");
                 }
             }
             catch (SecurityException se) {
-                directory = null;
+                file = null;
                 rootGroup = null;
                 throw new IOException(se);
             }
-            rootGroup = new EdfGroup(this, null);
-            rootGroup.addSubgroup(new EdfGroup(directory));
+            rootGroup = new EdfGroup(this, file);
+            // rootGroup.addSubgroup(new EdfGroup(file));
         }
     }
 
@@ -105,7 +106,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public synchronized boolean isOpen() {
-        return (directory != null);
+        return (file != null);
     }
 
     @Override
@@ -123,26 +124,22 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public void saveTo(String location) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void save(IContainer container) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void save(String parentPath, IAttribute attribute) throws WriterException {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public long getLastModificationDate() {
-        // TODO Auto-generated method stub
-        return 0;
+        return file.lastModified();
     }
 
 }

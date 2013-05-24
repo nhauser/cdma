@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cdma.arrays.DefaultRange;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
+import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
@@ -14,9 +16,9 @@ import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
+import org.cdma.plugin.edf.EdfFactory;
 import org.cdma.plugin.edf.abstraction.AbstractDataItem;
 import org.cdma.plugin.edf.array.BasicDimension;
-import org.cdma.plugin.edf.array.BasicRange;
 
 public class EdfDataItem extends AbstractDataItem {
     // Inner class
@@ -93,7 +95,13 @@ public class EdfDataItem extends AbstractDataItem {
         long[] stride = idx.getStride();
 
         for (int i = 0; i < rank; i++) {
-            list.add(new BasicRange("", origin[i], shape[i] * stride[i], stride[i]));
+            try {
+                list.add(new DefaultRange("", origin[i], shape[i] * stride[i], stride[i]));
+            }
+            catch (InvalidRangeException e) {
+
+                e.printStackTrace();
+            }
         }
 
         return list;
@@ -242,7 +250,12 @@ public class EdfDataItem extends AbstractDataItem {
         long[] stride = orignalShape.getStride();
 
         for (int i = 0; i < rank; i++) {
-            list.add(new BasicRange("", origin[i], shape[i] * stride[i], stride[i]));
+            try {
+                list.add(new DefaultRange("", origin[i], shape[i] * stride[i], stride[i]));
+            }
+            catch (InvalidRangeException e) {
+                e.printStackTrace();
+            }
         }
 
         return list;
@@ -260,14 +273,12 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public int getSizeToCache() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -282,32 +293,28 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public boolean hasCachedData() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public void invalidateCache() {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
 
     }
 
     @Override
     public boolean isCaching() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isMemberOfStructure() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean isMetadata() {
-        // TODO Auto-generated method stub
-        return false;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -317,44 +324,37 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public byte readScalarByte() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public double readScalarDouble() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public float readScalarFloat() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public int readScalarInt() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public long readScalarLong() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public short readScalarShort() throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
     public String readScalarString() throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -365,14 +365,12 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public void setCaching(boolean caching) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void setDataType(Class<?> dataType) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
@@ -409,32 +407,29 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public void setElementSize(int elementSize) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public void setSizeToCache(int sizeToCache) {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
 
     }
 
     @Override
     public void setUnitsString(String units) {
-        // TODO Auto-generated method stub
+        throw new NotImplementedException();
 
     }
 
     @Override
     public String toStringDebug() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String writeCDL(String indent, boolean useFullName, boolean strict) {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -465,13 +460,11 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public long getLastModificationDate() {
-        // TODO Auto-generated method stub
-        return 0;
+        return getRootGroup().getLastModificationDate();
     }
 
     @Override
     public String getFactoryName() {
-        // TODO Auto-generated method stub
-        return null;
+        return EdfFactory.NAME;
     }
 }
