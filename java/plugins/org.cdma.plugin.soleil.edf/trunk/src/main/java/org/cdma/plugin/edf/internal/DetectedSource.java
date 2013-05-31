@@ -53,13 +53,11 @@ public class DetectedSource {
                 if (file.exists()) {
                     mIsBrowsable = file.isDirectory();
 
-                    if (!mIsBrowsable) {
-                        ValidURIFilter filter = new ValidURIFilter();
-                        if (filter.accept(file)) {
-                            mIsReadable = true;
-                            mIsProducer = true;
-                            mIsExperiment = true;
-                        }
+                    ValidURIFilter filter = new ValidURIFilter();
+                    if (filter.accept(file)) {
+                        mIsReadable = true;
+                        mIsProducer = true;
+                        mIsExperiment = true;
                     }
                 }
             }

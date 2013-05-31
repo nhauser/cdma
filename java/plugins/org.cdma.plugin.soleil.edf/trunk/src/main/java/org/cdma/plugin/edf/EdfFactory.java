@@ -39,7 +39,6 @@ public class EdfFactory implements IFactory {
     private EdfDatasource detector;
 
     public EdfFactory() {
-        System.out.println("EdfFactory Constructor");
     }
 
     public static EdfFactory getInstance() {

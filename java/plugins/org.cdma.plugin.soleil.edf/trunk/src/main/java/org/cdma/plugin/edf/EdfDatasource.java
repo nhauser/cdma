@@ -13,11 +13,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.swing.filechooser.FileSystemView;
+
 import org.cdma.interfaces.IDatasource;
 import org.cdma.plugin.edf.internal.DetectedSource;
+import org.cdma.plugin.edf.utils.FileComparator;
 
 public final class EdfDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
@@ -40,15 +45,37 @@ public final class EdfDatasource implements IDatasource {
 
         @Override
         public boolean accept(File path) {
-            boolean result = path.isDirectory();
-            if (!result) {
+            boolean result = false;
+            boolean isDir = path.isDirectory();
+            if (!isDir) {
                 String fileName = path.getPath();
                 int length = fileName.length();
-                return (length > EXTENSION.length() && fileName.substring(
+                result = (length > EXTENSION.length() && fileName.substring(
                         length - EXTENSION.length()).equalsIgnoreCase(EXTENSION));
+            } else {
+                result = findEDFFiles(path);
             }
             return result;
         }
+    }
+
+    private static boolean findEDFFiles(File path) {
+        boolean result = false;
+        File[] files = FileSystemView.getFileSystemView().getFiles(path, false);
+        if (files != null) {
+            ArrayList<File> fileList = new ArrayList<File>();
+            fileList.addAll(Arrays.asList(files));
+            Collections.sort(fileList, new FileComparator());
+            for (File file : fileList) {
+                String fPath = file.getAbsolutePath();
+                int pointIndex = fPath.lastIndexOf('.');
+                if ((pointIndex > -1) && "edf".equalsIgnoreCase(fPath.substring(pointIndex + 1))) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -174,4 +201,3 @@ public final class EdfDatasource implements IDatasource {
         return URI_DESC;
     }
 }
-
