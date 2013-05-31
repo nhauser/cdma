@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.cdma.arrays.DefaultCompositeArray;
 import org.cdma.arrays.DefaultRange;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -17,10 +18,13 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.edf.EdfFactory;
-import org.cdma.plugin.edf.abstraction.AbstractDataItem;
+import org.cdma.plugin.edf.abstraction.AbstractObject;
 import org.cdma.plugin.edf.array.BasicDimension;
+import org.cdma.plugin.edf.utils.StringUtils;
+import org.cdma.utils.Utilities.ModelType;
 
-public class EdfDataItem extends AbstractDataItem {
+public class EdfDataItem extends AbstractObject implements IDataItem {
+
     // Inner class
     // Associate a IDimension to an order of the array
     private class DimOrder {
@@ -37,15 +41,14 @@ public class EdfDataItem extends AbstractDataItem {
     // Members
     private boolean unsigned = false; // is the worn array unsigned or not
     private final ArrayList<DimOrder> dimensions; // list of dimensions
-    private final IIndex orignalShape;
+    private IIndex orignalShape;
+    private EdfDataItem[] dataItems;
+    protected IArray data;
 
     private EdfDataItem(EdfDataItem item) {
-        try {
-            this.data = item.getData();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        this.data = item.getData();
+
         this.dimensions = item.dimensions;
         this.unsigned = item.unsigned;
         this.parentGroup = item.parentGroup;
@@ -59,14 +62,87 @@ public class EdfDataItem extends AbstractDataItem {
         this.unsigned = unsigned;
         this.orignalShape = value.getIndex();
         this.dimensions = new ArrayList<EdfDataItem.DimOrder>();
+        dataItems = new EdfDataItem[1];
+        dataItems[0] = this;
     }
 
     public EdfDataItem(String name, IArray value) {
+        this(name, value, false);
+    }
+
+    public EdfDataItem(EdfDataItem[] items) {
         super();
-        setName(name);
-        this.data = value;
-        this.orignalShape = value.getIndex();
-        this.dimensions = new ArrayList<EdfDataItem.DimOrder>();
+        ArrayList<EdfDataItem> list = new ArrayList<EdfDataItem>();
+        for (EdfDataItem cur : items) {
+            list.add(cur);
+        }
+        dataItems = list.toArray(new EdfDataItem[list.size()]);
+        this.dimensions = new ArrayList<DimOrder>();
+        if (data == null && dataItems.length > 0) {
+            IArray[] arrays = new IArray[dataItems.length];
+            for (int i = 0; i < dataItems.length; i++) {
+                arrays[i] = dataItems[i].getData();
+            }
+            data = new DefaultCompositeArray(EdfFactory.NAME, arrays);
+        }
+    }
+
+    @Override
+    public ModelType getModelType() {
+        return ModelType.DataItem;
+    }
+
+    @Override
+    public IAttribute findAttributeIgnoreCase(String name) {
+        if (attributes != null) {
+            for (IAttribute attribute : attributes) {
+                if (StringUtils.isSameStringIgnoreCase(name, attribute.getName())) {
+                    return attribute;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public IDataItem getASlice(int dimension, int value) throws InvalidRangeException {
+        return getSlice(dimension, value);
+    }
+
+    @Override
+    public IArray getData() {
+
+        return data;
+    }
+
+    @Override
+    public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
+        IArray array = getData().copy(false);
+        IIndex index = array.getIndex();
+
+        if (shape == null || shape.length != array.getRank()) {
+            throw new InvalidRangeException("Shape must be of same rank as the array!");
+        }
+        if (origin == null || origin.length != array.getRank()) {
+            throw new InvalidRangeException("Origin must be of same rank as the array!");
+        }
+
+        int str = 1;
+        long[] stride = new long[array.getRank()];
+        for (int i = array.getRank() - 1; i >= 0; i--) {
+            stride[i] = str;
+            str *= shape[i];
+        }
+        index.setStride(stride);
+        index.setShape(shape);
+        index.setOrigin(origin);
+        array.setIndex(index);
+        return array;
+    }
+
+    @Override
+    public IDataItem clone() {
+        return (IDataItem) super.clone();
     }
 
     @Override
@@ -176,8 +252,7 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public int getElementSize() {
-        // TODO Auto-generated method stub
-        return 0;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -229,14 +304,11 @@ public class EdfDataItem extends AbstractDataItem {
     @Override
     public IDataItem getSection(List<IRange> section) throws InvalidRangeException {
         EdfDataItem item = null;
-        try {
-            item = new EdfDataItem(this);
-            item.data.setIndex(item.getData().getArrayUtils().sectionNoReduce(section).getArray()
-                    .getIndex());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        item = new EdfDataItem(this);
+        item.data.setIndex(item.getData().getArrayUtils().sectionNoReduce(section).getArray()
+                .getIndex());
+
         return item;
     }
 
@@ -263,12 +335,25 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public int[] getShape() {
-        return data.getShape();
+        int[] shape;
+        if (dataItems.length == 1) {
+            shape = dataItems[0].getShape();
+        }
+        else {
+            shape = getData().getShape();
+        }
+        return shape;
     }
 
     @Override
     public long getSize() {
-        return data.getSize();
+        int[] shape = getShape();
+        long total = 1;
+        for (int size : shape) {
+            total *= size;
+        }
+
+        return total;
     }
 
     @Override
@@ -293,23 +378,23 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public boolean hasCachedData() {
-        throw new NotImplementedException();
+        return dataItems[0].hasCachedData();
     }
 
     @Override
     public void invalidateCache() {
-        throw new NotImplementedException();
+        dataItems[0].invalidateCache();
 
     }
 
     @Override
     public boolean isCaching() {
-        throw new NotImplementedException();
+        return dataItems[0].isCaching();
     }
 
     @Override
     public boolean isMemberOfStructure() {
-        throw new NotImplementedException();
+        return dataItems[0].isMemberOfStructure();
     }
 
     @Override
@@ -354,7 +439,12 @@ public class EdfDataItem extends AbstractDataItem {
 
     @Override
     public String readScalarString() throws IOException {
-        throw new NotImplementedException();
+        String result = null;
+        if (data != null) {
+            String[] stringArray = (String[]) data.getArrayUtils().copyTo1DJavaArray();
+            result = stringArray[0];
+        }
+        return result;
     }
 
     @Override
@@ -384,8 +474,8 @@ public class EdfDataItem extends AbstractDataItem {
             IAttribute attr = item.getAttribute("axis");
             if (attr != null) {
                 try {
-                    IDimension dim = new BasicDimension(item.getName(), item.getData(), false, item
-                            .isUnlimited(), false);
+                    IDimension dim = new BasicDimension(item.getName(), item.getData(), false,
+                            item.isUnlimited(), false);
                     if ("*".equals(dimString)) {
                         setDimension(dim, attr.getNumericValue().intValue());
                     }
@@ -466,5 +556,17 @@ public class EdfDataItem extends AbstractDataItem {
     @Override
     public String getFactoryName() {
         return EdfFactory.NAME;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("DataItem " + getName());
+        // if (data != null) {
+        // Object storage = data.getStorage();
+        // short[][] shortArray = (short[][]) storage;
+        // buffer.append("- Array Value @[10][4] = " + shortArray[11][4]);
+        // }
+        return buffer.toString();
     }
 }

@@ -19,6 +19,7 @@ public class EdfDataset implements IDataset, Cloneable {
     private File file;
     private EdfGroup rootGroup;
     private EdfLogicalGroup logicalRoot;
+    private boolean open = false;;
 
     public EdfDataset(String filePath) {
         super();
@@ -32,8 +33,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public synchronized void close() throws IOException {
-        file = null;
-        rootGroup = null;
+        open = false;
     }
 
     @Override
@@ -48,8 +48,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public String getTitle() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -61,13 +60,11 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public void setTitle(String title) {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
     @Override
     public boolean sync() throws IOException {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -79,34 +76,24 @@ public class EdfDataset implements IDataset, Cloneable {
             throw new IOException("No root directory defined");
         }
         else {
-            file = new File(filePath);
-            try {
-                if (file.isDirectory()) {
-                    file = null;
-                    rootGroup = null;
-                    throw new IOException(filePath + " is not a directory");
-                }
+            if (file == null || rootGroup == null) {
+                file = new File(filePath);
+                rootGroup = new EdfGroup(this, file);
+                // rootGroup.addSubgroup(new EdfGroup(file));
+                this.open = true;
             }
-            catch (SecurityException se) {
-                file = null;
-                rootGroup = null;
-                throw new IOException(se);
-            }
-            rootGroup = new EdfGroup(this, file);
-            // rootGroup.addSubgroup(new EdfGroup(file));
         }
     }
 
     @Override
     public void save() {
-        // TODO Auto-generated method stub
-
+        throw new NotImplementedException();
     }
 
 
     @Override
     public synchronized boolean isOpen() {
-        return (file != null);
+        return open;
     }
 
     @Override
