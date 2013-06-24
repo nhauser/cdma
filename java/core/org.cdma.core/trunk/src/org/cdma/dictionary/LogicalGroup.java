@@ -1,11 +1,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //    Tony Lam (nxi@Bragg Institute) - initial API and implementation
 //    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
@@ -17,7 +17,7 @@ package org.cdma.dictionary;
  * @brief The LogicalGroup class is a purely <b>virtual</b> object that regroup several data.
  * 
  * <p>
- * Its existence is correlated to the ExtendedDictionary. A standard CDMA dictionary make 
+ * Its existence is correlated to the ExtendedDictionary. A standard CDMA dictionary make
  * a link between a key and a path. Now let's imagine a dictionary with keys having a tree
  * structure. This structure hierarchically organized might now have a meaning regardless
  * their physical organization. So the keys are now simple notions that can have a human
@@ -54,14 +54,14 @@ public class LogicalGroup implements IContainer, Cloneable {
     public static final String KEY_PATH_SEPARATOR = ":";
 
     // Physical structure
-    private IDataset            mDataset;      // File handler
+    private final IDataset            mDataset;      // File handler
 
     // Logical structure
     private IKey                mKey;          // IKey that populated this items (with filters eventually used)
     private ExtendedDictionary  mDictionary;   // Dictionary that belongs to this current LogicalGroup
     private LogicalGroup        mParent;       // Parent logical group if root then, it's null
-    private IFactory            mFactory;      // Factory instantiating this group
-    private boolean            mThrow;        // Display debug info trace when dictionary isn't valid 
+    private final IFactory            mFactory;      // Factory instantiating this group
+    private final boolean            mThrow;        // Display debug info trace when dictionary isn't valid
     private List<IAttribute>    mAttributes;   // List of attributes
 
     public LogicalGroup(IKey key, IDataset dataset) {
@@ -99,14 +99,14 @@ public class LogicalGroup implements IContainer, Cloneable {
     @Override
     public LogicalGroup clone() {
         LogicalGroup group = new LogicalGroup(
-                mParent, 
-                mKey.clone(), 
-                mDataset, 
+                mParent,
+                mKey.clone(),
+                mDataset,
                 mThrow
                 );
         ExtendedDictionary dictionary = null;
         try {
-            dictionary = (ExtendedDictionary) mDictionary.clone();
+            dictionary = mDictionary.clone();
         } catch (CloneNotSupportedException e) {
         }
         group.setDictionary(dictionary);
@@ -130,7 +130,7 @@ public class LogicalGroup implements IContainer, Cloneable {
             return this;
         }
         else {
-            return (LogicalGroup) mParent.getRootGroup();
+            return mParent.getRootGroup();
         }
     }
 
@@ -195,15 +195,16 @@ public class LogicalGroup implements IContainer, Cloneable {
     boolean isRoot() {
         return (mParent == null && mKey == null);
     }
-    
+
     /**
      * Find the IDataItem corresponding to the given key in the dictionary.
-     *  
+     * 
      * @param key entry of the dictionary (can carry filters)
      * @return the first encountered IDataItem that match the key, else null
      */
     public IDataItem getDataItem(IKey key) {
         IDataItem item = null;
+
         List<IContainer> list = getItemByKey(key);
 
         for( IContainer object : list ) {
@@ -218,8 +219,8 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * Find the IDataItem corresponding to the given key in the dictionary.
-     *  
-     * @param keyPath separated entries of the dictionary (can't carry filters) 
+     * 
+     * @param keyPath separated entries of the dictionary (can't carry filters)
      * @return the first encountered IDataItem that match the key, else null
      * @note keyPath can contain several keys concatenated with a plug-in's separator
      */
@@ -245,7 +246,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * Find all IDataItems corresponding to the given key in the dictionary.
-     *  
+     * 
      * @param key entry of the dictionary (can carry filters)
      * @return a list of IDataItem that match the key
      */
@@ -264,7 +265,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * Find all IDataItems corresponding to the given path of key in the dictionary.
-     *  
+     * 
      * @param keyPath separated entries of the dictionary (can't carry filters)
      * @return a list of IDataItem that match the key
      * @note keyPath can contain several keys concatenated with a plug-in's separator
@@ -289,7 +290,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * Find the Group corresponding to the given key in the dictionary.
-     *  
+     * 
      * @param key entry name of the dictionary
      * @return the first encountered LogicalGroup that matches the key, else null
      */
@@ -310,7 +311,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * Find the Group corresponding to the given key in the dictionary.
-     *  
+     * 
      * @param keyPath separated entries of the dictionary (can't carry filters)
      * @return the first encountered LogicalGroup that matches the key, else null
      * @note keyPath can contain several keys concatenated with a plug-in's separator
@@ -334,7 +335,7 @@ public class LogicalGroup implements IContainer, Cloneable {
     /**
      * Get the IDataset that hold the current Group.
      * 
-     * @return CDMA IDataset 
+     * @return CDMA IDataset
      */
     @Override
     public IDataset getDataset() {
@@ -349,12 +350,12 @@ public class LogicalGroup implements IContainer, Cloneable {
      */
     public List<String> getKeyNames(ModelType model) {
         List<String> result = new ArrayList<String>();
-        
+
         // List all keys
         ExtendedDictionary dictionary = getDictionary();
         if( dictionary != null ) {
             List<IKey> keys = dictionary.getAllKeys();
-            
+
             // Check the ones that matches the model
             ItemSolver solver;
             for( IKey key : keys ) {
@@ -364,7 +365,7 @@ public class LogicalGroup implements IContainer, Cloneable {
                 }
             }
         }
-                
+
         return result;
     }
 
@@ -372,7 +373,7 @@ public class LogicalGroup implements IContainer, Cloneable {
      * Bind the given key with the given name, so the key can be accessed by the bind
      * 
      * @param bind value with which we can get the key
-     * @param key key object to be mapped by the bind value 
+     * @param key key object to be mapped by the bind value
      * @return the given key
      */
     public IKey bindKey(String bind, IKey key) {
@@ -432,14 +433,14 @@ public class LogicalGroup implements IContainer, Cloneable {
     @Override
     public IAttribute getAttribute(String name) {
         IAttribute result = null;
-        
+
         for( IAttribute attribute : mAttributes ) {
             if( attribute.getName().equals(name) ) {
                 result = attribute;
                 break;
             }
         }
-        
+
         return result;
     }
 
@@ -450,14 +451,14 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     /**
      * This method defines the way the ExtendedDictionary will be loaded.
-     * It must manage the detection and loading of the key file, 
+     * It must manage the detection and loading of the key file,
      * and the corresponding mapping file that belongs to the plug-in.
      * Once the dictionary has its paths targeting both key and mapping
-     * files set, the detection work is done. It just remains the loading 
+     * files set, the detection work is done. It just remains the loading
      * of those files using the ExtendedDictionary.
      * 
      * @return ExtendedDictionary instance, that has already loaded keys and paths
-     * @note ExtendedDictionary.readEntries() is already implemented in the core 
+     * @note ExtendedDictionary.readEntries() is already implemented in the core
      */
     public ExtendedDictionary findAndReadDictionary() {
         // Detect the key dictionary file and mapping dictionary file
@@ -478,27 +479,27 @@ public class LogicalGroup implements IContainer, Cloneable {
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
     private List<IContainer> getItemByKey(IKey key) {
-    	// Create output list
+        // Create output list
         List<IContainer> result = new ArrayList<IContainer>();
-        
-    	// Get the working dictionary
+
+        // Get the working dictionary
         ExtendedDictionary dico = getDictionary();
         if( dico != null ) {
-        	
-	        // Create the context of resolution
-	        Context context = new Context(mDataset, this, key);
-	        
-	        // Update context with corresponding concept
-	        context.setConcept( dico.getConcept(key) );
-	        
-	        // Get the corresponding item solver
-	        ItemSolver solver = dico.getItemSolver(key);
-	
-	        // Execute the solver
-	        if( solver != null ) {
-	            result = solver.solve(context);
-	        }
-        }   
+
+            // Create the context of resolution
+            Context context = new Context(mDataset, this, key);
+
+            // Update context with corresponding concept
+            context.setConcept( dico.getConcept(key) );
+
+            // Get the corresponding item solver
+            ItemSolver solver = dico.getItemSolver(key);
+
+            // Execute the solver
+            if( solver != null ) {
+                result = solver.solve(context);
+            }
+        }
         return result;
     }
 

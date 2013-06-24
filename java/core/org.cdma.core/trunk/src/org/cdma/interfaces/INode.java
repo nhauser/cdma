@@ -25,6 +25,10 @@ public interface INode {
     /**
      * 
      */
+    public String getName();
+    /**
+     * 
+     */
     public boolean matchesNode(INode node);
 
     /**
