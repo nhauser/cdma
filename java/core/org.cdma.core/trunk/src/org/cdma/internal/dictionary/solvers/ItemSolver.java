@@ -1,11 +1,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Clément Rodriguez - initial API and implementation
 // ****************************************************************************
 package org.cdma.internal.dictionary.solvers;
@@ -17,7 +17,7 @@ package org.cdma.internal.dictionary.solvers;
  * 
  * The ItemSolver class as an unique method which solve. The goal is to return
  * the IContainer that is defined into the institute's mapping. To do so, it uses
- * a Context which permits to access the CDMA environment. The IContainer can be 
+ * a Context which permits to access the CDMA environment. The IContainer can be
  * searched in a specific path, or might need a named method execution a to construct it.
  * <p>
  * That class is used internally by the LogicalGroup to construct item.
@@ -61,12 +61,12 @@ public class ItemSolver {
 
         // Set the model type
         mModelType = ModelType.DataItem;
-        
+
         // Add the solver to this item solver
         Solver solver = new Solver(path);
         mContent.add(solver);
     }
-    
+
     public ItemSolver(IFactory factory, PluginMethodManager manager, Element elem) {
         mFactory = factory;
 
@@ -77,7 +77,7 @@ public class ItemSolver {
         mAttributes = new ArrayList<AttributeSolver>();
 
         mModelType = ModelType.DataItem;
-        
+
         // Initialize internal fields
         init(manager, elem);
     }
@@ -137,7 +137,7 @@ public class ItemSolver {
             }
         }
 
-        // Check found items match what is requested by key
+        // Check found items match what is requested by key (filters on key)
         for (IContainer container : found) {
             if (isValidContainer(key, container)) {
                 valid.add(container);
@@ -181,28 +181,28 @@ public class ItemSolver {
                 attrs = node.getChildren();
                 String attrName  = node.getAttributeValue("name");
                 String attrValue = node.getAttributeValue("value");
-                
+
                 AttributeSolver attr = null;
                 if( attrValue != null ) {
-                	attr = new AttributeSolver(attrName, attrValue);;
+                    attr = new AttributeSolver(attrName, attrValue);;
                 }
                 else {
-	                // Create a list of solver for that particular attribute
-	                List<Solver> attrSolv = new ArrayList<Solver>();
-	                for (Element subNode : (List<Element>) attrs) {
-	                    // If path open the path
-	                    if (subNode.getName().equals("path")) {
-	                        current = new Solver(mFactory.createPath(subNode.getText()));
-	                        attrSolv.add(current);
-	                    }
-	                    // If call on a method
-	                    else if (subNode.getName().equals("call")) {
-	                        method = manager.getPluginMethod(mFactory.getName(), subNode.getText());
-	                        current = new Solver(method);
-	                        attrSolv.add(current);
-	                    }
-	                }
-	                attr = new AttributeSolver(attrName, attrSolv);
+                    // Create a list of solver for that particular attribute
+                    List<Solver> attrSolv = new ArrayList<Solver>();
+                    for (Element subNode : (List<Element>) attrs) {
+                        // If path open the path
+                        if (subNode.getName().equals("path")) {
+                            current = new Solver(mFactory.createPath(subNode.getText()));
+                            attrSolv.add(current);
+                        }
+                        // If call on a method
+                        else if (subNode.getName().equals("call")) {
+                            method = manager.getPluginMethod(mFactory.getName(), subNode.getText());
+                            current = new Solver(method);
+                            attrSolv.add(current);
+                        }
+                    }
+                    attr = new AttributeSolver(attrName, attrSolv);
                 }
                 // Store the attribute into a list
                 mAttributes.add(attr);
@@ -231,7 +231,7 @@ public class ItemSolver {
     }
 
     /**
-     * Returns the model type of instantiated object when solve is called 
+     * Returns the model type of instantiated object when solve is called
      * @return the ModelType of item
      */
     public ModelType getModelType() {
