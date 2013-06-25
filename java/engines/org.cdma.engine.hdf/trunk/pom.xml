@@ -37,6 +37,7 @@
      <dependency>
       <groupId>org.cdma</groupId>
       <artifactId>Core</artifactId>
+      <version>3.2.6-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

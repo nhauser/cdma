@@ -41,29 +41,6 @@ import utils.HdfPath;
 
 public class HdfGroup implements IGroup, Cloneable {
 
-    // private class ObjectContainer<T> {
-    // SoftReference<T> softRef;
-    // T hardRef;
-    //
-    // public ObjectContainer(SoftReference<T> container) {
-    // softRef = container;
-    // }
-    //
-    // public ObjectContainer(T container) {
-    // hardRef = container;
-    // }
-    //
-    // public T get() {
-    // T result = null;
-    // if (hardRef != null) {
-    // result = hardRef;
-    // }
-    // else if (softRef != null) {
-    // result = softRef.get();
-    // }
-    // return result;
-    // }
-    // }
 
     private final HdfGroup parent;
     private IGroup root = null;
@@ -114,8 +91,12 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public IAttribute getAttribute(String name) {
+        IAttribute result = null;
         Attribute attr = HdfObjectUtils.getAttribute(h5Group, name);
-        IAttribute result = new HdfAttribute(factoryName, attr);
+        if (attr != null) {
+            result = new HdfAttribute(factoryName, attr);
+        }
+
         return result;
     }
 
@@ -358,6 +339,10 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
+    public List<HObject> getMembers() {
+        return h5Group.getMemberList();
+    }
+
     @Override
     public IDataset getDataset() {
         HdfDataset dataSet = new HdfDataset(factoryName, h5File);
@@ -394,8 +379,8 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
-    private List<HdfNode> getNodes() {
-        List<HdfNode> nodes = new ArrayList<HdfNode>();
+    protected List<INode> getNodes() {
+        List<INode> nodes = new ArrayList<INode>();
         List<HObject> members = h5Group.getMemberList();
         for (HObject hObject : members) {
             nodes.add(new HdfNode(hObject));
@@ -442,12 +427,12 @@ public class HdfGroup implements IGroup, Cloneable {
                 HdfGroup group = (HdfGroup) container;
                 if (nodes.length > level) {
                     // List current node children
-                    List<HdfNode> childs = group.getNodes();
+                    List<INode> childs = group.getNodes();
 
                     INode current = nodes[level];
 
-                    for (HdfNode node : childs) {
-                        if (node.matchesPartNode(current)) {
+                    for (INode node : childs) {
+                        if (current.matchesPartNode(node)) {
 
                             if (level < nodes.length - 1) {
                                 result.addAll(findAllContainer(group.getContainer(node.getName()),

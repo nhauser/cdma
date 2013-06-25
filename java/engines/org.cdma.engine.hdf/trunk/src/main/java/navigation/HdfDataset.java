@@ -55,6 +55,13 @@ public class HdfDataset implements IDataset, Cloneable {
     public IGroup getRootGroup() {
         if (root == null) {
             if (h5File != null) {
+                try {
+                    h5File.open();
+                }
+                catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) h5File.getRootNode();
                 if (theRoot != null) {
                     H5Group rootObject = (H5Group) theRoot.getUserObject();
@@ -137,34 +144,6 @@ public class HdfDataset implements IDataset, Cloneable {
         throw new NotImplementedException();
     }
 
-    // public void saveWithNativeAPI(String location) throws HDF5LibraryException,
-    // NullPointerException {
-    // File newFile = new File(location);
-    // if (newFile.exists()) {
-    // newFile.delete();
-    // // TODO DEBUG
-    // System.out.println("DELETED");
-    // }
-    //
-    // int fileToWriteId = H5.H5Fcreate(location, HDF5Constants.H5F_ACC_DEBUG,
-    // HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT);
-    // int fileToReadId = H5.H5Fopen(h5File.getAbsolutePath(), HDF5Constants.H5F_ACC_RDONLY,
-    // HDF5Constants.H5P_DEFAULT);
-    //
-    // int groupToReadId = H5.H5Gopen(fileToReadId, "/BSA_0006", HDF5Constants.H5P_DEFAULT);
-    //
-    // int groupToWriteId = H5.H5Gcreate(fileToWriteId, "Greg", 1000);
-    // // H5.H5Gopen(fileToWriteId, "/", HDF5Constants.H5P_DEFAULT);
-    //
-    // // TODO DEBUG
-    // System.out.println("Read Id = " + groupToReadId);
-    // System.out.println("Write Id = " + groupToWriteId);
-    // H5.H5Ocopy(groupToReadId, "/BSA_0006", groupToWriteId, "/Greg/",
-    // HDF5Constants.H5P_DEFAULT,
-    // HDF5Constants.H5P_DEFAULT);
-    //
-    // }
-
     @Override
     public void saveTo(String location) throws WriterException {
         try {
@@ -209,7 +188,7 @@ public class HdfDataset implements IDataset, Cloneable {
 
     public static String readAviex(HdfDataset ds) {
         String result = null;
-        String fileName = "/home/viguier/NeXusFiles/BackToMama/BigTree/hdf.nxs";
+        String fileName = "/home/viguier/NeXusFiles/BackToMama/datas/bigtree.nxs";
 
         try {
             // File file = new File(fileName);
@@ -262,7 +241,7 @@ public class HdfDataset implements IDataset, Cloneable {
         try {
             System.setProperty(H5.H5PATH_PROPERTY_KEY,
                     "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
-            String fileName = "/home/viguier/NeXusFiles/BackToMama/BigTree/hdf.nxs";
+            String fileName = "/home/viguier/NeXusFiles/BackToMama/datas/bigtree.nxs";
 
             File file = new File(fileName);
 

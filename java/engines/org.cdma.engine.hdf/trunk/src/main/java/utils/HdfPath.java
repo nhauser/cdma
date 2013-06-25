@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.cdma.interfaces.INode;
 
-
-
 public class HdfPath {
 
     public static final String PATH_SEPARATOR = "/";
@@ -15,6 +13,10 @@ public class HdfPath {
 
     public HdfPath(INode[] nodes) {
         this.nodes = Arrays.asList(nodes);
+    }
+
+    public HdfPath(INode node) {
+        this.nodes.add(node);
     }
 
     /**
@@ -32,36 +34,37 @@ public class HdfPath {
     }
 
     public static INode[] splitStringToNode(String sPath) {
-        String[] names = splitStringPath(sPath);
-        HdfNode[] nodes = null;
+        HdfNode[] result = null;
+        if (sPath != null) {
+            String[] names = splitStringPath(sPath);
 
-        int nbNodes = 0;
-        for (String name : names) {
-            if (!name.isEmpty()) {
-                nbNodes++;
-            }
-        }
-
-        if (nbNodes > 0) {
-            nodes = new HdfNode[nbNodes];
-            int i = 0;
+            int nbNodes = 0;
             for (String name : names) {
                 if (!name.isEmpty()) {
-                    nodes[i] = new HdfNode(name);
-                    i++;
+                    nbNodes++;
                 }
             }
+
+            if (nbNodes > 0) {
+                result = new HdfNode[nbNodes];
+                int i = 0;
+                for (String name : names) {
+                    if (!name.isEmpty()) {
+                        result[i] = new HdfNode(name);
+                        i++;
+                    }
+                }
+            }
+            else {
+                result = new HdfNode[0];
+            }
         }
-        else {
-            nodes = new HdfNode[0];
-        }
-        return nodes;
+        return result;
     }
 
     public INode[] getNodes() {
         return nodes.toArray(new INode[nodes.size()]);
     }
-
 
     @Override
     public String toString() {
