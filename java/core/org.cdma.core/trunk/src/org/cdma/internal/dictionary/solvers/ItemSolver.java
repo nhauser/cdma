@@ -108,7 +108,9 @@ public class ItemSolver {
             found = solver.solve(context);
 
             // Update the context with the last found item
-            context.setContainers(found);
+            if (found != null && !found.isEmpty()) {
+                context.setContainers(found);
+            }
         }
 
         found = context.getContainers();
