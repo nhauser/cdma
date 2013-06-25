@@ -2,6 +2,7 @@ package utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import navigation.HdfAttribute;
 import ncsa.hdf.object.Attribute;
@@ -58,8 +59,10 @@ public class HdfObjectUtils {
         boolean result = false;
         if (name != null && value != null) {
             Attribute attribute = HdfObjectUtils.getAttribute(object, name);
-            if (value.equals(attribute.getValue())) {
-                result = true;
+            if (attribute != null) {
+                if (value.equals(attribute.getValue())) {
+                    result = true;
+                }
             }
         }
         return result;
@@ -93,7 +96,6 @@ public class HdfObjectUtils {
         return output;
     }
 
-
     public static void addStringAttribute(HObject object, String name, String value) {
         long[] dims = { 1 };
         try {
@@ -108,37 +110,43 @@ public class HdfObjectUtils {
     public static void addOneAttribute(HObject object, IAttribute attribute) {
         if (attribute != null) {
 
-            // Default is STRING
-            int datatype = Datatype.CLASS_STRING;
 
             Class<?> type = attribute.getType();
-            if ((Byte.TYPE.equals(type)) || Byte.class.equals(type)) {
-                datatype = Datatype.CLASS_CHAR;
-            }
-            else if ((Short.TYPE.equals(type)) || Short.class.equals(type)) {
-                datatype = Datatype.CLASS_INTEGER;
-            }
-            else if ((Integer.TYPE.equals(type)) || Integer.class.equals(type)) {
-                datatype = Datatype.CLASS_INTEGER;
-            }
-            else if ((Long.TYPE.equals(type)) || Long.class.equals(type)) {
-                datatype = Datatype.CLASS_FLOAT;
-            }
-            else if ((Float.TYPE.equals(type)) || Float.class.equals(type)) {
-                datatype = Datatype.CLASS_FLOAT;
-            }
+            int datatype = getHdfDataTypeForClass(type);
 
             long[] dims = { 1 };
             try {
                 getMetadataList(object).add(
-                        new Attribute(attribute.getName(), new H5Datatype(datatype), dims, attribute
-                                .getValue().getStorage()));
+                        new Attribute(attribute.getName(), new H5Datatype(datatype), dims,
+                                attribute.getValue().getStorage()));
             }
             catch (Exception e) {
-                Factory.getLogger().warning(e.getMessage());
+                Factory.getLogger().log(Level.SEVERE, "Unable to copy addOneAttribute", e);
             }
         }
 
+    }
+
+    public static int getHdfDataTypeForClass(Class<?> type) {
+        // Default is STRING
+        int datatype = Datatype.CLASS_STRING;
+
+        if ((Byte.TYPE.equals(type)) || Byte.class.equals(type)) {
+            datatype = Datatype.CLASS_CHAR;
+        }
+        else if ((Short.TYPE.equals(type)) || Short.class.equals(type)) {
+            datatype = Datatype.CLASS_INTEGER;
+        }
+        else if ((Integer.TYPE.equals(type)) || Integer.class.equals(type)) {
+            datatype = Datatype.CLASS_INTEGER;
+        }
+        else if ((Long.TYPE.equals(type)) || Long.class.equals(type)) {
+            datatype = Datatype.CLASS_FLOAT;
+        }
+        else if ((Float.TYPE.equals(type)) || Float.class.equals(type)) {
+            datatype = Datatype.CLASS_FLOAT;
+        }
+        return datatype;
     }
 
     @SuppressWarnings("unchecked")
@@ -148,7 +156,7 @@ public class HdfObjectUtils {
             h5AttributeList = object.getMetadata();
         }
         catch (Exception e) {
-            Factory.getLogger().warning(e.getMessage());
+            Factory.getLogger().log(Level.SEVERE, "Unable to copy getMetadataList", e);
         }
         return h5AttributeList;
     }

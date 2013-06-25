@@ -3,13 +3,16 @@ package navigation;
 import java.util.logging.Level;
 
 import ncsa.hdf.object.Attribute;
+import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.HObject;
+import ncsa.hdf.object.h5.H5Datatype;
 
 import org.cdma.Factory;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 
+import utils.HdfObjectUtils;
 import array.HdfArray;
 
 public class HdfAttribute implements IAttribute {
@@ -42,7 +45,8 @@ public class HdfAttribute implements IAttribute {
         }
 
         try {
-            this.value = new HdfArray(factoryName, value, shape, null);
+            this.value = new HdfArray(factoryName, data, shape, null);
+            this.value.lock();
         }
         catch (InvalidArrayTypeException e) {
             Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
@@ -114,7 +118,9 @@ public class HdfAttribute implements IAttribute {
     @Override
     public String getStringValue(int index) {
         if (isString()) {
-            return ((String) java.lang.reflect.Array.get(value.getStorage(), index));
+            Object data = value.getStorage();
+            return ((String[]) data)[0];
+            // return ((String) java.lang.reflect.Array.get(value.getStorage(), index));
         }
         else {
             return null;
@@ -164,17 +170,17 @@ public class HdfAttribute implements IAttribute {
     }
 
     public void save(HObject parent) throws Exception {
-        // int attrType = attribute.getType().getDatatypeClass();
-        // if (Datatype.CLASS_STRING == attrType) {
-        // String[] value = (String[]) attribute.getValue();
-        // Datatype newType = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
-        // // // Create a new attribute
-        // Attribute newAttribute = new Attribute(attribute.getName(), newType, null,
-        // attribute.getValue());
+        int dataType = HdfObjectUtils.getHdfDataTypeForClass(getType());
+        Attribute newAttribute = new Attribute(getName(), new H5Datatype(dataType), null,
+                getValue().getStorage());
+
+        if (getValue().getStorage() instanceof String[]) {
+            String[] value = (String[]) getValue().getStorage();
+            Datatype newType = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+            // Create a new attribute
+            newAttribute = new Attribute(getName(), newType, null, getValue().getStorage());
+
+        }
         // parent.writeMetadata(newAttribute);
-        // }
-        // else {
-        // parent.writeMetadata(attrType);
-        // }
     }
 }

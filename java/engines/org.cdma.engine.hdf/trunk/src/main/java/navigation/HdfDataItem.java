@@ -42,11 +42,14 @@ import array.HdfIndex;
 
 public class HdfDataItem implements IDataItem, Cloneable {
 
-    private final H5ScalarDS h5Item;
+    private H5ScalarDS h5Item;
     private final H5File h5File;
     private final String factoryName;
     private IArray array;
     private final IGroup parent;
+    private String shortName;
+
+    // private String fullName;
 
     public HdfDataItem(String factoryName, H5File file, IGroup parent, H5ScalarDS dataset) {
         this.factoryName = factoryName;
@@ -55,6 +58,13 @@ public class HdfDataItem implements IDataItem, Cloneable {
         this.parent = parent;
         if (this.h5Item != null) {
             this.h5Item.init();
+            this.shortName = h5Item.getName();
+            // this.fullName = h5Item.getFullName();
+        }
+        else {
+            this.shortName = "";
+            h5Item = new H5ScalarDS(H5File.getFileFormat(H5File.FILE_TYPE_HDF5), "", "");
+            // this.fullName = "";
         }
     }
 
@@ -67,6 +77,8 @@ public class HdfDataItem implements IDataItem, Cloneable {
         this.factoryName = dataItem.getFactoryName();
         this.h5File = dataItem.getH5File();
         this.h5Item = dataItem.getH5DataItem();
+        this.shortName = dataItem.shortName;
+        // this.fullName = dataItem.fullName;
         if (this.h5Item != null) {
             this.h5Item.init();
         }
@@ -98,12 +110,18 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        HdfObjectUtils.addOneAttribute(h5Item, attribute);
+        if (h5File != null) {
+            // TDGV incorrect test
+            HdfObjectUtils.addOneAttribute(h5Item, attribute);
+        }
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
-        HdfObjectUtils.addStringAttribute(h5Item, name, value);
+        if (h5File != null) {
+            // TDGV incorrect test
+            HdfObjectUtils.addStringAttribute(h5Item, name, value);
+        }
     }
 
     public IAttribute getAttribute(String name, boolean ignoreCase) {
@@ -184,11 +202,15 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public String getShortName() {
+        /*
         String result = null;
         if (h5Item != null) {
             result = h5Item.getName();
         }
+
         return result;
+         */
+        return shortName;
     }
 
     @Override
@@ -199,22 +221,41 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public void setName(String name) {
-        try {
-            h5Item.setName(name);
+        String[] nodes = name.split("/");
+        int depth = nodes.length - 1;
+
+        if (depth >= 0) {
+            setShortName(nodes[depth--]);
         }
-        catch (Exception e) {
-            Factory.getLogger().log(Level.SEVERE, "Unable to setName", e);
+
+        IGroup group = (IGroup) getParentGroup();
+        while (group != null && !group.isRoot() && depth >= 0) {
+            group.setShortName(nodes[depth--]);
         }
+
+        /*
+        if (h5Item != null) {
+            try {
+                h5Item.setName(name);
+            }
+            catch (Exception e) {
+                Factory.getLogger().log(Level.SEVERE, "Unable to setName", e);
+            }
+        }
+         */
     }
 
     @Override
     public void setShortName(String name) {
+        this.shortName = name;
+        /*
         try {
             h5Item.setName(name);
         }
         catch (Exception e) {
             Factory.getLogger().log(Level.SEVERE, "Unable to setShortName", e);
         }
+         */
     }
 
     @Override
@@ -293,6 +334,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     public Object load(int[] origin, int[] shape) throws OutOfMemoryError, Exception {
         Object result = null;
+        Object tempResult = null;
         boolean viewHasChanged = false;
         synchronized (h5Item) {
 
@@ -317,11 +359,15 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 }
 
                 if (viewHasChanged) {
-                    // TODO DEBUG
-                    System.out.println("Clearing dataset");
                     h5Item.clear();
                 }
-                result = h5Item.getData();
+                tempResult = h5Item.getData();
+
+                // if (h5Item.isUnsigned()) {
+                // Dataset.convertFromUnsignedC(tempResult, result);
+                // } else {
+                result = tempResult;
+                // }
             }
         }
         return result;
@@ -399,7 +445,10 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public int getRank() {
+
         return h5Item.getRank();
+
+        // return array.getRank();
     }
 
     @Override
@@ -429,9 +478,21 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public int[] getShape() {
+        /*
         long[] dims = h5Item.getDims();
         int[] result = new int[2];
         result = HdfObjectUtils.convertLongToInt(dims);
+        return result;
+         */
+        int[] result = null;
+        if (array != null) {
+            result = array.getShape();
+        }
+        else {
+            long[] dims = h5Item.getDims();
+            result = HdfObjectUtils.convertLongToInt(dims);
+            return result;
+        }
         return result;
     }
 
@@ -465,53 +526,59 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public Class<?> getType() {
+        // TODO DEBUG
+        System.out.println(this.getName());
         Class<?> result = null;
+        if (h5Item != null) {
+            Datatype dType = h5Item.getDatatype();
 
-        Datatype dType = h5Item.getDatatype();
+            if (dType != null) {
+                int datatype = dType.getDatatypeClass();
 
-        if (dType != null) {
-            int datatype = dType.getDatatypeClass();
+                if (DataType.BOOLEAN.equals(datatype)) {
+                    result = Boolean.TYPE;
+                }
+                else if (Datatype.CLASS_CHAR == datatype) {
+                    result = Character.TYPE;
+                }
+                else if (Datatype.CLASS_FLOAT == datatype) {
+                    switch (dType.getDatatypeSize()) {
+                        case 4:
+                            result = Float.TYPE;
+                            break;
+                        case 8:
+                            result = Double.TYPE;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else if (Datatype.CLASS_INTEGER == datatype) {
+                    switch (dType.getDatatypeSize()) {
+                        case 1:
+                            result = Byte.TYPE;
+                            break;
+                        case 2:
+                            result = Short.TYPE;
+                            break;
+                        case 4:
+                            result = Integer.TYPE;
+                            break;
+                        case 8:
+                            result = Long.TYPE;
+                            break;
+                        default:
+                            break;
+                    }
 
-            if (DataType.BOOLEAN.equals(datatype)) {
-                result = Boolean.TYPE;
-            }
-            else if (Datatype.CLASS_CHAR == datatype) {
-                result = Character.TYPE;
-            }
-            else if (Datatype.CLASS_FLOAT == datatype) {
-                switch (dType.getDatatypeSize()) {
-                    case 4:
-                        result = Float.TYPE;
-                        break;
-                    case 8:
-                        result = Double.TYPE;
-                        break;
-                    default:
-                        break;
+                }
+                else if (Datatype.CLASS_STRING == datatype) {
+                    result = String.class;
                 }
             }
-            else if (Datatype.CLASS_INTEGER == datatype) {
-                switch (dType.getDatatypeSize()) {
-                    case 1:
-                        result = Byte.TYPE;
-                        break;
-                    case 2:
-                        result = Short.TYPE;
-                        break;
-                    case 4:
-                        result = Integer.TYPE;
-                        break;
-                    case 8:
-                        result = Long.TYPE;
-                        break;
-                    default:
-                        break;
-                }
-
-            }
-            else if (Datatype.CLASS_STRING == datatype) {
-                result = String.class;
-            }
+        }
+        else {
+            result = array.getElementType();
         }
         return result;
     }
@@ -648,7 +715,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     @Override
     public String readScalarString() throws IOException {
         try {
-            return new String((char[]) h5Item.getData());
+            // Scalar Strings are String 1 dimension arrays
+            Object data = h5Item.getData();
+            return ((String[]) data)[0];
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -812,7 +881,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
             // for (int i = 0; i < 10; i++) {
             // System.out.println(Array.get(a2Storage, i));
             // }
-
 
             // byte[] b = ds.readBytes();
             // for (int i = 0; i < 10; i++) {

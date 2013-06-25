@@ -4,7 +4,6 @@ import ncsa.hdf.object.HObject;
 
 import org.cdma.interfaces.INode;
 
-
 public class HdfNode implements INode {
 
     private final String name;
@@ -18,7 +17,7 @@ public class HdfNode implements INode {
         this.name = hObject.getName();
     }
 
-
+    @Override
     public String getName() {
         return this.name;
     }
@@ -49,11 +48,12 @@ public class HdfNode implements INode {
         boolean nameMatch;
 
         nameMatch = "".equals(node.getNodeName())
-                || this.getNodeName().toLowerCase()
+                || this.getNodeName().toLowerCase().replace("*", ".*")
                 .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         return nameMatch;
     }
 
+    @Override
     public boolean isGroup() {
         return isGroup;
     }
@@ -62,5 +62,4 @@ public class HdfNode implements INode {
     public String toString() {
         return name;
     }
-
 }
