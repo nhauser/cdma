@@ -1,15 +1,14 @@
 package org.cdma.plugin.edf.navigation;
 
-import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import java.util.Map;
 
 import javax.swing.filechooser.FileSystemView;
 
-import org.apache.commons.io.EndianUtils;
 import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.InvalidArrayTypeException;
@@ -39,6 +37,7 @@ import org.cdma.interfaces.INode;
 import org.cdma.plugin.edf.EdfFactory;
 import org.cdma.plugin.edf.abstraction.AbstractGroup;
 import org.cdma.plugin.edf.abstraction.AbstractObject;
+import org.cdma.plugin.edf.utils.EdfFileReader;
 import org.cdma.plugin.edf.utils.FileComparator;
 import org.cdma.plugin.edf.utils.StringUtils;
 import org.cdma.utils.DefaultNode;
@@ -79,614 +78,264 @@ public class EdfGroup extends AbstractGroup {
 
     private void analyzeEdfFile() {
         if (!analyzed) {
-            if (false) {
-                analyzeEdfFileOLD();
-            }
-            else {
 
-                if (referenceFile != null) {
-                    // TODO DEBUG
-                    System.out.println("Analyzing EDF File " + referenceFile);
-                    HashMap<String, String> headerMap = new HashMap<String, String>();
-                    try {
-                        FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
-                        DataInputStream dis = new DataInputStream(fis);
-                        // ByteBuffer byteBuffer = ByteBuffer.allocate(1024 * 1024);
-                        // byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                        int character = -1;
+            if (referenceFile != null) {
+                HashMap<String, String> headerMap = new HashMap<String, String>();
+                try {
+                    FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
+                    DataInputStream dis = new DataInputStream(fis);
 
-                        StringBuffer headerBuffer = new StringBuffer();
-                        boolean newLine = false;
-                        while (true) {
-                            try {
-                                character = dis.read();
-                                if (character == -1) {
-                                    break;
-                                }
-                                headerBuffer.append((char) character);
-                                if (character == '\n') {
-                                    newLine = true;
-                                }
-                                else {
-                                    if ((character == '}') && newLine) {
-                                        character = dis.read();
-                                        break;
-                                    }
-                                    newLine = false;
-                                }
-                            }
-                            catch (IOException e) {
-                                character = -1;
+                    int character = -1;
+
+                    StringBuffer headerBuffer = new StringBuffer();
+                    boolean newLine = false;
+                    while (true) {
+                        try {
+                            character = dis.read();
+                            if (character == -1) {
                                 break;
                             }
-                        }
-                        if (character != -1) {
-                            char toCheck = headerBuffer.charAt(0);
-                            while (Character.isWhitespace(toCheck) || (toCheck == '{')) {
-                                headerBuffer.delete(0, 1);
-                                toCheck = headerBuffer.charAt(0);
+                            headerBuffer.append((char) character);
+                            if (character == '\n') {
+                                newLine = true;
                             }
+                            else {
+                                if ((character == '}') && newLine) {
+                                    character = dis.read();
+                                    break;
+                                }
+                                newLine = false;
+                            }
+                        }
+                        catch (IOException e) {
+                            character = -1;
+                            break;
+                        }
+                    }
+                    if (character != -1) {
+                        char toCheck = headerBuffer.charAt(0);
+                        while (Character.isWhitespace(toCheck) || (toCheck == '{')) {
+                            headerBuffer.delete(0, 1);
+                            toCheck = headerBuffer.charAt(0);
+                        }
+                        toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
+                        while (Character.isWhitespace(toCheck) || (toCheck == '}')) {
+                            headerBuffer.delete(headerBuffer.length() - 1, headerBuffer.length());
                             toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
-                            while (Character.isWhitespace(toCheck) || (toCheck == '}')) {
-                                headerBuffer.delete(headerBuffer.length() - 1,
-                                        headerBuffer.length());
-                                toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
-                            }
-                            String[] lines = headerBuffer.toString().split(";");
-                            for (String line : lines) {
-                                int separatorIndex = line.lastIndexOf('=');
-                                if (separatorIndex > -1) {
-                                    headerMap.put(line.substring(0, separatorIndex).trim(), line
-                                            .substring(separatorIndex + 1).trim());
-                                }
-                            }
-                            // Image Recovery
-                            try {
-                                boolean littleEndian = "LowByteFirst".equals(headerMap
-                                        .get("ByteOrder"));
-                                int dimX = Integer.valueOf(headerMap.get("Dim_1"));
-                                int dimY = Integer.valueOf(headerMap.get("Dim_2"));
-                                String dataType = headerMap.get("DataType");
-                                int y = 0, x = 0;
-                                Object imageValue = null;
-                                boolean unsigned = dataType.startsWith("Unsigned");
-                                if ("SignedByte".equals(dataType)) {
-                                    imageValue = new byte[dimY][dimX];
-                                    byte[][] arrayImageValue = (byte[][]) imageValue;
-                                    while (y < dimY) {
-                                        int read = dis.read();
-                                        if (read == -1) {
-                                            imageValue = null;
-                                            break;
-                                        }
-                                        else {
-
-                                            arrayImageValue[y][x] = (byte) read;
-                                            x++;
-                                            if (x >= dimX) {
-                                                x = 0;
-                                                y++;
-                                            }
-                                        }
-                                    }
-                                }
-                                else if ("UnsignedByte".equals(dataType)) {
-
-                                    imageValue = new short[dimY][dimX];
-                                    short[][] arrayImageValue = (short[][]) imageValue;
-
-                                    while (y < dimY) {
-                                        int read = dis.read();
-                                        if (read == -1) {
-                                            imageValue = null;
-                                            break;
-                                        }
-                                        else {
-                                            arrayImageValue[y][x] = (short) read;
-                                            x++;
-                                            if (x >= dimX) {
-                                                x = 0;
-                                                y++;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                else if ("UnsignedShort".equals(dataType)
-                                        || "SignedShort".equals(dataType)) {
-                                    short[][] arrayImageValue = new short[dimY][dimX];
-                                    int bufferSize = 4 * 1024 * 1024;
-                                    ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
-                                    byte[] dataToRead = new byte[bufferSize];
-                                    byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-                                    dis.readFully(dataToRead);
-                                    byteBuffer.get();
-                                    byteBuffer.put(dataToRead);
-
-                                    short[] array = byteBuffer.asShortBuffer().array();
-                                    // TODO DEBUG
-                                    System.out.println("stop");
-
-                                }
-                                else if ("SignedInteger".equals(dataType)
-                                        || "UnsignedInteger".equals(dataType)) {
-                                    imageValue = new int[dimY][dimX];
-                                    int[][] arrayImageValue = (int[][]) imageValue;
-                                    int lastBinaryValue;
-                                    try {
-                                        while (y < dimY) {
-
-                                            lastBinaryValue = dis.readInt();
-
-                                            if (littleEndian) {
-                                                // extract corresponding unsigned short (little
-                                                // endian)
-                                                arrayImageValue[y][x] = EndianUtils
-                                                        .swapInteger(lastBinaryValue);
-                                            }
-                                            else {
-                                                // extract corresponding unsigned short (big endian)
-                                                arrayImageValue[y][x] = lastBinaryValue;
-                                            }
-                                            x++;
-                                            if (x >= dimX) {
-                                                x = 0;
-                                                y++;
-                                            }
-                                        }
-
-                                    }
-                                    catch (EOFException e) {
-                                    }
-                                }
-                                else if ("UnsignedInteger".equals(dataType)
-                                        || "UnsignedLong".equals(dataType)) {
-                                    imageValue = new int[dimY][dimX];
-                                    int[][] arrayImageValue = (int[][]) imageValue;
-                                    int lastBinaryValue;
-                                    try {
-                                        while (y < dimY) {
-
-                                            lastBinaryValue = dis.readInt();
-
-                                            if (littleEndian) {
-                                                // extract corresponding unsigned short (little
-                                                // endian)
-                                                arrayImageValue[y][x] = EndianUtils
-                                                        .swapInteger(lastBinaryValue);
-                                            }
-                                            else {
-                                                // extract corresponding unsigned short (big endian)
-                                                arrayImageValue[y][x] = lastBinaryValue;
-                                            }
-                                            x++;
-                                            if (x >= dimX) {
-                                                x = 0;
-                                                y++;
-                                            }
-                                        }
-
-                                    }
-                                    catch (EOFException e) {
-                                    }
-
-                                }
-                                else if ("Signed64".equals(dataType)) {
-                                    throw new NotImplementedException();
-                                }
-                                else if ("Unsigned64".equals(dataType)) {
-                                    unsigned = true;
-                                    throw new NotImplementedException();
-                                }
-                                else if ("FloatValue".equals(dataType)) {
-                                    throw new NotImplementedException();
-                                }
-                                else if ("DoubleValue".equals(dataType)) {
-                                    throw new NotImplementedException();
-                                }
-                                if (imageValue != null) {
-                                    EdfDataItem imageDataItem = new EdfDataItem("Image",
-                                            new DefaultArrayMatrix(EdfFactory.NAME, imageValue),
-                                            unsigned);
-                                    // EdfDataItem imageDataItem = new EdfDataItem("Image", new
-                                    // BasicArray(
-                                    // imageValue, new int[] { dimX, dimY }), unsigned);
-                                    addDataItem(imageDataItem);
-                                }
-                            }
-                            catch (Exception e) {
-                                e.printStackTrace();
-                                // ignore exceptions for Image Recovery
-                            }
-                            // Cleaning keys bound to image
-                            headerMap.remove("ByteOrder");
-                            headerMap.remove("Dim_1");
-                            headerMap.remove("Dim_2");
-                            headerMap.remove("DataType");
-                            // Avoid having another item with the same name as image item
-                            headerMap.remove("Image");
-
-                            // Other DataItems
-                            HashMap<String, EdfGroup> subGroupMap = new HashMap<String, EdfGroup>();
-                            for (String key : headerMap.keySet()) {
-                                int openIndex = key.lastIndexOf('(');
-                                int closeIndex = key.lastIndexOf(')');
-                                if ((openIndex > -1) && (closeIndex > openIndex)) {
-                                    // Group items by name
-                                    String groupName = key.substring(openIndex + 1, closeIndex);
-                                    EdfGroup subGroup = subGroupMap.get(groupName);
-                                    if (subGroup == null) {
-                                        subGroup = new EdfGroup(null);
-                                        subGroup.setName(groupName);
-                                        subGroup.setShortName(groupName);
-                                        subGroup.setAnalyzed(true);
-                                        addSubgroup(subGroup);
-                                        subGroupMap.put(groupName, subGroup);
-
-                                    }
-                                    String itemName = key.substring(0, openIndex)
-                                            .replaceAll("=", "").trim();
-                                    subGroup.addDataItem(buildDataItem(itemName, headerMap.get(key)));
-                                }
-                                else {
-                                    // Build simple dataItem
-                                    addDataItem(buildDataItem(key, headerMap.get(key)));
-                                }
-                            }
-                            subGroupMap.clear();
-
-                            headerMap.clear();
-                            dis.close();
-
                         }
+                        String[] lines = headerBuffer.toString().split(";");
+                        for (String line : lines) {
+                            int separatorIndex = line.lastIndexOf('=');
+                            if (separatorIndex > -1) {
+                                headerMap.put(line.substring(0, separatorIndex).trim(), line
+                                        .substring(separatorIndex + 1).trim());
+                            }
+                        }
+                        readImageFromFile(headerMap, dis);
+                        // Cleaning keys bound to image
+                        headerMap.remove("ByteOrder");
+                        headerMap.remove("Dim_1");
+                        headerMap.remove("Dim_2");
+                        headerMap.remove("DataType");
+                        // Avoid having another item with the same name as image item
+                        headerMap.remove("Image");
+
+                        // Other DataItems
+                        HashMap<String, EdfGroup> subGroupMap = new HashMap<String, EdfGroup>();
+                        for (String key : headerMap.keySet()) {
+                            int openIndex = key.lastIndexOf('(');
+                            int closeIndex = key.lastIndexOf(')');
+                            if ((openIndex > -1) && (closeIndex > openIndex)) {
+                                // Group items by name
+                                String groupName = key.substring(openIndex + 1, closeIndex);
+                                EdfGroup subGroup = subGroupMap.get(groupName);
+                                if (subGroup == null) {
+                                    subGroup = new EdfGroup(null);
+                                    subGroup.setName(groupName);
+                                    subGroup.setShortName(groupName);
+                                    subGroup.setAnalyzed(true);
+                                    addSubgroup(subGroup);
+                                    subGroupMap.put(groupName, subGroup);
+
+                                }
+                                String itemName = key.substring(0, openIndex).replaceAll("=", "")
+                                        .trim();
+                                subGroup.addDataItem(buildDataItem(itemName, headerMap.get(key)));
+                            }
+                            else {
+                                // Build simple dataItem
+                                addDataItem(buildDataItem(key, headerMap.get(key)));
+                            }
+                        }
+                        subGroupMap.clear();
+
+                        headerMap.clear();
+                        dis.close();
+
                     }
-                    catch (FileNotFoundException e) {
-                        // Just ignore this case
-                    }
-                    catch (IOException e) {
-                        // Just ignore this case
-                    }
+                }
+                catch (FileNotFoundException e) {
+                    // Just ignore this case
+                }
+                catch (IOException e) {
+                    // Just ignore this case
                 }
             }
         }
+
         analyzed = true;
     }
 
-    private short[] read(File file, long numRecord, long samplesPerRecord, long recordPosition,
-            long startingSampleInFirstRecord, long nbSamplesToRead,
-            long nbOfSamplesToReadInFirstRecord) {
-
-        RandomAccessFile raf = new RandomAccessFile(file, "r");
-        ByteBuffer byteBuffer = ByteBuffer.allocate((int) nbSamplesToRead * 2);
-        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
-
-        short[] result = new short[(int) nbSamplesToRead];
-
-        int nbSamplesToReadAtOnce = 0;
-
-        nbSamplesToReadAtOnce = (int) nbOfSamplesToReadInFirstRecord;
-
-        while (nbSamplesToRead > 0) {
-            byte[] DataToRead = new byte[nbSamplesToReadAtOnce * 2];
-            try {
-                raf.seek(recordPosition + startingSampleInFirstRecord * 2);
-                raf.readFully(DataToRead);
-                byteBuffer.put(DataToRead);
-            }
-            catch (EOFException eof) {
-                // eof.printStackTrace();// add / remove this line
-                break;
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            nbSamplesToRead -= nbSamplesToReadAtOnce;
-
-            numRecord++;
-
-            recordPosition = edfFile.getDataStartPositionInFile() + numRecord
-                    * edfFile.getTotalNumberOfSamplesPerRecord() * 2
-                    + edfFile.getSignalDataOffsetInRecord(signal.getNumSignal());
-
-            startingSampleInFirstRecord = 0;
-
-            if ((nbSamplesToRead / (double) signal.getNbSamples()) >= 1.0) {
-                nbSamplesToReadAtOnce = (int) samplesPerRecord;
-            }
-            else {
-                nbSamplesToReadAtOnce = (int) nbSamplesToRead;
-            }
-        }
-
-        shortBuffer.get(result);
-
-        return result;
-    }
-
-    private void analyzeEdfFileOLD() {
-        if (referenceFile != null) {
-            HashMap<String, String> headerMap = new HashMap<String, String>();
-            try {
-                FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
-                DataInputStream dis = new DataInputStream(fis);
-                BufferedInputStream reader = new BufferedInputStream(fis);
-
-                int character = -1;
-                int count = 0;
-                StringBuffer headerBuffer = new StringBuffer();
-                boolean newLine = false;
-                while (true) {
-                    try {
-                        count++;
-                        character = reader.read();
-                        if (character == -1) {
-                            break;
-                        }
-                        headerBuffer.append((char) character);
-                        if (character == '\n') {
-                            newLine = true;
-                        }
-                        else {
-                            if ((character == '}') && newLine) {
-                                count++;
-                                character = reader.read();
-                                break;
-                            }
-                            newLine = false;
-                        }
-                    }
-                    catch (IOException e) {
-                        character = -1;
+    private void readImageFromFile(HashMap<String, String> headerMap, DataInputStream dis) {
+        // Image Recovery
+        try {
+            boolean littleEndian = "LowByteFirst".equals(headerMap.get("ByteOrder"));
+            int dimX = Integer.valueOf(headerMap.get("Dim_1"));
+            int dimY = Integer.valueOf(headerMap.get("Dim_2"));
+            String dataType = headerMap.get("DataType");
+            int y = 0, x = 0;
+            Object imageValue = null;
+            boolean unsigned = dataType.startsWith("Unsigned");
+            if ("SignedByte".equals(dataType)) {
+                imageValue = new byte[dimY][dimX];
+                byte[][] arrayImageValue = (byte[][]) imageValue;
+                while (y < dimY) {
+                    int read = dis.read();
+                    if (read == -1) {
+                        imageValue = null;
                         break;
                     }
-                }
-                if (character != -1) {
-                    char toCheck = headerBuffer.charAt(0);
-                    while (Character.isWhitespace(toCheck) || (toCheck == '{')) {
-                        headerBuffer.delete(0, 1);
-                        toCheck = headerBuffer.charAt(0);
-                    }
-                    toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
-                    while (Character.isWhitespace(toCheck) || (toCheck == '}')) {
-                        headerBuffer.delete(headerBuffer.length() - 1, headerBuffer.length());
-                        toCheck = headerBuffer.charAt(headerBuffer.length() - 1);
-                    }
-                    String[] lines = headerBuffer.toString().split(";");
-                    for (String line : lines) {
-                        int separatorIndex = line.lastIndexOf('=');
-                        if (separatorIndex > -1) {
-                            headerMap.put(line.substring(0, separatorIndex).trim(),
-                                    line.substring(separatorIndex + 1).trim());
-                        }
-                    }
-                    // Image Recovery
-                    try {
-                        boolean littleEndian = "LowByteFirst".equals(headerMap.get("ByteOrder"));
-                        int dimX = Integer.valueOf(headerMap.get("Dim_1"));
-                        int dimY = Integer.valueOf(headerMap.get("Dim_2"));
-                        String dataType = headerMap.get("DataType");
-                        int y = 0, x = 0;
-                        Object imageValue = null;
-                        boolean unsigned = false;
-                        if ("SignedByte".equals(dataType)) {
-                            imageValue = new byte[dimY][dimX];
-                            byte[][] arrayImageValue = (byte[][]) imageValue;
-                            while (y < dimY) {
-                                int read = reader.read();
-                                if (read == -1) {
-                                    imageValue = null;
-                                    break;
-                                }
-                                else {
+                    else {
 
-                                    arrayImageValue[y][x] = (byte) read;
-                                    x++;
-                                    if (x >= dimX) {
-                                        x = 0;
-                                        y++;
-                                    }
-                                }
-                            }
-                        }
-                        else if ("UnsignedByte".equals(dataType)) {
-                            unsigned = true;
-                            imageValue = new short[dimY][dimX];
-                            short[][] arrayImageValue = (short[][]) imageValue;
-
-                            while (y < dimY) {
-                                int read = reader.read();
-                                if (read == -1) {
-                                    imageValue = null;
-                                    break;
-                                }
-                                else {
-                                    arrayImageValue[y][x] = (short) read;
-                                    x++;
-                                    if (x >= dimX) {
-                                        x = 0;
-                                        y++;
-                                    }
-                                }
-                            }
-                        }
-                        else if ("SignedShort".equals(dataType)) {
-                            imageValue = new short[dimY][dimX];
-                            short[][] arrayImageValue = (short[][]) imageValue;
-                            byte[] bitPack = new byte[2];
-                            int lastBinaryValue;
-                            while (y < dimY) {
-                                lastBinaryValue = reader.read(bitPack);
-                                if (lastBinaryValue == bitPack.length) {
-                                    if (littleEndian) {
-                                        // extract corresponding unsigned short (little endian)
-                                        arrayImageValue[y][x] = (short) (((bitPack[1] << (short) 8)) | (bitPack[0]));
-                                    }
-                                    else {
-                                        // extract corresponding unsigned short (big endian)
-                                        arrayImageValue[y][x] = (short) ((bitPack[0] << (short) 8) | (bitPack[1]));
-                                    }
-                                    x++;
-                                    if (x >= dimX) {
-                                        x = 0;
-                                        y++;
-                                    }
-                                }
-                                else {
-                                    imageValue = null;
-                                    break;
-                                }
-                            }
-                        }
-                        else if ("UnsignedShort".equals(dataType)) {
-                            imageValue = new int[dimY][dimX];
-                            int[][] arrayImageValue = (int[][]) imageValue;
-                            byte[] bitPack = new byte[2];
-                            int lastBinaryValue;
-                            while (y < dimY) {
-                                lastBinaryValue = reader.read(bitPack);
-                                if (lastBinaryValue == bitPack.length) {
-                                    arrayImageValue[y][x] = 0;
-                                    if (littleEndian) {
-                                        // extract corresponding unsigned short (little endian)
-                                        arrayImageValue[y][x] = ((bitPack[1] & 0xff) << 8)
-                                                | ((bitPack[0] & 0xff));
-                                    }
-                                    else {
-                                        // extract corresponding unsigned short (big endian)
-                                        arrayImageValue[y][x] = ((bitPack[0] & 0xff) << 8)
-                                                | ((bitPack[1] & 0xff));
-                                    }
-                                    x++;
-                                    if (x >= dimX) {
-                                        x = 0;
-                                        y++;
-                                    }
-                                }
-                                else {
-                                    imageValue = null;
-                                    break;
-                                }
-                            }
-                        }
-                        else if ("SignedInteger".equals(dataType) || "SignedLong".equals(dataType)) {
-                            imageValue = new int[dimY][dimX];
-                            int[][] arrayImageValue = (int[][]) imageValue;
-                            byte[] bitPack = new byte[2];
-                            int lastBinaryValue;
-                            while (y < dimY) {
-                                while (true) {
-                                    try {
-                                        // if (lastBinaryValue == bitPack.length) {
-                                        // arrayImageValue[y][x] = 0;
-                                        if (littleEndian) {
-                                            // extract corresponding unsigned short (little endian)
-                                            arrayImageValue[y][x] = (dis.readByte())
-                                                    | (dis.readByte() << 8)
-                                                    | (dis.readByte() << 16)
-                                                    | (dis.readByte() << 24);
-                                        }
-                                        else {
-                                            // extract corresponding unsigned short (big endian)
-                                            arrayImageValue[y][x] = (dis.readByte())
-                                                    | (dis.readByte() << 8)
-                                                    | (dis.readByte() << 16)
-                                                    | (dis.readByte() << 24);
-                                        }
-                                        x++;
-                                        if (x >= dimX) {
-                                            x = 0;
-                                            y++;
-                                        }
-                                    }
-                                    catch (EOFException e) {
-                                        break;
-                                    }
-                                }
-                                // else {
-                                // imageValue = null;
-                                // break;
-                                // }
-                            }
-
-                        }
-                        else if ("UnsignedInteger".equals(dataType)
-                                || "UnsignedLong".equals(dataType)) {
-                            unsigned = true;
-                            throw new NotImplementedException();
-                        }
-                        else if ("Signed64".equals(dataType)) {
-                            throw new NotImplementedException();
-                        }
-                        else if ("Unsigned64".equals(dataType)) {
-                            unsigned = true;
-                            throw new NotImplementedException();
-                        }
-                        else if ("FloatValue".equals(dataType)) {
-                            throw new NotImplementedException();
-                        }
-                        else if ("DoubleValue".equals(dataType)) {
-                            throw new NotImplementedException();
-                        }
-                        if (imageValue != null) {
-                            EdfDataItem imageDataItem = new EdfDataItem("Image",
-                                    new DefaultArrayMatrix(EdfFactory.NAME, imageValue), unsigned);
-                            // EdfDataItem imageDataItem = new EdfDataItem("Image", new BasicArray(
-                            // imageValue, new int[] { dimX, dimY }), unsigned);
-                            addDataItem(imageDataItem);
+                        arrayImageValue[y][x] = (byte) read;
+                        x++;
+                        if (x >= dimX) {
+                            x = 0;
+                            y++;
                         }
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        // ignore exceptions for Image Recovery
-                    }
-                    // Cleaning keys bound to image
-                    headerMap.remove("ByteOrder");
-                    headerMap.remove("Dim_1");
-                    headerMap.remove("Dim_2");
-                    headerMap.remove("DataType");
-                    // Avoid having another item with the same name as image item
-                    headerMap.remove("Image");
-
-                    // Other DataItems
-                    HashMap<String, EdfGroup> subGroupMap = new HashMap<String, EdfGroup>();
-                    for (String key : headerMap.keySet()) {
-                        int openIndex = key.lastIndexOf('(');
-                        int closeIndex = key.lastIndexOf(')');
-                        if ((openIndex > -1) && (closeIndex > openIndex)) {
-                            // Group items by name
-                            String groupName = key.substring(openIndex + 1, closeIndex);
-                            EdfGroup subGroup = subGroupMap.get(groupName);
-                            if (subGroup == null) {
-                                subGroup = new EdfGroup(null);
-                                subGroup.setName(groupName);
-                                subGroup.setShortName(groupName);
-                                addSubgroup(subGroup);
-                                subGroupMap.put(groupName, subGroup);
-                            }
-                            String itemName = key.substring(0, openIndex).replaceAll("=", "")
-                                    .trim();
-                            subGroup.addDataItem(buildDataItem(itemName, headerMap.get(key)));
-                        }
-                        else {
-                            // Build simple dataItem
-                            addDataItem(buildDataItem(key, headerMap.get(key)));
-                        }
-                    }
-                    subGroupMap.clear();
-
-                    headerMap.clear();
-                    reader.close();
                 }
             }
-            catch (FileNotFoundException e) {
-                // Just ignore this case
+            else if ("UnsignedByte".equals(dataType)) {
+
+                imageValue = new short[dimY][dimX];
+                short[][] arrayImageValue = (short[][]) imageValue;
+
+                while (y < dimY) {
+                    int read = dis.read();
+                    if (read == -1) {
+                        imageValue = null;
+                        break;
+                    }
+                    else {
+                        arrayImageValue[y][x] = (short) read;
+                        x++;
+                        if (x >= dimX) {
+                            x = 0;
+                            y++;
+                        }
+                    }
+                }
             }
-            catch (IOException e) {
-                // Just ignore this case
+            else if ("UnsignedShort".equals(dataType) || "SignedInteger".equals(dataType)) {
+
+                // Specific
+                imageValue = new int[dimY][dimX];
+
+                // short = 2 bytes
+                // int = 4 bytes
+                int factor = (unsigned) ? 2 : 4;
+                int sizeToRead = factor * dimY * dimX;
+
+                // Global
+                Object flatImageValue = null;
+                ByteBuffer byteBuffer = EdfFileReader.readAsBytes(sizeToRead, littleEndian, dis);
+
+                // Specific
+                if ("UnsignedShort".equals(dataType)) {
+                    flatImageValue = new short[dimY * dimX];
+                    ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
+                    shortBuffer.get((short[]) flatImageValue);
+                }
+                else {
+                    flatImageValue = new int[dimY * dimX];
+                    IntBuffer integerBuffer = byteBuffer.asIntBuffer();
+                    integerBuffer.get((int[]) flatImageValue);
+                }
+
+                int globalIndex = 0;
+                for (int yIndex = 0; yIndex < dimY; yIndex++) {
+                    for (int xIndex = 0; xIndex < dimX; xIndex++) {
+                        int value = Array.getInt(flatImageValue, globalIndex);
+                        value = (unsigned) ? value & 0xffff : value;
+                        ((int[][]) imageValue)[yIndex][xIndex] = value;
+                        globalIndex++;
+                    }
+                }
+
+            }
+            else if ("SignedLong".equals(dataType) || "UnsignedInteger".equals(dataType)) {
+
+                // Specific
+                imageValue = new long[dimY][dimX];
+
+                // long = 8 bytes
+                // int = 4 bytes
+                int factor = (unsigned) ? 4 : 8;
+                int sizeToRead = factor * dimY * dimX;
+
+                // Global
+                Object flatImageValue = null;
+                ByteBuffer byteBuffer = EdfFileReader.readAsBytes(sizeToRead, littleEndian, dis);
+
+                // Specific
+                if ("UnsignedInteger".equals(dataType)) {
+                    flatImageValue = new int[dimY * dimX];
+                    IntBuffer integerBuffer = byteBuffer.asIntBuffer();
+                    integerBuffer.get((int[]) flatImageValue);
+                }
+                else {
+                    flatImageValue = new long[dimY * dimX];
+                    LongBuffer longBuffer = byteBuffer.asLongBuffer();
+                    longBuffer.get((long[]) flatImageValue);
+                }
+
+                int globalIndex = 0;
+                for (int yIndex = 0; yIndex < dimY; yIndex++) {
+                    for (int xIndex = 0; xIndex < dimX; xIndex++) {
+                        long value = Array.getLong(flatImageValue, globalIndex);
+                        value = (unsigned) ? value & 0xFFFFFFFFL : value;
+                        ((long[][]) imageValue)[yIndex][xIndex] = value;
+                        globalIndex++;
+                    }
+                }
+            }
+            else if ("Signed64".equals(dataType)) {
+                throw new NotImplementedException();
+            }
+            else if ("Unsigned64".equals(dataType)) {
+                unsigned = true;
+                throw new NotImplementedException();
+            }
+            else if ("FloatValue".equals(dataType)) {
+                throw new NotImplementedException();
+            }
+            else if ("DoubleValue".equals(dataType)) {
+                throw new NotImplementedException();
+            }
+            if (imageValue != null) {
+                EdfDataItem imageDataItem = new EdfDataItem("Image", new DefaultArrayMatrix(
+                        EdfFactory.NAME, imageValue), unsigned);
+                addDataItem(imageDataItem);
             }
         }
+        catch (Exception e) {
+            e.printStackTrace();
+            // ignore exceptions for Image Recovery
+        }
     }
+
+
 
     public void setAnalyzed(boolean newValue) {
         this.analyzed = newValue;
@@ -854,12 +503,9 @@ public class EdfGroup extends AbstractGroup {
                     fileList.clear();
                 }
             }
-            else if (itemList.isEmpty()) {
-                // recover item groups
-                // TODO DEBUG
-                System.out.println("Analyze ?? for " + this);
-                // analyzeEdfFileNew();
-            }
+            // else if (itemList.isEmpty()) {
+            //
+            // }
         }
         ArrayList<IGroup> result = new ArrayList<IGroup>();
         result.addAll(groupList);
@@ -1004,8 +650,8 @@ public class EdfGroup extends AbstractGroup {
 
         EdfAttribute unit = null;
         if (converted == null) {
-            String[] arrayValue = new String[1];
-            arrayValue[0] = stringValue;
+            char[] arrayValue = new char[stringValue.length()];
+            arrayValue = stringValue.toCharArray();
             // The value is a String
             try {
                 result = new EdfDataItem(name, new DefaultArrayMatrix(EdfFactory.NAME, arrayValue));
@@ -1135,7 +781,7 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
-        System.out.println("EdfGroup.findAllContainerByPath() with " + path);
+
         if (!analyzed) {
             analyzeEdfFile();
         }
@@ -1249,6 +895,141 @@ public class EdfGroup extends AbstractGroup {
     @Override
     public String getFactoryName() {
         throw new NotImplementedException();
+    }
+
+    public static Object convertArrayDimensionFrom1ToN(Object singleDimArray,
+            int... multiDimArrayShape) {
+        Object result = null;
+        if ((singleDimArray != null) && (multiDimArrayShape != null)
+                && (multiDimArrayShape.length > 0) && singleDimArray.getClass().isArray()
+                && (!singleDimArray.getClass().getComponentType().isArray())) {
+            if (multiDimArrayShape.length == 1) {
+                result = singleDimArray;
+            }
+            else {
+                Class<?> dataType = recoverDataType(singleDimArray);
+                if (Array.newInstance(dataType, 0).getClass().equals(singleDimArray.getClass())) {
+                    int arrayLength = Array.getLength(singleDimArray);
+                    int expectedLength = 1;
+                    for (int currentLength : multiDimArrayShape) {
+                        expectedLength *= currentLength;
+                    }
+                    if (arrayLength == expectedLength) {
+                        try {
+                            result = Array.newInstance(dataType, multiDimArrayShape);
+                        }
+                        catch (Exception e) {
+                            result = null;
+                        }
+                        if (result != null) {
+                            // java initializes int values with 0 by default
+                            int[] startPositions = new int[multiDimArrayShape.length];
+                            reshapeArray(0, startPositions, multiDimArrayShape, singleDimArray,
+                                    result, true);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Recursive method reshaping a filled mono-dimensional array into a multi-dimensional array, or
+     * a filled multi-dimensional array into a mono-dimensional array.
+     * 
+     * @param dimIndex reshape all dimensions greater than this one
+     * @param startPositions starting position in multi-dimensional array
+     * @param dimensions dimensions' size of the multi-dimensional array
+     * @param singleDimArray The mono-dimensional array
+     * @param multiDimArray The multi-dimensional array
+     * @param from1ToN A boolean to know the type of reshaping. If <code>TRUE</code>, then this
+     *            method will reshape a filled mono-dimensional array into a multi-dimensional
+     *            array. Otherwise, this method will reshape a filled multi-dimensional array into a
+     *            mono-dimensional array.
+     */
+    private static void reshapeArray(int dimIndex, int[] startPositions, int[] dimensions,
+            Object singleDimArray, Object multiDimArray, boolean from1ToN) {
+        int lStartRaw;
+        int lLinearStart;
+        if (dimIndex == dimensions.length - 1) {
+            lLinearStart = 0;
+            for (int k = 1; k < dimensions.length; k++) {
+                lStartRaw = 1;
+                for (int j = k; j < dimensions.length; j++) {
+                    lStartRaw *= dimensions[j];
+                }
+                lStartRaw *= startPositions[k - 1];
+                lLinearStart += lStartRaw;
+            }
+            if ((singleDimArray != null) && (multiDimArray != null)) {
+                if (from1ToN) {
+                    System.arraycopy(singleDimArray, lLinearStart, multiDimArray, 0,
+                            dimensions[dimensions.length - 1]);
+                }
+                else {
+                    System.arraycopy(multiDimArray, 0, singleDimArray, lLinearStart,
+                            dimensions[dimensions.length - 1]);
+                }
+            }
+        }
+        else {
+            Object[] outputAsArray = (Object[]) multiDimArray;
+            for (int i = 0; i < dimensions[dimIndex]; i++) {
+                Object o = outputAsArray[i];
+                reshapeArray(dimIndex + 1, startPositions, dimensions, singleDimArray, o, from1ToN);
+                if (startPositions[dimIndex] < dimensions[dimIndex] - 1) {
+                    startPositions[dimIndex] = i + 1;
+                }
+                else {
+                    startPositions[dimIndex] = 0;
+                }
+            }
+        }
+    }
+
+    /**
+     * This methods recovers the type of data present in a N dimension array.
+     * 
+     * @param array The array
+     * @return The {@link Class} that represents the data type in the given array. (Example: if
+     *         <code>array</code> is a <code>boolean[][]</code>, the result will be
+     *         {@link Boolean#TYPE}). This method returns <code>null</code> if <code>array</code> is
+     *         <code>null</code>.
+     */
+    public static Class<?> recoverDataType(Object array) {
+        Class<?> result = null;
+        if (array != null) {
+            result = recoverDeepComponentType(array.getClass());
+        }
+        return result;
+    }
+
+    /**
+     * This methods recovers the type of data present in a {@link Class} that represents N dimension
+     * arrays.
+     * 
+     * @param arrayClass The {@link Class}
+     * @return The {@link Class} that represents the data type in the given array. (Example: if
+     *         <code>arrayClass</code> is <code>boolean[][]</code>, the result will be
+     *         {@link Boolean#TYPE}). This method returns <code>null</code> if
+     *         <code>arrayClass</code> is <code>null</code>.
+     */
+    public static Class<?> recoverDeepComponentType(Class<?> arrayClass) {
+        Class<?> result = arrayClass;
+        if (arrayClass != null) {
+            while (result.isArray()) {
+                result = result.getComponentType();
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        EdfGroup group = new EdfGroup(new File(
+                "/home/viguier/NeXusFiles/EDF/test_264/test_264_test_im_00.edf"));
+        group.analyzeEdfFile();
+
     }
 
 }

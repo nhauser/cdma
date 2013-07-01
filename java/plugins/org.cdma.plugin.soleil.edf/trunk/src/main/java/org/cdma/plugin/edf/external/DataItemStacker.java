@@ -43,7 +43,7 @@ public final class DataItemStacker implements IPluginMethod {
 
     public IDataItem stackDataItems(Context context) {
         IDataItem item = null;
-        System.out.println("DataItemStacker.stackDataItems()");
+
         // Get all previously found nodes
         List<IDataItem> items = new ArrayList<IDataItem>();
         List<IContainer> nodes = context.getContainers();

@@ -11,6 +11,7 @@ import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
+import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDimension;
@@ -110,8 +111,23 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     }
 
     @Override
-    public IArray getData() {
+    public IGroup getRootGroup() {
+        IGroup result = null;
+        IDataItem dataItem = dataItems[0];
+        if (dataItem != null) {
+            IContainer parent = dataItem.getParentGroup();
+            if (parent != null) {
+                result = (IGroup) parent.getRootGroup();
+            }
+            else {
+                result = (IGroup) parent;
+            }
+        }
+        return result;
+    }
 
+    @Override
+    public IArray getData() {
         return data;
     }
 
@@ -146,6 +162,7 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     }
 
     @Override
+
     public String getDescription() {
         IAttribute attr = getAttribute("long_name");
         if (attr == null) {
@@ -217,18 +234,15 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     @Override
     public List<IDimension> getDimensionList() {
         ArrayList<IDimension> list = new ArrayList<IDimension>();
-
         for (DimOrder dimOrder : dimensions) {
             list.add(dimOrder.dimension);
         }
-
         return list;
     }
 
     @Override
     public String getDimensionsString() {
         String dimList = "";
-
         int i = 0;
         for (DimOrder dim : dimensions) {
             if (i++ != 0) {
@@ -236,7 +250,6 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
             }
             dimList += dim.dimension.getName();
         }
-
         return dimList;
     }
 
@@ -246,7 +259,6 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
             if (dimord.dimension.getName().equals(name))
                 return dimord.order;
         }
-
         return -1;
     }
 
@@ -308,7 +320,6 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
         item = new EdfDataItem(this);
         item.data.setIndex(item.getData().getArrayUtils().sectionNoReduce(section).getArray()
                 .getIndex());
-
         return item;
     }
 
@@ -545,7 +556,6 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     @Override
     public void setShortName(String name) {
         this.name = name;
-
     }
 
     @Override
@@ -562,11 +572,6 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         buffer.append("DataItem " + getName());
-        // if (data != null) {
-        // Object storage = data.getStorage();
-        // short[][] shortArray = (short[][]) storage;
-        // buffer.append("- Array Value @[10][4] = " + shortArray[11][4]);
-        // }
         return buffer.toString();
     }
 }
