@@ -7,9 +7,9 @@
 		<version>RELEASE</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.cdma.engines</groupId>
-	<artifactId>EdfEngine</artifactId>
-	<name>EDF CDMA Engine</name>
+	<groupId>org.cdma.plugins</groupId>
+	<artifactId>EdfSoleil</artifactId>
+	<name>EDF CDMA Soleil Plugin</name>
 	<version>1.0.0-SNAPSHOT</version>
 	<developers>
 		<developer>
