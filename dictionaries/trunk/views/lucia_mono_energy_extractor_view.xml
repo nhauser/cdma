@@ -1,0 +1,10 @@
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="LUCIA_MONO_ENERGY_EXTRACTOR" synonym="">
+    <item key="crystal"/>
+    <item key="thetaM"/>
+    <item key="crystalDistanceInsb"/>
+    <item key="crystalDistanceSilicium"/>
+    <item key="crystalDistanceBeryl"/>
+    <item key="crystalDistanceSi311"/>
+    <item key="crystalDistanceKTP"/>
+</data-def>
