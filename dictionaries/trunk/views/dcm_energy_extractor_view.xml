@@ -1,0 +1,5 @@
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="DCM_ENERGY_EXTRACTOR" synonym="">
+    <item key="thetaM"/>
+    <item key="crystalDistance"/>
+</data-def>
