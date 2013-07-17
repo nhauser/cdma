@@ -1,5 +1,7 @@
 <!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
 <data-def name="DCM_ENERGY_EXTRACTOR" synonym="">
+  <group key="dcm">
     <item key="thetaM"/>
     <item key="crystalDistance"/>
+  </group>
 </data-def>
