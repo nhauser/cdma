@@ -143,16 +143,13 @@
   <item key="thetaM">
     <path>/{NXdata}/actuator_*@long_name=*/counter6</path>
     <call>AttributeFilter</call>
-    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="crystalDistance">
     <path>/{NXinstrument}/{NXmonochromator}/crystal_inter_reticular_distance</path>
-    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="beamEnergy">
     <path>/{NXdata}/actuator_*@long_name=*/energy*</path>
     <call>AttributeFilter</call>
-    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="x_position">
     <path>/{NXdata}/trajectory_1_1</path>
