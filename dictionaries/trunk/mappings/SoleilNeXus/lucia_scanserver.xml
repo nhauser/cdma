@@ -141,7 +141,7 @@
     <call>AttributeFilter</call>
   </item>
   <item key="thetaM">
-    <path>/{NXdata}/actuator_*@long_name=*/counter6</path>
+    <path>/{NXdata}/data_*@long_name=*/counter6</path>
     <call>AttributeFilter</call>
   </item>
   <item key="crystalDistance">
