@@ -16,6 +16,8 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,7 +43,7 @@ public final class NxsDatasource implements IDatasource {
             mDetectedSources = new HashMap<String, DetectedSource>();
         }
     }
-    
+
     public static NxsDatasource getInstance() {
         synchronized (NxsDatasource.class ) {
             if( datasource == null ) {
@@ -123,6 +125,13 @@ public final class NxsDatasource implements IDatasource {
             if (source.isFolder() && !source.isDatasetFolder()) {
                 File folder = new File(target.getPath());
                 File[] files = folder.listFiles( (FileFilter) new ValidURIFilter() );
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    }
+                });
+
                 if( files != null ) {
                     for (File file : files) {
                         result.add(file.toURI());
@@ -138,9 +147,9 @@ public final class NxsDatasource implements IDatasource {
                         NxsDataset dataset = NxsDataset.instanciate(target);
                         IGroup group = dataset.getRootGroup();
                         if( group != null ) {
-	                        for (IGroup node : group.getGroupList()) {
-	                            result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
-	                        }
+                            for (IGroup node : group.getGroupList()) {
+                                result.add(URI.create(uri + sep + URLEncoder.encode("/" + node.getShortName(), "UTF-8")));
+                            }
                         }
 
                     }
@@ -203,11 +212,11 @@ public final class NxsDatasource implements IDatasource {
         String path = target.getPath();
         String fragment = target.getFragment();
         if( path != null ) {
-	        for( String part : path.split( "/" ) ) {
-	            if( part != null && ! part.isEmpty() ) {
-	                parts.add(part);
-	            }
-	        }
+            for( String part : path.split( "/" ) ) {
+                if( part != null && ! part.isEmpty() ) {
+                    parts.add(part);
+                }
+            }
         }
         if (fragment != null) {
             try {
@@ -235,13 +244,13 @@ public final class NxsDatasource implements IDatasource {
         }
         return last;
     }
-    
+
     private static final String URI_DESC = "File system: folders and NeXus files";
-    
-	@Override
-	public String getURITypeDescription() {
-		return URI_DESC;
-	}
+
+    @Override
+    public String getURITypeDescription() {
+        return URI_DESC;
+    }
 
     // ---------------------------------------------------------
     // Plug-in specific methods
@@ -267,7 +276,7 @@ public final class NxsDatasource implements IDatasource {
 
                 source = new DetectedSource(uri);
                 if( source.isStable() ) {
-                	mDetectedSources.put(uri.toString(), source);
+                    mDetectedSources.put(uri.toString(), source);
                 }
             }
         }
