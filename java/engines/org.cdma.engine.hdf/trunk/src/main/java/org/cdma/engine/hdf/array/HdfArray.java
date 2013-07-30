@@ -1,17 +1,17 @@
-package array;
+package org.cdma.engine.hdf.array;
 
 import java.util.logging.Level;
 
-import navigation.HdfDataItem;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
 import org.cdma.arrays.DefaultArrayInline;
 import org.cdma.arrays.DefaultIndex;
+import org.cdma.engine.hdf.navigation.HdfDataItem;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 
-import utils.HdfObjectUtils;
 
 public class HdfArray extends DefaultArrayInline {
 

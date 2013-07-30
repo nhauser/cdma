@@ -1,16 +1,16 @@
-package utils;
+package org.cdma.engine.hdf.utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import navigation.HdfAttribute;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
 
 import org.cdma.Factory;
+import org.cdma.engine.hdf.navigation.HdfAttribute;
 import org.cdma.interfaces.IAttribute;
 
 public class HdfObjectUtils {

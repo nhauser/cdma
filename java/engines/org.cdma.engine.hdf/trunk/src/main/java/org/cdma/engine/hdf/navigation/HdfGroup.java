@@ -1,4 +1,4 @@
-package navigation;
+package org.cdma.engine.hdf.navigation;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +21,9 @@ import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.Path;
+import org.cdma.engine.hdf.utils.HdfNode;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
+import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
@@ -35,9 +38,6 @@ import org.cdma.interfaces.IKey;
 import org.cdma.interfaces.INode;
 import org.cdma.utils.Utilities.ModelType;
 
-import utils.HdfNode;
-import utils.HdfObjectUtils;
-import utils.HdfPath;
 
 public class HdfGroup implements IGroup, Cloneable {
 
