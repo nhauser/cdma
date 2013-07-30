@@ -1,4 +1,4 @@
-//******************************************************************************
+// ******************************************************************************
 //Copyright (c) 2011 Synchrotron Soleil.
 //The CDMA library is free software; you can redistribute it and/or modify it
 //under the terms of the GNU General Public License as published by the Free
@@ -50,8 +50,8 @@ public final class EdfDatasource implements IDatasource {
             if (!isDir) {
                 String fileName = path.getPath();
                 int length = fileName.length();
-                result = (length > EXTENSION.length() && fileName.substring(
-                        length - EXTENSION.length()).equalsIgnoreCase(EXTENSION));
+                result = (length > EXTENSION.length() && fileName.substring(length - EXTENSION.length())
+                        .equalsIgnoreCase(EXTENSION));
             } else {
                 result = findEDFFiles(path);
             }
@@ -60,7 +60,8 @@ public final class EdfDatasource implements IDatasource {
     }
 
     private static boolean findEDFFiles(File path) {
-        boolean result = false;
+        boolean hasEdfFile = false;
+        boolean hasDirectory = false;
         File[] files = FileSystemView.getFileSystemView().getFiles(path, false);
         if (files != null) {
             ArrayList<File> fileList = new ArrayList<File>();
@@ -70,12 +71,14 @@ public final class EdfDatasource implements IDatasource {
                 String fPath = file.getAbsolutePath();
                 int pointIndex = fPath.lastIndexOf('.');
                 if ((pointIndex > -1) && "edf".equalsIgnoreCase(fPath.substring(pointIndex + 1))) {
-                    result = true;
-                    break;
+                    hasEdfFile = true;
+                }
+                if (file.isDirectory()) {
+                    hasDirectory = true;
                 }
             }
         }
-        return result;
+        return hasEdfFile && !hasDirectory;
     }
 
     @Override
