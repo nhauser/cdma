@@ -14,8 +14,6 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.logging.Level;
 
-import navigation.HdfAttribute;
-import navigation.HdfDataset;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
@@ -23,6 +21,9 @@ import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
+import org.cdma.engine.hdf.navigation.HdfAttribute;
+import org.cdma.engine.hdf.navigation.HdfDataset;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
@@ -43,7 +44,6 @@ import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 import org.cdma.plugin.soleil.nexus.utils.NxsArrayMath;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 
-import utils.HdfObjectUtils;
 
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;

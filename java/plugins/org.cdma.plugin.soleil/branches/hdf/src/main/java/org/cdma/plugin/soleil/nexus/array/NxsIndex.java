@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cdma.arrays.DefaultIndex;
+import org.cdma.engine.hdf.array.HdfIndex;
 import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.IRange;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
 
-import array.HdfIndex;
 
 public final class NxsIndex implements IIndex, Cloneable {
     private final DefaultIndex mIndexArrayData;  // View describing the matrix of arrays

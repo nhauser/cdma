@@ -12,6 +12,8 @@ package org.cdma.plugin.soleil.nexus.array;
 
 import org.cdma.arrays.DefaultArrayIterator;
 import org.cdma.arrays.DefaultSliceIterator;
+import org.cdma.engine.hdf.array.HdfArray;
+import org.cdma.engine.hdf.array.HdfIndex;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -27,8 +29,6 @@ import org.cdma.plugin.soleil.nexus.utils.NxsArrayUtils;
 import org.cdma.utils.ArrayTools;
 import org.cdma.utils.IArrayUtils;
 
-import array.HdfArray;
-import array.HdfIndex;
 
 public final class NxsArray implements IArray {
     private Object     mData;      // It's an array of values

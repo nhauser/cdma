@@ -1,7 +1,7 @@
 package org.cdma.plugin.soleil.nexus.utils;
 
 
-import utils.HdfNode;
+import org.cdma.engine.hdf.utils.HdfNode;
 
 public class NxsNode extends HdfNode {
 

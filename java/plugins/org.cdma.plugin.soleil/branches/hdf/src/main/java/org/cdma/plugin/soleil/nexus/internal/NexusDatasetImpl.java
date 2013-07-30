@@ -13,10 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import navigation.HdfDataset;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
+import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.exception.FileAccessException;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
 

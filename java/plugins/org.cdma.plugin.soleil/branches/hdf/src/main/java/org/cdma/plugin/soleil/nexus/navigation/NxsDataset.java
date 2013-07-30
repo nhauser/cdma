@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-import navigation.HdfDataset;
-import navigation.HdfGroup;
 
 import org.cdma.Factory;
 import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
+import org.cdma.engine.hdf.navigation.HdfDataset;
+import org.cdma.engine.hdf.navigation.HdfGroup;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;

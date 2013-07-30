@@ -1,8 +1,8 @@
 package org.cdma.plugin.soleil.nexus.utils;
 
+import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.interfaces.INode;
 
-import utils.HdfPath;
 
 public class NxsPath extends HdfPath {
 
