@@ -5,7 +5,7 @@ import java.io.File;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IGroup;
-import org.cdma.plugin.edf.navigation.EdfDataset;
+import org.cdma.plugin.soleil.edf.navigation.EdfDataset;
 import org.junit.Ignore;
 
 @Ignore
