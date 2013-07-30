@@ -1,4 +1,4 @@
-package org.cdma.plugin.edf;
+package org.cdma.plugin.soleil.edf;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +22,10 @@ import org.cdma.interfaces.IDatasource;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
-import org.cdma.plugin.edf.navigation.EdfAttribute;
-import org.cdma.plugin.edf.navigation.EdfDataItem;
-import org.cdma.plugin.edf.navigation.EdfDataset;
-import org.cdma.plugin.edf.navigation.EdfGroup;
+import org.cdma.plugin.soleil.edf.navigation.EdfAttribute;
+import org.cdma.plugin.soleil.edf.navigation.EdfDataItem;
+import org.cdma.plugin.soleil.edf.navigation.EdfDataset;
+import org.cdma.plugin.soleil.edf.navigation.EdfGroup;
 
 public class EdfFactory implements IFactory {
 

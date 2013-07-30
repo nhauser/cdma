@@ -7,7 +7,7 @@
 //Contributors :
 //See AUTHORS file
 //******************************************************************************
-package org.cdma.plugin.edf;
+package org.cdma.plugin.soleil.edf;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -21,8 +21,8 @@ import java.util.List;
 import javax.swing.filechooser.FileSystemView;
 
 import org.cdma.interfaces.IDatasource;
-import org.cdma.plugin.edf.internal.DetectedSource;
-import org.cdma.plugin.edf.utils.FileComparator;
+import org.cdma.plugin.soleil.edf.internal.DetectedSource;
+import org.cdma.plugin.soleil.edf.utils.FileComparator;
 
 public final class EdfDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
