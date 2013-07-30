@@ -1,0 +1,3 @@
+org.cdma.plugin.edf.external.CreateVirtualItem
+org.cdma.plugin.edf.external.DataItemStacker
+org.cdma.plugin.edf.external.HarvestEquipmentAttributes
