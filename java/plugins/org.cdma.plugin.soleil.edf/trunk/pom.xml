@@ -51,7 +51,6 @@
 				<directory>OSGI-INF</directory>
 			</resource>
 		</resources>
-
 	</build>
 	<dependencies>
 		<dependency>
