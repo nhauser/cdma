@@ -129,7 +129,7 @@ public final class EdfDatasource implements IDatasource {
         if (target != null) {
             String path = target.getPath();
             if (path != null) {
-                for (String part : path.split(File.pathSeparator)) {
+                for (String part : path.split("/")) {
                     if (part != null && !part.isEmpty()) {
                         parts.add(part);
                     }
