@@ -1,4 +1,4 @@
-package navigation;
+package org.cdma.engine.hdf.navigation;
 
 import java.io.File;
 import java.io.IOException;

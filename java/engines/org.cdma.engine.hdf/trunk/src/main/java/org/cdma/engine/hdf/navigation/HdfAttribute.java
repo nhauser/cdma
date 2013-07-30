@@ -1,4 +1,4 @@
-package navigation;
+package org.cdma.engine.hdf.navigation;
 
 import java.util.logging.Level;
 
@@ -8,12 +8,12 @@ import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
 
 import org.cdma.Factory;
+import org.cdma.engine.hdf.array.HdfArray;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
 
-import utils.HdfObjectUtils;
-import array.HdfArray;
 
 public class HdfAttribute implements IAttribute {
 

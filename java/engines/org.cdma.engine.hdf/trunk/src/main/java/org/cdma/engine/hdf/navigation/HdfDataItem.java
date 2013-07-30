@@ -1,4 +1,4 @@
-package navigation;
+package org.cdma.engine.hdf.navigation;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,9 @@ import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
+import org.cdma.engine.hdf.array.HdfArray;
+import org.cdma.engine.hdf.array.HdfIndex;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.DimensionNotSupportedException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -36,9 +39,6 @@ import org.cdma.interfaces.IRange;
 import org.cdma.utils.DataType;
 import org.cdma.utils.Utilities.ModelType;
 
-import utils.HdfObjectUtils;
-import array.HdfArray;
-import array.HdfIndex;
 
 public class HdfDataItem implements IDataItem, Cloneable {
 

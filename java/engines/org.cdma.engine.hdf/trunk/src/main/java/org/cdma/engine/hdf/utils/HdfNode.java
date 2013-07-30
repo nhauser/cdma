@@ -1,4 +1,4 @@
-package utils;
+package org.cdma.engine.hdf.utils;
 
 import ncsa.hdf.object.HObject;
 

@@ -1,11 +1,11 @@
-package array;
+package org.cdma.engine.hdf.array;
 
 import ncsa.hdf.object.ScalarDS;
 
 import org.cdma.arrays.DefaultIndex;
+import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.interfaces.IIndex;
 
-import utils.HdfObjectUtils;
 
 public final class HdfIndex extends DefaultIndex implements Cloneable {
     private long mLast = -1;
