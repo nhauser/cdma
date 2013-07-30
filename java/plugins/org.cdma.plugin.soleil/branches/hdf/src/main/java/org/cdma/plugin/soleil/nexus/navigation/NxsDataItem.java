@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import navigation.HdfDataItem;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
+import org.cdma.engine.hdf.navigation.HdfDataItem;
+import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NoResultException;
@@ -37,7 +38,6 @@ import org.cdma.plugin.soleil.nexus.array.NxsIndex;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
-import utils.HdfPath;
 
 public final class NxsDataItem implements IDataItem, Cloneable {
     // Inner class

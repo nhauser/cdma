@@ -12,6 +12,7 @@ package org.cdma.plugin.soleil.nexus.utils;
 import java.util.List;
 
 import org.cdma.arrays.DefaultIndex;
+import org.cdma.engine.hdf.array.HdfIndex;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.ShapeNotMatchException;
 import org.cdma.interfaces.IArray;
@@ -21,7 +22,6 @@ import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.array.NxsIndex;
 import org.cdma.utils.IArrayUtils;
 
-import array.HdfIndex;
 
 public final class NxsArrayUtils implements IArrayUtils {
     private final IArrayUtils mUtils;

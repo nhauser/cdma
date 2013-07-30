@@ -19,12 +19,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 
-import navigation.HdfDataItem;
-import navigation.HdfGroup;
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Path;
+import org.cdma.engine.hdf.navigation.HdfDataItem;
+import org.cdma.engine.hdf.navigation.HdfGroup;
+import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
@@ -45,7 +46,6 @@ import org.cdma.plugin.soleil.nexus.utils.NxsNode;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
-import utils.HdfPath;
 
 public final class NxsGroup implements IGroup, Cloneable {
 
