@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SOLEIL Data Model
-Bundle-SymbolicName: org.cdma.plugin.soleil
+Bundle-SymbolicName: org.cdma.plugin.soleil.nexus
 Bundle-Version: 3.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
@@ -10,11 +10,11 @@ Import-Package: org.cdma.utils,
  org.jdom.filter,
  org.jdom.input
 Service-Component: OSGI-INF/factory.xml
-Export-Package: org.cdma.plugin.soleil,
- org.cdma.plugin.soleil.array,
- org.cdma.plugin.soleil.dictionary,
- org.cdma.plugin.soleil.external,
- org.cdma.plugin.soleil.navigation,
- org.cdma.plugin.soleil.utils
+Export-Package: org.cdma.plugin.soleil.nexus,
+ org.cdma.plugin.soleil.nexus.array,
+ org.cdma.plugin.soleil.nexus.dictionary,
+ org.cdma.plugin.soleil.nexus.external,
+ org.cdma.plugin.soleil.nexus.navigation,
+ org.cdma.plugin.soleil.nexus.utils
 Require-Bundle: org.cdma.engine.nexus;bundle-version="3.0.0";visibility:=reexport,
  org.cdma.utilities;bundle-version="3.0.0";visibility:=reexport
