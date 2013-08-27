@@ -17,6 +17,7 @@ package org.cdma.interfaces;
  */
 public interface INode {
 
+    public String getAttribute();
     /**
      * 
      */
