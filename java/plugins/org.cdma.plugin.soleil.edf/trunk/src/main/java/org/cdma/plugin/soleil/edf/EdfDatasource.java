@@ -197,7 +197,7 @@ public final class EdfDatasource implements IDatasource {
         return source;
     }
 
-    private static final String URI_DESC = "URI must target an EDF Directory";
+    private static final String URI_DESC = "URI must target an EDF File or Directory";
 
     @Override
     public String getURITypeDescription() {
