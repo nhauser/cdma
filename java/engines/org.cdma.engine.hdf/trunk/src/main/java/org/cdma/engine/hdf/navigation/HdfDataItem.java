@@ -15,6 +15,7 @@ import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
+import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
 import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5ScalarDS;
@@ -39,15 +40,15 @@ import org.cdma.interfaces.IRange;
 import org.cdma.utils.DataType;
 import org.cdma.utils.Utilities.ModelType;
 
-
 public class HdfDataItem implements IDataItem, Cloneable {
 
-    private H5ScalarDS h5Item;
+    private final H5ScalarDS h5Item;
     private final H5File h5File;
     private final String factoryName;
     private IArray array;
-    private final IGroup parent;
+    private IGroup parent;
     private String shortName;
+    private final List<IAttribute> attributeList = new ArrayList<IAttribute>();
 
     // private String fullName;
 
@@ -59,12 +60,28 @@ public class HdfDataItem implements IDataItem, Cloneable {
         if (this.h5Item != null) {
             this.h5Item.init();
             this.shortName = h5Item.getName();
-            // this.fullName = h5Item.getFullName();
-        }
-        else {
+            loadAttributes();
+        } else {
             this.shortName = "";
-            h5Item = new H5ScalarDS(H5File.getFileFormat(H5File.FILE_TYPE_HDF5), "", "");
-            // this.fullName = "";
+            // Default Value
+//            long[] shape = { 0, 0 };
+            //
+            //            // shape can be determined by IArray
+            //            if (array != null) {
+            //                shape = HdfObjectUtils.convertIntToLong(array.getShape());
+            //            }
+            //
+            //            // Datatype can be determined by IArray
+            //            Datatype datatype = null;
+            //            if (array.getStorage() instanceof String[]) {
+            //                String[] value = (String[]) array.getStorage();
+            //                datatype = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+            //            } else {
+            //                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(array.getElementType());
+            //                datatype = new H5Datatype(type_id);
+            //            }
+            //
+            //            Dataset ds = file.createScalarDS(getName(), parent, datatype, shape, null, null, 0, null);
         }
     }
 
@@ -84,8 +101,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         }
         try {
             this.array = dataItem.getData();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Factory.getLogger().severe(e.getMessage());
         }
     }
@@ -110,40 +126,36 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        if (h5File != null) {
-            // TDGV incorrect test
-            HdfObjectUtils.addOneAttribute(h5Item, attribute);
-        }
+        this.attributeList.add(attribute);
     }
 
     @Override
     public void addStringAttribute(String name, String value) {
-        if (h5File != null) {
-            // TDGV incorrect test
-            HdfObjectUtils.addStringAttribute(h5Item, name, value);
-        }
+        IAttribute attr = new HdfAttribute(factoryName, name, value);
+        addOneAttribute(attr);
     }
 
     public IAttribute getAttribute(String name, boolean ignoreCase) {
         IAttribute result = null;
-        if (name != null && h5Item != null) {
-            List<?> attributes;
-            try {
-                attributes = h5Item.getMetadata();
-                for (Object attribute : attributes) {
-                    IAttribute attr = new HdfAttribute(factoryName, (Attribute) attribute);
-                    if (ignoreCase && name.equalsIgnoreCase(attr.getName())
-                            || name.equals(attr.getName())) {
-                        result = attr;
-                        break;
-                    }
-                }
-            }
-            catch (HDF5Exception e) {
-                Factory.getLogger().severe(e.getMessage());
+        for (IAttribute attribute : attributeList) {
+            if ((ignoreCase && name.equalsIgnoreCase(attribute.getName())) || name.equals(attribute.getName())) {
+                result = attribute;
             }
         }
         return result;
+    }
+
+    private void loadAttributes() {
+        List<?> attributes;
+        try {
+            attributes = h5Item.getMetadata();
+            for (Object attribute : attributes) {
+                IAttribute attr = new HdfAttribute(factoryName, (Attribute) attribute);
+                this.attributeList.add(attr);
+            }
+        } catch (HDF5Exception e) {
+            Factory.getLogger().log(Level.SEVERE, "Unable to loadAttributes", e);
+        }
     }
 
     @Override
@@ -202,14 +214,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public String getShortName() {
-        /*
-        String result = null;
-        if (h5Item != null) {
-            result = h5Item.getName();
-        }
-
-        return result;
-         */
         return shortName;
     }
 
@@ -232,38 +236,21 @@ public class HdfDataItem implements IDataItem, Cloneable {
         while (group != null && !group.isRoot() && depth >= 0) {
             group.setShortName(nodes[depth--]);
         }
-
-        /*
-        if (h5Item != null) {
-            try {
-                h5Item.setName(name);
-            }
-            catch (Exception e) {
-                Factory.getLogger().log(Level.SEVERE, "Unable to setName", e);
-            }
-        }
-         */
     }
 
     @Override
     public void setShortName(String name) {
         this.shortName = name;
-        /*
-        try {
-            h5Item.setName(name);
-        }
-        catch (Exception e) {
-            Factory.getLogger().log(Level.SEVERE, "Unable to setShortName", e);
-        }
-         */
     }
 
     @Override
     public void setParent(IGroup group) {
         try {
-            h5Item.setPath(group.getName());
-        }
-        catch (Exception e) {
+            parent = group;
+            if (h5Item != null) {
+                h5Item.setPath(group.getName());
+            }
+        } catch (Exception e) {
             Factory.getLogger().log(Level.SEVERE, "Unable to setParent", e);
         }
     }
@@ -308,8 +295,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
             int[] origin = new int[getRank()];
             try {
                 array = getData(origin, shape);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
         }
@@ -324,8 +310,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
             array = new HdfArray(factoryName, getType(), new int[0], this);
             index = new HdfIndex(this.factoryName, shape, origin, shape);
             array.setIndex(index);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
             throw new InvalidRangeException(e);
         }
 
@@ -436,8 +421,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         try {
             HdfIndex index = (HdfIndex) getData().getIndex();
             list.addAll(index.getRangeList());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             list = null;
         }
         return list;
@@ -457,8 +441,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         try {
             item = new HdfDataItem(this);
             item.array = item.getData().getArrayUtils().sectionNoReduce(section).getArray();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         return item;
     }
@@ -469,8 +452,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         try {
             HdfIndex index = (HdfIndex) getData().getIndex();
             list.addAll(index.getRangeList());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             list = null;
         }
         return list;
@@ -479,16 +461,15 @@ public class HdfDataItem implements IDataItem, Cloneable {
     @Override
     public int[] getShape() {
         /*
-        long[] dims = h5Item.getDims();
-        int[] result = new int[2];
-        result = HdfObjectUtils.convertLongToInt(dims);
-        return result;
+            long[] dims = h5Item.getDims();
+            int[] result = new int[2];
+            result = HdfObjectUtils.convertLongToInt(dims);
+            return result;
          */
         int[] result = null;
         if (array != null) {
             result = array.getShape();
-        }
-        else {
+        } else {
             long[] dims = h5Item.getDims();
             result = HdfObjectUtils.convertLongToInt(dims);
             return result;
@@ -517,8 +498,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         HdfDataItem item = new HdfDataItem(this);
         try {
             item.array = item.getData().getArrayUtils().slice(dim, value).getArray();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             item = null;
         }
         return item;
@@ -526,8 +506,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public Class<?> getType() {
-        // TODO DEBUG
-        System.out.println(this.getName());
         Class<?> result = null;
         if (h5Item != null) {
             Datatype dType = h5Item.getDatatype();
@@ -537,11 +515,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
                 if (DataType.BOOLEAN.equals(datatype)) {
                     result = Boolean.TYPE;
-                }
-                else if (Datatype.CLASS_CHAR == datatype) {
+                } else if (Datatype.CLASS_CHAR == datatype) {
                     result = Character.TYPE;
-                }
-                else if (Datatype.CLASS_FLOAT == datatype) {
+                } else if (Datatype.CLASS_FLOAT == datatype) {
                     switch (dType.getDatatypeSize()) {
                         case 4:
                             result = Float.TYPE;
@@ -552,8 +528,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
                         default:
                             break;
                     }
-                }
-                else if (Datatype.CLASS_INTEGER == datatype) {
+                } else if (Datatype.CLASS_INTEGER == datatype) {
                     switch (dType.getDatatypeSize()) {
                         case 1:
                             result = Byte.TYPE;
@@ -571,13 +546,11 @@ public class HdfDataItem implements IDataItem, Cloneable {
                             break;
                     }
 
-                }
-                else if (Datatype.CLASS_STRING == datatype) {
+                } else if (Datatype.CLASS_STRING == datatype) {
                     result = String.class;
                 }
             }
-        }
-        else {
+        } else {
             result = array.getElementType();
         }
         return result;
@@ -637,11 +610,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public byte readScalarByte() throws IOException {
         try {
             return java.lang.reflect.Array.getByte(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -651,11 +622,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public double readScalarDouble() throws IOException {
         try {
             return java.lang.reflect.Array.getByte(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -664,11 +633,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public float readScalarFloat() throws IOException {
         try {
             return java.lang.reflect.Array.getFloat(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -677,11 +644,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public int readScalarInt() throws IOException {
         try {
             return java.lang.reflect.Array.getInt(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -690,11 +655,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public long readScalarLong() throws IOException {
         try {
             return java.lang.reflect.Array.getLong(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -703,11 +666,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
     public short readScalarShort() throws IOException {
         try {
             return java.lang.reflect.Array.getShort(h5Item.getData(), 0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -718,8 +679,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
             // Scalar Strings are String 1 dimension arrays
             Object data = h5Item.getData();
             return ((String[]) data)[0];
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -730,8 +690,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void setCachedData(IArray cacheData, boolean isMetadata)
-            throws InvalidArrayTypeException {
+    public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
         array = cacheData;
     }
 
@@ -798,26 +757,51 @@ public class HdfDataItem implements IDataItem, Cloneable {
             for (IAttribute a : list) {
                 strDebug.append("- ").append(a.toString()).append("\n");
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         return strDebug.toString();
     }
 
     public void save(FileFormat fileToWrite, Group parentInFile) throws Exception {
         try {
-            Dataset ds = fileToWrite.createScalarDS(getShortName(), parentInFile,
-                    h5Item.getDatatype(), h5Item.getDims(), h5Item.getMaxDims(), null, 0, null);
+            // Default Value
+            long[] shape = { 0, 0 };
+
+            // shape can be determined by IArray
+            if (array != null) {
+                shape = HdfObjectUtils.convertIntToLong(array.getShape());
+            } else if (h5Item != null) {
+                // shape can be determined by h5Item
+                shape = h5Item.getDims();
+            }
+
+            // Datatype can be determined by IArray
+            Datatype datatype = null;
+            if (array.getStorage() instanceof String[]) {
+                String[] value = (String[]) array.getStorage();
+                datatype = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+            } else {
+                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(array.getElementType());
+                datatype = new H5Datatype(type_id);
+            }
+
+            // Datatype can be determined the H5 item itself
+            if (h5Item != null) {
+                datatype = h5Item.getDatatype();
+            }
+
+            Dataset ds = fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0, null);
+
             if (ds != null) {
                 ds.write(getData().getStorage());
             }
+
             List<IAttribute> attribute = getAttributeList();
             for (IAttribute iAttribute : attribute) {
                 HdfAttribute attr = (HdfAttribute) iAttribute;
                 attr.save(ds);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -829,8 +813,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     public static void main(String[] args) {
 
-        System.setProperty(H5.H5PATH_PROPERTY_KEY,
-                "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
+        System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
 
         String fileName = "/home/viguier/NeXusFiles/ANTARES/CKedge_2010-12-10_21-51-59.nxs";
         String datasetPath = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/scan_data/actuator_1_1/";
@@ -899,8 +882,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
             // System.out.print(",");
             // }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

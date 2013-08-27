@@ -38,11 +38,9 @@ import org.cdma.interfaces.IKey;
 import org.cdma.interfaces.INode;
 import org.cdma.utils.Utilities.ModelType;
 
-
 public class HdfGroup implements IGroup, Cloneable {
 
-
-    private final HdfGroup parent;
+    private HdfGroup parent;
     private IGroup root = null;
     private final String factoryName; // Name of the factory plugin that instantiate
     private final H5Group h5Group;
@@ -59,6 +57,14 @@ public class HdfGroup implements IGroup, Cloneable {
 
     public HdfGroup(String factoryName, Group hdfGroup, HdfGroup parent) {
         this(factoryName, (H5Group) hdfGroup, parent);
+    }
+
+    public HdfGroup(String factoryName, String file, String name, String path, HdfGroup parent) {
+        this.h5File = new H5File(file, H5File.WRITE);
+        H5Group parentGroup = (parent == null) ? null : parent.h5Group;
+        this.h5Group = new H5Group(h5File, name, path, parentGroup);
+        this.parent = parent;
+        this.factoryName = factoryName;
     }
 
     @Override
@@ -141,8 +147,7 @@ public class HdfGroup implements IGroup, Cloneable {
     public void setShortName(String name) {
         try {
             h5Group.setName(name);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
     }
@@ -150,9 +155,9 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public void setParent(IGroup group) {
         try {
+            parent = (HdfGroup) group;
             h5Group.setPath(group.getName());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
     }
@@ -176,6 +181,7 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public void addDataItem(IDataItem item) {
         item.setParent(this);
+        itemMap.put(item.getName(), item);
         if (item instanceof HdfDataItem) {
             h5Group.addToMemberList(((HdfDataItem) item).getH5DataItem());
         }
@@ -207,6 +213,12 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public void addSubgroup(IGroup group) {
         group.setParent(this);
+        groupMap.put(group.getShortName(), group);
+
+        if (group instanceof HdfGroup) {
+            HdfGroup hdfGroup = (HdfGroup) group;
+            h5Group.addToMemberList(hdfGroup.getH5Group());
+        }
     }
 
     @Override
@@ -214,7 +226,6 @@ public class HdfGroup implements IGroup, Cloneable {
         IDataItem result = null;
         if (shortName != null) {
             result = itemMap.get(shortName);
-
             if (result == null) {
                 H5ScalarDS scalarDS = getH5ScalarDS(shortName);
                 if (scalarDS != null) {
@@ -247,7 +258,6 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public IDataItem getDataItemWithAttribute(String name, String value) {
         IDataItem resItem = null;
-
         List<IDataItem> groups = getDataItemList();
         for (Iterator<?> iter = groups.iterator(); iter.hasNext();) {
             resItem = (IDataItem) iter.next();
@@ -268,7 +278,6 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public IContainer getContainer(String shortName) {
-        // TDGV Refactor reporter dans un DefaultGroup
         if (shortName != null && shortName.equals("")) {
             return this;
         }
@@ -289,9 +298,7 @@ public class HdfGroup implements IGroup, Cloneable {
     public IGroup getGroup(String shortName) {
         IGroup result = null;
         if (shortName != null) {
-
             result = groupMap.get(shortName);
-
             if (result == null) {
                 List<HObject> groups = h5Group.getMemberList();
                 for (HObject hObject : groups) {
@@ -326,17 +333,18 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public List<IDataItem> getDataItemList() {
-        List<IDataItem> result = new ArrayList<IDataItem>();
-        List<HObject> members = h5Group.getMemberList();
-        for (HObject hObject : members) {
-            if (hObject instanceof H5ScalarDS) {
-                IDataItem itemToAdd = getDataItem(hObject.getName());
-                if (itemToAdd != null) {
-                    result.add(itemToAdd);
-                }
-            }
-        }
-        return result;
+        //        List<IDataItem> result = new ArrayList<IDataItem>();
+        //        List<HObject> members = h5Group.getMemberList();
+        //        for (HObject hObject : members) {
+        //            if (hObject instanceof H5ScalarDS) {
+        //                IDataItem itemToAdd = getDataItem(hObject.getName());
+        //                if (itemToAdd != null) {
+        //                    result.add(itemToAdd);
+        //                }
+        //            }
+        //        }
+        //        return result;
+        return new ArrayList<IDataItem>(itemMap.values());
     }
 
     public List<HObject> getMembers() {
@@ -383,7 +391,13 @@ public class HdfGroup implements IGroup, Cloneable {
         List<INode> nodes = new ArrayList<INode>();
         List<HObject> members = h5Group.getMemberList();
         for (HObject hObject : members) {
-            nodes.add(new HdfNode(hObject));
+            Attribute attrClass = HdfObjectUtils.getAttribute(hObject, "NX_class");
+            String att = "";
+            if (attrClass != null) {
+                att = ((String[]) attrClass.getValue())[0];
+
+            }
+            nodes.add(new HdfNode(hObject.getName(), att));
         }
         return nodes;
     }
@@ -404,20 +418,26 @@ public class HdfGroup implements IGroup, Cloneable {
         return node;
     }
 
-    @Override
-    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+    public List<IContainer> findAllContainerByPath(INode[] nodes) throws NoResultException {
         List<IContainer> list = new ArrayList<IContainer>();
         IGroup root = getRootGroup();
-
-        // Try to list all nodes matching the path
-        // Transform path into a NexusNode array
-        INode[] nodes = HdfPath.splitStringToNode(path);
 
         // Call recursive method
         int level = 0;
         list = findAllContainer(root, nodes, level);
 
         return list;
+    }
+
+    @Override
+    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+        // Try to list all nodes matching the path
+        // Transform path into a NexusNode array
+        INode[] nodes = HdfPath.splitStringToNode(path);
+
+        List<IContainer> result = findAllContainerByPath(nodes);
+
+        return result;
     }
 
     private List<IContainer> findAllContainer(IContainer container, INode[] nodes, int level) {
@@ -432,11 +452,10 @@ public class HdfGroup implements IGroup, Cloneable {
                     INode current = nodes[level];
 
                     for (INode node : childs) {
-                        if (current.matchesPartNode(node)) {
 
+                        if (current.matchesPartNode(node)) {
                             if (level < nodes.length - 1) {
-                                result.addAll(findAllContainer(group.getContainer(node.getName()),
-                                        nodes, level + 1));
+                                result.addAll(findAllContainer(group.getContainer(node.getName()), nodes, level + 1));
                             }
                             // Create IContainer and add it to result list
                             else {
@@ -445,8 +464,7 @@ public class HdfGroup implements IGroup, Cloneable {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 HdfDataItem dataItem = (HdfDataItem) container;
                 result.add(dataItem);
             }
@@ -510,7 +528,7 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public boolean isRoot() {
-        return h5Group.isRoot();
+        return parent == null;
     }
 
     @Override
@@ -562,8 +580,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IDataItem findDataItemWithAttribute(IKey key, String name, String value)
-            throws NoResultException {
+    public IDataItem findDataItemWithAttribute(IKey key, String name, String value) throws NoResultException {
         List<IContainer> found = findAllOccurrences(key);
         IDataItem result = null;
         for (IContainer item : found) {
@@ -598,16 +615,16 @@ public class HdfGroup implements IGroup, Cloneable {
     public String toString() {
         StringBuffer buffer = new StringBuffer();
         IGroup parent = getParentGroup();
-        buffer.append("Group " + getShortName() + " with parent "
-                + ((parent == null) ? "Nobody" : parent.getName()));
+        buffer.append("Group " + getShortName() + " (parent = " + ((parent == null) ? "Nobody" : parent.getName())
+                + ")");
         return buffer.toString();
     }
 
     public void save(FileFormat fileToWrite, Group parent) throws Exception {
         Group newParent = null;
 
-        if (!isRoot()) {
-
+        boolean isRoot = isRoot();
+        if (!isRoot) {
             newParent = fileToWrite.createGroup(getShortName(), parent);
 
             List<IAttribute> attribute = getAttributeList();
@@ -615,8 +632,7 @@ public class HdfGroup implements IGroup, Cloneable {
                 HdfAttribute attr = (HdfAttribute) iAttribute;
                 attr.save(newParent);
             }
-        }
-        else {
+        } else {
             DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) fileToWrite.getRootNode();
             H5Group rootObject = (H5Group) theRoot.getUserObject();
             newParent = rootObject;
@@ -633,13 +649,11 @@ public class HdfGroup implements IGroup, Cloneable {
             HdfGroup hdfGroup = (HdfGroup) iGroup;
             hdfGroup.save(fileToWrite, newParent);
         }
-
     }
 
     public static void main(String[] args) {
 
-        System.setProperty(H5.H5PATH_PROPERTY_KEY,
-                "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
+        System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
 
         String fileName = "/home/viguier/NeXusFiles/ANTARES/CKedge_2010-12-10_21-51-59.nxs";
         String groupPath = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/ANTARES/ScientaAtt0";
@@ -670,8 +684,7 @@ public class HdfGroup implements IGroup, Cloneable {
                 System.out.println(iContainer);
             }
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
