@@ -5,10 +5,17 @@ import org.cdma.interfaces.INode;
 public class DefaultNode implements INode {
 
     private final String name;
+    private final String attribute;
     private boolean isGroup;
+
+    public DefaultNode(String name, String attribute) {
+        this.name = name;
+        this.attribute = attribute;
+    }
 
     public DefaultNode(String name) {
         this.name = name;
+        this.attribute = "";
     }
 
     @Override
@@ -43,7 +50,7 @@ public class DefaultNode implements INode {
 
         nameMatch = "".equals(node.getNodeName())
                 || this.getNodeName().toLowerCase().replace("*", ".*")
-                        .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+                .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         return nameMatch;
     }
 
@@ -55,5 +62,10 @@ public class DefaultNode implements INode {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public String getAttribute() {
+        return attribute;
     }
 }
