@@ -13,12 +13,10 @@ package org.cdma.plugin.soleil.nexus.navigation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
-
 
 import org.cdma.Factory;
 import org.cdma.IFactory;
@@ -67,7 +65,6 @@ public final class NxsGroup implements IGroup, Cloneable {
     // Constructors
     // ****************************************************
     private NxsGroup() {
-        mGroups = null;
         mParent = null;
         mDataset = null;
         mChildren = null;
@@ -75,6 +72,17 @@ public final class NxsGroup implements IGroup, Cloneable {
         mIsChildUpdate = false;
         mNode = null;
         listChildren();
+    }
+
+    public NxsGroup(NxsDataset dataset, String name, String file, String path, HdfGroup parent) {
+        mGroups = new HdfGroup[1];
+        mGroups[0] = new HdfGroup(NxsFactory.NAME, file, name, path, parent);
+        mParent = null;
+        mDataset = dataset;
+        mChildren = null;
+        mDimensions = null;
+        mIsChildUpdate = false;
+        mNode = null;
     }
 
     public NxsGroup(HdfGroup[] groups, IGroup parent, NxsDataset dataset) {
@@ -363,10 +371,15 @@ public final class NxsGroup implements IGroup, Cloneable {
         IGroup result = null;
         NxsNode node = new NxsNode(shortName);
 
-        if (!listContainer(node).isEmpty()) {
-            IContainer cnt = listContainer(node).get(0);
-            if (cnt.getModelType().equals(ModelType.Group)) {
-                result = (IGroup) cnt;
+        if (shortName.equals(this.getShortName())) {
+            result = this;
+        } else {
+
+            if (!listContainer(node).isEmpty()) {
+                IContainer cnt = listContainer(node).get(0);
+                if (cnt.getModelType().equals(ModelType.Group)) {
+                    result = (IGroup) cnt;
+                }
             }
         }
         return result;
@@ -489,23 +502,19 @@ public final class NxsGroup implements IGroup, Cloneable {
             // Store in a map all different containers from all m_groups
             Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
             List<String> sortGrp = new ArrayList<String>();
-            String absPath = /*mDataset.getRootGroup().getLocation() + */path;
-            for (IContainer container : mChildren) {
+            String absPath = mChildren.get(0).getLocation() + path;
+            for (HdfGroup group : mGroups) {
                 try {
-                    if (ModelType.Group.equals(container.getModelType())) {
-                        NxsGroup nxsGroup = (NxsGroup) container;
-                        tmp = nxsGroup.findAllContainerByNxsPath(absPath);
-                        for (IContainer item : tmp) {
-                            location = item.getLocation();
-                            if (items.containsKey(location)) {
-                                items.get(location).add(item);
-                            }
-                            else {
-                                ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
-                                tmpList.add(item);
-                                items.put(location, tmpList);
-                                sortGrp.add(location);
-                            }
+                    tmp = group.findAllContainerByPath(NxsPath.splitStringToNode(absPath));
+                    for (IContainer item : tmp) {
+                        location = item.getLocation();
+                        if (items.containsKey(location)) {
+                            items.get(location).add(item);
+                        } else {
+                            ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
+                            tmpList.add(item);
+                            items.put(location, tmpList);
+                            sortGrp.add(location);
                         }
                     }
                 }
@@ -520,10 +529,7 @@ public final class NxsGroup implements IGroup, Cloneable {
                 tmp = items.get(entry);
                 // If a Group list then construct a new Group folder
                 if (tmp.get(0).getModelType() == ModelType.Group) {
-                    for (Iterator<IContainer> iterator = tmp.iterator(); iterator.hasNext();) {
-                        NxsGroup nxsGroup = (NxsGroup) iterator.next();
-                        list.add(nxsGroup);
-                    }
+                    list.add(new NxsGroup(tmp.toArray(new HdfGroup[tmp.size()]), this, mDataset));
                 }
                 // If a IDataItem list then construct a new compound NxsDataItem
                 else {
@@ -541,6 +547,67 @@ public final class NxsGroup implements IGroup, Cloneable {
         }
         return list;
     }
+
+    //    @Override
+    //    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+    //        List<IContainer> list = new ArrayList<IContainer>();
+    //        if (path != null) {
+    //            List<IContainer> tmp = null;
+    //            String location;
+    //
+    //            // Store in a map all different containers from all m_groups
+    //            Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
+    //            List<String> sortGrp = new ArrayList<String>();
+    //            String absPath = /*mDataset.getRootGroup().getLocation() + */path;
+    //            for (IContainer container : mChildren) {
+    //                try {
+    //                    if (ModelType.Group.equals(container.getModelType())) {
+    //                        NxsGroup nxsGroup = (NxsGroup) container;
+    //                        tmp = nxsGroup.findAllContainerByNxsPath(absPath);
+    //                        for (IContainer item : tmp) {
+    //                            location = item.getLocation();
+    //                            if (items.containsKey(location)) {
+    //                                items.get(location).add(item);
+    //                            } else {
+    //                                ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
+    //                                tmpList.add(item);
+    //                                items.put(location, tmpList);
+    //                                sortGrp.add(location);
+    //                            }
+    //                        }
+    //                    }
+    //                } catch (NoResultException e) {
+    //                    // Nothing to do
+    //                }
+    //            }
+    //            // Construct that were found
+    //            for (String entry : sortGrp) {
+    //
+    //                // for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
+    //                tmp = items.get(entry);
+    //                // If a Group list then construct a new Group folder
+    //                if (tmp.get(0).getModelType() == ModelType.Group) {
+    //                    for (Iterator<IContainer> iterator = tmp.iterator(); iterator.hasNext();) {
+    //                        NxsGroup nxsGroup = (NxsGroup) iterator.next();
+    //                        list.add(nxsGroup);
+    //                    }
+    //                }
+    //                // If a IDataItem list then construct a new compound NxsDataItem
+    //                else {
+    //                    ArrayList<HdfDataItem> dataItems = new ArrayList<HdfDataItem>();
+    //                    for (IContainer item : tmp) {
+    //                        if (item.getModelType() == ModelType.DataItem) {
+    //                            dataItems.add((HdfDataItem) item);
+    //                        }
+    //                    }
+    //                    HdfDataItem[] array = new HdfDataItem[dataItems.size()];
+    //                    dataItems.toArray(array);
+    //                    list.add(new NxsDataItem(array, this, mDataset));
+    //                }
+    //            }
+    //        }
+    //        return list;
+    //    }
 
     @Override
     public boolean removeDataItem(IDataItem item) {
@@ -682,7 +749,13 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void addDataItem(IDataItem v) {
-        throw new NotImplementedException();
+        if (v instanceof NxsDataItem) {
+            NxsDataItem nxsDataItem = (NxsDataItem) v;
+            HdfDataItem[] itemsToAdd = nxsDataItem.getHdfDataItems();
+            for (HdfDataItem hdfDataItem : itemsToAdd) {
+                mGroups[0].addDataItem(hdfDataItem);
+            }
+        }
     }
 
     @Override
@@ -697,7 +770,10 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public void addSubgroup(IGroup group) {
-        throw new NotImplementedException();
+        if (group instanceof NxsGroup) {
+            NxsGroup nxsGroup = (NxsGroup) group;
+            mGroups[0].addSubgroup(nxsGroup.getHdfGroup());
+        }
     }
 
     @Override
@@ -863,12 +939,12 @@ public final class NxsGroup implements IGroup, Cloneable {
             if (result != null) {
                 result.addNode(getNxsNode());
             }
-        }
-        else {
+        } else {
             // ROOT NODE
             result = new NxsPath(new NxsNode(HdfPath.PATH_SEPARATOR));
         }
         return result;
+
     }
 
     @Override
@@ -904,5 +980,9 @@ public final class NxsGroup implements IGroup, Cloneable {
             mNode = new NxsNode(getName(), clazz);
         }
         return mNode;
+    }
+
+    public HdfGroup getHdfGroup() {
+        return mGroups[0];
     }
 }

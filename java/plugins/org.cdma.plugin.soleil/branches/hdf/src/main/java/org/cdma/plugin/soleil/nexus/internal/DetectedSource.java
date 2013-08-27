@@ -1,4 +1,4 @@
-//******************************************************************************
+// ******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
 // The CDMA library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
@@ -31,11 +31,10 @@ public class DetectedSource {
     private static final int EXTENSION_LENGTH = 4;
     private static final String EXTENSION = ".nxs";
     private static final String CREATOR = "Synchrotron SOLEIL";
-    private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES",
-        "CASSIOPEE", "CRISTAL", "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "HERMES",
-        "LUCIA",
-        "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2",
-        "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO", "SWING" };
+    private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL",
+        "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "HERMES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM",
+        "ODE", "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS",
+        "TEMPO", "SWING" };
 
     public static class NeXusFilter implements FilenameFilter {
         @Override
@@ -53,7 +52,8 @@ public class DetectedSource {
     private boolean mInitialized;
     private final URI mURI;
 
-    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment, boolean datasetFolder) {
+    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment,
+            boolean datasetFolder) {
         mIsReadable = readable;
         mIsProducer = producer;
         mIsBrowsable = browsable;
@@ -77,21 +77,21 @@ public class DetectedSource {
     }
 
     public boolean isExperiment() {
-        if( ! mInitialized ) {
+        if (!mInitialized) {
             fullInit();
         }
         return mIsExperiment;
     }
 
     public boolean isBrowsable() {
-        if( ! mInitialized ) {
+        if (!mInitialized) {
             fullInit();
         }
         return mIsBrowsable;
     }
 
     public boolean isProducer() {
-        if( ! mInitialized ) {
+        if (!mInitialized) {
             fullInit();
         }
         return mIsProducer;
@@ -111,9 +111,9 @@ public class DetectedSource {
     public boolean isStable() {
         boolean result = true;
         String path = mURI.getPath();
-        if( path != null ) {
-            File file = new File( path );
-            if( file.exists() && ! file.isDirectory() ) {
+        if (path != null) {
+            File file = new File(path);
+            if (file.exists() && !file.isDirectory()) {
                 long lastModTime;
                 long current = System.currentTimeMillis();
                 lastModTime = current - file.lastModified();
@@ -130,35 +130,33 @@ public class DetectedSource {
         if (uri != null) {
             // Check if the uri is a folder
             String path = uri.getPath();
-            if( path != null ) {
+            if (path != null) {
                 File file = new File(path);
                 if (file.isDirectory()) {
                     mIsDataset = isDatasetFolder(file);
                     mIsFolder = true;
-                }
-                else {
+                } else {
                     mIsDataset = false;
                     mIsFolder = false;
                 }
 
                 // Check it is a NeXus file
                 mIsReadable = initReadable(uri);
-            }
-            else {
-                mIsReadable   = false;
-                mIsProducer   = false;
-                mIsBrowsable  = false;
+            } else {
+                mIsReadable = false;
+                mIsProducer = false;
+                mIsBrowsable = false;
                 mIsExperiment = false;
-                mIsDataset    = false;
-                mInitialized  = true;
+                mIsDataset = false;
+                mInitialized = true;
             }
         }
 
     }
 
     private void fullInit() {
-        synchronized( this ) {
-            if( ! mInitialized && isStable() ) {
+        synchronized (this) {
+            if (!mInitialized && isStable()) {
                 // Check if we are producer of the source
                 mIsProducer = initProducer(mURI);
 
@@ -178,14 +176,13 @@ public class DetectedSource {
         boolean result = false;
         if (mIsDataset) {
             result = true;
-        }
-        else {
+        } else {
             File file = new File(uri.getPath());
             String name = file.getName();
 
-            if( file.exists() && file.length() != 0L ) {
+            if (file.exists() && file.length() != 0L) {
                 // Check if the URI is a NeXus file
-                if( DetectedSource.accept( name ) ) {
+                if (DetectedSource.accept(name)) {
                     result = true;
                 }
             }
@@ -210,8 +207,7 @@ public class DetectedSource {
                 IGroup group = dataset.getRootGroup();
                 if (group.hasAttribute("creator", CREATOR)) {
                     result = true;
-                }
-                else {
+                } else {
                     group = group.getGroup("<NXentry>");
                     if (group != null) {
                         group = group.getGroup("<NXinstrument>");
@@ -231,19 +227,16 @@ public class DetectedSource {
                 // close file
                 dataset.close();
 
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 // close file
                 if (dataset != null) {
                     try {
                         dataset.close();
-                    }
-                    catch (IOException e1) {
+                    } catch (IOException e1) {
                     }
                 }
-            }
-            catch (NoResultException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
+            } catch (NoResultException e) {
+                Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
         }
         return result;
@@ -262,8 +255,8 @@ public class DetectedSource {
                 if (conf != null) {
                     result = true;
                 }
-            }
-            catch (NoResultException e) {
+            } catch (NoResultException e) {
+                e.printStackTrace();
 
             }
         }
@@ -298,15 +291,15 @@ public class DetectedSource {
                 NxsDatasource source = NxsDatasource.getInstance();
                 DetectedSource detect = source.getSource(files[0].toURI());
 
-                if( detect.isProducer() ) {
+                if (detect.isProducer()) {
 
                     IDataset dataset = new NexusDatasetImpl(files[0]);
                     IGroup group = dataset.getRootGroup();
 
                     IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");
-                    if( groups instanceof IGroup ) {
-                        for( IDataItem item : ((IGroup) groups).getDataItemList() ) {
-                            if( item.getAttribute( "dataset_part" ) != null ) {
+                    if (groups instanceof IGroup) {
+                        for (IDataItem item : ((IGroup) groups).getDataItemList()) {
+                            if (item.getAttribute("dataset_part") != null) {
                                 result = true;
                                 break;
                             }
@@ -321,7 +314,7 @@ public class DetectedSource {
         return result;
     }
 
-    private static boolean accept( String filename ) {
+    private static boolean accept(String filename) {
         int length = filename.length();
         return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
     }

@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import ncsa.hdf.object.h5.H5ScalarDS;
-
 import org.cdma.Factory;
 import org.cdma.engine.hdf.navigation.HdfDataItem;
 import org.cdma.engine.hdf.utils.HdfPath;
@@ -765,11 +763,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     }
 
     // specific methods
-    public H5ScalarDS[] getNexusItems() {
-        H5ScalarDS[] result = new H5ScalarDS[mDataItems.length];
+    public HdfDataItem[] getHdfDataItems() {
+        HdfDataItem[] result = new HdfDataItem[mDataItems.length];
         int i = 0;
         for (HdfDataItem item : mDataItems) {
-            result[i] = item.getH5DataItem();
+            result[i] = item;
             i++;
         }
         return result;
