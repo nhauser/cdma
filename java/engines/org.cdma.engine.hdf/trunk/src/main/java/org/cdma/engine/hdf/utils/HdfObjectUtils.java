@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.HObject;
@@ -96,6 +97,17 @@ public class HdfObjectUtils {
         return output;
     }
 
+    public static long[] convertIntToLong(int[] input) {
+        if (input == null) {
+            return null;
+        }
+        long[] output = new long[input.length];
+        for (int i = 0; i < input.length; i++) {
+            output[i] = input[i];
+        }
+        return output;
+    }
+
     public static void addStringAttribute(HObject object, String name, String value) {
         long[] dims = { 1 };
         try {
@@ -145,6 +157,26 @@ public class HdfObjectUtils {
         }
         else if ((Float.TYPE.equals(type)) || Float.class.equals(type)) {
             datatype = Datatype.CLASS_FLOAT;
+        }
+        return datatype;
+    }
+
+    public static int getNativeHdfDataTypeForClass(Class<?> type) {
+        // Default is STRING
+        int datatype = HDF5Constants.H5T_STRING;
+
+        if ((Byte.TYPE.equals(type)) || Byte.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_CHAR;
+        } else if ((Short.TYPE.equals(type)) || Short.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_SHORT;
+        } else if ((Integer.TYPE.equals(type)) || Integer.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_INT;
+        } else if ((Long.TYPE.equals(type)) || Long.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_LONG;
+        } else if ((Float.TYPE.equals(type)) || Float.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_FLOAT;
+        } else if ((Double.TYPE.equals(type)) || Double.class.equals(type)) {
+            datatype = HDF5Constants.H5T_NATIVE_DOUBLE;
         }
         return datatype;
     }

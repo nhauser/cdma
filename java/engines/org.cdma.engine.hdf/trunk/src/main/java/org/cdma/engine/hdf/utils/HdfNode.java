@@ -5,12 +5,22 @@ import ncsa.hdf.object.HObject;
 import org.cdma.interfaces.INode;
 
 public class HdfNode implements INode {
+    // Private definitions
+    private static final String CLASS_SEPARATOR_START = "<";
+    private static final String CLASS_SEPARATOR_START2 = "{";
+    private static final String CLASS_SEPARATOR_END2 = "}";
 
     private final String name;
     private boolean isGroup;
+    private String attribute = "";
 
-    public HdfNode(String name) {
+    public HdfNode(String name, String attribute) {
         this.name = name;
+        this.attribute = attribute;
+    }
+
+    public HdfNode(String fullName) {
+        this(extractName(fullName), extractClass(fullName));
     }
 
     public HdfNode(HObject hObject) {
@@ -27,30 +37,30 @@ public class HdfNode implements INode {
         return getName();
     }
 
-    /**
-     * Return true when the given node (which is this) matches this node.
-     * 
-     * @param node NexusNode that is a pattern referent: it should have name XOR class name defined
-     * @return true when this node fit the given pattern node
-     */
+    @Override
+    public String getAttribute() {
+        return attribute;
+    }
+
     @Override
     public boolean matchesNode(INode node) {
-        boolean nameMatch;
+        boolean classMatch, nameMatch;
+        classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
+        nameMatch = "".equals(node.getNodeName()) || this.getNodeName().equalsIgnoreCase(node.getNodeName());
 
-        nameMatch = "".equals(node.getNodeName())
-                || this.getNodeName().equalsIgnoreCase(node.getNodeName());
-
-        return nameMatch;
+        return (classMatch && nameMatch);
     }
 
     @Override
     public boolean matchesPartNode(INode node) {
-        boolean nameMatch;
-
-        nameMatch = "".equals(node.getNodeName())
-                || this.getNodeName().toLowerCase().replace("*", ".*")
-                .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
-        return nameMatch;
+        boolean classMatch = false, nameMatch = false;
+        if (node != null) {
+            classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
+            nameMatch = "".equals(node.getNodeName())
+                    || this.getNodeName().toLowerCase().replace("*", ".*")
+                    .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+        }
+        return (classMatch && nameMatch);
     }
 
     @Override
@@ -62,4 +72,28 @@ public class HdfNode implements INode {
     public String toString() {
         return name;
     }
+
+    public static String extractName(String sNodeName) {
+        int iPosClassSep;
+        String tmpNodeName = "";
+        iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START);
+        if (iPosClassSep < 0)
+            iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START2);
+        iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
+        tmpNodeName = sNodeName.substring(0, iPosClassSep);
+        return tmpNodeName;
+    }
+
+    public static String extractClass(String sNodeName) {
+        int iPosClassSep;
+        String tmpClassName = "";
+        iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START);
+        if (iPosClassSep < 0)
+            iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START2);
+        iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
+        tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName
+                .substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
+                return tmpClassName;
+    }
+
 }

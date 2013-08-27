@@ -27,6 +27,7 @@ public class HdfArray extends DefaultArrayInline {
             throws InvalidArrayTypeException {
         super(factoryName, array, iShape);
         this.dataItem = dataItem;
+        this.lock();
     }
 
     public HdfArray(String factoryName, HdfDataItem dataItem) throws InvalidArrayTypeException {

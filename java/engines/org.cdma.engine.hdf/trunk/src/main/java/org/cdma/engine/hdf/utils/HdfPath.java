@@ -71,6 +71,7 @@ public class HdfPath {
         StringBuffer result = new StringBuffer();
         for (INode node : nodes) {
             result.append(node.toString());
+            result.append(PATH_SEPARATOR);
         }
         return result.toString();
     }

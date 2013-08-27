@@ -32,7 +32,7 @@ public class HdfDataset implements IDataset, Cloneable {
         this.factoryName = factoryName;
         this.hdfFileName = hdfFile;
         this.title = hdfFile.getName();
-        this.h5File = new H5File(hdfFileName.getAbsolutePath());
+        this.h5File = new H5File(hdfFileName.getAbsolutePath(), H5File.WRITE);
     }
 
     @Override
@@ -45,8 +45,7 @@ public class HdfDataset implements IDataset, Cloneable {
         try {
             h5File.close();
             h5File = null;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
     }
@@ -57,8 +56,7 @@ public class HdfDataset implements IDataset, Cloneable {
             if (h5File != null) {
                 try {
                     h5File.open();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
@@ -82,8 +80,7 @@ public class HdfDataset implements IDataset, Cloneable {
         hdfFileName = new File(location);
         try {
             open();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             Factory.getLogger().severe(e.getMessage());
         }
     }
@@ -117,8 +114,7 @@ public class HdfDataset implements IDataset, Cloneable {
         if (hdfFileName != null) {
             try {
                 h5File.open();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Factory.getLogger().severe(e.getMessage());
             }
 
@@ -141,7 +137,13 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public void save() throws WriterException {
-        throw new NotImplementedException();
+        HdfGroup root = (HdfGroup) getRootGroup();
+        // recursive save
+        try {
+            root.save(this.h5File, root.getH5Group());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -161,8 +163,7 @@ public class HdfDataset implements IDataset, Cloneable {
             root.save(fileToWrite, root.getH5Group());
             fileToWrite.close();
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // TODO DEBUG
             e.printStackTrace();
             throw new WriterException(e);
@@ -205,8 +206,7 @@ public class HdfDataset implements IDataset, Cloneable {
             Object data = item.getData().getStorage();
 
             result = ((String[]) data)[0];
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
@@ -229,18 +229,15 @@ public class HdfDataset implements IDataset, Cloneable {
             Object data = item.getData().getStorage();
 
             result = ((String[]) data)[0];
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public static void main(String args[]) throws IOException, WriterException,
-    NullPointerException {
+    public static void main(String args[]) throws IOException, WriterException, NullPointerException {
         try {
-            System.setProperty(H5.H5PATH_PROPERTY_KEY,
-                    "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
+            System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
             String fileName = "/home/viguier/NeXusFiles/BackToMama/datas/bigtree.nxs";
 
             File file = new File(fileName);
@@ -249,8 +246,7 @@ public class HdfDataset implements IDataset, Cloneable {
             ds.open();
             ds.saveTo("/home/viguier/out.nxs");
             // ds.saveWithNativeAPI("/home/viguier/out.nxs");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         //
