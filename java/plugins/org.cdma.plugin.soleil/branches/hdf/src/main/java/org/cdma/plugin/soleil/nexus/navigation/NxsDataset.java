@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-
 import org.cdma.Factory;
 import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.navigation.HdfGroup;
 import org.cdma.exception.FileAccessException;
+import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -37,9 +37,10 @@ import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
+import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.dictionary.NxsLogicalGroup;
-import org.cdma.plugin.soleil.nexus.internal.NexusDatasetImpl;
 import org.cdma.plugin.soleil.nexus.internal.DetectedSource.NeXusFilter;
+import org.cdma.plugin.soleil.nexus.internal.NexusDatasetImpl;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
 import org.cdma.utils.Utilities.ModelType;
@@ -325,4 +326,43 @@ public final class NxsDataset implements IDataset {
         return result;
     }
 
+    public static void main(String... args) throws NoResultException, URISyntaxException, WriterException,
+    InvalidArrayTypeException {
+        String fileName = "/home/viguier/writeTests.nxs";
+        String fileNameToWrite = "/home/viguier/writeTestsFinal.nxs";
+
+        // Add group1
+        NxsDataset dataset = NxsDataset.instanciate(new URI("file://" + fileName));
+        NxsGroup group1 = new NxsGroup(dataset, "group1", fileName, "/group1", null);
+        dataset.getRootGroup().addSubgroup(group1);
+
+        NxsGroup group2 = new NxsGroup(dataset, "group2", fileName, "/group2", null);
+        dataset.getRootGroup().addSubgroup(group2);
+
+        // Add data1 to group1
+        NxsDataItem dataItem1 = new NxsDataItem();
+        dataItem1.setShortName("data1");
+        int[] values1 = { 1, 2, 3, 4, 5, 6, 7 };
+        int[] shape1 = { 1, 7 };
+        NxsArray array1 = new NxsArray(values1, shape1);
+        dataItem1.setCachedData(array1, false);
+
+        NxsDataItem dataItem2 = new NxsDataItem();
+        dataItem1.setShortName("data2");
+        String[] values2 = { "sylvain", "mr bonbon" };
+        int[] shape2 = { 1, 2 };
+        NxsArray array2 = new NxsArray(values2, shape2);
+        dataItem2.setCachedData(array2, false);
+
+        group1.addDataItem(dataItem1);
+        group1.addDataItem(dataItem2);
+        group2.addDataItem(dataItem2);
+
+        dataset.saveTo(fileNameToWrite);
+
+    }
 }
+
+
+
+

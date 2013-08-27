@@ -123,9 +123,10 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         // Equipment attribute (NXdetector, NXmono...)
         if (container.getAttribute(NxsConstant.ATTR_EQUIPMENT) == null) {
             if (nodes.length > 2 && nodes[1].getClassName().equals("NXinstrument")) {
-                String attrValue = root.getGroup(nodes[1].getNodeName())
-                        .getGroup(nodes[2].getNodeName())
-                        .getShortName();
+                String node1Name = nodes[1].getNodeName();
+                String node2Name = nodes[2].getNodeName();
+                IGroup group1 = root.getGroup(node1Name);
+                String attrValue = group1.getGroup(node2Name).getShortName();
                 container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, attrValue);
             }
         }
