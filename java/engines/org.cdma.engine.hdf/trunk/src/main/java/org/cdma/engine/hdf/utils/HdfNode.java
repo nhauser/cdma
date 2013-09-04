@@ -58,7 +58,7 @@ public class HdfNode implements INode {
             classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
             nameMatch = "".equals(node.getNodeName())
                     || this.getNodeName().toLowerCase().replace("*", ".*")
-                    .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+                            .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         }
         return (classMatch && nameMatch);
     }

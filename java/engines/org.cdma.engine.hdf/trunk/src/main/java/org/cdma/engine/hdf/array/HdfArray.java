@@ -15,7 +15,7 @@ import org.cdma.interfaces.IArray;
 
 public class HdfArray extends DefaultArrayInline {
 
-    private final HdfDataItem dataItem;
+    private HdfDataItem dataItem;
 
     public HdfArray(String factoryName, Class<?> clazz, int[] iShape, HdfDataItem dataItem)
             throws InvalidArrayTypeException {
@@ -23,10 +23,9 @@ public class HdfArray extends DefaultArrayInline {
         this.dataItem = dataItem;
     }
 
-    public HdfArray(String factoryName, Object array, int[] iShape, HdfDataItem dataItem)
+    public HdfArray(String factoryName, Object array, int[] iShape)
             throws InvalidArrayTypeException {
         super(factoryName, array, iShape);
-        this.dataItem = dataItem;
         this.lock();
     }
 

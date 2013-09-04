@@ -7,17 +7,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
-import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
-import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.Factory;
@@ -49,8 +46,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     private IGroup parent;
     private String shortName;
     private final List<IAttribute> attributeList = new ArrayList<IAttribute>();
-
-    // private String fullName;
+    private boolean dirty = false;
 
     public HdfDataItem(String factoryName, H5File file, IGroup parent, H5ScalarDS dataset) {
         this.factoryName = factoryName;
@@ -62,31 +58,15 @@ public class HdfDataItem implements IDataItem, Cloneable {
             this.shortName = h5Item.getName();
             loadAttributes();
         } else {
+            dirty = true;
             this.shortName = "";
-            // Default Value
-//            long[] shape = { 0, 0 };
-            //
-            //            // shape can be determined by IArray
-            //            if (array != null) {
-            //                shape = HdfObjectUtils.convertIntToLong(array.getShape());
-            //            }
-            //
-            //            // Datatype can be determined by IArray
-            //            Datatype datatype = null;
-            //            if (array.getStorage() instanceof String[]) {
-            //                String[] value = (String[]) array.getStorage();
-            //                datatype = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
-            //            } else {
-            //                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(array.getElementType());
-            //                datatype = new H5Datatype(type_id);
-            //            }
-            //
-            //            Dataset ds = file.createScalarDS(getName(), parent, datatype, shape, null, null, 0, null);
         }
     }
 
-    public HdfDataItem(String factoryName) {
+
+    public HdfDataItem(String factoryName, String name) {
         this(factoryName, null, null, null);
+        this.shortName = name;
     }
 
     private HdfDataItem(HdfDataItem dataItem) {
@@ -101,6 +81,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         }
         try {
             this.array = dataItem.getData();
+            dirty = true;
         } catch (IOException e) {
             Factory.getLogger().severe(e.getMessage());
         }
@@ -167,9 +148,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public List<IAttribute> getAttributeList() {
-        List<IAttribute> result = HdfObjectUtils.getAttributeList(factoryName, h5Item);
-        return result;
+        return attributeList;
     }
+
 
     @Override
     public IDataset getDataset() {
@@ -327,9 +308,13 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 // Set Selected dimensions
                 long[] sDims = h5Item.getSelectedDims();
 
+                for (int i = 0; i < sDims.length; i++) {
+                    sDims[i] = 1;
+                }
+
                 if (!Arrays.equals(shape, HdfObjectUtils.convertLongToInt(sDims))) {
                     viewHasChanged = true;
-                    for (int i = 0; i < sDims.length; i++) {
+                    for (int i = 0; i < shape.length; i++) {
                         sDims[i] = shape[i];
                     }
                 }
@@ -692,6 +677,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     @Override
     public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
         array = cacheData;
+        dirty = true;
     }
 
     @Override
@@ -763,127 +749,72 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     public void save(FileFormat fileToWrite, Group parentInFile) throws Exception {
-        try {
-            // Default Value
-            long[] shape = { 0, 0 };
+        // Save if it's dirty
+        boolean doSave = dirty;
 
-            // shape can be determined by IArray
-            if (array != null) {
-                shape = HdfObjectUtils.convertIntToLong(array.getShape());
-            } else if (h5Item != null) {
-                // shape can be determined by h5Item
-                shape = h5Item.getDims();
+        // But save also if when we are going to write in a new file
+        if (!dirty) {
+            // If this dataset exists in a file ( = !dirty)
+            // then we only save it if the destination file is a different file
+            doSave = !(fileToWrite.getAbsolutePath().equals(h5File.getAbsolutePath()));
+        }
+        if (doSave) {
+            try {
+                // Default Value
+                long[] shape = { 0, 0 };
+
+                if (array == null) {
+                    array = getData();
+                }
+
+                // shape can be determined by IArray
+                if (array != null) {
+                    shape = HdfObjectUtils.convertIntToLong(array.getShape());
+                } else if (h5Item != null) {
+                    // shape can be determined by h5Item
+                    shape = h5Item.getDims();
+                }
+
+                // Datatype can be determined by IArray
+                Datatype datatype = null;
+                if (array != null) {
+                    if (array.getStorage() instanceof String[]) {
+                        String[] value = (String[]) array.getStorage();
+                        datatype = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+                    } else {
+                        int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(array.getElementType());
+                        datatype = new H5Datatype(type_id);
+                    }
+                } else if (h5Item != null) {
+                    // Datatype can be determined the H5 item itself
+                    datatype = h5Item.getDatatype();
+                }
+
+                Dataset ds = (Dataset) fileToWrite.get(getName());
+                if (ds != null && h5Item != null) {
+                    fileToWrite.delete(h5Item);
+                }
+
+                ds = fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0, null);
+
+                if (ds != null) {
+                    ds.write(getData().getStorage());
+                }
+
+                List<IAttribute> attribute = getAttributeList();
+                for (IAttribute iAttribute : attribute) {
+                    HdfAttribute attr = (HdfAttribute) iAttribute;
+                    attr.save(ds);
+                }
+                dirty = false;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            // Datatype can be determined by IArray
-            Datatype datatype = null;
-            if (array.getStorage() instanceof String[]) {
-                String[] value = (String[]) array.getStorage();
-                datatype = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
-            } else {
-                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(array.getElementType());
-                datatype = new H5Datatype(type_id);
-            }
-
-            // Datatype can be determined the H5 item itself
-            if (h5Item != null) {
-                datatype = h5Item.getDatatype();
-            }
-
-            Dataset ds = fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0, null);
-
-            if (ds != null) {
-                ds.write(getData().getStorage());
-            }
-
-            List<IAttribute> attribute = getAttributeList();
-            for (IAttribute iAttribute : attribute) {
-                HdfAttribute attr = (HdfAttribute) iAttribute;
-                attr.save(ds);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
     @Override
     public String writeCDL(String indent, boolean useFullName, boolean strict) {
         throw new NotImplementedException();
-    }
-
-    public static void main(String[] args) {
-
-        System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
-
-        String fileName = "/home/viguier/NeXusFiles/ANTARES/CKedge_2010-12-10_21-51-59.nxs";
-        String datasetPath = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/scan_data/actuator_1_1/";
-
-        try {
-            H5File file = new H5File(fileName);
-            file.open();
-            HObject hobject = file.get(datasetPath);
-            H5ScalarDS ds = (H5ScalarDS) hobject;
-            ds.read();
-
-            long[] dims = ds.getDims();
-            System.out.println("Dims =" + Arrays.toString(dims));
-
-            List metaData = ds.getMetadata();
-            System.out.println("MetaData =" + Arrays.toString(metaData.toArray()));
-
-            String targetName = ds.getLinkTargetObjName();
-            System.out.println("Target = " + targetName);
-
-            String parent = ds.getPath();
-            System.out.println("Path = " + parent);
-
-            HObject parentObject = file.get(ds.getPath());
-            H5Group group = (H5Group) parentObject;
-            System.out.println("Parent = " + group);
-
-            // ds.clearData();
-            // int[] origin;
-            // int[] shape;
-            //
-            // HdfDataItem item = new HdfDataItem("test", file, null, ds);
-            // origin = new int[] { 0, 0 };
-            // shape = new int[] { 101, 101 };
-            // IArray a1 = item.getData(origin, shape);
-            // Object a1Storage = a1.getStorage();
-            //
-            // origin = new int[] { 2, 2 };
-            // shape = new int[] { 10, 10 };
-            // IArray a2 = item.getData(origin, shape);
-            // Object a2Storage = a2.getStorage();
-            //
-            // System.out.println("a1Storage");
-            // for (int i = 0; i < 10; i++) {
-            // System.out.println(Array.get(a1Storage, i));
-            // }
-            // System.out.println("a2Storage");
-            // for (int i = 0; i < 10; i++) {
-            // System.out.println(Array.get(a2Storage, i));
-            // }
-
-            // byte[] b = ds.readBytes();
-            // for (int i = 0; i < 10; i++) {
-            // System.out.print(Array.get(b, i));
-            // System.out.print(",");
-            // }
-            // // TODO DEBUG
-            // System.out.println();
-            //
-            // long[] sD = ds.getStartDims();
-            // sD[1] = 1L;
-            // ds.clear();
-            // b = ds.readBytes();
-            // for (int i = 0; i < 10; i++) {
-            // System.out.print(Array.get(b, i));
-            // System.out.print(",");
-            // }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

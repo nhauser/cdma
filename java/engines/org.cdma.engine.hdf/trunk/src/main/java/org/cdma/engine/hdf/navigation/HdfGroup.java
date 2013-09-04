@@ -1,6 +1,5 @@
 package org.cdma.engine.hdf.navigation;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,11 +9,12 @@ import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import ncsa.hdf.hdf5lib.H5;
+import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
+import ncsa.hdf.object.Metadata;
 import ncsa.hdf.object.h5.H5File;
 import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5ScalarDS;
@@ -22,7 +22,6 @@ import ncsa.hdf.object.h5.H5ScalarDS;
 import org.cdma.Factory;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.hdf.utils.HdfNode;
-import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
@@ -43,33 +42,89 @@ public class HdfGroup implements IGroup, Cloneable {
     private HdfGroup parent;
     private IGroup root = null;
     private final String factoryName; // Name of the factory plugin that instantiate
-    private final H5Group h5Group;
-    private final H5File h5File;
+    private H5File h5File;
     private final Map<String, IGroup> groupMap = new HashMap<String, IGroup>();
     private final Map<String, IDataItem> itemMap = new HashMap<String, IDataItem>();
+    private final Map<String, IAttribute> attributeMap = new HashMap<String, IAttribute>();
+    private String nameInFile;
+    private String name;
+    private String fullName;
+    private boolean isNew = false;
+    private IDataset dataset;
+
+    public HdfGroup(String factoryName, H5Group hdfGroup, HdfDataset dataset) {
+        this(factoryName, hdfGroup, (HdfGroup) null);
+        this.dataset = dataset;
+    }
 
     public HdfGroup(String factoryName, H5Group hdfGroup, HdfGroup parent) {
-        this.h5Group = hdfGroup;
         this.factoryName = factoryName;
         this.h5File = (H5File) hdfGroup.getFileFormat();
         this.parent = parent;
+        init(hdfGroup);
     }
 
-    public HdfGroup(String factoryName, Group hdfGroup, HdfGroup parent) {
-        this(factoryName, (H5Group) hdfGroup, parent);
-    }
 
     public HdfGroup(String factoryName, String file, String name, String path, HdfGroup parent) {
-        this.h5File = new H5File(file, H5File.WRITE);
-        H5Group parentGroup = (parent == null) ? null : parent.h5Group;
-        this.h5Group = new H5Group(h5File, name, path, parentGroup);
+        this.h5File = new H5File(file, H5File.READ);
+        H5Group h5Group = new H5Group(h5File, name, path, null);
         this.parent = parent;
         this.factoryName = factoryName;
+        init(h5Group);
+    }
+
+    public HdfGroup(String factoryName, String name, String path, HdfGroup parent) {
+        try {
+            this.h5File = new H5File();
+            this.name = name;
+            this.fullName = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + name : parent.getName()
+                    + HdfPath.PATH_SEPARATOR + name;
+            this.isNew = true;
+        } catch (Exception e) {
+            Factory.getLogger().severe(e.getMessage());
+        }
+        this.factoryName = factoryName;
+    }
+
+    private void init(H5Group h5Group) {
+
+        fullName = h5Group.getFullName();
+        name = h5Group.getName();
+        nameInFile = name;
+
+        List<HObject> members = h5Group.getMemberList();
+        for (HObject hObject : members) {
+            if (hObject instanceof H5ScalarDS) {
+                H5ScalarDS scalarDS = (H5ScalarDS) hObject;
+                HdfDataItem dataItem = new HdfDataItem(factoryName, h5File, this, scalarDS);
+                itemMap.put(scalarDS.getName(), dataItem);
+            }
+            if (hObject instanceof H5Group) {
+                H5Group group = (H5Group) hObject;
+                HdfGroup hdfGroup = new HdfGroup(factoryName, group, this);
+                groupMap.put(group.getName(), hdfGroup);
+            }
+        }
+
+        try {
+            @SuppressWarnings("unchecked")
+            List<Metadata> metadatas = h5Group.getMetadata();
+
+            for (Metadata metadata : metadatas) {
+                if (metadata instanceof Attribute) {
+                    Attribute attribute = (Attribute) metadata;
+                    HdfAttribute hdfAttr = new HdfAttribute(factoryName, attribute);
+                    attributeMap.put(hdfAttr.getName(), hdfAttr);
+                }
+            }
+        } catch (HDF5Exception e) {
+            Factory.getLogger().severe(e.getMessage());
+        }
     }
 
     @Override
     public HdfGroup clone() {
-        return new HdfGroup(factoryName, h5Group, parent);
+        return new HdfGroup(factoryName, null, parent);
     }
 
     @Override
@@ -77,38 +132,34 @@ public class HdfGroup implements IGroup, Cloneable {
         return ModelType.Group;
     }
 
-    public H5Group getH5Group() {
-        return this.h5Group;
-    }
-
     public H5File getH5File() {
         return this.h5File;
     }
 
+    public boolean isNew() {
+        return isNew;
+    }
+
     @Override
     public void addStringAttribute(String name, String value) {
-        HdfObjectUtils.addStringAttribute(h5Group, name, value);
+        HdfAttribute attribute = new HdfAttribute(factoryName, name, value);
+        attributeMap.put(name, attribute);
     }
 
     @Override
     public void addOneAttribute(IAttribute attribute) {
-        HdfObjectUtils.addOneAttribute(h5Group, attribute);
+        attributeMap.put(attribute.getName(), attribute);
     }
 
     @Override
     public IAttribute getAttribute(String name) {
-        IAttribute result = null;
-        Attribute attr = HdfObjectUtils.getAttribute(h5Group, name);
-        if (attr != null) {
-            result = new HdfAttribute(factoryName, attr);
-        }
-
+        IAttribute result = attributeMap.get(name);
         return result;
     }
 
     @Override
     public List<IAttribute> getAttributeList() {
-        List<IAttribute> result = HdfObjectUtils.getAttributeList(factoryName, h5Group);
+        List<IAttribute> result = new ArrayList<IAttribute>(attributeMap.values());
         return result;
     }
 
@@ -119,23 +170,25 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public String getName() {
-        return h5Group.getFullName();
+        return this.fullName;
     }
 
     @Override
     public String getShortName() {
-        return h5Group.getName();
+        return this.name;
     }
 
     @Override
     public boolean hasAttribute(String name, String value) {
-        boolean result = HdfObjectUtils.hasAttribute(h5Group, name, value);
+        boolean result = attributeMap.containsKey(name);
         return result;
     }
 
     @Override
     public boolean removeAttribute(IAttribute a) {
-        return HdfObjectUtils.removeAttribute(h5Group, a);
+        boolean result = true;
+        attributeMap.remove(a.getName());
+        return result;
     }
 
     @Override
@@ -146,7 +199,12 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public void setShortName(String name) {
         try {
-            h5Group.setName(name);
+            this.name = name;
+            this.fullName = getParentGroup().getName() + HdfPath.PATH_SEPARATOR + name;
+            for (IDataItem item : itemMap.values()) {
+                item.setParent(this);
+            }
+
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
@@ -156,7 +214,6 @@ public class HdfGroup implements IGroup, Cloneable {
     public void setParent(IGroup group) {
         try {
             parent = (HdfGroup) group;
-            h5Group.setPath(group.getName());
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
@@ -165,11 +222,7 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public long getLastModificationDate() {
         long result = 0;
-        String fileName = h5Group.getFile();
-        File currentFile = new File(fileName);
-        if (currentFile != null && currentFile.exists()) {
-            result = currentFile.lastModified();
-        }
+        getDataset().getLastModificationDate();
         return result;
     }
 
@@ -182,9 +235,6 @@ public class HdfGroup implements IGroup, Cloneable {
     public void addDataItem(IDataItem item) {
         item.setParent(this);
         itemMap.put(item.getName(), item);
-        if (item instanceof HdfDataItem) {
-            h5Group.addToMemberList(((HdfDataItem) item).getH5DataItem());
-        }
     }
 
     @Override
@@ -214,11 +264,6 @@ public class HdfGroup implements IGroup, Cloneable {
     public void addSubgroup(IGroup group) {
         group.setParent(this);
         groupMap.put(group.getShortName(), group);
-
-        if (group instanceof HdfGroup) {
-            HdfGroup hdfGroup = (HdfGroup) group;
-            h5Group.addToMemberList(hdfGroup.getH5Group());
-        }
     }
 
     @Override
@@ -226,32 +271,8 @@ public class HdfGroup implements IGroup, Cloneable {
         IDataItem result = null;
         if (shortName != null) {
             result = itemMap.get(shortName);
-            if (result == null) {
-                H5ScalarDS scalarDS = getH5ScalarDS(shortName);
-                if (scalarDS != null) {
-                    result = new HdfDataItem(factoryName, h5File, this, scalarDS);
-                    itemMap.put(shortName, result);
-                }
-            }
         }
 
-        return result;
-    }
-
-    private H5ScalarDS getH5ScalarDS(String shortName) {
-        H5ScalarDS result = null;
-        if (shortName != null && !shortName.trim().isEmpty()) {
-            List<HObject> members = h5Group.getMemberList();
-            for (HObject hObject : members) {
-                if (hObject instanceof H5ScalarDS) {
-                    H5ScalarDS scalarDS = (H5ScalarDS) hObject;
-                    if (shortName.equals(scalarDS.getName())) {
-                        result = scalarDS;
-                        break;
-                    }
-                }
-            }
-        }
         return result;
     }
 
@@ -299,26 +320,12 @@ public class HdfGroup implements IGroup, Cloneable {
         IGroup result = null;
         if (shortName != null) {
             result = groupMap.get(shortName);
-            if (result == null) {
-                List<HObject> groups = h5Group.getMemberList();
-                for (HObject hObject : groups) {
-                    if (hObject instanceof H5Group) {
-                        H5Group group = (H5Group) hObject;
-                        if (shortName.equals(group.getName())) {
-                            result = new HdfGroup(factoryName, group, this);
-                            groupMap.put(shortName, result);
-                            break;
-                        }
-                    }
-                }
-            }
         }
         return result;
     }
 
     @Override
     public IGroup getGroupWithAttribute(String attributeName, String value) {
-        // TDGV Refactor reporter dans un DefaultGroup
         List<IGroup> groups = getGroupList();
         IAttribute attr;
         for (IGroup group : groups) {
@@ -333,28 +340,20 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public List<IDataItem> getDataItemList() {
-        //        List<IDataItem> result = new ArrayList<IDataItem>();
-        //        List<HObject> members = h5Group.getMemberList();
-        //        for (HObject hObject : members) {
-        //            if (hObject instanceof H5ScalarDS) {
-        //                IDataItem itemToAdd = getDataItem(hObject.getName());
-        //                if (itemToAdd != null) {
-        //                    result.add(itemToAdd);
-        //                }
-        //            }
-        //        }
-        //        return result;
-        return new ArrayList<IDataItem>(itemMap.values());
+        List<IDataItem> result;
+        result = new ArrayList<IDataItem>(itemMap.values());
+        return result;
     }
 
-    public List<HObject> getMembers() {
-        return h5Group.getMemberList();
-    }
 
     @Override
     public IDataset getDataset() {
-        HdfDataset dataSet = new HdfDataset(factoryName, h5File);
-        return dataSet;
+        if (dataset == null) {
+            if (parent != null) {
+                dataset = parent.getDataset();
+            }
+        }
+        return dataset;
     }
 
     @Override
@@ -372,33 +371,30 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public List<IGroup> getGroupList() {
-        List<IGroup> result = new ArrayList<IGroup>();
-
-        List<HObject> members = h5Group.getMemberList();
-        for (HObject hObject : members) {
-            if (hObject instanceof H5Group) {
-                IGroup groupToAdd = getGroup(hObject.getName());
-                if (groupToAdd != null) {
-                    result.add(groupToAdd);
-                }
-            }
-        }
-
+        List<IGroup> result;
+        result = new ArrayList<IGroup>(groupMap.values());
         return result;
     }
 
     protected List<INode> getNodes() {
         List<INode> nodes = new ArrayList<INode>();
-        List<HObject> members = h5Group.getMemberList();
-        for (HObject hObject : members) {
-            Attribute attrClass = HdfObjectUtils.getAttribute(hObject, "NX_class");
-            String att = "";
-            if (attrClass != null) {
-                att = ((String[]) attrClass.getValue())[0];
 
-            }
-            nodes.add(new HdfNode(hObject.getName(), att));
+        for (IDataItem item : itemMap.values()) {
+            nodes.add(new HdfNode(item.getShortName()));
         }
+        for (IGroup item : groupMap.values()) {
+            nodes.add(new HdfNode(item.getShortName()));
+        }
+        // List<HObject> members = h5Group.getMemberList();
+        // for (HObject hObject : members) {
+        // Attribute attrClass = HdfObjectUtils.getAttribute(hObject, "NX_class");
+        // String att = "";
+        // if (attrClass != null) {
+        // att = ((String[]) attrClass.getValue())[0];
+        //
+        // }
+        // nodes.add(new HdfNode(hObject.getName(), att));
+        // }
         return nodes;
     }
 
@@ -453,7 +449,7 @@ public class HdfGroup implements IGroup, Cloneable {
 
                     for (INode node : childs) {
 
-                        if (current.matchesPartNode(node)) {
+                        if (node.matchesPartNode(current)) {
                             if (level < nodes.length - 1) {
                                 result.addAll(findAllContainer(group.getContainer(node.getName()), nodes, level + 1));
                             }
@@ -481,7 +477,7 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public boolean removeDataItem(String varName) {
         boolean result = true;
-        h5Group.removeFromMemberList(getH5ScalarDS(varName));
+        itemMap.remove(varName);
         return result;
     }
 
@@ -502,23 +498,8 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public boolean removeGroup(String name) {
-        boolean result = false;
-        if (name != null) {
-            H5Group groupToRemove = null;
-
-            List<HObject> members = h5Group.getMemberList();
-            for (HObject hObject : members) {
-                if (hObject instanceof H5Group) {
-                    H5Group group = (H5Group) hObject;
-                    if (name.equals(group.getName())) {
-                        groupToRemove = group;
-                    }
-                }
-            }
-            result = h5Group.getMemberList().remove(groupToRemove);
-        }
-
-        return result;
+        groupMap.remove(name);
+        return true;
     }
 
     @Override
@@ -621,72 +602,49 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     public void save(FileFormat fileToWrite, Group parent) throws Exception {
-        Group newParent = null;
+        Group theGroup = null;
 
+        boolean copyToNewFile = !(fileToWrite.getAbsolutePath().equals(h5File.getAbsolutePath()));
         boolean isRoot = isRoot();
         if (!isRoot) {
-            newParent = fileToWrite.createGroup(getShortName(), parent);
 
-            List<IAttribute> attribute = getAttributeList();
-            for (IAttribute iAttribute : attribute) {
-                HdfAttribute attr = (HdfAttribute) iAttribute;
-                attr.save(newParent);
+            // New file or new group
+            if (isNew() || copyToNewFile) {
+                theGroup = fileToWrite.createGroup(getShortName(), parent);
+
+                List<IAttribute> attribute = getAttributeList();
+                for (IAttribute iAttribute : attribute) {
+                    HdfAttribute attr = (HdfAttribute) iAttribute;
+                    attr.save(theGroup);
+                }
             }
+            // Group has been renamed
+            else if (this.nameInFile != null && !this.nameInFile.equals(name)) {
+                theGroup = (Group) fileToWrite.get(nameInFile);
+                theGroup.setName(name);
+            } else {
+                theGroup = (Group) fileToWrite.get(name);
+            }
+
         } else {
             DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) fileToWrite.getRootNode();
             H5Group rootObject = (H5Group) theRoot.getUserObject();
-            newParent = rootObject;
+            theGroup = rootObject;
         }
+
+
 
         List<IDataItem> dataItems = getDataItemList();
         for (IDataItem dataItem : dataItems) {
             HdfDataItem hdfDataItem = (HdfDataItem) dataItem;
-            hdfDataItem.save(fileToWrite, newParent);
+            hdfDataItem.save(fileToWrite, theGroup);
         }
 
         List<IGroup> groups = getGroupList();
         for (IGroup iGroup : groups) {
             HdfGroup hdfGroup = (HdfGroup) iGroup;
-            hdfGroup.save(fileToWrite, newParent);
+            hdfGroup.save(fileToWrite, theGroup);
         }
+        isNew = false;
     }
-
-    public static void main(String[] args) {
-
-        System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
-
-        String fileName = "/home/viguier/NeXusFiles/ANTARES/CKedge_2010-12-10_21-51-59.nxs";
-        String groupPath = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/ANTARES/ScientaAtt0";
-
-        try {
-            H5File file = new H5File(fileName);
-            file.open();
-            HObject hobject = file.get(groupPath);
-
-            H5Group h5Group = (H5Group) hobject;
-            h5Group.open();
-
-            System.out.println("h5Group is opened");
-
-            HdfGroup group = new HdfGroup("HDF", h5Group, null);
-
-            String pathToFind = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/ANTARES";
-            System.out.println("Test: group.findContainerByPath(" + pathToFind + ")");
-            IContainer container = group.findContainerByPath(pathToFind);
-            System.out.println((container == null) ? "not found" : "Found ! -> " + container);
-
-            System.out.println("Test: group.findAllContainerByPath()");
-            pathToFind = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/ANTARES/ScientaAtt0";
-            pathToFind = "/Pattern_281_salsa.Microscopy.Scan2D_Scienta_Is_XIA_vs_PIXY_1/scan_data/data_0*";
-            List<IContainer> containers = group.findAllContainerByPath(pathToFind);
-            System.out.println("Found " + containers.size() + " containers");
-            for (IContainer iContainer : containers) {
-                System.out.println(iContainer);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }
