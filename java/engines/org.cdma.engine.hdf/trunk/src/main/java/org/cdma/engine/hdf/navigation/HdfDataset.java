@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import ncsa.hdf.hdf5lib.H5;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.h5.H5File;
 import ncsa.hdf.object.h5.H5Group;
@@ -16,7 +15,6 @@ import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
-import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 
@@ -29,10 +27,27 @@ public class HdfDataset implements IDataset, Cloneable {
     private IGroup root;
 
     public HdfDataset(String factoryName, File hdfFile) {
+        this(factoryName, hdfFile, false);
+    }
+
+    public HdfDataset(String factoryName, File hdfFile, boolean appendToFile) {
         this.factoryName = factoryName;
         this.hdfFileName = hdfFile;
         this.title = hdfFile.getName();
-        this.h5File = new H5File(hdfFileName.getAbsolutePath(), H5File.WRITE);
+        try {
+            int flag = H5File.CREATE;
+            if (hdfFile.exists()) {
+                if (appendToFile) {
+                    flag = H5File.WRITE;
+                } else {
+                    flag = H5File.READ;
+                }
+            }
+            this.h5File = (H5File) new H5File(hdfFile.getAbsolutePath())
+            .createInstance(hdfFile.getAbsolutePath(), flag);
+        } catch (Exception e) {
+            Factory.getLogger().severe(e.getMessage());
+        }
     }
 
     @Override
@@ -57,13 +72,12 @@ public class HdfDataset implements IDataset, Cloneable {
                 try {
                     h5File.open();
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) h5File.getRootNode();
                 if (theRoot != null) {
                     H5Group rootObject = (H5Group) theRoot.getUserObject();
-                    root = new HdfGroup(factoryName, rootObject, null);
+                    root = new HdfGroup(factoryName, rootObject, this);
                 }
             }
         }
@@ -137,10 +151,11 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public void save() throws WriterException {
+
         HdfGroup root = (HdfGroup) getRootGroup();
         // recursive save
         try {
-            root.save(this.h5File, root.getH5Group());
+            root.save(this.h5File, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,17 +169,15 @@ public class HdfDataset implements IDataset, Cloneable {
                 newFile.delete();
             }
 
-            // FileFormat fileToWrite = h5File.createFile(location, H5File.FILE_CREATE_DELETE);
             H5File fileToWrite = new H5File(location, FileFormat.CREATE);
             fileToWrite.open();
 
             HdfGroup root = (HdfGroup) getRootGroup();
             // recursive save
-            root.save(fileToWrite, root.getH5Group());
+            root.save(fileToWrite, null);
             fileToWrite.close();
 
         } catch (Exception e) {
-            // TODO DEBUG
             e.printStackTrace();
             throw new WriterException(e);
         }
@@ -185,95 +198,5 @@ public class HdfDataset implements IDataset, Cloneable {
         StringBuffer buffer = new StringBuffer();
         buffer.append("Dataset = " + getLocation());
         return buffer.toString();
-    }
-
-    public static String readAviex(HdfDataset ds) {
-        String result = null;
-        String fileName = "/home/viguier/NeXusFiles/BackToMama/datas/bigtree.nxs";
-
-        try {
-            // File file = new File(fileName);
-            //
-            // HdfDataset ds = new HdfDataset("HDF", file);
-            // ds.open();
-            IGroup root = ds.getRootGroup();
-
-            IGroup entry = root.getGroup("BSA_0006");
-            IGroup swingGroup = entry.getGroup("SWING");
-            IGroup aviexGroup = swingGroup.getGroup("Aviex");
-            IDataItem item = aviexGroup.getDataItem("type");
-
-            Object data = item.getData().getStorage();
-
-            result = ((String[]) data)[0];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static String readSampleInfos(HdfDataset ds) {
-        String result = null;
-        String fileName = "/home/viguier/NeXusFiles/BackToMama/BigTree/hdf.nxs";
-
-        try {
-
-            IGroup root = ds.getRootGroup();
-
-            IGroup entry = root.getGroup("BSA_0006");
-            IGroup sampleInfo = entry.getGroup("sample_info");
-            IGroup comments = sampleInfo.getGroup("comments");
-            IDataItem item = comments.getDataItem("data");
-
-            // TODO DEBUG
-            Object data = item.getData().getStorage();
-
-            result = ((String[]) data)[0];
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public static void main(String args[]) throws IOException, WriterException, NullPointerException {
-        try {
-            System.setProperty(H5.H5PATH_PROPERTY_KEY, "/home/viguier/LocalSoftware/hdf-java/lib/linux/libjhdf5.so");
-            String fileName = "/home/viguier/NeXusFiles/BackToMama/datas/bigtree.nxs";
-
-            File file = new File(fileName);
-
-            final HdfDataset ds = new HdfDataset("HDF", file);
-            ds.open();
-            ds.saveTo("/home/viguier/out.nxs");
-            // ds.saveWithNativeAPI("/home/viguier/out.nxs");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //
-        // Thread readAviexRunnable = new Thread() {
-        // @Override
-        // public void run() {
-        // String result = null;
-        // while (true) {
-        // result = readAviex(ds);
-        // System.out.println("Aviex Data Item = " + result);
-        // }
-        // }
-        // };
-        //
-        // Thread readCommentRunnable = new Thread() {
-        // @Override
-        // public void run() {
-        // String result = null;
-        // while (true) {
-        // result = readSampleInfos(ds);
-        // System.out.println("Comments Item = " + result);
-        // }
-        // }
-        // };
-        //
-        // readAviexRunnable.start();
-        // readCommentRunnable.start();
-
     }
 }

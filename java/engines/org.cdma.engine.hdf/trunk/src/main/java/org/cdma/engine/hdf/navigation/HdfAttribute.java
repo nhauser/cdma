@@ -45,7 +45,7 @@ public class HdfAttribute implements IAttribute {
         }
 
         try {
-            this.value = new HdfArray(factoryName, data, shape, null);
+            this.value = new HdfArray(factoryName, data, shape);
             this.value.lock();
         }
         catch (InvalidArrayTypeException e) {
@@ -157,7 +157,7 @@ public class HdfAttribute implements IAttribute {
     @Override
     public void setStringValue(String val) {
         try {
-            value = new HdfArray(factoryName, new String[] { val }, new int[] { 1 }, null);
+            value = new HdfArray(factoryName, new String[] { val }, new int[] { 1 });
         }
         catch (InvalidArrayTypeException e) {
             Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
@@ -170,17 +170,19 @@ public class HdfAttribute implements IAttribute {
     }
 
     public void save(HObject parent) throws Exception {
-        int dataType = HdfObjectUtils.getHdfDataTypeForClass(getType());
-        Attribute newAttribute = new Attribute(getName(), new H5Datatype(dataType), null,
-                getValue().getStorage());
+
+        H5Datatype dataType;
 
         if (getValue().getStorage() instanceof String[]) {
             String[] value = (String[]) getValue().getStorage();
-            Datatype newType = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
-            // Create a new attribute
-            newAttribute = new Attribute(getName(), newType, null, getValue().getStorage());
-
+            dataType = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+        } else {
+            int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(value.getElementType());
+            dataType = new H5Datatype(type_id);
         }
-        // parent.writeMetadata(newAttribute);
+
+        Attribute newAttribute = new Attribute(getName(), dataType, null, getValue().getStorage());
+
+        parent.writeMetadata(newAttribute);
     }
 }
