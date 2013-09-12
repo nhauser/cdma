@@ -33,7 +33,7 @@ import org.cdma.utilities.performance.PostTreatmentManager;
 
 public class SqlCdmaCursor {
 	private String mQuery;
-	private SqlDataset mDataset;
+	private ISqlDataset mDataset;
 	private SoftReference<ResultSet> mResult;
 	private int mCurRow;
 	private PreparedStatement mStatQuery;
@@ -44,11 +44,11 @@ public class SqlCdmaCursor {
 	private boolean mInitialized;
 	private ISqlArrayAppender mTreatment;
 	
-	public SqlCdmaCursor( SqlDataset dataset, String query ) {
+	public SqlCdmaCursor( ISqlDataset dataset, String query ) {
 		this( dataset, query, new Object[] {} );
 	}
 	
-	public SqlCdmaCursor( SqlDataset dataset, String query, Object[] params ) {
+	public SqlCdmaCursor( ISqlDataset dataset, String query, Object[] params ) {
 		mDataset = dataset;
 		mCurRow  = 0;
 		mQuery   = query;
@@ -288,7 +288,7 @@ public class SqlCdmaCursor {
 	/**
 	 * Returns the currently used SQL dataset
 	 */
-	protected SqlDataset getDataset() {
+	protected ISqlDataset getDataset() {
 		return mDataset;
 	}
 }

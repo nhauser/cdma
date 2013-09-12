@@ -25,16 +25,24 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IGroup;
 
-public final class SqlDataset implements ISqlDataset {
+public final class SqlQueryDataset implements ISqlDataset {
 	private SqlConnector mConnector;
 	private String mFactory;
 	private boolean mNumericalDate;
+	private SqlCdmaCursor cursor;
 
 	
-	public SqlDataset( String factoryName, String host, String user, String password ) {
+	public SqlQueryDataset( String factoryName, String host, String user, String password, String query) {
 		mFactory = factoryName;
 		mConnector = new SqlConnector(host, user, password);
 		mNumericalDate = false;
+		try {
+			open();
+			executeQuery(query);
+		} catch (IOException e) {
+			Factory.getLogger().log(Level.WARNING, "Unable to open the dataset", e);
+		}
+		
 	}
 	
 	@Override
@@ -51,7 +59,15 @@ public final class SqlDataset implements ISqlDataset {
 
 	@Override
 	public IGroup getRootGroup() {
-		return new SqlGroup(this, "", null);
+		//return new SqlGroup(this, "", null);
+		IGroup result = null;
+		try {
+			//result = new SqlGroup(this, "", cursor.getResultSet());
+			result = cursor.getGroup();
+		} catch (SQLException e) {
+			Factory.getLogger().log(Level.WARNING, "Unable to getRootGroup", e);
+		}
+		return result;
 	}
 
 	@Override
@@ -171,8 +187,8 @@ public final class SqlDataset implements ISqlDataset {
 	 * @param query to be executed
 	 * @note the execution is delayed: it will be triggered when a result will b e asked
 	 */
-	public SqlCdmaCursor executeQuery( String query ) {
-		return executeQuery( query, new Object[] {} );
+	public void executeQuery( String query ) {
+		executeQuery( query, new Object[] {} );
 	}
 	
 	/**
@@ -181,8 +197,14 @@ public final class SqlDataset implements ISqlDataset {
 	 * @param query to be executed
 	 * @note the execution is delayed: it will be triggered when a result will b e asked
 	 */
-	public SqlCdmaCursor executeQuery( String query, Object[] params ) {
-		return new SqlCdmaCursor(this, query, params);
+	public void executeQuery( String query, Object[] params ) {
+		cursor = new SqlCdmaCursor(this, query, params);
+		try {
+			cursor.next();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
