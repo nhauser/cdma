@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.sql.internal.SqlConnector;
+import org.cdma.engine.sql.utils.ISqlDataset;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
@@ -39,7 +40,7 @@ import org.cdma.utils.Utilities.ModelType;
 public class SqlGroup implements IGroup, Cloneable {
 	private String mFactory;
 	private SqlGroup mParent;
-	private SqlDataset mDataset;
+	private ISqlDataset mDataset;
 	private String[] mDepth;
 	private String mName;
 	
@@ -47,7 +48,7 @@ public class SqlGroup implements IGroup, Cloneable {
 	private List<IDataItem> mChildItems;
 
 	
-	public SqlGroup(SqlDataset dataset, String name, ResultSet sql_set) {
+	public SqlGroup(ISqlDataset dataset, String name, ResultSet sql_set) {
 		mFactory = dataset.getFactoryName();
 		mDataset = dataset;
 		mName = name;
