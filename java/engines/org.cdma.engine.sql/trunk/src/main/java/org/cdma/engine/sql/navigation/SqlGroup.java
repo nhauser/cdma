@@ -24,6 +24,7 @@ import org.cdma.Factory;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.utils.ISqlDataset;
+import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
@@ -46,6 +47,7 @@ public class SqlGroup implements IGroup, Cloneable {
 	
 	private List<IGroup> mChildGroups;
 	private List<IDataItem> mChildItems;
+	private SqlCdmaCursor mCursor;
 
 	
 	public SqlGroup(ISqlDataset dataset, String name, ResultSet sql_set) {
@@ -62,6 +64,15 @@ public class SqlGroup implements IGroup, Cloneable {
 		mName    = group.mName;
 		mChildItems = group.mChildItems;
 		mChildGroups = new ArrayList<IGroup>();
+	}
+	
+	public SqlGroup(ISqlDataset dataset, String name, SqlCdmaCursor cursor) {
+		mFactory = dataset.getFactoryName();
+		mDataset = dataset;
+		mName = name;
+		mCursor = cursor;
+		// childGroups will be instantiated later with cursor data
+		mChildGroups = null;
 	}
 
 
@@ -277,6 +288,24 @@ public class SqlGroup implements IGroup, Cloneable {
 
 	@Override
 	public List<IGroup> getGroupList() {
+		
+		if (mChildGroups == null){
+			mChildGroups = new ArrayList<IGroup>();
+			try {
+				while(mCursor.next()){
+					try{
+						mChildGroups.add(new SqlGroup(mCursor.getGroup()));
+					} catch (Exception e){
+						//SILENT CATCH
+						//TDGV Add error management here
+					}
+				}
+				
+			} catch (SQLException e) {
+				Factory.getLogger().log(Level.WARNING, "Unable to initialize group list", e);
+			}
+		
+		}
 		return mChildGroups;
 	}
 	

@@ -2,6 +2,7 @@ package org.cdma.engine.sql;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
 
 import org.cdma.IFactory;
@@ -14,6 +15,7 @@ import org.cdma.engine.sql.utils.SqlCdmaCursor;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
+import org.cdma.interfaces.IArrayIterator;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
@@ -222,15 +224,34 @@ public final class SqlFactory implements IFactory {
 	public static void main(String args[]) throws Exception {
 		String uriStr = "jdbc:oracle:thin:@LUTIN:1521:TEST11";
 
-		SqlQueryDataset dataset = new SqlQueryDataset(NAME, uriStr, "HDB",
-				"HDB", "select * from ADT");
+		SqlQueryDataset dataset = new SqlQueryDataset(
+				NAME,
+				uriStr,
+				"HDB",
+				"HDB",
+				"select a.FULL_NAME, a.DEVICE, a.DATA_TYPE, b.START_DATE, b.STOP_DATE from  amt b, adt a where b.id = a.id");
 		IGroup root = dataset.getRootGroup();
 		if (root == null) {
-			System.out.println("Something is Wrong. root is null");
+			System.out.println("Something went wrong. root is null");
 		}
-		List<IDataItem> items = root.getDataItemList();
-		for (IDataItem sqlDataItem : items) {
-			System.out.println(sqlDataItem.getName());
+
+		List<IGroup> groups = root.getGroupList();
+
+		for (IGroup iGroup : groups) {
+			List<IDataItem> items = iGroup.getDataItemList();
+			for (IDataItem sqlDataItem : items) {
+				System.out.println(sqlDataItem.getName());
+				IArray array = sqlDataItem.getData();
+				if (Character.TYPE.equals(sqlDataItem.getType())) {
+					System.out.println(new String((char[]) array
+							.getArrayUtils().copyTo1DJavaArray()));
+				} else {
+					System.out.println(java.lang.reflect.Array.get(array
+							.getArrayUtils().copyTo1DJavaArray(), 0));
+
+				}
+			}
+
 		}
 	}
 

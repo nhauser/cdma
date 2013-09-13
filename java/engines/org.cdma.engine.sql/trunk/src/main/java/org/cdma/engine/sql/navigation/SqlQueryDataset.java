@@ -59,14 +59,8 @@ public final class SqlQueryDataset implements ISqlDataset {
 
 	@Override
 	public IGroup getRootGroup() {
-		//return new SqlGroup(this, "", null);
 		IGroup result = null;
-		try {
-			//result = new SqlGroup(this, "", cursor.getResultSet());
-			result = cursor.getGroup();
-		} catch (SQLException e) {
-			Factory.getLogger().log(Level.WARNING, "Unable to getRootGroup", e);
-		}
+		result = new SqlGroup(this, "", cursor);
 		return result;
 	}
 
