@@ -30,6 +30,7 @@ public final class SqlQueryDataset implements ISqlDataset {
 	private String mFactory;
 	private boolean mNumericalDate;
 	private SqlCdmaCursor cursor;
+	private IGroup root;
 
 	
 	public SqlQueryDataset( String factoryName, String host, String user, String password, String query) {
@@ -59,9 +60,10 @@ public final class SqlQueryDataset implements ISqlDataset {
 
 	@Override
 	public IGroup getRootGroup() {
-		IGroup result = null;
-		result = new SqlGroup(this, "", cursor);
-		return result;
+		if (root == null){
+			root = new SqlGroup(this, "", cursor);
+		}
+		return root;
 	}
 
 	@Override
