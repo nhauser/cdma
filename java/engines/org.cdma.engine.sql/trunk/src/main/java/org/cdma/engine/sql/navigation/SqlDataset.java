@@ -11,6 +11,7 @@ package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
@@ -51,7 +52,7 @@ public final class SqlDataset implements ISqlDataset {
 
 	@Override
 	public IGroup getRootGroup() {
-		return new SqlGroup(this, "", null);
+		return new SqlGroup(this, "", (ResultSet)null);
 	}
 
 	@Override
