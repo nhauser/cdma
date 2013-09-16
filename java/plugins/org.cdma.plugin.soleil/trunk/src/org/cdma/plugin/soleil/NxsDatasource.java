@@ -125,12 +125,6 @@ public final class NxsDatasource implements IDatasource {
             if (source.isFolder() && !source.isDatasetFolder()) {
                 File folder = new File(target.getPath());
                 File[] files = folder.listFiles( (FileFilter) new ValidURIFilter() );
-                Arrays.sort(files, new Comparator<File>() {
-                    @Override
-                    public int compare(File f1, File f2) {
-                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
-                    }
-                });
 
                 if( files != null ) {
                     for (File file : files) {
