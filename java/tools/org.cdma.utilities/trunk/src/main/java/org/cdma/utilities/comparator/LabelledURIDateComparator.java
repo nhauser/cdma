@@ -12,8 +12,8 @@ public class LabelledURIDateComparator extends LabelledURIComparator {
         // Both object are != null
         if (result == Integer.MAX_VALUE) {
 
-            result = Long.valueOf(o1.getDatasource().getLastModificationDate(o1.getURI())).compareTo(
-                    Long.valueOf(o2.getDatasource().getLastModificationDate(o2.getURI())));
+            result = Long.valueOf(o2.getDatasource().getLastModificationDate(o2.getURI())).compareTo(
+                    Long.valueOf(o1.getDatasource().getLastModificationDate(o1.getURI())));
         }
         return result;
     }
