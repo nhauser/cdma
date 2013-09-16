@@ -198,8 +198,7 @@ public final class SqlQueryDataset implements ISqlDataset {
 		try {
 			cursor.next();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Factory.getLogger().log(Level.WARNING, "Unable to get execute query: " + query, e);
 		}
 	}
 
