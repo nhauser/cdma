@@ -585,8 +585,6 @@ public class HdfGroup implements IGroup, Cloneable {
             // New file or new group
             boolean isNew = fileToWrite.get(nameInFile) == null;
 
-            // TODO DEBUG
-            System.out.println(fullName + " is new = " + isNew);
             if (isNew || copyToNewFile) {
                 theGroup = fileToWrite.createGroup(getShortName(), parent);
 
@@ -600,13 +598,12 @@ public class HdfGroup implements IGroup, Cloneable {
             else if (this.nameInFile != null && !this.nameInFile.equals(name)) {
                 theGroup = (Group) fileToWrite.get(nameInFile);
                 theGroup.setName(name);
+                this.nameInFile = this.name;
             } else {
                 theGroup = (Group) fileToWrite.get(name);
             }
 
         } else {
-            // TODO DEBUG
-            System.out.println(fullName + " is root");
             DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) fileToWrite.getRootNode();
             H5Group rootObject = (H5Group) theRoot.getUserObject();
             theGroup = rootObject;
