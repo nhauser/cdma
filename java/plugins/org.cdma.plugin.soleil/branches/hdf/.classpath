@@ -11,6 +11,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="lib" path="/home/viguier/LocalSoftware/hdf-java/lib/jhdf5.jar" sourcepath="/home/viguier/LocalSoftware/hdf-java-src/hdf-java/hdf-src.zip.zip"/>
 	<classpathentry kind="lib" path="/home/viguier/LocalSoftware/hdf-java/lib/jhdf5obj.jar" sourcepath="/home/viguier/LocalSoftware/hdf-java-src/hdf-java/hdf-src.zip.zip"/>
 	<classpathentry kind="lib" path="/home/viguier/LocalSoftware/hdf-java/lib/jhdfobj.jar" sourcepath="/home/viguier/LocalSoftware/hdf-java-src/hdf-java/hdf-src.zip.zip"/>

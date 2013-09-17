@@ -61,7 +61,7 @@ public final class NxsArray implements IArray {
     }
 
     public NxsArray(Object oArray, int[] iShape) throws InvalidArrayTypeException {
-        this(new IArray[] { new HdfArray(NxsFactory.NAME, oArray, iShape, null) });
+        this(new IArray[] { new HdfArray(NxsFactory.NAME, oArray, iShape) });
     }
 
 

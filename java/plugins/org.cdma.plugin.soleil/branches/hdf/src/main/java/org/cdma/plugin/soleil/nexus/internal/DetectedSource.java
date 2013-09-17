@@ -293,7 +293,7 @@ public class DetectedSource {
 
                 if (detect.isProducer()) {
 
-                    IDataset dataset = new NexusDatasetImpl(files[0]);
+                    IDataset dataset = new NexusDatasetImpl(files[0], false);
                     IGroup group = dataset.getRootGroup();
 
                     IContainer groups = group.findContainerByPath("/<NXentry>/<NXdata>");

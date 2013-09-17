@@ -68,9 +68,9 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     private NxsPath mPath;
 
     // / Constructors
-    public NxsDataItem() {
-        mDataset = null;
-        mDataItems = new HdfDataItem[] { new HdfDataItem(NxsFactory.NAME) };
+    public NxsDataItem(String name, NxsDataset handler) {
+        mDataset = handler;
+        mDataItems = new HdfDataItem[] { new HdfDataItem(NxsFactory.NAME, name) };
         mDimension = new ArrayList<DimOrder>();
         mParent = null;
         mArray = null;
@@ -650,6 +650,9 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public void setParent(IGroup group) {
         if (mParent == null || !mParent.equals(group)) {
             mParent = group;
+            for (HdfDataItem dataItem : mDataItems) {
+                dataItem.setParent(((NxsGroup) group).getHdfGroup());
+            }
             // TODO
             //group.addDataItem(this);
         }

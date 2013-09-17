@@ -21,10 +21,11 @@ import org.cdma.interfaces.IGroup;
 public class HdfDataset implements IDataset, Cloneable {
 
     private final String factoryName;
-    private File hdfFileName;
+    private String hdfFileName;
     private H5File h5File;
     private String title;
     private IGroup root;
+    private int openFlag;
 
     public HdfDataset(String factoryName, File hdfFile) {
         this(factoryName, hdfFile, false);
@@ -32,21 +33,35 @@ public class HdfDataset implements IDataset, Cloneable {
 
     public HdfDataset(String factoryName, File hdfFile, boolean appendToFile) {
         this.factoryName = factoryName;
-        this.hdfFileName = hdfFile;
+        this.hdfFileName = hdfFile.getAbsolutePath();
         this.title = hdfFile.getName();
         try {
-            int flag = H5File.CREATE;
+            openFlag = H5File.CREATE;
             if (hdfFile.exists()) {
                 if (appendToFile) {
-                    flag = H5File.WRITE;
+                    openFlag = H5File.WRITE;
                 } else {
-                    flag = H5File.READ;
+                    openFlag = H5File.READ;
                 }
             }
-            this.h5File = (H5File) new H5File(hdfFile.getAbsolutePath())
-            .createInstance(hdfFile.getAbsolutePath(), flag);
+            initHdfFile();
+            if (this.h5File == null) {
+                // TODO DEBUG
+                System.out.println("STOP");
+            }
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
+        }
+    }
+
+    private void initHdfFile() {
+        if (hdfFileName != null) {
+            try {
+                this.h5File = (H5File) new H5File(hdfFileName).createInstance(hdfFileName, openFlag);
+            } catch (Exception e) {
+                Factory.getLogger().severe(e.getMessage());
+            }
+
         }
     }
 
@@ -55,15 +70,6 @@ public class HdfDataset implements IDataset, Cloneable {
         return factoryName;
     }
 
-    @Override
-    public void close() throws IOException {
-        try {
-            h5File.close();
-            h5File = null;
-        } catch (Exception e) {
-            Factory.getLogger().severe(e.getMessage());
-        }
-    }
 
     @Override
     public IGroup getRootGroup() {
@@ -77,7 +83,7 @@ public class HdfDataset implements IDataset, Cloneable {
                 DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) h5File.getRootNode();
                 if (theRoot != null) {
                     H5Group rootObject = (H5Group) theRoot.getUserObject();
-                    root = new HdfGroup(factoryName, rootObject, this);
+                    root = new HdfGroup(factoryName, rootObject, (HdfGroup) null, this);
                 }
             }
         }
@@ -91,7 +97,7 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public void setLocation(String location) {
-        hdfFileName = new File(location);
+        hdfFileName = location;
         try {
             open();
         } catch (IOException e) {
@@ -101,11 +107,11 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public String getLocation() {
-        String result = null;
-        if (hdfFileName != null) {
-            result = hdfFileName.getAbsolutePath();
-        }
-        return result;
+        return hdfFileName;
+    }
+
+    public H5File getH5File() {
+        return this.h5File;
     }
 
     @Override
@@ -120,18 +126,26 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public long getLastModificationDate() {
-        return hdfFileName.lastModified();
+        return new File(hdfFileName).lastModified();
     }
 
     @Override
     public void open() throws IOException {
-        if (hdfFileName != null) {
+        if (h5File != null) {
             try {
-                h5File.open();
+                this.h5File.open();
             } catch (Exception e) {
                 Factory.getLogger().severe(e.getMessage());
             }
+        }
+    }
 
+    @Override
+    public void close() throws IOException {
+        try {
+            h5File.close();
+        } catch (Exception e) {
+            Factory.getLogger().severe(e.getMessage());
         }
     }
 
@@ -157,7 +171,7 @@ public class HdfDataset implements IDataset, Cloneable {
         try {
             root.save(this.h5File, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            Factory.getLogger().severe(e.getMessage());
         }
     }
 
@@ -178,7 +192,7 @@ public class HdfDataset implements IDataset, Cloneable {
             fileToWrite.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Factory.getLogger().severe(e.getMessage());
             throw new WriterException(e);
         }
     }
