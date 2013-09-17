@@ -29,7 +29,7 @@ public class ReadTests {
 
             // Test ROOT
             List<IGroup> groupList = root.getGroupList();
-            assertEquals(3, groupList.size());
+            assertEquals(2, groupList.size());
             assertNull(root.getParentGroup());
 
             // Test IGroup
@@ -75,7 +75,7 @@ public class ReadTests {
 
             containers = root.findAllContainerByPath("/group*/data*");
             assertNotNull(containers);
-            assertTrue(containers.size() == 3);
+            assertTrue(containers.size() == 2);
         }
     }
 

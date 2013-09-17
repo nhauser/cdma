@@ -81,17 +81,18 @@ public final class NxsDataset implements IDataset {
         }
 
         synchronized (datasets) {
-            String uri = destination.toString();
-            SoftReference<NxsDataset> ref = datasets.get( uri );
-            if (ref != null) {
-                dataset = ref.get();
-                long last = lastModifications.get( uri );
-                if( dataset != null ) {
-                    if( last < dataset.getLastModificationDate() ) {
-                        dataset = null;
-                    }
-                }
-            }
+            //            String uri = destination.toString();
+            //            String uriID = uri + appendToExisting;
+            //            SoftReference<NxsDataset> ref = datasets.get(uriID);
+            //            if (ref != null) {
+            //                dataset = ref.get();
+            //                long last = lastModifications.get(uriID);
+            //                if (dataset != null) {
+            //                    if (last < dataset.getLastModificationDate()) {
+            //                        dataset = null;
+            //                    }
+            //                   }
+            //            }
 
             if (dataset == null) {
                 String filePath = destination.getPath();
@@ -115,8 +116,8 @@ public final class NxsDataset implements IDataset {
                                 Factory.getLogger().log( Level.WARNING, e.getMessage());
                             }
                         }
-                        datasets.put( uri, new SoftReference<NxsDataset>(dataset));
-                        lastModifications.put( uri, dataset.getLastModificationDate());
+                        //                        datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
+                        //                        lastModifications.put(uriID, dataset.getLastModificationDate());
                     }
                     catch ( FileAccessException e ) {
                         throw new NoResultException( e );
