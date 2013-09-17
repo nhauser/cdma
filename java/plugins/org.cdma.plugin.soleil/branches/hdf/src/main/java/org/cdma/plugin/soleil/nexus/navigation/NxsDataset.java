@@ -29,7 +29,6 @@ import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.navigation.HdfGroup;
 import org.cdma.exception.FileAccessException;
-import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -37,7 +36,6 @@ import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
-import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.dictionary.NxsLogicalGroup;
 import org.cdma.plugin.soleil.nexus.internal.DetectedSource.NeXusFilter;
 import org.cdma.plugin.soleil.nexus.internal.NexusDatasetImpl;
@@ -68,6 +66,10 @@ public final class NxsDataset implements IDataset {
     private static Map<String, Long> lastModifications;
 
     public static NxsDataset instanciate(URI destination) throws NoResultException {
+        return instanciate(destination, false);
+    }
+
+    public static NxsDataset instanciate(URI destination, boolean appendToExisting) throws NoResultException {
         NxsDataset dataset = null;
         if (datasets == null) {
             synchronized (NxsDataset.class) {
@@ -95,7 +97,7 @@ public final class NxsDataset implements IDataset {
                 String filePath = destination.getPath();
                 if( filePath != null ) {
                     try {
-                        dataset = new NxsDataset(new File(filePath));
+                        dataset = new NxsDataset(new File(filePath), appendToExisting);
                         String fragment = destination.getFragment();
 
                         if (fragment != null && !fragment.isEmpty()) {
@@ -200,6 +202,10 @@ public final class NxsDataset implements IDataset {
     @Override
     public void close() throws IOException {
         mOpen = false;
+        for (IDataset dataset : mDatasets) {
+            dataset.close();
+        }
+
     }
 
     @Override
@@ -294,12 +300,16 @@ public final class NxsDataset implements IDataset {
         return last;
     }
 
+    public HdfDataset getHdfDataset() {
+        return mDatasets.get(0);
+    }
+
 
 
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(File destination) throws FileAccessException {
+    private NxsDataset(File destination, boolean appendToExisting) throws FileAccessException {
         mPath = destination.toURI();
         mDatasets = new ArrayList<HdfDataset>();
         HdfDataset datafile;
@@ -308,13 +318,13 @@ public final class NxsDataset implements IDataset {
             File[] files = destination.listFiles(filter);
             if (files != null && files.length > 0) {
                 for (File file : files) {
-                    datafile = new NexusDatasetImpl(file);
+                    datafile = new NexusDatasetImpl(file, appendToExisting);
                     mDatasets.add(datafile);
                 }
             }
         }
         else {
-            datafile = new NexusDatasetImpl(destination);
+            datafile = new NexusDatasetImpl(destination, appendToExisting);
             mDatasets.add(datafile);
         }
         mOpen = false;
@@ -324,42 +334,6 @@ public final class NxsDataset implements IDataset {
     public String toString() {
         String result = "Dataset with path = " + mPath.toString();
         return result;
-    }
-
-    public static void main(String... args) throws NoResultException, URISyntaxException, WriterException,
-    InvalidArrayTypeException {
-        String fileName = "/home/viguier/writeTests.nxs";
-        String fileNameToWrite = "/home/viguier/writeTestsFinal.nxs";
-
-        // Add group1
-        NxsDataset dataset = NxsDataset.instanciate(new URI("file://" + fileName));
-        NxsGroup group1 = new NxsGroup(dataset, "group1", fileName, "/group1", null);
-        dataset.getRootGroup().addSubgroup(group1);
-
-        NxsGroup group2 = new NxsGroup(dataset, "group2", fileName, "/group2", null);
-        dataset.getRootGroup().addSubgroup(group2);
-
-        // Add data1 to group1
-        NxsDataItem dataItem1 = new NxsDataItem();
-        dataItem1.setShortName("data1");
-        int[] values1 = { 1, 2, 3, 4, 5, 6, 7 };
-        int[] shape1 = { 1, 7 };
-        NxsArray array1 = new NxsArray(values1, shape1);
-        dataItem1.setCachedData(array1, false);
-
-        NxsDataItem dataItem2 = new NxsDataItem();
-        dataItem1.setShortName("data2");
-        String[] values2 = { "sylvain", "mr bonbon" };
-        int[] shape2 = { 1, 2 };
-        NxsArray array2 = new NxsArray(values2, shape2);
-        dataItem2.setCachedData(array2, false);
-
-        group1.addDataItem(dataItem1);
-        group1.addDataItem(dataItem2);
-        group2.addDataItem(dataItem2);
-
-        dataset.saveTo(fileNameToWrite);
-
     }
 }
 

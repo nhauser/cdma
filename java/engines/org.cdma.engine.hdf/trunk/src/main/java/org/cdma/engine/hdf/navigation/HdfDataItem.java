@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
+import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.object.Attribute;
 import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
@@ -39,8 +40,8 @@ import org.cdma.utils.Utilities.ModelType;
 
 public class HdfDataItem implements IDataItem, Cloneable {
 
-    private final H5ScalarDS h5Item;
-    private final H5File h5File;
+    private H5ScalarDS h5Item;
+    private H5File h5File;
     private final String factoryName;
     private IArray array;
     private IGroup parent;
@@ -749,14 +750,22 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     public void save(FileFormat fileToWrite, Group parentInFile) throws Exception {
+        boolean saveInDifferentFile = false;
+        if (parentInFile == null) {
+            throw new RuntimeException("Can not save a dataitem with no parent");
+        }
         // Save if it's dirty
         boolean doSave = dirty;
+
+        if (this.h5File != null) {
+            saveInDifferentFile = !(fileToWrite.getAbsolutePath().equals(h5File.getAbsolutePath()));
+        }
 
         // But save also if when we are going to write in a new file
         if (!dirty) {
             // If this dataset exists in a file ( = !dirty)
             // then we only save it if the destination file is a different file
-            doSave = !(fileToWrite.getAbsolutePath().equals(h5File.getAbsolutePath()));
+            doSave = saveInDifferentFile;
         }
         if (doSave) {
             try {
@@ -790,9 +799,16 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     datatype = h5Item.getDatatype();
                 }
 
-                Dataset ds = (Dataset) fileToWrite.get(getName());
-                if (ds != null && h5Item != null) {
-                    fileToWrite.delete(h5Item);
+                Dataset ds = this.h5Item;
+                if (!saveInDifferentFile) {
+                    ds = (Dataset) fileToWrite.get(getName());
+                    if (ds != null && h5Item != null) {
+                        try {
+                            fileToWrite.delete(h5Item);
+                        } catch (HDF5LibraryException hdfexception) {
+                            // Sometime it's impossible to delete
+                        }
+                    }
                 }
 
                 ds = fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0, null);
@@ -806,7 +822,12 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     HdfAttribute attr = (HdfAttribute) iAttribute;
                     attr.save(ds);
                 }
-                dirty = false;
+
+                if (!saveInDifferentFile) {
+                    this.h5File = (H5File) fileToWrite;
+                    this.h5Item = (H5ScalarDS) ds;
+                }
+                this.dirty = false;
             } catch (Exception e) {
                 e.printStackTrace();
             }

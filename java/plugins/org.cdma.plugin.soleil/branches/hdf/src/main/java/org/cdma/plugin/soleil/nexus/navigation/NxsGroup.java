@@ -74,9 +74,14 @@ public final class NxsGroup implements IGroup, Cloneable {
         listChildren();
     }
 
+    public NxsGroup(NxsDataset dataset, String name, String file, String path, NxsGroup parent) {
+        this(dataset, name, file, path, parent.getHdfGroup());
+        mParent = parent;
+    }
+
     public NxsGroup(NxsDataset dataset, String name, String file, String path, HdfGroup parent) {
         mGroups = new HdfGroup[1];
-        mGroups[0] = new HdfGroup(NxsFactory.NAME, file, name, path, parent);
+        mGroups[0] = new HdfGroup(NxsFactory.NAME, name, path, parent, dataset.getHdfDataset());
         mParent = null;
         mDataset = dataset;
         mChildren = null;
@@ -194,7 +199,7 @@ public final class NxsGroup implements IGroup, Cloneable {
     public String getName() {
         String name = "";
         if (mGroups.length > 0 && mGroups[0] != null) {
-            name = mGroups[0].getShortName();
+            name = mGroups[0].getName();
         }
         return name;
     }
@@ -374,7 +379,6 @@ public final class NxsGroup implements IGroup, Cloneable {
         if (shortName.equals(this.getShortName())) {
             result = this;
         } else {
-
             if (!listContainer(node).isEmpty()) {
                 IContainer cnt = listContainer(node).get(0);
                 if (cnt.getModelType().equals(ModelType.Group)) {
@@ -502,7 +506,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             // Store in a map all different containers from all m_groups
             Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
             List<String> sortGrp = new ArrayList<String>();
-            String absPath = mChildren.get(0).getLocation() + path;
+            String absPath = /*mChildren.get(0).getLocation() + */path;
             for (HdfGroup group : mGroups) {
                 try {
                     tmp = group.findAllContainerByPath(NxsPath.splitStringToNode(absPath));
@@ -675,7 +679,12 @@ public final class NxsGroup implements IGroup, Cloneable {
 
     @Override
     public boolean isEntry() {
-        return (mParent.getParentGroup().getParentGroup() == null);
+        boolean result = false;
+        IGroup parent = getParentGroup();
+        if (parent != null) {
+            result = getParentGroup().isRoot();
+        }
+        return result;
     }
 
     @Override
@@ -755,6 +764,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             for (HdfDataItem hdfDataItem : itemsToAdd) {
                 mGroups[0].addDataItem(hdfDataItem);
             }
+            v.setParent(this);
         }
     }
 
@@ -774,6 +784,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             NxsGroup nxsGroup = (NxsGroup) group;
             mGroups[0].addSubgroup(nxsGroup.getHdfGroup());
         }
+        mChildren.add(group);
     }
 
     @Override
@@ -977,7 +988,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             if (attribute != null) {
                 clazz = attribute.getStringValue();
             }
-            mNode = new NxsNode(getName(), clazz);
+            mNode = new NxsNode(getShortName(), clazz);
         }
         return mNode;
     }

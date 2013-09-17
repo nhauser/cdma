@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 
-
 import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.hdf.navigation.HdfDataset;
@@ -25,8 +24,8 @@ public class NexusDatasetImpl extends HdfDataset {
     // ---------------------------------------------------------
     // Internal class that concretes the abstract NexusDataset
     // ---------------------------------------------------------
-    public NexusDatasetImpl(File nexusFile) throws FileAccessException {
-        super(NxsFactory.NAME, nexusFile);
+    public NexusDatasetImpl(File nexusFile, boolean appendToExisting) throws FileAccessException {
+        super(NxsFactory.NAME, nexusFile, appendToExisting);
         try {
             open();
         }

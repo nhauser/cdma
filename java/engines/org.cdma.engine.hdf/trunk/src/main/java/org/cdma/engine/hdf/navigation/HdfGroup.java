@@ -15,7 +15,6 @@ import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.Metadata;
-import ncsa.hdf.object.h5.H5File;
 import ncsa.hdf.object.h5.H5Group;
 import ncsa.hdf.object.h5.H5ScalarDS;
 
@@ -42,102 +41,69 @@ public class HdfGroup implements IGroup, Cloneable {
     private HdfGroup parent;
     private IGroup root = null;
     private final String factoryName; // Name of the factory plugin that instantiate
-    private H5File h5File;
     private final Map<String, IGroup> groupMap = new HashMap<String, IGroup>();
     private final Map<String, IDataItem> itemMap = new HashMap<String, IDataItem>();
     private final Map<String, IAttribute> attributeMap = new HashMap<String, IAttribute>();
     private String nameInFile;
     private String name;
     private String fullName;
-    private boolean isNew = false;
-    private IDataset dataset;
+    private HdfDataset dataset;
 
-    public HdfGroup(String factoryName, H5Group hdfGroup, HdfDataset dataset) {
-        this(factoryName, hdfGroup, (HdfGroup) null);
-        this.dataset = dataset;
+    public HdfGroup(String factoryName, String name, String path, HdfGroup parent, HdfDataset dataset) {
+        this(factoryName, new H5Group(dataset.getH5File(), name, path, null), parent, dataset);
     }
 
-    public HdfGroup(String factoryName, H5Group hdfGroup, HdfGroup parent) {
+    public HdfGroup(String factoryName, H5Group hdfGroup, HdfGroup parent, IDataset dataset) {
         this.factoryName = factoryName;
-        this.h5File = (H5File) hdfGroup.getFileFormat();
+        this.dataset = (HdfDataset) dataset;
         this.parent = parent;
         init(hdfGroup);
     }
 
-
-    public HdfGroup(String factoryName, String file, String name, String path, HdfGroup parent) {
-        this.h5File = new H5File(file, H5File.READ);
-        H5Group h5Group = new H5Group(h5File, name, path, null);
-        this.parent = parent;
-        this.factoryName = factoryName;
-        init(h5Group);
-    }
-
-    public HdfGroup(String factoryName, String name, String path, HdfGroup parent) {
-        try {
-            this.h5File = new H5File();
-            this.name = name;
-            this.fullName = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + name : parent.getName()
-                    + HdfPath.PATH_SEPARATOR + name;
-            this.isNew = true;
-        } catch (Exception e) {
-            Factory.getLogger().severe(e.getMessage());
-        }
-        this.factoryName = factoryName;
-    }
-
     private void init(H5Group h5Group) {
-
-        fullName = h5Group.getFullName();
         name = h5Group.getName();
         nameInFile = name;
 
         List<HObject> members = h5Group.getMemberList();
-        for (HObject hObject : members) {
-            if (hObject instanceof H5ScalarDS) {
-                H5ScalarDS scalarDS = (H5ScalarDS) hObject;
-                HdfDataItem dataItem = new HdfDataItem(factoryName, h5File, this, scalarDS);
-                itemMap.put(scalarDS.getName(), dataItem);
-            }
-            if (hObject instanceof H5Group) {
-                H5Group group = (H5Group) hObject;
-                HdfGroup hdfGroup = new HdfGroup(factoryName, group, this);
-                groupMap.put(group.getName(), hdfGroup);
-            }
-        }
-
-        try {
-            @SuppressWarnings("unchecked")
-            List<Metadata> metadatas = h5Group.getMetadata();
-
-            for (Metadata metadata : metadatas) {
-                if (metadata instanceof Attribute) {
-                    Attribute attribute = (Attribute) metadata;
-                    HdfAttribute hdfAttr = new HdfAttribute(factoryName, attribute);
-                    attributeMap.put(hdfAttr.getName(), hdfAttr);
+        if (members != null) {
+            for (HObject hObject : members) {
+                if (hObject instanceof H5ScalarDS) {
+                    H5ScalarDS scalarDS = (H5ScalarDS) hObject;
+                    HdfDataItem dataItem = new HdfDataItem(factoryName, dataset.getH5File(), this, scalarDS);
+                    itemMap.put(scalarDS.getName(), dataItem);
+                }
+                if (hObject instanceof H5Group) {
+                    H5Group group = (H5Group) hObject;
+                    HdfGroup hdfGroup = new HdfGroup(factoryName, group, this, dataset);
+                    groupMap.put(group.getName(), hdfGroup);
                 }
             }
-        } catch (HDF5Exception e) {
-            Factory.getLogger().severe(e.getMessage());
+
+            try {
+                @SuppressWarnings("unchecked")
+                List<Metadata> metadatas = h5Group.getMetadata();
+
+                for (Metadata metadata : metadatas) {
+                    if (metadata instanceof Attribute) {
+                        Attribute attribute = (Attribute) metadata;
+                        HdfAttribute hdfAttr = new HdfAttribute(factoryName, attribute);
+                        attributeMap.put(hdfAttr.getName(), hdfAttr);
+                    }
+                }
+            } catch (HDF5Exception e) {
+                Factory.getLogger().severe(e.getMessage());
+            }
         }
     }
 
     @Override
     public HdfGroup clone() {
-        return new HdfGroup(factoryName, null, parent);
+        return new HdfGroup(factoryName, null, parent, dataset);
     }
 
     @Override
     public ModelType getModelType() {
         return ModelType.Group;
-    }
-
-    public H5File getH5File() {
-        return this.h5File;
-    }
-
-    public boolean isNew() {
-        return isNew;
     }
 
     @Override
@@ -170,7 +136,16 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public String getName() {
-        return this.fullName;
+        if (fullName == null) {
+            if (parent == null) {
+                fullName = HdfPath.PATH_SEPARATOR;
+            } else {
+
+                fullName = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + name : parent.getName()
+                        + HdfPath.PATH_SEPARATOR + name;
+            }
+        }
+        return fullName;
     }
 
     @Override
@@ -345,12 +320,11 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
-
     @Override
     public IDataset getDataset() {
         if (dataset == null) {
             if (parent != null) {
-                dataset = parent.getDataset();
+                dataset = (HdfDataset) parent.getDataset();
             }
         }
         return dataset;
@@ -604,12 +578,16 @@ public class HdfGroup implements IGroup, Cloneable {
     public void save(FileFormat fileToWrite, Group parent) throws Exception {
         Group theGroup = null;
 
-        boolean copyToNewFile = !(fileToWrite.getAbsolutePath().equals(h5File.getAbsolutePath()));
+        boolean copyToNewFile = !(fileToWrite.getAbsolutePath().equals(dataset.getH5File().getAbsolutePath()));
         boolean isRoot = isRoot();
         if (!isRoot) {
 
             // New file or new group
-            if (isNew() || copyToNewFile) {
+            boolean isNew = fileToWrite.get(nameInFile) == null;
+
+            // TODO DEBUG
+            System.out.println(fullName + " is new = " + isNew);
+            if (isNew || copyToNewFile) {
                 theGroup = fileToWrite.createGroup(getShortName(), parent);
 
                 List<IAttribute> attribute = getAttributeList();
@@ -627,12 +605,12 @@ public class HdfGroup implements IGroup, Cloneable {
             }
 
         } else {
+            // TODO DEBUG
+            System.out.println(fullName + " is root");
             DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) fileToWrite.getRootNode();
             H5Group rootObject = (H5Group) theRoot.getUserObject();
             theGroup = rootObject;
         }
-
-
 
         List<IDataItem> dataItems = getDataItemList();
         for (IDataItem dataItem : dataItems) {
@@ -645,6 +623,6 @@ public class HdfGroup implements IGroup, Cloneable {
             HdfGroup hdfGroup = (HdfGroup) iGroup;
             hdfGroup.save(fileToWrite, theGroup);
         }
-        isNew = false;
+        // isNew = false;
     }
 }
