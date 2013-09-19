@@ -74,12 +74,12 @@ public final class NxsGroup implements IGroup, Cloneable {
         listChildren();
     }
 
-    public NxsGroup(NxsDataset dataset, String name, String file, String path, NxsGroup parent) {
-        this(dataset, name, file, path, parent.getHdfGroup());
+    public NxsGroup(NxsDataset dataset, String name, String path, NxsGroup parent) {
+        this(dataset, name, path, parent.getHdfGroup());
         mParent = parent;
     }
 
-    public NxsGroup(NxsDataset dataset, String name, String file, String path, HdfGroup parent) {
+    public NxsGroup(NxsDataset dataset, String name, String path, HdfGroup parent) {
         mGroups = new HdfGroup[1];
         mGroups[0] = new HdfGroup(NxsFactory.NAME, name, path, parent, dataset.getHdfDataset());
         mParent = null;
