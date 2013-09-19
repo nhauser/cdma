@@ -103,7 +103,7 @@ public class WriteTests {
 
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
         assertNotNull(root);
-        IGroup group3 = new NxsGroup(dataset, "group3", FIRST_FILE_TO_WRITE.getAbsolutePath(), "/", root);
+        IGroup group3 = new NxsGroup(dataset, "group3", "/", root);
         NxsDataItem dataItem = new NxsDataItem("data3", dataset);
         NxsArray array = createRandom1DArray(10);
         dataItem.setCachedData(array, false);
@@ -128,7 +128,7 @@ public class WriteTests {
         NxsDataset dataset = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI(), true);
         dataset.open();
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
-        IGroup group2 = new NxsGroup(dataset, "group2", FIRST_FILE_TO_WRITE.getAbsolutePath(), "/", root);
+        IGroup group2 = new NxsGroup(dataset, "group2", "/", root);
 
         NxsDataItem dataItem = new NxsDataItem("data2", dataset);
         dataItem.addStringAttribute("attr1", "mon attribut");
@@ -166,7 +166,7 @@ public class WriteTests {
         assertTrue(root.isRoot());
 
         // Test Sub Group
-        IGroup group = new NxsGroup(dataset, "group1", FIRST_FILE_TO_WRITE.getAbsolutePath(), "/", root);
+        IGroup group = new NxsGroup(dataset, "group1", "/", root);
         root.addSubgroup(group);
         group.addStringAttribute("attr1", "mon attribut");
         group.addOneAttribute(new HdfAttribute(FACTORY_NAME, "attr2", 5));
