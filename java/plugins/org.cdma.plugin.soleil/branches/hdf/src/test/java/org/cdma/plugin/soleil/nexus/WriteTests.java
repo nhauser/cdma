@@ -73,6 +73,13 @@ public class WriteTests {
         IArray newArray = new NxsArray(values, shape);
         dataItem.setCachedData(newArray, false);
 
+        // Add an empty dataitem
+        NxsDataItem emptyDataItem = new NxsDataItem("emptyDataItem", dataset);
+        emptyDataItem.addStringAttribute("attr1", "mon attribut");
+        assertNotNull(emptyDataItem);
+        group1.addDataItem(emptyDataItem);
+        emptyDataItem.getShape();
+
         assertEquals(int.class, newArray.getElementType());
         assertArrayEquals(shape, newArray.getShape());
 
