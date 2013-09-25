@@ -234,9 +234,31 @@ public final class NxsDatasource implements IDatasource {
             File file = new File(target.getPath());
             if (file.exists()) {
                 last = file.lastModified();
+                long lastFileModification =Long.MIN_VALUE;
+                if (file.isDirectory()){
+                	lastFileModification = computeLastFileModification(file);
+                }
+                if (lastFileModification > last){
+                	last = lastFileModification;
+                }
             }
         }
         return last;
+    }
+    
+    private long computeLastFileModification(File fl) {
+    	File[] files = fl.listFiles(new FileFilter() {			
+    		public boolean accept(File file) {
+    			return file.isFile();
+    		}
+    	});
+    	long lastMod = Long.MIN_VALUE;
+    	for (File file : files) {
+    		if (file.lastModified() > lastMod) {
+    			lastMod = file.lastModified();
+    		}
+    	}
+    	return lastMod;
     }
 
     private static final String URI_DESC = "File system: folders and NeXus files";
