@@ -33,9 +33,10 @@ public final class SqlQueryDataset implements ISqlDataset {
 	private IGroup root;
 
 	
-	public SqlQueryDataset( String factoryName, String host, String user, String password, String query) {
+	public SqlQueryDataset( String factoryName, String host, String user, String password, String driver, String dbName,
+            String dbScheme, boolean rac, String query) {
 		mFactory = factoryName;
-		mConnector = new SqlConnector(host, user, password);
+        mConnector = new SqlConnector(host, user, password, driver, dbName, dbScheme, rac);
 		mNumericalDate = false;
 		try {
 			open();
