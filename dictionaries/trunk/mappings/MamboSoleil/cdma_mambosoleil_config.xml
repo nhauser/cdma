@@ -9,7 +9,7 @@
   <dataset-model name="fully_defined_conf">
     <plugin>
       <java>
-        <set name="HDB_RAC" value=""/>
+        <set name="HDB_RAC" value="false"/>
         <set name="HDB_DRIVER" value="jdbc:oracle:thin"/>
         <set name="HDB_HOST" value="LUTIN"/>
         <set name="HDB_NAME" value="TEST11"/>
