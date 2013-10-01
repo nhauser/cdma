@@ -233,16 +233,16 @@ public final class NxsDatasource implements IDatasource {
 	@Override
 	public long getLastModificationDate(URI target) {
 		long last = 0;
-			File file = new File(target.getPath());
-			if (file.exists()) {
-				last = file.lastModified();
-				long lastFileModification = Long.MIN_VALUE;
-				if (file.isDirectory()) {
-					lastFileModification = computeLastFileModification(file);
-				}
-				if (lastFileModification > last) {
-					last = lastFileModification;
-				}
+		File file = new File(target.getPath());
+		if (file.exists()) {
+			last = file.lastModified();
+			long lastFileModification = Long.MIN_VALUE;
+			if (file.isDirectory()) {
+				lastFileModification = computeLastFileModification(file);
+			}
+			if (lastFileModification > last) {
+				last = lastFileModification;
+			}
 		}
 		return last;
 	}
@@ -255,7 +255,7 @@ public final class NxsDatasource implements IDatasource {
 					return file.isFile();
 				}
 			});
-			
+
 			if (files != null) {
 				for (File file : files) {
 					if (file.lastModified() > lastMod) {
@@ -297,9 +297,9 @@ public final class NxsDatasource implements IDatasource {
 				}
 
 				source = new DetectedSource(uri);
-				if (source.isStable()) {
-					mDetectedSources.put(uri.toString(), source);
-				}
+
+				mDetectedSources.put(uri.toString(), source);
+
 			}
 		}
 		return source;
