@@ -233,7 +233,6 @@ public final class NxsDatasource implements IDatasource {
 	@Override
 	public long getLastModificationDate(URI target) {
 		long last = 0;
-		if (isReadable(target) || isBrowsable(target)) {
 			File file = new File(target.getPath());
 			if (file.exists()) {
 				last = file.lastModified();
@@ -244,7 +243,6 @@ public final class NxsDatasource implements IDatasource {
 				if (lastFileModification > last) {
 					last = lastFileModification;
 				}
-			}
 		}
 		return last;
 	}
