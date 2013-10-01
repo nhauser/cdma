@@ -97,6 +97,9 @@ public class DetectedSource {
     }
 
     public boolean isReadable() {
+    	if( ! mInitialized ) {
+    		fullInit();
+    	}
         return mIsReadable;
     }
 
@@ -104,21 +107,15 @@ public class DetectedSource {
         return mIsFolder;
     }
     
+    public void setInitialized(boolean valueToSet){
+    	mInitialized = valueToSet;
+    }
+    
     /**
      * Return true if the source hasn't been modified since a while and is considered as stable.
      */
 	public boolean isStable() {
 		boolean result = true;
-		String path = mURI.getPath();
-		if( path != null ) {
-			File file = new File( path );
-	        if( file.exists() && ! file.isDirectory() ) {
-	        	long lastModTime;
-	        	long current = System.currentTimeMillis();
-	        	lastModTime = current - file.lastModified();
-	        	result = MIN_LAST_MODIF_TIME < lastModTime;
-	        }
-		}
 		return result;
 	}
 
@@ -156,8 +153,12 @@ public class DetectedSource {
     }
     
     private void fullInit() {
+
     	synchronized( this ) {
     		if( ! mInitialized && isStable() ) {
+    			
+    			mIsReadable = initReadable(mURI);
+    			
 	    		// Check if we are producer of the source
 		        mIsProducer = initProducer(mURI);
 		
@@ -270,7 +271,7 @@ public class DetectedSource {
 
     private boolean initBrowsable(URI uri) {
         boolean result = false;
-
+        
         // If experiment not browsable
         if (!mIsExperiment) {
             // If it is a folder containing split NeXus file (quick_exaf)
