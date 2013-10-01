@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
-<map-def name="ANTARES_SCANSERVER" version="1.0.0">
+<map-def name="PSICHE_SCANSERVER" version="1.0.0">
 
   <item key="acquisition_sequence">
     <path></path>
