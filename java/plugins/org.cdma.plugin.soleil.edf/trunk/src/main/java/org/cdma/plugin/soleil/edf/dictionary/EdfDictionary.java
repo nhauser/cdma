@@ -18,10 +18,10 @@ import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.soleil.edf.EdfFactory;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * @note This class is just a test and is not representative of how the real implementation should
