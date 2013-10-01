@@ -22,7 +22,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
-    <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>
+    <path>/{NXinstrument}/{NXdetector}/*dark</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="distance">
