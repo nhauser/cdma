@@ -120,16 +120,7 @@ public class SoleilMamboDataset implements IDataset {
             String host = getHost();
             String name = getDbName();
             try {
-                mArcDataset = new ArchivingDataset(SoleilMamboFactory.NAME);
-                mArcDataset.setArchivingMode(mArchivingMode);
-                mArcDataset.setUser(user);
-                mArcDataset.setPassword(pwrd);
-                mArcDataset.setIsRac(isRac);
-                mArcDataset.setSchema(schema);
-                mArcDataset.setDbName(name);
-                mArcDataset.setDriver(driver);
-                mArcDataset.setLocation(host);
-                mArcDataset.setNumericalDate(mNumDate);
+                mArcDataset = new ArchivingDataset(SoleilMamboFactory.NAME, mArchivingMode, user, pwrd, isRac, schema, name, driver, host, mNumDate);
             } catch (Exception e) {
                 mArcDataset = null;
                 throw new IOException("Unable to connect to: " + host, e);
