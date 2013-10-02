@@ -21,22 +21,23 @@
 		<developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.archiving/trunk</developerConnection>
 	</scm>
 	<dependencies>
-		<dependency>
-			<groupId>org.cdma</groupId>
-			<artifactId>Core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.cdma</groupId>
-			<artifactId>utilities</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.cdma.engines</groupId>
-			<artifactId>sql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.cdma.engines</groupId>
-			<artifactId>xml</artifactId>
-		</dependency>
+	    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>Core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>utilities</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.cdma.engines</groupId>
+      <artifactId>archiving</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>11.2.0.2.0</version>
+    </dependency>
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
