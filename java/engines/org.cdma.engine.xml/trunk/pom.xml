@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>xml</artifactId>
-  <version>0.0.3-SNAPSHOT-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <name>CDMA Xml engine</name>
   <description>This project is a XML engine for the CDMA. It only manages strings file, no bynary data.</description>
   <developers>
