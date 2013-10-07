@@ -120,10 +120,10 @@ public final class NxsDataset implements IDataset {
 										e.getMessage());
 							}
 						}
-						// datasets.put( uri, new
-						// SoftReference<NxsDataset>(dataset));
-						// lastModifications.put( uri,
-						// dataset.getLastModificationDate());
+						 datasets.put( uri, new
+						 SoftReference<NxsDataset>(dataset));
+						 lastModifications.put( uri,
+						 dataset.getLastModificationDate());
 					} catch (FileAccessException e) {
 						throw new NoResultException(e);
 					}

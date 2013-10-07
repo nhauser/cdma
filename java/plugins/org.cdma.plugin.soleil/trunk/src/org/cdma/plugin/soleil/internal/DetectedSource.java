@@ -180,6 +180,12 @@ public class DetectedSource {
 				mIsBrowsable = initBrowsable(mURI);
 
 				mInitialized = true;
+				
+				System.out.println(mURI.toASCIIString() + " is :");
+				System.out.println("Readable = " + mIsReadable);
+				System.out.println("Producer = " + mIsProducer);
+				System.out.println("Experiment = " + mIsExperiment);
+				System.out.println("Browsable = " + mIsBrowsable);
 			}
 		}
 	}
@@ -224,6 +230,8 @@ public class DetectedSource {
 					group = group.getGroup("<NXentry>");
 					if (group != null) {
 						group = group.getGroup("<NXinstrument>");
+					} else {
+						System.out.println("NO <NXentry>");
 					}
 
 					if (group != null) {
