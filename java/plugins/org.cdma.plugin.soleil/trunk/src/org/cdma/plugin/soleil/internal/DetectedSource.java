@@ -224,8 +224,6 @@ public class DetectedSource {
 					group = group.getGroup("<NXentry>");
 					if (group != null) {
 						group = group.getGroup("<NXinstrument>");
-					} else {
-						System.out.println("NO <NXentry>");
 					}
 
 					if (group != null) {
