@@ -1,0 +1,8 @@
+org.cdma.plugin.soleil.external.AttributeFilter
+org.cdma.plugin.soleil.external.CreateVirtualItem
+org.cdma.plugin.soleil.external.DataItemSlice1D
+org.cdma.plugin.soleil.external.DataItemStacker
+org.cdma.plugin.soleil.external.DataItemStackerByName
+org.cdma.plugin.soleil.external.HarvestEquipmentAttributes
+org.cdma.plugin.soleil.external.HarvestSignalAttributes
+org.cdma.plugin.soleil.external.SelectNodeByRegionAttribute
