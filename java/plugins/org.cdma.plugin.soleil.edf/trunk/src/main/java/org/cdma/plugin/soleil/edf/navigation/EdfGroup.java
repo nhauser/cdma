@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.cdma.arrays.DefaultArrayInline;
 import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.InvalidArrayTypeException;
@@ -37,6 +38,7 @@ import org.cdma.interfaces.INode;
 import org.cdma.plugin.soleil.edf.EdfFactory;
 import org.cdma.plugin.soleil.edf.abstraction.AbstractGroup;
 import org.cdma.plugin.soleil.edf.abstraction.AbstractObject;
+import org.cdma.plugin.soleil.edf.array.InlineArray;
 import org.cdma.plugin.soleil.edf.utils.EdfFileReader;
 import org.cdma.plugin.soleil.edf.utils.FileComparator;
 import org.cdma.plugin.soleil.edf.utils.StringUtils;
@@ -650,11 +652,14 @@ public class EdfGroup extends AbstractGroup {
 
         EdfAttribute unit = null;
         if (converted == null) {
-            char[] arrayValue = new char[stringValue.length()];
-            arrayValue = stringValue.toCharArray();
+            //char[] arrayValue = new char[stringValue.length()];
+            
+           // arrayValue = stringValue.toCharArray();
             // The value is a String
             try {
-                result = new EdfDataItem(name, new DefaultArrayMatrix(EdfFactory.NAME, arrayValue));
+                int[] shape = new int[]{1};
+                result = new EdfDataItem(name, new InlineArray(EdfFactory.NAME, new String[]{stringValue}, shape));
+                
                 // basicItem = new EdfDataItem(name, new BasicArray(converted, new int[] { 1 }));
             }
             catch (InvalidArrayTypeException e) {

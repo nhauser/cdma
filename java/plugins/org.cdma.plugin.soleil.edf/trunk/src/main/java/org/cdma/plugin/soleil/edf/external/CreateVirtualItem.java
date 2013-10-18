@@ -11,6 +11,7 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.edf.EdfFactory;
+import org.cdma.plugin.soleil.edf.array.InlineArray;
 import org.cdma.plugin.soleil.edf.navigation.EdfDataItem;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -28,13 +29,16 @@ public class CreateVirtualItem implements IPluginMethod {
 
         EdfDataItem item;
 
-        DefaultArrayMatrix array;
+        InlineArray array;
         String name;
         for (IContainer container : inList) {
             if (container.getModelType().equals(ModelType.Group)) {
                 name = container.getName();
 
-                array = new DefaultArrayMatrix(EdfFactory.NAME, name.toCharArray());
+                //array = new DefaultArrayMatrix(EdfFactory.NAME, name.toCharArray());
+                int[] shape = new int[]{1};
+                array = new InlineArray(EdfFactory.NAME,new String[]{ name}, shape);
+
                 item = new EdfDataItem(EdfFactory.NAME, array);
                 item.setName(name);
                 item.setShortName(container.getShortName());
