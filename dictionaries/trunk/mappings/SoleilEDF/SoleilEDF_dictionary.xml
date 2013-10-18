@@ -1,54 +1,58 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="SWING" version="1.0.0">
-  <item key="acquisition_sequence">
-    <path>/</path>
-    <call>CreateVirtualItem</call>
-  </item>
-    <item key="camera">
-        <path>Aviex</path>
-    </item>
-    <item key="distance">
-        <path>Aviex/Distance_sample_detector</path>
-    </item>
-    <item key="exposureTime">
-        <path>Aviex/Exposure_time</path>
-    </item>
-    <item key="shutterCloseDelay">
-        <path>Aviex/Shutter_close_delay</path>
-    </item>
-    <item key="xBin">
-        <path>Aviex/Xbin</path>
-    </item>
-    <item key="yBin">
-        <path>Aviex/Ybin</path>
-    </item>
-    <item key="mi">
-        <path>I11-C-C07__DT__MI_DIODE.5</path>
-    </item>
-    <item key="gain">
-        <path>I11-C-C07__DT__MI_DIODE.5/Gain</path>
-    </item>
-    <item key="intensity">
-        <path>I11-C-C07__DT__MI_DIODE.5/intensity</path>
-    </item>
-    <item key="lambda">
-        <path>Monochromator/wavelength</path>
-    </item>
-    <item key="energy">
-        <path>Monochromator/energy</path>
-    </item>
-    <item key="comments">
-        <path>Sample_comments</path>
-    </item>
-  <item key="exposure_time">
-    <path>Aviex/Exposure_time</path>
-  </item>
-  <item key="images">
-    <path>Image</path>
-    <!-- create a meta dataitem of all found node having the path above -->
-    <call>DataItemStacker</call>
-    <call>HarvestEquipmentAttributes</call>
-    <attribute name="interpretation" value="image"/>
-  </item>
+	<item key="acquisition_sequence">
+		<path>/</path>
+		<call>CreateVirtualItem</call>
+	</item>
+	<item key="camera">
+		<path>Aviex</path>
+	</item>
+	<item key="distance">
+		<path>SampleDistance</path>
+		<call>HarvestEquipmentAttributes</call>
+	</item>
+	<item key="exposureTime">
+		<path>Aviex/Exposure_time</path>
+	</item>
+	<item key="shutterCloseDelay">
+		<path>Aviex/Shutter_close_delay</path>
+	</item>
+	<item key="xBin">
+		<path>Aviex/Xbin</path>
+	</item>
+	<item key="yBin">
+		<path>Aviex/Ybin</path>
+	</item>
+	<item key="mi">
+		<path>I11-C-C07__DT__MI_DIODE.5</path>
+	</item>
+	<item key="gain">
+		<path>I11-C-C07__DT__MI_DIODE.5/Gain</path>
+	</item>
+	<item key="intensity">
+		<path>I11-C-C07__DT__MI_DIODE.5/intensity</path>
+	</item>
+	<item key="lambda">
+		<path>WaveLength</path>
+		<call>HarvestEquipmentAttributes</call>
+	</item>
+	<item key="energy">
+		<path>Monochromator/energy</path>
+		<call>HarvestEquipmentAttributes</call>
+	</item>
+	<item key="comments">
+		<path>Sample_comments</path>
+	</item>
+	<item key="exposure_time">
+		<path>Aviex/Exposure_time</path>
+		<call>HarvestEquipmentAttributes</call>
+	</item>
+	<item key="images">
+		<path>Image</path>
+		<!-- create a meta dataitem of all found node having the path above -->
+		<!-- <call>DataItemStacker</call> -->
+		<call>HarvestEquipmentAttributes</call>
+		<attribute name="interpretation" value="image" />
+	</item>
 </map-def>
