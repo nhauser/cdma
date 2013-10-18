@@ -347,12 +347,12 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     @Override
     public int[] getShape() {
         int[] shape;
-        if (dataItems.length == 1) {
-            shape = dataItems[0].getShape();
-        }
-        else {
+//        if (dataItems.length == 1) {
+//            shape = dataItems[0].getShape();
+//        }
+//        else {
             shape = getData().getShape();
-        }
+//        }
         return shape;
     }
 
