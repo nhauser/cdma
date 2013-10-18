@@ -53,7 +53,7 @@ public final class EdfDatasource implements IDatasource {
                 result = (length > EXTENSION.length() && fileName.substring(length - EXTENSION.length())
                         .equalsIgnoreCase(EXTENSION));
             } else {
-                result = findEDFFiles(path);
+                //result = findEDFFiles(path);
             }
             return result;
         }
