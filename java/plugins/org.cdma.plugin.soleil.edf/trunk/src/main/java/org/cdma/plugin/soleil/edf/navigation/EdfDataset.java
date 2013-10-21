@@ -24,6 +24,12 @@ public class EdfDataset implements IDataset, Cloneable {
     public EdfDataset(String filePath) {
         super();
         setLocation(filePath);
+        try {
+            open();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -70,17 +76,18 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public void open() throws IOException {
-        if ((filePath == null) || (filePath.trim().isEmpty())) {
-            file = null;
-            rootGroup = null;
-            throw new IOException("No root directory defined");
-        }
-        else {
-            if (file == null || rootGroup == null) {
-                file = new File(filePath);
-                rootGroup = new EdfGroup(this, file);
-                // rootGroup.addSubgroup(new EdfGroup(file));
-                this.open = true;
+        if (!open) {
+            if ((filePath == null) || (filePath.trim().isEmpty())) {
+                file = null;
+                rootGroup = null;
+                throw new IOException("No root directory defined");
+            } else {
+                if (file == null || rootGroup == null) {
+                    file = new File(filePath);
+                    rootGroup = new EdfGroup(this, file);
+                    // rootGroup.addSubgroup(new EdfGroup(file));
+                    this.open = true;
+                }
             }
         }
     }
@@ -89,7 +96,6 @@ public class EdfDataset implements IDataset, Cloneable {
     public void save() {
         throw new NotImplementedException();
     }
-
 
     @Override
     public synchronized boolean isOpen() {

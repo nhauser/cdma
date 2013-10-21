@@ -59,7 +59,7 @@ public final class EdfDatasource implements IDatasource {
         }
     }
 
-    private static boolean findEDFFiles(File path) {
+    public static boolean findEDFFiles(File path) {
         boolean hasEdfFile = false;
         boolean hasDirectory = false;
         File[] files = FileSystemView.getFileSystemView().getFiles(path, false);
