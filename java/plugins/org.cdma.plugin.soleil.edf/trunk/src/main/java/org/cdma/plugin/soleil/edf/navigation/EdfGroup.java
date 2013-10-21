@@ -80,12 +80,12 @@ public class EdfGroup extends AbstractGroup {
 
     private void analyzeEdfFile() {
         if (!analyzed) {
-
+            DataInputStream dis = null;
             if (referenceFile != null) {
                 HashMap<String, String> headerMap = new HashMap<String, String>();
                 try {
                     FileInputStream fis = new FileInputStream(referenceFile.getAbsolutePath());
-                    DataInputStream dis = new DataInputStream(fis);
+                    dis = new DataInputStream(fis);
 
                     int character = -1;
 
@@ -100,16 +100,14 @@ public class EdfGroup extends AbstractGroup {
                             headerBuffer.append((char) character);
                             if (character == '\n') {
                                 newLine = true;
-                            }
-                            else {
+                            } else {
                                 if ((character == '}') && newLine) {
                                     character = dis.read();
                                     break;
                                 }
                                 newLine = false;
                             }
-                        }
-                        catch (IOException e) {
+                        } catch (IOException e) {
                             character = -1;
                             break;
                         }
@@ -129,8 +127,8 @@ public class EdfGroup extends AbstractGroup {
                         for (String line : lines) {
                             int separatorIndex = line.lastIndexOf('=');
                             if (separatorIndex > -1) {
-                                headerMap.put(line.substring(0, separatorIndex).trim(), line
-                                        .substring(separatorIndex + 1).trim());
+                                headerMap.put(line.substring(0, separatorIndex).trim(),
+                                        line.substring(separatorIndex + 1).trim());
                             }
                         }
                         readImageFromFile(headerMap, dis);
@@ -160,27 +158,26 @@ public class EdfGroup extends AbstractGroup {
                                     subGroupMap.put(groupName, subGroup);
 
                                 }
-                                String itemName = key.substring(0, openIndex).replaceAll("=", "")
-                                        .trim();
+                                String itemName = key.substring(0, openIndex).replaceAll("=", "").trim();
                                 subGroup.addDataItem(buildDataItem(itemName, headerMap.get(key)));
-                            }
-                            else {
+                            } else {
                                 // Build simple dataItem
                                 addDataItem(buildDataItem(key, headerMap.get(key)));
                             }
                         }
                         subGroupMap.clear();
-
                         headerMap.clear();
-                        dis.close();
-
                     }
-                }
-                catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     // Just ignore this case
-                }
-                catch (IOException e) {
-                    // Just ignore this case
+                } finally {
+                    if (dis != null) {
+                        try {
+                            dis.close();
+                        } catch (IOException e) {
+                            // Just ignore this case
+                        }
+                    }
                 }
             }
         }
@@ -206,8 +203,7 @@ public class EdfGroup extends AbstractGroup {
                     if (read == -1) {
                         imageValue = null;
                         break;
-                    }
-                    else {
+                    } else {
 
                         arrayImageValue[y][x] = (byte) read;
                         x++;
@@ -217,8 +213,7 @@ public class EdfGroup extends AbstractGroup {
                         }
                     }
                 }
-            }
-            else if ("UnsignedByte".equals(dataType)) {
+            } else if ("UnsignedByte".equals(dataType)) {
 
                 imageValue = new short[dimY][dimX];
                 short[][] arrayImageValue = (short[][]) imageValue;
@@ -228,8 +223,7 @@ public class EdfGroup extends AbstractGroup {
                     if (read == -1) {
                         imageValue = null;
                         break;
-                    }
-                    else {
+                    } else {
                         arrayImageValue[y][x] = (short) read;
                         x++;
                         if (x >= dimX) {
@@ -238,8 +232,7 @@ public class EdfGroup extends AbstractGroup {
                         }
                     }
                 }
-            }
-            else if ("UnsignedShort".equals(dataType) || "SignedInteger".equals(dataType)) {
+            } else if ("UnsignedShort".equals(dataType) || "SignedInteger".equals(dataType)) {
 
                 // Specific
                 imageValue = new int[dimY][dimX];
@@ -258,8 +251,7 @@ public class EdfGroup extends AbstractGroup {
                     flatImageValue = new short[dimY * dimX];
                     ShortBuffer shortBuffer = byteBuffer.asShortBuffer();
                     shortBuffer.get((short[]) flatImageValue);
-                }
-                else {
+                } else {
                     flatImageValue = new int[dimY * dimX];
                     IntBuffer integerBuffer = byteBuffer.asIntBuffer();
                     integerBuffer.get((int[]) flatImageValue);
@@ -275,8 +267,7 @@ public class EdfGroup extends AbstractGroup {
                     }
                 }
 
-            }
-            else if ("SignedLong".equals(dataType) || "UnsignedInteger".equals(dataType)) {
+            } else if ("SignedLong".equals(dataType) || "UnsignedInteger".equals(dataType)) {
 
                 // Specific
                 imageValue = new long[dimY][dimX];
@@ -295,8 +286,7 @@ public class EdfGroup extends AbstractGroup {
                     flatImageValue = new int[dimY * dimX];
                     IntBuffer integerBuffer = byteBuffer.asIntBuffer();
                     integerBuffer.get((int[]) flatImageValue);
-                }
-                else {
+                } else {
                     flatImageValue = new long[dimY * dimX];
                     LongBuffer longBuffer = byteBuffer.asLongBuffer();
                     longBuffer.get((long[]) flatImageValue);
@@ -311,33 +301,26 @@ public class EdfGroup extends AbstractGroup {
                         globalIndex++;
                     }
                 }
-            }
-            else if ("Signed64".equals(dataType)) {
+            } else if ("Signed64".equals(dataType)) {
                 throw new NotImplementedException();
-            }
-            else if ("Unsigned64".equals(dataType)) {
+            } else if ("Unsigned64".equals(dataType)) {
                 unsigned = true;
                 throw new NotImplementedException();
-            }
-            else if ("FloatValue".equals(dataType)) {
+            } else if ("FloatValue".equals(dataType)) {
                 throw new NotImplementedException();
-            }
-            else if ("DoubleValue".equals(dataType)) {
+            } else if ("DoubleValue".equals(dataType)) {
                 throw new NotImplementedException();
             }
             if (imageValue != null) {
-                EdfDataItem imageDataItem = new EdfDataItem("Image", new DefaultArrayMatrix(
-                        EdfFactory.NAME, imageValue), unsigned);
+                EdfDataItem imageDataItem = new EdfDataItem("Image",
+                        new DefaultArrayMatrix(EdfFactory.NAME, imageValue), unsigned);
                 addDataItem(imageDataItem);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             // ignore exceptions for Image Recovery
         }
     }
-
-
 
     public void setAnalyzed(boolean newValue) {
         this.analyzed = newValue;
@@ -419,8 +402,7 @@ public class EdfGroup extends AbstractGroup {
             if ((!isFakeGroup()) && (!isAcquisitionGroup()) && (itemList.isEmpty())) {
                 analyzeEdfFile();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             itemList.clear();
         }
         ArrayList<IDataItem> itemList = new ArrayList<IDataItem>();
@@ -449,12 +431,10 @@ public class EdfGroup extends AbstractGroup {
             IGroup root = getRootGroup();
             if (root == null) {
                 return null;
-            }
-            else {
+            } else {
                 return root.getDataset();
             }
-        }
-        else {
+        } else {
             return dataset;
         }
     }
@@ -495,8 +475,7 @@ public class EdfGroup extends AbstractGroup {
                         String path = file.getAbsolutePath();
                         int pointIndex = path.lastIndexOf('.');
                         if (file.isDirectory()
-                                || ((pointIndex > -1) && "edf".equalsIgnoreCase(path
-                                        .substring(pointIndex + 1)))) {
+                                || ((pointIndex > -1) && "edf".equalsIgnoreCase(path.substring(pointIndex + 1)))) {
                             EdfGroup group = new EdfGroup(file);
                             group.setParent(this);
                             groupList.add(group);
@@ -545,8 +524,8 @@ public class EdfGroup extends AbstractGroup {
     }
 
     /**
-     * Returns whether this {@link EdfGroup} is a fake group. A fake group is a group bound to no
-     * {@link File} and no {@link IDataset}. These groups are used to group {@link IDataItem}s with
+     * Returns whether this {@link EdfGroup} is a fake group. A fake group is a group bound to no {@link File} and no
+     * {@link IDataset}. These groups are used to group {@link IDataItem}s with
      * similar names
      * 
      * @return a boolean value
@@ -564,12 +543,10 @@ public class EdfGroup extends AbstractGroup {
     protected boolean isAcquisitionGroup() {
         if (referenceFile == null) {
             return false;
-        }
-        else {
+        } else {
             try {
                 return referenceFile.isDirectory();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return false;
             }
         }
@@ -640,8 +617,8 @@ public class EdfGroup extends AbstractGroup {
      * 
      * @param name {@link EdfDataItem} name.
      * @param stringValue {@link EdfDataItem} string value. If this value represents a number (with
-     *            or without unit), then the {@link EdfDataItem} real value is the {@link Double}
-     *            representation of this value (and an attribute "unit" is added when unit is
+     *            or without unit), then the {@link EdfDataItem} real value is the {@link Double} representation of this
+     *            value (and an attribute "unit" is added when unit is
      *            defined)
      * @return The expected {@link EdfDataItem}
      */
@@ -652,22 +629,20 @@ public class EdfGroup extends AbstractGroup {
 
         EdfAttribute unit = null;
         if (converted == null) {
-            //char[] arrayValue = new char[stringValue.length()];
-            
-           // arrayValue = stringValue.toCharArray();
+            // char[] arrayValue = new char[stringValue.length()];
+
+            // arrayValue = stringValue.toCharArray();
             // The value is a String
             try {
-                int[] shape = new int[]{1};
-                result = new EdfDataItem(name, new InlineArray(EdfFactory.NAME, new String[]{stringValue}, shape));
-                
+                int[] shape = new int[] { 1 };
+                result = new EdfDataItem(name, new InlineArray(EdfFactory.NAME, new String[] { stringValue }, shape));
+
                 // basicItem = new EdfDataItem(name, new BasicArray(converted, new int[] { 1 }));
-            }
-            catch (InvalidArrayTypeException e) {
+            } catch (InvalidArrayTypeException e) {
                 e.printStackTrace();
             }
 
-        }
-        else {
+        } else {
             // The value is a numeric value
             Number[] arrayValue = new Number[1];
             arrayValue[0] = converted[0];
@@ -675,16 +650,14 @@ public class EdfGroup extends AbstractGroup {
                 // Construction of "unit" attribute
                 String tempUnit = stringValue.substring(converted[1].intValue()).trim();
                 if (!tempUnit.isEmpty()) {
-                    unit = new EdfAttribute("unit",
-                            stringValue.substring((converted[1].intValue())));
+                    unit = new EdfAttribute("unit", stringValue.substring((converted[1].intValue())));
                 }
                 result = new EdfDataItem(name, new DefaultArrayMatrix(EdfFactory.NAME, arrayValue));
 
                 if (unit != null) {
                     result.addOneAttribute(unit);
                 }
-            }
-            catch (InvalidArrayTypeException e) {
+            } catch (InvalidArrayTypeException e) {
                 e.printStackTrace();
             }
 
@@ -706,8 +679,7 @@ public class EdfGroup extends AbstractGroup {
     private Number[] convertStringToDouble(String toConvert) {
         if (toConvert == null) {
             return null;
-        }
-        else {
+        } else {
             Number[] result = new Number[2];
             // Recover number part
             int index = -1;
@@ -722,12 +694,10 @@ public class EdfGroup extends AbstractGroup {
                 try {
                     result[0] = Double.valueOf(toConvert.substring(0, index));
                     result[1] = index;
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     result = null;
                 }
-            }
-            else {
+            } else {
                 result = null;
             }
             return result;
@@ -801,8 +771,7 @@ public class EdfGroup extends AbstractGroup {
         int level = 0;
         if (PATH_SEPARATOR.equals(path)) {
             list.add(root);
-        }
-        else {
+        } else {
             list = findAllContainer(root, nodes, level);
         }
 
@@ -831,8 +800,7 @@ public class EdfGroup extends AbstractGroup {
                         if (current.matchesPartNode(node)) {
 
                             if (level < nodes.length - 1) {
-                                result.addAll(findAllContainer(group.getContainer(node.getName()),
-                                        nodes, level + 1));
+                                result.addAll(findAllContainer(group.getContainer(node.getName()), nodes, level + 1));
                             }
                             // Create IContainer and add it to result list
                             else {
@@ -841,8 +809,7 @@ public class EdfGroup extends AbstractGroup {
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 EdfDataItem dataItem = (EdfDataItem) container;
                 result.add(dataItem);
             }
@@ -902,16 +869,13 @@ public class EdfGroup extends AbstractGroup {
         throw new NotImplementedException();
     }
 
-    public static Object convertArrayDimensionFrom1ToN(Object singleDimArray,
-            int... multiDimArrayShape) {
+    public static Object convertArrayDimensionFrom1ToN(Object singleDimArray, int... multiDimArrayShape) {
         Object result = null;
-        if ((singleDimArray != null) && (multiDimArrayShape != null)
-                && (multiDimArrayShape.length > 0) && singleDimArray.getClass().isArray()
-                && (!singleDimArray.getClass().getComponentType().isArray())) {
+        if ((singleDimArray != null) && (multiDimArrayShape != null) && (multiDimArrayShape.length > 0)
+                && singleDimArray.getClass().isArray() && (!singleDimArray.getClass().getComponentType().isArray())) {
             if (multiDimArrayShape.length == 1) {
                 result = singleDimArray;
-            }
-            else {
+            } else {
                 Class<?> dataType = recoverDataType(singleDimArray);
                 if (Array.newInstance(dataType, 0).getClass().equals(singleDimArray.getClass())) {
                     int arrayLength = Array.getLength(singleDimArray);
@@ -922,15 +886,13 @@ public class EdfGroup extends AbstractGroup {
                     if (arrayLength == expectedLength) {
                         try {
                             result = Array.newInstance(dataType, multiDimArrayShape);
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             result = null;
                         }
                         if (result != null) {
                             // java initializes int values with 0 by default
                             int[] startPositions = new int[multiDimArrayShape.length];
-                            reshapeArray(0, startPositions, multiDimArrayShape, singleDimArray,
-                                    result, true);
+                            reshapeArray(0, startPositions, multiDimArrayShape, singleDimArray, result, true);
                         }
                     }
                 }
@@ -953,8 +915,8 @@ public class EdfGroup extends AbstractGroup {
      *            array. Otherwise, this method will reshape a filled multi-dimensional array into a
      *            mono-dimensional array.
      */
-    private static void reshapeArray(int dimIndex, int[] startPositions, int[] dimensions,
-            Object singleDimArray, Object multiDimArray, boolean from1ToN) {
+    private static void reshapeArray(int dimIndex, int[] startPositions, int[] dimensions, Object singleDimArray,
+            Object multiDimArray, boolean from1ToN) {
         int lStartRaw;
         int lLinearStart;
         if (dimIndex == dimensions.length - 1) {
@@ -969,24 +931,19 @@ public class EdfGroup extends AbstractGroup {
             }
             if ((singleDimArray != null) && (multiDimArray != null)) {
                 if (from1ToN) {
-                    System.arraycopy(singleDimArray, lLinearStart, multiDimArray, 0,
-                            dimensions[dimensions.length - 1]);
-                }
-                else {
-                    System.arraycopy(multiDimArray, 0, singleDimArray, lLinearStart,
-                            dimensions[dimensions.length - 1]);
+                    System.arraycopy(singleDimArray, lLinearStart, multiDimArray, 0, dimensions[dimensions.length - 1]);
+                } else {
+                    System.arraycopy(multiDimArray, 0, singleDimArray, lLinearStart, dimensions[dimensions.length - 1]);
                 }
             }
-        }
-        else {
+        } else {
             Object[] outputAsArray = (Object[]) multiDimArray;
             for (int i = 0; i < dimensions[dimIndex]; i++) {
                 Object o = outputAsArray[i];
                 reshapeArray(dimIndex + 1, startPositions, dimensions, singleDimArray, o, from1ToN);
                 if (startPositions[dimIndex] < dimensions[dimIndex] - 1) {
                     startPositions[dimIndex] = i + 1;
-                }
-                else {
+                } else {
                     startPositions[dimIndex] = 0;
                 }
             }
@@ -997,10 +954,9 @@ public class EdfGroup extends AbstractGroup {
      * This methods recovers the type of data present in a N dimension array.
      * 
      * @param array The array
-     * @return The {@link Class} that represents the data type in the given array. (Example: if
-     *         <code>array</code> is a <code>boolean[][]</code>, the result will be
-     *         {@link Boolean#TYPE}). This method returns <code>null</code> if <code>array</code> is
-     *         <code>null</code>.
+     * @return The {@link Class} that represents the data type in the given array. (Example: if <code>array</code> is a
+     *         <code>boolean[][]</code>, the result will be {@link Boolean#TYPE}). This method returns <code>null</code>
+     *         if <code>array</code> is <code>null</code>.
      */
     public static Class<?> recoverDataType(Object array) {
         Class<?> result = null;
@@ -1015,10 +971,9 @@ public class EdfGroup extends AbstractGroup {
      * arrays.
      * 
      * @param arrayClass The {@link Class}
-     * @return The {@link Class} that represents the data type in the given array. (Example: if
-     *         <code>arrayClass</code> is <code>boolean[][]</code>, the result will be
-     *         {@link Boolean#TYPE}). This method returns <code>null</code> if
-     *         <code>arrayClass</code> is <code>null</code>.
+     * @return The {@link Class} that represents the data type in the given array. (Example: if <code>arrayClass</code>
+     *         is <code>boolean[][]</code>, the result will be {@link Boolean#TYPE}). This method returns
+     *         <code>null</code> if <code>arrayClass</code> is <code>null</code>.
      */
     public static Class<?> recoverDeepComponentType(Class<?> arrayClass) {
         Class<?> result = arrayClass;
@@ -1031,8 +986,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     public static void main(String[] args) {
-        EdfGroup group = new EdfGroup(new File(
-                "/home/viguier/NeXusFiles/EDF/test_264/test_264_test_im_00.edf"));
+        EdfGroup group = new EdfGroup(new File("/home/viguier/NeXusFiles/EDF/test_264/test_264_test_im_00.edf"));
         group.analyzeEdfFile();
 
     }
