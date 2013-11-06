@@ -1,4 +1,4 @@
-//******************************************************************************
+// ******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
 // The CDMA library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
@@ -9,7 +9,6 @@
 //******************************************************************************
 package org.cdma.utilities.performance;
 
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -21,20 +20,19 @@ import java.util.TreeSet;
 /**
  * @brief The Buffer class stores in memory the given data associated to a String.
  * 
- * The aim is to prevent recalculating several time things that have been done yet.
- * <p>
- * Each object are associated to 'path'. When the buffer is starting to get
- * full, its lighter half is automatically flushed. Indeed, a cost in time is generated,
- * while accessing each path. When a flush is needed the costlier path are kept,
- * whereas the other are removed.
+ *        The aim is to prevent recalculating several time things that have been done yet.
+ *        <p>
+ *        Each object are associated to 'path'. When the buffer is starting to get full, its lighter half is
+ *        automatically flushed. Indeed, a cost in time is generated, while accessing each path. When a flush is needed
+ *        the costlier path are kept, whereas the other are removed.
  * 
  * @author rodriguez
  */
 
 public class Buffer<U, V> {
 
-	private Comparator<V> mCollator;
-	
+    private Comparator<V> mCollator;
+
     // Maximum size of the buffer (number of available slots)
     private int mBufferSize;
 
@@ -47,18 +45,19 @@ public class Buffer<U, V> {
     // Constructor
     /**
      * Construct a Buffer with given maximum size and collator to sort the buffered objects.
-     * @param size of the buffer 
+     * 
+     * @param size of the buffer
      * @param collator to sort buffered set
      * @note if 'size' is negative then auto free mechanism is disabled
      * @note if 'collator' is null then sorting is disabled
      */
     public Buffer(int size, Comparator<V> comparator) {
-    	mKeyUsageWeigth = new HashMap<U, Integer>();
-    	mKeyValues      = new HashMap<U, Collection<V> >();
-        mBufferSize     = size;
-        mCollator       = comparator; 
+        mKeyUsageWeigth = new HashMap<U, Integer>();
+        mKeyValues = new HashMap<U, Collection<V>>();
+        mBufferSize = size;
+        mCollator = comparator;
     }
-    
+
     public Buffer(int size) {
         this(size, null);
     }
@@ -96,10 +95,10 @@ public class Buffer<U, V> {
      * @return node collection (or null if not found)
      */
     public Collection<V> get(U key) {
-    	Collection<V> result = null;
-    	if( mKeyValues.containsKey(key) ) {
-    		Integer cost = mKeyUsageWeigth.get(key);
-    		mKeyUsageWeigth.put(key, cost + 1);
+        Collection<V> result = null;
+        if (mKeyValues.containsKey(key)) {
+            Integer cost = mKeyUsageWeigth.get(key);
+            mKeyUsageWeigth.put(key, cost + 1);
             result = mKeyValues.get(key);
         }
         return result;
@@ -113,14 +112,13 @@ public class Buffer<U, V> {
      * @param time spent to get the object
      */
     public void push(U key, V value, int time) {
-    	Collection<V> tmpSet = mKeyValues.get(key);
+        Collection<V> tmpSet = mKeyValues.get(key);
         if (tmpSet == null) {
-        	tmpSet = getEmptyCollection();
-            tmpSet.add( value );
+            tmpSet = getEmptyCollection();
+            tmpSet.add(value);
             put(key, tmpSet, 1);
-        }
-        else {
-            tmpSet.add( value );
+        } else {
+            tmpSet.add(value);
         }
     }
 
@@ -133,42 +131,42 @@ public class Buffer<U, V> {
      * @see getEmptyCollection
      */
     public void push(U key, Collection<V> values, int time) {
-    	Collection<V> tmpSet = mKeyValues.get(key);
+        Collection<V> tmpSet = mKeyValues.get(key);
         if (tmpSet == null) {
-    		tmpSet = getEmptyCollection();
+            tmpSet = getEmptyCollection();
         }
         tmpSet.addAll(values);
         put(key, tmpSet, time);
     }
-    
+
     /**
      * Returns a new collection that can be used of the default type used by the Buffer,
-     * it instantiates it with right Collator if any. 
+     * it instantiates it with right Collator if any.
      */
     public Collection<V> getEmptyCollection() {
-    	Collection<V> result;
-    	if( mCollator != null ) {
-    		result = new TreeSet<V> (mCollator);
-    	}
-    	else {
-    		result = new ArrayList<V>();
-    	}
+        Collection<V> result;
+        if (mCollator != null) {
+            result = new TreeSet<V>(mCollator);
+        } else {
+            result = new ArrayList<V>();
+        }
         return result;
     }
 
     /**
      * Returns the currently used collator to sort buffer.
+     * 
      * @return
      */
     public Comparator<V> getCollator() {
-    	return mCollator;
+        return mCollator;
     }
-    
+
     /**
      * Set the collator to be used when storing object.
      */
     public void setCollator(Comparator<V> collator) {
-    	mCollator = collator;
+        mCollator = collator;
     }
 
     // ---------------------------------------------------------
@@ -182,8 +180,7 @@ public class Buffer<U, V> {
         Integer cost = mKeyUsageWeigth.get(key);
         if (cost == null) {
             cost = iTimeToAccessNode;
-        }
-        else {
+        } else {
             cost += iTimeToAccessNode + 1;
         }
         mKeyUsageWeigth.put(key, cost);
