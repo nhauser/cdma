@@ -3,7 +3,6 @@ package org.cdma.plugin.soleil.edf.external;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
 import org.cdma.exception.CDMAException;
@@ -35,9 +34,9 @@ public class CreateVirtualItem implements IPluginMethod {
             if (container.getModelType().equals(ModelType.Group)) {
                 name = container.getName();
 
-                //array = new DefaultArrayMatrix(EdfFactory.NAME, name.toCharArray());
-                int[] shape = new int[]{1};
-                array = new InlineArray(EdfFactory.NAME,new String[]{ name}, shape);
+                // array = new DefaultArrayMatrix(EdfFactory.NAME, name.toCharArray());
+                int[] shape = new int[] { 1 };
+                array = new InlineArray(EdfFactory.NAME, new String[] { name }, shape);
 
                 item = new EdfDataItem(EdfFactory.NAME, array);
                 item.setName(name);
@@ -49,8 +48,7 @@ public class CreateVirtualItem implements IPluginMethod {
                     item.addOneAttribute(attr);
                 }
                 outList.add(item);
-            }
-            else {
+            } else {
                 outList.add(container);
             }
         }

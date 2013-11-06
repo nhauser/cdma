@@ -17,8 +17,9 @@ public class EdfHeaderTest {
         for (String path : args) {
             int pointIndex = path.lastIndexOf('.');
             if ((pointIndex > -1) && "edf".equalsIgnoreCase(path.substring(pointIndex + 1))) {
+                BufferedInputStream reader = null;
                 try {
-                    BufferedInputStream reader = new BufferedInputStream(new FileInputStream(path));
+                    reader = new BufferedInputStream(new FileInputStream(path));
                     int character = -1;
                     int count = 0;
                     StringBuffer headerBuffer = new StringBuffer();
@@ -33,8 +34,7 @@ public class EdfHeaderTest {
                             headerBuffer.append((char) character);
                             if (character == '\n') {
                                 newLine = true;
-                            }
-                            else {
+                            } else {
                                 if ((character == '}') && newLine) {
                                     count++;
                                     character = reader.read();
@@ -42,8 +42,7 @@ public class EdfHeaderTest {
                                 }
                                 newLine = false;
                             }
-                        }
-                        catch (IOException e) {
+                        } catch (IOException e) {
                             character = -1;
                             break;
                         }
@@ -69,9 +68,16 @@ public class EdfHeaderTest {
                         System.out.println("Transformed header value:");
                         System.out.println(headerBuffer.toString());
                     }
-                }
-                catch (FileNotFoundException e) {
+                } catch (FileNotFoundException e) {
                     // Just ignore this case;
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (Exception e) {
+                            // Ignore this one
+                        }
+                    }
                 }
             }
         }

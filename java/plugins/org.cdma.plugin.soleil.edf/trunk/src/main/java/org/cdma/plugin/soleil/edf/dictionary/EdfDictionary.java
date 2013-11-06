@@ -30,7 +30,8 @@ import org.jdom2.input.SAXBuilder;
  * @author rodriguez
  * 
  */
-public class EdfDictionary implements IDictionary {
+@Deprecated
+public class EdfDictionary implements org.cdma.interfaces.IDictionary {
     // private String m_path; // Path of the XML file carrying the dictionary
     private Map<IKey, Path> m_itemMap = new HashMap<IKey, Path>();
 
@@ -59,8 +60,7 @@ public class EdfDictionary implements IDictionary {
     public Path getPath(IKey key) {
         if (m_itemMap.containsKey(key)) {
             return m_itemMap.get(key);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -71,17 +71,25 @@ public class EdfDictionary implements IDictionary {
         if (!dicFile.exists()) {
             throw new FileAccessException("the target dictionary file does not exist");
         }
+        BufferedReader br = null;
         try {
-            BufferedReader br = new BufferedReader(new FileReader(dicFile));
+            br = new BufferedReader(new FileReader(dicFile));
             while (br.ready()) {
                 String[] temp = br.readLine().split("=");
                 if (0 < (temp[0].length())) {
                     addEntry(temp[0], temp[1]);
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new FileAccessException("failed to open the dictionary file", ex);
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (Exception e) {
+                    // Ignore this one
+                }
+            }
         }
     }
 
@@ -98,14 +106,10 @@ public class EdfDictionary implements IDictionary {
         Document dictionary;
         try {
             dictionary = xmlFile.build(dicFile);
-        }
-        catch (JDOMException e1) {
-            throw new FileAccessException("error while to parsing the dictionary!\n"
-                    + e1.getMessage());
-        }
-        catch (IOException e1) {
-            throw new FileAccessException("an I/O error prevent parsing dictionary!\n"
-                    + e1.getMessage());
+        } catch (JDOMException e1) {
+            throw new FileAccessException("error while to parsing the dictionary!\n" + e1.getMessage());
+        } catch (IOException e1) {
+            throw new FileAccessException("an I/O error prevent parsing dictionary!\n" + e1.getMessage());
         }
 
         // m_path = dicFile.getAbsolutePath();
@@ -131,8 +135,7 @@ public class EdfDictionary implements IDictionary {
                         String attr = pathNode.getAttributeValue("filter");
                         if (!"false".equals(attr)) {
                             path += "_[" + pathNode.getText() + "]_";
-                        }
-                        else {
+                        } else {
                             path += pathNode.getText();
                         }
 
