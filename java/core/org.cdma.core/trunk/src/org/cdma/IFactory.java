@@ -24,19 +24,17 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDatasource;
-import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 import org.cdma.utils.FactoryManager;
 
 /// @cond pluginAPIclientAPI
 
-
 /**
  * @brief The plug-in factory is the entry point of the CDMA plug-in.
  * 
- * The IFactory interface is implemented by each plug-in. It permits to instantiate the IDataset and
- * all the CDMA plug-in's object that will be used during the process.
+ *        The IFactory interface is implemented by each plug-in. It permits to instantiate the IDataset and
+ *        all the CDMA plug-in's object that will be used during the process.
  */
 
 public interface IFactory {
@@ -58,7 +56,7 @@ public interface IFactory {
      * @throws FileAccessException
      */
     @Deprecated
-    public IDictionary openDictionary(final URI uri) throws FileAccessException;
+    public org.cdma.interfaces.IDictionary openDictionary(final URI uri) throws FileAccessException;
 
     /**
      * Instantiate a IDictionary with the given file path. Its loading can be done later.
@@ -68,7 +66,7 @@ public interface IFactory {
      * @throws FileAccessException
      */
     @Deprecated
-    public IDictionary openDictionary(final String filepath) throws FileAccessException;
+    public org.cdma.interfaces.IDictionary openDictionary(final String filepath) throws FileAccessException;
 
     /**
      * Create an empty IArray with a certain data type and certain shape.
@@ -87,8 +85,7 @@ public interface IFactory {
      * @param storage a 1D java array in the type reference by clazz
      * @return CDMA IArray
      */
-    public IArray createArray(final Class<?> clazz, final int[] shape,
-            final Object storage);
+    public IArray createArray(final Class<?> clazz, final int[] shape, final Object storage);
 
     /**
      * Create an IArray from a java array. A new 1D java array storage will be
@@ -149,9 +146,8 @@ public interface IFactory {
      * @return CDMA IDataItem
      * @throws InvalidArrayTypeException
      */
-    public IDataItem createDataItem(final IGroup parent,
-            final String shortName, final IArray array)
-                    throws InvalidArrayTypeException;
+    public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array)
+            throws InvalidArrayTypeException;
 
     /**
      * Create a CDMA Group with a given parent CDMA Group and a name.
@@ -226,10 +222,11 @@ public interface IFactory {
      * @param path interpreted by the plug-in
      * @return a new IPath
      */
-    public Path createPath( String path );
+    public Path createPath(String path);
 
     /**
      * The factory has a unique name that identifies it.
+     * 
      * @return the factory's name
      */
     public String getName();
@@ -238,6 +235,7 @@ public interface IFactory {
      * The plug-in has a label, which describe the institute it comes from
      * and / or the data source it is supposed to read / write: a human friendly
      * information of which plug-in is working.
+     * 
      * @return the plug-in's label
      */
     public String getPluginLabel();
@@ -245,12 +243,14 @@ public interface IFactory {
     /**
      * Shortly describes the specificities of the plug-in for instance the underlying format,
      * managed file's extension, or protocol.
+     * 
      * @return a plug-in's description
      */
     public String getPluginDescription();
 
     /**
      * Returns the URI detector of the instantiated plug-in.
+     * 
      * @return IPluginURIDetector
      */
     public IDatasource getPluginURIDetector();
@@ -261,7 +261,7 @@ public interface IFactory {
      * @return a CDMA IDictionary
      */
     @Deprecated
-    public IDictionary createDictionary();
+    public org.cdma.interfaces.IDictionary createDictionary();
 
     /**
      * Returns the plug-ins version number with under the form
