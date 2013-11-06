@@ -19,7 +19,6 @@ import java.util.Map;
 
 import javax.swing.filechooser.FileSystemView;
 
-import org.cdma.arrays.DefaultArrayInline;
 import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.InvalidArrayTypeException;
@@ -30,7 +29,6 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
-import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
@@ -364,8 +362,9 @@ public class EdfGroup extends AbstractGroup {
         throw new NotImplementedException();
     }
 
+    @Deprecated
     @Override
-    public IDictionary findDictionary() {
+    public org.cdma.interfaces.IDictionary findDictionary() {
         throw new NotImplementedException();
     }
 
@@ -582,8 +581,9 @@ public class EdfGroup extends AbstractGroup {
         throw new NotImplementedException();
     }
 
+    @Deprecated
     @Override
-    public void setDictionary(IDictionary dictionary) {
+    public void setDictionary(org.cdma.interfaces.IDictionary dictionary) {
         throw new NotImplementedException();
     }
 

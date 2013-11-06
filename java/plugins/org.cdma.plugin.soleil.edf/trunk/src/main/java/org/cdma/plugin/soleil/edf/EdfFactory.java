@@ -19,7 +19,6 @@ import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IDatasource;
-import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.soleil.edf.navigation.EdfAttribute;
@@ -55,8 +54,7 @@ public class EdfFactory implements IFactory {
         EdfDataset dataset = new EdfDataset(uri.getPath());
         try {
             dataset.open();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new FileAccessException(e.getMessage(), e);
         }
         return dataset;
@@ -68,8 +66,7 @@ public class EdfFactory implements IFactory {
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
         try {
             result = new DefaultArrayMatrix(EdfFactory.NAME, o);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
             e.printStackTrace();
         }
         return result;
@@ -80,8 +77,7 @@ public class EdfFactory implements IFactory {
         IArray result = null;
         try {
             result = new DefaultArrayMatrix(EdfFactory.NAME, storage);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
             e.printStackTrace();
         }
         return result;
@@ -93,8 +89,7 @@ public class EdfFactory implements IFactory {
         if (javaArray != null && javaArray.getClass().isArray()) {
             try {
                 result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
-            }
-            catch (InvalidArrayTypeException e) {
+            } catch (InvalidArrayTypeException e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
         }
@@ -112,8 +107,7 @@ public class EdfFactory implements IFactory {
         IArray result = null;
         try {
             result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
             e.printStackTrace();
         }
         return result;
@@ -124,8 +118,7 @@ public class EdfFactory implements IFactory {
         IArray result = null;
         try {
             result = new DefaultArrayMatrix(EdfFactory.NAME, javaArray);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
 
             e.printStackTrace();
         }
@@ -138,8 +131,7 @@ public class EdfFactory implements IFactory {
     }
 
     @Override
-    public IDataItem createDataItem(IGroup parent, String shortName, IArray array)
-            throws InvalidArrayTypeException {
+    public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
         EdfDataItem dataitem = new EdfDataItem(shortName, array);
         dataitem.setParent(parent);
         return dataitem;
@@ -178,13 +170,13 @@ public class EdfFactory implements IFactory {
 
     @Override
     @Deprecated
-    public IDictionary openDictionary(URI uri) throws FileAccessException {
+    public org.cdma.interfaces.IDictionary openDictionary(URI uri) throws FileAccessException {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public IDictionary openDictionary(String filepath) throws FileAccessException {
+    public org.cdma.interfaces.IDictionary openDictionary(String filepath) throws FileAccessException {
         throw new NotImplementedException();
     }
 
@@ -220,10 +212,9 @@ public class EdfFactory implements IFactory {
 
     @Override
     @Deprecated
-    public IDictionary createDictionary() {
+    public org.cdma.interfaces.IDictionary createDictionary() {
         throw new NotImplementedException();
     }
-
 
     @Override
     public void processPostRecording() {
@@ -251,4 +242,3 @@ public class EdfFactory implements IFactory {
     }
 
 }
-
