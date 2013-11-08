@@ -11,7 +11,7 @@
 
 	<groupId>org.cdma</groupId>
 	<artifactId>utilities</artifactId>
-	<version>1.0.4-SNAPSHOT</version>
+	<version>1.0.3</version>
 
 	<name>CDMA Utilities</name>
 	<description> This project contains various tools to interact with CDMA </description>
