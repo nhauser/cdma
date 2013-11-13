@@ -54,11 +54,11 @@ public class DetectedSource {
                 if (file.exists()) {
                     mIsBrowsable = file.isDirectory();
                     
-                    if (mIsBrowsable){
-                        if (EdfDatasource.findEDFFiles(file)){
-                            mIsReadable = true;
-                        }
-                    }
+//                    if (mIsBrowsable){
+//                        if (EdfDatasource.findEDFFiles(file)){
+//                            mIsReadable = true;
+//                        }
+//                    }
                     ValidURIFilter filter = new ValidURIFilter();
                     if (filter.accept(file)) {
                         mIsBrowsable = true;
