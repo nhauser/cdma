@@ -105,7 +105,9 @@ public class DetectedSource {
 	}
 
 	public boolean isReadable() {
-		fullInit();
+		if (!mIsReadable){
+			initReadable(mURI);
+		}
 		return mIsReadable;
 	}
 
