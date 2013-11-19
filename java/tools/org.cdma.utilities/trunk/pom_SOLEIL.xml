@@ -23,35 +23,13 @@
 	
 		<developers>
 		<developer>
-			<id>saintin</id>
-			<name>Katy Saintin</name>
-			<email>katy.saintin@synchrotron-soleil.fr</email>
+			<id>viguier</id>
+			<name>Gregory VIGUIER</name>
+			<email>gregory.viguier@synchrotron-soleil.fr</email>
 			<organization>Synchrotron Soleil</organization>
 			<organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
 			<roles>
 				<role>Manager</role>
-				<role>Java Developer</role>
-			</roles>
-			<timezone>1</timezone>
-		</developer>
-		<developer>
-			<id>girardot</id>
-			<name>Raphaël GIRARDOT</name>
-			<email>raphael.girardot@synchrotron-soleil.fr</email>
-			<organization>EXTIA</organization>
-			<organizationUrl>http://www.extia.fr</organizationUrl>
-			<roles>
-				<role>Java Developer</role>
-			</roles>
-			<timezone>1</timezone>
-		</developer>
-		<developer>
-			<id>crodriguez</id>
-			<name>Clément RODRIGUEZ</name>
-			<email>clement.rodriguez@synchrotron-soleil.fr</email>
-			<organization>ALTEN</organization>
-			<organizationUrl>http://www.alten.fr</organizationUrl>
-			<roles>
 				<role>Java Developer</role>
 			</roles>
 			<timezone>1</timezone>
