@@ -3,7 +3,6 @@ package org.cdma.plugin.soleil.edf.internal;
 import java.io.File;
 import java.net.URI;
 
-import org.cdma.plugin.soleil.edf.EdfDatasource;
 import org.cdma.plugin.soleil.edf.EdfDatasource.ValidURIFilter;
 
 public class DetectedSource {
