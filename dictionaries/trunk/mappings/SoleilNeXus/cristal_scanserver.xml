@@ -128,6 +128,38 @@
     <path>/{NXinstrument}/{NXmonochromator}/exitSlitAperture</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="cpt4counter2">
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXdata}/data_*@long_name=*cpt.4/counter2</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="interpretation" value="image"/>
+  </item>
+  <item key="cpt4counter4">
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXdata}/data_*@long_name=*cpt.4/counter4</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="interpretation" value="image"/>
+  </item>
+  <item key="xpadroisum">
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXdata}/data_*@long_name=*roisum*</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="interpretation" value="image"/>
+  </item>
+  <item key="xpadroi">
+    <path>/{NXdata}/data_*@long_name=*/xpadroi/roi</path>
+    <call>AttributeFilter</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="images">
     <!-- the core will try to open that path, but won't succeed -->
     <path>/{NXdata}/data_*@long_name=*image</path>
