@@ -1,4 +1,4 @@
-//******************************************************************************
+// ******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
 // The CDMA library is free software; you can redistribute it and/or modify it
 // under the terms of the GNU General Public License as published by the Free
@@ -14,6 +14,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.cdma.engine.sql.navigation.SqlDataset;
 
 import fr.soleil.database.connection.AbstractDataBaseConnector;
 import fr.soleil.database.connection.MySQLDataBaseConnector;
@@ -61,7 +63,7 @@ public class SqlConnector {
         System.out.println("mRac=" + mRac);
         String hostLabel = "mHost";
         String nameLabel = "mDbName";
-        if(mRac) {
+        if (mRac) {
             hostLabel = "tnsName";
             nameLabel = "onsConfiguration";
         }
@@ -77,20 +79,22 @@ public class SqlConnector {
                 }
 
                 AbstractDataBaseConnector dbConnector = null;
-                if ((mDriver != null) && (mDriver.indexOf("oracle") > -1)) {
+                if ((mDriver != null) && (mDriver.contains("oracle"))) {
                     dbConnector = new OracleDataBaseConnector();
                 } else {
                     dbConnector = new MySQLDataBaseConnector();
                 }
 
                 if (dbConnector != null) {
-                    dbConnector.setSchema(mDbScheme);
+
                     dbConnector.setUser(mUser);
                     dbConnector.setPassword(mPwd);
                     if (mRac && (dbConnector instanceof OracleDataBaseConnector)) {
                         ((OracleDataBaseConnector) dbConnector).setTnsName(mHost);
-                        ((OracleDataBaseConnector) dbConnector).setOnsConfiguration("mDbName");
+                        ((OracleDataBaseConnector) dbConnector).setOnsConfiguration(mDbName);
+                        ((OracleDataBaseConnector) dbConnector).setRac(mRac);
                     } else {
+                        dbConnector.setSchema(mDbScheme);
                         dbConnector.setHost(mHost);
                         dbConnector.setName(mDbName);
                     }
@@ -156,6 +160,42 @@ public class SqlConnector {
             }
         }
         return statement;
-
     }
+
+    public static void main(String args[]) {
+        // CHANGE THIS VALUES
+        boolean useRac = false;
+        boolean test = true;
+
+        // Values for RCM
+        String factoryName = "this";
+        String host = "erato.rcm";
+        String user = "hdbarchiver";
+        String passwd = "hdbarchiver";
+        String driver = "jdbc:oracle:thin";
+        String dbName = "hdb";
+        String dbScheme = "hdb";
+
+        if (test) {
+            host = "LUTIN";// "erato.rcm";
+            user = "HDB"; // "hdbarchiver";
+            passwd = "HDB";// "hdbarchiver";
+            driver = "jdbc:oracle:thin";
+            dbName = "TEST11";
+            dbScheme = "";
+        }
+
+        if (useRac) {
+            host = "(DESCRIPTION = (ADDRESS_LIST=(LOAD_BALANCE=on)(ADDRESS = (PROTOCOL = TCP)(HOST = calliope-vip.rcm) (PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = euterpe-vip.rcm)(PORT = 1521))) (CONNECT_DATA = (SERVICE_NAME = HDB)))"; // "erato.rcm";
+            dbName = "thalie:6200,euterpe:6200,calliope:6200";
+        }
+        SqlDataset ds = new SqlDataset(factoryName, host, user, passwd, driver, dbName, dbScheme, useRac);
+
+        try {
+            ds.open();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
