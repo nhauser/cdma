@@ -22,6 +22,7 @@ import fr.soleil.database.connection.MySQLDataBaseConnector;
 import fr.soleil.database.connection.OracleDataBaseConnector;
 
 public class SqlConnector {
+    private static final String ORACLE_IDENTIFIER = "oracle";
     private final String mUser;
     private final String mHost;
     private final String mPwd;
@@ -55,20 +56,21 @@ public class SqlConnector {
     }
 
     public Connection open() throws IOException {
-        System.out.println("--------------OPEN connection------------------");
-        System.out.println("mDriver=" + mDriver);
-        System.out.println("mDbScheme=" + mDbScheme);
-        System.out.println("mUser=" + mUser);
-        System.out.println("mPwd=" + mPwd);
-        System.out.println("mRac=" + mRac);
-        String hostLabel = "mHost";
-        String nameLabel = "mDbName";
-        if (mRac) {
-            hostLabel = "tnsName";
-            nameLabel = "onsConfiguration";
-        }
-        System.out.println(hostLabel + "=" + mHost);
-        System.out.println(nameLabel + "=" + mDbName);
+//        System.out.println("--------------OPEN connection------------------");
+//        System.out.println("mDriver=" + mDriver);
+//        System.out.println("mDbScheme=" + mDbScheme);
+//        System.out.println("mUser=" + mUser);
+//        System.out.println("mPwd=" + mPwd);
+//        System.out.println("mRac=" + mRac);
+
+//        String hostLabel = "mHost";
+//        String nameLabel = "mDbName";
+//        if (mRac) {
+//            hostLabel = "tnsName";
+//            nameLabel = "onsConfiguration";
+//        }
+//        System.out.println(hostLabel + "=" + mHost);
+//        System.out.println(nameLabel + "=" + mDbName);
         try {
             if ((mConnection == null) || !mConnection.isValid(0) || mConnection.isClosed()) {
                 if (mConnection != null) {
@@ -79,7 +81,7 @@ public class SqlConnector {
                 }
 
                 AbstractDataBaseConnector dbConnector = null;
-                if ((mDriver != null) && (mDriver.contains("oracle"))) {
+                if ((mDriver != null) && (mDriver.contains(ORACLE_IDENTIFIER))) {
                     dbConnector = new OracleDataBaseConnector();
                 } else {
                     dbConnector = new MySQLDataBaseConnector();
@@ -120,7 +122,7 @@ public class SqlConnector {
         } catch (SQLException e) {
             throw new IOException(e);
         }
-        System.out.println("connection successful");
+//        System.out.println("connection successful");
         return mConnection;
     }
 
