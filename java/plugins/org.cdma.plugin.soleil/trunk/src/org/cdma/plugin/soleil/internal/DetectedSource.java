@@ -38,6 +38,7 @@ public class DetectedSource {
             "SWING" };
 
     public static class NeXusFilter implements FilenameFilter {
+        @Override
         public boolean accept(File dir, String name) {
             return DetectedSource.accept(name);
         }
@@ -50,7 +51,7 @@ public class DetectedSource {
     private boolean mIsReadable;
     private boolean mIsFolder;
     private boolean mInitialized;
-    private URI mURI;
+    private final URI mURI;
     private long mTimestamp;
 
     public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment,
@@ -90,21 +91,25 @@ public class DetectedSource {
     }
 
     public boolean isExperiment() {
+        System.out.println("DetectedSource.isExperiment()");
         fullInit();
         return mIsExperiment;
     }
 
     public boolean isBrowsable() {
+        System.out.println("DetectedSource.isBrowsable()");
         fullInit();
         return mIsBrowsable;
     }
 
     public boolean isProducer() {
+        System.out.println("DetectedSource.isProducer()");
         fullInit();
         return mIsProducer;
     }
 
     public boolean isReadable() {
+        System.out.println("DetectedSource.isReadable()");
         if (!mIsReadable) {
             initReadable(mURI);
         }
@@ -128,7 +133,6 @@ public class DetectedSource {
         long currentTimestamp = getTimestamp(uri);
         if (currentTimestamp != mTimestamp) {
             result = true;
-
         }
         return result;
     }
@@ -137,6 +141,8 @@ public class DetectedSource {
     // / private methods
     // ---------------------------------------------------------
     private void init(URI uri) {
+        Benchmarker.start("init");
+        System.out.println("init for :" + mURI.toString());
         if (uri != null) {
             // Check if the uri is a folder
             String path = uri.getPath();
@@ -160,14 +166,14 @@ public class DetectedSource {
                 mInitialized = true;
             }
         }
-
+        Benchmarker.stop("init");
     }
 
     private void fullInit() {
-
+        Benchmarker.start("fullInit");
         synchronized (this) {
             if (!mInitialized || hasChanged(mURI)) {
-
+                System.out.println("FullInit for :" + mURI.toString());
                 // Check if we are producer of the source
                 mIsProducer = initProducer(mURI);
 
@@ -178,12 +184,15 @@ public class DetectedSource {
                 mIsBrowsable = initBrowsable(mURI);
 
                 mInitialized = true;
+                System.out.println("End of FullInit for :" + mURI.toString());
             }
         }
+        Benchmarker.stop("fullInit");
     }
 
     private boolean initReadable(URI uri) {
-
+        Benchmarker.start("initReadable");
+        System.out.println("initReadable for :" + mURI.toString());
         boolean result = false;
 
         File file = new File(uri.getPath());
@@ -195,15 +204,20 @@ public class DetectedSource {
                 result = true;
             }
         }
-
+        System.out.println("End of initReadable for :" + mURI.toString());
+        Benchmarker.stop("initReadable");
         return result;
     }
 
     private boolean initProducer(URI uri) {
+        Benchmarker.start("initProducer");
+
+        System.out.println("initProducer for :" + mURI.toString());
         boolean result = false;
         if (mIsReadable) {
             File file = new File(uri.getPath());
             IDataset dataset = null;
+
             try {
                 // instantiate
                 dataset = NxsDataset.instanciate(file.toURI());
@@ -247,10 +261,14 @@ public class DetectedSource {
                 Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
         }
+        System.out.println("End of initProducer for :" + mURI.toString());
+        Benchmarker.stop("initProducer");
         return result;
     }
 
     private boolean initExperiment(URI uri) {
+        Benchmarker.start("initExperiment");
+        System.out.println("initExperiment for :" + mURI.toString());
         boolean result = false;
         // Check if the URI is a NeXus file
         if (mIsProducer) {
@@ -266,6 +284,8 @@ public class DetectedSource {
             } catch (NoResultException e) {
             }
         }
+        System.out.println("End of initExperiment for :" + mURI.toString());
+        Benchmarker.stop("initExperiment");
         return result;
     }
 
@@ -288,6 +308,8 @@ public class DetectedSource {
      * @note the given file must be a folder
      */
     private boolean isDatasetFolder(File file) {
+        Benchmarker.start("isDatasetFolder");
+        System.out.println("isDatasetFolder for :" + mURI.toString());
         boolean result = false;
 
         NeXusFilter filter = new NeXusFilter();
@@ -315,7 +337,8 @@ public class DetectedSource {
             } catch (FileAccessException e) {
             }
         }
-
+        System.out.println("End of isDatasetFolder for :" + mURI.toString());
+        Benchmarker.stop("isDatasetFolder");
         return result;
     }
 
