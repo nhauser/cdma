@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities.performance;
 
 import java.text.DecimalFormat;
@@ -23,19 +28,19 @@ import java.util.logging.Level;
 import org.cdma.Factory;
 
 public class Benchmarker {
-    private static Map<String, Long> timers   = new TreeMap<String, Long>();
+    private static Map<String, Long> timers = new TreeMap<String, Long>();
     private static Map<String, Long> maxTimer = new TreeMap<String, Long>();
     private static Map<String, Long> minTimer = new TreeMap<String, Long>();
     private static Map<String, Long> counters = new TreeMap<String, Long>();
     private static Map<String, Long> starters = new TreeMap<String, Long>();
-    private static Map<String, Long> nbcalls  = new TreeMap<String, Long>();
+    private static Map<String, Long> nbcalls = new TreeMap<String, Long>();
     private static Map<String, Long> nbthread = new TreeMap<String, Long>();
-    private static Map<String, Long> memFree  = new TreeMap<String, Long>();
-    private static Map<String, Long> memCost  = new TreeMap<String, Long>();
-
+    private static Map<String, Long> memFree = new TreeMap<String, Long>();
+    private static Map<String, Long> memCost = new TreeMap<String, Long>();
 
     /**
      * Start a timer with the given label.
+     * 
      * @param label
      */
     public static void start(String label) {
@@ -50,14 +55,14 @@ public class Benchmarker {
                 } else {
                     counters.put(label, ++counter);
                     Long thread = nbthread.get(label);
-                    if( thread < counter ) {
+                    if (thread < counter) {
                         nbthread.put(label, counter);
                     }
                 }
                 nbcalls.put(label, ++call);
-                long run  = Runtime.getRuntime().freeMemory();
+                long run = Runtime.getRuntime().freeMemory();
                 long free = memFree.get(label);
-                if( free != 0 ) {
+                if (free != 0) {
                     long cost = memCost.get(label) + (run - free);
                     memCost.put(label, cost);
                 }
@@ -78,6 +83,7 @@ public class Benchmarker {
 
     /**
      * Stop the timer having the given label.
+     * 
      * @param label
      */
     public static void stop(String label) {
@@ -89,9 +95,9 @@ public class Benchmarker {
                 if (counter > 1) {
                     counter--;
                     counters.put(label, counter);
-                    long run  = Runtime.getRuntime().freeMemory();
+                    long run = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
-                    if( free != 0 ) {
+                    if (free != 0) {
                         long cost = memCost.get(label) + (run - free);
                         memCost.put(label, cost);
                     }
@@ -106,31 +112,31 @@ public class Benchmarker {
                     counters.put(label, counter);
 
                     Long max = maxTimer.get(label);
-                    if( currentTime - starter > max ) {
-                        maxTimer.put(label, currentTime - starter );
+                    if (currentTime - starter > max) {
+                        maxTimer.put(label, currentTime - starter);
                     }
                     Long min = minTimer.get(label);
-                    if( currentTime - starter < min ) {
-                        minTimer.put(label, currentTime - starter );
+                    if (currentTime - starter < min) {
+                        minTimer.put(label, currentTime - starter);
                     }
 
-                    long run  = Runtime.getRuntime().freeMemory();
+                    long run = Runtime.getRuntime().freeMemory();
                     long free = memFree.get(label);
-                    if( free != 0 ) {
+                    if (free != 0) {
                         long cost = memCost.get(label) + (run - free);
                         memCost.put(label, cost);
                     }
                     memFree.put(label, 0L);
 
                 } else {
-                    Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                    Factory.getLogger().log( Level.INFO, "To much stop for: " + label);
-                    Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                    Factory.getLogger().log(Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                    Factory.getLogger().log(Level.INFO, "To much stop for: " + label);
+                    Factory.getLogger().log(Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
                 }
             } else {
-                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
-                Factory.getLogger().log( Level.INFO, "Stopping inexistent timer: " + label);
-                Factory.getLogger().log( Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log(Level.INFO, ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log(Level.INFO, "Stopping inexistent timer: " + label);
+                Factory.getLogger().log(Level.INFO, ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
         }
     }
@@ -158,8 +164,8 @@ public class Benchmarker {
             } else {
                 counters.put(label, 0L);
                 starters.put(label, 0L);
-                timers.put(label,   0L);
-                nbcalls.put(label,  1L);
+                timers.put(label, 0L);
+                nbcalls.put(label, 1L);
                 nbthread.put(label, 0L);
                 memCost.put(label, 0L);
                 memFree.put(label, 0L);
@@ -183,24 +189,30 @@ public class Benchmarker {
         StringBuilder result = new StringBuilder();
         synchronized (Benchmarker.class) {
             int max = 0;
-            for( String label : timers.keySet() ) {
+            for (String label : timers.keySet()) {
                 String lines[] = label.split("\n");
-                for( String line : lines ) {
-                    if( line.length() + 2 > max ) {
+                for (String line : lines) {
+                    if (line.length() + 2 > max) {
                         max = line.length() + 2;
                     }
                 }
             }
 
             for (String label : timers.keySet()) {
-                result.append( print( label + ": ", max ) );
-                result.append( print( " spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3) + " s ", 20) );
-                result.append( print( " nb calls: " + nbcalls.get(label), 20 ) + " " );
-                result.append( print( " max thread: " +  nbthread.get(label), 20) + " " );
-                result.append( print( " maximum cost: " + maxTimer.get(label) + " ms ", 28 )  );
-                result.append( print( " average cost: " + roundNumber( Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3 ) + " ms ", 30 )  );
-                result.append( print( " minimum cost: " + minTimer.get(label) + " ms ", 28 )  );
-                result.append( print( " free mem var: " + roundNumber( Benchmarker.memCost.get(label) / (float) 1000000, 3), 25 ) + " Mo\n" );
+                result.append(print(label + ": ", max));
+                result.append(print(" spent: " + roundNumber(Benchmarker.getTimers().get(label) / (float) 1000, 3)
+                        + " s ", 20));
+                result.append(print(" nb calls: " + nbcalls.get(label), 20) + " ");
+                result.append(print(" max thread: " + nbthread.get(label), 20) + " ");
+                result.append(print(" maximum cost: " + maxTimer.get(label) + " ms ", 28));
+                result.append(print(
+                        " average cost: "
+                                + roundNumber(Benchmarker.getTimers().get(label) / (float) nbcalls.get(label), 3)
+                                + " ms ", 30));
+                result.append(print(" minimum cost: " + minTimer.get(label) + " ms ", 28));
+                result.append(print(" free mem var: "
+                        + roundNumber(Benchmarker.memCost.get(label) / (float) 1000000, 3), 25)
+                        + " Mo\n");
             }
         }
         return result.toString();
@@ -219,33 +231,32 @@ public class Benchmarker {
         synchronized (Benchmarker.class) {
             boolean reset = true;
             List<String> running = new ArrayList<String>();
-            for( Entry<String,Long> counter : counters.entrySet() ) {
-                if( counter.getValue() > 0 ) {
+            for (Entry<String, Long> counter : counters.entrySet()) {
+                if (counter.getValue() > 0) {
                     running.add(counter.getKey());
                     reset = false;
                 }
             }
-            if( reset ) {
-                timers   = new TreeMap<String, Long>();
+            if (reset) {
+                timers = new TreeMap<String, Long>();
                 counters = new TreeMap<String, Long>();
                 starters = new TreeMap<String, Long>();
-                nbcalls  = new TreeMap<String, Long>();
+                nbcalls = new TreeMap<String, Long>();
                 nbthread = new TreeMap<String, Long>();
-                memFree  = new TreeMap<String, Long>();
-                memCost  = new TreeMap<String, Long>();
+                memFree = new TreeMap<String, Long>();
+                memCost = new TreeMap<String, Long>();
                 maxTimer = new TreeMap<String, Long>();
                 minTimer = new TreeMap<String, Long>();
-            }
-            else {
+            } else {
                 StringBuffer log = new StringBuffer();
-                log.append( ">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n" );
-                log.append( "Timers are still running!!!!\n" );
-                log.append( "Please stop the following timers:\n" );
-                for( String timer : running ) {
-                    log.append( "   - " + timer + "\n" );
+                log.append(">>>>>>>>>>>>>>>>>> Benchmark  <<<<<<<<<<<<<<<<<<<<<<\n");
+                log.append("Timers are still running!!!!\n");
+                log.append("Please stop the following timers:\n");
+                for (String timer : running) {
+                    log.append("   - " + timer + "\n");
                 }
-                log.append( ">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<" );
-                Factory.getLogger().log( Level.INFO, log.toString() );
+                log.append(">>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+                Factory.getLogger().log(Level.INFO, log.toString());
             }
         }
     }
@@ -253,11 +264,11 @@ public class Benchmarker {
     // ------------------------------------------------------------------------
     // private methods
     // ------------------------------------------------------------------------
-    private static String print(String value, int length ) {
+    private static String print(String value, int length) {
         String result = value;
 
-        if( value.length() < length ) {
-            for( int i = 0; i < length - value.length(); i++ ) {
+        if (value.length() < length) {
+            for (int i = 0; i < length - value.length(); i++) {
                 result += ".";
             }
         }
@@ -269,13 +280,12 @@ public class Benchmarker {
         int i = -1;
         int depthCall = depth > e.getStackTrace().length ? e.getStackTrace().length : depth;
         for (StackTraceElement element : e.getStackTrace()) {
-            if( i > -1 && ( i < depthCall || depth < 0 ) ) {
+            if (i > -1 && (i < depthCall || depth < 0)) {
                 sb.append(element.toString());
-            }
-            else if( i == depth && depth >= 0 ) {
+            } else if (i == depth && depth >= 0) {
                 break;
             }
-            if( i < depthCall - 1 && i > -1 ) {
+            if (i < depthCall - 1 && i > -1) {
                 sb.append("\n");
             }
             i++;
@@ -283,7 +293,7 @@ public class Benchmarker {
         return sb.toString();
     }
 
-    private static String roundNumber( Number num, int nbDigits ) {
+    private static String roundNumber(Number num, int nbDigits) {
         String format = "#.";
         char[] digits = new char[nbDigits];
         Arrays.fill(digits, '#');

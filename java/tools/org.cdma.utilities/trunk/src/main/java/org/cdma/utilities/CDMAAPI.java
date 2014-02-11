@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities;
 
 import java.io.File;
@@ -57,8 +62,7 @@ public class CDMAAPI {
         if (sourcePath != null && !sourcePath.isEmpty()) {
             if (dataSetMap.containsKey(sourcePath)) {
                 dataSet = dataSetMap.get(sourcePath);
-            }
-            else {
+            } else {
                 IFactory factory = Factory.getFactory(factoryId);
                 dataSet = factory.createDatasetInstance(new File(sourcePath).toURI());
                 if (dataSet != null) {
@@ -83,8 +87,7 @@ public class CDMAAPI {
         if (sourcePath != null && !sourcePath.isEmpty()) {
             if (rootGroupMap.containsKey(sourcePath)) {
                 rootGroup = rootGroupMap.get(sourcePath);
-            }
-            else {
+            } else {
                 IDataset dataSet = readDataSet(sourcePath, factoryId);
                 if (dataSet != null) {
                     dataSet.open();
@@ -110,8 +113,8 @@ public class CDMAAPI {
      * @return Object, the storage contained in the dataPath
      */
     // If we dont know the NXEntry we can read the first group
-    public static Object readItemStorage(String sourcePath, String factoryId, String dataPath,
-            int indexGroup) throws Exception {
+    public static Object readItemStorage(String sourcePath, String factoryId, String dataPath, int indexGroup)
+            throws Exception {
         Object storage = null;
         IGroup rootGroup = readRootGoup(sourcePath, factoryId);
         if (rootGroup != null) {
@@ -133,8 +136,7 @@ public class CDMAAPI {
      * @param dataPath, the dataPath in the source file
      * @return Object, the storage contained in the dataPath
      */
-    public static Object readItemStorage(String sourcePath, String factoryId, String dataPath)
-            throws Exception {
+    public static Object readItemStorage(String sourcePath, String factoryId, String dataPath) throws Exception {
         Object storage = null;
         IArray array = readArray(sourcePath, factoryId, dataPath);
         if (array != null) {
@@ -155,8 +157,8 @@ public class CDMAAPI {
      * @return Date, the date of the Item
      */
     // If we dont know the NXEntry we can read the first group
-    public static Date readItemDate(String sourcePath, String factoryId, String dataPath,
-            int indexGroup) throws Exception {
+    public static Date readItemDate(String sourcePath, String factoryId, String dataPath, int indexGroup)
+            throws Exception {
         Date value = null;
         IGroup rootGroup = readRootGoup(sourcePath, factoryId);
         if (rootGroup != null) {
@@ -183,8 +185,7 @@ public class CDMAAPI {
      * @param dataPath, the dataPath in the source file
      * @return Date, the date of the Item
      */
-    public static Date readItemDate(String sourcePath, String factoryId, String dataPath)
-            throws Exception {
+    public static Date readItemDate(String sourcePath, String factoryId, String dataPath) throws Exception {
         Date date = null;
         IDataItem item = readDateItem(sourcePath, factoryId, dataPath);
         if (item != null) {
@@ -204,8 +205,7 @@ public class CDMAAPI {
      * @return IDataItem
      * @see IDataItem
      */
-    public static IDataItem readDateItem(String sourcePath, String factoryId, String dataPath)
-            throws Exception {
+    public static IDataItem readDateItem(String sourcePath, String factoryId, String dataPath) throws Exception {
         IDataItem item = null;
 
         if (sourcePath != null && !sourcePath.isEmpty() && dataPath != null && !dataPath.isEmpty()) {
@@ -242,8 +242,7 @@ public class CDMAAPI {
      * @return IArray
      * @see IArray
      */
-    public static IArray readArray(String sourcePath, String factoryId, String dataPath)
-            throws Exception {
+    public static IArray readArray(String sourcePath, String factoryId, String dataPath) throws Exception {
         IArray array = null;
         if (sourcePath != null && !sourcePath.isEmpty() && dataPath != null && !dataPath.isEmpty()) {
             String key = sourcePath + dataPath;
@@ -280,8 +279,7 @@ public class CDMAAPI {
             dateValue = dateValue.replaceFirst("Z", " ");
             try {
                 date = simpleDateFormat.parse(dateValue);
-            }
-            catch (ParseException e) {
+            } catch (ParseException e) {
             }
         }
         return date;
@@ -302,8 +300,7 @@ public class CDMAAPI {
             index++;
             try {
                 oneChar = (Character) Array.get(storage, index);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 oneChar = null;
             }
         }
