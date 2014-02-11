@@ -1,14 +1,19 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.array;
-
 
 import org.cdma.arrays.DefaultArrayIterator;
 import org.cdma.arrays.DefaultSliceIterator;
@@ -32,29 +37,29 @@ import org.cdma.utils.IArrayUtils;
 import fr.soleil.nexus.DataItem;
 
 public final class NxsArray implements IArray {
-    private Object     mData;      // It's an array of values
-    private NxsIndex   mIndex;     // IIndex corresponding to mArray shape
-    private IArray[]   mArrays;    // IArray of IArray
+    private Object mData; // It's an array of values
+    private NxsIndex mIndex; // IIndex corresponding to mArray shape
+    private final IArray[] mArrays; // IArray of IArray
 
-    public NxsArray( IArray[] arrays ) {
-        mArrays   = arrays.clone();
-        mData     = null;
-        initDimSize();    
+    public NxsArray(IArray[] arrays) {
+        mArrays = arrays.clone();
+        mData = null;
+        initDimSize();
 
         // Define the same viewable part for all sub-IArray
         NexusIndex index = mIndex.getIndexStorage();
-        for( IArray array : mArrays ) {
+        for (IArray array : mArrays) {
             array.setIndex(index.clone());
         }
     }
 
-    public NxsArray( NxsArray array ) {
+    public NxsArray(NxsArray array) {
         mIndex = (NxsIndex) array.mIndex.clone();
-        mData   = array.mData;
+        mData = array.mData;
 
         IIndex index = mIndex.getIndexStorage();
-        mArrays      = new IArray[array.mArrays.length];
-        for( int i = 0; i < array.mArrays.length; i++ ) {
+        mArrays = new IArray[array.mArrays.length];
+        for (int i = 0; i < array.mArrays.length; i++) {
             mArrays[i] = array.mArrays[i].copy(false);
             mArrays[i].setIndex(index);
 
@@ -62,11 +67,11 @@ public final class NxsArray implements IArray {
     }
 
     public NxsArray(DataItem item) throws InvalidArrayTypeException {
-        this( new IArray[] { new NexusArray(NxsFactory.NAME, item) });
+        this(new IArray[] { new NexusArray(NxsFactory.NAME, item) });
     }
 
     public NxsArray(Object oArray, int[] iShape) throws InvalidArrayTypeException {
-        this( new IArray[] { new NexusArray(NxsFactory.NAME, oArray, iShape) });
+        this(new IArray[] { new NexusArray(NxsFactory.NAME, oArray, iShape) });
     }
 
     @Override
@@ -83,7 +88,7 @@ public final class NxsArray implements IArray {
     public IArray copy(boolean data) {
         NxsArray result = new NxsArray(this);
 
-        if( data ) {
+        if (data) {
             result.mData = ArrayTools.copyJavaArray(mData);
         }
 
@@ -97,7 +102,7 @@ public final class NxsArray implements IArray {
 
     @Override
     public IArrayUtils getArrayUtils() {
-    	return new NxsArrayUtils(this);
+        return new NxsArrayUtils(this);
     }
 
     @Override
@@ -105,7 +110,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getBoolean(itemIdx);
+        return mArrays[nodeIndex].getBoolean(itemIdx);
     }
 
     @Override
@@ -113,7 +118,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getByte(itemIdx);
+        return mArrays[nodeIndex].getByte(itemIdx);
     }
 
     @Override
@@ -121,7 +126,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getChar(itemIdx);
+        return mArrays[nodeIndex].getChar(itemIdx);
     }
 
     @Override
@@ -129,7 +134,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getDouble(itemIdx);
+        return mArrays[nodeIndex].getDouble(itemIdx);
     }
 
     @Override
@@ -137,7 +142,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getFloat(itemIdx);
+        return mArrays[nodeIndex].getFloat(itemIdx);
     }
 
     @Override
@@ -145,7 +150,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getInt(itemIdx);
+        return mArrays[nodeIndex].getInt(itemIdx);
     }
 
     @Override
@@ -153,7 +158,7 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getLong(itemIdx);
+        return mArrays[nodeIndex].getLong(itemIdx);
     }
 
     @Override
@@ -161,14 +166,13 @@ public final class NxsArray implements IArray {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
-        return mArrays[(int) nodeIndex].getShort(itemIdx);
+        return mArrays[nodeIndex].getShort(itemIdx);
     }
 
     @Override
     public Class<?> getElementType() {
         Class<?> result = null;
-        if( mArrays != null )
-        {
+        if (mArrays != null) {
             result = mArrays[0].getElementType();
         }
         return result;
@@ -182,8 +186,8 @@ public final class NxsArray implements IArray {
     @Override
     public IArrayIterator getIterator() {
         NxsIndex index = (NxsIndex) mIndex.clone();
-        index.set( new int[index.getRank()] );
-        return new DefaultArrayIterator(this, index );
+        index.set(new int[index.getRank()]);
+        return new DefaultArrayIterator(this, index);
     }
 
     @Override
@@ -192,17 +196,16 @@ public final class NxsArray implements IArray {
     }
 
     @Override
-    public IArrayIterator getRegionIterator(int[] reference, int[] range)
-            throws InvalidRangeException {
+    public IArrayIterator getRegionIterator(int[] reference, int[] range) throws InvalidRangeException {
         int[] shape = mIndex.getShape();
-        IIndex index = new NexusIndex( NxsFactory.NAME, shape, reference, range );
+        IIndex index = new NexusIndex(NxsFactory.NAME, shape, reference, range);
         return new DefaultArrayIterator(this, index);
     }
 
     @Override
     public int[] getShape() {
-    	int[] result = mIndex.getShape();
-    	return result;
+        int[] result = mIndex.getShape();
+        return result;
     }
 
     @Override
@@ -215,19 +218,19 @@ public final class NxsArray implements IArray {
         Object result = mData;
         IIndex index = mIndex.getIndexMatrix().clone();
         int rank = index.getRank();
-        
-        if ( mData == null && mArrays != null ) {
+
+        if (mData == null && mArrays != null) {
             Object[] array;
             int offset;
-            
+
             // Case of several NexusArray in the visible part of the matrix
             if (rank != 0) {
-            	int[] pos = new int[1];
-            	int size = (int) index.getSize();
+                int[] pos = new int[1];
+                int size = (int) index.getSize();
                 array = new Object[size];
                 for (int i = 0; i < size; i++) {
-            		pos[0] = i;
-            		index.set(pos);
+                    pos[0] = i;
+                    index.set(pos);
                     offset = (int) index.currentElement();
                     if (offset < 0) {
                         array = null;
@@ -238,7 +241,7 @@ public final class NxsArray implements IArray {
             }
             // Case of one NexusArray in the visible part of the matrix
             else {
-            	offset = (int) index.currentElement();
+                offset = (int) index.currentElement();
                 array = new Object[1];
                 array[0] = mArrays[offset].getStorage();
             }
@@ -246,7 +249,7 @@ public final class NxsArray implements IArray {
         }
         return result;
     }
-    
+
     @Override
     public void setBoolean(IIndex ima, boolean value) {
         set(ima, value);
@@ -312,22 +315,21 @@ public final class NxsArray implements IArray {
 
     @Override
     public void setIndex(IIndex index) {
-        if( index instanceof NxsIndex ) {
+        if (index instanceof NxsIndex) {
             mIndex = (NxsIndex) index;
-        }
-        else {
-            mIndex = new NxsIndex(mIndex.getIndexMatrix().getRank(), index.getShape(), index.getOrigin(), index.getShape() );
+        } else {
+            mIndex = new NxsIndex(mIndex.getIndexMatrix().getRank(), index.getShape(), index.getOrigin(),
+                    index.getShape());
             mIndex.set(index.getCurrentCounter());
         }
 
-        for( IArray array : mArrays ) {
+        for (IArray array : mArrays) {
             array.setIndex(mIndex.getIndexStorage());
         }
     }
 
     @Override
-    public ISliceIterator getSliceIterator(int rank)
-            throws ShapeNotMatchException, InvalidRangeException {
+    public ISliceIterator getSliceIterator(int rank) throws ShapeNotMatchException, InvalidRangeException {
         return new DefaultSliceIterator(this, rank);
     }
 
@@ -380,37 +382,35 @@ public final class NxsArray implements IArray {
      * @return this array sub-parts if any
      */
     public IArray[] getArrayParts() {
-    	return mArrays;
+        return mArrays;
     }
 
     // ---------------------------------------------------------
-    /// Private methods
+    // / Private methods
     // ---------------------------------------------------------
     /**
      * InitDimSize
      * Initialize member dimension sizes 'm_iDimS' according to defined member data 'm_oData'
      */
-    private void initDimSize()
-    {
+    private void initDimSize() {
         // Check data existence
-        if( mArrays != null ) {
+        if (mArrays != null) {
             // Set dimension rank
             int matrixRank = mArrays.length > 1 ? 1 : 0;
-            int[] shape    = new int[ matrixRank + mArrays[0].getRank() ];
-
+            int[] shape = new int[matrixRank + mArrays[0].getRank()];
 
             // Fill dimension size array
-            if( matrixRank > 0 ) {
+            if (matrixRank > 0) {
                 shape[0] = mArrays.length;
             }
 
             int i = 0;
-            for( int size : mArrays[0].getShape() ) {
+            for (int size : mArrays[0].getShape()) {
                 shape[i + matrixRank] = size;
                 i++;
             }
 
-            mIndex = new NxsIndex( matrixRank, shape, new int[shape.length], shape );
+            mIndex = new NxsIndex(matrixRank, shape, new int[shape.length], shape);
         }
     }
 
@@ -418,7 +418,7 @@ public final class NxsArray implements IArray {
      * Get the object targeted by given index and return it (eventually using auto-boxing).
      * It's the central data access method that all other methods rely on.
      * 
-     * @param index targeting a cell 
+     * @param index targeting a cell
      * @return the content of cell designed by the index
      * @throws InvalidRangeException if one of the index is bigger than the corresponding dimension shape
      */
@@ -428,8 +428,8 @@ public final class NxsArray implements IArray {
         IIndex itemIdx = ind.getIndex();
 
         int nodeIndex = ind.getNode();
-        IArray slab = mArrays[(int) nodeIndex];
-        if( slab != null ) {
+        IArray slab = mArrays[nodeIndex];
+        if (slab != null) {
             result = slab.getObject(itemIdx);
         }
         return result;
@@ -438,21 +438,19 @@ public final class NxsArray implements IArray {
     private IndexNode getIndexNode(IIndex index) {
         int nodeIndex;
         IIndex itemIdx;
-        if( mArrays.length > 1 ) {
+        if (mArrays.length > 1) {
             NxsIndex idx;
-            if( ! (index instanceof NxsIndex) ) {
+            if (!(index instanceof NxsIndex)) {
                 int rank = mIndex.getIndexMatrix().getRank();
                 idx = new NxsIndex(rank, mIndex.getShape(), index.getOrigin(), index.getShape());
                 idx.set(index.getCurrentCounter());
-            }
-            else {
+            } else {
                 idx = (NxsIndex) index;
             }
             nodeIndex = (int) idx.currentElementMatrix();
             itemIdx = mIndex.getIndexStorage().clone();
             itemIdx.set(idx.getIndexStorage().getCurrentCounter());
-        }
-        else {
+        } else {
             nodeIndex = 0;
             itemIdx = mIndex.getIndexStorage().clone();
             itemIdx.set(index.getCurrentCounter());
@@ -462,28 +460,27 @@ public final class NxsArray implements IArray {
 
     private void set(IIndex index, Object value) {
         NxsIndex idx = null;
-        if( ! (index instanceof NxsIndex) ) {
+        if (!(index instanceof NxsIndex)) {
             idx = new NxsIndex(mIndex.getIndexMatrix().getRank(), index);
-        }
-        else {
+        } else {
             idx = (NxsIndex) index;
         }
 
         NexusIndex itemIdx = idx.getIndexStorage();
         long nodeIndex = idx.currentElementMatrix();
         IArray slab = mArrays[(int) nodeIndex];
-        if( slab != null ) {
+        if (slab != null) {
             slab.setObject(itemIdx, value);
         }
     }
 
     private class IndexNode {
-        private IIndex mIndex;
-        private int mNode;
+        private final IIndex mIndex;
+        private final int mNode;
 
-        public IndexNode( IIndex index, int node ) {
+        public IndexNode(IIndex index, int node) {
             mIndex = index;
-            mNode  = node;
+            mNode = node;
         }
 
         public IIndex getIndex() {

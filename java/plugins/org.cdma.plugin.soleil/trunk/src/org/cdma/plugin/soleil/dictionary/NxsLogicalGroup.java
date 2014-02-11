@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.dictionary;
 
 import java.util.logging.Level;
@@ -42,23 +48,25 @@ public class NxsLogicalGroup extends LogicalGroup {
         super(parent, key, dataset, debug);
     }
 
+    @Override
     public ExtendedDictionary findAndReadDictionary() {
         IFactory factory = NxsFactory.getInstance();
 
         // Detect the key dictionary file and mapping dictionary file
         String keyFile = Factory.getPathKeyDictionary();
-        String mapFile = Factory.getPathMappingDictionaryFolder( factory ) + NxsLogicalGroup.detectDictionaryFile( (NxsDataset) getDataset() );
-        ExtendedDictionary dictionary = new ExtendedDictionary( factory, keyFile, mapFile);
+        String mapFile = Factory.getPathMappingDictionaryFolder(factory)
+                + NxsLogicalGroup.detectDictionaryFile((NxsDataset) getDataset());
+        ExtendedDictionary dictionary = new ExtendedDictionary(factory, keyFile, mapFile);
         try {
             dictionary.readEntries();
         } catch (FileAccessException e) {
-            Factory.getLogger().log( Level.SEVERE, e.getMessage(), e);
+            Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
             dictionary = null;
         }
 
         return dictionary;
     }
-    
+
     /**
      * According to the current corresponding dataset, this method will try to guess which XML
      * dictionary mapping file should be used
@@ -78,9 +86,8 @@ public class NxsLogicalGroup extends LogicalGroup {
             // Ask for beamline and datamodel parameters
             beamline = conf.getParameter(NxsConstant.BEAMLINE);
             model = conf.getParameter(NxsConstant.MODEL);
-        }
-        catch (NoResultException e) {
-            Factory.getLogger().log( Level.WARNING, e.getMessage());
+        } catch (NoResultException e) {
+            Factory.getLogger().log(Level.WARNING, e.getMessage());
         }
 
         if (beamline != null) {
