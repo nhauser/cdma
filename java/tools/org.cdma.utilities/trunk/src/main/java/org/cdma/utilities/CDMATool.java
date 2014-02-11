@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities;
 
 import java.io.File;
@@ -35,16 +40,14 @@ public class CDMATool {
      * Checks whether a dictionary file exist in the dictionary folder
      * 
      * @param dictionaryFileName The name of the file to check
-     * @return A <code>boolean</code> value. <code>TRUE</code> if the file exists,
-     *         <code>FALSE</code> otherwise
+     * @return A <code>boolean</code> value. <code>TRUE</code> if the file exists, <code>FALSE</code> otherwise
      */
     public static boolean hasDictionary() {
         String dictionaryFileName = Factory.getPathKeyDictionary();
         boolean exists;
         if ((dictionaryFileName == null) || (dictionaryFileName.trim().isEmpty())) {
             exists = false;
-        }
-        else {
+        } else {
             File file = new File(dictionaryFileName);
             exists = file.isFile();
         }
@@ -60,8 +63,7 @@ public class CDMATool {
      */
     public static void createDictionary(InputStream sourceStream) {
         String dictionaryFileName = Factory.getPathKeyDictionary();
-        if ((dictionaryFileName != null) && (sourceStream != null)
-                && (!dictionaryFileName.trim().isEmpty())) {
+        if ((dictionaryFileName != null) && (sourceStream != null) && (!dictionaryFileName.trim().isEmpty())) {
             File destinationDictionaryFile = new File(dictionaryFileName);
             duplicateFile(sourceStream, destinationDictionaryFile, false);
         }
@@ -122,16 +124,15 @@ public class CDMATool {
             }
             try {
                 reference.close();
-            }
-            catch (IOException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
+            } catch (IOException e) {
+                Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
         }
     }
 
     /**
-     * Gets access to parameter values of a parameter name for a given {@link IKey} in an
-     * {@link ILogicalGroup}. If the corresponding parameter is not the 1st one in the list of
+     * Gets access to parameter values of a parameter name for a given {@link IKey} in an {@link ILogicalGroup}. If the
+     * corresponding parameter is not the 1st one in the list of
      * possible parameters, this methods sets the previous parameters with their first available
      * value.
      * 
@@ -139,8 +140,7 @@ public class CDMATool {
      * @param group The {@link ILogicalGroup}
      * @param key The {@link IKey}
      * @return An {@link IPathParameter} {@link List}. May be <code>null</code> if parameter name is
-     *         empty or <code>null</code>, or if <code>group</code> or <code>key</code> is
-     *         <code>null</code>.
+     *         empty or <code>null</code>, or if <code>group</code> or <code>key</code> is <code>null</code>.
      */
     /*
         public static List<PathParameter> getFirstAccessParameterValues(String parameterName,
@@ -173,18 +173,16 @@ public class CDMATool {
      * 
      * @param source the source {@link File}, as an {@link InputStream}
      * @param dest the destination {@link File}
-     * @param allowOverWrite a boolean to allow or not writing over an existing destination
-     *            {@link File}. <code>true</code> to allow overwriting.
+     * @param allowOverWrite a boolean to allow or not writing over an existing destination {@link File}.
+     *            <code>true</code> to allow overwriting.
      * @return A boolean value: <code>true</code> if the destination File was successfully created
      *         and written, <code>false</code> otherwise
      */
     private static boolean duplicateFile(InputStream source, File dest, boolean allowOverWrite) {
         boolean result = true;
-        if ((source == null) || (dest == null) || dest.isDirectory()
-                || (dest.exists() && !allowOverWrite)) {
+        if ((source == null) || (dest == null) || dest.isDirectory() || (dest.exists() && !allowOverWrite)) {
             result = false;
-        }
-        else if (!dest.getParentFile().exists()) {
+        } else if (!dest.getParentFile().exists()) {
             if (!dest.getParentFile().mkdirs()) {
                 result = false;
             }
@@ -198,25 +196,21 @@ public class CDMATool {
                 while ((length = source.read(buffer)) != -1) {
                     output.write(buffer, 0, length);
                 }
-            }
-            catch (IOException ex) {
-                Factory.getLogger().log( Level.WARNING, ex.getMessage());
+            } catch (IOException ex) {
+                Factory.getLogger().log(Level.WARNING, ex.getMessage());
                 result = false;
-            }
-            finally {
+            } finally {
                 if (output != null) {
                     try {
                         output.close();
-                    }
-                    catch (IOException e) {
-                        Factory.getLogger().log( Level.WARNING, e.getMessage());
+                    } catch (IOException e) {
+                        Factory.getLogger().log(Level.WARNING, e.getMessage());
                     }
                 }
                 try {
                     source.close();
-                }
-                catch (IOException e) {
-                    Factory.getLogger().log( Level.WARNING, e.getMessage());
+                } catch (IOException e) {
+                    Factory.getLogger().log(Level.WARNING, e.getMessage());
                 }
             }
         }

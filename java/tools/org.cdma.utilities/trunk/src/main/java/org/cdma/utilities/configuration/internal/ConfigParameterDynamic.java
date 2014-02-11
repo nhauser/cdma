@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities.configuration.internal;
 
 import java.io.IOException;
@@ -25,37 +30,37 @@ import org.jdom2.Element;
 /**
  * <b>ConfigParameterDynamic implements ConfigParameter</b><br>
  * 
- * The aim of that class is to define <b>parameters that are dependent</b> of the content 
+ * The aim of that class is to define <b>parameters that are dependent</b> of the content
  * of the IDataset. It means that those parameters <b>are specific to that file</b>.
- * The evaluation will be performed on the fly when requested.<p> 
+ * The evaluation will be performed on the fly when requested.
+ * <p>
  * 
- * This class is used by ConfigDataset when the plug-in asks for a specific value
- * for that specific file. For example is:<br/>
- * - how to know on which beamline it was created</br>
- * - what the data model is</br><p>
+ * This class is used by ConfigDataset when the plug-in asks for a specific value for that specific file. For example
+ * is:<br/>
+ * - how to know on which beamline it was created</br> - what the data model is</br>
+ * <p>
  * 
  * <b>The parameter's type can be:</b><br/>
  * - CriterionType.EXIST will try to find a specific path in the IDataset <br/>
  * - CriterionType.NAME get the name of the object targeted by the path<br/>
  * - CriterionType.VALUE get the value of IDataItem targeted by the path<br/>
  * - CriterionType.CONSTANT the value will be a constant<br/>
- * - CriterionType.EQUAL will compare values targeted by a path to a referent one<p>
+ * - CriterionType.EQUAL will compare values targeted by a path to a referent one
+ * <p>
  * 
- * It corresponds to "parameter" DOM element in the "parameters" section
- * of the plug-in's configuration file.
- *
+ * It corresponds to "parameter" DOM element in the "parameters" section of the plug-in's configuration file.
+ * 
  * @see ConfigParameter
  * @see CriterionType
  * 
  * @author rodriguez
  */
 public final class ConfigParameterDynamic implements ConfigParameter {
-    private String         mName;        // Parameter name
-    private String         mPath;        // Path to seek in
-    private CriterionType  mType;        // Type of operation to do
-    private CriterionValue mTest;        // Expected property
-    private String         mValue;       // Comparison value with the expected property
-
+    private String mName; // Parameter name
+    private String mPath; // Path to seek in
+    private CriterionType mType; // Type of operation to do
+    private CriterionValue mTest; // Expected property
+    private String mValue; // Comparison value with the expected property
 
     public ConfigParameterDynamic(Element parameter) {
         init(parameter);
@@ -66,123 +71,116 @@ public final class ConfigParameterDynamic implements ConfigParameter {
         return mType;
     }
 
+    @Override
     public String getName() {
         return mName;
     }
 
+    @Override
     public String getValue(IDataset dataset) {
         String result = "";
         IContainer cnt;
-        switch( mType ) {
-        case EXIST:
-            cnt = openPath(dataset);
-            CriterionValue crt;
-            if( cnt != null ) {
-                crt = CriterionValue.TRUE;
-            }
-            else {
-                crt = CriterionValue.FALSE;
-            }
-            result = mTest.equals( crt ) ? CriterionValue.TRUE.toString() : CriterionValue.FALSE.toString();
-            break;
-        case NAME:
-            cnt = openPath(dataset);
-            if( cnt != null ) {
-                result = cnt.getShortName();
-            }
-            else {
-                result = null;
-            }
-            break;
-        case VALUE:
-            cnt = openPath(dataset);
-            if( cnt != null && cnt instanceof IDataItem ) {
-                try {
-                    result = ((IDataItem) cnt).getData().getObject(((IDataItem) cnt).getData().getIndex()).toString();
-                } catch (IOException e) {
-                    Factory.getLogger().log( Level.WARNING, e.getMessage());
+        switch (mType) {
+            case EXIST:
+                cnt = openPath(dataset);
+                CriterionValue crt;
+                if (cnt != null) {
+                    crt = CriterionValue.TRUE;
+                } else {
+                    crt = CriterionValue.FALSE;
                 }
-            }
-            else {
-                result = null;
-            }
-            break;
-        case CONSTANT:
-            result = mValue;
-            break;
-        case EQUAL:
-            cnt = openPath(dataset);
-            if( cnt != null && cnt instanceof IDataItem ) {
-                String value;
-                try {
-                    value = ((IDataItem) cnt).getData().getObject(((IDataItem) cnt).getData().getIndex()).toString();
-                    if( value.equals(mValue) ) {
-                        crt = CriterionValue.TRUE;
-                    }
-                    else {
-                        crt = CriterionValue.FALSE;
-                    }
-                    result = mTest.equals( crt ) ? CriterionValue.TRUE.toString() : CriterionValue.FALSE.toString();
-                } catch (IOException e) {
-                    Factory.getLogger().log( Level.WARNING, e.getMessage());
+                result = mTest.equals(crt) ? CriterionValue.TRUE.toString() : CriterionValue.FALSE.toString();
+                break;
+            case NAME:
+                cnt = openPath(dataset);
+                if (cnt != null) {
+                    result = cnt.getShortName();
+                } else {
+                    result = null;
                 }
-            }
-            else {
+                break;
+            case VALUE:
+                cnt = openPath(dataset);
+                if (cnt != null && cnt instanceof IDataItem) {
+                    try {
+                        result = ((IDataItem) cnt).getData().getObject(((IDataItem) cnt).getData().getIndex())
+                                .toString();
+                    } catch (IOException e) {
+                        Factory.getLogger().log(Level.WARNING, e.getMessage());
+                    }
+                } else {
+                    result = null;
+                }
+                break;
+            case CONSTANT:
+                result = mValue;
+                break;
+            case EQUAL:
+                cnt = openPath(dataset);
+                if (cnt != null && cnt instanceof IDataItem) {
+                    String value;
+                    try {
+                        value = ((IDataItem) cnt).getData().getObject(((IDataItem) cnt).getData().getIndex())
+                                .toString();
+                        if (value.equals(mValue)) {
+                            crt = CriterionValue.TRUE;
+                        } else {
+                            crt = CriterionValue.FALSE;
+                        }
+                        result = mTest.equals(crt) ? CriterionValue.TRUE.toString() : CriterionValue.FALSE.toString();
+                    } catch (IOException e) {
+                        Factory.getLogger().log(Level.WARNING, e.getMessage());
+                    }
+                } else {
+                    result = null;
+                }
+                break;
+            case NONE:
+            default:
                 result = null;
-            }
-            break;
-        case NONE:
-        default:
-            result = null;
-            break;
+                break;
         }
         return result;
     }
 
     @Override
     public String toString() {
-        String result = "Name: " + mName +
-                        " Type: " + mType + 
-                        " Path: " + mPath + 
-                        " Test: " + mTest +
-                        " Value: " + mValue;
+        String result = "Name: " + mName + " Type: " + mType + " Path: " + mPath + " Test: " + mTest + " Value: "
+                + mValue;
         return result;
     }
-    
+
     // ---------------------------------------------------------
-    /// Private methods
+    // / Private methods
     // ---------------------------------------------------------
     private void init(Element dom) {
         // Given element is <parameter>
-        if( dom.getName().equals("parameter") )
-        {
+        if (dom.getName().equals("parameter")) {
             mName = dom.getAttributeValue("name");
             mPath = dom.getAttributeValue("target");
-            
+
             Attribute attribute;
             String test;
-    
+
             attribute = dom.getAttribute("type");
-            if( attribute != null )
-            {
-                mType  = CriterionType.valueOf(attribute.getValue().toUpperCase());
+            if (attribute != null) {
+                mType = CriterionType.valueOf(attribute.getValue().toUpperCase());
                 String value = dom.getAttributeValue("constant");
-                if( value != null ) {
+                if (value != null) {
                     mValue = value;
                 }
-    
+
                 test = dom.getAttributeValue("test");
-                if( test != null ) {
+                if (test != null) {
                     mTest = CriterionValue.valueOf(test.toUpperCase());
-                }
-                else {
+                } else {
                     mTest = CriterionValue.NONE;
                 }
             }
         }
     }
 
-    private IContainer openPath( IDataset dataset ) {
+    private IContainer openPath(IDataset dataset) {
         IGroup root = dataset.getRootGroup();
         IContainer result = null;
         try {

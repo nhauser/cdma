@@ -1,32 +1,36 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities.configuration.internal;
 
 import org.cdma.interfaces.IDataset;
 
 /**
- * <b>Interface ConfigParameter</b><br/>It permits to associate a label
- * to a string value. The way the value will be defined depends on the 
- * implementation: it can be done statically, dynamically or it can correspond 
+ * <b>Interface ConfigParameter</b><br/>
+ * It permits to associate a label
+ * to a string value. The way the value will be defined depends on the
+ * implementation: it can be done statically, dynamically or it can correspond
  * to a boolean test.
  * <p>
  * There are 2 main usages of those ConfigParameter:<br>
- * - the first one is to perform a matching test between a IDataset and a 
- * ConfigurationDataset that will carry some parameters used by the plug-in.
- * Using <b>ConfigParameterCriterion</b><br>
- * - the second is to evaluate parameters according to the IDataset. Those parameters
- * will be accessible through the ConfigDataset and defined on the fly. Using 
- * <b>ConfigParameterDynamic</b> or <b>ConfigParameterStatic</b>
+ * - the first one is to perform a matching test between a IDataset and a ConfigurationDataset that will carry some
+ * parameters used by the plug-in. Using <b>ConfigParameterCriterion</b><br>
+ * - the second is to evaluate parameters according to the IDataset. Those parameters will be accessible through the
+ * ConfigDataset and defined on the fly. Using <b>ConfigParameterDynamic</b> or <b>ConfigParameterStatic</b>
  * 
- *
+ * 
  * @see ConfigParameterCriterion
  * @see ConfigParameterDynamic
  * @see ConfigParameterStatic
@@ -36,12 +40,14 @@ import org.cdma.interfaces.IDataset;
 public interface ConfigParameter {
     /**
      * Get the name of that ConfigParameter
+     * 
      * @return name of the parameter
      */
     public String getName();
 
     /**
-     * Get the type of this ConfigParameter 
+     * Get the type of this ConfigParameter
+     * 
      * @return CriterionType
      * @see CriterionType
      */
@@ -66,17 +72,17 @@ public interface ConfigParameter {
      * - NONE parameter value will be null<br/>
      */
     public enum CriterionType {
-        EXIST     ("exist"),
-        NAME      ("name"),
-        VALUE     ("value"),
-        CONSTANT  ("constant"),
-        EQUAL     ("equal"),
-        NONE      ("");
+        EXIST("exist"), NAME("name"), VALUE("value"), CONSTANT("constant"), EQUAL("equal"), NONE("");
 
-        private String mName;
+        private final String mName;
 
-        private CriterionType(String type) { mName = type; }
-        public String getName()            { return mName; }
+        private CriterionType(String type) {
+            mName = type;
+        }
+
+        public String getName() {
+            return mName;
+        }
     }
 
     /**
@@ -86,13 +92,16 @@ public interface ConfigParameter {
      * - NONE having value string ""<br/>
      */
     public enum CriterionValue {
-        TRUE     ("true"),
-        FALSE    ("false"),
-        NONE     ("");
+        TRUE("true"), FALSE("false"), NONE("");
 
-        private String mName;
+        private final String mName;
 
-        private CriterionValue(String type) { mName = type; }
-        public String getName()             { return mName; }
+        private CriterionValue(String type) {
+            mName = type;
+        }
+
+        public String getName() {
+            return mName;
+        }
     }
 }

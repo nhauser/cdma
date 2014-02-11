@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities.configuration.internal;
 
 import java.util.ArrayList;
@@ -18,23 +23,23 @@ import org.cdma.utilities.configuration.internal.ConfigParameter.CriterionValue;
 import org.jdom2.Element;
 
 /**
- * This class <b>ConfigCriteria</b> gather a set of criterion. It is used to 
+ * This class <b>ConfigCriteria</b> gather a set of criterion. It is used to
  * determine whether a IDataset is matching to <b>ConfigDataset</b>'s criteria.
  * <p>
- * To be considered as matching the IDataset must be returning <b>CriterionValue.TRUE</b>
- * at the evaluation of each <b>ConfigParameter</b>
+ * To be considered as matching the IDataset must be returning <b>CriterionValue.TRUE</b> at the evaluation of each
+ * <b>ConfigParameter</b>
  * <p>
- * Each <b>ConfigParameter</b> of the contained set of criterion, must return the
- * string form of a <b>CriterionValue</b>. 
- *
- * @see ConfigParameterCriterion ConfigParameterCriterion implements ConfigParameter 
+ * Each <b>ConfigParameter</b> of the contained set of criterion, must return the string form of a
+ * <b>CriterionValue</b>.
+ * 
+ * @see ConfigParameterCriterion ConfigParameterCriterion implements ConfigParameter
  * @see CriterionValue
  * @author rodriguez
- *
+ * 
  */
 public class ConfigCriteria {
     // Private members
-    private List<ConfigParameterCriterion> mCriterion;
+    private final List<ConfigParameterCriterion> mCriterion;
 
     /**
      * Constructor
@@ -52,10 +57,10 @@ public class ConfigCriteria {
      */
     public void add(Element domCriteria) {
         // Managing criterion
-        if( domCriteria.getName().equals("criteria") ) {
+        if (domCriteria.getName().equals("criteria")) {
             List<?> nodes = domCriteria.getChildren("if");
-            for( Object node : nodes ) {
-                mCriterion.add( new ConfigParameterCriterion((Element) node) );
+            for (Object node : nodes) {
+                mCriterion.add(new ConfigParameterCriterion((Element) node));
             }
         }
     }
@@ -63,7 +68,7 @@ public class ConfigCriteria {
     /**
      * Add the given ConfigParameterCriterion to the set of ConfigParameter.
      * 
-     * @param item ConfigParameterCriterion that will be checked when matching 
+     * @param item ConfigParameterCriterion that will be checked when matching
      */
     public void add(ConfigParameterCriterion item) {
         mCriterion.add(item);
@@ -71,31 +76,31 @@ public class ConfigCriteria {
 
     /**
      * Tells if the given IDataset matches this ConfigCriteria. All clause must be
-     * respected by the given IDataset. 
+     * respected by the given IDataset.
      * 
      * @param dataset to be checked
      * @return boolean true if each ConfigParameterCriterion are respected in the given IDataset
      */
-    public boolean match( IDataset dataset ) {
+    public boolean match(IDataset dataset) {
         boolean result = true;
         String falseTest = CriterionValue.FALSE.toString();
-        for( ConfigParameterCriterion criterion : mCriterion ) {
-            if( criterion.getValue(dataset).equals( falseTest ) ) {
+        for (ConfigParameterCriterion criterion : mCriterion) {
+            if (criterion.getValue(dataset).equals(falseTest)) {
                 result = false;
                 break;
             }
         }
         return result;
     }
-    
+
     @Override
     public String toString() {
         String result = "Criteria: ";
-        
-        for( ConfigParameterCriterion crit : mCriterion ) {
+
+        for (ConfigParameterCriterion crit : mCriterion) {
             result += "\n" + crit;
         }
-        
+
         return result;
     }
 }

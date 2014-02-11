@@ -1,13 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-//    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr)
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.utilities.configuration.internal;
 
 import java.io.IOException;
@@ -25,24 +30,24 @@ import org.jdom2.Element;
 /**
  * <b>ConfigParameterCriterion implements ConfigParameter</b><br>
  * 
- * The aim of that class is to perform boolean test according an IDataset.<br/> 
+ * The aim of that class is to perform boolean test according an IDataset.<br/>
  * Two type can be done:<br/>
  * - CriterionType.EXIST will try to find a specific path in the IDataset <br/>
- * - CriterionType.EQUAL will compare values that targeted by a path to a referent one<p>
- * This class is used when the ConfigManager will try to <b>determine compatibility 
- * between an IDataset and a ConfigDataset</b>. It corresponds to "if" DOM element in
- * the "criteria" section of the plugin configuration file.
- *
+ * - CriterionType.EQUAL will compare values that targeted by a path to a referent one
+ * <p>
+ * This class is used when the ConfigManager will try to <b>determine compatibility between an IDataset and a
+ * ConfigDataset</b>. It corresponds to "if" DOM element in the "criteria" section of the plugin configuration file.
+ * 
  * @see ConfigParameter
  * @see CriterionType
  * 
  * @author rodriguez
  */
 public class ConfigParameterCriterion implements ConfigParameter {
-    private String         mPath;    // Path to seek in
-    private CriterionType  mType;    // Type of operation to do
-    private CriterionValue mTest;    // Expected value of the test
-    private String         mValue;   // Comparison value with the expected property
+    private String mPath; // Path to seek in
+    private CriterionType mType; // Type of operation to do
+    private CriterionValue mTest; // Expected value of the test
+    private String mValue; // Comparison value with the expected property
 
     public ConfigParameterCriterion(Element dom) {
         Attribute attribute;
@@ -51,35 +56,34 @@ public class ConfigParameterCriterion implements ConfigParameter {
 
         // Checking each attribute of the current node
         List<?> attributes = dom.getAttributes();
-        for( Object att : attributes ) {
+        for (Object att : attributes) {
             attribute = (Attribute) att;
-            name  = attribute.getName();
+            name = attribute.getName();
             value = attribute.getValue();
 
             // Case of a path
-            if( name.equals("target") ) {
+            if (name.equals("target")) {
                 mPath = value;
             }
             // Case of exist attribute
-            else if( name.equals("exist") ) {
-                mType  = CriterionType.EXIST;
-                mTest  = CriterionValue.valueOf(value.toUpperCase());
+            else if (name.equals("exist")) {
+                mType = CriterionType.EXIST;
+                mTest = CriterionValue.valueOf(value.toUpperCase());
                 mValue = "";
 
             }
             // Case of exist attribute
-            else if( name.equals("equal") ) {
-                mType  = CriterionType.EQUAL;
-                mTest  = CriterionValue.TRUE;
+            else if (name.equals("equal")) {
+                mType = CriterionType.EQUAL;
+                mTest = CriterionValue.TRUE;
                 mValue = value;
             }
             // Case of exist attribute
-            else if( name.equals("not_equal") ) {
+            else if (name.equals("not_equal")) {
                 mType = CriterionType.EQUAL;
-                mTest  = CriterionValue.FALSE;
+                mTest = CriterionValue.FALSE;
                 mValue = value;
-            }
-            else {
+            } else {
                 mTest = CriterionValue.NONE;
                 mType = CriterionType.NONE;
             }
@@ -95,22 +99,21 @@ public class ConfigParameterCriterion implements ConfigParameter {
     @Override
     public String getValue(IDataset dataset) {
         CriterionValue result;
-        switch( mType ) {
-        case EXIST:
-            result = existPath(dataset);
-            break;
-        case EQUAL:
-            result = getValuePath(dataset);
-            break;
-        default:
-            result = CriterionValue.NONE;
-            break;
+        switch (mType) {
+            case EXIST:
+                result = existPath(dataset);
+                break;
+            case EQUAL:
+                result = getValuePath(dataset);
+                break;
+            default:
+                result = CriterionValue.NONE;
+                break;
         }
 
-        if( result.equals(mTest) ) {
+        if (result.equals(mTest)) {
             result = CriterionValue.TRUE;
-        }
-        else {
+        } else {
             result = CriterionValue.FALSE;
         }
 
@@ -124,18 +127,14 @@ public class ConfigParameterCriterion implements ConfigParameter {
 
     @Override
     public String toString() {
-        String result = "Type: " + mType + 
-                        " Path: " + mPath +  
-                        " Test: " + mTest + 
-                        " Value: " + mValue;
+        String result = "Type: " + mType + " Path: " + mPath + " Test: " + mTest + " Value: " + mValue;
         return result;
     }
 
-
     // ---------------------------------------------------------
-    /// Private methods
+    // / Private methods
     // ---------------------------------------------------------
-    private CriterionValue existPath( IDataset dataset ) {
+    private CriterionValue existPath(IDataset dataset) {
         IGroup root = dataset.getRootGroup();
         IContainer result = null;
         try {
@@ -145,27 +144,26 @@ public class ConfigParameterCriterion implements ConfigParameter {
         return result != null ? CriterionValue.TRUE : CriterionValue.FALSE;
     }
 
-    private CriterionValue getValuePath( IDataset dataset ) {
+    private CriterionValue getValuePath(IDataset dataset) {
         IGroup root = dataset.getRootGroup();
         IContainer item;
         String value = null;
         CriterionValue result;
         try {
             item = root.findContainerByPath(mPath);
-            if( item instanceof IDataItem ) {
+            if (item instanceof IDataItem) {
                 IArray data = ((IDataItem) item).getData();
-                if( data != null && data.getElementType() == String.class ) {
-                    value = (String) data.getObject( data.getIndex() );
+                if (data != null && data.getElementType() == String.class) {
+                    value = (String) data.getObject(data.getIndex());
                 }
             }
         } catch (NoResultException e) {
         } catch (IOException e) {
         }
 
-        if( mValue != null && mValue.equals(value) ) {
+        if (mValue != null && mValue.equals(value)) {
             result = CriterionValue.TRUE;
-        }
-        else {
+        } else {
             result = CriterionValue.FALSE;
         }
 
