@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.navigation;
 
 import java.io.File;
@@ -44,12 +50,12 @@ import org.cdma.utilities.configuration.ConfigManager;
 import org.cdma.utils.Utilities.ModelType;
 
 public final class NxsDataset implements IDataset {
-    private boolean           mOpen;         // is the dataset open
-    private URI                mPath;         // URI of this dataset
-    private ConfigDataset      mConfig;       // Configuration associated to this dataset
+    private boolean mOpen; // is the dataset open
+    private URI mPath; // URI of this dataset
+    private ConfigDataset mConfig; // Configuration associated to this dataset
     private final List<HdfDataset> mDatasets; // HdfDataset compounding this NxsDataset
-    private IGroup             mRootPhysical; // Physical root of the document
-    private NxsLogicalGroup    mRootLogical;  // Logical root of the document
+    private IGroup mRootPhysical; // Physical root of the document
+    private NxsLogicalGroup mRootLogical; // Logical root of the document
 
     @Override
     public int hashCode() {
@@ -81,22 +87,22 @@ public final class NxsDataset implements IDataset {
         }
 
         synchronized (datasets) {
-            //            String uri = destination.toString();
-            //            String uriID = uri + appendToExisting;
-            //            SoftReference<NxsDataset> ref = datasets.get(uriID);
-            //            if (ref != null) {
-            //                dataset = ref.get();
-            //                long last = lastModifications.get(uriID);
-            //                if (dataset != null) {
-            //                    if (last < dataset.getLastModificationDate()) {
-            //                        dataset = null;
-            //                    }
-            //                   }
-            //            }
+            // String uri = destination.toString();
+            // String uriID = uri + appendToExisting;
+            // SoftReference<NxsDataset> ref = datasets.get(uriID);
+            // if (ref != null) {
+            // dataset = ref.get();
+            // long last = lastModifications.get(uriID);
+            // if (dataset != null) {
+            // if (last < dataset.getLastModificationDate()) {
+            // dataset = null;
+            // }
+            // }
+            // }
 
             if (dataset == null) {
                 String filePath = destination.getPath();
-                if( filePath != null ) {
+                if (filePath != null) {
                     try {
                         dataset = new NxsDataset(new File(filePath), appendToExisting);
                         String fragment = destination.getFragment();
@@ -111,16 +117,14 @@ public final class NxsDataset implements IDataset {
                                         break;
                                     }
                                 }
-                            }
-                            catch (UnsupportedEncodingException e) {
-                                Factory.getLogger().log( Level.WARNING, e.getMessage());
+                            } catch (UnsupportedEncodingException e) {
+                                Factory.getLogger().log(Level.WARNING, e.getMessage());
                             }
                         }
-                        //                        datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
-                        //                        lastModifications.put(uriID, dataset.getLastModificationDate());
-                    }
-                    catch ( FileAccessException e ) {
-                        throw new NoResultException( e );
+                        // datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
+                        // lastModifications.put(uriID, dataset.getLastModificationDate());
+                    } catch (FileAccessException e) {
+                        throw new NoResultException(e);
                     }
                 }
             }
@@ -141,12 +145,10 @@ public final class NxsDataset implements IDataset {
                 param = getConfiguration().getParameter(NxsFactory.DEBUG_INF);
                 boolean debug = Boolean.parseBoolean(param);
                 mRootLogical = new NxsLogicalGroup(null, null, this, debug);
+            } catch (NoResultException e) {
+                Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
-            catch (NoResultException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
-            }
-        }
-        else {
+        } else {
             ExtendedDictionary dict = mRootLogical.getDictionary();
             if (dict != null && !Factory.getActiveView().equals(dict.getView())) {
                 mRootLogical.setDictionary(mRootLogical.findAndReadDictionary());
@@ -220,8 +222,7 @@ public final class NxsDataset implements IDataset {
         if (title.isEmpty()) {
             try {
                 title = mDatasets.get(0).getTitle();
-            }
-            catch (NoSuchElementException e) {
+            } catch (NoSuchElementException e) {
             }
         }
 
@@ -233,9 +234,8 @@ public final class NxsDataset implements IDataset {
         if (location != null && !location.equals(mPath.toString())) {
             try {
                 mPath = new URI(location);
-            }
-            catch (URISyntaxException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
+            } catch (URISyntaxException e) {
+                Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
             mDatasets.clear();
         }
@@ -245,8 +245,7 @@ public final class NxsDataset implements IDataset {
     public void setTitle(String title) {
         try {
             mDatasets.get(0).setTitle(title);
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
         }
     }
 
@@ -286,8 +285,8 @@ public final class NxsDataset implements IDataset {
         long last = 0;
         long temp = 0;
 
-        File path = new File( mPath.getPath() );
-        if( path.exists() && path.isDirectory() ) {
+        File path = new File(mPath.getPath());
+        if (path.exists() && path.isDirectory()) {
             last = path.lastModified();
         }
 
@@ -305,8 +304,6 @@ public final class NxsDataset implements IDataset {
         return mDatasets.get(0);
     }
 
-
-
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
@@ -323,8 +320,7 @@ public final class NxsDataset implements IDataset {
                     mDatasets.add(datafile);
                 }
             }
-        }
-        else {
+        } else {
             datafile = new NexusDatasetImpl(destination, appendToExisting);
             mDatasets.add(datafile);
         }
@@ -336,8 +332,8 @@ public final class NxsDataset implements IDataset {
         String result = "Dataset with path = " + mPath.toString();
         return result;
     }
+
+    public static void main(String args[]) {
+        System.out.println("Blah");
+    }
 }
-
-
-
-

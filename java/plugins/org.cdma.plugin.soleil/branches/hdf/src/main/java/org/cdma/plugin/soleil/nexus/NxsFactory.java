@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.nexus;
 
 import java.io.IOException;
@@ -44,13 +50,12 @@ import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 import org.cdma.plugin.soleil.nexus.utils.NxsArrayMath;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 
-
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
-    public static final String NAME        = "SoleilNeXus";
-    public static final String LABEL       = "SOLEIL's NeXus plug-in";
-    public static final String DEBUG_INF   = "CDMA_DEBUG";
+    public static final String NAME = "SoleilNeXus";
+    public static final String LABEL = "SOLEIL's NeXus plug-in";
+    public static final String DEBUG_INF = "CDMA_DEBUG";
     public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
     private static final String CDMA_VERSION = "3_2_0";
     private static final String PLUG_VERSION = "1.4.12";
@@ -60,9 +65,9 @@ public final class NxsFactory implements IFactory {
     }
 
     public static NxsFactory getInstance() {
-        synchronized (NxsFactory.class ) {
+        synchronized (NxsFactory.class) {
             if (factory == null) {
-                factory  = new NxsFactory();
+                factory = new NxsFactory();
                 detector = NxsDatasource.getInstance();
             }
         }
@@ -74,7 +79,7 @@ public final class NxsFactory implements IFactory {
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
         IArray result = null;
         try {
-            result = new NxsArray( o,shape );
+            result = new NxsArray(o, shape);
         } catch (InvalidArrayTypeException e) {
             Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
         }
@@ -84,21 +89,18 @@ public final class NxsFactory implements IFactory {
     @Override
     public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
         IArray result = null;
-        if( storage instanceof IArray[] ) {
-            result = new NxsArray( (IArray[]) storage );
-        }
-        else if (storage instanceof H5ScalarDS) {
+        if (storage instanceof IArray[]) {
+            result = new NxsArray((IArray[]) storage);
+        } else if (storage instanceof H5ScalarDS) {
             try {
                 result = new NxsArray(((H5ScalarDS) storage).getData(), shape);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
 
-        }
-        else {
+        } else {
             try {
-                result = new NxsArray( storage, shape);
+                result = new NxsArray(storage, shape);
             } catch (InvalidArrayTypeException e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
@@ -125,26 +127,21 @@ public final class NxsFactory implements IFactory {
     @Override
     public IArray createArrayNoCopy(Object array) {
         IArray result = null;
-        if( array instanceof IArray[] ) {
-            result = new NxsArray( (IArray[]) array);
-        }
-        else if (array instanceof H5ScalarDS) {
+        if (array instanceof IArray[]) {
+            result = new NxsArray((IArray[]) array);
+        } else if (array instanceof H5ScalarDS) {
 
             H5ScalarDS hdfItem = (H5ScalarDS) array;
             try {
-                result = new NxsArray(hdfItem.getData(),
-                        HdfObjectUtils.convertLongToInt(hdfItem.getDims()));
-            }
-            catch (Exception e) {
+                result = new NxsArray(hdfItem.getData(), HdfObjectUtils.convertLongToInt(hdfItem.getDims()));
+            } catch (Exception e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
-        }
-        else {
+        } else {
             int size = Array.getLength(array);
             try {
                 result = new NxsArray(array, new int[] { size });
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 result = null;
             }
 
@@ -200,7 +197,7 @@ public final class NxsFactory implements IFactory {
     @Override
     public IGroup createGroup(IGroup parent, String shortName) {
         String path_val = parent.getLocation();
-        //PathGroup path = new PathGroup(NxsPath.splitStringPath(path_val));
+        // PathGroup path = new PathGroup(NxsPath.splitStringPath(path_val));
         NxsPath nxsPath = new NxsPath((NxsPath.splitStringToNode(path_val)));
         NxsGroup group = new NxsGroup(parent, nxsPath, (NxsDataset) parent.getDataset());
 
@@ -229,8 +226,8 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDatasource getPluginURIDetector() {
-        synchronized (NxsDatasource.class ) {
-            if( detector == null ) {
+        synchronized (NxsDatasource.class) {
+            if (detector == null) {
                 detector = NxsDatasource.getInstance();
             }
         }
@@ -242,8 +239,7 @@ public final class NxsFactory implements IFactory {
         IDataset ds = null;
         try {
             ds = NxsDataset.instanciate(uri);
-        }
-        catch( NoResultException e) {
+        } catch (NoResultException e) {
             throw new FileAccessException(e);
         }
         return ds;
@@ -256,7 +252,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public LogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
-        return new NxsLogicalGroup(dataset, new Key(this, key.getName()) );
+        return new NxsLogicalGroup(dataset, new Key(this, key.getName()));
     }
 
     @Override
@@ -272,8 +268,7 @@ public final class NxsFactory implements IFactory {
 
     @Deprecated
     @Override
-    public IDictionary openDictionary(String filepath)
-            throws FileAccessException {
+    public IDictionary openDictionary(String filepath) throws FileAccessException {
         throw new UnsupportedOperationException();
     }
 
@@ -304,7 +299,7 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public void processPostRecording() {
-        synchronized (NxsFactory.class ) {
+        synchronized (NxsFactory.class) {
             boolean checkHdfAPI = HdfDataset.checkHdfAPI();
             if (!checkHdfAPI) {
                 Factory.getManager().unregisterFactory(NAME);

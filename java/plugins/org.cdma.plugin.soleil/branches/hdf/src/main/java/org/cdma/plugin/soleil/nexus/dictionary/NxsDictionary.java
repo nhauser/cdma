@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.dictionary;
 
 import java.io.BufferedReader;
@@ -18,21 +24,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
-import org.cdma.Factory;
 import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.Path;
 import org.cdma.exception.FileAccessException;
-import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
-import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
-import org.cdma.plugin.soleil.nexus.utils.NxsConstant;
-import org.cdma.utilities.configuration.ConfigDataset;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -81,8 +81,7 @@ public final class NxsDictionary implements IDictionary, Cloneable {
     public Path getPath(IKey keyName) {
         if (mItemMap.containsKey(keyName)) {
             return mItemMap.get(keyName);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -105,8 +104,7 @@ public final class NxsDictionary implements IDictionary, Cloneable {
                 }
             }
             br.close();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new FileAccessException("failed to open the dictionary file\n", ex);
         }
     }
@@ -125,11 +123,9 @@ public final class NxsDictionary implements IDictionary, Cloneable {
         Document dictionary;
         try {
             dictionary = xmlFile.build(dicFile);
-        }
-        catch (JDOMException e1) {
+        } catch (JDOMException e1) {
             throw new FileAccessException("error while to parsing the dictionary!\n", e1);
-        }
-        catch (IOException e1) {
+        } catch (IOException e1) {
             throw new FileAccessException("an I/O error prevent parsing dictionary!\n", e1);
         }
 
