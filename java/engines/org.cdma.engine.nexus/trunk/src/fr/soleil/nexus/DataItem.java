@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 import java.lang.ref.SoftReference;
@@ -55,6 +61,7 @@ public class DataItem implements Cloneable {
     private SoftReference<Object> mPrevSlab;
 
     private HashMap<String, Data<?>> mAttribs; // Map containing all node's attributes having name
+
     // as key associated to value
 
     // Constructors
@@ -220,11 +227,10 @@ public class DataItem implements Cloneable {
             mAttribs = new HashMap<String, Data<?>>();
         }
 
-        if( oValue != null ) {
+        if (oValue != null) {
             Data<T> tValue = new Data<T>(oValue);
             mAttribs.put(sAttrName, tValue);
-        }
-        else {
+        } else {
             mAttribs.remove(sAttrName);
         }
     }
@@ -259,8 +265,7 @@ public class DataItem implements Cloneable {
             mStart = new int[] { 0 };
             mPrevShape = mDimData;
             mPrevStart = mStart;
-        }
-        else if (oData instanceof PathNexus) {
+        } else if (oData instanceof PathNexus) {
             mType = NexusFile.NX_BINARY;
             mDimSize = new int[] { 0 };
             mData = new SoftReference<Object>(oData);
@@ -273,7 +278,7 @@ public class DataItem implements Cloneable {
         // Try to determine type of data (primitive only) and its dimension size
         else {
             // If data is not array try to arrify it
-            if ( !oData.getClass().isArray() ) {
+            if (!oData.getClass().isArray()) {
                 Object oObj = java.lang.reflect.Array.newInstance(oData.getClass(), 1);
                 java.lang.reflect.Array.set(oObj, 0, oData);
                 oData = oObj;
@@ -326,7 +331,7 @@ public class DataItem implements Cloneable {
         str.append("\n     - NodeParent Path: " + mPath);
         Object data = getData();
         if (mType == NexusFile.NX_CHAR && null != data) {
-            str.append("\n     - Value: " + new String( (char[]) data) );
+            str.append("\n     - Value: " + new String((char[]) data));
         }
         return str.toString();
     }
@@ -387,8 +392,7 @@ public class DataItem implements Cloneable {
             mPrevSlabLength = -1;
             mPrevSlab = null;
         }
-        boolean slabData = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(
-                mStart, pos));
+        boolean slabData = !(java.util.Arrays.equals(shape, mDimData) && java.util.Arrays.equals(mStart, pos));
         if (slabData) {
             int start = 0;
             int length = 1;
@@ -403,8 +407,7 @@ public class DataItem implements Cloneable {
                 mPrevSlabStart = start;
                 mPrevSlabLength = length;
                 mPrevSlab = new SoftReference<Object>(data);
-            }
-            else {
+            } else {
                 data = mPrevSlab.get();
             }
         }
@@ -472,23 +475,20 @@ public class DataItem implements Cloneable {
                 mData = new SoftReference<Object>(nfrFile.readData(mPath).getRawData());
                 mPrevStart = new int[mDimSize.length];
                 mPrevShape = mDimSize;
-            }
-            else {
+            } else {
                 mData = new SoftReference<Object>(nfrFile.readDataSlab(mPath, mStart, mDimData).getRawData());
                 mPrevStart = mStart;
                 mPrevShape = mDimData;
             }
             nfrFile.closeFile();
             nfrFile.close();
-        }
-        catch (NexusException ne) {
+        } catch (NexusException ne) {
             mData = new SoftReference<Object>(null);
             try {
                 nfrFile.closeFile();
                 nfrFile.close();
-            }
-            catch (NexusException e) {
-                Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+            } catch (NexusException e) {
+                Factory.getLogger().log(Level.SEVERE, e.getMessage());
             }
         }
     }
@@ -517,8 +517,7 @@ public class DataItem implements Cloneable {
         if (mData != null) {
             if (mData instanceof SoftReference) {
                 result = ((SoftReference<Object>) mData).get();
-            }
-            else {
+            } else {
                 result = mData;
             }
         }

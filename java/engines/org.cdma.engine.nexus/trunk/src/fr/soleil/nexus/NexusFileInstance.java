@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 // Tools lib
@@ -18,16 +24,16 @@ import org.nexusformat.NexusFile;
 
 public class NexusFileInstance {
     // Definitions
-    protected static final String PATH_SEPARATOR = "/"; // Node separator in path when having a  string representation
-    protected final static int    RANK_MAX       = 32; // Maximum dimension  rank
+    protected static final String PATH_SEPARATOR = "/"; // Node separator in path when having a string representation
+    protected final static int RANK_MAX = 32; // Maximum dimension rank
 
     // Member attributes
-    private int                   m_iAccessMode;  // The current access mode to the file: read / write
-    private String                m_sFilePath;     // Path to current file
-    private NexusFileHandler      m_nfFile;        // Current file
-    private static ReentrantLock g_mutex;         // Mutex for thread safety
-    private static String        g_curFile;       // File currently opened
-    
+    private int m_iAccessMode; // The current access mode to the file: read / write
+    private String m_sFilePath; // Path to current file
+    private NexusFileHandler m_nfFile; // Current file
+    private static ReentrantLock g_mutex; // Mutex for thread safety
+    private static String g_curFile; // File currently opened
+
     private static ReentrantLock g_mutexCanonicOp; // mutex for canonical operations
 
     static {
@@ -39,7 +45,7 @@ public class NexusFileInstance {
             }
         }
     }
-    
+
     // Constructors
     protected NexusFileInstance() {
         m_sFilePath = "";
@@ -89,8 +95,7 @@ public class NexusFileInstance {
     public int getFileAccessMode() throws NexusException {
         if (isFileOpened()) {
             return m_iAccessMode;
-        }
-        else {
+        } else {
             throw new NexusException("No file currently opened!");
         }
     }
@@ -107,9 +112,9 @@ public class NexusFileInstance {
 
     public long getLastModificationDate() {
         long last = 0;
-        if( m_sFilePath != null ) {
+        if (m_sFilePath != null) {
             File file = new File(m_sFilePath);
-            if( file.exists() ) {
+            if (file.exists()) {
                 last = file.lastModified();
             }
         }
@@ -117,13 +122,13 @@ public class NexusFileInstance {
     }
 
     public void open() {
-    	g_mutexCanonicOp.lock();
+        g_mutexCanonicOp.lock();
     }
-    
+
     public void close() {
-    	g_mutexCanonicOp.unlock();
+        g_mutexCanonicOp.unlock();
     }
-    
+
     // ---------------------------------------------------------
     // Protected methods
     // ---------------------------------------------------------
@@ -175,7 +180,6 @@ public class NexusFileInstance {
             g_mutex.unlock();
         }
     }
-
 
     protected void openFile(int iAccessMode) throws NexusException {
         openFile(m_sFilePath, iAccessMode);
@@ -235,7 +239,7 @@ public class NexusFileInstance {
                 m_nfFile = new NexusFileHandler(sFilePath, NexusFile.NXACC_CREATE5);
             }
         } else if (file.exists()) {
-            if( NexusFile.NXACC_READ == iAccessMode && file.length() == 0L ) {
+            if (NexusFile.NXACC_READ == iAccessMode && file.length() == 0L) {
                 throw new NexusException("Can't open file for read: " + sFilePath + " is badly formated!");
             }
             m_nfFile = new NexusFileHandler(sFilePath, iAccessMode);

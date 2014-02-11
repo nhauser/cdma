@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.engine.nexus.navigation;
 
 import java.io.IOException;
@@ -19,12 +25,12 @@ import org.cdma.interfaces.IDimension;
 
 public final class NexusDimension implements IDimension {
 
-    private IArray  mArray;
-    private String  mLongName;
+    private IArray mArray;
+    private String mLongName;
     private boolean mIsVariableLength;
     private boolean mIsUnlimited;
     private boolean mIsShared;
-    private String  mFactory;
+    private final String mFactory;
 
     public NexusDimension(String factoryName, IDataItem item) {
         mFactory = factoryName;

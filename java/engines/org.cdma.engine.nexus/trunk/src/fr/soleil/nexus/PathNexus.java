@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 // Tools lib
@@ -20,17 +26,28 @@ import org.nexusformat.NexusException;
 
 public class PathNexus implements Cloneable {
     // Public definition
-    public static final PathGroup ROOT_PATH = new PathGroup(new String[0]);  // Path to reach the document root
-    public static final String    PARENT_NODE = "..";                       // Pattern meaning parent node of the current one
+    public static final PathGroup ROOT_PATH = new PathGroup(new String[0]); // Path to reach the document root
+    public static final String PARENT_NODE = ".."; // Pattern meaning parent node of the current one
 
     // Private members
-    private String   m_sFilePath;
+    private String m_sFilePath;
     private List<NexusNode> m_nnNode;
 
     // Constructors
-    protected PathNexus()                  { m_nnNode = new ArrayList<NexusNode>(); }
-    protected PathNexus(String[] sGroups)  { boolean[] bIsGroup = new boolean[sGroups.length]; java.util.Arrays.fill(bIsGroup, true); initPath(sGroups, bIsGroup); }
-    public PathNexus(NexusNode[] nnNodes)  { m_nnNode = new ArrayList<NexusNode>(); setPath(nnNodes); }
+    protected PathNexus() {
+        m_nnNode = new ArrayList<NexusNode>();
+    }
+
+    protected PathNexus(String[] sGroups) {
+        boolean[] bIsGroup = new boolean[sGroups.length];
+        java.util.Arrays.fill(bIsGroup, true);
+        initPath(sGroups, bIsGroup);
+    }
+
+    public PathNexus(NexusNode[] nnNodes) {
+        m_nnNode = new ArrayList<NexusNode>();
+        setPath(nnNodes);
+    }
 
     protected PathNexus(NexusNode[] nnNodes, String sNodeName) {
         m_nnNode = new ArrayList<NexusNode>();
@@ -130,7 +147,7 @@ public class PathNexus implements Cloneable {
             return null;
 
         // Copy the given node in a buffer
-        PathNexus pnBuf = (PathNexus) clone();
+        PathNexus pnBuf = clone();
 
         // Remove the last node
         pnBuf.popNode();
@@ -182,7 +199,7 @@ public class PathNexus implements Cloneable {
         String result = buf.toString();
         return result;
     }
-    
+
     /**
      * getDataItemName returns the name of the DataItem in path (node having
      * isGroup == false)
@@ -305,18 +322,18 @@ public class PathNexus implements Cloneable {
     }
 
     /**
-     * Split a string representing a NexusPath to extract each node name 
+     * Split a string representing a NexusPath to extract each node name
+     * 
      * @param path
      */
     public static String[] splitStringPath(String path) {
         if (path.startsWith(NexusFileInstance.PATH_SEPARATOR)) {
             return path.substring(1).split(NexusFileInstance.PATH_SEPARATOR);
-        }
-        else {
+        } else {
             return path.split(NexusFileInstance.PATH_SEPARATOR);
         }
     }
-    
+
     public static NexusNode[] splitStringToNode(String sPath) {
         String[] names = splitStringPath(sPath);
         NexusNode[] nodes = null;
@@ -356,7 +373,6 @@ public class PathNexus implements Cloneable {
         paPath.m_sFilePath = m_sFilePath;
         return paPath;
     }
-    
 
     @Override
     public boolean equals(Object obj) {
@@ -369,34 +385,35 @@ public class PathNexus implements Cloneable {
 
         boolean result = false;
         PathNexus path = (PathNexus) obj;
-        if( path.m_nnNode.size() == m_nnNode.size() ) {
-        	if( path.m_sFilePath.equals(m_sFilePath) ) {
-        		result = true;
-        		for( int i = 0; i < m_nnNode.size(); i++ ) {
-        			if(! m_nnNode.get(i).equals(path.m_nnNode.get(i)) ) {
-        				result = false;
-        				break;
-        			}
-        		}
-        	}
+        if (path.m_nnNode.size() == m_nnNode.size()) {
+            if (path.m_sFilePath.equals(m_sFilePath)) {
+                result = true;
+                for (int i = 0; i < m_nnNode.size(); i++) {
+                    if (!m_nnNode.get(i).equals(path.m_nnNode.get(i))) {
+                        result = false;
+                        break;
+                    }
+                }
+            }
         }
         return result;
     }
-   
+
     @Override
     public int hashCode() {
         int code = 0x9A74;
         int mult = 0x20DE;
         code = code * mult + getClass().hashCode();
-        for( NexusNode node : m_nnNode ) {
-        	code = code * mult + node.hashCode();
+        for (NexusNode node : m_nnNode) {
+            code = code * mult + node.hashCode();
         }
         return code;
     }
 
     static public class PathCollator implements Comparator<String> {
-    	public PathCollator() {}
-    	
+        public PathCollator() {
+        }
+
         @Override
         public int compare(String arg0, String arg1) {
             if (arg0.length() > arg1.length())
@@ -407,65 +424,64 @@ public class PathNexus implements Cloneable {
                 return Collator.getInstance().compare(arg0, arg1);
         }
     }
-    
+
     /**
      * Return the string representation of a NeuxsPath
-     * @param path 
+     * 
+     * @param path
      * @param showClass do the node's class has to be displayed
      */
     public static String toString(PathNexus path, boolean showClass) {
-    	StringBuilder result = new StringBuilder();
-    	
-    	for( NexusNode node : path.getNodes() ) {
-    		result.append(NexusFileInstance.PATH_SEPARATOR);
-    		if( showClass ) {
-    			result.append(node.toString());
-    		}
-    		else {
-    			result.append( node.getNodeName() );
-    		}
-    	}
-    	return result.toString();
+        StringBuilder result = new StringBuilder();
+
+        for (NexusNode node : path.getNodes()) {
+            result.append(NexusFileInstance.PATH_SEPARATOR);
+            if (showClass) {
+                result.append(node.toString());
+            } else {
+                result.append(node.getNodeName());
+            }
+        }
+        return result.toString();
     }
 
     public List<NexusNode> getShortestWayTo(PathNexus destination) {
-    	List<NexusNode> result = new ArrayList<NexusNode>();
-    	
-    	if( ! destination.equals( this ) ) {
-    		int depth = 0;
-    		int depthSource = m_nnNode.size();
-    		int depthTarget = destination.m_nnNode.size();
-    		
-    		// find deepest common ancestor
-    		boolean depthOk = depth < depthSource && depth < depthTarget;
-    		NexusNode source; 
-    		NexusNode target;
-    		while( depthOk ) {
-    			source = m_nnNode.get(depth);
-    			target = destination.m_nnNode.get(depth);
-    			
-    			if( ! source.equals(target) ) {
-    				break;
-    			}
-    			depth++;
-				depthOk = depth < depthSource && depth < depthTarget;
-    		}
-    		
-    		// close source nodes until to reach deepest common ancestor
-    		for( int i = depthSource - 1; i >= depth; i-- ) {
-    			result.add( new NexusNode( PARENT_NODE, "" ) );
-    		}
-    		
-    		// open nodes from deepest common ancestor to last target one
-    		for( int i = depth; i < depthTarget; i++ ) {
-    			result.add( destination.m_nnNode.get(i) );
-    		}
-    	}
-    	
-    	return result;
+        List<NexusNode> result = new ArrayList<NexusNode>();
+
+        if (!destination.equals(this)) {
+            int depth = 0;
+            int depthSource = m_nnNode.size();
+            int depthTarget = destination.m_nnNode.size();
+
+            // find deepest common ancestor
+            boolean depthOk = depth < depthSource && depth < depthTarget;
+            NexusNode source;
+            NexusNode target;
+            while (depthOk) {
+                source = m_nnNode.get(depth);
+                target = destination.m_nnNode.get(depth);
+
+                if (!source.equals(target)) {
+                    break;
+                }
+                depth++;
+                depthOk = depth < depthSource && depth < depthTarget;
+            }
+
+            // close source nodes until to reach deepest common ancestor
+            for (int i = depthSource - 1; i >= depth; i--) {
+                result.add(new NexusNode(PARENT_NODE, ""));
+            }
+
+            // open nodes from deepest common ancestor to last target one
+            for (int i = depth; i < depthTarget; i++) {
+                result.add(destination.m_nnNode.get(i));
+            }
+        }
+
+        return result;
     }
-    
-    
+
     // ---------------------------------------------------------
     // ---------------------------------------------------------
     // / Protected
@@ -493,18 +509,18 @@ public class PathNexus implements Cloneable {
      * @note for each node to be processed that is, deeper than the sGroupsClass
      *       array the last class name will be set
      */
-   /*
-    protected void applyClassPattern(String[] sGroupsClass) {
-        for (int i = 0; i < m_nnNode.size(); i++) {
-            if (m_nnNode.get(i).isGroup() && "".equals(m_nnNode.get(i).getClassName())) {
-                if (i < sGroupsClass.length)
-                    m_nnNode.get(i).setClassName(sGroupsClass[i]);
-                else
-                    m_nnNode.get(i).setClassName(sGroupsClass[sGroupsClass.length - 1]);
-            }
-        }
-    }
-*/
+    /*
+     protected void applyClassPattern(String[] sGroupsClass) {
+         for (int i = 0; i < m_nnNode.size(); i++) {
+             if (m_nnNode.get(i).isGroup() && "".equals(m_nnNode.get(i).getClassName())) {
+                 if (i < sGroupsClass.length)
+                     m_nnNode.get(i).setClassName(sGroupsClass[i]);
+                 else
+                     m_nnNode.get(i).setClassName(sGroupsClass[sGroupsClass.length - 1]);
+             }
+         }
+     }
+    */
     /**
      * determinePath Return the shortest path from file fFrom to reach file
      * fTarget

@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 // Tools lib
@@ -70,8 +76,7 @@ public class NexusFileReader extends NexusFileBrowser {
         // Open target DataItem
         try {
             openPath(pPath);
-        }
-        catch (NexusException e) {
+        } catch (NexusException e) {
             throw e;
         }
 
@@ -126,13 +131,13 @@ public class NexusFileReader extends NexusFileBrowser {
 
         // Get infos on DataItem (data type, rank, dimsize)
         int[] iNodeSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
-        int[] iDimSize;                       // data dimension's sizes
+        int[] iDimSize; // data dimension's sizes
         int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
-                                      // iDataInf[1]= data type
+                                     // iDataInf[1]= data type
 
         openFile();
         getNexusFile().getinfo(iNodeSize, iDataInf);
-        
+
         // Initialize dimension's sizes
         iDimSize = new int[iDataInf[0]];
         System.arraycopy(iNodeSize, 0, iDimSize, 0, iDataInf[0]);
@@ -146,9 +151,9 @@ public class NexusFileReader extends NexusFileBrowser {
         dsData.setNodeName(getCurrentPath().getDataItemName());
         dsData.setPath(getCurrentPath().clone());
         dsData.isSingleRawArray(m_bResultAsSingleRaw);
-        
-        if( dsData.getType() == NexusFile.NX_CHAR ) {
-        	dsData.setData( readNodeValue(iDataInf, dsData.getSize(), iDimSize.length ) );
+
+        if (dsData.getType() == NexusFile.NX_CHAR) {
+            dsData.setData(readNodeValue(iDataInf, dsData.getSize(), iDimSize.length));
         }
         closeFile();
 
@@ -184,11 +189,10 @@ public class NexusFileReader extends NexusFileBrowser {
         openFile();
         getNexusFile().getdata(oInput);
         closeFile();
-        
+
         if (m_bResultAsSingleRaw) {
             oOutput = oInput;
-        }
-        else {
+        } else {
             // Changing the array into matrix (having iDimSize dimensions'
             // sizes) instead of single row
             oOutput = defineArrayObject(iDataInf[1], iDimSize);
@@ -222,8 +226,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
         if (dsData.getType() == NexusFile.NX_CHAR) {
             dsData.setData(data);
-        }
-        else {
+        } else {
             dsData.setData(new SoftReference<Object>(data));
         }
 
@@ -242,8 +245,7 @@ public class NexusFileReader extends NexusFileBrowser {
      * @param oOutput output array having the proper shape for resize
      * @throws NexusException
      */
-    protected void reshapeArray(int[] iStart, int[] iDimSize, Object oInput, Object oOutput)
-            throws NexusException {
+    protected void reshapeArray(int[] iStart, int[] iDimSize, Object oInput, Object oOutput) throws NexusException {
         reshapeArray(0, iStart, iDimSize, oInput, oOutput);
     }
 
@@ -258,8 +260,8 @@ public class NexusFileReader extends NexusFileBrowser {
      * @param oOutput output array having the proper shape for resize
      * @throws NexusException
      */
-    private void reshapeArray(int iCurDim, int[] iStart, int[] iDimSize, Object oInput,
-            Object oOutput) throws NexusException {
+    private void reshapeArray(int iCurDim, int[] iStart, int[] iDimSize, Object oInput, Object oOutput)
+            throws NexusException {
         int lStartRaw;
         int lLinearStart;
         if (iCurDim != iDimSize.length - 1) {
@@ -320,15 +322,13 @@ public class NexusFileReader extends NexusFileBrowser {
                 openData("description");
                 dataItem.setDesc(readDataItem(iRank).getData());
                 closeData();
-            }
-            catch (NexusException ne) {
-            	closeData();
+            } catch (NexusException ne) {
+                closeData();
             }
             dataItem.setPath(getCurrentPath().clone());
 
             return dataItem;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -360,11 +360,10 @@ public class NexusFileReader extends NexusFileBrowser {
             openFile();
             getNexusFile().getslab(iStartPos, iShape, oInput);
             closeFile();
-            
+
             if (m_bResultAsSingleRaw) {
                 oOutput = oInput;
-            }
-            else {
+            } else {
                 // Changing the array into matrix (having iDimSize dimensions'
                 // sizes) instead of single row
                 oOutput = defineArrayObject(iDataInf[1], iShape);
@@ -456,8 +455,7 @@ public class NexusFileReader extends NexusFileBrowser {
 
         try {
             oTmpOut = getAttribute(sAttrName);
-        }
-        catch (NexusException ne) {
+        } catch (NexusException ne) {
             return null;
         }
 
@@ -466,8 +464,7 @@ public class NexusFileReader extends NexusFileBrowser {
         if (oTmpOut != null && !(oTmpOut instanceof char[]) && oTmpOut.getClass().isArray()) {
             if (java.lang.reflect.Array.getLength(oTmpOut) == 1)
                 oOutput = java.lang.reflect.Array.get(oTmpOut, 0);
-        }
-        else
+        } else
             oOutput = oTmpOut;
 
         return oOutput;
@@ -483,11 +480,11 @@ public class NexusFileReader extends NexusFileBrowser {
     protected void getDataItemAttribute(DataItem dsData) throws NexusException {
         // Get a map of DataItem's attributs
         Collection<Attribute> attributes = listAttribute();
-        
+
         // Storing all encountered attributes
         Object value;
-        for (Attribute attribute : attributes ) {
-        	value = getAttributeValue(attribute.name);
+        for (Attribute attribute : attributes) {
+            value = getAttributeValue(attribute.name);
             dsData.setAttribute(attribute.name, value);
         }
     }
@@ -503,10 +500,10 @@ public class NexusFileReader extends NexusFileBrowser {
      */
     protected void checkDataMatch(DataItem dsData) throws NexusException {
         // Get infos on DataItem (data type, rank, dimsize)
-    	int[] iDimSize = dsData.getSize(); // DataItem dimension's sizes
-    	int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
-    	int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
-                                      // iDataInf[1] = data type
+        int[] iDimSize = dsData.getSize(); // DataItem dimension's sizes
+        int[] iNodSize = new int[RANK_MAX]; // whole DataItem dimension's sizes
+        int[] iDataInf = new int[2]; // iDataInf[0] = DataItem rank ;
+                                     // iDataInf[1] = data type
         openFile();
         getNexusFile().getinfo(iNodSize, iDataInf);
         closeFile();
@@ -527,11 +524,10 @@ public class NexusFileReader extends NexusFileBrowser {
             int iDim = (iDataInf[0] - iDimSize.length);
             for (; iDim < iDataInf[0]; iDim++) {
                 if (iDimSize[iDim + iDimSize.length - iDataInf[0]] != iNodSize[iDim])
-                    throw new NexusException(
-                            "Datas and target node do not have compatible dimension sizes!");
+                    throw new NexusException("Datas and target node do not have compatible dimension sizes!");
             }
         }
-        
+
     }
 
     /**
@@ -549,8 +545,7 @@ public class NexusFileReader extends NexusFileBrowser {
         // Open the requested path in current file
         try {
             openPath(pgPath);
-        }
-        catch (NexusException n) {
+        } catch (NexusException n) {
             // Close all nodes
             closeAll();
 
@@ -605,30 +600,22 @@ public class NexusFileReader extends NexusFileBrowser {
 
         if (sClassName.startsWith("Ljava.lang.Byte") || sClassName.equals("B")) {
             iType = NexusFile.NX_BINARY;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Integer") || sClassName.equals("I")) {
+        } else if (sClassName.startsWith("Ljava.lang.Integer") || sClassName.equals("I")) {
             iType = NexusFile.NX_INT32;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Short") || sClassName.equals("S")) {
+        } else if (sClassName.startsWith("Ljava.lang.Short") || sClassName.equals("S")) {
             iType = NexusFile.NX_INT16;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Float") || sClassName.equals("F")) {
+        } else if (sClassName.startsWith("Ljava.lang.Float") || sClassName.equals("F")) {
             iType = NexusFile.NX_FLOAT32;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Double") || sClassName.equals("D")) {
+        } else if (sClassName.startsWith("Ljava.lang.Double") || sClassName.equals("D")) {
             iType = NexusFile.NX_FLOAT64;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Long") || sClassName.equals("J")) {
+        } else if (sClassName.startsWith("Ljava.lang.Long") || sClassName.equals("J")) {
             iType = NexusFile.NX_INT64;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Character") || sClassName.equals("C")
+        } else if (sClassName.startsWith("Ljava.lang.Character") || sClassName.equals("C")
                 || sClassName.startsWith("java.lang.String")) {
             iType = NexusFile.NX_CHAR;
-        }
-        else if (sClassName.startsWith("Ljava.lang.Boolean") || sClassName.equals("Z")) {
+        } else if (sClassName.startsWith("Ljava.lang.Boolean") || sClassName.equals("Z")) {
             iType = NexusFile.NX_BOOLEAN;
-        }
-        else {
+        } else {
             throw new NexusException("Unable to determine type of object!  '" + sClassName);
         }
         return iType;
@@ -819,15 +806,14 @@ public class NexusFileReader extends NexusFileBrowser {
         try {
             if (pnTarget == null) {
                 PathRelative prRelTgtPath = new PathRelative(prTgtPath);
-                pnTarget = prRelTgtPath.generateAbsolutePath((PathNexus) paSrcPath);
+                pnTarget = prRelTgtPath.generateAbsolutePath(paSrcPath);
             }
 
             openPath(pnTarget);
             pnTarget = getCurrentPath().clone();
             closeAll();
             return pnTarget;
-        }
-        catch (NexusException ne) {
+        } catch (NexusException ne) {
             return null;
         }
     }
@@ -858,13 +844,11 @@ public class NexusFileReader extends NexusFileBrowser {
                 if (o.getClass().isArray()) {
                     Object oTmpOut = java.lang.reflect.Array.get(oOutput, j);
                     java.lang.reflect.Array.set(oOutput, j, convertArray(oTmpOut, o));
-                }
-                else {
+                } else {
                     java.lang.reflect.Array.set(oOutput, j, convertValue(o));
                 }
             }
-        }
-        else
+        } else
             java.lang.reflect.Array.set(oOutput, 0, convertValue(oInput));
 
         return oOutput;

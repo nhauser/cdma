@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 // Nexus lib
@@ -21,7 +27,7 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 public class NexusFileWriter extends NexusFileReader {
-    public final static String NULL_VALUE = "null";            // Value used to mean null when reading/writing a DataItem
+    public final static String NULL_VALUE = "null"; // Value used to mean null when reading/writing a DataItem
     protected static final String DATAITEM_LINK = "link_node"; // Generic name of a node wearing a link
 
     private boolean m_bCompressed;
@@ -79,13 +85,13 @@ public class NexusFileWriter extends NexusFileReader {
             isGroup = nnNode.isGroup();
             // Create appropriate group and open it
             nCurStep = getCurrentPath().getCurrentNode();
-            if ( nnNode.isRealGroup() ) {
+            if (nnNode.isRealGroup()) {
                 try {
-                    openNode( new NexusNode(sCurName, sCurClass, isGroup) );
-                }
-                catch (NexusException ne) {
+                    openNode(new NexusNode(sCurName, sCurClass, isGroup));
+                } catch (NexusException ne) {
                     // Ensure we are still in the expected group
-                    if (nCurStep != getCurrentPath().getCurrentNode() || (nCurStep != null && !nCurStep.equals(getCurrentPath().getCurrentNode())))
+                    if (nCurStep != getCurrentPath().getCurrentNode()
+                            || (nCurStep != null && !nCurStep.equals(getCurrentPath().getCurrentNode())))
                         closeGroup();
 
                     // Create the requested group
@@ -120,13 +126,12 @@ public class NexusFileWriter extends NexusFileReader {
      *         of this return is to tell whether data compatibility should be checked before writing
      *         it
      */
-    protected boolean createDataItem(DataItem dsData, PathNexus pnPath, boolean bKeepOpen)
-            throws NexusException {
+    protected boolean createDataItem(DataItem dsData, PathNexus pnPath, boolean bKeepOpen) throws NexusException {
         // Checking path contains a DataItem name
-    	NexusNode item   = pnPath.getCurrentNode();
-        String itemName  = item.getNodeName();
+        NexusNode item = pnPath.getCurrentNode();
+        String itemName = item.getNodeName();
         String itemClass = item.getClassName();
-        
+
         if (itemName == null)
             throw new NexusException("Path is invalid: no DataItem name specified to store data!");
 
@@ -135,14 +140,13 @@ public class NexusFileWriter extends NexusFileReader {
 
         // Open DataItem (or create it if needed)
         boolean bCheckData;
-        if( "NXtechnical_data".equals(itemClass) ) {
-        	itemName = "data";
+        if ("NXtechnical_data".equals(itemClass)) {
+            itemName = "data";
         }
         try {
-            openNode( new NexusNode(itemName, "SDS", false) );
+            openNode(new NexusNode(itemName, "SDS", false));
             bCheckData = true;
-        }
-        catch (NexusException ne) {
+        } catch (NexusException ne) {
             makeData(itemName, dsData);
             openData(itemName);
             bCheckData = false;
@@ -182,10 +186,8 @@ public class NexusFileWriter extends NexusFileReader {
 
         // Create the DataItem
         if (m_bCompressed && iLength > 1000 && iType != NexusFile.NX_CHAR) {
-            getNexusFile().compmakedata(sDataName, iType, iRank, iDimSize, NexusFile.NX_COMP_LZW,
-                    iDimSize);
-        }
-        else {
+            getNexusFile().compmakedata(sDataName, iType, iRank, iDimSize, NexusFile.NX_COMP_LZW, iDimSize);
+        } else {
             getNexusFile().makedata(sDataName, iType, iRank, iDimSize);
         }
 
@@ -213,8 +215,7 @@ public class NexusFileWriter extends NexusFileReader {
      *            primitive or string)
      * @param sPath path to set datas in current file
      */
-    public <type> void writeAttr(String sAttrName, type tData, PathNexus paPath)
-            throws NexusException {
+    public <type> void writeAttr(String sAttrName, type tData, PathNexus paPath) throws NexusException {
         // Open destination path
         openPath(paPath);
 
@@ -225,8 +226,7 @@ public class NexusFileWriter extends NexusFileReader {
         else if (!tData.getClass().isArray() && !(tData instanceof String)) {
             oData = java.lang.reflect.Array.newInstance(tData.getClass(), 1);
             java.lang.reflect.Array.set(oData, 0, tData);
-        }
-        else
+        } else
             oData = tData;
         // Write the attribute
         putAttr(sAttrName, oData);
@@ -249,8 +249,7 @@ public class NexusFileWriter extends NexusFileReader {
 
             // Return to document root
             closeAll();
-        }
-        else {
+        } else {
             // Create or open DataItem
             boolean bNeedDataCheck = createDataItem(dsData, paPath, true);
 
@@ -281,10 +280,9 @@ public class NexusFileWriter extends NexusFileReader {
     protected <type> void putAttr(String sAttrName, type tData) throws NexusException {
         Object tArrayData;
         if (!(tData instanceof String) && !tData.getClass().isArray()) {
-            tArrayData = (type[]) java.lang.reflect.Array.newInstance(tData.getClass(), 1);
+            tArrayData = java.lang.reflect.Array.newInstance(tData.getClass(), 1);
             java.lang.reflect.Array.set(tArrayData, 0, tData);
-        }
-        else
+        } else
             tArrayData = tData;
 
         // Changing the array into a DataItem object to apply conversion methods if needed
@@ -329,7 +327,7 @@ public class NexusFileWriter extends NexusFileReader {
         Object oAttrVal;
         if (mAttrMap != null) {
             for (Iterator<String> iter = mAttrMap.keySet().iterator(); iter.hasNext();) {
-                sAttrName = (String) iter.next();
+                sAttrName = iter.next();
                 oAttrVal = dsData.getAttribute(sAttrName);
                 putAttr(sAttrName, oAttrVal);
             }
@@ -383,14 +381,11 @@ public class NexusFileWriter extends NexusFileReader {
         PathNexus pnTgtPath = getCurrentPath().clone();
         NexusNode nnCurNode = pnSrcPath.getCurrentNode();
 
-        if (getCurrentPath().getCurrentNode() != null
-                && !getCurrentPath().getCurrentNode().isRealGroup())
-            throw new NexusException("Invalid destination path: only a group can contain nodes!\n"
-                    + getCurrentPath());
+        if (getCurrentPath().getCurrentNode() != null && !getCurrentPath().getCurrentNode().isRealGroup())
+            throw new NexusException("Invalid destination path: only a group can contain nodes!\n" + getCurrentPath());
 
         // Check the kind of the node
-        if (nnCurNode == null || nnCurNode.isGroup()
-                || "NXtechnical_data".equals(nnCurNode.getClassName())) {
+        if (nnCurNode == null || nnCurNode.isGroup() || "NXtechnical_data".equals(nnCurNode.getClassName())) {
             // Copy the current group
             PathNexus pnPath = pnTgtPath.clone();
             if (nnCurNode != null)
@@ -404,8 +399,7 @@ public class NexusFileWriter extends NexusFileReader {
                 nfrSource.openNode(node);
                 copyNode(nfrSource);
             }
-        }
-        else {
+        } else {
             // Copy the current DataItem
             PathData pdDstPath = new PathData(pnTgtPath.getNodes(), nnCurNode.getNodeName());
             DataItem dsData = nfrSource.getDataItem();
@@ -464,9 +458,8 @@ public class NexusFileWriter extends NexusFileReader {
         // Ensure the wearing node is a DataItem
         if (prRelPath.getDataItemName() == null) {
             PathGroup pgDest = new PathGroup(prRelPath.clone());
-            pdDestNode = new PathData(pgDest, generateDataName((PathGroup) pgDest, DATAITEM_LINK));
-        }
-        else
+            pdDestNode = new PathData(pgDest, generateDataName(pgDest, DATAITEM_LINK));
+        } else
             pdDestNode = (PathData) prRelPath;
 
         // Check the link is valid

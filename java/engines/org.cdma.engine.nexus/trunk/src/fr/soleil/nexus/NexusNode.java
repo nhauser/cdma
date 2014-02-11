@@ -1,38 +1,44 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 import java.text.Collator;
 import java.util.Comparator;
 
-
 public class NexusNode implements Cloneable {
     // Private definitions
-    private static final String CLASS_SEPARATOR_START  = "<";
+    private static final String CLASS_SEPARATOR_START = "<";
     private static final String CLASS_SEPARATOR_START2 = "{";
-    private static final String CLASS_SEPARATOR_END2   = "}";
+    private static final String CLASS_SEPARATOR_END2 = "}";
 
-    private String   m_sNodeName;
-    private String   m_sClassName;
+    private String m_sNodeName;
+    private String m_sClassName;
     private boolean m_bIsGroup;
 
     public NexusNode() {
-    	m_sNodeName  = "";
+        m_sNodeName = "";
         m_sClassName = "";
-        m_bIsGroup   = false;
+        m_bIsGroup = false;
     }
 
     public NexusNode(String sNodeName, String sClassName) {
         m_sNodeName = sNodeName;
         m_sClassName = sClassName;
-        m_bIsGroup = ((!"SDS".equals(sClassName) && !"".equals(sClassName)) || "".equals(sNodeName) ) && !"NXtechnical_data".equals(sClassName);
+        m_bIsGroup = ((!"SDS".equals(sClassName) && !"".equals(sClassName)) || "".equals(sNodeName))
+                && !"NXtechnical_data".equals(sClassName);
     }
 
     public NexusNode(String sNodeName, String sClassName, boolean bIsGroup) {
@@ -66,17 +72,17 @@ public class NexusNode implements Cloneable {
     }
 
     public boolean isRealGroup() {
-    	boolean result;
-        if( m_sClassName != null && !m_sClassName.isEmpty() ) {
-        	result = !m_sClassName.equals("SDS");
+        boolean result;
+        if (m_sClassName != null && !m_sClassName.isEmpty()) {
+            result = !m_sClassName.equals("SDS");
+        } else {
+            result = m_bIsGroup;
         }
-        else {
-        	result = m_bIsGroup;
-        }
-        
+
         return result;
     }
 
+    @Override
     protected NexusNode clone() {
         NexusNode nNewNode = new NexusNode();
         nNewNode.m_sNodeName = m_sNodeName;
@@ -85,7 +91,7 @@ public class NexusNode implements Cloneable {
 
         return nNewNode;
     }
-    
+
     @Override
     public boolean equals(Object node) {
         if (node == this) {
@@ -104,6 +110,7 @@ public class NexusNode implements Cloneable {
         return m_sNodeName.hashCode() + m_sClassName.hashCode();
     }
 
+    @Override
     public String toString() {
         String sName = getNodeName();
         if (!getClassName().trim().equals("") && isRealGroup())
@@ -123,7 +130,8 @@ public class NexusNode implements Cloneable {
     }
 
     public static String getNodeFullName(String sNodeName, String sNodeClass) {
-        return sNodeName + (sNodeClass.equals("SDS") ? "" : (CLASS_SEPARATOR_START2 + sNodeClass + CLASS_SEPARATOR_END2));
+        return sNodeName
+                + (sNodeClass.equals("SDS") ? "" : (CLASS_SEPARATOR_START2 + sNodeClass + CLASS_SEPARATOR_END2));
     }
 
     public static String extractName(String sNodeName) {
@@ -144,7 +152,8 @@ public class NexusNode implements Cloneable {
         if (iPosClassSep < 0)
             iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START2);
         iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
-        tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName.substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
+        tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName
+                .substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
         return tmpClassName;
     }
 
@@ -168,50 +177,49 @@ public class NexusNode implements Cloneable {
     public boolean matchesPartNode(NexusNode node) {
         boolean classMatch, nameMatch;
         classMatch = "".equals(node.getClassName()) || node.getClassName().equalsIgnoreCase(this.getClassName());
-        nameMatch = "".equals(node.getNodeName()) || this.getNodeName().toLowerCase().matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+        nameMatch = "".equals(node.getNodeName())
+                || this.getNodeName().toLowerCase().matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         return (classMatch && nameMatch);
     }
-    
+
     static public class NodeCollator implements Comparator<NexusNode> {
 
-		@Override
-		public int compare(NexusNode arg0, NexusNode arg1) {
-			int result;
-			// if arg0 is null
-			if( arg0 == null ) {
-				// equals if arg1 is null else negative
-				result = arg1 == null ? 0 : -1;
-			}
-			// Check they are equals
-			else if( arg0.equals(arg1) ) {
-				result = 0;
-			}
-			// Lesser or greater test
-			else {
-				// If one is group and other not: group is greater
-				if( arg0.isGroup() != arg1.isGroup() ) {
-					result = arg0.isGroup() ? 1 : -1;
-				}
-				else {
-					String name0 = arg0.getNodeName();
-					String name1 = arg1.getNodeName();
-					if( ! name0.equals( name1 ) ) {
-						result = new NameCollator().compare( name0, name1 );
-					}
-					else {
-						String class0 = arg0.getClassName();
-						String class1 = arg1.getClassName();
-						result = Collator.getInstance().compare( class0, class1 );
-					}
-				}
-			}
-			return result;
-		}
-    	
+        @Override
+        public int compare(NexusNode arg0, NexusNode arg1) {
+            int result;
+            // if arg0 is null
+            if (arg0 == null) {
+                // equals if arg1 is null else negative
+                result = arg1 == null ? 0 : -1;
+            }
+            // Check they are equals
+            else if (arg0.equals(arg1)) {
+                result = 0;
+            }
+            // Lesser or greater test
+            else {
+                // If one is group and other not: group is greater
+                if (arg0.isGroup() != arg1.isGroup()) {
+                    result = arg0.isGroup() ? 1 : -1;
+                } else {
+                    String name0 = arg0.getNodeName();
+                    String name1 = arg1.getNodeName();
+                    if (!name0.equals(name1)) {
+                        result = new NameCollator().compare(name0, name1);
+                    } else {
+                        String class0 = arg0.getClassName();
+                        String class1 = arg1.getClassName();
+                        result = Collator.getInstance().compare(class0, class1);
+                    }
+                }
+            }
+            return result;
+        }
+
     }
-    
+
     static public class NameCollator implements Comparator<String> {
-    	
+
         @Override
         public int compare(final String arg0, final String arg1) {
             int iCmp;

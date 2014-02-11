@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.engine.nexus.navigation;
 
 // Standard import
@@ -46,20 +52,20 @@ public final class NexusGroup implements IGroup, Cloneable {
     public long MINIMUM_REFRESH_TIME = 1000;
 
     // / Members
-    private String mFactory; // Name of the factory plugin that instantiate
+    private final String mFactory; // Name of the factory plugin that instantiate
 
     // API CDMA tree need
-    private NexusDataset mDataset; // File handler
+    private final NexusDataset mDataset; // File handler
     private IGroup mParent = null; // Parent group
-    private List<IContainer> mChild; // Children nodes (group, dataitem...)
+    private final List<IContainer> mChild; // Children nodes (group, dataitem...)
 
     // Internal members
     private PathNexus mN4TCurPath; // Current path
     @Deprecated
     private IDictionary mDictionary; // Group dictionary
-    private List<IAttribute> mAttributes; // Attributes belonging to this
-    private List<IDimension> mDimensions; // Dimensions direct child of this
-    private boolean readAttributes; // have attributes been read
+    private final List<IAttribute> mAttributes; // Attributes belonging to this
+    private final List<IDimension> mDimensions; // Dimensions direct child of this
+    private final boolean readAttributes; // have attributes been read
     private long mLastLoadChild;
 
     // / Constructors
@@ -602,7 +608,8 @@ public final class NexusGroup implements IGroup, Cloneable {
         return list;
     }
 
-    private List<IContainer> findAllContainer(NexusFileWriter handler, NexusNode[] nodes, int level) throws NexusException {
+    private List<IContainer> findAllContainer(NexusFileWriter handler, NexusNode[] nodes, int level)
+            throws NexusException {
         List<IContainer> list = new ArrayList<IContainer>();
 
         if (nodes.length > level) {
