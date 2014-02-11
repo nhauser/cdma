@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.external;
 
 import java.util.ArrayList;
@@ -32,7 +38,7 @@ import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 /**
  * Analyze the path previously entered, to extract the specified attribute
  * path is under the form: "/node1/node2@attribute_name=value"
- *
+ * 
  * Only nodes with that particular attribute are returned.
  * 
  * @note: the character '*' is a wildcard for text completion both in name and value of attribute
@@ -55,6 +61,7 @@ public final class AttributeFilter implements IPluginMethod {
 
     /**
      * Stack all found data items to construct an aggregated NxsDataItem
+     * 
      * @param context @return
      */
     public List<IContainer> filterOnAttribute(Context context) {
@@ -62,11 +69,11 @@ public final class AttributeFilter implements IPluginMethod {
         List<Solver> solvers = context.getSolver();
 
         // The last Solver was a Path
-        Path path = solvers.get( solvers.size() - 2 ).getPath();
+        Path path = solvers.get(solvers.size() - 2).getPath();
         String addr = path.toString();
 
         // Extract the subpart corresponding to attribute and value
-        String[] attr = addr.substring(addr.lastIndexOf('@') + 1 ).split("=");
+        String[] attr = addr.substring(addr.lastIndexOf('@') + 1).split("=");
         addr = addr.substring(0, addr.lastIndexOf('@'));
 
         INode[] nodes = NxsPath.splitStringToNode(addr);
@@ -76,12 +83,12 @@ public final class AttributeFilter implements IPluginMethod {
         List<NxsDataItem> list = getAllDataItems(handler, nodes);
         List<IContainer> items = new ArrayList<IContainer>();
         String expected = attr[1].replace("*", ".*");
-        for( NxsDataItem item : list ) {
-            IAttribute attribute = item.getAttribute( attr[0] );
-            if( attribute != null  ) {
+        for (NxsDataItem item : list) {
+            IAttribute attribute = item.getAttribute(attr[0]);
+            if (attribute != null) {
                 String value = attribute.getStringValue();
-                if( value != null && value.matches(expected) ) {
-                    items.add( item );
+                if (value != null && value.matches(expected)) {
+                    items.add(item);
                 }
             }
         }
@@ -92,7 +99,7 @@ public final class AttributeFilter implements IPluginMethod {
      * Recursively explore the tree represented by the given array of nodes
      */
     protected static List<NxsDataItem> getAllDataItems(NxsDataset handler, INode[] nodes) {
-        return getAllDataItems( (NxsGroup) handler.getRootGroup(), nodes, 0);
+        return getAllDataItems((NxsGroup) handler.getRootGroup(), nodes, 0);
     }
 
     /**
@@ -102,25 +109,23 @@ public final class AttributeFilter implements IPluginMethod {
     private static List<NxsDataItem> getAllDataItems(NxsGroup entryPoint, INode[] nodes, int depth) {
         List<NxsDataItem> result = new ArrayList<NxsDataItem>();
 
-        if( depth < nodes.length ) {
+        if (depth < nodes.length) {
             INode node = nodes[depth];
-            if( depth < nodes.length - 1 ) {
+            if (depth < nodes.length - 1) {
                 List<IGroup> groups = entryPoint.getGroupList();
 
-                for( IGroup current : groups ) {
+                for (IGroup current : groups) {
                     INode leaf = ((NxsGroup) current).getNxsPath().getCurrentNode();
-                    if( leaf.matchesPartNode(node) ) {
-                        result.addAll( getAllDataItems( (NxsGroup) current, nodes, depth + 1) );
+                    if (leaf.matchesPartNode(node)) {
+                        result.addAll(getAllDataItems((NxsGroup) current, nodes, depth + 1));
                     }
                 }
-            }
-            else {
+            } else {
                 List<IDataItem> items = entryPoint.getDataItemList();
-                for( IDataItem current : items ) {
-                    INode leaf = ((NxsDataItem) current).getPath()
-                            .getCurrentNode();
-                    if( leaf.matchesPartNode(node) ) {
-                        result.add( (NxsDataItem) current );
+                for (IDataItem current : items) {
+                    INode leaf = ((NxsDataItem) current).getPath().getCurrentNode();
+                    if (leaf.matchesPartNode(node)) {
+                        result.add((NxsDataItem) current);
                     }
                 }
             }

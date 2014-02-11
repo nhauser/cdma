@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.external;
 
 import java.util.ArrayList;
@@ -111,12 +117,11 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         }
     }
 
-    private void setAttributeEquipment(IContainer container, NxsNode[] nodes,
-            List<IContainer> outList) {
+    private void setAttributeEquipment(IContainer container, NxsNode[] nodes, List<IContainer> outList) {
         // Set the root group at the NXentry position
         NxsGroup root = (NxsGroup) container.getRootGroup();
         NxsNode[] rootNodes = root.getNxsPath().getNodes();
-        if( rootNodes.length == 0 || ! rootNodes[0].getClassName().equals("NXentry") ) {
+        if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
             root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
         }
 
@@ -148,8 +153,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                         if (node.getNodeName().toLowerCase().matches(".*xia.*")) {
                             container.addStringAttribute(NxsConstant.ATTR_REGION, region);
                         }
-                    }
-                    else {
+                    } else {
                         // We are on the XIA the region is contained in the children name
                         IGroup xia = root.getGroup(nodes[1].getNodeName()).getGroup(nodes[2].getNodeName());
                         List<IDataItem> list = xia.getDataItemList();
@@ -163,8 +167,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
 
                                 if (first) {
                                     container.addStringAttribute(NxsConstant.ATTR_REGION, region);
-                                }
-                                else {
+                                } else {
                                     IContainer clone = container.clone();
                                     clone.addStringAttribute(NxsConstant.ATTR_REGION, region);
                                     outList.add(clone);
@@ -174,8 +177,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                         }
 
                     }
-                }
-                else {
+                } else {
                     container.addStringAttribute(NxsConstant.ATTR_REGION, "0");
                 }
             }
