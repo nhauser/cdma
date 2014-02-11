@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.soleil.navigation;
 
 import java.io.File;
@@ -42,8 +48,8 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     // Associate a IDimension to an order of the array
     private static class DimOrder {
         // Members
-        private int mOrder;            // order of the corresponding dimension in the NxsDataItem
-        private IDimension mDimension; // dimension object
+        private final int mOrder; // order of the corresponding dimension in the NxsDataItem
+        private final IDimension mDimension; // dimension object
 
         public DimOrder(int order, IDimension dim) {
             mOrder = order;
@@ -64,7 +70,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     private IGroup mParent; // parent group
     private NexusDataItem[] mDataItems; // NeXus dataitem support of the data
     private NxsArray mArray; // CDMA IArray supporting a view of the data
-    private List<DimOrder> mDimension; // list of dimensions
+    private final List<DimOrder> mDimension; // list of dimensions
 
     // / Constructors
     public NxsDataItem() {
@@ -84,12 +90,10 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         try {
             if (mDataItems.length == 1) {
                 mArray = new NxsArray((NxsArray) dataItem.getData());
-            }
-            else {
+            } else {
                 mArray = new NxsArray((NxsArray) dataItem.getData());
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
     }
 
@@ -322,18 +326,15 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
             if (myd.isVariableLength()) {
                 buf.append("*");
-            }
-            else if (myd.isShared()) {
+            } else if (myd.isShared()) {
                 if (!showDimLength) {
                     buf.append(dimName);
                     buf.append("=");
                     buf.append(myd.getLength());
-                }
-                else {
+                } else {
                     buf.append(dimName);
                 }
-            }
-            else {
+            } else {
                 if (dimName != null) {
                     buf.append(dimName);
                 }
@@ -355,8 +356,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         List<IRange> list = null;
         try {
             list = new NxsIndex(getData().getShape()).getRangeList();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         return list;
     }
@@ -366,8 +366,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         List<IRange> list = null;
         try {
             list = ((NxsIndex) getData().getIndex()).getRangeList();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         return list;
     }
@@ -376,12 +375,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public int getRank() {
         int result;
         int[] shape = getShape();
-        
+
         if (shape.length == 1 && shape[0] == 1) {
             result = 0;
-        }
-        else {
-        	result = shape.length;
+        } else {
+            result = shape.length;
         }
 
         return result;
@@ -393,26 +391,23 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         try {
             item = new NxsDataItem(this);
             mArray = (NxsArray) item.getData().getArrayUtils().sectionNoReduce(section).getArray();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         return item;
     }
 
     @Override
     public int[] getShape() {
-    	int[] shape;
-    	if( mDataItems.length == 1 ) {
-    		shape = mDataItems[0].getShape();
-    	}
-    	else {
+        int[] shape;
+        if (mDataItems.length == 1) {
+            shape = mDataItems[0].getShape();
+        } else {
             try {
                 shape = getData().getShape();
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 shape = new int[] {};
             }
-    	}
+        }
         return shape;
     }
 
@@ -442,8 +437,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         NxsDataItem item = new NxsDataItem(this);
         try {
             item.mArray = (NxsArray) item.getData().getArrayUtils().slice(dim, value).getArray();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             item = null;
         }
         return item;
@@ -511,7 +505,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public boolean isScalar() {
-    	return ( getRank() == 0 );
+        return (getRank() == 0);
     }
 
     @Override
@@ -571,15 +565,13 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
-    	if( cacheData instanceof NxsArray ) {
-   			mArray = (NxsArray) cacheData;
-    	}
-    	else if( mDataItems.length == 1 ) {
-	        mDataItems[0].setCachedData(cacheData, isMetadata);
-    	}
-    	else {
-    		throw new InvalidArrayTypeException("Unable to set data: NxsArray is expected!");
-    	}
+        if (cacheData instanceof NxsArray) {
+            mArray = (NxsArray) cacheData;
+        } else if (mDataItems.length == 1) {
+            mDataItems[0].setCachedData(cacheData, isMetadata);
+        } else {
+            throw new InvalidArrayTypeException("Unable to set data: NxsArray is expected!");
+        }
     }
 
     @Override
@@ -607,12 +599,9 @@ public final class NxsDataItem implements IDataItem, Cloneable {
             IAttribute attr = item.getAttribute("axis");
             if (attr != null) {
                 if ("*".equals(dimString)) {
-                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue()
-                            .intValue());
-                }
-                else if (dimNames.contains(attr.getName())) {
-                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue()
-                            .intValue());
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue());
+                } else if (dimNames.contains(attr.getName())) {
+                    setDimension(new NexusDimension(NxsFactory.NAME, item), attr.getNumericValue().intValue());
                 }
             }
         }
@@ -642,7 +631,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         if (mParent == null || !mParent.equals(group)) {
             mParent = group;
             // TODO
-            //group.addDataItem(this);
+            // group.addDataItem(this);
         }
     }
 
@@ -655,9 +644,9 @@ public final class NxsDataItem implements IDataItem, Cloneable {
 
     @Override
     public String toString() {
-    	return getName();
+        return getName();
     }
-    
+
     @Override
     public String toStringDebug() {
         StringBuffer strDebug = new StringBuffer();
@@ -667,8 +656,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         }
         try {
             strDebug.append("shape: " + getData().shapeToString() + "\n");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         }
         List<IDimension> dimensions = getDimensionList();
         for (IDimension dim : dimensions) {
@@ -704,33 +692,30 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public void setDataset(IDataset dataset) {
         if (dataset instanceof NxsDataset) {
             mDataset = (NxsDataset) dataset;
-        }
-        else {
+        } else {
             try {
                 mDataset = NxsDataset.instanciate(new File(dataset.getLocation()).toURI());
-            }
-            catch (NoResultException e) {
-                Factory.getLogger().log( Level.WARNING, e.getMessage());
+            } catch (NoResultException e) {
+                Factory.getLogger().log(Level.WARNING, e.getMessage());
             }
         }
     }
 
     @Override
     public String getLocation() {
-    	String result = null;
-    	if( mDataItems != null && mDataItems.length > 0 ) {
-    		result = mDataItems[0].getLocation();
-    	}
-    	return result;
+        String result = null;
+        if (mDataItems != null && mDataItems.length > 0) {
+            result = mDataItems[0].getLocation();
+        }
+        return result;
     }
 
     @Override
     public IGroup getRootGroup() {
         IGroup root;
-        if( mParent != null ) {
+        if (mParent != null) {
             root = mParent.getRootGroup();
-        }
-        else {
+        } else {
             root = mDataset.getRootGroup();
         }
         return root;
