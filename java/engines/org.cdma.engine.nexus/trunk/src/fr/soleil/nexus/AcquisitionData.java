@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package fr.soleil.nexus;
 
 // Tools lib
@@ -20,7 +26,7 @@ import org.nexusformat.NexusException;
 import org.nexusformat.NexusFile;
 
 public class AcquisitionData {
-    /// Members
+    // / Members
     private NexusFileWriter m_nfwFile; // Manipulator of a NexusFile from which all processes are made
 
     private ArrayList<WeakReference<IWritableGroupListener>> groupListeners;
@@ -331,8 +337,7 @@ public class AcquisitionData {
             sNodeName = lImageNodes.get(iIndex).getNodeName();
             if (!sNodeName.toLowerCase().startsWith("image#")) {
                 lImageNodes.remove(iIndex);
-            }
-            else {
+            } else {
                 m_nfwFile.openGroup(sNodeName, "NXdata");
                 try {
                     openSignalDataNode(m_nfwFile);
@@ -392,13 +397,14 @@ public class AcquisitionData {
      * It corresponds to the following parameters:
      * 
      * @param sAcquiName
-     * @param instName 
-     * @param DataItemName 
+     * @param instName
+     * @param DataItemName
      * @param bCaseSensitive : true / false
      * @return DataItem
      * @throws NexusException
      */
-    public DataItem getDataItem(String sAcquiName, String sInstrName, String DataItemName, boolean bCaseSensitive) throws NexusException {
+    public DataItem getDataItem(String sAcquiName, String sInstrName, String DataItemName, boolean bCaseSensitive)
+            throws NexusException {
         // Get a DataItem array belonging to an instrument
         DataItem[] DataItem_array = getInstrumentData(sAcquiName, sInstrName);
         if (DataItem_array != null) {
@@ -618,7 +624,7 @@ public class AcquisitionData {
      */
     public void writeData(DataItem dsData, PathData pdPath) throws NexusException {
         // Open the file if exists else create it
-    	m_nfwFile.open();
+        m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         try {
@@ -626,7 +632,7 @@ public class AcquisitionData {
             dsData = prepareWriteDataItem(dsData);
 
             // Put data
-            //pdPath.applyClassPattern(FREE_PATTERN);
+            // pdPath.applyClassPattern(FREE_PATTERN);
             m_nfwFile.writeData(dsData, pdPath);
         } catch (NexusException ne) {
             // Close file
@@ -676,7 +682,7 @@ public class AcquisitionData {
      */
     public void writeData(DataItem... datas) throws NexusException {
         // Open the file
-    	m_nfwFile.open();
+        m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // For each DataItem in the given array
@@ -718,7 +724,7 @@ public class AcquisitionData {
      */
     public <type> void writeAttr(String sAttrName, type tData, PathNexus pnPath) throws NexusException {
         // Open the file if exists else create it
-    	m_nfwFile.open();
+        m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // Write the attribute
@@ -787,7 +793,7 @@ public class AcquisitionData {
      */
     public void writeLink(PathNexus pgTargPath, PathNexus pgDestPath) throws NexusException {
         // Open the file if exists else create it
-    	m_nfwFile.open();
+        m_nfwFile.open();
         m_nfwFile.openFile(NexusFile.NXACC_RDWR);
 
         // Write the link
@@ -805,11 +811,12 @@ public class AcquisitionData {
      * Instrument Enumeration of possible instruments.
      */
     public enum Instrument {
-        APERTURE("NXaperture"), ATTENUATOR("NXattenuator"), BEAM_STOP("NXbeam_stop"), BENDING_MAGNET("NXbending_magnet"), COLLIMATOR("NXcollimator"), CRYSTAL(
-                "NXcrystal"), DETECTOR("NXdetector"), DISK_CHOPPER("NXdisk_chopper"), FERMI_CHOPPER("NXfermi_chopper"), FILTER("NXfilter"), FLIPPER(
-                "NXflipper"), GUIDE("NXguide"), INSERTION_DEVICE("NXinsertion_device"), INTENSITY_MONITOR("NXintensity_monitor"), MIRROR("NXmirror"), MODERATOR(
-                "NXmoderator"), MONOCHROMATOR("NXmonochromator"), POLARIZER("NXpolarizer"), POSITIONER("NXpositioner"), SOURCE("NXsource"), VELOCITY_SELECTOR(
-                "NXvelocity_selector");
+        APERTURE("NXaperture"), ATTENUATOR("NXattenuator"), BEAM_STOP("NXbeam_stop"), BENDING_MAGNET("NXbending_magnet"), COLLIMATOR(
+                "NXcollimator"), CRYSTAL("NXcrystal"), DETECTOR("NXdetector"), DISK_CHOPPER("NXdisk_chopper"), FERMI_CHOPPER(
+                "NXfermi_chopper"), FILTER("NXfilter"), FLIPPER("NXflipper"), GUIDE("NXguide"), INSERTION_DEVICE(
+                "NXinsertion_device"), INTENSITY_MONITOR("NXintensity_monitor"), MIRROR("NXmirror"), MODERATOR(
+                "NXmoderator"), MONOCHROMATOR("NXmonochromator"), POLARIZER("NXpolarizer"), POSITIONER("NXpositioner"), SOURCE(
+                "NXsource"), VELOCITY_SELECTOR("NXvelocity_selector");
 
         private String m_sName;
 
@@ -864,7 +871,8 @@ public class AcquisitionData {
      * name or those which not having, depending on the value of bEqualityTest
      * 
      * @param sClassName the name of class on which selection test will be done
-     * @param bEqualityTest boolean value filtering nodes having sClassName (if true), or filtering those not having sClassName (if false)
+     * @param bEqualityTest boolean value filtering nodes having sClassName (if true), or filtering those not having
+     *            sClassName (if false)
      * @return HashSet of NeXus nodes
      */
 
@@ -907,7 +915,6 @@ public class AcquisitionData {
         return alNameList;
     }
 
-    
     /**
      * openSignalDataNode Open the DataItem containing the signal data. This
      * node must be direct descendant of current group
@@ -919,22 +926,22 @@ public class AcquisitionData {
 
         // Parse children
         ArrayList<NexusNode> mNodeMap = handler.listChildren();
-        for (NexusNode node : mNodeMap ) {
+        for (NexusNode node : mNodeMap) {
             sNodeName = node.getNodeName();
             sNodeClass = node.getClassName();
 
             // Seek DataItem nodes (class name = SDS)
             if (sNodeClass.equals("SDS")) {
                 // open DataItem
-            	handler.openData(sNodeName);
-            	
-            	Collection<Attribute> attributes = handler.listAttribute();
-            	
-            	for( Attribute attribute : attributes ) {
-            		if( "signal".equals(attribute.name) ) {
-            			return;
-            		}
-            	}
+                handler.openData(sNodeName);
+
+                Collection<Attribute> attributes = handler.listAttribute();
+
+                for (Attribute attribute : attributes) {
+                    if ("signal".equals(attribute.name)) {
+                        return;
+                    }
+                }
 
                 // Signal DataItem not found, so we continue parsing children
                 handler.closeData();
@@ -942,7 +949,7 @@ public class AcquisitionData {
         }
         throw new NexusException("No signal data item found!");
     }
-    
+
     /**
      * openSubItem Open the iIndex sub-item of current group having the sClass
      * as class name
@@ -958,19 +965,20 @@ public class AcquisitionData {
      * @throws NexusException
      * @note the first item has index number 0
      */
-    private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass, String sPatternName) throws NexusException {
+    private void openSubItem(NexusFileBrowser handler, int iIndex, String sNodeClass, String sPatternName)
+            throws NexusException {
         // Index of the currently examined node in list
         int iCurIndex = 0;
 
         // Get all direct descendants
         List<NexusNode> nodes = handler.listChildren();
-        
+
         // Get the item number iIndex according to nodes (which is correctly sorted)
-        for( NexusNode node : nodes ) {
+        for (NexusNode node : nodes) {
             // Check class name and index to open write node
             if (sNodeClass.equals(node.getClassName()) && node.getNodeName().matches(sPatternName)) {
                 if (iIndex == iCurIndex) {
-                	handler.openNode(node);
+                    handler.openNode(node);
                     return;
                 }
                 iCurIndex++;

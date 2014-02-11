@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.engine.sql.navigation;
 
 import java.io.IOException;
@@ -31,7 +37,6 @@ public final class SqlDataset implements ISqlDataset {
     private final String mFactory;
     private boolean mNumericalDate;
 
-
     public SqlDataset(String factoryName, String host, String user, String password, String driver, String dbName,
             String dbScheme, boolean rac) {
         mFactory = factoryName;
@@ -46,14 +51,14 @@ public final class SqlDataset implements ISqlDataset {
 
     @Override
     public void close() throws IOException {
-        if( mConnector != null ) {
+        if (mConnector != null) {
             mConnector.close();
         }
     }
 
     @Override
     public IGroup getRootGroup() {
-		return new SqlGroup(this, "", (ResultSet)null);
+        return new SqlGroup(this, "", (ResultSet) null);
     }
 
     @Override
@@ -92,7 +97,7 @@ public final class SqlDataset implements ISqlDataset {
     @Override
     public boolean sync() throws IOException {
         boolean result = true;
-        if( mConnector != null ) {
+        if (mConnector != null) {
             try {
                 mConnector.getConnection().commit();
             } catch (SQLException e) {
@@ -145,6 +150,7 @@ public final class SqlDataset implements ISqlDataset {
     /**
      * Return the SqlConnector that handles the database
      */
+    @Override
     public SqlConnector getSqlConnector() {
         return mConnector;
     }
@@ -154,7 +160,7 @@ public final class SqlDataset implements ISqlDataset {
      * 
      * @param timeout in seconds
      */
-    public void setLoginTimeout( int timeout ) {
+    public void setLoginTimeout(int timeout) {
         DriverManager.setLoginTimeout(timeout);
     }
 
@@ -173,8 +179,8 @@ public final class SqlDataset implements ISqlDataset {
      * @param query to be executed
      * @note the execution is delayed: it will be triggered when a result will b e asked
      */
-    public SqlCdmaCursor executeQuery( String query ) {
-        return executeQuery( query, new Object[] {} );
+    public SqlCdmaCursor executeQuery(String query) {
+        return executeQuery(query, new Object[] {});
     }
 
     /**
@@ -183,12 +189,13 @@ public final class SqlDataset implements ISqlDataset {
      * @param query to be executed
      * @note the execution is delayed: it will be triggered when a result will b e asked
      */
-    public SqlCdmaCursor executeQuery( String query, Object[] params ) {
+    public SqlCdmaCursor executeQuery(String query, Object[] params) {
         return new SqlCdmaCursor(this, query, params);
     }
 
     /**
      * Should date be stored as long or should they be stored as string.
+     * 
      * @param numerical
      */
     public void setNumericalDate(boolean numerical) {

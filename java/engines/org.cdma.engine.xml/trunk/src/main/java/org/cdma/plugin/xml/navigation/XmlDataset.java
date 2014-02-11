@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.plugin.xml.navigation;
 
 import java.io.File;
@@ -17,7 +23,6 @@ import org.cdma.dictionary.LogicalGroup;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
-import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.xml.XmlUtils;
@@ -27,207 +32,196 @@ import org.w3c.dom.NodeList;
 
 public class XmlDataset implements IDataset {
 
-	private File mPath;
-	private String mTitle;
-	private IGroup mRootGroup;
-	private boolean mIsOpen;
-	private final String mFactoryName;
+    private File mPath;
+    private String mTitle;
+    private IGroup mRootGroup;
+    private boolean mIsOpen;
+    private final String mFactoryName;
 
-	public XmlDataset(String factoryName, File file) {
-		mIsOpen = false;
-		mPath = file;
-		mTitle = file.getName();
-		mFactoryName = factoryName;
-		if (file.exists() && file.isFile()) {
-			initFromXmlFile(file);
-		}
-	}
+    public XmlDataset(String factoryName, File file) {
+        mIsOpen = false;
+        mPath = file;
+        mTitle = file.getName();
+        mFactoryName = factoryName;
+        if (file.exists() && file.isFile()) {
+            initFromXmlFile(file);
+        }
+    }
 
-	private void initFromXmlFile(File file) {
-		try {
-			Node rootNode = XmlUtils.getRootNode(file);
-			mRootGroup = new XmlGroup(mFactoryName, rootNode.getNodeName(), 0,
-					this, null);
-			loadAttributes(rootNode, (XmlGroup) mRootGroup);
-			loadChildNodes(rootNode, (XmlGroup) mRootGroup);
-			mIsOpen = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    private void initFromXmlFile(File file) {
+        try {
+            Node rootNode = XmlUtils.getRootNode(file);
+            mRootGroup = new XmlGroup(mFactoryName, rootNode.getNodeName(), 0, this, null);
+            loadAttributes(rootNode, (XmlGroup) mRootGroup);
+            loadChildNodes(rootNode, (XmlGroup) mRootGroup);
+            mIsOpen = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	private void loadChildNodes(Node node, XmlGroup parentContainer)
-			throws Exception {
-		if (node.hasChildNodes()) {
-			NodeList childNodes = node.getChildNodes();
-			int groupIndex = 0, itemIndex = 0;
-			for (int index = 0; index < childNodes.getLength(); ++index) {
-				Node currentChild = childNodes.item(index);
-				if (XmlUtils.isAFakeNode(currentChild)) {
-					continue;
-				}
-				String currentChildType = currentChild.getNodeName().trim();
+    private void loadChildNodes(Node node, XmlGroup parentContainer) throws Exception {
+        if (node.hasChildNodes()) {
+            NodeList childNodes = node.getChildNodes();
+            int groupIndex = 0, itemIndex = 0;
+            for (int index = 0; index < childNodes.getLength(); ++index) {
+                Node currentChild = childNodes.item(index);
+                if (XmlUtils.isAFakeNode(currentChild)) {
+                    continue;
+                }
+                String currentChildType = currentChild.getNodeName().trim();
 
-				// Add data item when a text value is available
-				String data = currentChild.getNodeValue();
-				if ( data != null && ! data.trim().isEmpty() ) {
-					XmlDataItem item = new XmlDataItem(mFactoryName, "data_item",
-							itemIndex, this, parentContainer);
-					item.setCachedData(new XmlArray( mFactoryName, data), false);
-					parentContainer.addContainer(item);
-					itemIndex++;
-				}
-				// The node is a group
-				else {
-					XmlGroup container = null;
-					if (parentContainer instanceof IGroup) {
-						container = new XmlGroup(mFactoryName, currentChildType,
-								groupIndex, this, parentContainer);
-						loadChildNodes(currentChild, container);
-						groupIndex++;
-					}
-	
-					if (parentContainer != null
-							&& parentContainer instanceof XmlGroup) {
-						parentContainer.addContainer(container);
-					}
-					loadAttributes(currentChild, container);
-				}
-			}
-		}
-	}
+                // Add data item when a text value is available
+                String data = currentChild.getNodeValue();
+                if (data != null && !data.trim().isEmpty()) {
+                    XmlDataItem item = new XmlDataItem(mFactoryName, "data_item", itemIndex, this, parentContainer);
+                    item.setCachedData(new XmlArray(mFactoryName, data), false);
+                    parentContainer.addContainer(item);
+                    itemIndex++;
+                }
+                // The node is a group
+                else {
+                    XmlGroup container = null;
+                    if (parentContainer instanceof IGroup) {
+                        container = new XmlGroup(mFactoryName, currentChildType, groupIndex, this, parentContainer);
+                        loadChildNodes(currentChild, container);
+                        groupIndex++;
+                    }
 
-	private void loadAttributes(Node node, XmlContainer container)
-			throws Exception {
-		Hashtable<String, String> attributeProperties = XmlUtils
-				.loadAttributes(node);
-		if (!attributeProperties.isEmpty()) {
-			for (String entry : attributeProperties.keySet()) {
-				container.addStringAttribute(entry,
-						attributeProperties.get(entry));
-			}
-		}
-	}
+                    if (parentContainer != null && parentContainer instanceof XmlGroup) {
+                        parentContainer.addContainer(container);
+                    }
+                    loadAttributes(currentChild, container);
+                }
+            }
+        }
+    }
 
-	@Override
-	public void close() throws IOException {
+    private void loadAttributes(Node node, XmlContainer container) throws Exception {
+        Hashtable<String, String> attributeProperties = XmlUtils.loadAttributes(node);
+        if (!attributeProperties.isEmpty()) {
+            for (String entry : attributeProperties.keySet()) {
+                container.addStringAttribute(entry, attributeProperties.get(entry));
+            }
+        }
+    }
 
-	}
+    @Override
+    public void close() throws IOException {
 
-	@Override
-	public String getFactoryName() {
-		return mFactoryName;
-	}
+    }
 
-	@Override
-	public IGroup getRootGroup() {
-		return mRootGroup;
-	}
+    @Override
+    public String getFactoryName() {
+        return mFactoryName;
+    }
 
-	@Override
-	public String getLocation() {
-		return mPath.getPath();
-	}
+    @Override
+    public IGroup getRootGroup() {
+        return mRootGroup;
+    }
 
-	@Override
-	public String getTitle() {
-		return mTitle;
-	}
+    @Override
+    public String getLocation() {
+        return mPath.getPath();
+    }
 
-	@Override
-	public void setLocation(String location) {
-		File file = new File(location);
-		if (file.exists() && file.isFile()) {
-			mPath = file;
-			initFromXmlFile(file);
-		}
-	}
+    @Override
+    public String getTitle() {
+        return mTitle;
+    }
 
-	@Override
-	public LogicalGroup getLogicalRoot() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void setLocation(String location) {
+        File file = new File(location);
+        if (file.exists() && file.isFile()) {
+            mPath = file;
+            initFromXmlFile(file);
+        }
+    }
 
-	@Override
-	public void setTitle(String title) {
-		mTitle = title;
-	}
+    @Override
+    public LogicalGroup getLogicalRoot() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public boolean sync() throws IOException {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public void setTitle(String title) {
+        mTitle = title;
+    }
 
-	@Override
-	public void open() throws IOException {
-		// TODO Auto-generated method stub
+    @Override
+    public boolean sync() throws IOException {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	}
+    @Override
+    public void open() throws IOException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void save() throws WriterException {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public void save() throws WriterException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void saveTo(String location) throws WriterException {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public void saveTo(String location) throws WriterException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void save(IContainer container) throws WriterException {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public void save(IContainer container) throws WriterException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void save(String parentPath, IAttribute attribute)
-			throws WriterException {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    @Override
+    public void save(String parentPath, IAttribute attribute) throws WriterException {
+        // TODO Auto-generated method stub
 
-	@Override
-	public boolean isOpen() {
-		return mIsOpen;
-	}
+    }
 
-	public void printHierarchy() {
-		System.out
-				.print("-------------------------- HIERARCHY ---------------------------------\n");
-		if (mRootGroup != null) {
-			((XmlGroup) mRootGroup).printHierarchy(0);
-		} else {
-			System.out.print("Root is null");
-		}
-	}
+    @Override
+    public boolean isOpen() {
+        return mIsOpen;
+    }
 
-	public static void main(String[] args) {
+    public void printHierarchy() {
+        System.out.print("-------------------------- HIERARCHY ---------------------------------\n");
+        if (mRootGroup != null) {
+            ((XmlGroup) mRootGroup).printHierarchy(0);
+        } else {
+            System.out.print("Root is null");
+        }
+    }
 
-		File xmlFile = new File(
-				"D:\\Archiving\\Mambo\\vc\\bug_mambo_example_vc.xml");
-		System.out.println("File exists : " + xmlFile.exists());
-		System.out.println("File is a file : " + xmlFile.isFile());
+    public static void main(String[] args) {
 
-		XmlDataset dataset = new XmlDataset("XML_FACTORY", xmlFile);
-		System.out.println(dataset);
-		System.out.println("Path : " + dataset.getLocation());
-		System.out.println("Title : " + dataset.getTitle());
+        File xmlFile = new File("D:\\Archiving\\Mambo\\vc\\bug_mambo_example_vc.xml");
+        System.out.println("File exists : " + xmlFile.exists());
+        System.out.println("File is a file : " + xmlFile.isFile());
 
-		IGroup group = dataset.getRootGroup();
-		System.out.println("Root group : " + group);
+        XmlDataset dataset = new XmlDataset("XML_FACTORY", xmlFile);
+        System.out.println(dataset);
+        System.out.println("Path : " + dataset.getLocation());
+        System.out.println("Title : " + dataset.getTitle());
 
-		System.out.println();
-		dataset.printHierarchy();
+        IGroup group = dataset.getRootGroup();
+        System.out.println("Root group : " + group);
 
-	}
+        System.out.println();
+        dataset.printHierarchy();
 
-	@Override
-	public long getLastModificationDate() {
-		return mPath.lastModified();
-	}
+    }
+
+    @Override
+    public long getLastModificationDate() {
+        return mPath.lastModified();
+    }
 }

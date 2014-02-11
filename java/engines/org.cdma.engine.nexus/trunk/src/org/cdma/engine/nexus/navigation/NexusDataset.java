@@ -1,12 +1,18 @@
-//******************************************************************************
-// Copyright (c) 2011 Synchrotron Soleil.
-// The CDMA library is free software; you can redistribute it and/or modify it
-// under the terms of the GNU General Public License as published by the Free
-// Software Foundation; either version 2 of the License, or (at your option)
-// any later version.
-// Contributors :
-// See AUTHORS file
-//******************************************************************************
+/*******************************************************************************
+ * Copyright (c) 2008 - ANSTO/Synchrotron SOLEIL
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ ******************************************************************************/
 package org.cdma.engine.nexus.navigation;
 
 import java.io.File;
@@ -25,7 +31,6 @@ import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.nexusformat.NexusException;
-import org.nexusformat.NexusFile;
 
 import fr.soleil.nexus.DataItem;
 import fr.soleil.nexus.NexusFileHandler;
@@ -36,33 +41,34 @@ import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.PathNexus;
 
 public abstract class NexusDataset implements IDataset, Cloneable {
-	
-	static public boolean checkNeXusAPI() {
-		// Check library can be fully loaded (specially the native part)
-		boolean result = false;
-    	try {
-    		NexusFileHandler.loadAPI();
+
+    static public boolean checkNeXusAPI() {
+        // Check library can be fully loaded (specially the native part)
+        boolean result = false;
+        try {
+            NexusFileHandler.loadAPI();
             result = true;
-		} catch (Exception exception) {
-			// Nothing to be done API hasn't been found
-		} catch( Error error ) {
-			Factory.getLogger().log(Level.SEVERE, error.getMessage() );
-			// Nothing to be done but API isn't valid
-		}
-		return result;
-	}
-	
-    public NexusDataset(String factoryName, File nexusFile, int bufferSize, boolean resetBuffer) throws FileAccessException {
-        mFactory      = factoryName;
+        } catch (Exception exception) {
+            // Nothing to be done API hasn't been found
+        } catch (Error error) {
+            Factory.getLogger().log(Level.SEVERE, error.getMessage());
+            // Nothing to be done but API isn't valid
+        }
+        return result;
+    }
+
+    public NexusDataset(String factoryName, File nexusFile, int bufferSize, boolean resetBuffer)
+            throws FileAccessException {
+        mFactory = factoryName;
         mRootPhysical = null;
-        mN4TWriter    = new NexusFileWriter(nexusFile.getAbsolutePath());
-        mN4TCurPath   = PathNexus.ROOT_PATH.clone();
-        mTitle        = nexusFile.getName();
+        mN4TWriter = new NexusFileWriter(nexusFile.getAbsolutePath());
+        mN4TCurPath = PathNexus.ROOT_PATH.clone();
+        mTitle = nexusFile.getName();
         mN4TCurPath.setFile(nexusFile.getAbsolutePath());
         mN4TWriter.setBufferSize(bufferSize);
         mN4TWriter.isSingleRawResult(true);
         mN4TWriter.setCompressedData(true);
-        if( resetBuffer ) {
+        if (resetBuffer) {
             mN4TWriter.resetBuffer();
         }
     }
@@ -72,10 +78,10 @@ public abstract class NexusDataset implements IDataset, Cloneable {
     }
 
     public NexusDataset(NexusDataset dataset) {
-        mFactory      = dataset.mFactory;
-        mN4TWriter    = dataset.mN4TWriter;
-        mN4TCurPath   = dataset.mN4TCurPath.clone();
-        mTitle        = dataset.mTitle;
+        mFactory = dataset.mFactory;
+        mN4TWriter = dataset.mN4TWriter;
+        mN4TCurPath = dataset.mN4TCurPath.clone();
+        mTitle = dataset.mTitle;
         mRootPhysical = dataset.mRootPhysical;
         mN4TWriter.isSingleRawResult(true);
     }
@@ -84,7 +90,7 @@ public abstract class NexusDataset implements IDataset, Cloneable {
     public void open() throws IOException {
     }
 
-    /// Methods
+    // / Methods
     @Override
     public void close() throws IOException {
     }
@@ -154,12 +160,12 @@ public abstract class NexusDataset implements IDataset, Cloneable {
     public NexusFileWriter getHandler() {
         return mN4TWriter;
     }
-    
+
     @Override
     public long getLastModificationDate() {
         return mN4TWriter.getLastModificationDate();
     }
-    
+
     @Override
     public String getFactoryName() {
         return mFactory;
@@ -199,9 +205,9 @@ public abstract class NexusDataset implements IDataset, Cloneable {
     public void resetBuffer() {
         mN4TWriter.resetBuffer();
     }
-    
+
     // -----------------------------------------------------------
-    /// protected methods
+    // / protected methods
     // -----------------------------------------------------------
     // Accessors
     protected PathNexus getCurrentPath() {
@@ -225,11 +231,11 @@ public abstract class NexusDataset implements IDataset, Cloneable {
         mRootPhysical = new NexusGroup(mFactory, rootPath, this);
     }
 
-    private IGroup           mRootPhysical;      // Physical root of the document
-    private NexusFileWriter  mN4TWriter;         // Instance manipulating the NeXus file
-    private String           mTitle;
-    private String           mFactory;
-    private PathNexus        mN4TCurPath;         // Instance of the current path
+    private IGroup mRootPhysical; // Physical root of the document
+    private final NexusFileWriter mN4TWriter; // Instance manipulating the NeXus file
+    private String mTitle;
+    private final String mFactory;
+    private PathNexus mN4TCurPath; // Instance of the current path
     private static final int N4T_BUFF_SIZE = 300; // Size of the buffer managed by NeXus4Tango
 
 }
