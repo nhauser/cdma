@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stï¿½phane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.nexus.navigation;
 
@@ -574,7 +574,15 @@ public final class NexusDataItem implements IDataItem, Cloneable {
 
     @Override
     public byte readScalarByte() throws IOException {
-        return java.lang.reflect.Array.getByte(mn4tDataItem.getData(), 0);
+        byte result;
+        Object data = mn4tDataItem.getData();
+        if (data instanceof boolean[]) {
+            boolean[] array = (boolean[]) data;
+            result = (byte) (array[0] ? 1 : 0);
+        } else {
+            result = java.lang.reflect.Array.getByte(data, 0);
+        }
+        return result;
     }
 
     @Override
