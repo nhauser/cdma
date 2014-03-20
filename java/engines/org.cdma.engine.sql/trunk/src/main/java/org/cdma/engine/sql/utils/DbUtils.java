@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.sql.utils;
 
@@ -48,13 +48,19 @@ public class DbUtils {
      * Return the Data Base type according the given URL (must contains the protocol)
      */
     public static BaseType detectDb(SqlDataset dataset) {
-        String host = dataset.getSqlConnector().getHost();
+        String driver = dataset.getSqlConnector().getDriver();
         BaseType type;
-        if (host.matches("[^:]*:oracle.*")) {
+        if (driver.contains("oracle")) {
             type = BaseType.ORACLE;
         } else {
             type = BaseType.MYSQL;
         }
+
+        // if (driver.matches("[^:]*:oracle.*")) {
+//            type = BaseType.ORACLE;
+//        } else {
+//            type = BaseType.MYSQL;
+//        }
         return type;
     }
 
