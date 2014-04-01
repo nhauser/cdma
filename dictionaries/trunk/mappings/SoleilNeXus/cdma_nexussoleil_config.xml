@@ -112,6 +112,28 @@
     </plugin>
   </dataset-model>
   
+  
+  <!-- ============================================
+==  CONFIG 5: CONTACQ flyscan                    ==
+============================================= -->
+  <dataset-model name="contacq_flyscan">
+    <criteria>
+            <if exist="true" target="/{NXentry}/{NXdata}/image"/>
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE" type="constant" constant="contacq"/>
+      <parameter name="MODEL" type="constant" constant="flyscan"/>
+    </parameters>
+
+    <plugin>
+      <java>
+        <set name="log_debug" value="true"/>
+        <set name="N4T_buffer_size" value="300"/>
+      </java>
+    </plugin>
+  </dataset-model>
+  
 <!-- ============================================
 ==  Global section                             ==
 ============================================= -->

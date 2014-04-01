@@ -24,6 +24,12 @@
 	<item key="yBin">
 		<path>Aviex/Ybin</path>
 	</item>
+	<item key="x0">
+    <path>Center_1</path>
+  </item>
+  <item key="z0">
+    <path>Center_2</path>
+  </item>
 	<item key="mi">
 		<path>I11-C-C07__DT__MI_DIODE.5</path>
 	</item>
