@@ -52,6 +52,8 @@
       <item key="total_image" />
       <item key="x_position" />
       <item key="y_position" />
+	  <item key="x0" />
+      <item key="z0" />
       <item key="sampleTheta" />
       <item key="samplePhi" />
       <item key="apertureAngle" />
@@ -59,6 +61,6 @@
     <group key="info">
       <item key="comments" />
     </group>
-    <item key="acquisition_sequence" />
+	<item key="acquisition_sequence" />
   </group>
 </data-def>
