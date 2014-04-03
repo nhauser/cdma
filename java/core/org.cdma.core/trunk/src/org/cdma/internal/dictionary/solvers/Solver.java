@@ -48,43 +48,51 @@ import org.cdma.interfaces.IKey;
  */
 
 public class Solver {
-    private IKey mKey;             // LogicalGroup to create
-    private Path mPath;            // Physical path to open
-    private IPluginMethod mMethod; // Method call to call
-    
+    private final IKey mKey;             // LogicalGroup to create
+    private final Path mPath;            // Physical path to open
+    private final IPluginMethod mMethod; // Method call to call
+    private final Object[] mParameters;
+
     public Solver( IKey key ) {
         mKey    = key;
         mPath   = null;
         mMethod = null;
+        mParameters = null;
     }
-    
+
     public Solver( Path path ) {
         mPath   = path;
         mKey    = null;
         mMethod = null;
+        mParameters = null;
     }
-    
-    public Solver( IPluginMethod method ) {
+
+    public Solver(IPluginMethod method, Object[] parameters) {
         mMethod = method;
         mPath   = null;
         mKey    = null;
-        
+        mParameters = parameters;
     }
-    
+
+    public Solver(IPluginMethod method) {
+        this(method, null);
+    }
+
     public List<IContainer> solve(Context context) {
         List<IContainer> result = null;
-        
-        // Update context with currently executed solver 
+
+        // Update context with currently executed solver
         context.addSolver(this);
-        
+
         // If the solver is a path
         if( mPath != null ) {
-        	// return all found nodes at path
-        	result = findAllContainerByPath(context);
+            // return all found nodes at path
+            result = findAllContainerByPath(context);
         }
         // If the solver is a call on a method
         else if( mMethod != null ) {
-        	result = executeMethod(context);
+            context.setParams(mParameters);
+            result = executeMethod(context);
         }
         // If the solver is a key create a LogicalGroup
         else if( mKey != null ) {
@@ -95,19 +103,19 @@ public class Solver {
         else {
             result = new ArrayList<IContainer>();
         }
-        
+
         return result;
     }
 
 
-	/**
+    /**
      * Give an access to the given IKey that constructed this object.
      * @return IKey implementation
      */
     public IKey getKey() {
         return mKey;
     }
-    
+
     /**
      * Give an access to the given Path that constructed this object.
      * @return Path object
@@ -115,7 +123,7 @@ public class Solver {
     public Path getPath() {
         return mPath;
     }
-    
+
     /**
      * Give an access to the given IPluginMethod that constructed this object.
      * @return IPluginMethod implementation
@@ -123,19 +131,19 @@ public class Solver {
     public IPluginMethod getPluginMethod() {
         return mMethod;
     }
-    
+
     // ---------------------------------------------------------------
     // PRIVATE methods
     // ---------------------------------------------------------------
     private List<IContainer> findAllContainerByPath(Context context) {
-    	List<IContainer> result = new ArrayList<IContainer>();
-    	
-    	// Clear the context of previously found nodes
+        List<IContainer> result = new ArrayList<IContainer>();
+
+        // Clear the context of previously found nodes
         context.clearContainers();
-        
+
         // Get the dataset
         IGroup root = context.getDataset().getRootGroup();
-        
+
         // Try to get all nodes at the targeted path
         try {
             result = root.findAllContainerByPath( mPath.getValue() );
@@ -144,21 +152,21 @@ public class Solver {
         }
 
         return result;
-	}
-        
-	private List<IContainer> executeMethod(Context context) {
-		List<IContainer> result = new ArrayList<IContainer>();
+    }
+
+    private List<IContainer> executeMethod(Context context) {
+        List<IContainer> result = new ArrayList<IContainer>();
         try {
             // Execute the method
             mMethod.execute(context);
-            
+
             // Get all items added by the method
             result.addAll( context.getContainers() );
         } catch (CDMAException e) {
             Factory.getLogger().log( Level.WARNING, e.getMessage());
         }
         return result;
-	}
+    }
 }
 
 /// @endcond internal

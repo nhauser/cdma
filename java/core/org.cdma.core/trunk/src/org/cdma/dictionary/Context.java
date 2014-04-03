@@ -16,11 +16,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //    Tony Lam (nxi@Bragg Institute) - initial API and implementation
 //    Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
@@ -41,7 +41,7 @@ public final class Context {
     private IKey             mKey;
     private Object[]         mParams;
     private List<IContainer> mContainers;
-    private List<Solver>     mSolvers;
+    private final List<Solver>     mSolvers;
     private Concept          mConcept;
 
     public Context(IDataset dataset) {
@@ -106,7 +106,7 @@ public final class Context {
     }
 
     /**
-     * Permits to get the Solver list corresponding to the 
+     * Permits to get the Solver list corresponding to the
      * IKey that have been previously executed
      */
     public List<Solver> getSolver() {
@@ -133,13 +133,15 @@ public final class Context {
     /**
      * Permits to set some parameters that are defined by the instantiating plug-in
      * and that can be useful for the method using this context.
-     *  
+     * 
      * @return array of object
      */
     public void setParams(Object[] params) {
-        mParams = params.clone();
+        if (params != null) {
+            mParams = params.clone();
+        }
     }
-    
+
     /**
      * Get the list of found Containers by previously executed solver
      * 
@@ -155,21 +157,21 @@ public final class Context {
     public void clearContainers() {
         mContainers.clear();
     }
-    
+
     /**
      * Set the list of found containers
      */
     public void setContainers( List<IContainer> items ) {
         mContainers = items;
     }
-    
+
     /**
      * Add a Container to the list of found Containers
      */
     public void addContainer( IContainer item ) {
         mContainers.add(item);
     }
-    
+
     /**
      * Returns the concept that is expected for this context.
      * 
@@ -178,7 +180,7 @@ public final class Context {
     public Concept getConcept() {
         return mConcept;
     }
-    
+
     /**
      * Set the concept that is expected by the context user.
      * 
