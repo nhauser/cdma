@@ -222,8 +222,11 @@
     <path>/comment_conditions/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="end_time">
+  <item key="start_time">
     <path>/start_time</path>
+  </item>
+  <item key="end_time">
+    <path>/end_time</path>
   </item>
   <item key="time">
     <path>/duration</path>
