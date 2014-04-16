@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EDF Data Plug-in
+Bundle-SymbolicName: org.cdma.plugin.soleil.edf
+Bundle-Version: 3.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Import-Package: org.gumtree.data,
+ org.gumtree.data.exception,
+ org.gumtree.data.impl.utils,
+ org.gumtree.data.interfaces,
+ org.gumtree.data.math,
+ org.jdom,
+ org.jdom.filter,
+ org.jdom.input
+Service-Component: OSGI-INF/factory.xml
+Export-Package: org.gumtree.data.impl.edf
