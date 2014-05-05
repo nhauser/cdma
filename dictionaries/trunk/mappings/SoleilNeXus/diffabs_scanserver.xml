@@ -130,7 +130,7 @@
   </item>
   <item key="images">
     <!-- the core will try to open that path, but won't succeed -->
-    <path>/{NXdata}/data_*@long_name=*xpad.*/image</path>
+    <path>/{NXdata}/data_*@long_name=*xpad*/image</path>
     <!-- that method will get the previous path from context, will split the attribute section from the 
       path to filter on that attribute name and value -->
     <call>AttributeFilter</call>
