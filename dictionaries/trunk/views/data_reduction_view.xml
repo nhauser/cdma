@@ -13,6 +13,7 @@
       <item key="liveTime" />
       <item key="sweeps" />
       <item key="acquisitionMode" />
+	  <item key="globalGain" />
       <item key="lensMode" />
       <item key="passEnergy" />
       <item key="lowEnergy" />
@@ -27,10 +28,12 @@
       <item key="sliceScale" />
       <item key="energyScale" />
       <item key="dataChannelScale" />
+	  <item key="pixelSize" />
     </group>
     <group key="monitor">
       <item key="mi" />
       <item key="gain" />
+	  <item key="bias" />
       <item key="intensity" />
     </group>
     <group key="monochromator">

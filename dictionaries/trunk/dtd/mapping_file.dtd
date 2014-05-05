@@ -29,7 +29,9 @@ item
 ========================== 
 -->
 <!ELEMENT call (#PCDATA)>
-<!ATTLIST call >
+<!ATTLIST call
+    param CDATA #IMPLIED
+  >
 
 <!--
 ==========================

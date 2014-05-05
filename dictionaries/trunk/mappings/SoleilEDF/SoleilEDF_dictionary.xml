@@ -10,37 +10,53 @@
 	</item>
 	<item key="distance">
 		<path>SampleDistance</path>
+		<call param="1000">ApplyCorrectionFactor</call>
 		<call>HarvestEquipmentAttributes</call>
 	</item>
-	<item key="exposureTime">
-		<path>Aviex/Exposure_time</path>
-	</item>
-	<item key="shutterCloseDelay">
-		<path>Aviex/Shutter_close_delay</path>
-	</item>
-	<item key="xBin">
-		<path>Aviex/Xbin</path>
-	</item>
-	<item key="yBin">
-		<path>Aviex/Ybin</path>
-	</item>
+    <item key="exposureTime">
+        <path>ExposureTime</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="shutterCloseDelay">
+        <path>ShutterCloseDelay</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="xBin">
+        <path>Xbin</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="yBin">
+        <path>Ybin</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="pixelSize">
+        <path>PSize_1</path>
+		<call>HarvestEquipmentAttributes</call>
+		<call param="1000000">ApplyCorrectionFactor</call>
+    </item>	
 	<item key="x0">
     <path>Center_1</path>
   </item>
   <item key="z0">
     <path>Center_2</path>
   </item>
+      <item key="globalGain">
+        <path>Gain</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="bias">
+        <path>Bias</path>
+		<call>HarvestEquipmentAttributes</call>
+    </item>
+    <item key="intensity">
+        <path>Intensity1</path>
+    </item>
 	<item key="mi">
 		<path>I11-C-C07__DT__MI_DIODE.5</path>
 	</item>
-	<item key="gain">
-		<path>I11-C-C07__DT__MI_DIODE.5/Gain</path>
-	</item>
-	<item key="intensity">
-		<path>I11-C-C07__DT__MI_DIODE.5/intensity</path>
-	</item>
 	<item key="lambda">
 		<path>WaveLength</path>
+		<call param="10000000000">ApplyCorrectionFactor</call>
 		<call>HarvestEquipmentAttributes</call>
 	</item>
 	<item key="energy">
@@ -49,10 +65,6 @@
 	</item>
 	<item key="comments">
 		<path>Sample_comments</path>
-	</item>
-	<item key="exposure_time">
-		<path>Aviex/Exposure_time</path>
-		<call>HarvestEquipmentAttributes</call>
 	</item>
 	<item key="images">
 		<path>Image</path>
