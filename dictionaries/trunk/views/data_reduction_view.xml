@@ -29,6 +29,8 @@
       <item key="energyScale" />
       <item key="dataChannelScale" />
 	  <item key="pixelSize" />
+      <item key="delta" />
+      <item key="deltaOffset" />
     </group>
     <group key="monitor">
       <item key="mi" />
