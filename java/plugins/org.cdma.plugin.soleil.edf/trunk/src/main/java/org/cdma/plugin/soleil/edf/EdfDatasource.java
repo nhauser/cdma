@@ -41,7 +41,7 @@ import org.cdma.plugin.soleil.edf.utils.FileComparator;
 
 public final class EdfDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
-    private static final String EXTENSION = ".edf";
+    public static final String EXTENSION = ".edf";
 
     private static HashMap<String, DetectedSource> detectedSources; // map of analyzed URIs
     private static EdfDatasource datasource;
@@ -68,7 +68,8 @@ public final class EdfDatasource implements IDatasource {
                 result = (length > EXTENSION.length() && fileName.substring(length - EXTENSION.length())
                         .equalsIgnoreCase(EXTENSION));
             } else {
-                //result = findEDFFiles(path);
+
+                result = findEDFFiles(path);
             }
             return result;
         }
@@ -93,7 +94,7 @@ public final class EdfDatasource implements IDatasource {
                 }
             }
         }
-        return hasEdfFile && !hasDirectory;
+        return hasEdfFile || hasDirectory;
     }
 
     @Override
@@ -130,9 +131,10 @@ public final class EdfDatasource implements IDatasource {
             File folder = new File(target.getPath());
             if (folder.isDirectory()) {
 
-                File[] files = folder.listFiles(new ValidURIFilter());
+                File[] files = folder.listFiles();
                 if (files != null) {
                     for (File file : files) {
+
                         result.add(file.toURI());
                     }
                 }
