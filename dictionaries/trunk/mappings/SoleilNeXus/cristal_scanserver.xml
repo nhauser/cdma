@@ -120,6 +120,10 @@
     <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="lambda">
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="energy">
     <path>/{NXinstrument}/{NXmonochromator}/energy</path>
     <call>HarvestEquipmentAttributes</call>
@@ -209,7 +213,18 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
+
   </item>
+    <item key="delta">
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXdata}/actuator_*@long_name=*/position</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="interpretation" value="image"/>
+  </item>
+  
   <item key="beamEnergy">
     <path>/{NXdata}/actuator_*@long_name=*/energy*</path>
     <call>AttributeFilter</call>
