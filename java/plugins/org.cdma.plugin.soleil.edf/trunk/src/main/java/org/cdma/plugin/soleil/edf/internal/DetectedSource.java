@@ -18,6 +18,7 @@ package org.cdma.plugin.soleil.edf.internal;
 import java.io.File;
 import java.net.URI;
 
+import org.apache.commons.io.FilenameUtils;
 import org.cdma.plugin.soleil.edf.EdfDatasource;
 
 public class DetectedSource {
@@ -67,21 +68,20 @@ public class DetectedSource {
                 File file = new File(path);
                 if (file.exists()) {
                     mIsBrowsable = file.isDirectory();
-                    mIsReadable = true;
-                    //                    if (mIsBrowsable){
-                    //                        if (EdfDatasource.findEDFFiles(file)){
-                    //                            mIsReadable = true;
-                    //                        }
-                    //                    }
-                    // ValidURIFilter filter = new ValidURIFilter();
-                    String fileName = file.getPath();
-                    int length = fileName.length();
-                    boolean accept = (length > EdfDatasource.EXTENSION.length() && fileName.substring(
-                            length - EdfDatasource.EXTENSION.length()).equalsIgnoreCase(EdfDatasource.EXTENSION));
+
+                    String fileName = file.getName();
+                    String ext = FilenameUtils.getExtension(fileName);
+                    boolean accept = EdfDatasource.EXTENSION.equalsIgnoreCase(ext);
+
                     if (accept) {
-                        mIsBrowsable = true;
+                        // Correct extension -> Readable
                         mIsReadable = true;
+                        // We are producer since EDF are not signed
                         mIsProducer = true;
+                        // Producer || folder
+                        mIsBrowsable = true;
+                        // not sure there
+                        // improvement needed
                         mIsExperiment = true;
                     }
                 }
