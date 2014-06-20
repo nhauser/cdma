@@ -10,7 +10,7 @@
 	<groupId>org.cdma.plugins</groupId>
 	<artifactId>EdfSoleil</artifactId>
 	<name>EDF CDMA Soleil Plugin</name>
-	<version>1.0.7-SNAPSHOT</version>
+	<version>1.0.6</version>
 	<developers>
 		<developer>
 			<id>girardot</id>
