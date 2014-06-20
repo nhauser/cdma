@@ -35,13 +35,14 @@ import java.util.List;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.commons.io.FilenameUtils;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.plugin.soleil.edf.internal.DetectedSource;
 import org.cdma.plugin.soleil.edf.utils.FileComparator;
 
 public final class EdfDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
-    public static final String EXTENSION = ".edf";
+    public static final String EXTENSION = "edf";
 
     private static HashMap<String, DetectedSource> detectedSources; // map of analyzed URIs
     private static EdfDatasource datasource;
@@ -64,9 +65,8 @@ public final class EdfDatasource implements IDatasource {
             boolean isDir = path.isDirectory();
             if (!isDir) {
                 String fileName = path.getPath();
-                int length = fileName.length();
-                result = (length > EXTENSION.length() && fileName.substring(length - EXTENSION.length())
-                        .equalsIgnoreCase(EXTENSION));
+                String ext = FilenameUtils.getExtension(fileName);
+                result = EdfDatasource.EXTENSION.equalsIgnoreCase(ext);
             } else {
 
                 result = findEDFFiles(path);
@@ -134,7 +134,6 @@ public final class EdfDatasource implements IDatasource {
                 File[] files = folder.listFiles();
                 if (files != null) {
                     for (File file : files) {
-
                         result.add(file.toURI());
                     }
                 }
