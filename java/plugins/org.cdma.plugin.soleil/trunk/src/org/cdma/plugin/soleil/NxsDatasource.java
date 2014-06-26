@@ -17,6 +17,7 @@ package org.cdma.plugin.soleil;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
@@ -40,9 +41,9 @@ import fr.soleil.nexus.PathNexus;
 public final class NxsDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
     private static final HashMap<String, DetectedSource> mDetectedSources; // map
-                                                                           // of
-                                                                           // analyzed
-                                                                           // URIs
+    // of
+    // analyzed
+    // URIs
     private static NxsDatasource datasource;
 
     static {
@@ -94,17 +95,20 @@ public final class NxsDatasource implements IDatasource {
 
     @Override
     public boolean isProducer(URI target) {
-        boolean result = false;
-        DetectedSource source = getSource(target);
-        if (source != null) {
-            result = source.isProducer();
-        }
+        boolean result = true;
+        // This plugin is the only one for NeXus today
+        // so avoid this time consuming file accesses.
+        //        DetectedSource source = getSource(target);
+        //        if (source != null) {
+        //            result = source.isProducer();
+        //        }
         return result;
     }
 
     @Override
     public boolean isExperiment(URI target) {
         boolean result = false;
+
         DetectedSource source = getSource(target);
         if (source != null) {
             result = source.isExperiment();
@@ -128,7 +132,7 @@ public final class NxsDatasource implements IDatasource {
 
         DetectedSource source = getSource(target);
         if (source != null) {
-            if (source.isFolder() && !source.isDatasetFolder()) {
+            if (source.isFolder()) {
                 File folder = new File(target.getPath());
                 File[] files = folder.listFiles((FileFilter) new ValidURIFilter());
 
@@ -144,6 +148,7 @@ public final class NxsDatasource implements IDatasource {
                         String sep = target.getFragment() == null ? "#" : "";
 
                         NxsDataset dataset = NxsDataset.instanciate(target);
+                        dataset.open();
                         IGroup group = dataset.getRootGroup();
                         if (group != null) {
                             for (IGroup node : group.getGroupList()) {
@@ -154,6 +159,8 @@ public final class NxsDatasource implements IDatasource {
                     } catch (NoResultException e) {
                         Factory.getLogger().log(Level.WARNING, e.getMessage());
                     } catch (UnsupportedEncodingException e) {
+                        Factory.getLogger().log(Level.WARNING, e.getMessage());
+                    } catch (IOException e) {
                         Factory.getLogger().log(Level.WARNING, e.getMessage());
                     }
                 }

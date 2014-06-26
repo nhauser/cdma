@@ -54,7 +54,7 @@ public final class NxsDataset implements IDataset {
     private URI mPath; // URI of this dataset
     private ConfigDataset mConfig; // Configuration associated to this dataset
     private final List<NexusDataset> mDatasets; // NexusDataset compounding this
-                                                // NxsDataset
+    // NxsDataset
     private IGroup mRootPhysical; // Physical root of the document
     private NxsLogicalGroup mRootLogical; // Logical root of the document
 
@@ -92,7 +92,7 @@ public final class NxsDataset implements IDataset {
                 long last = lastModifications.get(uri);
                 if (dataset != null) {
                     long lastForDataset = dataset.getLastModificationDate();
-                    if (last < lastForDataset) {
+                    if (lastForDataset == 0 || last < lastForDataset) {
                         dataset = null;
                         resetBuffer = true;
                     }
@@ -284,7 +284,7 @@ public final class NxsDataset implements IDataset {
 
         for (NexusDataset dataset : mDatasets) {
             temp = dataset.getLastModificationDate();
-            if (temp > last) {
+            if (temp != 0 && temp > last) {
                 last = temp;
             }
         }

@@ -17,11 +17,8 @@ package org.cdma.plugin.soleil.internal;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Level;
 
-import org.cdma.Factory;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IContainer;
@@ -38,9 +35,9 @@ public class DetectedSource {
     private static final String EXTENSION = ".nxs";
     private static final String CREATOR = "Synchrotron SOLEIL";
     private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL",
-            "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
-            "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO",
-            "SWING" };
+        "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
+        "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO",
+    "SWING" };
 
     public static class NeXusFilter implements FilenameFilter {
         @Override
@@ -96,7 +93,10 @@ public class DetectedSource {
     }
 
     public boolean isExperiment() {
-        fullInit();
+        // For NeXus SOLEIL: experience implies a fragment in URI
+        if (mURI.getFragment() != null) {
+            fullInit();
+        }
         return mIsExperiment;
     }
 
@@ -106,13 +106,14 @@ public class DetectedSource {
     }
 
     public boolean isProducer() {
-        fullInit();
-        return mIsProducer;
+        return true;
+        //        fullInit();
+        //        return mIsProducer;
     }
 
     public boolean isReadable() {
         if (!mIsReadable) {
-            initReadable(mURI);
+            mIsReadable = initReadable(mURI);
         }
         return mIsReadable;
     }
@@ -190,7 +191,7 @@ public class DetectedSource {
         File file = new File(uri.getPath());
         String name = file.getName();
 
-        if (file.exists() && file.length() != 0L) {
+        if (file.exists()) {
             // Check if the URI is a NeXus file
             if (DetectedSource.accept(name)) {
                 result = true;
@@ -200,54 +201,58 @@ public class DetectedSource {
     }
 
     private boolean initProducer(URI uri) {
+
         boolean result = false;
         if (mIsReadable) {
-            File file = new File(uri.getPath());
-            IDataset dataset = null;
-
-            try {
-                // instantiate
-                dataset = NxsDataset.instanciate(file.toURI());
-                // open file
-                dataset.open();
-
-                // seek at root for 'creator' attribute
-
-                IGroup group = dataset.getRootGroup();
-                if (group.hasAttribute("creator", CREATOR)) {
-                    result = true;
-                } else {
-                    group = group.getGroup("<NXentry>");
-                    if (group != null) {
-                        group = group.getGroup("<NXinstrument>");
-                    }
-
-                    if (group != null) {
-                        String node = group.getShortName();
-
-                        for (String name : BEAMLINES) {
-                            if (node.equalsIgnoreCase(name)) {
-                                result = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                // close file
-                dataset.close();
-
-            } catch (IOException e) {
-                // close file
-                if (dataset != null) {
-                    try {
-                        dataset.close();
-                    } catch (IOException e1) {
-                    }
-                }
-            } catch (NoResultException e) {
-                Factory.getLogger().log(Level.WARNING, e.getMessage());
-            }
+            result = true;
         }
+
+//            File file = new File(uri.getPath());
+        //            IDataset dataset = null;
+        //
+        //            try {
+        //                // instantiate
+        //                dataset = NxsDataset.instanciate(file.toURI());
+        //                // open file
+        //                dataset.open();
+        //
+        //                // seek at root for 'creator' attribute
+        //
+        //                IGroup group = dataset.getRootGroup();
+        //                if (group.hasAttribute("creator", CREATOR)) {
+        //                    result = true;
+        //                } else {
+        //                    group = group.getGroup("<NXentry>");
+        //                    if (group != null) {
+        //                        group = group.getGroup("<NXinstrument>");
+        //                    }
+        //
+        //                    if (group != null) {
+        //                        String node = group.getShortName();
+        //
+        //                        for (String name : BEAMLINES) {
+        //                            if (node.equalsIgnoreCase(name)) {
+        //                                result = true;
+        //                                break;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                // close file
+        //                dataset.close();
+        //
+        //            } catch (IOException e) {
+        //                // close file
+        //                if (dataset != null) {
+        //                    try {
+        //                        dataset.close();
+        //                    } catch (IOException e1) {
+        //                    }
+        //                }
+        //            } catch (NoResultException e) {
+        //                Factory.getLogger().log(Level.WARNING, e.getMessage());
+        //            }
+        //        }
         return result;
     }
 
