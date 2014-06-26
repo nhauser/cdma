@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.cdma</groupId>
 	<artifactId>utilities</artifactId>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.4</version>
 	<name>CDMA Utilities</name>
 	<description>This project contains various tools to interact with CDMA</description>
 	<developers>
