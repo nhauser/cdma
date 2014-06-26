@@ -29,6 +29,11 @@ public class LabelledURIDateComparator extends LabelledURIComparator {
 
             result = Long.valueOf(o2.getDatasource().getLastModificationDate(o2.getURI())).compareTo(
                     Long.valueOf(o1.getDatasource().getLastModificationDate(o1.getURI())));
+
+            // Same timestamp (may happen if file is copied)
+            if (result == 0) {
+                result = new LabelledURINameComparator().compare(o1, o2);
+            }
         }
         return result;
     }
