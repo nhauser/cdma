@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ******************************************************************************
 //Copyright (c) 2011 Synchrotron Soleil.
@@ -29,7 +29,6 @@ import java.io.FileFilter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,7 +37,6 @@ import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.io.FilenameUtils;
 import org.cdma.interfaces.IDatasource;
 import org.cdma.plugin.soleil.edf.internal.DetectedSource;
-import org.cdma.plugin.soleil.edf.utils.FileComparator;
 
 public final class EdfDatasource implements IDatasource {
     private static final int MAX_SOURCE_BUFFER_SIZE = 200;
@@ -68,33 +66,33 @@ public final class EdfDatasource implements IDatasource {
                 String ext = FilenameUtils.getExtension(fileName);
                 result = EdfDatasource.EXTENSION.equalsIgnoreCase(ext);
             } else {
-
-                result = findEDFFiles(path);
+                result = isEdfDatasetDirectory(path);
             }
             return result;
         }
     }
 
-    public static boolean findEDFFiles(File path) {
-        boolean hasEdfFile = false;
-        boolean hasDirectory = false;
+    public static boolean isEdfDatasetDirectory(File path) {
+        boolean hasOnlyEdfFile = true;
+
         File[] files = FileSystemView.getFileSystemView().getFiles(path, false);
+
         if (files != null) {
             ArrayList<File> fileList = new ArrayList<File>();
             fileList.addAll(Arrays.asList(files));
-            Collections.sort(fileList, new FileComparator());
             for (File file : fileList) {
                 String fPath = file.getAbsolutePath();
-                int pointIndex = fPath.lastIndexOf('.');
-                if ((pointIndex > -1) && "edf".equalsIgnoreCase(fPath.substring(pointIndex + 1))) {
-                    hasEdfFile = true;
+                String ext = FilenameUtils.getExtension(fPath);
+                if (!EdfDatasource.EXTENSION.equalsIgnoreCase(ext)) {
+                    hasOnlyEdfFile = false;
+                    break;
                 }
-                if (file.isDirectory()) {
-                    hasDirectory = true;
-                }
+                //                if (file.isDirectory()) {
+                //                    hasDirectory = true;
+                //                }
             }
         }
-        return hasEdfFile || hasDirectory;
+        return hasOnlyEdfFile;
     }
 
     @Override
@@ -130,11 +128,14 @@ public final class EdfDatasource implements IDatasource {
         if (source != null) {
             File folder = new File(target.getPath());
             if (folder.isDirectory()) {
-
-                File[] files = folder.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        result.add(file.toURI());
+                if (isEdfDatasetDirectory(folder)) {
+                    result.add(folder.toURI());
+                } else {
+                    File[] files = folder.listFiles();
+                    if (files != null) {
+                        for (File file : files) {
+                            result.add(file.toURI());
+                        }
                     }
                 }
             }
