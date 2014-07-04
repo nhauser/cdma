@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.edf.internal;
 
@@ -68,21 +68,34 @@ public class DetectedSource {
                 File file = new File(path);
                 if (file.exists()) {
                     mIsBrowsable = file.isDirectory();
+                    if (mIsBrowsable) {
+                        if (EdfDatasource.isEdfDatasetDirectory(file)) {
+                            // Correct extension -> Readable
+                            mIsReadable = true;
+                            // We are producer since EDF are not signed
+                            mIsProducer = true;
+                            // Producer || folder
+                            mIsBrowsable = true;
+                            // not sure there
+                            // improvement needed
+                            mIsExperiment = true;
+                        }
+                    } else {
+                        String fileName = file.getName();
+                        String ext = FilenameUtils.getExtension(fileName);
+                        boolean accept = EdfDatasource.EXTENSION.equalsIgnoreCase(ext);
 
-                    String fileName = file.getName();
-                    String ext = FilenameUtils.getExtension(fileName);
-                    boolean accept = EdfDatasource.EXTENSION.equalsIgnoreCase(ext);
-
-                    if (accept) {
-                        // Correct extension -> Readable
-                        mIsReadable = true;
-                        // We are producer since EDF are not signed
-                        mIsProducer = true;
-                        // Producer || folder
-                        mIsBrowsable = true;
-                        // not sure there
-                        // improvement needed
-                        mIsExperiment = true;
+                        if (accept) {
+                            // Correct extension -> Readable
+                            mIsReadable = true;
+                            // We are producer since EDF are not signed
+                            mIsProducer = true;
+                            // Producer || folder
+                            mIsBrowsable = true;
+                            // not sure there
+                            // improvement needed
+                            mIsExperiment = true;
+                        }
                     }
                 }
             }
