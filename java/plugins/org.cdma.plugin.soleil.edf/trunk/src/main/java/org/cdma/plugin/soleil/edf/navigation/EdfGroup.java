@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.edf.navigation;
 
@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
@@ -320,7 +321,28 @@ public class EdfGroup extends AbstractGroup {
                 unsigned = true;
                 throw new NotImplementedException();
             } else if ("FloatValue".equals(dataType)) {
-                throw new NotImplementedException();
+
+                imageValue = new float[dimY][dimX];
+                // float = 4 bytes
+                int factor = 4;
+                int sizeToRead = factor * dimY * dimX;
+                Object flatImageValue = null;
+                ByteBuffer byteBuffer = null;
+                byteBuffer = EdfFileReader.readAsBytes(sizeToRead, littleEndian, dis);
+
+                flatImageValue = new float[dimY * dimX];
+                FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
+                floatBuffer.get((float[]) flatImageValue);
+
+                int globalIndex = 0;
+                for (int yIndex = 0; yIndex < dimY; yIndex++) {
+                    for (int xIndex = 0; xIndex < dimX; xIndex++) {
+                        float value = Array.getFloat(flatImageValue, globalIndex);
+                        ((float[][]) imageValue)[yIndex][xIndex] = value;
+                        globalIndex++;
+                    }
+                }
+
             } else if ("DoubleValue".equals(dataType)) {
                 throw new NotImplementedException();
             }
@@ -328,6 +350,7 @@ public class EdfGroup extends AbstractGroup {
                 EdfDataItem imageDataItem = new EdfDataItem("Image",
                         new DefaultArrayMatrix(EdfFactory.NAME, imageValue), unsigned);
                 addDataItem(imageDataItem);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
