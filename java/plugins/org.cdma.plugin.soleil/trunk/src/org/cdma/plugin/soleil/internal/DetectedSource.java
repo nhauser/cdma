@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.internal;
 
@@ -37,7 +37,7 @@ public class DetectedSource {
     private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL",
         "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
         "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO",
-    "SWING" };
+        "SWING", "ROCK", "PUMA", "ANATOMIX", "HERMES" };
 
     public static class NeXusFilter implements FilenameFilter {
         @Override
@@ -107,8 +107,8 @@ public class DetectedSource {
 
     public boolean isProducer() {
         return true;
-        //        fullInit();
-        //        return mIsProducer;
+        // fullInit();
+        // return mIsProducer;
     }
 
     public boolean isReadable() {
@@ -207,52 +207,52 @@ public class DetectedSource {
             result = true;
         }
 
-//            File file = new File(uri.getPath());
-        //            IDataset dataset = null;
+        //            File file = new File(uri.getPath());
+        // IDataset dataset = null;
         //
-        //            try {
-        //                // instantiate
-        //                dataset = NxsDataset.instanciate(file.toURI());
-        //                // open file
-        //                dataset.open();
+        // try {
+        // // instantiate
+        // dataset = NxsDataset.instanciate(file.toURI());
+        // // open file
+        // dataset.open();
         //
-        //                // seek at root for 'creator' attribute
+        // // seek at root for 'creator' attribute
         //
-        //                IGroup group = dataset.getRootGroup();
-        //                if (group.hasAttribute("creator", CREATOR)) {
-        //                    result = true;
-        //                } else {
-        //                    group = group.getGroup("<NXentry>");
-        //                    if (group != null) {
-        //                        group = group.getGroup("<NXinstrument>");
-        //                    }
+        // IGroup group = dataset.getRootGroup();
+        // if (group.hasAttribute("creator", CREATOR)) {
+        // result = true;
+        // } else {
+        // group = group.getGroup("<NXentry>");
+        // if (group != null) {
+        // group = group.getGroup("<NXinstrument>");
+        // }
         //
-        //                    if (group != null) {
-        //                        String node = group.getShortName();
+        // if (group != null) {
+        // String node = group.getShortName();
         //
-        //                        for (String name : BEAMLINES) {
-        //                            if (node.equalsIgnoreCase(name)) {
-        //                                result = true;
-        //                                break;
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //                // close file
-        //                dataset.close();
+        // for (String name : BEAMLINES) {
+        // if (node.equalsIgnoreCase(name)) {
+        // result = true;
+        // break;
+        // }
+        // }
+        // }
+        // }
+        // // close file
+        // dataset.close();
         //
-        //            } catch (IOException e) {
-        //                // close file
-        //                if (dataset != null) {
-        //                    try {
-        //                        dataset.close();
-        //                    } catch (IOException e1) {
-        //                    }
-        //                }
-        //            } catch (NoResultException e) {
-        //                Factory.getLogger().log(Level.WARNING, e.getMessage());
-        //            }
-        //        }
+        // } catch (IOException e) {
+        // // close file
+        // if (dataset != null) {
+        // try {
+        // dataset.close();
+        // } catch (IOException e1) {
+        // }
+        // }
+        // } catch (NoResultException e) {
+        // Factory.getLogger().log(Level.WARNING, e.getMessage());
+        // }
+        // }
         return result;
     }
 
