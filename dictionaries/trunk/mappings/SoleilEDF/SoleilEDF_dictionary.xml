@@ -15,6 +15,7 @@
 	</item>
     <item key="exposureTime">
         <path>ExposureTime</path>
+        <call param="1000">ApplyCorrectionFactor</call>
 		<call>HarvestEquipmentAttributes</call>
     </item>
     <item key="shutterCloseDelay">
@@ -69,7 +70,7 @@
 	<item key="images">
 		<path>Image</path>
 		<!-- create a meta dataitem of all found node having the path above -->
-		<!-- <call>DataItemStacker</call> -->
+		<!--<call>DataItemStacker</call> -->
 		<call>HarvestEquipmentAttributes</call>
 		<attribute name="interpretation" value="image" />
 	</item>
