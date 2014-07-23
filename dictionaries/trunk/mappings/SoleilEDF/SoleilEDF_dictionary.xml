@@ -20,6 +20,7 @@
     </item>
     <item key="shutterCloseDelay">
         <path>ShutterCloseDelay</path>
+        <call param="1000">ApplyCorrectionFactor</call>
 		<call>HarvestEquipmentAttributes</call>
     </item>
     <item key="xBin">
