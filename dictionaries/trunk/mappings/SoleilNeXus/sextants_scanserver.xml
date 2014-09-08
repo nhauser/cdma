@@ -50,7 +50,11 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="images">
-    <path>/{NXdata}/data_01</path>
+    <!-- the core will try to open that path, but won't succeed -->
+    <path>/{NXdata}/data_*@long_name=*/image</path>
+    <!-- that method will get the previous path from context, will split the attribute section from the 
+      path to filter on that attribute name and value -->
+    <call>AttributeFilter</call>
     <call>HarvestSignalAttributes</call>
     <attribute name="interpretation" value="image" />
   </item>
