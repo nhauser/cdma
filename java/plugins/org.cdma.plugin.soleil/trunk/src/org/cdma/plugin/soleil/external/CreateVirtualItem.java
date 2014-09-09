@@ -71,7 +71,7 @@ public class CreateVirtualItem implements IPluginMethod {
                     parameter = name;
                 }
                 Object arrayValue = parameter.toCharArray();
-                int size = name.length();
+                int size = parameter.length();
 
                 try {
                     arrayValue = new Double[] { Double.valueOf(parameter) };
