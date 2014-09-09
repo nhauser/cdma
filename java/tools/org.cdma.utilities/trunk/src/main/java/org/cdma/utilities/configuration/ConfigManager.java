@@ -19,9 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
@@ -57,7 +58,7 @@ public class ConfigManager {
 
     private final Map<String, IFactory> mFactories; // Factories registered by the plug-in name
     private final Map<String, File> mFiles; // Files of configuration for each plug-in
-    private final Map<String, Vector<ConfigGeneric>> mConfigurations; // Available configurations for each plug-in
+    private final Map<String, LinkedList<ConfigGeneric>> mConfigurations; // Available configurations for each plug-in
     private final Map<String, Boolean> mInitialized; // Do each plug-in configuration file has been loaded ?
 
     /**
@@ -107,13 +108,15 @@ public class ConfigManager {
 
             // Seek for a matching configuration of the plug-in for that dataset
             boolean found = false;
-            for (ConfigGeneric conf : mConfigurations.get(factoryName)) {
-                if (conf.getCriteria().match(dataset)) {
-                    result = new ConfigDataset(conf, dataset);
+            for (ListIterator<ConfigGeneric> it = mConfigurations.get(factoryName).listIterator(); it.hasNext();) {
+                ConfigGeneric cg = it.next();
+                if (cg.getCriteria().match(dataset)) {
+                    result = new ConfigDataset(cg, dataset);
                     found = true;
                     break;
                 }
             }
+
 
             // If not found throw
             if (!found) {
@@ -132,7 +135,7 @@ public class ConfigManager {
     private ConfigManager() {
         mFactories = new HashMap<String, IFactory>();
         mFiles = new HashMap<String, File>();
-        mConfigurations = new HashMap<String, Vector<ConfigGeneric>>();
+        mConfigurations = new HashMap<String, LinkedList<ConfigGeneric>>();
         mInitialized = new HashMap<String, Boolean>();
     }
 
@@ -156,7 +159,7 @@ public class ConfigManager {
             // Construct maps
             mFiles.put(factory, file);
             mInitialized.put(factory, false);
-            mConfigurations.put(factory, new Vector<ConfigGeneric>());
+            mConfigurations.put(factory, new LinkedList<ConfigGeneric>());
             mFactories.put(factory, pluginFactory);
         }
     }
@@ -204,7 +207,7 @@ public class ConfigManager {
             // Load each data model configuration
             List<?> nodes = root.getChildren("dataset-model");
             Element elem;
-            Vector<ConfigGeneric> configurations = new Vector<ConfigGeneric>();
+            LinkedList<ConfigGeneric> configurations = new LinkedList<ConfigGeneric>();
             ConfigGeneric conf;
             for (Object node : nodes) {
                 elem = (Element) node;
