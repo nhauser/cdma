@@ -1,47 +1,27 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="UNKNOWN" version="1.0.0">
-    <item key="camera">
-        <path>/{NXentry}/{NXinstrument}/$(detector_name){NXdetector}</path>
-    </item>
-    <item key="dark">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/intensityBlack</path>
-    </item>
-    <item key="distance">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path>
-    </item>
-    <item key="exposureTime">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path>
-    </item>
-    <item key="shutterCloseDelay">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
-    </item>
-    <item key="xBin">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path>
-    </item>
-    <item key="yBin">
-        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path>
-    </item>
-    <item key="mi">
-        <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}</path>
-    </item>
-    <item key="gain">
-        <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}/Gain</path>
-    </item>
-    <item key="intensity">
-        <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}/intensity</path>
-    </item>
-    <item key="lambda">
-        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path>
-    </item>
-    <item key="energy">
-        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/energy</path>
-    </item>
-    <item key="images">
-        <path>/{NXentry}/{NXdata}/xpad1</path>
-        <attribute name="interpretation" value="image"/>
-    </item>
-    <item key="comments">
-        <path>/{NXentry}/{NXsample}/comments/data</path>
-    </item>
+  <!-- acquisition_sequence: this part to identify the scan. Please don't change it  -->
+  <item key="acquisition_sequence">
+    <path></path>
+    <call>CreateVirtualItem</call>
+  </item>
+  <!-- camera: this part is needed to associate a camera to current scan. "equipment" and "region" attributes are mandatory  -->
+  <item key="camera">
+    <path>/</path>
+    <call param="MarCCD">CreateVirtualItem</call>
+    <attribute name="equipment" value="MarCCD" />
+    <attribute name="region" value="" />
+  </item>
+  <!-- energy: Needed by some programs. Leave as is or just change value in param -->
+  <item key="energy">
+    <path>/</path>
+    <call param="100">CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <!-- images: Where to find the image stack ? You can change path, but you have to known the start point is the NXentry, not the root node  -->
+  <item key="images">
+    <path>/{NXdata}/Image</path>
+    <call>HarvestSignalAttributes</call>
+  </item>
 </map-def>
