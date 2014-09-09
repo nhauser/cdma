@@ -54,12 +54,33 @@ public class CreateVirtualItem implements IPluginMethod {
         PathNexus path;
         NxsArray array;
         String name;
+        String parameter = null;
+
+        // Backward compatibility
+        if (context.getParams() != null) {
+            parameter = (String) context.getParams()[0];
+        }
         for (IContainer container : inList) {
             if (container.getModelType().equals(ModelType.Group)) {
                 name = container.getName();
                 path = new PathNexus(PathNexus.splitStringToNode(container.getLocation()));
                 item = new NxsDataItem();
-                array = new NxsArray(name.toCharArray(), new int[] { name.length() });
+
+                // Backward compatibility
+                if (parameter == null) {
+                    parameter = name;
+                }
+                Object arrayValue = parameter.toCharArray();
+                int size = name.length();
+
+                try {
+                    arrayValue = new Double[] { Double.valueOf(parameter) };
+                    size = 1;
+                } catch (NumberFormatException nfe) {
+
+                }
+                array = new NxsArray(arrayValue, new int[] { size });
+
                 item.setName(name);
                 item.setShortName(container.getShortName());
                 item.setDataset(container.getDataset());
