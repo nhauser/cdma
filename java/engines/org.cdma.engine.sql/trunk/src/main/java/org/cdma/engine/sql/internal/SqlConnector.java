@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.cdma.engine.sql.navigation.SqlDataset;
 
@@ -37,10 +36,7 @@ public class SqlConnector {
     private final String mDbName;
     private final String mDbScheme;
     private Connection mConnection;
-
-    private static final String ALTER_SESSION_SET_NLS_NUMERIC_CHARACTERS = "alter session set NLS_NUMERIC_CHARACTERS = \". \"";
-    private static final String ALTER_SESSION_SET_NLS_DATE_FORMAT_DD_MM_YYYY_HH24_MI_SS = "alter session set NLS_DATE_FORMAT = 'DD-MM-YYYY HH24:MI:SS'";
-    private static final String ALTER_SESSION_SET_NLS_TIMESTAMP_FORMAT_DD_MM_YYYY_HH24_MI_SS_FF = "alter session set NLS_TIMESTAMP_FORMAT = 'DD-MM-YYYY HH24:MI:SS.FF'";
+    private AbstractDataBaseConnector dbConnector;
 
     public SqlConnector(String host, String user, String password, String driver, String dbName, String dbScheme,
             boolean rac) {
@@ -52,41 +48,34 @@ public class SqlConnector {
         mDbScheme = dbScheme;
         mRac = rac;
         mConnection = null;
+        dbConnector = null;
     }
 
     public Connection getConnection() throws IOException {
-        if (mConnection == null) {
-            open();
+        if (dbConnector != null) {
+            mConnection = dbConnector.getConnection();
         }
         return mConnection;
     }
 
     public Connection open() throws IOException {
-//        System.out.println("--------------OPEN connection------------------");
-//        System.out.println("mDriver=" + mDriver);
-//        System.out.println("mDbScheme=" + mDbScheme);
-//        System.out.println("mUser=" + mUser);
-//        System.out.println("mPwd=" + mPwd);
-//        System.out.println("mRac=" + mRac);
-
-//        String hostLabel = "mHost";
-//        String nameLabel = "mDbName";
-//        if (mRac) {
-//            hostLabel = "tnsName";
-//            nameLabel = "onsConfiguration";
-//        }
-//        System.out.println(hostLabel + "=" + mHost);
-//        System.out.println(nameLabel + "=" + mDbName);
-        try {
-            if ((mConnection == null) || !mConnection.isValid(0) || mConnection.isClosed()) {
-                if (mConnection != null) {
-                    try {
-                        mConnection.close();
-                    } catch (SQLException e) {
-                    }
-                }
-
-                AbstractDataBaseConnector dbConnector = null;
+        //        System.out.println("--------------OPEN connection------------------");
+        //        System.out.println("mDriver=" + mDriver);
+        //        System.out.println("mDbScheme=" + mDbScheme);
+        //        System.out.println("mUser=" + mUser);
+        //        System.out.println("mPwd=" + mPwd);
+        //        System.out.println("mRac=" + mRac);
+        //
+        //        String hostLabel = "mHost";
+        //        String nameLabel = "mDbName";
+        //        if (mRac) {
+        //            hostLabel = "tnsName";
+        //            nameLabel = "onsConfiguration";
+        //        }
+        //        System.out.println(hostLabel + "=" + mHost);
+        //        System.out.println(nameLabel + "=" + mDbName);
+        if (dbConnector == null) {
+            try {
                 if ((mDriver != null) && (mDriver.contains(ORACLE_IDENTIFIER))) {
                     dbConnector = new OracleDataBaseConnector();
                 } else {
@@ -94,51 +83,38 @@ public class SqlConnector {
                 }
 
                 if (dbConnector != null) {
-
                     dbConnector.setUser(mUser);
                     dbConnector.setPassword(mPwd);
+                    dbConnector.setSchema(mDbScheme);
+
                     if (mRac && (dbConnector instanceof OracleDataBaseConnector)) {
                         ((OracleDataBaseConnector) dbConnector).setTnsName(mHost);
                         ((OracleDataBaseConnector) dbConnector).setOnsConfiguration(mDbName);
                         ((OracleDataBaseConnector) dbConnector).setRac(mRac);
                     } else {
-                        dbConnector.setSchema(mDbScheme);
                         dbConnector.setHost(mHost);
                         dbConnector.setName(mDbName);
                     }
 
                     dbConnector.connect();
                     mConnection = dbConnector.getConnection();
-
-                    if (mConnection != null) {
-                        Statement stmt = null;
-                        try {
-                            stmt = mConnection.createStatement();
-                            stmt.executeQuery(ALTER_SESSION_SET_NLS_NUMERIC_CHARACTERS);
-                            stmt.executeQuery(ALTER_SESSION_SET_NLS_TIMESTAMP_FORMAT_DD_MM_YYYY_HH24_MI_SS_FF);
-                            stmt.executeQuery(ALTER_SESSION_SET_NLS_DATE_FORMAT_DD_MM_YYYY_HH24_MI_SS);
-                        } finally {
-                            if ((stmt != null) && !stmt.isClosed()) {
-                                stmt.close();
-                            }
-                        }
-                    }
                 }
+
+            } catch (SQLException e) {
+                throw new IOException(e);
             }
-        } catch (SQLException e) {
-            throw new IOException(e);
         }
-//        System.out.println("connection successful");
+        //        System.out.println("connection successful");
         return mConnection;
     }
 
     public void close() throws IOException {
-        if (mConnection != null) {
-            try {
-                mConnection.close();
-            } catch (SQLException e) {
-                throw new IOException(e);
+        try {
+            if (dbConnector != null) {
+                dbConnector.closeConnection(mConnection);
             }
+        } catch (SQLException e) {
+            throw new IOException(e);
         }
     }
 
@@ -152,11 +128,8 @@ public class SqlConnector {
 
     public boolean isOpen() {
         boolean result = false;
-        if (mConnection != null) {
-            try {
-                result = mConnection.isValid(0);
-            } catch (SQLException e) {
-            }
+        if (dbConnector != null) {
+            dbConnector.isConnected();
         }
         return result;
     }
