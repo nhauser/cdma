@@ -17,10 +17,6 @@ package org.cdma.plugin.mambo.navigation;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -45,6 +41,7 @@ import org.cdma.plugin.xml.navigation.XmlGroup;
 import org.cdma.utilities.configuration.ConfigDataset;
 import org.cdma.utilities.configuration.ConfigManager;
 
+import fr.soleil.lib.project.SystemUtils;
 import fr.soleil.lib.project.math.ArrayUtils;
 
 public class SoleilMamboDataset implements IDataset {
@@ -56,6 +53,7 @@ public class SoleilMamboDataset implements IDataset {
     private LogicalGroup mLogRoot;
     private boolean mNumDate;
     private final boolean mForceConfig;
+    private String beamline = null;
 
     public SoleilMamboDataset(File file) {
         this(file, true);
@@ -138,7 +136,7 @@ public class SoleilMamboDataset implements IDataset {
         if (mArcDataset == null) {
             String user = getUser(mArchivingMode);
             String pwrd = getPassword(mArchivingMode);
-            boolean isRac = Boolean.getBoolean(getRac());
+            boolean isRac = Boolean.parseBoolean(getRac());
             String schema = getSchema();
             getDbName();
             String driver = getDriver();
@@ -234,53 +232,6 @@ public class SoleilMamboDataset implements IDataset {
         return mNumDate;
     }
 
-    // ------------------------------------------------------------------------
-    // Private methods
-    // ------------------------------------------------------------------------
-    private URI getDbConnectionURI() throws URISyntaxException {
-        URI uri = null;
-        String driver = getDriver();
-        String schema = getSchema();
-        String dbName = getDbName();
-        String host = getHost();
-        String port = getPort();
-        String rac = getRac();
-        StringBuffer bufUri = new StringBuffer();
-        if ((driver != null) && !driver.isEmpty()) {
-            bufUri.append(driver);
-            if ((rac != null) && !rac.isEmpty()) {
-                bufUri.append(":");
-                bufUri.append(rac);
-            } else {
-                if ((host != null) && !host.isEmpty()) {
-                    bufUri.append(":@");
-                    bufUri.append(host);
-                }
-                if ((port != null) && !port.isEmpty()) {
-                    bufUri.append(":");
-                    bufUri.append(port);
-                }
-                if ((schema != null) && !schema.isEmpty()) {
-                    bufUri.append(":");
-                    bufUri.append(schema);
-                }
-                if ((dbName != null) && !dbName.isEmpty()) {
-                    bufUri.append(":");
-                    bufUri.append(dbName);
-                }
-            }
-        }
-        String value;
-        try {
-            value = URLEncoder.encode(bufUri.toString(), "UTF-8");
-            uri = new URI(value);
-        } catch (UnsupportedEncodingException e) {
-            uri = new URI(bufUri.toString());
-        }
-
-        return uri;
-    }
-
     private String getDriver() {
         return getParam("_DRIVER", mArchivingMode, mForceConfig);
     }
@@ -289,16 +240,17 @@ public class SoleilMamboDataset implements IDataset {
         return getParam("_HOST", mArchivingMode, mForceConfig);
     }
 
-    private String getPort() {
-        return getParam("_PORT", mArchivingMode, mForceConfig);
-    }
-
     private String getRac() {
         return getParam("_RAC", mArchivingMode, mForceConfig);
     }
 
     private String getSchema() {
-        return getParam("_SCHEMA", mArchivingMode, mForceConfig);
+        String schema = getParam("_SCHEMA", mArchivingMode, mForceConfig);
+        if (((schema == null) || schema.isEmpty())
+                && ((beamline != null) && !beamline.isEmpty() && !beamline.equals("contacq"))) {
+            schema = beamline;
+        }
+        return schema;
     }
 
     private String getDbName() {
@@ -330,7 +282,7 @@ public class SoleilMamboDataset implements IDataset {
         if (mode != null) {
             // Check in env.
             String fullName = mode.getName() + name;
-            result = System.getProperty(fullName, System.getenv(fullName));
+            result = SystemUtils.getSystemProperty(fullName);
 
             // Check in config file
             if ((result == null) || forceConfig) {
@@ -355,8 +307,20 @@ public class SoleilMamboDataset implements IDataset {
     public ConfigDataset getConfiguration() {
         if (mConfig == null) {
             try {
-                mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(), SoleilMamboFactory.CONFIG_FILE)
-                        .getConfig(this);
+                beamline = SystemUtils.getSystemProperty(SoleilMamboFactory.BEAMLINE_ENV);
+                // If no beamline is defined in system property use the rcm default configuration file
+                if ((beamline == null) || beamline.isEmpty()) {
+                    mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
+                            SoleilMamboFactory.CONFIG_FILE).getConfig(this);
+                } else if (beamline.equals("contacq")) {
+                    // read the test configuration file
+                    mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
+                            "test_" + SoleilMamboFactory.CONFIG_FILE).getConfig(this);
+                } else {
+                    // read the beamline configuration file
+                    mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
+                            "beamline_" + SoleilMamboFactory.CONFIG_FILE).getConfig(this);
+                }
             } catch (NoResultException e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to get configuration!", e);
             }
@@ -369,11 +333,10 @@ public class SoleilMamboDataset implements IDataset {
         for (IGroup iGroup : groups) {
             explore(iGroup);
         }
-//        System.out.println("Group: " + group.getName());
         List<IDataItem> items = group.getDataItemList();
         for (IDataItem item : items) {
-            System.out.println("Item: " + item.getName());
-            System.out.println(ArrayUtils.toString(item.getData().getStorage()));
+            Factory.getLogger().log(Level.FINE, "Item: ", item.getName());
+            Factory.getLogger().log(Level.FINE, "Value: ", ArrayUtils.toString(item.getData().getStorage()));
         }
 
     }
