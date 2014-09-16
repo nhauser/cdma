@@ -316,6 +316,10 @@ public class SoleilMamboDataset implements IDataset {
                     // read the test configuration file
                     mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
                             "test_" + SoleilMamboFactory.CONFIG_FILE).getConfig(this);
+                } else if (beamline.equals("degrad")) {
+                    // read the test configuration file
+                    mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
+                            "degrad_" + SoleilMamboFactory.CONFIG_FILE).getConfig(this);
                 } else {
                     // read the beamline configuration file
                     mConfig = ConfigManager.getInstance(SoleilMamboFactory.getInstance(),
