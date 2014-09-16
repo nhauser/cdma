@@ -60,20 +60,22 @@ public class SqlConnector {
 
     public Connection open() throws IOException {
         //        System.out.println("--------------OPEN connection------------------");
-        //        System.out.println("mDriver=" + mDriver);
-        //        System.out.println("mDbScheme=" + mDbScheme);
-        //        System.out.println("mUser=" + mUser);
-        //        System.out.println("mPwd=" + mPwd);
-        //        System.out.println("mRac=" + mRac);
-        //
-        //        String hostLabel = "mHost";
-        //        String nameLabel = "mDbName";
-        //        if (mRac) {
-        //            hostLabel = "tnsName";
-        //            nameLabel = "onsConfiguration";
-        //        }
-        //        System.out.println(hostLabel + "=" + mHost);
-        //        System.out.println(nameLabel + "=" + mDbName);
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\nDriver=" + mDriver);
+        stringBuilder.append("\nDbScheme=" + mDbScheme);
+        stringBuilder.append("\nUser=" + mUser);
+        stringBuilder.append("\nPwd=" + mPwd);
+        stringBuilder.append("\nRac=" + mRac);
+
+        String hostLabel = "Host";
+        String nameLabel = "DbName";
+        if (mRac) {
+            hostLabel = "tnsName";
+            nameLabel = "onsConfiguration";
+        }
+        stringBuilder.append("\n" + hostLabel + "=" + mHost);
+        stringBuilder.append("\n" + nameLabel + "=" + mDbName);
+
         if (dbConnector == null) {
             try {
                 if ((mDriver != null) && (mDriver.contains(ORACLE_IDENTIFIER))) {
@@ -101,10 +103,10 @@ public class SqlConnector {
                 }
 
             } catch (SQLException e) {
-                throw new IOException(e);
+                stringBuilder.append("\n Connection to database failed : " + e.getMessage());
+                throw new IOException(stringBuilder.toString());
             }
         }
-        //        System.out.println("connection successful");
         return mConnection;
     }
 
