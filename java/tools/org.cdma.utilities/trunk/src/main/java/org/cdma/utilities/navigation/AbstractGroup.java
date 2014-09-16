@@ -110,9 +110,11 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         IDataItem result = null;
         if (shortName != null) {
             for (IContainer container : mContainers) {
-                if (container.getModelType().equals(ModelType.DataItem) && shortName.equals(container.getShortName())) {
-                    result = (IDataItem) container;
-                    break;
+                if (container != null) {
+                    if (container.getModelType().equals(ModelType.DataItem) && shortName.equals(container.getShortName())) {
+                        result = (IDataItem) container;
+                        break;
+                    }
                 }
             }
         }
@@ -125,9 +127,11 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         IDataItem result = null;
         if (name != null) {
             for (IContainer container : mContainers) {
-                if (container.getModelType().equals(ModelType.DataItem) && container.hasAttribute(name, value)) {
-                    result = (IDataItem) container;
-                    break;
+                if (container != null) {
+                    if (container.getModelType().equals(ModelType.DataItem) && container.hasAttribute(name, value)) {
+                        result = (IDataItem) container;
+                        break;
+                    }
                 }
             }
         }
@@ -155,9 +159,11 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         IContainer result = null;
         if (shortName != null) {
             for (IContainer container : mContainers) {
-                if (shortName.equals(container.getShortName())) {
-                    result = container;
-                    break;
+                if (container != null) {
+                    if (shortName.equals(container.getShortName())) {
+                        result = container;
+                        break;
+                    }
                 }
             }
         }
@@ -170,9 +176,11 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         IGroup result = null;
         if (shortName != null) {
             for (IContainer container : mContainers) {
-                if (container.getModelType().equals(ModelType.Group) && shortName.equals(container.getShortName())) {
-                    result = (IGroup) container;
-                    break;
+                if (container != null) {
+                    if (container.getModelType().equals(ModelType.Group) && shortName.equals(container.getShortName())) {
+                        result = (IGroup) container;
+                        break;
+                    }
                 }
             }
         }
@@ -185,9 +193,11 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         IGroup result = null;
         if (name != null) {
             for (IContainer container : mContainers) {
-                if (container.getModelType().equals(ModelType.Group) && container.hasAttribute(name, value)) {
-                    result = (IGroup) container;
-                    break;
+                if (container != null) {
+                    if (container.getModelType().equals(ModelType.Group) && container.hasAttribute(name, value)) {
+                        result = (IGroup) container;
+                        break;
+                    }
                 }
             }
         }
@@ -200,7 +210,7 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         List<IDataItem> result = new ArrayList<IDataItem>();
 
         for (IContainer container : mContainers) {
-            if (container != null && container.getModelType().equals(ModelType.DataItem)) {
+            if ((container != null) && container.getModelType().equals(ModelType.DataItem)) {
                 result.add((IDataItem) container);
             }
         }
@@ -220,7 +230,7 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
         List<IGroup> result = new ArrayList<IGroup>();
 
         for (IContainer container : mContainers) {
-            if (container != null && container.getModelType().equals(ModelType.Group)) {
+            if ((container != null) && container.getModelType().equals(ModelType.Group)) {
                 result.add((IGroup) container);
             }
         }
@@ -298,7 +308,7 @@ public abstract class AbstractGroup extends NodeParentAttribute implements IGrou
 
     @Override
     public boolean isEntry() {
-        return (getParentGroup() != null && getParentGroup().isRoot());
+        return ((getParentGroup() != null) && getParentGroup().isRoot());
     }
 
     @Override
