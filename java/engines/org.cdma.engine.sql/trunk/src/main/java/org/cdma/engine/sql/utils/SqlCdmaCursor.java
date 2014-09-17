@@ -79,7 +79,7 @@ public class SqlCdmaCursor {
 
     public List<SqlDataItem> getDataItemList() {
         List<SqlDataItem> result = new ArrayList<SqlDataItem>();
-        if (mCurRow == 0 && !mClose) {
+        if ((mCurRow == 0) && !mClose) {
             try {
                 next();
             } catch (SQLException e) {
@@ -87,7 +87,7 @@ public class SqlCdmaCursor {
             }
         }
 
-        if (mNbRows >= 0 && mCurRow == 1) {
+        if ((mNbRows >= 0) && (mCurRow == 1)) {
             try {
                 ResultSet set = getResultSet();
                 ResultSetMetaData meta = set.getMetaData();
@@ -107,8 +107,7 @@ public class SqlCdmaCursor {
                     names[col - 1] = meta.getColumnName(col);
                 }
 
-                // Fill the array asynchronously
-                Thread thread = PostTreatmentManager.launchParallelTreatment(loader);
+                PostTreatmentManager.launchParallelTreatment(loader);
 
                 // Create items for each arrays
                 for (int col = 1; col <= count; col++) {
@@ -154,7 +153,7 @@ public class SqlCdmaCursor {
     protected ResultSet getResultSet() throws SQLException {
         // Get the soft ref and check it is still available
         ResultSet sql_set = mResult.get();
-        if (sql_set == null || sql_set.isClosed()) {
+        if ((sql_set == null) || sql_set.isClosed()) {
             // Get the result set of the query
             sql_set = executeQuery();
 
@@ -168,10 +167,10 @@ public class SqlCdmaCursor {
     }
 
     public void close() throws SQLException {
-        if (mStatQuery != null && !mStatQuery.isClosed()) {
+        if ((mStatQuery != null) && !mStatQuery.isClosed()) {
             mStatQuery.close();
         }
-        if (mStatCount != null && !mStatCount.isClosed()) {
+        if ((mStatCount != null) && !mStatCount.isClosed()) {
             mStatCount.close();
         }
         mClose = true;
@@ -212,14 +211,17 @@ public class SqlCdmaCursor {
             try {
                 Connection connection = sql_connector.getConnection();
                 // Check statements are still valid
-                if (mStatQuery == null || mStatQuery.isClosed()) {
+                if ((mStatQuery == null) || mStatQuery.isClosed()) {
                     // Create the query statement
                     mStatQuery = connection.prepareStatement(mQuery);
                     mStatQuery.setFetchSize(1000);
                 }
-                if (mStatCount == null || mStatCount.isClosed()) {
+                if ((mStatCount == null) || mStatCount.isClosed()) {
                     // Create the count statement
-                    mStatCount = connection.prepareStatement("SELECT COUNT(*) FROM (" + mQuery + ")");
+                    String queryString = "SELECT COUNT(*) FROM (" + mQuery + ")";
+                    mStatCount = connection.prepareStatement(queryString);
+                    Factory.getLogger().log(Level.FINEST, "select query : " + queryString);
+                    // System.out.println("mStatCount query=" + queryString);
                     mStatCount.setFetchSize(1000);
                 }
 
@@ -247,7 +249,7 @@ public class SqlCdmaCursor {
     }
 
     private void setParams(PreparedStatement statement) {
-        if (mParams != null && mParams.length > 0) {
+        if ((mParams != null) && (mParams.length > 0)) {
             Object param = null;
             for (int i = 0; i < mParams.length; i++) {
                 param = mParams[i];
