@@ -25,6 +25,7 @@
     </plugin>
   </dataset-model>
 
+
 <!-- ============================================
 ==  CONFIG 2: all beamlines scanserver         ==
 ============================================= -->
@@ -46,9 +47,33 @@
       </java>
     </plugin>
   </dataset-model>
-  
+
+
 <!-- ============================================
-==  CONFIG 3: all beamlines passerelle         ==
+==  CONFIG 3: all beamlines flyscan            ==
+============================================= -->
+  <dataset-model name="generic_flyscan">
+    <criteria>
+      <if exist="true" target="/{NXinstrument}"/>
+      <if exist="true" target="/scan_data{NXdata}"/>
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE" type="name" target="/{NXinstrument}"/>
+      <parameter name="MODEL" type="constant" constant="flyscan"/>
+    </parameters>
+
+    <plugin>
+      <java>
+        <set name="log_debug" value="true"/>
+        <set name="N4T_buffer_size" value="300"/>
+      </java>
+    </plugin>
+  </dataset-model>
+
+
+<!-- ============================================
+==  CONFIG 4: all beamlines passerelle         ==
 ============================================= -->
   <dataset-model name="generic_passerelle">
     <criteria>
@@ -60,27 +85,6 @@
       <parameter name="MODEL" type="constant" constant="passerelle"/>
     </parameters>
 
-    <plugin>
-      <java>
-        <set name="log_debug" value="true"/>
-        <set name="N4T_buffer_size" value="300"/>
-      </java>
-    </plugin>
-  </dataset-model>
-  
-<!-- ============================================
-==  CONFIG 4: all beamlines flyscan            ==
-============================================= -->
-  <dataset-model name="generic_flyscan">
-    <criteria>
-      <if exist="true" target="/*flyscan*{NXentry}/{NXinstrument}" />
-    </criteria>
-    
-    <parameters>
-      <parameter name="BEAMLINE" type="name" target="/{NXentry}/{NXinstrument}"/>
-      <parameter name="MODEL" type="constant" constant="flyscan"/>
-    </parameters>
-    
     <plugin>
       <java>
         <set name="log_debug" value="true"/>
