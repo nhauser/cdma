@@ -13,7 +13,7 @@
       <item key="liveTime" />
       <item key="sweeps" />
       <item key="acquisitionMode" />
-	  <item key="globalGain" />
+      <item key="globalGain" />
       <item key="lensMode" />
       <item key="passEnergy" />
       <item key="lowEnergy" />
@@ -28,7 +28,7 @@
       <item key="sliceScale" />
       <item key="energyScale" />
       <item key="dataChannelScale" />
-	  <item key="pixelSize" />
+      <item key="pixelSize" />
       <item key="delta" />
       <item key="deltaOffset" />
       <item key="omegaOffset" />
@@ -37,7 +37,7 @@
     <group key="monitor">
       <item key="mi" />
       <item key="gain" />
-	  <item key="bias" />
+      <item key="bias" />
       <item key="intensity" />
     </group>
     <group key="monochromator">
@@ -59,7 +59,7 @@
       <item key="total_image" />
       <item key="x_position" />
       <item key="y_position" />
-	  <item key="x0" />
+      <item key="x0" />
       <item key="z0" />
       <item key="sampleTheta" />
       <item key="samplePhi" />
@@ -68,6 +68,6 @@
     <group key="info">
       <item key="comments" />
     </group>
-	<item key="acquisition_sequence" />
+    <item key="acquisition_sequence" />
   </group>
 </data-def>
