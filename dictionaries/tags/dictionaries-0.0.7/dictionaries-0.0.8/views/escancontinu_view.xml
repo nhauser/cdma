@@ -1,0 +1,8 @@
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="ESCANCONTINU" synonym="">
+  <group key="scan">
+    <item key="intensity0"/>    <!-- current before sample -->
+	<item key="intensityTey"/>    <!-- current after sample -->
+    <item key="intensityTrans"/>    <!-- transmitted current -->
+  </group>
+</data-def>
