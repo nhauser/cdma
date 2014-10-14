@@ -9,11 +9,11 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>archiving</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.2</version>
   <name>CDMA Archiving engine</name>
   <description>This project is an Attribute Archiving engine for the CDMA.</description>
   <developers>
-      <developer>
+    <developer>
       <id>viguier</id>
       <name>Gregory VIGUIER</name>
       <email>gregory.viguier@synchrotron-soleil.fr</email>
