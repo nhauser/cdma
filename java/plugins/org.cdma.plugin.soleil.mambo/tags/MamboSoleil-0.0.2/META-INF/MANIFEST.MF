@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: SOLEIL Data Model
+Bundle-SymbolicName: org.cdma.plugin.soleil.mambo
+Bundle-Version: 3.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ActivationPolicy: lazy
+Service-Component: OSGI-INF/factory.xml
+Export-Package: 
+ org.cdma.plugin.mambo,
+ org.cdma.plugin.mambo.navigation
+Require-Bundle: org.cdma.engine.sql;bundle-version="3.0.0";visibility:=reexport,
+ org.cdma.utilities;bundle-version="3.0.0";visibility:=reexport
