@@ -46,6 +46,8 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 import org.cdma.plugin.mambo.navigation.SoleilMamboDataset;
 
+import fr.soleil.lib.project.SystemUtils;
+
 public class SoleilMamboFactory implements IFactory {
     public static final String DESC = "Manages a Mambo file to extract archived attributes.";
     public static final String NAME = "MamboSoleil";
@@ -280,8 +282,8 @@ public class SoleilMamboFactory implements IFactory {
         String hdbEnv = ArchivingMode.HDB.getName() + "_USER";
         String tdbEnv = ArchivingMode.TDB.getName() + "_USER";
 
-        String hdbUsr = System.getProperty(hdbEnv, System.getenv(hdbEnv));
-        String tdbUsr = System.getProperty(tdbEnv, System.getenv(tdbEnv));
+        String hdbUsr = SystemUtils.getSystemProperty(hdbEnv);
+        String tdbUsr = SystemUtils.getSystemProperty(tdbEnv);
         if(
                 ( (hdbUsr != null) && !hdbUsr.isEmpty() ) ||
                 ( (tdbUsr != null) && !tdbUsr.isEmpty() )
