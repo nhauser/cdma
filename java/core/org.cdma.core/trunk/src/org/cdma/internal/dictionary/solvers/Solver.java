@@ -53,32 +53,32 @@ public class Solver {
     private final IPluginMethod mMethod; // Method call to call
     private final Object[] mParameters;
 
-    public Solver( IKey key ) {
+    public Solver( final IKey key ) {
         mKey    = key;
         mPath   = null;
         mMethod = null;
         mParameters = null;
     }
 
-    public Solver( Path path ) {
+    public Solver( final Path path ) {
         mPath   = path;
         mKey    = null;
         mMethod = null;
         mParameters = null;
     }
 
-    public Solver(IPluginMethod method, Object[] parameters) {
+    public Solver(final IPluginMethod method, final Object[] parameters) {
         mMethod = method;
         mPath   = null;
         mKey    = null;
         mParameters = parameters;
     }
 
-    public Solver(IPluginMethod method) {
+    public Solver(final IPluginMethod method) {
         this(method, null);
     }
 
-    public List<IContainer> solve(Context context) {
+    public List<IContainer> solve(final Context context) {
         List<IContainer> result = null;
 
         // Update context with currently executed solver
@@ -91,8 +91,8 @@ public class Solver {
         }
         // If the solver is a call on a method
         else if( mMethod != null ) {
-            context.setParams(mParameters);
-            result = executeMethod(context);
+                context.setParams(mParameters);
+                result = executeMethod(context);
         }
         // If the solver is a key create a LogicalGroup
         else if( mKey != null ) {
@@ -135,7 +135,7 @@ public class Solver {
     // ---------------------------------------------------------------
     // PRIVATE methods
     // ---------------------------------------------------------------
-    private List<IContainer> findAllContainerByPath(Context context) {
+    private List<IContainer> findAllContainerByPath(final Context context) {
         List<IContainer> result = new ArrayList<IContainer>();
 
         // Clear the context of previously found nodes
@@ -154,7 +154,7 @@ public class Solver {
         return result;
     }
 
-    private List<IContainer> executeMethod(Context context) {
+    private List<IContainer> executeMethod(final Context context) {
         List<IContainer> result = new ArrayList<IContainer>();
         try {
             // Execute the method

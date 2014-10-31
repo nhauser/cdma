@@ -25,6 +25,7 @@
 package org.cdma.arrays;
 
 
+import org.cdma.Factory;
 import org.cdma.exception.BackupException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
@@ -44,7 +45,7 @@ public final class DefaultCompositeArray implements IArray {
     private DefaultCompositeIndex mIndex; // IIndex corresponding to mArray shape
     private final IArray[] mArrays; // IArray of IArray
 
-    public DefaultCompositeArray(String factName, IArray[] arrays) {
+    public DefaultCompositeArray(final String factName, final IArray[] arrays) {
         factoryName = factName;
         mArrays   = arrays.clone();
         mData     = null;
@@ -57,7 +58,7 @@ public final class DefaultCompositeArray implements IArray {
         }
     }
 
-    public DefaultCompositeArray(DefaultCompositeArray array) {
+    public DefaultCompositeArray(final DefaultCompositeArray array) {
         mIndex = (DefaultCompositeIndex) array.mIndex.clone();
         mData = array.mData;
 
@@ -72,13 +73,13 @@ public final class DefaultCompositeArray implements IArray {
     }
 
 
-    public DefaultCompositeArray(String factoryName, Object oArray, int[] iShape)
+    public DefaultCompositeArray(final String factoryName, final Object oArray, final int[] iShape)
             throws InvalidArrayTypeException {
         this(factoryName, new IArray[] { new DefaultArrayInline(factoryName, oArray, iShape) });
     }
 
     @Override
-    public Object getObject(IIndex index) {
+    public Object getObject(final IIndex index) {
         return this.get(index);
     }
 
@@ -106,7 +107,7 @@ public final class DefaultCompositeArray implements IArray {
     // }
 
     @Override
-    public IArray copy(boolean data) {
+    public IArray copy(final boolean data) {
         DefaultCompositeArray result = new DefaultCompositeArray(this);
 
         if (data) {
@@ -118,7 +119,8 @@ public final class DefaultCompositeArray implements IArray {
 
     @Override
     public IArrayMath getArrayMath() {
-        return mArrays[0].getArrayMath();
+        return new DefaultCompositeArrayMath(this, Factory.getFactory(getFactoryName()));
+        // return mArrays[0].getArrayMath();
     }
 
     @Override
@@ -127,7 +129,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public boolean getBoolean(IIndex ima) {
+    public boolean getBoolean(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -135,7 +137,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public byte getByte(IIndex ima) {
+    public byte getByte(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -143,7 +145,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public char getChar(IIndex ima) {
+    public char getChar(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -151,7 +153,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public double getDouble(IIndex ima) {
+    public double getDouble(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -159,7 +161,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public float getFloat(IIndex ima) {
+    public float getFloat(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -167,7 +169,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public int getInt(IIndex ima) {
+    public int getInt(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -175,7 +177,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public long getLong(IIndex ima) {
+    public long getLong(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -183,7 +185,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public short getShort(IIndex ima) {
+    public short getShort(final IIndex ima) {
         IndexNode ind = getIndexNode(ima);
         IIndex itemIdx = ind.getIndex();
         int nodeIndex = ind.getNode();
@@ -218,7 +220,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public IArrayIterator getRegionIterator(int[] reference, int[] range)
+    public IArrayIterator getRegionIterator(final int[] reference, final int[] range)
             throws InvalidRangeException {
         int[] shape = mIndex.getShape();
         IIndex index = new DefaultCompositeIndex(this.factoryName, shape, reference, range);
@@ -234,7 +236,7 @@ public final class DefaultCompositeArray implements IArray {
     @Override
     public long getSize() {
         DefaultCompositeIndex idx = (DefaultCompositeIndex) getIndex();
-        // TODO BIG HACK
+        // TODO Index size is wrong !
         return mArrays.length * idx.getIndexStorage().getSize();
         // return mIndex.getSize();
     }
@@ -277,47 +279,47 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public void setBoolean(IIndex ima, boolean value) {
+    public void setBoolean(final IIndex ima, final boolean value) {
         set(ima, value);
     }
 
     @Override
-    public void setByte(IIndex ima, byte value) {
+    public void setByte(final IIndex ima, final byte value) {
         set(ima, value);
     }
 
     @Override
-    public void setChar(IIndex ima, char value) {
+    public void setChar(final IIndex ima, final char value) {
         set(ima, value);
     }
 
     @Override
-    public void setDouble(IIndex ima, double value) {
+    public void setDouble(final IIndex ima, final double value) {
         set(ima, value);
     }
 
     @Override
-    public void setFloat(IIndex ima, float value) {
+    public void setFloat(final IIndex ima, final float value) {
         set(ima, value);
     }
 
     @Override
-    public void setInt(IIndex ima, int value) {
+    public void setInt(final IIndex ima, final int value) {
         set(ima, value);
     }
 
     @Override
-    public void setLong(IIndex ima, long value) {
+    public void setLong(final IIndex ima, final long value) {
         set(ima, value);
     }
 
     @Override
-    public void setObject(IIndex ima, Object value) {
+    public void setObject(final IIndex ima, final Object value) {
         set(ima, value);
     }
 
     @Override
-    public void setShort(IIndex ima, short value) {
+    public void setShort(final IIndex ima, final short value) {
         set(ima, value);
     }
 
@@ -340,7 +342,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public void setIndex(IIndex index) {
+    public void setIndex(final IIndex index) {
         if (index instanceof DefaultCompositeIndex) {
             mIndex = (DefaultCompositeIndex) index;
         }
@@ -356,7 +358,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public ISliceIterator getSliceIterator(int rank)
+    public ISliceIterator getSliceIterator(final int rank)
             throws ShapeNotMatchException, InvalidRangeException {
         return new DefaultSliceIterator(this, rank);
     }
@@ -387,7 +389,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public IArray setDouble(double value) {
+    public IArray setDouble(final double value) {
         throw new NotImplementedException();
     }
 
@@ -402,7 +404,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public void setDirty(boolean dirty) {
+    public void setDirty(final boolean dirty) {
         throw new NotImplementedException();
     }
 
@@ -454,7 +456,7 @@ public final class DefaultCompositeArray implements IArray {
      * @throws InvalidRangeException if one of the index is bigger than the corresponding dimension
      *             shape
      */
-    private Object get(IIndex index) {
+    private Object get(final IIndex index) {
         Object result = null;
         IndexNode ind = getIndexNode(index);
         IIndex itemIdx = ind.getIndex();
@@ -467,7 +469,7 @@ public final class DefaultCompositeArray implements IArray {
         return result;
     }
 
-    private IndexNode getIndexNode(IIndex index) {
+    private IndexNode getIndexNode(final IIndex index) {
         int nodeIndex;
         IIndex itemIdx;
         if( mArrays.length > 1 ) {
@@ -493,7 +495,7 @@ public final class DefaultCompositeArray implements IArray {
         return new IndexNode(itemIdx, nodeIndex);
     }
 
-    private void set(IIndex index, Object value) {
+    private void set(final IIndex index, final Object value) {
         DefaultCompositeIndex idx = null;
         if (!(index instanceof DefaultCompositeIndex)) {
             idx = new DefaultCompositeIndex(factoryName, mIndex.getIndexMatrix().getRank(), index);
@@ -514,7 +516,7 @@ public final class DefaultCompositeArray implements IArray {
         private final IIndex mIndex;
         private final int mNode;
 
-        public IndexNode( IIndex index, int node ) {
+        public IndexNode( final IIndex index, final int node ) {
             mIndex = index;
             mNode  = node;
         }

@@ -44,7 +44,7 @@ public final class Context {
     private final List<Solver>     mSolvers;
     private Concept          mConcept;
 
-    public Context(IDataset dataset) {
+    public Context(final IDataset dataset) {
         mDataset    = dataset;
         mCaller     = null;
         mKey        = null;
@@ -53,7 +53,7 @@ public final class Context {
         mContainers = new ArrayList<IContainer>();
     }
 
-    public Context( IDataset dataset, IContainer caller, IKey key ) {
+    public Context( final IDataset dataset, final IContainer caller, final IKey key ) {
         mDataset    = dataset;
         mCaller     = caller;
         mKey        = key;
@@ -73,7 +73,7 @@ public final class Context {
     /**
      * Permits to set the IDataset we want to work on.
      */
-    public void setDataset(IDataset dataset) {
+    public void setDataset(final IDataset dataset) {
         mDataset = dataset;
     }
 
@@ -87,7 +87,7 @@ public final class Context {
     /**
      * Permits to set the IContainer that instantiated the context.
      */
-    public void setCaller(IContainer caller) {
+    public void setCaller(final IContainer caller) {
         mCaller = caller;
     }
 
@@ -101,7 +101,7 @@ public final class Context {
     /**
      * Permits to set the IKey that lead to this instantiation.
      */
-    public void setKey(IKey key) {
+    public void setKey(final IKey key) {
         mKey = key;
     }
 
@@ -116,7 +116,7 @@ public final class Context {
     /**
      * Permits to add a Solver corresponding to the IKey
      */
-    public void addSolver(Solver solver) {
+    public void addSolver(final Solver solver) {
         mSolvers.add( solver );
     }
 
@@ -136,7 +136,7 @@ public final class Context {
      * 
      * @return array of object
      */
-    public void setParams(Object[] params) {
+    public void setParams(final Object[] params) {
         if (params != null) {
             mParams = params.clone();
         }
@@ -155,20 +155,22 @@ public final class Context {
      * Clear the list of found Containers
      */
     public void clearContainers() {
-        mContainers.clear();
+        if (mContainers != null) {
+            mContainers.clear();
+        }
     }
 
     /**
      * Set the list of found containers
      */
-    public void setContainers( List<IContainer> items ) {
+    public void setContainers( final List<IContainer> items ) {
         mContainers = items;
     }
 
     /**
      * Add a Container to the list of found Containers
      */
-    public void addContainer( IContainer item ) {
+    public void addContainer( final IContainer item ) {
         mContainers.add(item);
     }
 
@@ -186,7 +188,7 @@ public final class Context {
      * 
      * @param concept to have at end of the process
      */
-    public void setConcept(Concept concept) {
+    public void setConcept(final Concept concept) {
         mConcept = concept;
     }
 }
