@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf.navigation;
 
@@ -64,18 +64,19 @@ public class HdfGroup implements IGroup, Cloneable {
     private String fullName;
     private HdfDataset dataset;
 
-    public HdfGroup(String factoryName, String name, String path, HdfGroup parent, HdfDataset dataset) {
+    public HdfGroup(final String factoryName, final String name, final String path, final HdfGroup parent,
+            final HdfDataset dataset) {
         this(factoryName, new H5Group(dataset.getH5File(), name, path, null), parent, dataset);
     }
 
-    public HdfGroup(String factoryName, H5Group hdfGroup, HdfGroup parent, IDataset dataset) {
+    public HdfGroup(final String factoryName, final H5Group hdfGroup, final HdfGroup parent, final IDataset dataset) {
         this.factoryName = factoryName;
         this.dataset = (HdfDataset) dataset;
         this.parent = parent;
         init(hdfGroup);
     }
 
-    private void init(H5Group h5Group) {
+    private void init(final H5Group h5Group) {
         name = h5Group.getName();
         nameInFile = name;
 
@@ -122,18 +123,18 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public void addStringAttribute(String name, String value) {
+    public void addStringAttribute(final String name, final String value) {
         HdfAttribute attribute = new HdfAttribute(factoryName, name, value);
         attributeMap.put(name, attribute);
     }
 
     @Override
-    public void addOneAttribute(IAttribute attribute) {
+    public void addOneAttribute(final IAttribute attribute) {
         attributeMap.put(attribute.getName(), attribute);
     }
 
     @Override
-    public IAttribute getAttribute(String name) {
+    public IAttribute getAttribute(final String name) {
         IAttribute result = attributeMap.get(name);
         return result;
     }
@@ -169,25 +170,25 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public boolean hasAttribute(String name, String value) {
+    public boolean hasAttribute(final String name, final String value) {
         boolean result = attributeMap.containsKey(name);
         return result;
     }
 
     @Override
-    public boolean removeAttribute(IAttribute a) {
+    public boolean removeAttribute(final IAttribute a) {
         boolean result = true;
         attributeMap.remove(a.getName());
         return result;
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         addStringAttribute("long_name", name);
     }
 
     @Override
-    public void setShortName(String name) {
+    public void setShortName(final String name) {
         try {
             this.name = name;
             this.fullName = getParentGroup().getName() + HdfPath.PATH_SEPARATOR + name;
@@ -201,7 +202,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public void setParent(IGroup group) {
+    public void setParent(final IGroup group) {
         try {
             parent = (HdfGroup) group;
         } catch (Exception e) {
@@ -222,13 +223,13 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public void addDataItem(IDataItem item) {
+    public void addDataItem(final IDataItem item) {
         item.setParent(this);
         itemMap.put(item.getName(), item);
     }
 
     @Override
-    public Map<String, String> harvestMetadata(String mdStandard) throws IOException {
+    public Map<String, String> harvestMetadata(final String mdStandard) throws IOException {
         throw new NotImplementedException();
     }
 
@@ -247,17 +248,17 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public void addOneDimension(IDimension dimension) {
+    public void addOneDimension(final IDimension dimension) {
     }
 
     @Override
-    public void addSubgroup(IGroup group) {
+    public void addSubgroup(final IGroup group) {
         group.setParent(this);
         groupMap.put(group.getShortName(), group);
     }
 
     @Override
-    public IDataItem getDataItem(String shortName) {
+    public IDataItem getDataItem(final String shortName) {
         IDataItem result = null;
         if (shortName != null) {
             result = itemMap.get(shortName);
@@ -267,7 +268,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IDataItem getDataItemWithAttribute(String name, String value) {
+    public IDataItem getDataItemWithAttribute(final String name, final String value) {
         IDataItem resItem = null;
         List<IDataItem> groups = getDataItemList();
         for (Iterator<?> iter = groups.iterator(); iter.hasNext();) {
@@ -282,13 +283,13 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IDimension getDimension(String name) {
+    public IDimension getDimension(final String name) {
         IDimension result = null;
         return result;
     }
 
     @Override
-    public IContainer getContainer(String shortName) {
+    public IContainer getContainer(final String shortName) {
         if (shortName != null && shortName.equals("")) {
             return this;
         }
@@ -306,7 +307,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IGroup getGroup(String shortName) {
+    public IGroup getGroup(final String shortName) {
         IGroup result = null;
         if (shortName != null) {
             result = groupMap.get(shortName);
@@ -315,7 +316,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IGroup getGroupWithAttribute(String attributeName, String value) {
+    public IGroup getGroupWithAttribute(final String attributeName, final String value) {
         List<IGroup> groups = getGroupList();
         IAttribute attr;
         for (IGroup group : groups) {
@@ -352,7 +353,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IGroup findGroup(String shortName) {
+    public IGroup findGroup(final String shortName) {
         IGroup result = null;
         result = getGroup(shortName);
         return result;
@@ -365,14 +366,47 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
-    protected List<INode> getNodes() {
+    public HdfPath getHdfPath(){
+        HdfPath result;
+        List<HdfNode> parentNodes = getParentNodes();
+        result = new HdfPath(parentNodes.toArray(new HdfNode[parentNodes.size()]));
+
+        return result;
+    }
+
+    public List<HdfNode> getParentNodes() {
+        List<HdfNode> nodes = new ArrayList<HdfNode>();
+
+        IAttribute attribute = getAttribute("NX_class");
+
+        String clazz = null;
+        if (attribute != null) {
+            clazz = attribute.getStringValue();
+        }
+        HdfNode node = new HdfNode(name, clazz);
+
+        if (parent != null) {
+            nodes.addAll(parent.getParentNodes());
+            nodes.add(node);
+        }
+
+        return nodes;
+    }
+
+    public List<INode> getNodes() {
         List<INode> nodes = new ArrayList<INode>();
 
         for (IDataItem item : itemMap.values()) {
             nodes.add(new HdfNode(item.getShortName()));
         }
         for (IGroup item : groupMap.values()) {
-            nodes.add(new HdfNode(item.getShortName()));
+            IAttribute attribute = item.getAttribute("NX_class");
+
+            String clazz = null;
+            if (attribute != null) {
+                clazz = attribute.getStringValue();
+            }
+            nodes.add(new HdfNode(item.getShortName(), clazz));
         }
         // List<HObject> members = h5Group.getMemberList();
         // for (HObject hObject : members) {
@@ -388,7 +422,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public IContainer findContainerByPath(String path) throws NoResultException {
+    public IContainer findContainerByPath(final String path) throws NoResultException {
         // Split path into nodes
         String[] sNodes = HdfPath.splitStringPath(path);
         IContainer node = getRootGroup();
@@ -403,7 +437,7 @@ public class HdfGroup implements IGroup, Cloneable {
         return node;
     }
 
-    public List<IContainer> findAllContainerByPath(INode[] nodes) throws NoResultException {
+    public List<IContainer> findAllContainerByPath(final INode[] nodes) throws NoResultException {
         List<IContainer> list = new ArrayList<IContainer>();
         IGroup root = getRootGroup();
 
@@ -415,7 +449,7 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+    public List<IContainer> findAllContainerByPath(final String path) throws NoResultException {
         // Try to list all nodes matching the path
         // Transform path into a NexusNode array
         INode[] nodes = HdfPath.splitStringToNode(path);
@@ -425,7 +459,7 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
-    private List<IContainer> findAllContainer(IContainer container, INode[] nodes, int level) {
+    private List<IContainer> findAllContainer(final IContainer container, final INode[] nodes, final int level) {
         List<IContainer> result = new ArrayList<IContainer>();
         if (container != null) {
             if (container instanceof HdfGroup) {
@@ -458,41 +492,41 @@ public class HdfGroup implements IGroup, Cloneable {
     }
 
     @Override
-    public boolean removeDataItem(IDataItem item) {
+    public boolean removeDataItem(final IDataItem item) {
         return removeDataItem(item.getShortName());
 
     }
 
     @Override
-    public boolean removeDataItem(String varName) {
+    public boolean removeDataItem(final String varName) {
         boolean result = true;
         itemMap.remove(varName);
         return result;
     }
 
     @Override
-    public boolean removeDimension(String name) {
+    public boolean removeDimension(final String name) {
         return false;
     }
 
     @Override
-    public boolean removeDimension(IDimension dimension) {
+    public boolean removeDimension(final IDimension dimension) {
         return false;
     }
 
     @Override
-    public boolean removeGroup(IGroup group) {
+    public boolean removeGroup(final IGroup group) {
         return removeGroup(group.getShortName());
     }
 
     @Override
-    public boolean removeGroup(String name) {
+    public boolean removeGroup(final String name) {
         groupMap.remove(name);
         return true;
     }
 
     @Override
-    public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
+    public void updateDataItem(final String key, final IDataItem dataItem) throws SignalNotAvailableException {
         throw new NotImplementedException();
     }
 
@@ -510,7 +544,7 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     @Deprecated
-    public void setDictionary(IDictionary dictionary) {
+    public void setDictionary(final IDictionary dictionary) {
         throw new NotImplementedException();
     }
 
@@ -522,35 +556,36 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     @Deprecated
-    public List<IContainer> findAllContainers(IKey key) throws NoResultException {
+    public List<IContainer> findAllContainers(final IKey key) throws NoResultException {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
+    public List<IContainer> findAllOccurrences(final IKey key) throws NoResultException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IContainer findObjectByPath(Path path) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    @Deprecated
-    public IContainer findContainer(String shortName) {
+    public IContainer findObjectByPath(final Path path) {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public IGroup findGroup(IKey key) {
+    public IContainer findContainer(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataItem findDataItemWithAttribute(IKey key, String name, String value) throws NoResultException {
+    @Deprecated
+    public IGroup findGroup(final IKey key) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public IDataItem findDataItemWithAttribute(final IKey key, final String name, final String value)
+            throws NoResultException {
         List<IContainer> found = findAllOccurrences(key);
         IDataItem result = null;
         for (IContainer item : found) {
@@ -565,19 +600,19 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     @Deprecated
-    public IGroup findGroupWithAttribute(IKey key, String name, String value) {
+    public IGroup findGroupWithAttribute(final IKey key, final String name, final String value) {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public IDataItem findDataItem(String shortName) {
+    public IDataItem findDataItem(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public IDataItem findDataItem(IKey key) {
+    public IDataItem findDataItem(final IKey key) {
         throw new NotImplementedException();
     }
 
@@ -590,7 +625,7 @@ public class HdfGroup implements IGroup, Cloneable {
         return buffer.toString();
     }
 
-    public void save(FileFormat fileToWrite, Group parent) throws Exception {
+    public void save(final FileFormat fileToWrite, final Group parent) throws Exception {
         Group theGroup = null;
 
         boolean copyToNewFile = !(fileToWrite.getAbsolutePath().equals(dataset.getH5File().getAbsolutePath()));
