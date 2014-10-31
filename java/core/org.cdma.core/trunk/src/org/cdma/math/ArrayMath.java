@@ -16,11 +16,11 @@
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
 // All rights reserved. This program and the accompanying materials
-// are made available under the terms of the Eclipse Public License v1.0 
+// are made available under the terms of the Eclipse Public License v1.0
 // which accompanies this distribution, and is available at
 // http://www.eclipse.org/legal/epl-v10.html
-// 
-// Contributors: 
+//
+// Contributors:
 //    Norman Xiong (nxi@Bragg Institute) - initial API and implementation
 //    Clément Rodriguez (clement.rodriguez@synchrotron-soleil.fr) - API evolution
 // ****************************************************************************
@@ -43,7 +43,7 @@ public abstract class ArrayMath implements IArrayMath {
 
     private IFactory factory;
 
-    public ArrayMath(IArray array, IFactory factory) {
+    public ArrayMath(final IArray array, final IFactory factory) {
         m_array = array;
         this.factory = factory;
         if (this.factory == null) {
@@ -51,6 +51,7 @@ public abstract class ArrayMath implements IArrayMath {
         }
     }
 
+    @Override
     public IArray getArray() {
         return m_array;
     }
@@ -62,13 +63,15 @@ public abstract class ArrayMath implements IArrayMath {
      * @param array in IArray type
      * @return IArray with new storage
      * @throws ShapeNotMatchException
-     *             mismatching shape 
+     *             mismatching shape
      */
-    public IArrayMath toAdd(IArrayMath array) throws ShapeNotMatchException {
+    @Override
+    public IArrayMath toAdd(final IArrayMath array) throws ShapeNotMatchException {
         return toAdd(array.getArray());
     }
 
-    public IArrayMath add(IArrayMath array) throws ShapeNotMatchException {
+    @Override
+    public IArrayMath add(final IArrayMath array) throws ShapeNotMatchException {
         return add(array.getArray());
     }
 
@@ -76,9 +79,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Add a value to the IArray element-wisely.
      * 
      * @param value double type
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
-    public IArrayMath toAdd(double value) {
+    @Override
+    public IArrayMath toAdd(final double value) {
         // [ANSTO][Tony][2011-08-30] Resulting array should be typed as double
         IArray result = getFactory().createArray(double.class, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
@@ -94,9 +98,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with adding a constant to its values.
      * 
      * @param value double type
-     * @return IArray itself 
+     * @return IArray itself
      */
-    public IArrayMath add(double val) {
+    @Override
+    public IArrayMath add(final double val) {
         IArrayIterator iter = getArray().getIterator();
         while (iter.hasNext()) {
             iter.next();
@@ -106,7 +111,8 @@ public abstract class ArrayMath implements IArrayMath {
         return this;
     }
 
-    public IArrayMath eltRemainder(IArray newArray)
+    @Override
+    public IArrayMath eltRemainder(final IArray newArray)
             throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         if (getArray().getRank() == newArray.getRank()) {
@@ -129,7 +135,8 @@ public abstract class ArrayMath implements IArrayMath {
         return this;
     }
 
-    public IArrayMath eltRemainder(IArrayMath array)
+    @Override
+    public IArrayMath eltRemainder(final IArrayMath array)
             throws ShapeNotMatchException {
         return eltRemainder(array.getArray());
     }
@@ -141,9 +148,10 @@ public abstract class ArrayMath implements IArrayMath {
      * @param array in IArray type
      * @return IArray with new storage
      * @throws ShapeNotMatchException
-     *             mismatching shape 
+     *             mismatching shape
      */
-    public IArrayMath toEltRemainder(IArray newArray)
+    @Override
+    public IArrayMath toEltRemainder(final IArray newArray)
             throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         IArrayMath arrMath = newArray.getArrayMath();
@@ -172,12 +180,14 @@ public abstract class ArrayMath implements IArrayMath {
         return result.getArrayMath();
     }
 
-    public IArrayMath toEltRemainder(IArrayMath array)
+    @Override
+    public IArrayMath toEltRemainder(final IArrayMath array)
             throws ShapeNotMatchException {
         return toEltRemainder(array.getArray());
     }
 
-    public IArrayMath toEltMultiply(IArray newArray)
+    @Override
+    public IArrayMath toEltMultiply(final IArray newArray)
             throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         IArrayMath arrMath = newArray.getArrayMath();
@@ -206,7 +216,8 @@ public abstract class ArrayMath implements IArrayMath {
         return result.getArrayMath();
     }
 
-    public IArrayMath toEltMultiply(IArrayMath array)
+    @Override
+    public IArrayMath toEltMultiply(final IArrayMath array)
             throws ShapeNotMatchException {
         return toEltMultiply(array.getArray());
     }
@@ -217,9 +228,10 @@ public abstract class ArrayMath implements IArrayMath {
      * @param array IArray object
      * @return IArray itself
      * @throws ShapeNotMatchException
-     *             mismatching shape 
+     *             mismatching shape
      */
-    public IArrayMath eltMultiply(IArray newArray)
+    @Override
+    public IArrayMath eltMultiply(final IArray newArray)
             throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         if (getArray().getRank() == newArray.getRank()) {
@@ -242,7 +254,8 @@ public abstract class ArrayMath implements IArrayMath {
         return this;
     }
 
-    public IArrayMath eltMultiply(IArrayMath array)
+    @Override
+    public IArrayMath eltMultiply(final IArrayMath array)
             throws ShapeNotMatchException {
         return eltMultiply(array.getArray());
     }
@@ -251,10 +264,12 @@ public abstract class ArrayMath implements IArrayMath {
      * Scale the array with a double value.
      * 
      * @param value double type
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
-    public IArrayMath toScale(double value) {
-        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
+    @Override
+    public IArrayMath toScale(final double value) {
+        System.out.println("ArrayMath.toScale()");
+        IArray result = getFactory().createArray(double.class, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -268,10 +283,11 @@ public abstract class ArrayMath implements IArrayMath {
      * Modulo the array with a double value.
      * 
      * @param value double type
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
-    public IArrayMath toMod(double value) {
-        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
+    @Override
+    public IArrayMath toMod(final double value) {
+        IArray result = getFactory().createArray(double.class, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -285,9 +301,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with the scale of its values.
      * 
      * @param value double type
-     * @return IArray itself 
+     * @return IArray itself
      */
-    public IArrayMath scale(double value) {
+    @Override
+    public IArrayMath scale(final double value) {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
             oldIterator.setDouble(oldIterator.getDoubleNext() * value);
@@ -300,9 +317,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with the mod of a value.
      * 
      * @param value double type
-     * @return IArray itself 
+     * @return IArray itself
      */
-    public IArrayMath mod(double value) {
+    @Override
+    public IArrayMath mod(final double value) {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
             oldIterator.setDouble(oldIterator.getDoubleNext() % value);
@@ -311,7 +329,8 @@ public abstract class ArrayMath implements IArrayMath {
         return this;
     }
 
-    public IArrayMath matMultiply(IArrayMath array)
+    @Override
+    public IArrayMath matMultiply(final IArrayMath array)
             throws ShapeNotMatchException {
         return matMultiply(array.getArray());
     }
@@ -319,8 +338,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the square root value of every element of the array.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toSqrt() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -335,8 +355,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with of the square root its value.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath sqrt() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -350,8 +371,9 @@ public abstract class ArrayMath implements IArrayMath {
      * Calculate the e raised to the power of double values in the IArray
      * element-wisely.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toExp() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -367,8 +389,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with e raised to the power of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath exp() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -381,8 +404,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate an element-wise natural logarithm of values of an IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toLn() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -403,8 +427,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with element-wise natural logarithm of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath ln() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -422,8 +447,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate an element-wise logarithm (base 10) of values of an IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toLog10() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -444,8 +470,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with element-wise logarithm (base 10) of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath log10() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -463,8 +490,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the sine value of each elements in the IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toSin() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -480,8 +508,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with sine of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath sin() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -494,8 +523,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the arc sine value of each elements in the IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toAsin() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -511,8 +541,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with arc sine of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath asin() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -525,8 +556,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the cosine value of each elements in the IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toCos() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -543,8 +575,9 @@ public abstract class ArrayMath implements IArrayMath {
      * Calculate the arc cosine value of each elements in the IArray.
      * 
      * @param array in array type
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toAcos() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -561,8 +594,9 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with cosine of its values.
      * 
      * @param array in array type
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath cos() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -575,8 +609,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with arc cosine of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath acos() {
         IArrayIterator iterator = getArray().getIterator();
         while (iterator.hasNext()) {
@@ -589,8 +624,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the trigonometric value of each elements in the IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toTan() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -606,8 +642,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with trigonometric of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath tan() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -620,8 +657,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the arc trigonometric value of each elements in the IArray.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toAtan() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -637,8 +675,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Update the array with arc trigonometric of its values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath atan() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -652,9 +691,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Do an element-wise power calculation of the array. Yij = Xij ^ power.
      * 
      * @param power double value
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
-    public IArrayMath toPower(double value) {
+    @Override
+    public IArrayMath toPower(final double value) {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
@@ -670,9 +710,10 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with to a constant power of its values.
      * 
      * @param power double value
-     * @return IArray itself 
+     * @return IArray itself
      */
-    public IArrayMath power(double value) {
+    @Override
+    public IArrayMath power(final double value) {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
             oldIterator.setDouble(Math.pow(oldIterator.getDoubleNext(),value));
@@ -692,8 +733,9 @@ public abstract class ArrayMath implements IArrayMath {
      * @return IArray with new storage
      * @throws ShapeNotMatchException
      */
-    public double powerSum(IArray axis, int dimension,
-            double power) throws ShapeNotMatchException {
+    @Override
+    public double powerSum(final IArray axis, final int dimension,
+            final double power) throws ShapeNotMatchException {
         if (dimension >= getArray().getRank()) {
             throw new ShapeNotMatchException(dimension
                     + " dimension is not available");
@@ -717,7 +759,8 @@ public abstract class ArrayMath implements IArrayMath {
         return powerSum;
     }
 
-    public double powerSum(IArrayMath axis, int dimension, double power)
+    @Override
+    public double powerSum(final IArrayMath axis, final int dimension, final double power)
             throws ShapeNotMatchException {
         return powerSum(axis.getArray(), dimension, power);
     }
@@ -725,8 +768,9 @@ public abstract class ArrayMath implements IArrayMath {
     /**
      * Calculate the sum value of the array. If an element is NaN, skip it.
      * 
-     * @return a double value 
+     * @return a double value
      */
+    @Override
     public double sum() {
         double sum = Double.NaN;
         IArrayIterator iterator = getArray().getIterator();
@@ -752,8 +796,9 @@ public abstract class ArrayMath implements IArrayMath {
      * For example, result = raw sum * size of array / (size of array - number
      * of NaNs).
      * 
-     * @return a double value 
+     * @return a double value
      */
+    @Override
     public double sumNormalise() {
         double sum = Double.NaN;
         int countNaN = 0;
@@ -788,6 +833,7 @@ public abstract class ArrayMath implements IArrayMath {
      * @return IArray with new storage
      * @throws DivideByZeroException
      */
+    @Override
     public IArrayMath toEltInverse() throws DivideByZeroException {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -809,8 +855,9 @@ public abstract class ArrayMath implements IArrayMath {
      * 
      * @return IArray itself
      * @throws DivideByZeroException
-     *             divided by zero 
+     *             divided by zero
      */
+    @Override
     public IArrayMath eltInverse() throws DivideByZeroException {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -828,8 +875,9 @@ public abstract class ArrayMath implements IArrayMath {
      * Do a element-wise inverse calculation that skip zero values. Yij = 1 /
      * Xij.
      * 
-     * @return IArray with new storage 
+     * @return IArray with new storage
      */
+    @Override
     public IArrayMath toEltInverseSkipZero() {
         IArray result = getFactory().createArray(Double.TYPE,
                 getArray().getShape());
@@ -847,8 +895,9 @@ public abstract class ArrayMath implements IArrayMath {
      * Update the array with element-wise inverse of its values, skip zero
      * values.
      * 
-     * @return IArray itself 
+     * @return IArray itself
      */
+    @Override
     public IArrayMath eltInverseSkipZero() {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
@@ -867,7 +916,8 @@ public abstract class ArrayMath implements IArrayMath {
      * @return IArray with new storage
      * @throws ShapeNotMatchException
      */
-    public double vecDot(IArray newArray) throws ShapeNotMatchException {
+    @Override
+    public double vecDot(final IArray newArray) throws ShapeNotMatchException {
         try {
             return toEltMultiply(newArray).sum();
         } catch (Exception e) {
@@ -875,7 +925,8 @@ public abstract class ArrayMath implements IArrayMath {
         }
     }
 
-    public double vecDot(IArrayMath array) throws ShapeNotMatchException {
+    @Override
+    public double vecDot(final IArrayMath array) throws ShapeNotMatchException {
         return vecDot(array.getArray());
     }
 
@@ -885,6 +936,7 @@ public abstract class ArrayMath implements IArrayMath {
      * 
      * @return double value
      */
+    @Override
     public double varianceSumNormalise() {
         double sum = Double.NaN;
         int countNaN = 0;
@@ -921,7 +973,8 @@ public abstract class ArrayMath implements IArrayMath {
      * @param result CDMA IArray object
      * @throws ShapeNotMatchException
      */
-    public void eltMultiplyWithEqualSize(IArray newArray, IArray result)
+    @Override
+    public void eltMultiplyWithEqualSize(final IArray newArray, final IArray result)
             throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
@@ -937,17 +990,20 @@ public abstract class ArrayMath implements IArrayMath {
         getArray().setDirty(true);
     }
 
-    public void eltMultiplyWithEqualSize(IArrayMath array, IArrayMath result)
+    @Override
+    public void eltMultiplyWithEqualSize(final IArrayMath array, final IArrayMath result)
             throws ShapeNotMatchException {
         eltMultiplyWithEqualSize(array.getArray(), result.getArray());
     }
 
-    public void eltRemainderEqualSize(IArrayMath array, IArrayMath result)
+    @Override
+    public void eltRemainderEqualSize(final IArrayMath array, final IArrayMath result)
             throws ShapeNotMatchException {
         eltRemainderEqualSize(array.getArray(), result.getArray());
     }
 
-    public void eltRemainderEqualSize(IArray newArray, IArray result)
+    @Override
+    public void eltRemainderEqualSize(final IArray newArray, final IArray result)
             throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
@@ -971,7 +1027,8 @@ public abstract class ArrayMath implements IArrayMath {
      * @param result CDMA IArray object
      * @throws ShapeNotMatchException
      */
-    public void eltDivideWithEqualSize(IArray newArray, IArray result)
+    @Override
+    public void eltDivideWithEqualSize(final IArray newArray, final IArray result)
             throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
@@ -991,7 +1048,8 @@ public abstract class ArrayMath implements IArrayMath {
         getArray().setDirty(true);
     }
 
-    public void eltDivideWithEqualSize(IArrayMath array, IArrayMath result)
+    @Override
+    public void eltDivideWithEqualSize(final IArrayMath array, final IArrayMath result)
             throws ShapeNotMatchException {
         eltDivideWithEqualSize(array.getArray(), result.getArray());
     }
@@ -1004,7 +1062,8 @@ public abstract class ArrayMath implements IArrayMath {
      * @throws ShapeNotMatchException
      *             mismatching shape
      */
-    public IArrayMath toEltDivide(IArray newArray)
+    @Override
+    public IArrayMath toEltDivide(final IArray newArray)
             throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         IArray result = getFactory().createArray(Double.TYPE,
@@ -1033,7 +1092,8 @@ public abstract class ArrayMath implements IArrayMath {
         return result.getArrayMath();
     }
 
-    public IArrayMath toEltDivide(IArrayMath array)
+    @Override
+    public IArrayMath toEltDivide(final IArrayMath array)
             throws ShapeNotMatchException {
         return toEltDivide(array.getArray());
     }
@@ -1046,7 +1106,8 @@ public abstract class ArrayMath implements IArrayMath {
      * @throws ShapeNotMatchException
      *             mismatching shape
      */
-    public IArrayMath eltDivide(IArray newArray) throws ShapeNotMatchException {
+    @Override
+    public IArrayMath eltDivide(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         if (getArray().getRank() == newArray.getRank()) {
             eltDivideWithEqualSize(newArray, getArray());
@@ -1068,7 +1129,8 @@ public abstract class ArrayMath implements IArrayMath {
         return this;
     }
 
-    public IArrayMath eltDivide(IArrayMath array) throws ShapeNotMatchException {
+    @Override
+    public IArrayMath eltDivide(final IArrayMath array) throws ShapeNotMatchException {
         return eltDivide(array.getArray());
     }
 
@@ -1077,6 +1139,7 @@ public abstract class ArrayMath implements IArrayMath {
         return factory;
     }
 
+    @Override
     public double getMaximum() {
         IArrayIterator iter = getArray().getIterator();
         double max = -Double.MAX_VALUE;
@@ -1090,6 +1153,7 @@ public abstract class ArrayMath implements IArrayMath {
         return max;
     }
 
+    @Override
     public double getMinimum() {
         IArrayIterator iter = getArray().getIterator();
         double min = Double.MAX_VALUE;

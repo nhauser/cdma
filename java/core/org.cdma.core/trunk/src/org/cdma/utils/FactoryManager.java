@@ -52,13 +52,13 @@ public class FactoryManager {
      * 
      * @param cdmaVersion filter on API version to apply when loading plug-ins
      */
-    public FactoryManager(String cdmaVersion) {
+    public FactoryManager(final String cdmaVersion) {
         factoryRegistry = new TreeMap<String, IFactory>();
         version = cdmaVersion;
         initialized = false;
     }
 
-    public void registerFactory(String name, IFactory factory) {
+    public void registerFactory(final String name, final IFactory factory) {
         synchronized (FactoryManager.class) {
             if( ! initialized ) {
                 initialized = true;
@@ -83,7 +83,7 @@ public class FactoryManager {
         }
     }
 
-    public void unregisterFactory(String name) {
+    public void unregisterFactory(final String name) {
         synchronized (FactoryManager.class) {
             if( ! initialized ) {
                 initialized = true;
@@ -117,7 +117,7 @@ public class FactoryManager {
         return factory;
     }
 
-    public IFactory getFactory(String name) {
+    public IFactory getFactory(final String name) {
         synchronized (FactoryManager.class) {
             if( ! initialized ) {
                 initialized = true;
@@ -154,8 +154,8 @@ public class FactoryManager {
             Class<?> osgiClass = Class.forName(CLASS_OSGI_BUNDLE_CONTEXT);
             if (osgiClass != null) {
                 // Use reflection in case OSGi is not available at runtime
-                IFactoryResolver osgiResolver = (IFactoryResolver) Class
-                        .forName(CLASS_OSGI_FACTORY_RESOLVER).newInstance();
+                IFactoryResolver osgiResolver = (IFactoryResolver) Class.forName(CLASS_OSGI_FACTORY_RESOLVER)
+                        .newInstance();
                 osgiResolver.discoverFactories(this);
             }
         } catch (Exception e) {
@@ -169,7 +169,7 @@ public class FactoryManager {
      * @param version in string format X.Y.Z
      * @return a int[] of length 3 with major version in first cell.
      */
-    private int[] parseVersion(String version) {
+    private int[] parseVersion(final String version) {
         int[] result = new int[3];
 
         String[] numbers = version.split("[^0-9]");

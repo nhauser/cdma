@@ -189,8 +189,10 @@ public class ItemSolver {
             // If call on a method
             else if (node.getName().equals("call")) {
                 String param = node.getAttributeValue("param");
+                String param_args = node.getAttributeValue("param_args");
+
                 method = manager.getPluginMethod(mFactory.getName(), node.getText());
-                current = new Solver(method, new String[] { param });
+                current = new Solver(method, new String[] { param, param_args });
                 mContent.add(current);
             }
             // If attribute
