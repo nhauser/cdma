@@ -42,11 +42,11 @@ public class HdfDataset implements IDataset, Cloneable {
     private IGroup root;
     private int openFlag;
 
-    public HdfDataset(String factoryName, File hdfFile) {
+    public HdfDataset(final String factoryName, final File hdfFile) {
         this(factoryName, hdfFile, false);
     }
 
-    public HdfDataset(String factoryName, File hdfFile, boolean appendToFile) {
+    public HdfDataset(final String factoryName, final File hdfFile, final boolean appendToFile) {
         this.factoryName = factoryName;
         this.hdfFileName = hdfFile.getAbsolutePath();
         this.title = hdfFile.getName();
@@ -60,10 +60,6 @@ public class HdfDataset implements IDataset, Cloneable {
                 }
             }
             initHdfFile();
-            if (this.h5File == null) {
-                // TODO DEBUG
-                System.out.println("STOP");
-            }
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
         }
@@ -111,7 +107,7 @@ public class HdfDataset implements IDataset, Cloneable {
     }
 
     @Override
-    public void setLocation(String location) {
+    public void setLocation(final String location) {
         hdfFileName = location;
         try {
             open();
@@ -135,7 +131,7 @@ public class HdfDataset implements IDataset, Cloneable {
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -191,7 +187,7 @@ public class HdfDataset implements IDataset, Cloneable {
     }
 
     @Override
-    public void saveTo(String location) throws WriterException {
+    public void saveTo(final String location) throws WriterException {
         try {
             File newFile = new File(location);
             if (newFile.exists()) {
@@ -213,12 +209,12 @@ public class HdfDataset implements IDataset, Cloneable {
     }
 
     @Override
-    public void save(IContainer container) throws WriterException {
+    public void save(final IContainer container) throws WriterException {
         throw new NotImplementedException();
     }
 
     @Override
-    public void save(String parentPath, IAttribute attribute) throws WriterException {
+    public void save(final String parentPath, final IAttribute attribute) throws WriterException {
         throw new NotImplementedException();
     }
 

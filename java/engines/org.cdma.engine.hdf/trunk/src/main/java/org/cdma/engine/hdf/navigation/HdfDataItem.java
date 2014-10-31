@@ -64,7 +64,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     private final List<IAttribute> attributeList = new ArrayList<IAttribute>();
     private boolean dirty = false;
 
-    public HdfDataItem(String factoryName, H5File file, IGroup parent, H5ScalarDS dataset) {
+    public HdfDataItem(final String factoryName, final H5File file, final IGroup parent, final H5ScalarDS dataset) {
         this.factoryName = factoryName;
         this.h5File = file;
         this.h5Item = dataset;
@@ -79,12 +79,12 @@ public class HdfDataItem implements IDataItem, Cloneable {
         }
     }
 
-    public HdfDataItem(String factoryName, String name) {
+    public HdfDataItem(final String factoryName, final String name) {
         this(factoryName, null, null, null);
         this.shortName = name;
     }
 
-    private HdfDataItem(HdfDataItem dataItem) {
+    private HdfDataItem(final HdfDataItem dataItem) {
         this.parent = dataItem.parent;
         this.factoryName = dataItem.getFactoryName();
         this.h5File = dataItem.getH5File();
@@ -121,17 +121,17 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void addOneAttribute(IAttribute attribute) {
+    public void addOneAttribute(final IAttribute attribute) {
         this.attributeList.add(attribute);
     }
 
     @Override
-    public void addStringAttribute(String name, String value) {
+    public void addStringAttribute(final String name, final String value) {
         IAttribute attr = new HdfAttribute(factoryName, name, value);
         addOneAttribute(attr);
     }
 
-    public IAttribute getAttribute(String name, boolean ignoreCase) {
+    public IAttribute getAttribute(final String name, final boolean ignoreCase) {
         IAttribute result = null;
         for (IAttribute attribute : attributeList) {
             if ((ignoreCase && name.equalsIgnoreCase(attribute.getName())) || name.equals(attribute.getName())) {
@@ -157,7 +157,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public IAttribute getAttribute(String name) {
+    public IAttribute getAttribute(final String name) {
         IAttribute result = null;
         result = getAttribute(name, false);
         return result;
@@ -184,14 +184,14 @@ public class HdfDataItem implements IDataItem, Cloneable {
         IContainer parentGroup = getParentGroup();
         if (parentGroup != null) {
             result = parentGroup.getLocation();
+            // result = result + "/" + getName();
         }
         return result;
     }
 
     @Override
     public String getName() {
-        IContainer parent = getParentGroup();
-        return (parent == null ? "" : parent.getName() + "/") + getShortName();
+        return getShortName();
     }
 
     @Override
@@ -215,13 +215,13 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public boolean hasAttribute(String name, String value) {
+    public boolean hasAttribute(final String name, final String value) {
         boolean result = HdfObjectUtils.hasAttribute(h5Item, name, value);
         return result;
     }
 
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         String[] nodes = name.split("/");
         int depth = nodes.length - 1;
 
@@ -236,12 +236,12 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void setShortName(String name) {
+    public void setShortName(final String name) {
         this.shortName = name;
     }
 
     @Override
-    public void setParent(IGroup group) {
+    public void setParent(final IGroup group) {
         try {
             parent = group;
             if (h5Item != null) {
@@ -271,19 +271,19 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public IAttribute findAttributeIgnoreCase(String name) {
+    public IAttribute findAttributeIgnoreCase(final String name) {
         IAttribute result = null;
         result = getAttribute(name, true);
         return result;
     }
 
     @Override
-    public int findDimensionIndex(String name) {
+    public int findDimensionIndex(final String name) {
         return 0;
     }
 
     @Override
-    public IDataItem getASlice(int dimension, int value) throws InvalidRangeException {
+    public IDataItem getASlice(final int dimension, final int value) throws InvalidRangeException {
         return getSlice(dimension, value);
     }
 
@@ -302,7 +302,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public IArray getData(int[] origin, int[] shape) throws IOException, InvalidRangeException {
+    public IArray getData(final int[] origin, final int[] shape) throws IOException, InvalidRangeException {
         IArray array = null;
         IIndex index = null;
         try {
@@ -319,7 +319,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         return array;
     }
 
-    public Object load(int[] origin, int[] shape) throws OutOfMemoryError, Exception {
+    public Object load(final int[] origin, final int[] shape) throws OutOfMemoryError, Exception {
         Object result = null;
         Object tempResult = null;
         boolean viewHasChanged = false;
@@ -386,7 +386,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public List<IDimension> getDimensions(int index) {
+    public List<IDimension> getDimensions(final int index) {
         return new ArrayList<IDimension>();
     }
 
@@ -418,7 +418,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public void getNameAndDimensions(StringBuffer buf, boolean longName, boolean length) {
+    public void getNameAndDimensions(final StringBuffer buf, final boolean longName, final boolean length) {
     }
 
     @Override
@@ -444,7 +444,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public IDataItem getSection(List<IRange> section) throws InvalidRangeException {
+    public IDataItem getSection(final List<IRange> section) throws InvalidRangeException {
         HdfDataItem item = null;
         try {
             item = new HdfDataItem(this);
@@ -505,7 +505,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public IDataItem getSlice(int dim, int value) throws InvalidRangeException {
+    public IDataItem getSlice(final int dim, final int value) throws InvalidRangeException {
         HdfDataItem item = new HdfDataItem(this);
         try {
             item.array = item.getData().getArrayUtils().slice(dim, value).getArray();
@@ -700,48 +700,48 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public boolean removeAttribute(IAttribute a) {
+    public boolean removeAttribute(final IAttribute a) {
         return HdfObjectUtils.removeAttribute(h5Item, a);
     }
 
     @Override
-    public void setCachedData(IArray cacheData, boolean isMetadata) throws InvalidArrayTypeException {
+    public void setCachedData(final IArray cacheData, final boolean isMetadata) throws InvalidArrayTypeException {
         array = cacheData;
         dirty = true;
     }
 
     @Override
-    public void setCaching(boolean caching) {
+    public void setCaching(final boolean caching) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void setDataType(Class<?> dataType) {
+    public void setDataType(final Class<?> dataType) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void setDimensions(String dimString) {
+    public void setDimensions(final String dimString) {
 
     }
 
     @Override
-    public void setDimension(IDimension dim, int ind) throws DimensionNotSupportedException {
+    public void setDimension(final IDimension dim, final int ind) throws DimensionNotSupportedException {
 
     }
 
     @Override
-    public void setElementSize(int elementSize) {
+    public void setElementSize(final int elementSize) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void setSizeToCache(int sizeToCache) {
+    public void setSizeToCache(final int sizeToCache) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void setUnitsString(String units) {
+    public void setUnitsString(final String units) {
         throw new NotImplementedException();
     }
 
@@ -778,7 +778,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         return strDebug.toString();
     }
 
-    public void save(FileFormat fileToWrite, Group parentInFile) throws Exception {
+    public void save(final FileFormat fileToWrite, final Group parentInFile) throws Exception {
         boolean saveInDifferentFile = false;
         if (parentInFile == null) {
             throw new RuntimeException("Can not save a dataitem with no parent");
@@ -869,7 +869,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     @Override
-    public String writeCDL(String indent, boolean useFullName, boolean strict) {
+    public String writeCDL(final String indent, final boolean useFullName, final boolean strict) {
         throw new NotImplementedException();
     }
 }
