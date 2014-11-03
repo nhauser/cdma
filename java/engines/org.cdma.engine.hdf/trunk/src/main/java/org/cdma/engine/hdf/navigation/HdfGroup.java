@@ -156,7 +156,6 @@ public class HdfGroup implements IGroup, Cloneable {
             if (parent == null) {
                 fullName = HdfPath.PATH_SEPARATOR;
             } else {
-
                 fullName = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + name : parent.getName()
                         + HdfPath.PATH_SEPARATOR + name;
             }
@@ -366,7 +365,7 @@ public class HdfGroup implements IGroup, Cloneable {
         return result;
     }
 
-    public HdfPath getHdfPath(){
+    public HdfPath getHdfPath() {
         HdfPath result;
         List<HdfNode> parentNodes = getParentNodes();
         result = new HdfPath(parentNodes.toArray(new HdfNode[parentNodes.size()]));
