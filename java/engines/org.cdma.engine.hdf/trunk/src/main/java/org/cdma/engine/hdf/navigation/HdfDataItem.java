@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf.navigation;
 
@@ -353,7 +353,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     h5Item.clear();
                 }
                 tempResult = h5Item.getData();
-
+                // TODO Activate & Test Unsigned conversion
                 // if (h5Item.isUnsigned()) {
                 // Dataset.convertFromUnsignedC(tempResult, result);
                 // } else {
@@ -440,7 +440,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
             result = h5Item.getRank();
         }
         return result;
-        // return array.getRank();
     }
 
     @Override
@@ -468,12 +467,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public int[] getShape() {
-        /*
-            long[] dims = h5Item.getDims();
-            int[] result = new int[2];
-            result = HdfObjectUtils.convertLongToInt(dims);
-            return result;
-         */
         int[] result = null;
         if (array != null) {
             result = array.getShape();

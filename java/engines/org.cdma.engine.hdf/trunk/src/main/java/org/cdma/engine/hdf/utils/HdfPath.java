@@ -24,14 +24,19 @@ import org.cdma.interfaces.INode;
 public class HdfPath {
 
     public static final String PATH_SEPARATOR = "/";
+    public static final String PARENT_NODE = "..";
     protected List<INode> nodes = new ArrayList<INode>();
 
-    public HdfPath(INode[] nodes) {
+    public HdfPath(final INode[] nodes) {
         this.nodes = Arrays.asList(nodes);
     }
 
-    public HdfPath(INode node) {
+    public HdfPath(final INode node) {
         this.nodes.add(node);
+    }
+
+    public HdfPath() {
+        // Needed empty
     }
 
     /**
@@ -39,7 +44,7 @@ public class HdfPath {
      * 
      * @param path
      */
-    public static String[] splitStringPath(String path) {
+    public static String[] splitStringPath(final String path) {
         if (path.startsWith(HdfPath.PATH_SEPARATOR)) {
             return path.substring(1).split(HdfPath.PATH_SEPARATOR);
         }
@@ -48,7 +53,7 @@ public class HdfPath {
         }
     }
 
-    public static INode[] splitStringToNode(String sPath) {
+    public static INode[] splitStringToNode(final String sPath) {
         HdfNode[] result = null;
         if (sPath != null) {
             String[] names = splitStringPath(sPath);
@@ -69,17 +74,60 @@ public class HdfPath {
                         i++;
                     }
                 }
-            }
-            else {
+            } else {
                 result = new HdfNode[0];
             }
         }
         return result;
     }
 
+    /**
+     * getCurrentNode returns the node that the path is aiming to or null if it contains no node
+     */
+    public INode getCurrentNode() {
+
+        if (nodes.size() > 0)
+            return nodes.get(nodes.size() - 1);
+        else
+            return null;
+    }
     public INode[] getNodes() {
         return nodes.toArray(new INode[nodes.size()]);
     }
+
+    /**
+     * getValue return the path value in a Nexus file as a String
+     */
+    public String getValue() {
+        StringBuffer buf = new StringBuffer();
+
+        if (!isRelative())
+            buf.append(HdfPath.PATH_SEPARATOR);
+
+        INode nnNode;
+        for (int i = 0; i < nodes.size(); i++) {
+            nnNode = nodes.get(i);
+            if (!"".equals(nnNode.toString().trim())) {
+                buf.append(nnNode.toString());
+                if (nnNode.isGroup())
+                    buf.append(HdfPath.PATH_SEPARATOR);
+            }
+        }
+        String result = buf.toString();
+        return result;
+    }
+
+    /**
+     * isRelative Scan all nodes of the current path and check if it has a back value
+     */
+    public boolean isRelative() {
+        for (int i = 0; i < nodes.size(); i++) {
+            if (nodes.get(i).getNodeName().equals(PARENT_NODE))
+                return true;
+        }
+        return false;
+    }
+
 
     @Override
     public String toString() {
@@ -90,5 +138,6 @@ public class HdfPath {
         }
         return result.toString();
     }
+
 
 }

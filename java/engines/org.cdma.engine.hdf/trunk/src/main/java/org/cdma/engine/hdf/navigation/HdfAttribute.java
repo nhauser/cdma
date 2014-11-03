@@ -37,11 +37,11 @@ public class HdfAttribute implements IAttribute {
     private final String name;
 
 
-    public HdfAttribute(String factoryName, Attribute attribute) {
+    public HdfAttribute(final String factoryName, final Attribute attribute) {
         this(factoryName, attribute.getName(), attribute.getValue());
     }
 
-    public HdfAttribute(String factoryName, String name, Object value) {
+    public HdfAttribute(final String factoryName, final String name, final Object value) {
         this.factoryName = factoryName;
         this.name = name;
         int[] shape;
@@ -131,7 +131,7 @@ public class HdfAttribute implements IAttribute {
     }
 
     @Override
-    public String getStringValue(int index) {
+    public String getStringValue(final int index) {
         if (isString()) {
             Object data = value.getStorage();
             return ((String[]) data)[0];
@@ -152,7 +152,7 @@ public class HdfAttribute implements IAttribute {
     }
 
     @Override
-    public Number getNumericValue(int index) {
+    public Number getNumericValue(final int index) {
         Object localValue;
         if (isArray()) {
             localValue = java.lang.reflect.Array.get(value.getArrayUtils().copyTo1DJavaArray(),
@@ -170,7 +170,7 @@ public class HdfAttribute implements IAttribute {
     }
 
     @Override
-    public void setStringValue(String val) {
+    public void setStringValue(final String val) {
         try {
             value = new HdfArray(factoryName, new String[] { val }, new int[] { 1 });
         }
@@ -180,11 +180,11 @@ public class HdfAttribute implements IAttribute {
     }
 
     @Override
-    public void setValue(IArray value) {
+    public void setValue(final IArray value) {
         this.value = value;
     }
 
-    public void save(HObject parent) throws Exception {
+    public void save(final HObject parent) throws Exception {
 
         H5Datatype dataType;
 
