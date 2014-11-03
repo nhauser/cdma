@@ -58,7 +58,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
             switch (type) {
                 case Group: {
                     NxsGroup group = (NxsGroup) container;
-                    NxsNode[] nodes = group.getNxsPath().getNodes();
+                    NxsNode[] nodes = (NxsNode[]) group.getNxsPath().getNodes();
 
                     setAttributeAcquisitionSequence(container, nodes);
                     setAttributeEquipment(container, nodes, outList);
@@ -71,7 +71,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                     // Try to set attributes
                     // H5ScalarDS[] h5scalarDS = item.getNexusItems();
 
-                    NxsNode[] nodes = item.getPath().getNodes();
+                    NxsNode[] nodes = (NxsNode[]) item.getPath().getNodes();
 
                     // Set scan acquisition
                     setAttributeAcquisitionSequence(container, nodes);
@@ -126,7 +126,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
     private void setAttributeEquipment(final IContainer container, final NxsNode[] nodes, final List<IContainer> outList) {
         // Set the root group at the NXentry position
         NxsGroup root = (NxsGroup) container.getRootGroup();
-        NxsNode[] rootNodes = root.getNxsPath().getNodes();
+        NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
         if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
             root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
         }

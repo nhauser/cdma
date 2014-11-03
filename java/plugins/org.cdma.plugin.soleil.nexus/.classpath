@@ -27,14 +27,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarh5obj.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
-	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdf-2.10.0.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
-	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdf5-2.10.0.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
-	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdfobj.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarh5obj.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
+	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdf-2.10.0.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.6.1-src"/>
+	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdf5-2.10.0.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
+	<classpathentry kind="lib" path="C:/Program Files/HDF_Group/HDF-JAVA/2.10.0/lib/jarhdfobj.jar" sourcepath="D:/Projets/CDMA/hdf-java-2.10.1-source"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

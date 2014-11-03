@@ -46,7 +46,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
     }
 
     @Override
-    public void execute(Context context) throws CDMAException {
+    public void execute(final Context context) throws CDMAException {
         List<IContainer> inList = context.getContainers();
         List<IContainer> outList = new ArrayList<IContainer>();
 
@@ -56,7 +56,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
             switch (type) {
                 case Group: {
                     NxsGroup group = (NxsGroup) container;
-                    NxsNode[] nodes = group.getNxsPath().getNodes();
+                    NxsNode[] nodes = (NxsNode[]) group.getNxsPath().getNodes();
 
                     setAttributeAcquisitionSequence(container, nodes);
                     break;
@@ -66,7 +66,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
 
                     // Try to set attributes
                     // H5ScalarDS[] scalarDS = item.getNexusItems();
-                    NxsNode[] nodes = item.getPath().getNodes();
+                    NxsNode[] nodes = (NxsNode[]) item.getPath().getNodes();
 
                     // Set scan acquisition
                     setAttributeAcquisitionSequence(container, nodes);
@@ -85,11 +85,11 @@ public class HarvestSignalAttributes implements IPluginMethod {
         context.setContainers(outList);
     }
 
-    private void setAttributeAcquisitionSequence(IContainer container, NxsNode[] nodes) {
+    private void setAttributeAcquisitionSequence(final IContainer container, final NxsNode[] nodes) {
         // Scan attribute
         if (nodes.length > 0) {
             NxsGroup root = (NxsGroup) container.getRootGroup();
-            NxsNode[] rootNodes = root.getNxsPath().getNodes();
+            NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
             if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
                 root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
             }
@@ -99,11 +99,11 @@ public class HarvestSignalAttributes implements IPluginMethod {
         }
     }
 
-    private void setAttributeEquipment(IContainer container, NxsNode[] nodes) {
+    private void setAttributeEquipment(final IContainer container, final NxsNode[] nodes) {
         // Scan attribute
         if (nodes.length > 1 && nodes[1].getClassName().equals("NXdata")) {
             NxsGroup root = (NxsGroup) container.getRootGroup();
-            NxsNode[] rootNodes = root.getNxsPath().getNodes();
+            NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
             if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
                 root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
             }

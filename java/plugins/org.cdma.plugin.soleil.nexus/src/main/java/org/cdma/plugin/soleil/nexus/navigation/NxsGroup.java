@@ -29,7 +29,6 @@ import org.cdma.IFactory;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.hdf.navigation.HdfDataItem;
 import org.cdma.engine.hdf.navigation.HdfGroup;
-import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
@@ -936,40 +935,8 @@ public final class NxsGroup implements IGroup, Cloneable {
     // Specific methods
     // ****************************************************
     public NxsPath getNxsPath() {
-        //        NxsPath result = null;
-        //        IGroup parent = getParentGroup();
-        //
-        //        // GROUP NODES
-        //        if (parent != null && parent.getModelType().equals(ModelType.Group)) {
-        //
-        //            NxsGroup nxsParent = (NxsGroup) parent;
-        //            result = nxsParent.getNxsPath();
-        //            if (result != null) {
-        //                IAttribute clazz = parent.getAttribute(NX_CLASS);
-        //                String attribute = "";
-        //                if (clazz != null) {
-        //                    attribute = clazz.getStringValue();
-        //                }
-        //                // result.addNode(nodeToAdd);
-        //                result.addNode((mGroups[0].get);
-        //                // result.addNode(getNxsNode());
-        //            }
-        //        } else {
-        //            // ROOT NODE
-        //            result = new NxsPath(new NxsNode(HdfPath.PATH_SEPARATOR));
-        //        }
-        HdfPath hdfPath = mGroups[0].getHdfPath();
-        INode[] hdfNodes = hdfPath.getNodes();
-        NxsNode[] nodes = new NxsNode[hdfNodes.length];
-        for (int i = 0; i < hdfNodes.length; i++) {
-            INode hdfNode = hdfNodes[i];
-            NxsNode nxsNode = new NxsNode(hdfNode.getName(), hdfNode.getAttribute());
-            nodes[i] = nxsNode;
-        }
-
-        NxsPath result = new NxsPath(nodes);
+        NxsPath result = new NxsPath(mGroups[0].getHdfPath());
         return result;
-
     }
 
     @Override
