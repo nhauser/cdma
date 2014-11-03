@@ -26,7 +26,7 @@ public class HdfNode implements INode {
     private static final String ATTRIBUTE_SEPARATOR_START = "<";
     private static final String ATTRIBUTE_SEPARATOR_START2 = "{";
     // TODO
-    private static final String ATTRIBUTE_TO_LOAD = "NX_class";
+    private static final String SELECTED_ATTRIBUTE_TO_LOAD = "NX_class";
 
     private final String name;
     private boolean isGroup;
@@ -43,7 +43,7 @@ public class HdfNode implements INode {
 
     public HdfNode(final IContainer container) {
         this.name = container.getShortName();
-        IAttribute attribute = container.getAttribute(ATTRIBUTE_TO_LOAD);
+        IAttribute attribute = container.getAttribute(SELECTED_ATTRIBUTE_TO_LOAD);
         if (attribute != null) {
             this.attribute = attribute.getStringValue();
         }
