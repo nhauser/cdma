@@ -370,20 +370,13 @@ public class HdfGroup implements IGroup, Cloneable {
         HdfPath result;
         List<HdfNode> parentNodes = getParentNodes();
         result = new HdfPath(parentNodes.toArray(new HdfNode[parentNodes.size()]));
-
         return result;
     }
 
-    public List<HdfNode> getParentNodes() {
+    private List<HdfNode> getParentNodes() {
         List<HdfNode> nodes = new ArrayList<HdfNode>();
 
-        IAttribute attribute = getAttribute("NX_class");
-
-        String clazz = null;
-        if (attribute != null) {
-            clazz = attribute.getStringValue();
-        }
-        HdfNode node = new HdfNode(name, clazz);
+        HdfNode node = new HdfNode(this);
 
         if (parent != null) {
             nodes.addAll(parent.getParentNodes());
@@ -393,31 +386,16 @@ public class HdfGroup implements IGroup, Cloneable {
         return nodes;
     }
 
-    public List<INode> getNodes() {
+    private List<INode> getChildNodes() {
         List<INode> nodes = new ArrayList<INode>();
 
         for (IDataItem item : itemMap.values()) {
             nodes.add(new HdfNode(item.getShortName()));
         }
         for (IGroup item : groupMap.values()) {
-            IAttribute attribute = item.getAttribute("NX_class");
-
-            String clazz = null;
-            if (attribute != null) {
-                clazz = attribute.getStringValue();
-            }
-            nodes.add(new HdfNode(item.getShortName(), clazz));
+            nodes.add(new HdfNode(item));
         }
-        // List<HObject> members = h5Group.getMemberList();
-        // for (HObject hObject : members) {
-        // Attribute attrClass = HdfObjectUtils.getAttribute(hObject, "NX_class");
-        // String att = "";
-        // if (attrClass != null) {
-        // att = ((String[]) attrClass.getValue())[0];
-        //
-        // }
-        // nodes.add(new HdfNode(hObject.getName(), att));
-        // }
+
         return nodes;
     }
 
@@ -466,7 +444,7 @@ public class HdfGroup implements IGroup, Cloneable {
                 HdfGroup group = (HdfGroup) container;
                 if (nodes.length > level) {
                     // List current node children
-                    List<INode> childs = group.getNodes();
+                    List<INode> childs = group.getChildNodes();
 
                     INode current = nodes[level];
 

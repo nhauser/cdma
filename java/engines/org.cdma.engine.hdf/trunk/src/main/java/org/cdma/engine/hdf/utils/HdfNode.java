@@ -17,28 +17,39 @@ package org.cdma.engine.hdf.utils;
 
 import ncsa.hdf.object.HObject;
 
+import org.cdma.interfaces.IAttribute;
+import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.INode;
 
 public class HdfNode implements INode {
     // Private definitions
-    private static final String CLASS_SEPARATOR_START = "<";
-    private static final String CLASS_SEPARATOR_START2 = "{";
-    private static final String CLASS_SEPARATOR_END2 = "}";
+    private static final String ATTRIBUTE_SEPARATOR_START = "<";
+    private static final String ATTRIBUTE_SEPARATOR_START2 = "{";
+    // TODO
+    private static final String ATTRIBUTE_TO_LOAD = "NX_class";
 
     private final String name;
     private boolean isGroup;
     private String attribute = "";
 
-    public HdfNode(String name, String attribute) {
+    public HdfNode(final String name, final String attribute) {
         this.name = name;
         this.attribute = attribute;
     }
 
-    public HdfNode(String fullName) {
+    public HdfNode(final String fullName) {
         this(extractName(fullName), extractClass(fullName));
     }
 
-    public HdfNode(HObject hObject) {
+    public HdfNode(final IContainer container) {
+        this.name = container.getShortName();
+        IAttribute attribute = container.getAttribute(ATTRIBUTE_TO_LOAD);
+        if (attribute != null) {
+            this.attribute = attribute.getStringValue();
+        }
+    }
+
+    public HdfNode(final HObject hObject) {
         this.name = hObject.getName();
     }
 
@@ -58,7 +69,7 @@ public class HdfNode implements INode {
     }
 
     @Override
-    public boolean matchesNode(INode node) {
+    public boolean matchesNode(final INode node) {
         boolean classMatch, nameMatch;
         classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
         nameMatch = "".equals(node.getNodeName()) || this.getNodeName().equalsIgnoreCase(node.getNodeName());
@@ -67,13 +78,13 @@ public class HdfNode implements INode {
     }
 
     @Override
-    public boolean matchesPartNode(INode node) {
+    public boolean matchesPartNode(final INode node) {
         boolean classMatch = false, nameMatch = false;
         if (node != null) {
             classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
             nameMatch = "".equals(node.getNodeName())
                     || this.getNodeName().toLowerCase().replace("*", ".*")
-                            .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+                    .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         }
         return (classMatch && nameMatch);
     }
@@ -88,23 +99,23 @@ public class HdfNode implements INode {
         return name;
     }
 
-    public static String extractName(String sNodeName) {
+    public static String extractName(final String sNodeName) {
         int iPosClassSep;
         String tmpNodeName = "";
-        iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START);
+        iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START);
         if (iPosClassSep < 0)
-            iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START2);
+            iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START2);
         iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
         tmpNodeName = sNodeName.substring(0, iPosClassSep);
         return tmpNodeName;
     }
 
-    public static String extractClass(String sNodeName) {
+    public static String extractClass(final String sNodeName) {
         int iPosClassSep;
         String tmpClassName = "";
-        iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START);
+        iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START);
         if (iPosClassSep < 0)
-            iPosClassSep = sNodeName.indexOf(CLASS_SEPARATOR_START2);
+            iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START2);
         iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
         tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName
                 .substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
