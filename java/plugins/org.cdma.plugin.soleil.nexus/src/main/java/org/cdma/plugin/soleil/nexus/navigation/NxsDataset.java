@@ -71,11 +71,11 @@ public final class NxsDataset implements IDataset {
     // datasets' URIs associated to the last modification
     private static Map<String, Long> lastModifications;
 
-    public static NxsDataset instanciate(URI destination) throws NoResultException {
+    public static NxsDataset instanciate(final URI destination) throws NoResultException {
         return instanciate(destination, false);
     }
 
-    public static NxsDataset instanciate(URI destination, boolean appendToExisting) throws NoResultException {
+    public static NxsDataset instanciate(final URI destination, final boolean appendToExisting) throws NoResultException {
         NxsDataset dataset = null;
         if (datasets == null) {
             synchronized (NxsDataset.class) {
@@ -87,18 +87,18 @@ public final class NxsDataset implements IDataset {
         }
 
         synchronized (datasets) {
-            // String uri = destination.toString();
-            // String uriID = uri + appendToExisting;
-            // SoftReference<NxsDataset> ref = datasets.get(uriID);
-            // if (ref != null) {
-            // dataset = ref.get();
-            // long last = lastModifications.get(uriID);
-            // if (dataset != null) {
-            // if (last < dataset.getLastModificationDate()) {
-            // dataset = null;
-            // }
-            // }
-            // }
+            String uri = destination.toString();
+            String uriID = uri + appendToExisting;
+            SoftReference<NxsDataset> ref = datasets.get(uriID);
+            if (ref != null) {
+                dataset = ref.get();
+                long last = lastModifications.get(uriID);
+                if (dataset != null) {
+                    if (last < dataset.getLastModificationDate()) {
+                        dataset = null;
+                    }
+                }
+            }
 
             if (dataset == null) {
                 String filePath = destination.getPath();
@@ -121,8 +121,8 @@ public final class NxsDataset implements IDataset {
                                 Factory.getLogger().log(Level.WARNING, e.getMessage());
                             }
                         }
-                        // datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
-                        // lastModifications.put(uriID, dataset.getLastModificationDate());
+                        datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
+                        lastModifications.put(uriID, dataset.getLastModificationDate());
                     } catch (FileAccessException e) {
                         throw new NoResultException(e);
                     }
@@ -171,21 +171,21 @@ public final class NxsDataset implements IDataset {
     }
 
     @Override
-    public void saveTo(String location) throws WriterException {
+    public void saveTo(final String location) throws WriterException {
         for (IDataset dataset : mDatasets) {
             dataset.saveTo(location);
         }
     }
 
     @Override
-    public void save(IContainer container) throws WriterException {
+    public void save(final IContainer container) throws WriterException {
         for (IDataset dataset : mDatasets) {
             dataset.save(container);
         }
     }
 
     @Override
-    public void save(String parentPath, IAttribute attribute) throws WriterException {
+    public void save(final String parentPath, final IAttribute attribute) throws WriterException {
         for (IDataset dataset : mDatasets) {
             dataset.save(parentPath, attribute);
         }
@@ -230,7 +230,7 @@ public final class NxsDataset implements IDataset {
     }
 
     @Override
-    public void setLocation(String location) {
+    public void setLocation(final String location) {
         if (location != null && !location.equals(mPath.toString())) {
             try {
                 mPath = new URI(location);
@@ -242,7 +242,7 @@ public final class NxsDataset implements IDataset {
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         try {
             mDatasets.get(0).setTitle(title);
         } catch (NoSuchElementException e) {
@@ -307,7 +307,7 @@ public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(File destination, boolean appendToExisting) throws FileAccessException {
+    private NxsDataset(final File destination, final boolean appendToExisting) throws FileAccessException {
         mPath = destination.toURI();
         mDatasets = new ArrayList<HdfDataset>();
         HdfDataset datafile;
@@ -333,7 +333,7 @@ public final class NxsDataset implements IDataset {
         return result;
     }
 
-    public static void main(String args[]) {
+    public static void main(final String args[]) {
         System.out.println("Blah");
     }
 }
