@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
-<map-def name="SWING" version="1.0.0">
+<map-def name="EDF" version="1.0.0">
 	<item key="acquisition_sequence">
 		<path>/</path>
 		<call>CreateVirtualItem</call>
@@ -71,7 +71,7 @@
 	<item key="images">
 		<path>Image</path>
 		<!-- create a meta dataitem of all found node having the path above -->
-		<!--<call>DataItemStacker</call> -->
+		<call>DataItemStacker</call>
 		<call>HarvestEquipmentAttributes</call>
 		<attribute name="interpretation" value="image" />
 	</item>
