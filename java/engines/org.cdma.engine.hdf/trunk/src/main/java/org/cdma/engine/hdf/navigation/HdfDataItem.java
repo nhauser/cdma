@@ -191,7 +191,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
 
     @Override
     public String getName() {
-        return getShortName();
+        IContainer parent = getParentGroup();
+        return (parent == null ? "" : parent.getName() + "/") + getShortName();
+        // return getShortName();
     }
 
     @Override
