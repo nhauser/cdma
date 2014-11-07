@@ -42,11 +42,11 @@ public class HdfDataset implements IDataset, Cloneable {
     private IGroup root;
     private int openFlag;
 
-    public HdfDataset(final String factoryName, final File hdfFile) {
+    public HdfDataset(final String factoryName, final File hdfFile) throws Exception {
         this(factoryName, hdfFile, false);
     }
 
-    public HdfDataset(final String factoryName, final File hdfFile, final boolean appendToFile) {
+    public HdfDataset(final String factoryName, final File hdfFile, final boolean appendToFile) throws Exception {
         this.factoryName = factoryName;
         this.hdfFileName = hdfFile.getAbsolutePath();
         this.title = hdfFile.getName();
@@ -62,17 +62,14 @@ public class HdfDataset implements IDataset, Cloneable {
             initHdfFile();
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
+            throw e;
         }
     }
 
-    private void initHdfFile() {
+    private void initHdfFile() throws Exception {
         if (hdfFileName != null) {
-            try {
-                this.h5File = (H5File) new H5File(hdfFileName).createInstance(hdfFileName, openFlag);
-            } catch (Exception e) {
-                Factory.getLogger().severe(e.getMessage());
-            }
-
+            this.h5File = (H5File) new H5File(hdfFileName).createInstance(hdfFileName, openFlag);
+            this.h5File.open();
         }
     }
 
@@ -90,6 +87,7 @@ public class HdfDataset implements IDataset, Cloneable {
                     h5File.open();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return null;
                 }
                 DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) h5File.getRootNode();
                 if (theRoot != null) {
@@ -142,11 +140,14 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public void open() throws IOException {
-        if (h5File != null) {
-            try {
+        try{
+            if (h5File != null) {
                 this.h5File.open();
-            } catch (Exception e) {
-                Factory.getLogger().severe(e.getMessage());
+            }
+        } catch (Exception e) {
+            if (e instanceof IOException){
+                IOException ioException = (IOException) e;
+                throw ioException;
             }
         }
     }
