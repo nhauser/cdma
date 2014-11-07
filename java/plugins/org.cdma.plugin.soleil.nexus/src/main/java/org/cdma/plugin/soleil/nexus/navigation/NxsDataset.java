@@ -34,7 +34,6 @@ import org.cdma.dictionary.ExtendedDictionary;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.navigation.HdfGroup;
-import org.cdma.exception.FileAccessException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
@@ -123,7 +122,7 @@ public final class NxsDataset implements IDataset {
                         }
                         datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
                         lastModifications.put(uriID, dataset.getLastModificationDate());
-                    } catch (FileAccessException e) {
+                    } catch (Exception e) {
                         throw new NoResultException(e);
                     }
                 }
@@ -307,7 +306,7 @@ public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(final File destination, final boolean appendToExisting) throws FileAccessException {
+    private NxsDataset(final File destination, final boolean appendToExisting) throws Exception {
         mPath = destination.toURI();
         mDatasets = new ArrayList<HdfDataset>();
         HdfDataset datafile;
