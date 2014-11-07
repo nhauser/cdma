@@ -49,10 +49,19 @@ public class MamboVCGenerator {
     private boolean historic = true;
     private SamplingPeriod samplingPeriod = SamplingPeriod.NONE;
     private int samplingFactor = 1;
+    private String userPath = null;
 
     public MamboVCGenerator(final String fileName) {
         this.fileName = fileName;
         creationTMS = System.currentTimeMillis();
+    }
+
+    public String getUserPath() {
+        return userPath;
+    }
+
+    public void setUserPath(String userPath) {
+        this.userPath = userPath;
     }
 
     public SamplingPeriod getSamplingPeriod() {
@@ -132,13 +141,30 @@ public class MamboVCGenerator {
     }
 
     private File generateVCFile() throws IOException {
-        vcFile = File.createTempFile(fileName, ".vc");
-        PrintWriter writer = new PrintWriter(new FileWriter(vcFile.getAbsolutePath(), false));
-        writer.println(XMLUtils.XML_HEADER);
-        writer.println(toString());
-        writer.flush();
-        writer.close();
-        if ((vcFile != null) && vcFile.exists()) {
+        if ((userPath != null) && !userPath.trim().isEmpty()) {
+            try {
+                vcFile = new File(userPath + ".vc");
+                if ((vcFile != null) && !vcFile.exists()) {
+                    vcFile.createNewFile();
+                }
+            } catch (IOException e) {
+                System.err.println("Cannot create file " + userPath + ".vc" + " " + e.getMessage());
+                vcFile = null;
+            }
+        }
+
+        if (vcFile == null) {
+            vcFile = File.createTempFile(fileName, ".vc");
+        }
+        if (vcFile != null) {
+            PrintWriter writer = new PrintWriter(new FileWriter(vcFile.getAbsolutePath(), false));
+            writer.println(XMLUtils.XML_HEADER);
+            writer.println(toString());
+            writer.flush();
+            writer.close();
+        }
+        if (((userPath == null) || (userPath.trim().isEmpty())) && (vcFile != null) && vcFile.exists()) {
+            // Delete file if it is a temporary file
             vcFile.deleteOnExit();
         }
         return vcFile;
