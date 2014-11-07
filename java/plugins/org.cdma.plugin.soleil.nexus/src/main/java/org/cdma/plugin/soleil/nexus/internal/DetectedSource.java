@@ -41,7 +41,7 @@ public class DetectedSource {
 
     public static class NeXusFilter implements FilenameFilter {
         @Override
-        public boolean accept(File dir, String name) {
+        public boolean accept(final File dir, final String name) {
             return DetectedSource.accept(name);
         }
     }
@@ -56,8 +56,8 @@ public class DetectedSource {
     private final URI mURI;
     private long mTimestamp;
 
-    public DetectedSource(URI uri, boolean browsable, boolean readable, boolean producer, boolean experiment,
-            boolean datasetFolder) {
+    public DetectedSource(final URI uri, final boolean browsable, final boolean readable, final boolean producer, final boolean experiment,
+            final boolean datasetFolder) {
         mIsReadable = readable;
         mIsProducer = producer;
         mIsBrowsable = browsable;
@@ -68,12 +68,12 @@ public class DetectedSource {
         mTimestamp = getTimestamp(uri);
     }
 
-    public DetectedSource(URI uri) {
+    public DetectedSource(final URI uri) {
         mURI = uri;
         init(uri);
     }
 
-    private long getTimestamp(URI uri) {
+    private long getTimestamp(final URI uri) {
         long result = Integer.MIN_VALUE;
         String path = uri.getPath();
         if (path != null) {
@@ -122,7 +122,7 @@ public class DetectedSource {
         return mIsFolder;
     }
 
-    public void setInitialized(boolean valueToSet) {
+    public void setInitialized(final boolean valueToSet) {
         mInitialized = valueToSet;
     }
 
@@ -130,7 +130,7 @@ public class DetectedSource {
      * Return true if the source hasn't been modified since a while and is
      * considered as stable.
      */
-    public boolean hasChanged(URI uri) {
+    public boolean hasChanged(final URI uri) {
         boolean result = false;
         long currentTimestamp = getTimestamp(uri);
         if (currentTimestamp != mTimestamp) {
@@ -142,7 +142,7 @@ public class DetectedSource {
     // ---------------------------------------------------------
     // / private methods
     // ---------------------------------------------------------
-    private void init(URI uri) {
+    private void init(final URI uri) {
         if (uri != null) {
             // Check if the uri is a folder
             String path = uri.getPath();
@@ -185,7 +185,7 @@ public class DetectedSource {
         }
     }
 
-    private boolean initReadable(URI uri) {
+    private boolean initReadable(final URI uri) {
         boolean result = false;
 
         File file = new File(uri.getPath());
@@ -200,7 +200,7 @@ public class DetectedSource {
         return result;
     }
 
-    private boolean initProducer(URI uri) {
+    private boolean initProducer(final URI uri) {
 
         boolean result = false;
         if (mIsReadable) {
@@ -256,7 +256,7 @@ public class DetectedSource {
         return result;
     }
 
-    private boolean initExperiment(URI uri) {
+    private boolean initExperiment(final URI uri) {
         boolean result = false;
         // Check if the URI is a NeXus file
         if (mIsProducer) {
@@ -275,7 +275,7 @@ public class DetectedSource {
         return result;
     }
 
-    private boolean initBrowsable(URI uri) {
+    private boolean initBrowsable(final URI uri) {
         boolean result = false;
 
         // If experiment not browsable
@@ -293,7 +293,7 @@ public class DetectedSource {
      * 
      * @note the given file must be a folder
      */
-    private boolean isDatasetFolder(File file) {
+    private boolean isDatasetFolder(final File file) {
         boolean result = false;
 
         NeXusFilter filter = new NeXusFilter();
@@ -319,12 +319,13 @@ public class DetectedSource {
                 }
             } catch (NoResultException e) {
             } catch (FileAccessException e) {
+            } catch (Exception e) {
             }
         }
         return result;
     }
 
-    private static boolean accept(String filename) {
+    private static boolean accept(final String filename) {
         int length = filename.length();
         return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
     }

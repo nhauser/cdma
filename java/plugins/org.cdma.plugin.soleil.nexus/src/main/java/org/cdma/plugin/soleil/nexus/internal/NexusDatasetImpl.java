@@ -16,13 +16,9 @@
 package org.cdma.plugin.soleil.nexus.internal;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
 
-import org.cdma.Factory;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.hdf.navigation.HdfDataset;
-import org.cdma.exception.FileAccessException;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
 
 public class NexusDatasetImpl extends HdfDataset {
@@ -30,13 +26,8 @@ public class NexusDatasetImpl extends HdfDataset {
     // ---------------------------------------------------------
     // Internal class that concretes the abstract NexusDataset
     // ---------------------------------------------------------
-    public NexusDatasetImpl(File nexusFile, boolean appendToExisting) throws FileAccessException {
+    public NexusDatasetImpl(final File nexusFile, final boolean appendToExisting) throws Exception {
         super(NxsFactory.NAME, nexusFile, appendToExisting);
-        try {
-            open();
-        } catch (IOException e) {
-            Factory.getLogger().log(Level.SEVERE, e.getMessage());
-        }
     }
 
     @Override
