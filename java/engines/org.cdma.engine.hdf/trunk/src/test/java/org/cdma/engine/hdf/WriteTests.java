@@ -160,20 +160,21 @@ public class WriteTests {
         long[] selectedDims = h5Item.getSelectedDims();
         long[] startDims = h5Item.getStartDims();
 
-        // The non-reduced shape of the slabs we are going to put in the dataitem
+        // We have to give to HDF the non-reduced shape of the slabs we are going to put in the dataitem
         selectedDims[0] = 1;
         selectedDims[1] = yLength;
         selectedDims[2] = xLength;
 
-        // First image is at index 0
-        startDims[0] = 0;
+        // We have to modify the startDims because HDF cannot guess where to put the slab
+        // First image is at index 0 on the first dimension of our 3 dimension hyperslab
+        startDims[0] = 0; // optional, this is the default value
         dataItem.getH5DataItem().write(image1);
 
-        // For the next image, we start at index 1
+        // For the next image, we want start at index 1 on the first dimension of the hyperslab
         startDims[0] = 1;
         dataItem.getH5DataItem().write(image2);
 
-        // For the next image, we start at index 2
+        // For the next image, we want start at index 2 on the first dimension of the hyperslab
         startDims[0] = 2;
         dataItem.getH5DataItem().write(image3);
 
