@@ -22,7 +22,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.IOException;
+
+import ncsa.hdf.object.h5.H5ScalarDS;
 
 import org.cdma.engine.hdf.array.HdfArray;
 import org.cdma.engine.hdf.navigation.HdfAttribute;
@@ -30,7 +31,6 @@ import org.cdma.engine.hdf.navigation.HdfDataItem;
 import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.navigation.HdfGroup;
 import org.cdma.exception.InvalidArrayTypeException;
-import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IGroup;
@@ -41,12 +41,12 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WriteTests {
 
-    public static final File FIRST_FILE_TO_WRITE = new File("/home/viguier/testWriteFromScratch.nxs");
-    public static final File SECOND_FILE_TO_WRITE = new File("/home/viguier/testCopyIntoNewFile.nxs");
+    public static final File FIRST_FILE_TO_WRITE = new File("C:/temp/testWriteFromScratch.nxs");
+    public static final File SECOND_FILE_TO_WRITE = new File("C:/temp/testCopyIntoNewFile.nxs");
 
     private static final String FACTORY_NAME = "HDF";
 
-    private HdfArray createRandom1DArray(int arrayLength) {
+    private HdfArray createRandom1DArray(final int arrayLength) {
         HdfArray result = null;
 
         double[] values = new double[arrayLength];
@@ -63,8 +63,32 @@ public class WriteTests {
         return result;
     }
 
+    private double[] createImages(final int xarrayLength, final int yarrayLength, final int offset) {
+        double[] values = new double[yarrayLength * xarrayLength];
+        int index = 0;
+        for (int i = 0; i < yarrayLength; i++) {
+            for (int j = 0; j < xarrayLength; j++) {
+                values[index] = index++ + offset;
+            }
+        }
+        return values;
+    }
+
+    private double[][][] createImages2D(final int xarrayLength, final int yarrayLength, final int offset) {
+        double[][][] values = new double[1][yarrayLength][xarrayLength];
+        double[][] image = values[0];
+        int index = 0;
+        for (int i = 0; i < yarrayLength; i++) {
+            for (int j = 0; j < xarrayLength; j++) {
+                image[i][j] = index++ + offset;
+            }
+        }
+        return values;
+    }
+
+
     @Test
-    public void dTestModifyInExistingFile() throws InvalidArrayTypeException, WriterException, IOException {
+    public void dTestModifyInExistingFile() throws Exception {
         System.out.println("--------------------------------------------------");
         System.out.println("Test: Modify existing file");
         System.out.println(" - Modify group1/data1 values to [0,1,2,3]");
@@ -97,7 +121,67 @@ public class WriteTests {
     }
 
     @Test
-    public void cTestWriteIntoNewFile() throws InvalidArrayTypeException, WriterException, IOException {
+    public void eTestWriteMultiIntoNewFile() throws Exception {
+        System.out.println("--------------------------------------------------");
+        System.out.println("Test: Copy existing dataset into new file and add new group & dataitem");
+        if (FIRST_FILE_TO_WRITE.exists()) {
+            if (!FIRST_FILE_TO_WRITE.delete()) {
+                System.out.println("Cannot delete file: missing close() ??");
+                System.exit(0);
+            }
+        }
+
+        HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE);
+
+        // Create group with name group3 under root node and save it
+        HdfGroup root = (HdfGroup) dataset.getRootGroup();
+        IGroup group3 = new HdfGroup(FACTORY_NAME, "group3", "/", root, dataset);
+        root.addSubgroup(group3);
+        dataset.save();
+
+        // Image are 20x10
+        int xLength = 20;
+        int yLength = 10;
+
+        // We have 3 random images
+        double[] image1 = createImages(xLength, yLength, 0);
+        double[] image2 = createImages(xLength, yLength, 400);
+        double[] image3 = createImages(xLength, yLength, 800);
+
+        // So shape is:
+        int[] shape = new int[] { 3, yLength, xLength };
+
+        // We create a DataItem under group3
+        HdfDataItem dataItem = new HdfDataItem(FACTORY_NAME, dataset.getH5File(), group3, "imageStack", shape,
+                double.class);
+
+        // Now we have to tune the underlying HDF item
+        H5ScalarDS h5Item = dataItem.getH5DataItem();
+        long[] selectedDims = h5Item.getSelectedDims();
+        long[] startDims = h5Item.getStartDims();
+
+        // The non-reduced shape of the slabs we are going to put in the dataitem
+        selectedDims[0] = 1;
+        selectedDims[1] = yLength;
+        selectedDims[2] = xLength;
+
+        // First image is at index 0
+        startDims[0] = 0;
+        dataItem.getH5DataItem().write(image1);
+
+        // For the next image, we start at index 1
+        startDims[0] = 1;
+        dataItem.getH5DataItem().write(image2);
+
+        // For the next image, we start at index 2
+        startDims[0] = 2;
+        dataItem.getH5DataItem().write(image3);
+
+        dataset.save();
+        dataset.close();
+    }
+    @Test
+    public void cTestWriteIntoNewFile() throws Exception {
         System.out.println("--------------------------------------------------");
         System.out.println("Test: Copy existing dataset into new file and add new group & dataitem");
         if (SECOND_FILE_TO_WRITE.exists()) {
@@ -128,7 +212,7 @@ public class WriteTests {
     }
 
     @Test
-    public void bTestWriteIntoExistingFile() throws InvalidArrayTypeException, WriterException, IOException {
+    public void bTestWriteIntoExistingFile() throws Exception {
         System.out.println("--------------------------------------------------");
         System.out.println("Test: Write into a the previous file");
 
@@ -155,7 +239,7 @@ public class WriteTests {
     }
 
     @Test
-    public void aTestWriteFromScratch() throws InvalidArrayTypeException, WriterException, IOException {
+    public void aTestWriteFromScratch() throws Exception {
         System.out.println("--------------------------------------------------");
         System.out.println("Test: Write into a new file");
 

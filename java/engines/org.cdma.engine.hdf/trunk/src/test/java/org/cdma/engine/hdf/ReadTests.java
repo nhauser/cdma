@@ -22,11 +22,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.cdma.engine.hdf.navigation.HdfDataset;
-import org.cdma.exception.NoResultException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
@@ -37,7 +35,7 @@ import org.junit.Test;
 public class ReadTests {
 
     @Test
-    public void aReadFile() throws IOException, NoResultException {
+    public void aReadFile() throws Exception {
         IDataset dataSet = new HdfDataset("HDF", WriteTests.FIRST_FILE_TO_WRITE);
         IGroup root = dataSet.getRootGroup();
         if (root != null) {
