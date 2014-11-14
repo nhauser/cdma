@@ -11,7 +11,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
+    <path>/{NXinstrument}/{NXdetector}/channelScale/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
@@ -23,11 +23,11 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXinstrument}/{NXdetector}/Exposure</path>
+    <path>/{NXinstrument}/{NXdetector}/Exposure/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="globalGain">
-    <path>/{NXinstrument}/{NXdetector}/Gain</path>
+    <path>/{NXinstrument}/{NXdetector}/Gain/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="shutterCloseDelay">
@@ -35,11 +35,11 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="xBin">
-    <path>/{NXinstrument}/{NXdetector}/Xbin</path>
+    <path>/{NXinstrument}/{NXdetector}/Xbin/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="yBin">
-    <path>/{NXinstrument}/{NXdetector}/Ybin</path>
+    <path>/{NXinstrument}/{NXdetector}/Ybin/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="x0">
@@ -56,7 +56,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="gain">
-    <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
+    <path>/{NXinstrument}/{NXintensity_monitor}/Gain/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="intensity">
@@ -64,11 +64,11 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
-    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energy">
-    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
+    <path>/{NXinstrument}/{NXmonochromator}/energy/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="images">

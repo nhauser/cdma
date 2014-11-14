@@ -11,7 +11,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
+    <path>/{NXinstrument}/{NXdetector}/channelScale/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
