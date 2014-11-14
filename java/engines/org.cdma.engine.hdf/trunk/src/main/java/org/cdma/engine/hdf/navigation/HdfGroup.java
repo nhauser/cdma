@@ -63,6 +63,7 @@ public class HdfGroup implements IGroup, Cloneable {
     private String name;
     private String fullName;
     private HdfDataset dataset;
+    private H5Group h5group;
 
     public HdfGroup(final String factoryName, final String name, final String path, final HdfGroup parent,
             final HdfDataset dataset) {
@@ -73,6 +74,7 @@ public class HdfGroup implements IGroup, Cloneable {
         this.factoryName = factoryName;
         this.dataset = (HdfDataset) dataset;
         this.parent = parent;
+        this.h5group = hdfGroup;
         init(hdfGroup);
     }
 
@@ -120,6 +122,10 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public ModelType getModelType() {
         return ModelType.Group;
+    }
+
+    public Group getH5Group() {
+        return this.h5group;
     }
 
     @Override
@@ -614,7 +620,7 @@ public class HdfGroup implements IGroup, Cloneable {
 
             if (isNew || copyToNewFile) {
                 theGroup = fileToWrite.createGroup(getShortName(), parent);
-
+                h5group = (H5Group) theGroup;
                 List<IAttribute> attribute = getAttributeList();
                 for (IAttribute iAttribute : attribute) {
                     HdfAttribute attr = (HdfAttribute) iAttribute;

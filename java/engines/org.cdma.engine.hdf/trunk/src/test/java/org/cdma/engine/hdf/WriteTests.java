@@ -217,6 +217,7 @@ public class WriteTests {
         System.out.println("--------------------------------------------------");
         System.out.println("Test: Write into a the previous file");
 
+        // Create a dataset in _Append_ mode
         HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE, true);
 
         HdfGroup root = (HdfGroup) dataset.getRootGroup();
