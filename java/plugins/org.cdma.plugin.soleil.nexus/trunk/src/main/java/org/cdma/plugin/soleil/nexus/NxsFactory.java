@@ -53,12 +53,12 @@ import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
-    public static final String NAME = "SoleilNeXus v2";
+    public static final String NAME = "SoleilNeXus2";
     public static final String LABEL = "SOLEIL's NeXus plug-in v2";
     public static final String DEBUG_INF = "CDMA_DEBUG";
     public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
     private static final String CDMA_VERSION = "3_2_0";
-    private static final String PLUG_VERSION = "1.4.12";
+    private static final String PLUG_VERSION = "2.0.0";
     private static final String DESC = "This plug-in manages NeXus data files (having 'nxs' for extension).";
 
     public NxsFactory() {
@@ -75,7 +75,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createArray(Class<?> clazz, int[] shape) {
+    public IArray createArray(final Class<?> clazz, final int[] shape) {
         Object o = java.lang.reflect.Array.newInstance(clazz, shape);
         IArray result = null;
         try {
@@ -87,7 +87,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
+    public IArray createArray(final Class<?> clazz, final int[] shape, final Object storage) {
         IArray result = null;
         if (storage instanceof IArray[]) {
             result = new NxsArray((IArray[]) storage);
@@ -109,7 +109,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createArray(Object javaArray) {
+    public IArray createArray(final Object javaArray) {
         IArray result = null;
         // [ANSTO][Tony][2011-08-31] testing isArray may be slow
         // [SOLEIL][clement][2012-04-18] as the supported array is a primitive type the "instanceof" won't be correct
@@ -125,7 +125,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createArrayNoCopy(Object array) {
+    public IArray createArrayNoCopy(final Object array) {
         IArray result = null;
         if (array instanceof IArray[]) {
             result = new NxsArray((IArray[]) array);
@@ -150,22 +150,22 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IAttribute createAttribute(String name, Object value) {
+    public IAttribute createAttribute(final String name, final Object value) {
         return new HdfAttribute(NAME, name, value);
     }
 
     @Override
-    public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
+    public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array) throws InvalidArrayTypeException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(final URI uri) throws Exception {
         return NxsDataset.instanciate(uri);
     }
 
     @Override
-    public IArray createDoubleArray(double[] javaArray) {
+    public IArray createDoubleArray(final double[] javaArray) {
         IArray result = null;
         try {
             int[] shape = new int[1];
@@ -178,7 +178,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createDoubleArray(double[] javaArray, int[] shape) {
+    public IArray createDoubleArray(final double[] javaArray, final int[] shape) {
 
         IArray result = null;
         try {
@@ -195,7 +195,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IGroup createGroup(IGroup parent, String shortName) {
+    public IGroup createGroup(final IGroup parent, final String shortName) {
         String path_val = parent.getLocation();
         // PathGroup path = new PathGroup(NxsPath.splitStringPath(path_val));
         NxsPath nxsPath = new NxsPath((NxsPath.splitStringToNode(path_val)));
@@ -205,12 +205,12 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IGroup createGroup(String shortName) throws IOException {
+    public IGroup createGroup(final String shortName) throws IOException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IArray createStringArray(String string) {
+    public IArray createStringArray(final String string) {
         throw new NotImplementedException();
     }
 
@@ -235,7 +235,7 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IDataset openDataset(URI uri) throws FileAccessException {
+    public IDataset openDataset(final URI uri) throws FileAccessException {
         IDataset ds = null;
         try {
             ds = NxsDataset.instanciate(uri);
@@ -246,29 +246,29 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IKey createKey(String keyName) {
+    public IKey createKey(final String keyName) {
         return new Key(this, keyName);
     }
 
     @Override
-    public LogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
+    public LogicalGroup createLogicalGroup(final IDataset dataset, final IKey key) {
         return new NxsLogicalGroup(dataset, new Key(this, key.getName()));
     }
 
     @Override
-    public Path createPath(String path) {
+    public Path createPath(final String path) {
         return new Path(this, path);
     }
 
     @Deprecated
     @Override
-    public IDictionary openDictionary(URI uri) throws FileAccessException {
+    public IDictionary openDictionary(final URI uri) throws FileAccessException {
         throw new UnsupportedOperationException();
     }
 
     @Deprecated
     @Override
-    public IDictionary openDictionary(String filepath) throws FileAccessException {
+    public IDictionary openDictionary(final String filepath) throws FileAccessException {
         throw new UnsupportedOperationException();
     }
 
@@ -278,7 +278,7 @@ public final class NxsFactory implements IFactory {
         throw new UnsupportedOperationException();
     }
 
-    public static IArrayMath createArrayMath(NxsArray array) {
+    public static IArrayMath createArrayMath(final NxsArray array) {
         return new NxsArrayMath(array);
     }
 
