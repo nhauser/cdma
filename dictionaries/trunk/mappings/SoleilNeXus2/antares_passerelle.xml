@@ -11,7 +11,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
+    <path>/{NXinstrument}/{NXdetector}/channelScale/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
@@ -39,63 +39,63 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="sweeps">
-    <path>/{NXinstrument}/{NXdetector}/sweeps</path>
+    <path>/{NXinstrument}/{NXdetector}/sweeps/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="acquisitionMode">
-    <path>/{NXinstrument}/{NXdetector}/mode</path>
+    <path>/{NXinstrument}/{NXdetector}/mode/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lensMode">
-    <path>/{NXinstrument}/{NXdetector}/lensMode</path>
+    <path>/{NXinstrument}/{NXdetector}/lensMode/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="passEnergy">
-    <path>/{NXinstrument}/{NXdetector}/passEnergy</path>
+    <path>/{NXinstrument}/{NXdetector}/passEnergy/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lowEnergy">
-    <path>/{NXinstrument}/{NXdetector}/lowEnergy</path>
+    <path>/{NXinstrument}/{NXdetector}/lowEnergy/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="highEnergy">
-    <path>/{NXinstrument}/{NXdetector}/highEnergy</path>
+    <path>/{NXinstrument}/{NXdetector}/highEnergy/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energyStep">
-    <path>/{NXinstrument}/{NXdetector}/energyStep</path>
+    <path>/{NXinstrument}/{NXdetector}/energyStep/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="stepTime">
-    <path>/{NXinstrument}/{NXdetector}/stepTime</path>
+    <path>/{NXinstrument}/{NXdetector}/stepTime/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="firstXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstXChannel</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorFirstXChannel/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lastXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastXChannel</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorLastXChannel/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="firstYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstYChannel</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorFirstYChannel/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lastYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastYChannel</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorLastYChannel/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="slices">
-    <path>/{NXinstrument}/{NXdetector}/slices</path>
+    <path>/{NXinstrument}/{NXdetector}/slices/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="sliceScale">
-    <path>/{NXinstrument}/{NXdetector}/sliceScale</path>
+    <path>/{NXinstrument}/{NXdetector}/sliceScale/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energyScale">
-    <path>/{NXinstrument}/{NXdetector}/energyScale</path>
+    <path>/{NXinstrument}/{NXdetector}/energyScale/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="mi">
@@ -111,15 +111,15 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
-    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energy">
-    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
+    <path>/{NXinstrument}/{NXmonochromator}/energy/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exitSlits">
-    <path>/{NXinstrument}/{NXmonochromator}/exitSlitAperture</path>
+    <path>/{NXinstrument}/{NXmonochromator}/exitSlitAperture/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="motor_name">
