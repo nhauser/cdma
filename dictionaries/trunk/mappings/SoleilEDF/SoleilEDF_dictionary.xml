@@ -27,8 +27,8 @@
         <path>Xbin</path>
 		<call>HarvestEquipmentAttributes</call>
     </item>
-    <item key="yBin">
-        <path>Ybin</path>
+    <item key="zBin">
+        <path>Zbin</path>
 		<call>HarvestEquipmentAttributes</call>
     </item>
     <item key="pixelSize">

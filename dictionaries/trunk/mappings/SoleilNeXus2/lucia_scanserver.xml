@@ -41,7 +41,7 @@
     <path>/{NXinstrument}/{NXdetector}/Xbin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="yBin">
+  <item key="zBin">
     <path>/{NXinstrument}/{NXdetector}/Ybin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>

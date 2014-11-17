@@ -19,7 +19,7 @@
     <item key="xBin">
         <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path>
     </item>
-    <item key="yBin">
+    <item key="zBin">
         <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path>
     </item>
     <item key="gain">
