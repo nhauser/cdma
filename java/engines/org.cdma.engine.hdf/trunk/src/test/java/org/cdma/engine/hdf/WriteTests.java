@@ -234,6 +234,15 @@ public class WriteTests {
 
         assertEquals(2, root.getGroupList().size());
 
+        // Test if we can acces to previously written group1
+        HdfGroup group1 = (HdfGroup) root.getGroup("group1");
+        assertNotNull(group1);
+        group1.addStringAttribute("attr100", "mon attribut sauvé ensuite");
+        HdfDataItem data1 = (HdfDataItem) group1.getDataItem("data1");
+        assertNotNull(data1);
+        data1.addStringAttribute("attr100", "mon attribut sauvé ensuite");
+
+
         dataset.save();
         dataset.close();
         System.out.println("End of test: Write into the previous file");
