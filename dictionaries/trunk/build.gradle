@@ -1,0 +1,23 @@
+apply plugin: PackagePlugin
+
+repositories {
+    maven {
+     url "http://soleilrepo"
+    }
+}
+
+soleilDistribution {
+ 	into('concepts') {
+    	from 'concepts'
+    }
+    into('dtd') {
+    	from 'dtd'
+    }
+    into('mappings') {
+    	from 'mappings'
+    }
+    into('views') {
+   	 from 'views'
+    }
+}
+
