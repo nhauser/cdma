@@ -844,14 +844,20 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     datatype = new H5Datatype(type_id);
                 }
 
-                Dataset ds = this.h5Item;
+                Dataset ds = null;
+
                 if (!saveInDifferentFile) {
                     ds = (Dataset) fileToWrite.get(getName());
                     if (ds != null && h5Item != null) {
-                        try {
-                            fileToWrite.delete(h5Item);
-                        } catch (HDF5LibraryException hdfexception) {
-                            // Sometime it's impossible to delete
+                        if (!datatype.equals(ds.getDatatype())) {
+                            try {
+                                // Ouch ! Datatype has changed.
+                                // We have to create a new DS.
+                                fileToWrite.delete(h5Item);
+                            } catch (HDF5LibraryException hdfexception) {
+                                // Sometime it's impossible to delete
+                                // Don't ask me why but you should contact the HDF foundation.
+                            }
                         }
                     }
                 }

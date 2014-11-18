@@ -621,11 +621,6 @@ public class HdfGroup implements IGroup, Cloneable {
             if (isNew || copyToNewFile) {
                 theGroup = fileToWrite.createGroup(getShortName(), parent);
                 h5group = (H5Group) theGroup;
-                List<IAttribute> attribute = getAttributeList();
-                for (IAttribute iAttribute : attribute) {
-                    HdfAttribute attr = (HdfAttribute) iAttribute;
-                    attr.save(theGroup);
-                }
             }
             // Group has been renamed
             else if (this.nameInFile != null && !this.nameInFile.equals(name)) {
@@ -640,6 +635,12 @@ public class HdfGroup implements IGroup, Cloneable {
             DefaultMutableTreeNode theRoot = (DefaultMutableTreeNode) fileToWrite.getRootNode();
             H5Group rootObject = (H5Group) theRoot.getUserObject();
             theGroup = rootObject;
+        }
+
+        List<IAttribute> attribute = getAttributeList();
+        for (IAttribute iAttribute : attribute) {
+            HdfAttribute attr = (HdfAttribute) iAttribute;
+            attr.save(theGroup);
         }
 
         List<IDataItem> dataItems = getDataItemList();
