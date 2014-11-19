@@ -1,6 +1,6 @@
 apply plugin: PackagePlugin
 
-archivesBaseName = "CDMA-dictonnaries"
+archivesBaseName = "CDMA-dictionaries"
 
 repositories {
     maven {
@@ -62,11 +62,12 @@ publishing {
 
             repositories {
                 maven {
-                    url "http://calypso/nexus/content/repositories/releases/"
+     			    url "http://build-mongodb-1.ica.synchrotron-soleil.fr:8090/legacy"
+                    //  url "http://calypso/nexus/content/repositories/releases/"
                      //url "file:/${project.projectDir}/artifacts"
 		            credentials {
-		                    username System.getenv("mvn_user")
-		                    password System.getenv("mvn_pwd")
+	                    username System.getenv("mvn_user")
+	                    password System.getenv("mvn_pwd")
 		            }
                 }
             }
