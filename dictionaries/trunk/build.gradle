@@ -53,7 +53,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
               
-            groupId 'fr.soleil.test'
+            groupId 'fr.soleil.packaging'
             artifactId archivesBaseName
 
            // artifact(soleilDistribution){
