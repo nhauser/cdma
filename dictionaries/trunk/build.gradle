@@ -23,3 +23,55 @@ soleilDistribution {
     }
 }
 
+project.ext.distribVersion=System.getProperty("release_version")
+
+if (!project.distribVersion){
+ throw new GradleException("A 'release_version' variable is required.'")
+}
+
+version = project.distribVersion
+
+
+/* Not use to publish in maven repo
+project.ext.buildId = System.getenv("BUILD_ID")
+if (project.buildId){
+ version = project.distribVersion + "-" + project.buildId
+}
+else {
+ version = project.distribVersion + "-" + getDate()
+}
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyy-MM-dd-HHmmss')
+    return formattedDate
+}*/
+
+// XXX: publish in lecacy maven.To be changed when new repo is available
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+              
+            groupId 'fr.soleil.test'
+            artifactId archivesBaseName
+
+           // artifact(soleilDistribution){
+           //     classifier= 'distribution'
+            //}
+
+            repositories {
+                maven {
+                    url "http://calypso/nexus/content/repositories/releases/"
+                     //url "file:/${project.projectDir}/artifacts"
+		            credentials {
+		                    username System.getProperty("mvn_user")
+		                    password System.getProperty("mvn_pwd")
+		            }
+                }
+            }
+       }
+    }
+}
+
+
