@@ -65,8 +65,8 @@ publishing {
                     url "http://calypso/nexus/content/repositories/releases/"
                      //url "file:/${project.projectDir}/artifacts"
 		            credentials {
-		                    username System.getProperty("mvn_user")
-		                    password System.getProperty("mvn_pwd")
+		                    username System.getenv("mvn_user")
+		                    password System.getenv("mvn_pwd")
 		            }
                 }
             }
