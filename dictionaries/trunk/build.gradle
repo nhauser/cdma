@@ -56,9 +56,9 @@ publishing {
             groupId 'fr.soleil.packaging'
             artifactId archivesBaseName
 
-           // artifact(soleilDistribution){
-           //     classifier= 'distribution'
-            //}
+            artifact(soleilDistribution){
+                classifier= 'distribution'
+            }
 
             repositories {
                 maven {
