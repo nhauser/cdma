@@ -1,5 +1,7 @@
 apply plugin: PackagePlugin
 
+archivesBaseName = "CDMA-dictonnaries"
+
 repositories {
     maven {
      url "http://soleilrepo"
