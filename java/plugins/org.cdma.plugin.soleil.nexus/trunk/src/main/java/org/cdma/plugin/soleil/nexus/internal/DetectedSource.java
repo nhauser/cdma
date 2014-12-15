@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * Tony Lam (nxi@Bragg Institute) - initial API and implementation
@@ -32,7 +32,7 @@ import org.cdma.utilities.configuration.ConfigDataset;
 public class DetectedSource {
     private static final long MIN_LAST_MODIF_TIME = 5000;
     private static final int EXTENSION_LENGTH = 4;
-    private static final String EXTENSION = ".nxs";
+    private static final String EXTENSION[] = new String[] { "nxs", "hdf", "h4", "hdf4", "he4", "h5", "hdf5", "he5" };
     private static final String CREATOR = "Synchrotron SOLEIL";
     private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL",
         "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
@@ -290,7 +290,7 @@ public class DetectedSource {
 
     /**
      * Return true if the given is a folder dataset.
-     * 
+     *
      * @note the given file must be a folder
      */
     private boolean isDatasetFolder(final File file) {
@@ -326,7 +326,17 @@ public class DetectedSource {
     }
 
     private static boolean accept(final String filename) {
-        int length = filename.length();
-        return (length > EXTENSION_LENGTH && filename.substring(length - EXTENSION_LENGTH).equalsIgnoreCase(EXTENSION));
+        boolean result = false;
+        if (filename != null) {
+            int length = filename.length();
+            for (String extension : EXTENSION) {
+                if (length >= extension.length() && filename.endsWith(extension)) {
+                    result = true;
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 }
