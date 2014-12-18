@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>archiving</artifactId>
-  <version>0.0.3-SNAPSHOT</version>
+  <version>0.0.3</version>
   <name>CDMA Archiving engine</name>
   <description>This project is an Attribute Archiving engine for the CDMA.</description>
   <developers>
@@ -25,7 +25,7 @@
       </roles>
       <timezone>1</timezone>
     </developer>
-      <developer>
+    <developer>
       <id>saintin</id>
       <name>Katy SAINTIN</name>
       <email>katy.saintin@synchrotron-soleil.fr</email>
