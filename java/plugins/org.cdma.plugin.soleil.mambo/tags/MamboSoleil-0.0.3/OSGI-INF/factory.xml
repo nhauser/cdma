@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.cdma.plugin.mambo.factory">
+   <implementation class="org.cdma.plugin.mambo.SoleilMamboFactory"/>
+   <service>
+      <provide interface="org.cdma.IFactory"/>
+   </service>
+</scr:component>
