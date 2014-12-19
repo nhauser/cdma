@@ -11,12 +11,10 @@ package org.cdma.plugin.archiving.internal;
 
 import java.io.IOException;
 import java.net.URI;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDataset.ArchivingMode;
+import org.cdma.interfaces.IDataset;
 import org.cdma.plugin.archiving.SoleilArcFactory;
 
 public class DetectedSource {
@@ -24,7 +22,7 @@ public class DetectedSource {
     private boolean mIsBrowsable;
     private boolean mIsProducer;
     private boolean mIsReadable;
-    private URI mURI;
+    private final URI mURI;
 
     public DetectedSource(URI uri) {
         mURI = uri;
@@ -56,43 +54,44 @@ public class DetectedSource {
     // ---------------------------------------------------------
     private void init(URI uri) {
         if (uri != null) {
-        	String scheme = uri.getScheme();
-        	
-    		mIsBrowsable = false;
-    		mIsExperiment = false;
-    		mIsProducer = false;
-    		mIsReadable = false;
-        	
-        	if( scheme != null && scheme.equals("jdbc") && uri.getSchemeSpecificPart() != null ) {
-        		try {
-					Driver driver = DriverManager.getDriver(uri.toString());
-					if( driver != null ) {
-			    		ArchivingDataset dataset = new ArchivingDataset(SoleilArcFactory.NAME, uri);
-			    		for( ArchivingMode mode : ArchivingMode.values() ) {
-			    			try {
-			    				dataset.setArchivingMode(mode);
-			    				dataset.open();
-			    				if( dataset.getRootGroup() != null ) {
-			    					mIsBrowsable = true;
-						    		mIsExperiment = true;
-						    		mIsProducer = true;
-						    		mIsReadable = true;
-						    		dataset.close();
-						    		break;
-			    				}
-			    				else {
-			    					dataset.close();
-			    				}
-			    			}
-			    			catch( IOException e ) {
-			    				// Nothing to do
-			    			}
-			    		}
-					}
-				} catch (SQLException e) {
-					// Nothing to do: no suitable driver for the given URI 
-				}
-        	}
+            String scheme = uri.getScheme();
+
+            mIsBrowsable = false;
+            mIsExperiment = false;
+            mIsProducer = false;
+            mIsReadable = false;
+
+            if( (scheme != null) && scheme.equals("jdbc") && (uri.getSchemeSpecificPart() != null) ) {
+                try {
+                    IDataset dataset = new SoleilArcFactory().createDatasetInstance(uri);
+                    if(dataset instanceof ArchivingDataset) {
+                        ArchivingDataset archivingdataset = (ArchivingDataset)dataset;
+                        for( ArchivingMode mode : ArchivingMode.values() ) {
+                            try {
+                                archivingdataset.setArchivingMode(mode);
+                                archivingdataset.open();
+                                if( dataset.getRootGroup() != null ) {
+                                    mIsBrowsable = true;
+                                    mIsExperiment = true;
+                                    mIsProducer = true;
+                                    mIsReadable = true;
+                                    dataset.close();
+                                    break;
+                                }
+                                else {
+                                    dataset.close();
+                                }
+                            }
+                            catch( IOException e ) {
+                                // Nothing to do
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    // Nothing to do: no suitable driver for the given URI
+                }
+
+            }
         }
     }
 }

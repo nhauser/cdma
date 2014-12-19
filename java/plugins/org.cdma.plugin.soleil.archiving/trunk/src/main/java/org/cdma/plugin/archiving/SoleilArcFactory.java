@@ -39,71 +39,14 @@ public class SoleilArcFactory implements IFactory {
 
     @Override
     public IDataset openDataset(URI uri) {
-        ArchivingDataset dataset = null;
-        // URI format type jdbc:mysql://dbhost/dbname#hdb#user#passwd#rac#schema
-        if(uri != null) {
-            String uriString = uri.toString();
-            String[] uriSplit = uriString.split("#");
-            if ((uriSplit != null) && (uriSplit.length > 0)) {
-                String dbDriver = "oracle";
-                String dbHost = null;
-                String dbName = null;
-                ArchivingMode dbMode = ArchivingMode.HDB;
-                String dbUser = null;
-                String dbPassword = null;
-                boolean rac = false;
-                String dbScheme = null;
-                // Parse first token
-                if (uriSplit.length > 0) {
-                    String url_db = uriSplit[0];
-                    if (url_db.contains("mysql")) {
-                        dbDriver = "mysql";
-                    }
-                    String[] url_split = url_db.split("/");
-                    if ((url_split != null) && (url_split.length > 1)) {
-                        dbName = url_split[url_split.length - 1];
-                        dbHost = url_split[url_split.length - 2];
-                    }
-                }
-
-                // Archiving mode
-                if (uriSplit.length > 1) {
-                    try {
-                        dbMode = ArchivingMode.valueOf(uriSplit[1]);
-                    } catch (Exception e) {
-                        dbMode = ArchivingMode.HDB;
-                    }
-                }
-
-                // user
-                if (uriSplit.length > 2) {
-                    dbUser = uriSplit[2];
-                }
-
-                // password
-                if (uriSplit.length > 3) {
-                    dbPassword = uriSplit[3];
-                }
-
-                // rac
-                if (uriSplit.length > 4) {
-                    rac = Boolean.parseBoolean(uriSplit[4]);
-                }
-
-                // scheme
-                if (uriSplit.length > 5) {
-                    dbScheme = uriSplit[3];
-                }
-
-                dataset = new ArchivingDataset(NAME, dbMode, dbUser, dbPassword, rac, dbScheme, dbName,
-                        dbDriver, dbHost, true);
-            }
-            try {
+        IDataset dataset = null;
+        try {
+            dataset = createDatasetInstance(uri);
+            if (dataset != null) {
                 dataset.open();
-            } catch (IOException e) {
-                Factory.getLogger().log(Level.SEVERE, "Unable to open dataset!", e);
             }
-
+        } catch (Exception e) {
+            Factory.getLogger().log(Level.SEVERE, "Unable to open dataset!", e);
         }
         return dataset;
     }
@@ -209,7 +152,69 @@ public class SoleilArcFactory implements IFactory {
 
     @Override
     public IDataset createDatasetInstance(URI uri) throws Exception {
-        return openDataset(uri);
+
+        ArchivingDataset dataset = null;
+        // URI format type jdbc:mysql://dbhost/dbname#hdb#user#passwd#rac#schema
+        if(uri != null) {
+            String uriString = uri.toString();
+            String[] uriSplit = uriString.split("#");
+            if ((uriSplit != null) && (uriSplit.length > 0)) {
+                String dbDriver = "oracle";
+                String dbHost = null;
+                String dbName = null;
+                ArchivingMode dbMode = ArchivingMode.HDB;
+                String dbUser = null;
+                String dbPassword = null;
+                boolean rac = false;
+                String dbScheme = null;
+                // Parse first token
+                if (uriSplit.length > 0) {
+                    String url_db = uriSplit[0];
+                    if (url_db.contains("mysql")) {
+                        dbDriver = "mysql";
+                    }
+                    String[] url_split = url_db.split("/");
+                    if ((url_split != null) && (url_split.length > 1)) {
+                        dbName = url_split[url_split.length - 1];
+                        dbHost = url_split[url_split.length - 2];
+                    }
+                }
+
+                // Archiving mode
+                if (uriSplit.length > 1) {
+                    try {
+                        dbMode = ArchivingMode.valueOf(uriSplit[1]);
+                    } catch (Exception e) {
+                        dbMode = ArchivingMode.HDB;
+                    }
+                }
+
+                // user
+                if (uriSplit.length > 2) {
+                    dbUser = uriSplit[2];
+                }
+
+                // password
+                if (uriSplit.length > 3) {
+                    dbPassword = uriSplit[3];
+                }
+
+                // rac
+                if (uriSplit.length > 4) {
+                    rac = Boolean.parseBoolean(uriSplit[4]);
+                }
+
+                // scheme
+                if (uriSplit.length > 5) {
+                    dbScheme = uriSplit[3];
+                }
+
+                dataset = new ArchivingDataset(NAME, dbMode, dbUser, dbPassword, rac, dbScheme, dbName,
+                        dbDriver, dbHost, true);
+            }
+        }
+
+        return dataset;
     }
 
     @Override
