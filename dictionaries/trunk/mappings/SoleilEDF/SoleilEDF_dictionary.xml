@@ -52,14 +52,20 @@
   </item>
   <item key="intensity">
     <path>Intensity1</path>
+    <call>DataItemStacker</call>
     <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Intensity1" />
   </item>
   <item key="delta">
     <path>delta</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="mi">
-    <path>I11-C-C07__DT__MI_DIODE.5</path>
+    <path>Intensity1</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Intensity1" />
+    <attribute name="name" value="Intensity1" />
   </item>
   <item key="lambda">
     <path>WaveLength</path>
