@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf;
 
@@ -48,8 +48,7 @@ public class ReadTests {
             // Test IGroup
             IGroup group1 = root.getGroup("group1");
             assertNotNull(group1);
-            assertEquals(2, group1.getAttributeList().size());
-            assertEquals("Attribute List size", 2, group1.getAttributeList().size());
+            assertEquals("Attribute List size", 3, group1.getAttributeList().size());
             assertEquals("group1", group1.getShortName());
             assertEquals("/group1", group1.getName());
             assertEquals(root, group1.getRootGroup());
@@ -83,7 +82,6 @@ public class ReadTests {
             containers = root.findAllContainerByPath("/group*/data*");
             assertNotNull(containers);
             assertTrue(containers.size() == 2);
-
 
         }
     }
