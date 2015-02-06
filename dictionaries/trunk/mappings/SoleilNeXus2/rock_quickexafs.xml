@@ -13,11 +13,14 @@
     <item key="intensity2">
         <path>/{NXentry}/{NXdata}/channel2*</path>
     </item>
+    <item key="mono3_direction">
+        <path>/{NXentry}/{NXdata}/mono*Direction*</path>
+    </item>
     <item key="mono2_direction">
-        <path>/{NXentry}/{NXdata}/mono2Direction*</path>
+        <path>/{NXentry}/{NXdata}/mono*Direction*</path>
     </item>
     <item key="mono1_direction">
-        <path>/{NXentry}/{NXdata}/mono1Direction*</path>
+        <path>/{NXentry}/{NXdata}/mono*Direction*</path>
     </item>
     <item key="cristal_inter_reticular_distance">
         <path>/{NXentry}/QuickEXAFS/cristal_inter_reticular_distance</path>
