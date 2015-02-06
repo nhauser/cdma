@@ -4,6 +4,7 @@
     	<item key="intensity0"/>    <!-- current before sample -->
 	<item key="intensity1"/>    <!-- current after sample -->
 	<item key="intensity2"/>    <!-- current after sample -->
+    <item key="mono1_direction"/>
 	<item key="mono2_direction"/>
 	<item key="mono3_direction"/>
 	<item key ="cristal_inter_reticular_distance"/>
