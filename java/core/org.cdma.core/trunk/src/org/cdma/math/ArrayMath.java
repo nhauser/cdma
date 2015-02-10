@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stï¿½phane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
@@ -39,7 +39,7 @@ import org.cdma.interfaces.ISliceIterator;
 
 public abstract class ArrayMath implements IArrayMath {
 
-    private IArray m_array;
+    private final IArray m_array;
 
     private IFactory factory;
 
@@ -112,20 +112,17 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath eltRemainder(final IArray newArray)
-            throws ShapeNotMatchException {
+    public IArrayMath eltRemainder(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         if (getArray().getRank() == newArray.getRank()) {
             eltRemainderEqualSize(newArray, getArray());
         } else {
             ISliceIterator sourceSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
                 while (sourceSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
-                    sourceSlice.getArrayMath().eltRemainderEqualSize(newArray,
-                            sourceSlice);
+                    sourceSlice.getArrayMath().eltRemainderEqualSize(newArray, sourceSlice);
                 }
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException("shape is invalid");
@@ -136,8 +133,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath eltRemainder(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath eltRemainder(final IArrayMath array) throws ShapeNotMatchException {
         return eltRemainder(array.getArray());
     }
 
@@ -151,24 +147,19 @@ public abstract class ArrayMath implements IArrayMath {
      *             mismatching shape
      */
     @Override
-    public IArrayMath toEltRemainder(final IArray newArray)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltRemainder(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         IArrayMath arrMath = newArray.getArrayMath();
-        IArray result = getFactory().createArray(getArray().getElementType(),
-                getArray().getShape());
+        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
         if (getArray().getRank() == newArray.getRank()) {
             eltRemainderEqualSize(newArray, result);
         } else {
             ISliceIterator sourceSliceIterator = null;
             ISliceIterator resultSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
-                resultSliceIterator = result.getSliceIterator(newArray
-                        .getRank());
-                while (sourceSliceIterator.hasNext()
-                        && resultSliceIterator.hasNext()) {
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
+                resultSliceIterator = result.getSliceIterator(newArray.getRank());
+                while (sourceSliceIterator.hasNext() && resultSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
                     IArray resultSlice = resultSliceIterator.getArrayNext();
                     arrMath.eltRemainderEqualSize(sourceSlice, resultSlice);
@@ -181,30 +172,24 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath toEltRemainder(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltRemainder(final IArrayMath array) throws ShapeNotMatchException {
         return toEltRemainder(array.getArray());
     }
 
     @Override
-    public IArrayMath toEltMultiply(final IArray newArray)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltMultiply(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         IArrayMath arrMath = newArray.getArrayMath();
-        IArray result = getFactory().createArray(getArray().getElementType(),
-                getArray().getShape());
+        IArray result = getFactory().createArray(getArray().getElementType(), getArray().getShape());
         if (getArray().getRank() == newArray.getRank()) {
             eltMultiplyWithEqualSize(newArray, result);
         } else {
             ISliceIterator sourceSliceIterator = null;
             ISliceIterator resultSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
-                resultSliceIterator = result.getSliceIterator(newArray
-                        .getRank());
-                while (sourceSliceIterator.hasNext()
-                        && resultSliceIterator.hasNext()) {
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
+                resultSliceIterator = result.getSliceIterator(newArray.getRank());
+                while (sourceSliceIterator.hasNext() && resultSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
                     IArray resultSlice = resultSliceIterator.getArrayNext();
                     arrMath.eltMultiplyWithEqualSize(sourceSlice, resultSlice);
@@ -217,8 +202,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath toEltMultiply(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltMultiply(final IArrayMath array) throws ShapeNotMatchException {
         return toEltMultiply(array.getArray());
     }
 
@@ -231,20 +215,17 @@ public abstract class ArrayMath implements IArrayMath {
      *             mismatching shape
      */
     @Override
-    public IArrayMath eltMultiply(final IArray newArray)
-            throws ShapeNotMatchException {
+    public IArrayMath eltMultiply(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
         if (getArray().getRank() == newArray.getRank()) {
             eltMultiplyWithEqualSize(newArray, getArray());
         } else {
             ISliceIterator sourceSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
                 while (sourceSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
-                    sourceSlice.getArrayMath().eltMultiplyWithEqualSize(
-                            newArray, sourceSlice);
+                    sourceSlice.getArrayMath().eltMultiplyWithEqualSize(newArray, sourceSlice);
                 }
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException("shape is invalid");
@@ -255,8 +236,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath eltMultiply(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath eltMultiply(final IArrayMath array) throws ShapeNotMatchException {
         return eltMultiply(array.getArray());
     }
 
@@ -268,7 +248,6 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toScale(final double value) {
-        System.out.println("ArrayMath.toScale()");
         IArray result = getFactory().createArray(double.class, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
@@ -330,8 +309,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath matMultiply(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath matMultiply(final IArrayMath array) throws ShapeNotMatchException {
         return matMultiply(array.getArray());
     }
 
@@ -342,8 +320,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toSqrt() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -375,8 +352,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toExp() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -408,8 +384,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toLn() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -451,8 +426,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toLog10() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -494,8 +468,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toSin() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -527,8 +500,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toAsin() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -560,8 +532,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toCos() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -579,8 +550,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toAcos() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -628,8 +598,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toTan() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -661,8 +630,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toAtan() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -695,13 +663,12 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toPower(final double value) {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
             newIterator.next();
-            newIterator.setDouble(Math.pow(oldIterator.getDoubleNext(),  value));
+            newIterator.setDouble(Math.pow(oldIterator.getDoubleNext(), value));
         }
         return result.getArrayMath();
     }
@@ -716,7 +683,7 @@ public abstract class ArrayMath implements IArrayMath {
     public IArrayMath power(final double value) {
         IArrayIterator oldIterator = getArray().getIterator();
         while (oldIterator.hasNext()) {
-            oldIterator.setDouble(Math.pow(oldIterator.getDoubleNext(),value));
+            oldIterator.setDouble(Math.pow(oldIterator.getDoubleNext(), value));
         }
         getArray().setDirty(true);
         return this;
@@ -734,11 +701,9 @@ public abstract class ArrayMath implements IArrayMath {
      * @throws ShapeNotMatchException
      */
     @Override
-    public double powerSum(final IArray axis, final int dimension,
-            final double power) throws ShapeNotMatchException {
+    public double powerSum(final IArray axis, final int dimension, final double power) throws ShapeNotMatchException {
         if (dimension >= getArray().getRank()) {
-            throw new ShapeNotMatchException(dimension
-                    + " dimension is not available");
+            throw new ShapeNotMatchException(dimension + " dimension is not available");
         }
         int[] shape = getArray().getShape();
         if (axis != null && axis.getSize() < shape[dimension]) {
@@ -823,8 +788,7 @@ public abstract class ArrayMath implements IArrayMath {
         if (Double.isNaN(sum)) {
             return sum;
         }
-        return Double.valueOf(sum) * getArray().getSize()
-                / Double.valueOf(getArray().getSize() - countNaN);
+        return Double.valueOf(sum) * getArray().getSize() / Double.valueOf(getArray().getSize() - countNaN);
     }
 
     /**
@@ -835,8 +799,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toEltInverse() throws DivideByZeroException {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -879,8 +842,7 @@ public abstract class ArrayMath implements IArrayMath {
      */
     @Override
     public IArrayMath toEltInverseSkipZero() {
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         IArrayIterator oldIterator = getArray().getIterator();
         IArrayIterator newIterator = result.getIterator();
         while (oldIterator.hasNext()) {
@@ -961,8 +923,7 @@ public abstract class ArrayMath implements IArrayMath {
         if (Double.isNaN(sum)) {
             return sum;
         }
-        double normaliseFactor = getArray().getSize()
-                / Double.valueOf(getArray().getSize() - countNaN);
+        double normaliseFactor = getArray().getSize() / Double.valueOf(getArray().getSize() - countNaN);
         return Double.valueOf(sum) * normaliseFactor * normaliseFactor;
     }
 
@@ -974,8 +935,7 @@ public abstract class ArrayMath implements IArrayMath {
      * @throws ShapeNotMatchException
      */
     @Override
-    public void eltMultiplyWithEqualSize(final IArray newArray, final IArray result)
-            throws ShapeNotMatchException {
+    public void eltMultiplyWithEqualSize(final IArray newArray, final IArray result) throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
         }
@@ -984,27 +944,23 @@ public abstract class ArrayMath implements IArrayMath {
         IArrayIterator newIterator = result.getIterator();
         while (iterator1.hasNext()) {
             newIterator.next();
-            newIterator.setDouble(iterator1.getDoubleNext()
-                    * iterator2.getDoubleNext());
+            newIterator.setDouble(iterator1.getDoubleNext() * iterator2.getDoubleNext());
         }
         getArray().setDirty(true);
     }
 
     @Override
-    public void eltMultiplyWithEqualSize(final IArrayMath array, final IArrayMath result)
-            throws ShapeNotMatchException {
+    public void eltMultiplyWithEqualSize(final IArrayMath array, final IArrayMath result) throws ShapeNotMatchException {
         eltMultiplyWithEqualSize(array.getArray(), result.getArray());
     }
 
     @Override
-    public void eltRemainderEqualSize(final IArrayMath array, final IArrayMath result)
-            throws ShapeNotMatchException {
+    public void eltRemainderEqualSize(final IArrayMath array, final IArrayMath result) throws ShapeNotMatchException {
         eltRemainderEqualSize(array.getArray(), result.getArray());
     }
 
     @Override
-    public void eltRemainderEqualSize(final IArray newArray, final IArray result)
-            throws ShapeNotMatchException {
+    public void eltRemainderEqualSize(final IArray newArray, final IArray result) throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
         }
@@ -1013,8 +969,7 @@ public abstract class ArrayMath implements IArrayMath {
         IArrayIterator newIterator = result.getIterator();
         while (iterator1.hasNext()) {
             newIterator.next();
-            newIterator.setDouble(iterator1.getDoubleNext()
-                    % iterator2.getDoubleNext());
+            newIterator.setDouble(iterator1.getDoubleNext() % iterator2.getDoubleNext());
         }
         getArray().setDirty(true);
     }
@@ -1028,8 +983,7 @@ public abstract class ArrayMath implements IArrayMath {
      * @throws ShapeNotMatchException
      */
     @Override
-    public void eltDivideWithEqualSize(final IArray newArray, final IArray result)
-            throws ShapeNotMatchException {
+    public void eltDivideWithEqualSize(final IArray newArray, final IArray result) throws ShapeNotMatchException {
         if (getArray().getSize() != newArray.getSize()) {
             throw new ShapeNotMatchException("the size of the arrays not match");
         }
@@ -1049,8 +1003,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public void eltDivideWithEqualSize(final IArrayMath array, final IArrayMath result)
-            throws ShapeNotMatchException {
+    public void eltDivideWithEqualSize(final IArrayMath array, final IArrayMath result) throws ShapeNotMatchException {
         eltDivideWithEqualSize(array.getArray(), result.getArray());
     }
 
@@ -1063,27 +1016,21 @@ public abstract class ArrayMath implements IArrayMath {
      *             mismatching shape
      */
     @Override
-    public IArrayMath toEltDivide(final IArray newArray)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltDivide(final IArray newArray) throws ShapeNotMatchException {
         getArray().getArrayUtils().checkShape(newArray);
-        IArray result = getFactory().createArray(Double.TYPE,
-                getArray().getShape());
+        IArray result = getFactory().createArray(Double.TYPE, getArray().getShape());
         if (getArray().getRank() == newArray.getRank()) {
             eltDivideWithEqualSize(newArray, result);
         } else {
             ISliceIterator sourceSliceIterator = null;
             ISliceIterator resultSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
-                resultSliceIterator = result.getSliceIterator(newArray
-                        .getRank());
-                while (sourceSliceIterator.hasNext()
-                        && resultSliceIterator.hasNext()) {
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
+                resultSliceIterator = result.getSliceIterator(newArray.getRank());
+                while (sourceSliceIterator.hasNext() && resultSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
                     IArray resultSlice = resultSliceIterator.getArrayNext();
-                    sourceSlice.getArrayMath().eltDivideWithEqualSize(newArray,
-                            resultSlice);
+                    sourceSlice.getArrayMath().eltDivideWithEqualSize(newArray, resultSlice);
                 }
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException("shape is invalid");
@@ -1093,8 +1040,7 @@ public abstract class ArrayMath implements IArrayMath {
     }
 
     @Override
-    public IArrayMath toEltDivide(final IArrayMath array)
-            throws ShapeNotMatchException {
+    public IArrayMath toEltDivide(final IArrayMath array) throws ShapeNotMatchException {
         return toEltDivide(array.getArray());
     }
 
@@ -1114,12 +1060,10 @@ public abstract class ArrayMath implements IArrayMath {
         } else {
             ISliceIterator sourceSliceIterator = null;
             try {
-                sourceSliceIterator = getArray().getSliceIterator(
-                        newArray.getRank());
+                sourceSliceIterator = getArray().getSliceIterator(newArray.getRank());
                 while (sourceSliceIterator.hasNext()) {
                     IArray sourceSlice = sourceSliceIterator.getArrayNext();
-                    sourceSlice.getArrayMath().eltDivideWithEqualSize(newArray,
-                            sourceSlice);
+                    sourceSlice.getArrayMath().eltDivideWithEqualSize(newArray, sourceSlice);
                 }
             } catch (InvalidRangeException e) {
                 throw new ShapeNotMatchException("shape is invalid");
