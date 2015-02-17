@@ -26,6 +26,10 @@
     <path>/{NXinstrument}/{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="globalGain">
+    <path>/{NXinstrument}/{NXdetector}/Gain</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="closeDelay">
     <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
