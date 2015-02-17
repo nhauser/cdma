@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
-<map-def name="SEXTANTS" version="1.0.0">
+<map-def name="SEXTANTS_SCANSERVER" version="1.0.0">
   <item key="acquisition_sequence">
     <path>/</path>
     <call>CreateVirtualItem</call>
+  </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
     <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>

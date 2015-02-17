@@ -5,6 +5,11 @@
     <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="camera">
     <path>/{NXinstrument}/{NXdetector}</path>
     <call>CreateVirtualItem</call>

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="CRISTAL_SCANSERVER" version="1.0.0">
-
   <item key="acquisition_sequence">
-    <path></path>
+    <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
-  <item key="camera">
-    <path>/{NXinstrument}/{NXdetector}</path>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="camera">
+    <path></path>
+    <call param="XIA">CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="XIA" />
+    <attribute name="region" value="1" />
   </item>
   <item key="channelScale">
     <path>/{NXinstrument}/{NXdetector}/channelScale</path>
@@ -171,6 +177,7 @@
       path to filter on that attribute name and value -->
     <call>AttributeFilter</call>
     <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="XIA" />
     <attribute name="interpretation" value="image"/>
   </item>
   <item key="spectrums_scienta">
@@ -222,7 +229,7 @@
       path to filter on that attribute name and value -->
     <call>AttributeFilter</call>
     <call>HarvestEquipmentAttributes</call>
-    <attribute name="interpretation" value="image"/>
+    <attribute name="equipment" value="XIA" />
   </item>
   
   <item key="beamEnergy">

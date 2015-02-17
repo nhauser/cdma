@@ -6,6 +6,12 @@
     <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
+  <!-- acquisition_origin: this part to identify the origin (for example: the beamline). -->
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <!-- camera: this part is needed to associate a camera to current scan. "equipment" and "region" attributes are mandatory  -->
   <item key="camera">
     <path>/</path>

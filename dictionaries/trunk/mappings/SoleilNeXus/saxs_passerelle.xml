@@ -2,8 +2,13 @@
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="SAXS_PASSERELLE" version="1.0.0">
   <item key="acquisition_sequence">
-    <path></path>
+    <path>/</path>
     <call>CreateVirtualItem</call>
+  </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="camera">
     <path>/{NXinstrument}/{NXdetector}</path>
