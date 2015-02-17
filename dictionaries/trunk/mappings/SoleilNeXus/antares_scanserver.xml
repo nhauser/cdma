@@ -37,6 +37,10 @@
     <path>/{NXinstrument}/{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="globalGain">
+    <path>/{NXinstrument}/{NXdetector}/Gain</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="shutterCloseDelay">
     <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
@@ -158,7 +162,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="image"/>
+    <attribute name="interpretation" value="image" />
   </item>
   <item key="spectrums_scienta">
     <!-- the core will try to open that path, but won't succeed -->
@@ -178,7 +182,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="spectrum"/>
+    <attribute name="interpretation" value="spectrum" />
   </item>
   <item key="spectrums_xia">
     <path>/{NXdata}/data_*@long_name=*/channel*</path>
@@ -189,7 +193,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="spectrum"/>
+    <attribute name="interpretation" value="spectrum" />
   </item>
   <item key="scalars_xia">
     <path>/{NXdata}/data_*@long_name=*/eventsinrun*</path>
