@@ -2,91 +2,96 @@
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="TEMP_FLYSCAN" version="1.0.0">
   <item key="acquisition_sequence">
-    <path>/{NXentry}</path>
+    <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="camera">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}</path>
+    <path>/{NXinstrument}/{NXdetector}</path>
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/channelScale</path>
+    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/intensityBlack</path>
+    <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="distance">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path>
+    <path>/{NXinstrument}/{NXdetector}/distance</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path>
+    <path>/{NXinstrument}/{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="shutterCloseDelay">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
+    <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="xBin">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path>
+    <path>/{NXinstrument}/{NXdetector}/Xbin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="zBin">
-    <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path>
+    <path>/{NXinstrument}/{NXdetector}/Ybin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="mi">
-    <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}</path>
+    <path>/{NXinstrument}/{NXintensity_monitor}</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="gain">
-    <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}/Gain</path>
+    <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="intensity">
-    <path>/{NXentry}/{NXinstrument}/{NXintensity_monitor}/intensity</path>
+    <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
-    <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path>
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energy">
-    <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/energy</path>
+    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="spectrums_scienta">
-    <path>/{NXentry}/{NXdata}/sumData*</path>
+    <path>/{NXdata}/sumData*</path>
     <call>DataItemStackerByName</call>
     <call>HarvestSignalAttributes</call>
     <attribute name="equipment">
-      <path>/{NXentry}/{NXinstrument}/Scienta*{NXdetector}</path>
+      <path>/{NXinstrument}/Scienta*{NXdetector}</path>
       <call>HarvestEquipmentAttributes</call>
       <call>SelectNodeByRegionAttribute</call>
     </attribute>
     <attribute name="interpretation" value="spectrum"/>
   </item>
   <item key="spectrums_xia">
-    <path>/{NXentry}/{NXdata}/channel*</path>
+    <path>/{NXdata}/channel*</path>
     <call>DataItemStackerByName</call>
     <call>HarvestSignalAttributes</call>
     <attribute name="equipment">
-      <path>/{NXentry}/{NXinstrument}/Xia*{NXdetector}</path>
+      <path>/{NXinstrument}/Xia*{NXdetector}</path>
       <call>HarvestEquipmentAttributes</call>
       <call>SelectNodeByRegionAttribute</call>
     </attribute>
     <attribute name="interpretation" value="spectrum"/>
   </item>
   <item key="images">
-    <path>/{NXentry}/{NXdata}/Image</path>
+    <path>/{NXdata}/Image</path>
     <call>HarvestSignalAttributes</call>
     <attribute name="interpretation" value="image"/>
   </item>
   <item key="comments">
-    <path>/{NXentry}/{NXsample}/comments/data</path>
+    <path>/{NXsample}/comments/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
 </map-def>

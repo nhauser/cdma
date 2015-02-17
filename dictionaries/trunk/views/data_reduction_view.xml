@@ -67,6 +67,7 @@
     </group>
     <group key="info">
       <item key="comments" />
+      <item key="acquisition_origin" />
     </group>
     <item key="acquisition_sequence" />
   </group>
