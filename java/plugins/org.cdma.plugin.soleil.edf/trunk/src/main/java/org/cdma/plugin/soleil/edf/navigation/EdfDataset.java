@@ -34,7 +34,8 @@ public class EdfDataset implements IDataset, Cloneable {
     private File file;
     private EdfGroup rootGroup;
     private EdfLogicalGroup logicalRoot;
-    private boolean open = false;;
+    private boolean open = false;
+    private String title;
 
     public EdfDataset(String filePath) {
         super();
@@ -69,7 +70,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public String getTitle() {
-        throw new NotImplementedException();
+        return title;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class EdfDataset implements IDataset, Cloneable {
 
     @Override
     public void setTitle(String title) {
-        throw new NotImplementedException();
+        this.title = title;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class EdfDataset implements IDataset, Cloneable {
                 rootGroup = null;
                 throw new IOException("No root directory defined");
             } else {
-                if (file == null || rootGroup == null) {
+                if ((file == null) || (rootGroup == null)) {
                     file = new File(filePath);
                     rootGroup = new EdfGroup(this, file);
                     // rootGroup.addSubgroup(new EdfGroup(file));
