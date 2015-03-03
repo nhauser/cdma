@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.external;
 
@@ -33,7 +33,7 @@ import fr.soleil.nexus.PathNexus;
 
 /**
  * Create a list of IDataItem that are empty from a IGroup list. Created items have no data linked.
- * 
+ *
  * @param context
  * @throws CDMAException
  */
@@ -46,7 +46,7 @@ public class CreateVirtualItem implements IPluginMethod {
     }
 
     @Override
-    public void execute(Context context) throws CDMAException {
+    public void execute(final Context context) throws CDMAException {
         List<IContainer> inList = context.getContainers();
         List<IContainer> outList = new ArrayList<IContainer>();
 
@@ -57,8 +57,14 @@ public class CreateVirtualItem implements IPluginMethod {
         String parameter = null;
 
         // Backward compatibility
-        if (context.getParams() != null) {
-            parameter = (String) context.getParams()[0];
+        Object[] parameters = context.getParams();
+        if (parameters != null) {
+            if (parameters.length > 0) {
+                Object parameterAsObject = parameters[0];
+                if (parameterAsObject instanceof String) {
+                    parameter = (String) parameterAsObject;
+                }
+            }
         }
         for (IContainer container : inList) {
             if (container.getModelType().equals(ModelType.Group)) {
@@ -99,5 +105,4 @@ public class CreateVirtualItem implements IPluginMethod {
         // Update context
         context.setContainers(outList);
     }
-
 }
