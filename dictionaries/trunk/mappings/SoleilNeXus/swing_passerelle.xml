@@ -60,10 +60,13 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="gain">
+<!--
+   This gain is not the expected gain (dixit Javier PEREZ). Do not read it.
+   <item key="gain">
     <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+-->
   <item key="intensity">
     <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
     <call>HarvestEquipmentAttributes</call>
