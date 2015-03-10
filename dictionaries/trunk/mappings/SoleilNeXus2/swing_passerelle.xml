@@ -5,49 +5,54 @@
     <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="camera">
-    <path>/{NXinstrument}/{NXdetector}</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}</path>
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale/data</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/channelScale</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dark">
-    <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/intensityBlack</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="distance">
-    <path>/{NXinstrument}/{NXdetector}/distance</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/distance</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXinstrument}/{NXdetector}/Exposure/data</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="globalGain">
-    <path>/{NXinstrument}/{NXdetector}/Gain/data</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Gain</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="shutterCloseDelay">
-    <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="xBin">
-    <path>/{NXinstrument}/{NXdetector}/Xbin/data</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Xbin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="zBin">
-    <path>/{NXinstrument}/{NXdetector}/Ybin/data</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Ybin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="x0">
-    <path>/{NXinstrument}/{NXdetector}/dir_beam_x</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/dir_beam_x</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="z0">
-    <path>/{NXinstrument}/{NXdetector}/dir_beam_z</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/dir_beam_z</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="mi">
@@ -55,20 +60,23 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="gain">
-    <path>/{NXinstrument}/{NXintensity_monitor}/Gain/data</path>
+<!--
+   This gain is not the expected gain (dixit Javier PEREZ). Do not read it.
+   <item key="gain">
+    <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+-->
   <item key="intensity">
     <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
-    <path>/{NXinstrument}/{NXmonochromator}/wavelength/data</path>
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energy">
-    <path>/{NXinstrument}/{NXmonochromator}/energy/data</path>
+    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="images">
@@ -76,7 +84,7 @@
     <call>DataItemStacker</call>
     <call>HarvestSignalAttributes</call>
     <attribute name="equipment">
-      <path>/{NXinstrument}/{NXdetector}</path>
+      <path>/{NXinstrument}/Aviex{NXdetector}</path>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
     <attribute name="interpretation" value="image"/>
