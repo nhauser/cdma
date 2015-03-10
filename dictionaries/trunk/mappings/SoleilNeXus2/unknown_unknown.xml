@@ -3,15 +3,21 @@
 <map-def name="UNKNOWN" version="1.0.0">
   <!-- acquisition_sequence: this part to identify the scan. Please don't change it  -->
   <item key="acquisition_sequence">
-    <path></path>
+    <path>/</path>
     <call>CreateVirtualItem</call>
+  </item>
+  <!-- acquisition_origin: this part to identify the origin (for example: the beamline). -->
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
   </item>
   <!-- camera: this part is needed to associate a camera to current scan. "equipment" and "region" attributes are mandatory  -->
   <item key="camera">
     <path>/</path>
-    <call param="MarCCD">CreateVirtualItem</call>
-    <attribute name="equipment" value="MarCCD" />
-    <attribute name="region" value="" />
+    <call param="ScientaAtt1">CreateVirtualItem</call>
+    <attribute name="equipment" value="" />
+    <attribute name="region" value="1" />
   </item>
   <!-- energy: Needed by some programs. Leave as is or just change value in param -->
   <item key="energy">
@@ -19,9 +25,46 @@
     <call param="100">CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <!-- images: Where to find the image stack ? You can change path, but you have to known the start point is the NXentry, not the root node  -->
-  <item key="images">
-    <path>/{NXdata}/Image</path>
+  <item key="dataChannelScale">
+    <path>/{NXdata}/channelScale*</path>
+    <!-- <call>DataItemStackerByName</call> -->
     <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXinstrument}/Scienta*{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+      <call>SelectNodeByRegionAttribute</call>
+    </attribute>
+  </item>
+  <item key="samplePhi">
+    <path>/{NXdata}/phi*</path>
+    <call>DataItemStackerByName</call>
+    <call>HarvestSignalAttributes</call>
+  </item>
+  <item key="sampleTheta">
+    <path>/{NXdata}/Theta</path>
+    <call>DataItemStackerByName</call>
+    <call>HarvestSignalAttributes</call>
+  </item>
+  <item key="apertureAngle">
+    <path>/{NXdata}/sliceScale*</path>
+    <!-- <call>DataItemStackerByName</call> -->
+    <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXinstrument}/Scienta*{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+      <call>SelectNodeByRegionAttribute</call>
+    </attribute>
+  </item>
+  <!-- images: Where to find the image stack ? You can change path, but you have to know the start point is the NXentry, not the root node  -->
+  <item key="images">
+    <path>/{NXdata}/data*</path>
+    <call>DataItemStackerByName</call>
+    <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXinstrument}/Scienta*{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+      <call>SelectNodeByRegionAttribute</call>
+    </attribute>
+    <attribute name="interpretation" value="image"/>
   </item>
 </map-def>

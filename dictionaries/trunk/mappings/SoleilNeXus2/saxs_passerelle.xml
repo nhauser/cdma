@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
-<map-def name="CRISTAL_PASSERELLE" version="1.0.0">
+<map-def name="SAXS_PASSERELLE" version="1.0.0">
   <item key="acquisition_sequence">
     <path>/</path>
     <call>CreateVirtualItem</call>
@@ -12,52 +12,24 @@
   </item>
   <item key="camera">
     <path>/{NXinstrument}/{NXdetector}</path>
-    <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Pilatus300K" />
+    <attribute name="region" value="" />
   </item>
-  <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="dark">
-    <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="distance">
+   <item key="distance">
     <path>/{NXinstrument}/{NXdetector}/distance</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXinstrument}/{NXdetector}/Exposure</path>
+    <path>/duration</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="globalGain">
-    <path>/{NXinstrument}/{NXdetector}/Gain</path>
+  <item key="x0">
+    <path>/{NXinstrument}/{NXdetector}/beam_center_x</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="shutterCloseDelay">
-    <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="xBin">
-    <path>/{NXinstrument}/{NXdetector}/Xbin</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="zBin">
-    <path>/{NXinstrument}/{NXdetector}/Ybin</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="mi">
-    <path>/{NXinstrument}/{NXintensity_monitor}</path>
-    <call>CreateVirtualItem</call>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="gain">
-    <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="intensity">
-    <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
+  <item key="z0">
+    <path>/{NXinstrument}/{NXdetector}/beam_center_z</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
@@ -79,7 +51,7 @@
     <attribute name="interpretation" value="image"/>
   </item>
   <item key="comments">
-    <path>/{NXsample}/comments/data</path>
+    <path>/{NXsample}/name</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
 </map-def>

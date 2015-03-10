@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
 <map-def name="ANTARES_SCANSERVER" version="1.0.0">
-
   <item key="acquisition_sequence">
-    <path></path>
+    <path>/</path>
     <call>CreateVirtualItem</call>
+  </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="camera">
     <path>/{NXinstrument}/{NXdetector}</path>
@@ -12,7 +16,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale/data</path>
+    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
     <!-- set attributes as "acquisition_sequence", "region" and "instrument" works only with NXinstrument 
       children -->
     <call>HarvestEquipmentAttributes</call>
@@ -33,6 +37,10 @@
     <path>/{NXinstrument}/{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="globalGain">
+    <path>/{NXinstrument}/{NXdetector}/Gain</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="shutterCloseDelay">
     <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
@@ -46,67 +54,67 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="sweeps">
-    <path>/{NXinstrument}/{NXdetector}/sweeps/data</path>
+    <path>/{NXinstrument}/{NXdetector}/sweeps</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="acquisitionMode">
-    <path>/{NXinstrument}/{NXdetector}/mode/data</path>
+    <path>/{NXinstrument}/{NXdetector}/mode</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lensMode">
-    <path>/{NXinstrument}/{NXdetector}/lensMode/data</path>
+    <path>/{NXinstrument}/{NXdetector}/lensMode</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="passEnergy">
-    <path>/{NXinstrument}/{NXdetector}/passEnergy/data</path>
+    <path>/{NXinstrument}/{NXdetector}/passEnergy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lowEnergy">
-    <path>/{NXinstrument}/{NXdetector}/lowEnergy/data</path>
+    <path>/{NXinstrument}/{NXdetector}/lowEnergy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="highEnergy">
-    <path>/{NXinstrument}/{NXdetector}/highEnergy/data</path>
+    <path>/{NXinstrument}/{NXdetector}/highEnergy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energyStep">
-    <path>/{NXinstrument}/{NXdetector}/energyStep/data</path>
+    <path>/{NXinstrument}/{NXdetector}/energyStep</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="stepTime">
-    <path>/{NXinstrument}/{NXdetector}/stepTime/data</path>
+    <path>/{NXinstrument}/{NXdetector}/stepTime</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="firstXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstXChannel/data</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorFirstXChannel</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lastXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastXChannel/data</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorLastXChannel</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="firstYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstYChannel/data</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorFirstYChannel</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lastYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastYChannel/data</path>
+    <path>/{NXinstrument}/{NXdetector}/detectorLastYChannel</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="slices">
-    <path>/{NXinstrument}/{NXdetector}/slices/data</path>
+    <path>/{NXinstrument}/{NXdetector}/slices</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="sliceScale">
-    <path>/{NXinstrument}/{NXdetector}/sliceScale/data</path>
+    <path>/{NXinstrument}/{NXdetector}/sliceScale</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energyScale">
-    <path>/{NXinstrument}/{NXdetector}/energyScale/data</path>
+    <path>/{NXinstrument}/{NXdetector}/energyScale</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="dataChannelScale">
-    <path>/{NXdata}/*channelScale*/data</path>
+    <path>/{NXdata}/*channelScale*</path>
   </item>
   <item key="mi">
     <path>/{NXinstrument}/{NXintensity_monitor}</path>
@@ -154,7 +162,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="image"/>
+    <attribute name="interpretation" value="image" />
   </item>
   <item key="spectrums_scienta">
     <!-- the core will try to open that path, but won't succeed -->
@@ -174,7 +182,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="spectrum"/>
+    <attribute name="interpretation" value="spectrum" />
   </item>
   <item key="spectrums_xia">
     <path>/{NXdata}/data_*@long_name=*/channel*</path>
@@ -185,7 +193,7 @@
       <call>CreateVirtualItem</call>
       <call>HarvestEquipmentAttributes</call>
     </attribute>
-    <attribute name="interpretation" value="spectrum"/>
+    <attribute name="interpretation" value="spectrum" />
   </item>
   <item key="scalars_xia">
     <path>/{NXdata}/data_*@long_name=*/eventsinrun*</path>

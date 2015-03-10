@@ -5,8 +5,8 @@
     <path>/</path>
     <call>CreateVirtualItem</call>
   </item>
-  <item key="camera">
-    <path>/{NXinstrument}/{NXdetector}</path>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
@@ -23,7 +23,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXinstrument}/{NXdetector}/Exposure/data</path>
+    <path>/{NXinstrument}/{NXdetector}/Exposure</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="globalGain">
@@ -31,15 +31,15 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="shutterCloseDelay">
-    <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay/data</path>
+    <path>/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="xBin">
-    <path>/{NXinstrument}/{NXdetector}/Xbin/data</path>
+    <path>/{NXinstrument}/{NXdetector}/Xbin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="zBin">
-    <path>/{NXinstrument}/{NXdetector}/Ybin/data</path>
+    <path>/{NXinstrument}/{NXdetector}/Ybin</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="x0">
@@ -55,20 +55,23 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="gain">
-    <path>/{NXinstrument}/{NXintensity_monitor}/Gain/data</path>
+<!--
+   This gain is not the expected gain (dixit Javier PEREZ). Do not read it.
+   <item key="gain">
+    <path>/{NXinstrument}/{NXintensity_monitor}/Gain</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+-->
   <item key="intensity">
     <path>/{NXinstrument}/{NXintensity_monitor}/intensity</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="lambda">
-    <path>/{NXinstrument}/{NXmonochromator}/wavelength/data</path>
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="energy">
-    <path>/{NXinstrument}/{NXmonochromator}/energy/data</path>
+    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="images">
