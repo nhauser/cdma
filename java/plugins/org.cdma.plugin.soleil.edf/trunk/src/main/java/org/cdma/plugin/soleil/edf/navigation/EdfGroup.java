@@ -89,7 +89,7 @@ public class EdfGroup extends AbstractGroup {
     private ArrayList<EdfGroup> groupList;
     private final EdfDataset dataset;
 
-    private boolean analyzed = false;;
+    private boolean analyzed = false;
 
     protected EdfGroup(EdfDataset dataset, File file) {
         super();
