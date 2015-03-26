@@ -121,7 +121,7 @@ public class EdfGroup extends AbstractGroup {
 
                     int character = -1;
 
-                    StringBuffer headerBuffer = new StringBuffer();
+                    StringBuilder headerBuffer = new StringBuilder();
                     // XXX No need to test for new line: '}' always means header end
 //                    boolean newLine = false;
                     while (true) {
@@ -779,7 +779,7 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         if (getParentGroup() != null) {
             buffer.append(getParentGroup().toString()).append(PATH_SEPARATOR);
         }
