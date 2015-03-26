@@ -86,10 +86,10 @@ public class EdfGroup extends AbstractGroup {
     private final File referenceFile;
     private final ArrayList<AbstractObject> objectList;
     private final ArrayList<EdfDataItem> itemList;
-    private ArrayList<EdfGroup> groupList;
+    private final ArrayList<EdfGroup> groupList;
     private final EdfDataset dataset;
 
-    private boolean analyzed = false;
+    private boolean analyzed;
 
     protected EdfGroup(EdfDataset dataset, File file) {
         super();
@@ -97,11 +97,11 @@ public class EdfGroup extends AbstractGroup {
         this.referenceFile = file;
         this.groupList = new ArrayList<EdfGroup>();
         this.itemList = new ArrayList<EdfDataItem>();
-        this.groupList = new ArrayList<EdfGroup>();
         this.objectList = new ArrayList<AbstractObject>();
         if (referenceFile != null) {
             setName(referenceFile.getName());
         }
+        analyzed = false;
         analyzeEdfFile();
         getGroupList();
     }
