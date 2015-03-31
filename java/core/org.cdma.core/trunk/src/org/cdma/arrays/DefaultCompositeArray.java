@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
@@ -235,10 +235,12 @@ public final class DefaultCompositeArray implements IArray {
 
     @Override
     public long getSize() {
-        DefaultCompositeIndex idx = (DefaultCompositeIndex) getIndex();
-        // TODO Index size is wrong !
-        return mArrays.length * idx.getIndexStorage().getSize();
-        // return mIndex.getSize();
+        // DefaultCompositeIndex idx = (DefaultCompositeIndex) getIndex();
+        // TODO Check HDF5 regression on this:
+        // long result = mArrays.length * idx.getIndexStorage().getSize();
+        long result = mIndex.getSize();
+        return result;
+        // return
     }
 
     @Override
@@ -450,7 +452,7 @@ public final class DefaultCompositeArray implements IArray {
     /**
      * Get the object targeted by given index and return it (eventually using auto-boxing). It's the
      * central data access method that all other methods rely on.
-     * 
+     *
      * @param index targeting a cell
      * @return the content of cell designed by the index
      * @throws InvalidRangeException if one of the index is bigger than the corresponding dimension
