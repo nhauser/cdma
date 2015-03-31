@@ -240,7 +240,6 @@ public final class DefaultCompositeArray implements IArray {
         // long result = mArrays.length * idx.getIndexStorage().getSize();
         long result = mIndex.getSize();
         return result;
-        // return
     }
 
     @Override
