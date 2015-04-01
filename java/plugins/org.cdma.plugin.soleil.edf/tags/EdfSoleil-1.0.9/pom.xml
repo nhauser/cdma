@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>super-pom-java</artifactId>
+    <groupId>fr.soleil</groupId>
+    <version>RELEASE</version>
+  </parent>
+  <groupId>org.cdma.plugins</groupId>
+  <artifactId>EdfSoleil</artifactId>
+  <version>1.0.9</version>
+  <name>EDF CDMA Soleil Plugin</name>
+  <developers>
+    <developer>
+      <id>girardot</id>
+      <name>Raphaël GIRARDOT</name>
+      <email>raphael.girardot@synchrotron-soleil.fr</email>
+      <organization>SOLEIL</organization>
+      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+    <developer>
+      <id>viguier</id>
+      <name>Gregory VIGUIER</name>
+      <email>gregory.viguier@synchrotron-soleil.fr</email>
+      <organization>SOLEIL</organization>
+      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.edf/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/plugins/org.cdma.plugin.soleil.edf/trunk</developerConnection>
+  </scm>
+  <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <resources>
+      <resource>
+        <targetPath>META-INF</targetPath>
+        <directory>META-INF</directory>
+      </resource>
+      <resource>
+        <targetPath>OSGI-INF</targetPath>
+        <directory>OSGI-INF</directory>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.cdma</groupId>
+      <artifactId>Core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.4</version>
+    </dependency>
+  </dependencies>
+</project>
