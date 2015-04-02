@@ -2,6 +2,8 @@ apply plugin: PackagePlugin
 
 archivesBaseName = "CDMADictionaryRoot"
 
+defaultTasks 'clean', 'soleilDistribution', 'publish'
+
 repositories {
     maven {
      url "http://soleilrepo"
