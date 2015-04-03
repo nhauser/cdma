@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 //******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
+import org.cdma.dictionary.filter.FilterAttribute;
+import org.cdma.dictionary.filter.IFilter;
 import org.cdma.exception.CDMAException;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IDataItem;
@@ -42,7 +44,7 @@ import org.cdma.utils.Utilities.ModelType;
 public final class DataItemStacker implements IPluginMethod {
 
     @Override
-    public void execute(Context context) throws CDMAException {
+    public void execute(final Context context) throws CDMAException {
         List<IContainer> result = new ArrayList<IContainer>();
         IDataItem item = stackDataItems(context);
         if (item != null) {
@@ -56,15 +58,30 @@ public final class DataItemStacker implements IPluginMethod {
         return EdfFactory.NAME;
     }
 
-    public IDataItem stackDataItems(Context context) {
+    public IDataItem stackDataItems(final Context context) {
         IDataItem item = null;
 
         // Get all previously found nodes
         List<IDataItem> items = new ArrayList<IDataItem>();
         List<IContainer> nodes = context.getContainers();
         for (IContainer node : nodes) {
+            boolean okForAdd = true;
+            // Search equipment filter
+            List<IFilter> filters = context.getKey().getFilterList();
+            for (IFilter iFilter : filters) {
+                if (iFilter instanceof FilterAttribute) {
+                    if (((FilterAttribute) iFilter).getName().equals("equipment")) {
+                        if (!iFilter.matches(node)) {
+                            okForAdd = false;
+                        }
+                    }
+                }
+            }
+
             if (node.getModelType() == ModelType.DataItem) {
-                items.add((IDataItem) node);
+                if (okForAdd) {
+                    items.add((IDataItem) node);
+                }
             }
         }
 

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * Tony Lam (nxi@Bragg Institute) - initial API and implementation
@@ -91,7 +91,7 @@ public class EdfGroup extends AbstractGroup {
 
     private boolean analyzed;
 
-    protected EdfGroup(EdfDataset dataset, File file) {
+    protected EdfGroup(final EdfDataset dataset, final File file) {
         super();
         this.dataset = dataset;
         this.referenceFile = file;
@@ -106,7 +106,7 @@ public class EdfGroup extends AbstractGroup {
         getGroupList();
     }
 
-    public EdfGroup(File file) {
+    public EdfGroup(final File file) {
         this(null, file);
     }
 
@@ -123,7 +123,7 @@ public class EdfGroup extends AbstractGroup {
 
                     StringBuilder headerBuffer = new StringBuilder();
                     // XXX No need to test for new line: '}' always means header end
-//                    boolean newLine = false;
+                    //                    boolean newLine = false;
                     while (true) {
                         try {
                             character = dis.read();
@@ -131,15 +131,15 @@ public class EdfGroup extends AbstractGroup {
                                 break;
                             }
                             headerBuffer.append((char) character);
-//                            if (character == '\n') {
-//                                newLine = true;
-//                            } else {
+                            //                            if (character == '\n') {
+                            //                                newLine = true;
+                            //                            } else {
                             if ((character == '}')/* && newLine*/) {
                                 character = dis.read();
                                 break;
                             }
-//                                newLine = false;
-//                            }
+                            //                                newLine = false;
+                            //                            }
                         } catch (IOException e) {
                             character = -1;
                             break;
@@ -218,7 +218,7 @@ public class EdfGroup extends AbstractGroup {
         analyzed = true;
     }
 
-    private void readImageFromFile(HashMap<String, String> headerMap, DataInputStream dis) {
+    private void readImageFromFile(final HashMap<String, String> headerMap, final DataInputStream dis) {
         // Image Recovery
         try {
             boolean littleEndian = LOW_BYTE_FIRST.equals(headerMap.get(BYTE_ORDER));
@@ -380,12 +380,12 @@ public class EdfGroup extends AbstractGroup {
         }
     }
 
-    public void setAnalyzed(boolean newValue) {
+    public void setAnalyzed(final boolean newValue) {
         this.analyzed = newValue;
     }
 
     @Override
-    public void addDataItem(IDataItem v) {
+    public void addDataItem(final IDataItem v) {
         if ((v instanceof EdfDataItem) && (!itemList.contains(v))) {
             itemList.add((EdfDataItem) v);
             objectList.add((EdfDataItem) v);
@@ -394,12 +394,12 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public void addOneDimension(IDimension dimension) {
+    public void addOneDimension(final IDimension dimension) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void addSubgroup(IGroup group) {
+    public void addSubgroup(final IGroup group) {
         if ((group instanceof EdfGroup) && (!groupList.contains(group))) {
             groupList.add((EdfGroup) group);
             objectList.add((EdfGroup) group);
@@ -408,17 +408,17 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IDataItem findDataItem(IKey key) {
+    public IDataItem findDataItem(final IKey key) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataItem findDataItem(String shortName) {
+    public IDataItem findDataItem(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataItem findDataItemWithAttribute(IKey key, String name, String attribute) {
+    public IDataItem findDataItemWithAttribute(final IKey key, final String name, final String attribute) {
         throw new NotImplementedException();
     }
 
@@ -429,22 +429,22 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IGroup findGroup(String shortName) {
+    public IGroup findGroup(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IGroup findGroup(IKey key) {
+    public IGroup findGroup(final IKey key) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IGroup findGroupWithAttribute(IKey key, String name, String value) {
+    public IGroup findGroupWithAttribute(final IKey key, final String name, final String value) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataItem getDataItem(String shortName) {
+    public IDataItem getDataItem(final String shortName) {
         IDataItem result = null;
         if (shortName != null) {
             for (IDataItem item : itemList) {
@@ -472,7 +472,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IDataItem getDataItemWithAttribute(String name, String value) {
+    public IDataItem getDataItemWithAttribute(final String name, final String value) {
         IDataItem result = null;
         if (name != null) {
             for (IDataItem item : itemList) {
@@ -505,7 +505,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IDimension getDimension(String name) {
+    public IDimension getDimension(final String name) {
         throw new NotImplementedException();
     }
 
@@ -515,7 +515,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IGroup getGroup(String shortName) {
+    public IGroup getGroup(final String shortName) {
         IGroup result = null;
         if (shortName != null) {
             for (IGroup group : groupList) {
@@ -561,7 +561,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IGroup getGroupWithAttribute(String attributeName, String value) {
+    public IGroup getGroupWithAttribute(final String attributeName, final String value) {
         IGroup result = null;
         if (name != null) {
             for (IGroup group : groupList) {
@@ -578,7 +578,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public Map<String, String> harvestMetadata(String mdStandard) throws IOException {
+    public Map<String, String> harvestMetadata(final String mdStandard) throws IOException {
         throw new NotImplementedException();
     }
 
@@ -596,7 +596,7 @@ public class EdfGroup extends AbstractGroup {
      * Returns whether this {@link EdfGroup} is a fake group. A fake group is a group bound to no {@link File} and no
      * {@link IDataset}. These groups are used to group {@link IDataItem}s with
      * similar names
-     * 
+     *
      * @return a boolean value
      */
     protected boolean isFakeGroup() {
@@ -606,7 +606,7 @@ public class EdfGroup extends AbstractGroup {
     /**
      * Returns whether this {@link EdfGroup} is an acquisition group. An acquisition group is a
      * group bound to a directory.
-     * 
+     *
      * @return a boolean value
      */
     protected boolean isAcquisitionGroup() {
@@ -624,48 +624,48 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public boolean removeDataItem(IDataItem item) {
+    public boolean removeDataItem(final IDataItem item) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean removeDataItem(String varName) {
+    public boolean removeDataItem(final String varName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean removeDimension(String dimName) {
+    public boolean removeDimension(final String dimName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean removeDimension(IDimension dimension) {
+    public boolean removeDimension(final IDimension dimension) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean removeGroup(IGroup group) {
+    public boolean removeGroup(final IGroup group) {
         throw new NotImplementedException();
     }
 
     @Override
-    public boolean removeGroup(String shortName) {
+    public boolean removeGroup(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Deprecated
     @Override
-    public void setDictionary(org.cdma.interfaces.IDictionary dictionary) {
+    public void setDictionary(final org.cdma.interfaces.IDictionary dictionary) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void updateDataItem(String key, IDataItem dataItem) throws SignalNotAvailableException {
+    public void updateDataItem(final String key, final IDataItem dataItem) throws SignalNotAvailableException {
         throw new NotImplementedException();
     }
 
     @Override
-    public void addStringAttribute(String name, String value) {
+    public void addStringAttribute(final String name, final String value) {
         throw new NotImplementedException();
     }
 
@@ -680,13 +680,13 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public void setShortName(String name) {
+    public void setShortName(final String name) {
         setName(name);
     }
 
     /**
      * Builds an {@link EdfDataItem} with a particular name and value.
-     * 
+     *
      * @param name {@link EdfDataItem} name.
      * @param stringValue {@link EdfDataItem} string value. If this value represents a number (with
      *            or without unit), then the {@link EdfDataItem} real value is the {@link Double} representation of this
@@ -694,7 +694,7 @@ public class EdfGroup extends AbstractGroup {
      *            defined)
      * @return The expected {@link EdfDataItem}
      */
-    private EdfDataItem buildDataItem(String name, String stringValue) {
+    private EdfDataItem buildDataItem(final String name, final String stringValue) {
         EdfDataItem result = null;
         // Recover Double representation and unit
         Number[] converted = convertStringToDouble(stringValue);
@@ -742,13 +742,13 @@ public class EdfGroup extends AbstractGroup {
      * This method tries to convert a {@link String} to a {@link Double}. It is more powerful than
      * {@link Double#valueOf(String)}, because it is compatible with {@link String} values that
      * contain units at the end.
-     * 
+     *
      * @param toConvert The {@link String} to convert to {@link Double}
      * @return A {@link Number} array of length 2. The 1st element is the expected Double, and the
      *         2nd one is the index at which you can find the unit. Returns <code>null</code> if the
      *         conversion failed
      */
-    private Number[] convertStringToDouble(String toConvert) {
+    private Number[] convertStringToDouble(final String toConvert) {
         Number[] result;
         if (toConvert == null) {
             result = null;
@@ -788,7 +788,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public IContainer getContainer(String shortName) {
+    public IContainer getContainer(final String shortName) {
         IContainer container = null;
         if ((shortName != null) && shortName.isEmpty()) {
             container = this;
@@ -808,12 +808,12 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     @Deprecated
-    public IContainer findContainer(String shortName) {
+    public IContainer findContainer(final String shortName) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IContainer findContainerByPath(String path) throws NoResultException {
+    public IContainer findContainerByPath(final String path) throws NoResultException {
         String[] sNodes = DefaultPath.splitStringPath(path);
         IContainer node = getRootGroup();
         // Try to open each node
@@ -826,7 +826,7 @@ public class EdfGroup extends AbstractGroup {
     }
 
     @Override
-    public List<IContainer> findAllContainerByPath(String path) throws NoResultException {
+    public List<IContainer> findAllContainerByPath(final String path) throws NoResultException {
         if (!analyzed) {
             analyzeEdfFile();
         }
@@ -847,7 +847,7 @@ public class EdfGroup extends AbstractGroup {
         return list;
     }
 
-    private List<IContainer> findAllContainer(IContainer container, INode[] nodes, int level) {
+    private List<IContainer> findAllContainer(final IContainer container, final INode[] nodes, final int level) {
         List<IContainer> result = new ArrayList<IContainer>();
         if (container != null) {
             if (container instanceof EdfGroup) {
@@ -865,8 +865,8 @@ public class EdfGroup extends AbstractGroup {
                     INode current = nodes[level];
 
                     for (INode node : childs) {
-                        if (current.matchesPartNode(node)) {
-
+                        if (node.matchesPartNode(current)) {
+ 
                             if (level < nodes.length - 1) {
                                 result.addAll(findAllContainer(group.getContainer(node.getName()), nodes, level + 1));
                             }
@@ -908,18 +908,18 @@ public class EdfGroup extends AbstractGroup {
 
     @Override
     @Deprecated
-    public List<IContainer> findAllContainers(IKey key) throws NoResultException {
+    public List<IContainer> findAllContainers(final IKey key) throws NoResultException {
         throw new NotImplementedException();
     }
 
     @Override
     @Deprecated
-    public List<IContainer> findAllOccurrences(IKey key) throws NoResultException {
+    public List<IContainer> findAllOccurrences(final IKey key) throws NoResultException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IContainer findObjectByPath(Path path) {
+    public IContainer findObjectByPath(final Path path) {
         throw new NotImplementedException();
     }
 
@@ -937,7 +937,7 @@ public class EdfGroup extends AbstractGroup {
         throw new NotImplementedException();
     }
 
-    public static Object convertArrayDimensionFrom1ToN(Object singleDimArray, int... multiDimArrayShape) {
+    public static Object convertArrayDimensionFrom1ToN(final Object singleDimArray, final int... multiDimArrayShape) {
         Object result = null;
         if ((singleDimArray != null) && (multiDimArrayShape != null) && (multiDimArrayShape.length > 0)
                 && singleDimArray.getClass().isArray() && (!singleDimArray.getClass().getComponentType().isArray())) {
@@ -972,7 +972,7 @@ public class EdfGroup extends AbstractGroup {
     /**
      * Recursive method reshaping a filled mono-dimensional array into a multi-dimensional array, or
      * a filled multi-dimensional array into a mono-dimensional array.
-     * 
+     *
      * @param dimIndex reshape all dimensions greater than this one
      * @param startPositions starting position in multi-dimensional array
      * @param dimensions dimensions' size of the multi-dimensional array
@@ -983,8 +983,8 @@ public class EdfGroup extends AbstractGroup {
      *            array. Otherwise, this method will reshape a filled multi-dimensional array into a
      *            mono-dimensional array.
      */
-    private static void reshapeArray(int dimIndex, int[] startPositions, int[] dimensions, Object singleDimArray,
-            Object multiDimArray, boolean from1ToN) {
+    private static void reshapeArray(final int dimIndex, final int[] startPositions, final int[] dimensions, final Object singleDimArray,
+            final Object multiDimArray, final boolean from1ToN) {
         int lStartRaw;
         int lLinearStart;
         if (dimIndex == dimensions.length - 1) {
@@ -1020,13 +1020,13 @@ public class EdfGroup extends AbstractGroup {
 
     /**
      * This methods recovers the type of data present in a N dimension array.
-     * 
+     *
      * @param array The array
      * @return The {@link Class} that represents the data type in the given array. (Example: if <code>array</code> is a
      *         <code>boolean[][]</code>, the result will be {@link Boolean#TYPE}). This method returns <code>null</code>
      *         if <code>array</code> is <code>null</code>.
      */
-    public static Class<?> recoverDataType(Object array) {
+    public static Class<?> recoverDataType(final Object array) {
         Class<?> result = null;
         if (array != null) {
             result = recoverDeepComponentType(array.getClass());
@@ -1037,13 +1037,13 @@ public class EdfGroup extends AbstractGroup {
     /**
      * This methods recovers the type of data present in a {@link Class} that represents N dimension
      * arrays.
-     * 
+     *
      * @param arrayClass The {@link Class}
      * @return The {@link Class} that represents the data type in the given array. (Example: if <code>arrayClass</code>
      *         is <code>boolean[][]</code>, the result will be {@link Boolean#TYPE}). This method returns
      *         <code>null</code> if <code>arrayClass</code> is <code>null</code>.
      */
-    public static Class<?> recoverDeepComponentType(Class<?> arrayClass) {
+    public static Class<?> recoverDeepComponentType(final Class<?> arrayClass) {
         Class<?> result = arrayClass;
         if (arrayClass != null) {
             while (result.isArray()) {
@@ -1053,7 +1053,7 @@ public class EdfGroup extends AbstractGroup {
         return result;
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         EdfGroup group = new EdfGroup(new File("/home/viguier/NeXusFiles/EDF/test_264/test_264_test_im_00.edf"));
         group.analyzeEdfFile();
 

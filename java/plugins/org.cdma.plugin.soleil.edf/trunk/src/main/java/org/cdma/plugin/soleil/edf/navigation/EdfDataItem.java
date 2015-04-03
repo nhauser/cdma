@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
@@ -106,6 +106,15 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     @Override
     public ModelType getModelType() {
         return ModelType.DataItem;
+    }
+
+    @Override
+    public boolean hasAttribute(String name, String value) {
+        boolean result = super.hasAttribute(name, value);
+        if (!result && data instanceof DefaultCompositeArray && dataItems != null && dataItems.length > 0) {
+            result = dataItems[0].hasAttribute(name, value);
+        }
+        return result;
     }
 
     @Override
@@ -362,12 +371,12 @@ public class EdfDataItem extends AbstractObject implements IDataItem {
     @Override
     public int[] getShape() {
         int[] shape;
-//        if (dataItems.length == 1) {
-//            shape = dataItems[0].getShape();
-//        }
-//        else {
-            shape = getData().getShape();
-//        }
+        //        if (dataItems.length == 1) {
+        //            shape = dataItems[0].getShape();
+        //        }
+        //        else {
+        shape = getData().getShape();
+        //        }
         return shape;
     }
 

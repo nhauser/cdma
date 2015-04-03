@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 //******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
@@ -32,6 +32,7 @@ import org.cdma.dictionary.IPluginMethod;
 import org.cdma.exception.CDMAException;
 import org.cdma.interfaces.IContainer;
 import org.cdma.plugin.soleil.edf.EdfFactory;
+import org.cdma.plugin.soleil.edf.navigation.EdfDataItem;
 import org.cdma.plugin.soleil.edf.navigation.EdfGroup;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -40,13 +41,14 @@ import org.cdma.utils.Utilities.ModelType;
  * - acquisition_sequence (based on NXentry)
  * - region (of the detector it belongs to, based on number at end of the node's name)
  * - equipment (based on the name of NX... direct son of the NXinstrument)
- * 
+ *
  * @param context
  * @throws CDMAException
  */
 public class HarvestEquipmentAttributes implements IPluginMethod {
 
     private static String ACQ_SEQUENCE = "acquisition_sequence";
+    private static String EQUIPMENT = "equipment";
 
     @Override
     public String getFactoryName() {
@@ -68,6 +70,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                 }
                 case DataItem: {
                     setAttributeAcquisitionSequence(container);
+                    setEquipment(container);
                     break;
                 }
                 case LogicalGroup: {
@@ -87,4 +90,18 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         String attrValue = root.getShortName();
         container.addStringAttribute(ACQ_SEQUENCE, attrValue);
     }
+
+    private void setEquipment(IContainer container) {
+        // HACK For Javier PEREZ 03/04/15
+        String equipment = container.getName();
+        if (container instanceof EdfDataItem) {
+            if (container.getParentGroup() == null) {
+                equipment = "";
+            } else {
+                equipment = container.getParentGroup().getName();
+            }
+        }
+        container.addStringAttribute(EQUIPMENT, equipment);
+    }
+
 }
