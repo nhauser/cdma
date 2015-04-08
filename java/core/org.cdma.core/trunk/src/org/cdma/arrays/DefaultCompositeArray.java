@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 //******************************************************************************
 // Copyright (c) 2011 Synchrotron Soleil.
@@ -23,7 +23,6 @@
 // See AUTHORS file
 //******************************************************************************
 package org.cdma.arrays;
-
 
 import org.cdma.Factory;
 import org.cdma.exception.BackupException;
@@ -47,13 +46,13 @@ public final class DefaultCompositeArray implements IArray {
 
     public DefaultCompositeArray(final String factName, final IArray[] arrays) {
         factoryName = factName;
-        mArrays   = arrays.clone();
-        mData     = null;
+        mArrays = arrays.clone();
+        mData = null;
         initDimSize();
 
         // Define the same viewable part for all sub-IArray
         DefaultIndex index = mIndex.getIndexStorage();
-        for( IArray array : mArrays ) {
+        for (IArray array : mArrays) {
             array.setIndex(index.clone());
         }
     }
@@ -63,15 +62,14 @@ public final class DefaultCompositeArray implements IArray {
         mData = array.mData;
 
         IIndex index = mIndex.getIndexStorage();
-        mArrays      = new IArray[array.mArrays.length];
-        for( int i = 0; i < array.mArrays.length; i++ ) {
+        mArrays = new IArray[array.mArrays.length];
+        for (int i = 0; i < array.mArrays.length; i++) {
             mArrays[i] = array.mArrays[i].copy(false);
             mArrays[i].setIndex(index);
 
         }
         factoryName = array.factoryName;
     }
-
 
     public DefaultCompositeArray(final String factoryName, final Object oArray, final int[] iShape)
             throws InvalidArrayTypeException {
@@ -195,8 +193,7 @@ public final class DefaultCompositeArray implements IArray {
     @Override
     public Class<?> getElementType() {
         Class<?> result = null;
-        if( mArrays != null )
-        {
+        if (mArrays != null) {
             result = mArrays[0].getElementType();
         }
         return result;
@@ -210,8 +207,8 @@ public final class DefaultCompositeArray implements IArray {
     @Override
     public IArrayIterator getIterator() {
         DefaultCompositeIndex index = (DefaultCompositeIndex) mIndex.clone();
-        index.set( new int[index.getRank()] );
-        return new DefaultArrayIterator(this, index );
+        index.set(new int[index.getRank()]);
+        return new DefaultArrayIterator(this, index);
     }
 
     @Override
@@ -220,8 +217,7 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     @Override
-    public IArrayIterator getRegionIterator(final int[] reference, final int[] range)
-            throws InvalidRangeException {
+    public IArrayIterator getRegionIterator(final int[] reference, final int[] range) throws InvalidRangeException {
         int[] shape = mIndex.getShape();
         IIndex index = new DefaultCompositeIndex(this.factoryName, shape, reference, range);
         return new DefaultArrayIterator(this, index);
@@ -235,8 +231,8 @@ public final class DefaultCompositeArray implements IArray {
 
     @Override
     public long getSize() {
-        // DefaultCompositeIndex idx = (DefaultCompositeIndex) getIndex();
         // TODO Check HDF5 regression on this:
+        //        DefaultCompositeIndex idx = (DefaultCompositeIndex) getIndex();
         // long result = mArrays.length * idx.getIndexStorage().getSize();
         long result = mIndex.getSize();
         return result;
@@ -248,7 +244,7 @@ public final class DefaultCompositeArray implements IArray {
         IIndex index = mIndex.getIndexMatrix().clone();
         int rank = index.getRank();
 
-        if ( mData == null && mArrays != null ) {
+        if (mData == null && mArrays != null) {
             Object[] array;
             int offset;
 
@@ -346,21 +342,19 @@ public final class DefaultCompositeArray implements IArray {
     public void setIndex(final IIndex index) {
         if (index instanceof DefaultCompositeIndex) {
             mIndex = (DefaultCompositeIndex) index;
-        }
-        else {
-            mIndex = new DefaultCompositeIndex(this.factoryName, mIndex.getIndexMatrix().getRank(),
-                    index.getShape(), index.getOrigin(), index.getShape());
+        } else {
+            mIndex = new DefaultCompositeIndex(this.factoryName, mIndex.getIndexMatrix().getRank(), index.getShape(),
+                    index.getOrigin(), index.getShape());
             mIndex.set(index.getCurrentCounter());
         }
 
-        for( IArray array : mArrays ) {
+        for (IArray array : mArrays) {
             array.setIndex(mIndex.getIndexStorage());
         }
     }
 
     @Override
-    public ISliceIterator getSliceIterator(final int rank)
-            throws ShapeNotMatchException, InvalidRangeException {
+    public ISliceIterator getSliceIterator(final int rank) throws ShapeNotMatchException, InvalidRangeException {
         return new DefaultSliceIterator(this, rank);
     }
 
@@ -417,34 +411,31 @@ public final class DefaultCompositeArray implements IArray {
     }
 
     // ---------------------------------------------------------
-    /// Private methods
+    // / Private methods
     // ---------------------------------------------------------
     /**
      * InitDimSize
      * Initialize member dimension sizes 'm_iDimS' according to defined member data 'm_oData'
      */
-    private void initDimSize()
-    {
+    private void initDimSize() {
         // Check data existence
-        if( mArrays != null ) {
+        if (mArrays != null) {
             // Set dimension rank
             int matrixRank = mArrays.length > 1 ? 1 : 0;
-            int[] shape    = new int[ matrixRank + mArrays[0].getRank() ];
-
+            int[] shape = new int[matrixRank + mArrays[0].getRank()];
 
             // Fill dimension size array
-            if( matrixRank > 0 ) {
+            if (matrixRank > 0) {
                 shape[0] = mArrays.length;
             }
 
             int i = 0;
-            for( int size : mArrays[0].getShape() ) {
+            for (int size : mArrays[0].getShape()) {
                 shape[i + matrixRank] = size;
                 i++;
             }
 
-            mIndex = new DefaultCompositeIndex(factoryName, matrixRank, shape,
-                    new int[shape.length], shape);
+            mIndex = new DefaultCompositeIndex(factoryName, matrixRank, shape, new int[shape.length], shape);
         }
     }
 
@@ -464,7 +455,7 @@ public final class DefaultCompositeArray implements IArray {
 
         int nodeIndex = ind.getNode();
         IArray slab = mArrays[nodeIndex];
-        if( slab != null ) {
+        if (slab != null) {
             result = slab.getObject(itemIdx);
         }
         return result;
@@ -473,22 +464,20 @@ public final class DefaultCompositeArray implements IArray {
     private IndexNode getIndexNode(final IIndex index) {
         int nodeIndex;
         IIndex itemIdx;
-        if( mArrays.length > 1 ) {
+        if (mArrays.length > 1) {
             DefaultCompositeIndex idx;
             if (!(index instanceof DefaultCompositeIndex)) {
                 int rank = mIndex.getIndexMatrix().getRank();
-                idx = new DefaultCompositeIndex(factoryName, rank, mIndex.getShape(),
-                        index.getOrigin(), index.getShape());
+                idx = new DefaultCompositeIndex(factoryName, rank, mIndex.getShape(), index.getOrigin(),
+                        index.getShape());
                 idx.set(index.getCurrentCounter());
-            }
-            else {
+            } else {
                 idx = (DefaultCompositeIndex) index;
             }
             nodeIndex = (int) idx.currentElementMatrix();
             itemIdx = mIndex.getIndexStorage().clone();
             itemIdx.set(idx.getIndexStorage().getCurrentCounter());
-        }
-        else {
+        } else {
             nodeIndex = 0;
             itemIdx = mIndex.getIndexStorage().clone();
             itemIdx.set(index.getCurrentCounter());
@@ -500,15 +489,14 @@ public final class DefaultCompositeArray implements IArray {
         DefaultCompositeIndex idx = null;
         if (!(index instanceof DefaultCompositeIndex)) {
             idx = new DefaultCompositeIndex(factoryName, mIndex.getIndexMatrix().getRank(), index);
-        }
-        else {
+        } else {
             idx = (DefaultCompositeIndex) index;
         }
 
         DefaultIndex itemIdx = idx.getIndexStorage();
         long nodeIndex = idx.currentElementMatrix();
         IArray slab = mArrays[(int) nodeIndex];
-        if( slab != null ) {
+        if (slab != null) {
             slab.setObject(itemIdx, value);
         }
     }
@@ -517,9 +505,9 @@ public final class DefaultCompositeArray implements IArray {
         private final IIndex mIndex;
         private final int mNode;
 
-        public IndexNode( final IIndex index, final int node ) {
+        public IndexNode(final IIndex index, final int node) {
             mIndex = index;
-            mNode  = node;
+            mNode = node;
         }
 
         public IIndex getIndex() {
