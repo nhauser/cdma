@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
@@ -32,7 +32,7 @@ public class EdfFileReader {
         ByteBuffer result = ByteBuffer.allocate(sizeToRead);
 
         if (littleEndian) {
-            result.order(ByteOrder.LITTLE_ENDIAN);
+            result = result.order(ByteOrder.LITTLE_ENDIAN);
         }
 
         dis.readFully(flatByteImageValue);

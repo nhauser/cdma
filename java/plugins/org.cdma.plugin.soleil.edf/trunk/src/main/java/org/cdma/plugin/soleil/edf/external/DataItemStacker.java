@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.cdma.dictionary.Context;
 import org.cdma.dictionary.IPluginMethod;
-import org.cdma.dictionary.filter.FilterAttribute;
 import org.cdma.dictionary.filter.IFilter;
 import org.cdma.exception.CDMAException;
 import org.cdma.interfaces.IContainer;
@@ -64,22 +63,22 @@ public final class DataItemStacker implements IPluginMethod {
         // Get all previously found nodes
         List<IDataItem> items = new ArrayList<IDataItem>();
         List<IContainer> nodes = context.getContainers();
+        String elementName = "";
         for (IContainer node : nodes) {
             boolean okForAdd = true;
-            // Search equipment filter
+            // WARNING !!!!!!!!!!!!!!
+            // Filter before stacking elements
+            // You should Call HarvestEquipementAttributes before StackDataItems
             List<IFilter> filters = context.getKey().getFilterList();
             for (IFilter iFilter : filters) {
-                if (iFilter instanceof FilterAttribute) {
-                    if (((FilterAttribute) iFilter).getName().equals("equipment")) {
-                        if (!iFilter.matches(node)) {
-                            okForAdd = false;
-                        }
-                    }
+                if (!iFilter.matches(node)) {
+                    okForAdd = false;
                 }
             }
 
             if (node.getModelType() == ModelType.DataItem) {
                 if (okForAdd) {
+                    elementName = node.getName();
                     items.add((IDataItem) node);
                 }
             }
@@ -87,6 +86,7 @@ public final class DataItemStacker implements IPluginMethod {
 
         if (!items.isEmpty()) {
             item = new EdfDataItem(items.toArray(new EdfDataItem[items.size()]));
+            item.setName(elementName + " Stack");
         }
 
         return item;
