@@ -47,8 +47,8 @@ import org.cdma.utils.Utilities.ModelType;
  */
 public class HarvestEquipmentAttributes implements IPluginMethod {
 
-    private static String ACQ_SEQUENCE = "acquisition_sequence";
-    private static String EQUIPMENT = "equipment";
+    public static String ACQ_SEQUENCE = "acquisition_sequence";
+    public static String EQUIPMENT = "equipment";
 
     @Override
     public String getFactoryName() {
@@ -92,12 +92,11 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
     }
 
     private void setEquipment(IContainer container) {
-        // HACK For Javier PEREZ 03/04/15
         String equipment = container.getName();
         if (container instanceof EdfDataItem) {
-            if (container.getParentGroup() == null) {
-                equipment = "";
-            } else {
+            if (container.getParentGroup() != null) {
+                // SOLEIL EDF convention:
+                // A dataitem wich is not directly under the ROOT is contextual data. Its parent is the equipment name.
                 equipment = container.getParentGroup().getName();
             }
         }

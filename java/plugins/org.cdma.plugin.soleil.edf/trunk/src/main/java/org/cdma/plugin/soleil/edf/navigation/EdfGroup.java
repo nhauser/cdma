@@ -123,7 +123,7 @@ public class EdfGroup extends AbstractGroup {
 
                     StringBuilder headerBuffer = new StringBuilder();
                     // XXX No need to test for new line: '}' always means header end
-                    //                    boolean newLine = false;
+                    int bracketCounter = 0;
                     while (true) {
                         try {
                             character = dis.read();
@@ -131,15 +131,18 @@ public class EdfGroup extends AbstractGroup {
                                 break;
                             }
                             headerBuffer.append((char) character);
-                            //                            if (character == '\n') {
-                            //                                newLine = true;
-                            //                            } else {
-                            if ((character == '}')/* && newLine*/) {
-                                character = dis.read();
-                                break;
+
+                            if ((character == '{')) {
+                                bracketCounter++;
                             }
-                            //                                newLine = false;
-                            //                            }
+                            if ((character == '}')) {
+                                bracketCounter--;
+                                if (bracketCounter == 0) {
+                                    character = dis.read();
+                                    break;
+                                }
+                            }
+
                         } catch (IOException e) {
                             character = -1;
                             break;
@@ -866,7 +869,7 @@ public class EdfGroup extends AbstractGroup {
 
                     for (INode node : childs) {
                         if (node.matchesPartNode(current)) {
- 
+
                             if (level < nodes.length - 1) {
                                 result.addAll(findAllContainer(group.getContainer(node.getName()), nodes, level + 1));
                             }
