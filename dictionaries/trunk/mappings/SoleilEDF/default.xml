@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="EDF" version="1.0.0">
+  <item key="acquisition_sequence">
+    <path>/</path>
+    <call>CreateVirtualItem</call>
+  </item>
+  <item key="camera">
+    <path>Aviex</path>
+  </item>
+  <item key="distance">
+    <path>SampleDistance</path>
+    <call param="1000">ApplyCorrectionFactor</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="exposureTime">
+    <path>ExposureTime</path>
+    <call param="1000">ApplyCorrectionFactor</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="shutterCloseDelay">
+    <path>ShutterCloseDelay</path>
+    <call param="1000">ApplyCorrectionFactor</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="xBin">
+    <path>Xbin</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="zBin">
+    <path>Zbin</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="pixelSize">
+    <path>PSize_1</path>
+    <call>HarvestEquipmentAttributes</call>
+    <call param="1000000">ApplyCorrectionFactor</call>
+  </item>
+  <item key="x0">
+    <path>Center_1</path>
+  </item>
+  <item key="z0">
+    <path>Center_2</path>
+  </item>
+  <item key="globalGain">
+    <path>Gain</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="bias">
+    <path>Bias</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="intensity">
+    <path>Intensity1</path>
+    <call>DataItemStacker</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Intensity1" />
+  </item>
+  <item key="delta">
+    <path>delta</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="mi">
+    <path>Intensity1</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Intensity1" />
+    <attribute name="name" value="Intensity1" />
+  </item>
+  <item key="lambda">
+    <path>WaveLength</path>
+    <call param="10000000000">ApplyCorrectionFactor</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="energy">
+    <path>Monochromator/energy</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="comments">
+    <path>Sample_comments</path>
+  </item>
+  <item key="images">
+    <path>Image</path>
+    <!-- create a meta dataitem of all found node having the path above -->
+    <call>DataItemStacker</call>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="interpretation" value="image" />
+  </item>
+</map-def>
