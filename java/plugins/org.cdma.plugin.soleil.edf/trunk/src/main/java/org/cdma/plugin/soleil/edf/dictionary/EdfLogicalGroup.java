@@ -32,6 +32,7 @@ import org.cdma.plugin.soleil.edf.navigation.EdfDataset;
 
 public class EdfLogicalGroup extends LogicalGroup {
 
+    private static final String DEFAULT_Dictionnary = "default.xml";
     private static final String FACILITY = "Facility";
 
     public EdfLogicalGroup(IDataset dataset, Key key) {
@@ -58,11 +59,17 @@ public class EdfLogicalGroup extends LogicalGroup {
      * @throws FileAccessException
      */
     public static String detectDictionaryFile(EdfDataset dataset) {
-        String dictionary = "default.xml";
+        String dictionary = DEFAULT_Dictionnary;
         if (dataset.getRootGroup() != null) {
             IGroup root = dataset.getRootGroup();
             if (root != null) {
                 IDataItem facilityItem = root.getDataItem(FACILITY);
+                if (facilityItem == null) {
+                    if (!root.getGroupList().isEmpty()) {
+                        IGroup firstGroup = root.getGroupList().get(0);
+                        facilityItem = firstGroup.getDataItem(FACILITY);
+                    }
+                }
                 if (facilityItem != null) {
                     try {
                         dictionary = facilityItem.readScalarString() + ".xml";
@@ -87,7 +94,7 @@ public class EdfLogicalGroup extends LogicalGroup {
         try {
             dictionary.readEntries();
         } catch (FileAccessException e) {
-            Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+            Factory.getLogger().log(Level.SEVERE, e.getMessage());
             dictionary = null;
         }
 
