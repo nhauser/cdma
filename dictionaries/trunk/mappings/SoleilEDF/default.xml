@@ -82,8 +82,8 @@
   <item key="images">
     <path>Image</path>
     <!-- create a meta dataitem of all found node having the path above -->
-    <call>DataItemStacker</call>
     <call>HarvestEquipmentAttributes</call>
+    <call>DataItemStacker</call>
     <attribute name="interpretation" value="image" />
   </item>
 </map-def>
