@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.plugins</groupId>
   <artifactId>EdfSoleil</artifactId>
-  <version>1.0.10-SNAPSHOT</version>
+  <version>1.0.10</version>
   <name>EDF CDMA Soleil Plugin</name>
   <developers>
     <developer>
