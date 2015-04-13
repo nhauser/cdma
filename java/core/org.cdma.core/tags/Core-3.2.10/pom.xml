@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>super-pom-java</artifactId>
+    <groupId>fr.soleil</groupId>
+    <version>RELEASE</version>
+  </parent>
+  <groupId>org.cdma</groupId>
+  <artifactId>Core</artifactId>
+  <version>3.2.10</version>
+  <name>CDMA Core</name>
+  <developers>
+    <developer>
+      <id>viguier</id>
+      <name>Gregory VIGUIER</name>
+      <email>gregory.viguier@synchrotron-soleil.fr</email>
+      <organization>Synchrotron Soleil</organization>
+      <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+      <roles>
+        <role>Manager</role>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>1</timezone>
+    </developer>
+  </developers>
+  <scm>
+    <connection>scm:svn:http://cdma.googlecode.com/svn/java/core/org.cdma.core/trunk</connection>
+    <developerConnection>scm:svn:https://cdma.googlecode.com/svn/java/core/org.cdma.core/trunk</developerConnection>
+  </scm>
+  <build>
+    <sourceDirectory>src/</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <version>1.4.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+    </dependency>
+  </dependencies>
+</project>
