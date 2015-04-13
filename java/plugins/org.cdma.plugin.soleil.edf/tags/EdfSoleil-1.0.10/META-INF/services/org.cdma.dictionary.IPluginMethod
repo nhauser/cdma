@@ -1,0 +1,5 @@
+org.cdma.plugin.soleil.edf.external.CreateVirtualItem
+org.cdma.plugin.soleil.edf.external.DataItemStacker
+org.cdma.plugin.soleil.edf.external.HarvestEquipmentAttributes
+org.cdma.plugin.soleil.edf.external.ApplyCorrectionFactor
+org.cdma.plugin.soleil.edf.external.ModifyData
