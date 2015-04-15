@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE plugin-config SYSTEM "../../dtd/plugin_config_file.dtd">
+<plugin-config name="SOLEIL's Mambo plug-in configuration file">
+
+
+<!-- ============================================
+==  CONFIG 1: detection by file information    ==
+============================================= -->
+  <dataset-model name="fully_defined_conf">
+    <plugin>
+      <java>
+        <set name="HDB_RAC" value="true"/>
+        <set name="HDB_DRIVER" value="jdbc:oracle:thin"/>
+        <set name="HDB_HOST" value="(DESCRIPTION = (ADDRESS_LIST=(LOAD_BALANCE=on)(ADDRESS = (PROTOCOL = TCP)(HOST = calliope-vip.rcm) (PORT = 1521)) (ADDRESS = (PROTOCOL = TCP)(HOST = euterpe-vip.rcm)(PORT = 1521))) (CONNECT_DATA = (SERVICE_NAME = HDB)))"/>
+        <set name="HDB_NAME" value="thalie:6200,euterpe:6200,calliope:6200"/>
+        <set name="HDB_PORT" value="1521"/>
+        <set name="HDB_SCHEMA" value="hdb"/>
+        <!--
+        <set name="HDB_USER" value=""/>
+        <set name="HDB_PASSWORD" value=""/>
+        -->
+        <set name="TDB_RAC" value="true"/>
+        <set name="TDB_DRIVER" value="jdbc:oracle:thin"/>
+        <set name="TDB_HOST" value="(DESCRIPTION = (ADDRESS_LIST=(LOAD_BALANCE=on)(ADDRESS = (PROTOCOL = TCP)(HOST = calliope-vip.rcm) (PORT = 1522)) (ADDRESS = (PROTOCOL = TCP)(HOST = euterpe-vip.rcm)(PORT = 1522))) (CONNECT_DATA = (SERVICE_NAME = TDB)))"/>
+        <set name="TDB_NAME" value="thalie:6200,euterpe:6200,calliope:6200"/>
+        <set name="TDB_PORT" value="1521"/>
+        <set name="TDB_SCHEMA" value="tdb"/>
+        <!--
+        <set name="TDB_USER" value=""/>
+        <set name="TDB_PASSWORD" value=""/>
+        -->
+      </java>
+    </plugin>
+  </dataset-model>
+</plugin-config>
+

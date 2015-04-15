@@ -1,0 +1,80 @@
+apply plugin: PackagePlugin
+
+archivesBaseName = "CDMADictionaryRoot"
+
+defaultTasks 'clean', 'soleilDistribution', 'publish'
+
+repositories {
+    maven {
+     url "http://soleilrepo"
+    }
+}
+
+soleilDistribution {
+ 	into('concepts') {
+    	from 'concepts'
+    }
+    into('dtd') {
+    	from 'dtd'
+    }
+    into('mappings') {
+    	from 'mappings'
+    }
+    into('views') {
+   	 from 'views'
+    }
+}
+
+project.ext.distribVersion=System.getProperty("release_version")
+
+if (!project.distribVersion){
+ throw new GradleException("A 'release_version' variable is required.'")
+}
+
+version = project.distribVersion
+
+
+/* Not use to publish in maven repo
+project.ext.buildId = System.getenv("BUILD_ID")
+if (project.buildId){
+ version = project.distribVersion + "-" + project.buildId
+}
+else {
+ version = project.distribVersion + "-" + getDate()
+}
+def getDate() {
+    def date = new Date()
+    def formattedDate = date.format('yyyy-MM-dd-HHmmss')
+    return formattedDate
+}*/
+
+// XXX: publish in lecacy maven.To be changed when new repo is available
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+              
+            groupId 'fr.soleil.packaging'
+            artifactId archivesBaseName
+
+            artifact(soleilDistribution){
+                classifier= 'distribution'
+            }
+
+            repositories {
+                maven {
+     			    url "http://build-mongodb-1.ica.synchrotron-soleil.fr:8090/legacy"
+                    //  url "http://calypso/nexus/content/repositories/releases/"
+                     //url "file:/${project.projectDir}/artifacts"
+		            credentials {
+	                    username System.getenv("mvn_user")
+	                    password System.getenv("mvn_pwd")
+		            }
+                }
+            }
+       }
+    }
+}
+
+
