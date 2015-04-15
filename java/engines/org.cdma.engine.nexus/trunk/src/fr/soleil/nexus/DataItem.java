@@ -127,6 +127,10 @@ public class DataItem implements Cloneable {
 
     public void setType(int iType) {
         mType = iType;
+        // SEE JIRA JAVAAPI-191 and JAVAAPI-282 Boolean in nexus is not supported force it in Byte type
+        if (mType == NexusFile.NX_BOOLEAN) {
+            mType = NexusFile.NX_BINARY;
+        }
     }
 
     public void setSize(int[] iDimS) {
@@ -215,7 +219,7 @@ public class DataItem implements Cloneable {
 
     @SuppressWarnings("unchecked")
     public <T> T getAttribute(String sAttrName) {
-        if (mAttribs == null || !mAttribs.containsKey(sAttrName)) {
+        if ((mAttribs == null) || !mAttribs.containsKey(sAttrName)) {
             return null;
         }
         Data<T> tVal = (Data<T>) mAttribs.get(sAttrName);
@@ -330,7 +334,7 @@ public class DataItem implements Cloneable {
         }
         str.append("\n     - NodeParent Path: " + mPath);
         Object data = getData();
-        if (mType == NexusFile.NX_CHAR && null != data) {
+        if ((mType == NexusFile.NX_CHAR) && (null != data)) {
             str.append("\n     - Value: " + new String((char[]) data));
         }
         return str.toString();
@@ -338,7 +342,7 @@ public class DataItem implements Cloneable {
 
     public void arrayify() {
         Object data = getRawData();
-        if (data != null && !data.getClass().isArray() && !(data instanceof String)) {
+        if ((data != null) && !data.getClass().isArray() && !(data instanceof String)) {
             Object oTmp = java.lang.reflect.Array.newInstance(data.getClass(), 1);
             java.lang.reflect.Array.set(oTmp, 0, data);
             mData = new SoftReference<Object>(oTmp);
@@ -381,9 +385,9 @@ public class DataItem implements Cloneable {
     @SuppressWarnings("unchecked")
     public Object getData(int[] pos, int[] shape) {
         // save current position and shape
-        boolean reload = !alreadyLoaded(pos, shape) && mType != NexusFile.NX_CHAR;
+        boolean reload = !alreadyLoaded(pos, shape) && (mType != NexusFile.NX_CHAR);
         Object data = getRawData();
-        if (reload || data == null) {
+        if (reload || (data == null)) {
             mStart = pos;
             mDimData = shape;
             loadData();
@@ -402,7 +406,7 @@ public class DataItem implements Cloneable {
                 length *= shape[i];
                 stride *= shape[i];
             }
-            if (mPrevSlabStart != start || mPrevSlabLength != length || mPrevSlab.get() == null) {
+            if ((mPrevSlabStart != start) || (mPrevSlabLength != length) || (mPrevSlab.get() == null)) {
                 data = copy(data, start, length);
                 mPrevSlabStart = start;
                 mPrevSlabLength = length;
@@ -433,8 +437,9 @@ public class DataItem implements Cloneable {
     private void initDimSize() throws NexusException {
         Object oArray = getRawData();
         // Check data existence
-        if (oArray == null)
+        if (oArray == null) {
             throw new NexusException("No data to determine Nexus data dimension sizes!");
+        }
 
         // Determine rank of array (by parsing data array class name)
         String sClassName = oArray.getClass().getName();
