@@ -23,6 +23,8 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -133,7 +135,12 @@ public final class NxsDatasource implements IDatasource {
             if (source.isFolder()) {
                 File folder = new File(target.getPath());
                 File[] files = folder.listFiles((FileFilter) new ValidURIFilter());
-
+                Arrays.sort(files, new Comparator<File>() {
+                    @Override
+                    public int compare(File f1, File f2) {
+                        return Long.valueOf(f2.lastModified()).compareTo(f1.lastModified());
+                    }
+                });
                 if (files != null) {
                     for (File file : files) {
                         result.add(file.toURI());
