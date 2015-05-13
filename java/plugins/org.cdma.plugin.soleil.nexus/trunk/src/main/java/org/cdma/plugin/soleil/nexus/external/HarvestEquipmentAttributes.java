@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.external;
 
@@ -58,7 +58,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
             switch (type) {
                 case Group: {
                     NxsGroup group = (NxsGroup) container;
-                    NxsNode[] nodes = (NxsNode[]) group.getNxsPath().getNodes();
+                    NxsNode[] nodes = group.getNxsPath().getNodes();
 
                     setAttributeAcquisitionSequence(container, nodes);
                     setAttributeEquipment(container, nodes, outList);
@@ -68,20 +68,11 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
                 case DataItem: {
                     NxsDataItem item = (NxsDataItem) container;
 
-                    // Try to set attributes
-                    // H5ScalarDS[] h5scalarDS = item.getNexusItems();
-
-                    NxsNode[] nodes = (NxsNode[]) item.getPath().getNodes();
+                    NxsNode[] nodes = item.getNxsPath().getNodes();
 
                     // Set scan acquisition
                     setAttributeAcquisitionSequence(container, nodes);
 
-                    // Node is under NXinstrument it belongs to an equipment
-
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    // TODO Remettre code en fonctionnement
-                    // && nodes[1].getClassName().equals("NXinstrument")
-                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (nodes.length >= 2) {
                         setAttributeEquipment(container, nodes, outList);
                     }
@@ -126,7 +117,7 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
     private void setAttributeEquipment(final IContainer container, final NxsNode[] nodes, final List<IContainer> outList) {
         // Set the root group at the NXentry position
         NxsGroup root = (NxsGroup) container.getRootGroup();
-        NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
+        NxsNode[] rootNodes = root.getNxsPath().getNodes();
         if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
             root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
         }

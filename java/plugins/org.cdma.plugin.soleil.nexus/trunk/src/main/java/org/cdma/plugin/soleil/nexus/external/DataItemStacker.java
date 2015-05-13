@@ -16,6 +16,8 @@
 package org.cdma.plugin.soleil.nexus.external;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.cdma.dictionary.Context;
@@ -56,6 +58,14 @@ public final class DataItemStacker implements IPluginMethod {
         // Get all previously found nodes
         List<IDataItem> items = new ArrayList<IDataItem>();
         List<IContainer> nodes = context.getContainers();
+
+        Comparator<IContainer> containerComparatorByName = new Comparator<IContainer>() {
+            public int compare(IContainer o1, IContainer o2) {
+                return o1.getName().compareTo(o2.getName());
+            };
+        };
+        
+        Collections.sort(nodes,containerComparatorByName);
         for (IContainer node : nodes) {
             if (node.getModelType() == ModelType.DataItem) {
                 items.add((IDataItem) node);
