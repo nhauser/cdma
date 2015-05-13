@@ -6,16 +6,14 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf.utils;
-
-import ncsa.hdf.object.HObject;
 
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
@@ -49,10 +47,6 @@ public class HdfNode implements INode {
         }
     }
 
-    public HdfNode(final HObject hObject) {
-        this.name = hObject.getName();
-    }
-
     @Override
     public String getName() {
         return this.name;
@@ -84,7 +78,7 @@ public class HdfNode implements INode {
             classMatch = "".equals(node.getAttribute()) || node.getAttribute().equalsIgnoreCase(this.getAttribute());
             nameMatch = "".equals(node.getNodeName())
                     || this.getNodeName().toLowerCase().replace("*", ".*")
-                    .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+                            .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
         }
         return (classMatch && nameMatch);
     }
@@ -119,7 +113,7 @@ public class HdfNode implements INode {
         iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
         tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName
                 .substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
-                return tmpClassName;
+        return tmpClassName;
     }
 
 }

@@ -85,8 +85,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     }
 
     public HdfDataItem(final String factoryName, final H5File file, final IGroup parent, final String name,
-            final int[] shape,
-            final Class<?> type) {
+            final int[] shape, final Class<?> type) {
         this.factoryName = factoryName;
         this.h5File = file;
         this.parent = parent;
@@ -649,7 +648,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
     @Override
     public double readScalarDouble() throws IOException {
         try {
-            return java.lang.reflect.Array.getByte(h5Item.getData(), 0);
+            return java.lang.reflect.Array.getDouble(h5Item.getData(), 0);
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {

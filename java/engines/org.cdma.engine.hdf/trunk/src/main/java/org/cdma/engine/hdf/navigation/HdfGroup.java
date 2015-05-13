@@ -395,7 +395,7 @@ public class HdfGroup implements IGroup, Cloneable {
         List<INode> nodes = new ArrayList<INode>();
 
         for (IDataItem item : itemMap.values()) {
-            nodes.add(new HdfNode(item.getShortName()));
+            nodes.add(new HdfNode(item));
         }
         for (IGroup item : groupMap.values()) {
             nodes.add(new HdfNode(item));
