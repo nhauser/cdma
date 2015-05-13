@@ -119,7 +119,7 @@ public final class DataItemSlice1D implements IPluginMethod {
             } else {
                 List<IDataItem> items = entryPoint.getDataItemList();
                 for (IDataItem current : items) {
-                    INode leaf = ((NxsDataItem) current).getPath().getCurrentNode();
+                    INode leaf = ((NxsDataItem) current).getNxsPath().getCurrentNode();
                     if (leaf.matchesPartNode(node)) {
                         result.add((NxsDataItem) current);
                     }

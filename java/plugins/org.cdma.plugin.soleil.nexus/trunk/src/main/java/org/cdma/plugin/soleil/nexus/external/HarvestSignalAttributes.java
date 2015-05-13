@@ -66,7 +66,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
 
                     // Try to set attributes
                     // H5ScalarDS[] scalarDS = item.getNexusItems();
-                    NxsNode[] nodes = (NxsNode[]) item.getPath().getNodes();
+                    NxsNode[] nodes = (NxsNode[]) item.getNxsPath().getNodes();
 
                     // Set scan acquisition
                     setAttributeAcquisitionSequence(container, nodes);
