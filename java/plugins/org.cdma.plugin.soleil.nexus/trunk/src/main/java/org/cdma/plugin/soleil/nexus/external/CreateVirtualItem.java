@@ -28,6 +28,8 @@ import org.cdma.plugin.soleil.nexus.NxsFactory;
 import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
+import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
+import org.cdma.plugin.soleil.nexus.utils.NxsNode;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -56,13 +58,16 @@ public class CreateVirtualItem implements IPluginMethod {
         String name;
         for (IContainer container : inList) {
             if (container.getModelType().equals(ModelType.Group)) {
+                NxsGroup group = (NxsGroup)container;
+                
                 name = container.getName();
-                path = new NxsPath(NxsPath.splitStringToNode(container.getLocation()));
+                path = new NxsPath(group.getNxsPath());
+                path.addNode(new NxsNode(container.getShortName()));
                 item = new NxsDataItem(name, (NxsDataset) container.getDataset());
                 array = new NxsArray(name.toCharArray(), new int[] { name.length() });
                 item.setShortName(container.getShortName());
                 item.setDataset(container.getDataset());
-                item.setPath(path);
+                item.setNxsPath(path);
                 item.setParent((IGroup) container);
                 item.setCachedData(array, false);
                 for (IAttribute attr : container.getAttributeList()) {
