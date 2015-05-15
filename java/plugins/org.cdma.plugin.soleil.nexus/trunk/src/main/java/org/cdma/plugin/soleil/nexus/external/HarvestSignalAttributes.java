@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.external;
 
@@ -56,7 +56,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
             switch (type) {
                 case Group: {
                     NxsGroup group = (NxsGroup) container;
-                    NxsNode[] nodes = (NxsNode[]) group.getNxsPath().getNodes();
+                    NxsNode[] nodes = group.getNxsPath().getNodes();
 
                     setAttributeAcquisitionSequence(container, nodes);
                     break;
@@ -66,7 +66,7 @@ public class HarvestSignalAttributes implements IPluginMethod {
 
                     // Try to set attributes
                     // H5ScalarDS[] scalarDS = item.getNexusItems();
-                    NxsNode[] nodes = (NxsNode[]) item.getNxsPath().getNodes();
+                    NxsNode[] nodes = item.getNxsPath().getNodes();
 
                     // Set scan acquisition
                     setAttributeAcquisitionSequence(container, nodes);
@@ -89,9 +89,9 @@ public class HarvestSignalAttributes implements IPluginMethod {
         // Scan attribute
         if (nodes.length > 0) {
             NxsGroup root = (NxsGroup) container.getRootGroup();
-            NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
+            NxsNode[] rootNodes = root.getNxsPath().getNodes();
             if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
-                root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+                root = (NxsGroup) root.getGroup(nodes[1].getNodeName());
             }
             String attrName = NxsConstant.ATTR_SCAN;
             String attrValue = root.getShortName();
@@ -101,11 +101,11 @@ public class HarvestSignalAttributes implements IPluginMethod {
 
     private void setAttributeEquipment(final IContainer container, final NxsNode[] nodes) {
         // Scan attribute
-        if (nodes.length > 1 && nodes[1].getClassName().equals("NXdata")) {
+        if (nodes.length > 1 && nodes[2].getClassName().equals("NXdata")) {
             NxsGroup root = (NxsGroup) container.getRootGroup();
-            NxsNode[] rootNodes = (NxsNode[]) root.getNxsPath().getNodes();
+            NxsNode[] rootNodes = root.getNxsPath().getNodes();
             if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
-                root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+                root = (NxsGroup) root.getGroup(nodes[1].getNodeName());
             }
 
             String attrName = "region";

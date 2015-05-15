@@ -16,29 +16,74 @@
 package org.cdma.plugin.soleil.nexus.utils;
 
 import org.cdma.engine.hdf.utils.HdfNode;
+import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
+import org.cdma.interfaces.INode;
 
 public class NxsNode extends HdfNode {
 
-    public NxsNode(final String name, final String className) {
-        super(name, className);
-    }
+    private static final String SELECTED_ATTRIBUTE_TO_LOAD = "NX_class";
+    private String clazz = "";
 
-    public NxsNode(IContainer container) {
-        super(container);
+    public NxsNode(final String name, final String className) {
+        super(name);
+        this.clazz = className;
     }
 
     public NxsNode(final String fullName) {
         this(extractName(fullName), extractClass(fullName));
     }
 
+    public NxsNode(final IContainer container) {
+        super(container);
+        IAttribute attribute = container.getAttribute(SELECTED_ATTRIBUTE_TO_LOAD);
+        if (attribute != null) {
+            this.clazz = attribute.getStringValue();
+        }
+    }
+
     public String getClassName() {
-        return getAttribute();
+        return clazz;
     }
 
     @Override
     public String toString() {
-        return getName() + "{" + getAttribute() + "}";
+        return getName() + "{" + this.clazz + "}";
     }
 
+    public static String extractClass(final String sNodeName) {
+        int iPosClassSep;
+        String tmpClassName = "";
+        iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START);
+        if (iPosClassSep < 0)
+            iPosClassSep = sNodeName.indexOf(ATTRIBUTE_SEPARATOR_START2);
+        iPosClassSep = iPosClassSep < 0 ? sNodeName.length() : iPosClassSep;
+        tmpClassName = iPosClassSep < sNodeName.length() ? sNodeName
+                .substring(iPosClassSep + 1, sNodeName.length() - 1) : "";
+        return tmpClassName;
+    }
+
+    @Override
+    public boolean matchesNode(final INode node) {
+        boolean classMatch, nameMatch;
+        NxsNode nxsNode = (NxsNode) node;
+        classMatch = "".equals(nxsNode.getClassName()) || nxsNode.getClassName().equalsIgnoreCase(this.clazz);
+        nameMatch = "".equals(node.getNodeName()) || this.getNodeName().equalsIgnoreCase(node.getNodeName());
+
+        return (classMatch && nameMatch);
+    }
+
+    @Override
+    public boolean matchesPartNode(final INode node) {
+        boolean classMatch = false, nameMatch = false;
+        NxsNode nxsNode = (NxsNode) node;
+
+        if (node != null) {
+            classMatch = "".equals(nxsNode.getClassName()) || nxsNode.getClassName().equalsIgnoreCase(this.clazz);
+            nameMatch = "".equals(node.getNodeName())
+                    || this.getNodeName().toLowerCase().replace("*", ".*")
+                            .matches(node.getNodeName().toLowerCase().replace("*", ".*"));
+        }
+        return (classMatch && nameMatch);
+    }
 }

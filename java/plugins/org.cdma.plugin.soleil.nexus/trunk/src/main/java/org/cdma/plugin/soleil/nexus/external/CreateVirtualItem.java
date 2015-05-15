@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.external;
 
@@ -29,7 +29,6 @@ import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
 import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
-import org.cdma.plugin.soleil.nexus.utils.NxsNode;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -58,17 +57,16 @@ public class CreateVirtualItem implements IPluginMethod {
         String name;
         for (IContainer container : inList) {
             if (container.getModelType().equals(ModelType.Group)) {
-                NxsGroup group = (NxsGroup)container;
-                
+                NxsGroup group = (NxsGroup) container;
                 name = container.getName();
-                path = new NxsPath(group.getNxsPath());
-                path.addNode(new NxsNode(container.getShortName()));
                 item = new NxsDataItem(name, (NxsDataset) container.getDataset());
                 array = new NxsArray(name.toCharArray(), new int[] { name.length() });
                 item.setShortName(container.getShortName());
                 item.setDataset(container.getDataset());
-                item.setNxsPath(path);
                 item.setParent((IGroup) container);
+                path = new NxsPath(item);
+                item.setNxsPath(path);
+                // path.addNode(new NxsNode(container.getShortName()));
                 item.setCachedData(array, false);
                 for (IAttribute attr : container.getAttributeList()) {
                     item.addOneAttribute(attr);
@@ -82,5 +80,4 @@ public class CreateVirtualItem implements IPluginMethod {
         // Update context
         context.setContainers(outList);
     }
-
 }
