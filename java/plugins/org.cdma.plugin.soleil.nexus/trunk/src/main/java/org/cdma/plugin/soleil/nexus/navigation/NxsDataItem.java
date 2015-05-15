@@ -38,7 +38,6 @@ import org.cdma.interfaces.IRange;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
 import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.array.NxsIndex;
-import org.cdma.plugin.soleil.nexus.utils.NxsNode;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -104,15 +103,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         mDataset = handler;
         if (data != null) {
             mDataItems = data.clone();
-            NxsGroup parentGroup = (NxsGroup) parent;
-            NxsPath parentPath = parentGroup.getNxsPath();
-
-            mPath = parentPath;
-            mPath.addNode(new NxsNode(this));
         }
         mDimension = new ArrayList<DimOrder>();
         mParent = parent;
         mArray = null;
+        mPath = new NxsPath(this);
     }
 
     public NxsDataItem(final HdfDataItem item, final IGroup parent, final NxsDataset dataset) {

@@ -17,22 +17,9 @@ package org.cdma.plugin.soleil.nexus.utils;
 
 import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.interfaces.IContainer;
-import org.cdma.interfaces.INode;
 import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 
 public class NxsPath extends HdfPath {
-
-    public NxsPath(final NxsNode[] nodes) {
-        super(nodes);
-    }
-
-    public NxsPath(final INode[] nodes) {
-        super(nodes);
-    }
-
-    public NxsPath(final INode node) {
-        super(node);
-    }
 
     public NxsPath(IContainer container) {
         IContainer parent = container.getParentGroup();
@@ -46,10 +33,6 @@ public class NxsPath extends HdfPath {
     @Override
     public NxsNode[] getNodes() {
         return nodes.toArray(new NxsNode[nodes.size()]);
-    }
-
-    public void addNode(INode node) {
-        nodes.add(node);
     }
 
     public static NxsNode[] splitStringToNode(final String sPath) {
