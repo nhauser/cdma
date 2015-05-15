@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus;
 
@@ -48,7 +48,6 @@ import org.cdma.plugin.soleil.nexus.dictionary.NxsLogicalGroup;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
 import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 import org.cdma.plugin.soleil.nexus.utils.NxsArrayMath;
-import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 
 public final class NxsFactory implements IFactory {
     private static NxsFactory factory;
@@ -155,7 +154,8 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array) throws InvalidArrayTypeException {
+    public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array)
+            throws InvalidArrayTypeException {
         throw new NotImplementedException();
     }
 
@@ -198,9 +198,7 @@ public final class NxsFactory implements IFactory {
     public IGroup createGroup(final IGroup parent, final String shortName) {
         String path_val = parent.getLocation();
         // PathGroup path = new PathGroup(NxsPath.splitStringPath(path_val));
-        NxsPath nxsPath = new NxsPath((NxsPath.splitStringToNode(path_val)));
-        NxsGroup group = new NxsGroup(parent, nxsPath, (NxsDataset) parent.getDataset());
-
+        NxsGroup group = new NxsGroup((NxsDataset) parent.getDataset(), shortName, path_val, (NxsGroup) parent);
         return group;
     }
 

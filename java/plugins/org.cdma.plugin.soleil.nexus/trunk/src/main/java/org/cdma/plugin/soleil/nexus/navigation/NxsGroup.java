@@ -495,19 +495,27 @@ public final class NxsGroup implements IGroup, Cloneable {
         return result;
     }
 
-   
-
     @Override
     public List<IContainer> findAllContainerByPath(final String path) throws NoResultException {
+        List<IContainer> result = new ArrayList<IContainer>();
+        IGroup root = getRootGroup();
+//        if (root.getParentGroup() != null) {
+//            root = root.getParentGroup();
+//        }
 
-        List<IContainer> list = new ArrayList<IContainer>();
-        if (path != null) {
-            String absPath = mDataset.getRootGroup().getLocation() + path;
-
-            list = findAllContainerByNxsPath(path);
+        // Try to list all nodes matching the path
+        // Transform path into a NexusNode array
+        NxsNode[] nodes = NxsPath.splitStringToNode(path);
+        if (nodes != null && nodes.length == 0) {
+            result.add(root);
+            return result;
         }
 
-        return list;
+        // Call recursive method
+        int level = 0;
+        result = findAllContainer(root, nodes, level);
+
+        return result;
     }
 
     @Override
@@ -783,28 +791,6 @@ public final class NxsGroup implements IGroup, Cloneable {
         return mChildren;
     }
 
-    public List<IContainer> findAllContainerByNxsPath(final String path) throws NoResultException {
-        List<IContainer> result = new ArrayList<IContainer>();
-        IGroup root = getRootGroup();
-//        if (root.getParentGroup() != null) {
-//            root = root.getParentGroup();
-//        }
-
-        // Try to list all nodes matching the path
-        // Transform path into a NexusNode array
-        NxsNode[] nodes = NxsPath.splitStringToNode(path);
-        if (nodes != null && nodes.length == 0) {
-            result.add(root);
-            return result;
-        }
-
-        // Call recursive method
-        int level = 0;
-        result = findAllContainer(root, nodes, level);
-
-        return result;
-    }
-
     private List<IContainer> findAllContainer(final IContainer container, final NxsNode[] nodes, final int level) {
         List<IContainer> result = new ArrayList<IContainer>();
         if (container != null) {
@@ -838,7 +824,9 @@ public final class NxsGroup implements IGroup, Cloneable {
     // Specific methods
     // ****************************************************
     public NxsPath getNxsPath() {
-        nxsPath = new NxsPath(this);
+        if (nxsPath == null) {
+            nxsPath = new NxsPath(this);
+        }
         return nxsPath;
     }
 
@@ -862,7 +850,7 @@ public final class NxsGroup implements IGroup, Cloneable {
                 }
             }
             for (IDataItem item : getDataItemList()) {
-                INode nxNode = new NxsNode(item.getShortName());
+                INode nxNode = new NxsNode(item);
                 if (nxNode != null && nxNode.matchesPartNode(node)) {
                     result.add(item);
                 }
