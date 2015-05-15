@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.navigation;
 
@@ -23,7 +23,6 @@ import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.engine.hdf.navigation.HdfDataItem;
-import org.cdma.engine.hdf.utils.HdfPath;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.InvalidRangeException;
 import org.cdma.exception.NoResultException;
@@ -39,6 +38,7 @@ import org.cdma.interfaces.IRange;
 import org.cdma.plugin.soleil.nexus.NxsFactory;
 import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.array.NxsIndex;
+import org.cdma.plugin.soleil.nexus.utils.NxsNode;
 import org.cdma.plugin.soleil.nexus.utils.NxsPath;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -104,7 +104,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         mDataset = handler;
         if (data != null) {
             mDataItems = data.clone();
-            mPath = new NxsPath(HdfPath.splitStringToNode(data[0].getLocation()));
+            NxsGroup parentGroup = (NxsGroup) parent;
+            NxsPath parentPath = parentGroup.getNxsPath();
+
+            mPath = parentPath;
+            mPath.addNode(new NxsNode(this));
         }
         mDimension = new ArrayList<DimOrder>();
         mParent = parent;
@@ -122,7 +126,7 @@ public final class NxsDataItem implements IDataItem, Cloneable {
                 list.add(item);
             }
         }
-        mPath = items[0].getPath();
+        mPath = items[0].getNxsPath();
         mDataItems = list.toArray(new HdfDataItem[list.size()]);
 
         mDataset = dataset;
@@ -759,12 +763,11 @@ public final class NxsDataItem implements IDataItem, Cloneable {
         return result;
     }
 
-    public NxsPath getPath() {
-        NxsGroup parent = (NxsGroup) getParentGroup();
-        return parent.getNxsPath();
+    public NxsPath getNxsPath() {
+        return mPath;
     }
 
-    public void setPath(final NxsPath path) {
+    public void setNxsPath(final NxsPath path) {
         mPath = path;
     }
 }

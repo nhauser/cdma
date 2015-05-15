@@ -6,22 +6,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.utils;
 
-
 import org.cdma.engine.hdf.utils.HdfNode;
+import org.cdma.interfaces.IContainer;
 
 public class NxsNode extends HdfNode {
 
     public NxsNode(final String name, final String className) {
         super(name, className);
+    }
+
+    public NxsNode(IContainer container) {
+        super(container);
     }
 
     public NxsNode(final String fullName) {
@@ -30,6 +34,11 @@ public class NxsNode extends HdfNode {
 
     public String getClassName() {
         return getAttribute();
+    }
+
+    @Override
+    public String toString() {
+        return getName() + "{" + getAttribute() + "}";
     }
 
 }

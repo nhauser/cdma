@@ -52,6 +52,10 @@ public class NxsPath extends HdfPath {
     public NxsNode[] getNodes() {
         return nodes.toArray(new NxsNode[nodes.size()]);
     }
+    
+    public void addNode(INode node){
+        nodes.add(node);
+    }
 
     public static NxsNode[] splitStringToNode(final String sPath) {
         String[] names = splitStringPath(sPath);
