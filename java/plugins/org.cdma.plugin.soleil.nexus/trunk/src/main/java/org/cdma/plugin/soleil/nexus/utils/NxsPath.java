@@ -6,22 +6,21 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.utils;
 
 import org.cdma.engine.hdf.utils.HdfPath;
+import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.INode;
-
+import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 
 public class NxsPath extends HdfPath {
-
-
 
     public NxsPath(final NxsNode[] nodes) {
         super(nodes);
@@ -35,25 +34,21 @@ public class NxsPath extends HdfPath {
         super(node);
     }
 
-    public NxsPath(final HdfPath hdfPath) {
-        super();
-
-        INode[] hdfNodes = hdfPath.getNodes();
-
-        nodes.clear();
-        for (int i = 0; i < hdfNodes.length; i++) {
-            INode hdfNode = hdfNodes[i];
-            nodes.add(new NxsNode(hdfNode.getName(), hdfNode.getAttribute()));
+    public NxsPath(IContainer container) {
+        IContainer parent = container.getParentGroup();
+        if (parent != null) {
+            NxsGroup nxsParent = (NxsGroup) parent;
+            nodes.addAll(nxsParent.getNxsPath().nodes);
         }
-
+        nodes.add(new NxsNode(container));
     }
 
     @Override
     public NxsNode[] getNodes() {
         return nodes.toArray(new NxsNode[nodes.size()]);
     }
-    
-    public void addNode(INode node){
+
+    public void addNode(INode node) {
         nodes.add(node);
     }
 
@@ -77,8 +72,7 @@ public class NxsPath extends HdfPath {
                     i++;
                 }
             }
-        }
-        else {
+        } else {
             nodes = new NxsNode[0];
         }
         return nodes;

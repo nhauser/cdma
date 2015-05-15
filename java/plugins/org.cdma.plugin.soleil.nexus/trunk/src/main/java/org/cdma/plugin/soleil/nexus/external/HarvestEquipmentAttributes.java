@@ -119,22 +119,26 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
         NxsGroup root = (NxsGroup) container.getRootGroup();
         NxsNode[] rootNodes = root.getNxsPath().getNodes();
         if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
-            root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+            root = (NxsGroup) root.getGroup(nodes[1].getNodeName());
         }
 
         // Equipment attribute (NXdetector, NXmono...)
         if (container.getAttribute(NxsConstant.ATTR_EQUIPMENT) == null) {
-            if (nodes.length > 2 && nodes[1].getClassName().equals("NXinstrument")) {
+            if (nodes.length > 2 && nodes[2].getClassName().equals("NXinstrument")) {
+                // String attrValue = container.getParentGroup().getShortName();
                 String node1Name = nodes[1].getNodeName();
                 String node2Name = nodes[2].getNodeName();
-                IGroup group1 = root.getGroup(node1Name);
-                String attrValue = group1.getGroup(node2Name).getShortName();
+                String node3Name = nodes[3].getNodeName();
+                IGroup group2 = root.getGroup(node2Name);
+                IGroup group3 = group2.getGroup(node3Name);
+                String attrValue = group3.getShortName();
+
                 container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, attrValue);
             }
         }
 
         if (container.getAttribute(NxsConstant.ATTR_REGION) == null) {
-            if (nodes.length > 2 && nodes[2].getClassName().equals("NXdetector")) {
+            if (nodes.length > 2 && nodes[3].getClassName().equals("NXdetector")) {
                 NxsNode node = nodes[2];
                 // If Scienta
                 if (node.getNodeName().toLowerCase().matches(".*scienta.*")) {

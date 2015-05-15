@@ -64,6 +64,7 @@ public final class NxsGroup implements IGroup, Cloneable {
     private boolean mIsChildUpdate; // is the children list up to date
     private boolean mIsMultigroup; // is this group managing aggregation of group
     private NxsNode mNode;
+    private NxsPath nxsPath;
 
     // ****************************************************
     // Constructors
@@ -494,136 +495,18 @@ public final class NxsGroup implements IGroup, Cloneable {
         return result;
     }
 
-    // @Override
-    // public List<IContainer> findAllContainerByPath(final String path) throws NoResultException {
-    // List<IContainer> list = new ArrayList<IContainer>();
-    // if (path != null) {
-    // List<IContainer> tmp = null;
-    // String location;
-    //
-    // // Store in a map all different containers from all m_groups
-    // Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
-    // List<String> sortGrp = new ArrayList<String>();
-    // String absPath = mDataset.getRootGroup().getLocation() + path;
-    // for (IGroup group : mGroups) {
-    // try {
-    // NxsNode[] nodes = ((NxsGroup) (mDataset.getRootGroup())).getNxsPath().getNodes();
-    // tmp = ((HdfGroup) group).findAllContainerByPath(nodes);
-    // for (IContainer item : tmp) {
-    // location = item.getLocation();
-    // if (items.containsKey(location)) {
-    // items.get(location).add(item);
-    // } else {
-    // ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
-    // tmpList.add(item);
-    // items.put(location, tmpList);
-    // sortGrp.add(location);
-    // }
-    // }
-    // } catch (NoResultException e) {
-    // // Nothing to do
-    // }
-    // }
-    // // Construct that were found
-    // for (String entry : sortGrp) {
-    //
-    // // for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
-    // tmp = items.get(entry);
-    // // If a Group list then construct a new Group folder
-    // if (tmp.get(0).getModelType() == ModelType.Group) {
-    // list.add(new NxsGroup(tmp.toArray(new HdfGroup[tmp.size()]), this, mDataset));
-    // }
-    // // If a IDataItem list then construct a new compound NxsDataItem
-    // else {
-    // ArrayList<HdfDataItem> dataItems = new ArrayList<HdfDataItem>();
-    // for (IContainer item : tmp) {
-    // if (item.getModelType() == ModelType.DataItem) {
-    // dataItems.add((HdfDataItem) item);
-    // }
-    // }
-    // HdfDataItem[] array = new HdfDataItem[dataItems.size()];
-    // dataItems.toArray(array);
-    // list.add(new NxsDataItem(array, this, mDataset));
-    // }
-    // }
-    // }
-    // return list;
-    // }
+   
 
     @Override
     public List<IContainer> findAllContainerByPath(final String path) throws NoResultException {
 
         List<IContainer> list = new ArrayList<IContainer>();
         if (path != null) {
-            List<IContainer> tmp = null;
-            String location;
-
-            // Store in a map all different containers from all m_groups
-            Map<String, ArrayList<IContainer>> items = new HashMap<String, ArrayList<IContainer>>();
-            List<String> sortGrp = new ArrayList<String>();
-
             String absPath = mDataset.getRootGroup().getLocation() + path;
-            for (HdfGroup group : mGroups) {
-                try {
 
-                    tmp = group.findAllContainerByPath(NxsPath.splitStringToNode(absPath));
-                    for (IContainer item : tmp) {
-                        location = item.getLocation();
-                        if (items.containsKey(location)) {
-                            items.get(location).add(item);
-                        } else {
-                            ArrayList<IContainer> tmpList = new ArrayList<IContainer>();
-                            tmpList.add(item);
-                            items.put(location, tmpList);
-                            sortGrp.add(location);
-                        }
-                    }
-                } catch (NoResultException e) {
-                    // Nothing to do
-                }
-            }
-            IGroup currentGroup = this;
-            // Construct that were found
-            for (String entry : sortGrp) {
-
-                // for( Entry<String, ArrayList<IContainer>> entry : items.entrySet() ) {
-                tmp = items.get(entry);
-                // If a Group list then construct a new Group folder
-                if (tmp.get(0).getModelType() == ModelType.Group) {
-                    HdfGroup hdfGroup = (HdfGroup) tmp.get(0);
-                    if (hdfGroup.getAttribute(NX_CLASS).equals("NXtechnical_data")) {
-                        // TODO Gestion des Technical Data à faire
-                        System.out.println("Construire un DATAITEM !");
-                    }
-                    List<IContainer> containers = findAllContainerByNxsPath(hdfGroup.getName());
-
-                    if (containers != null && !containers.isEmpty()) {
-                        currentGroup = (IGroup) containers.get(0);
-                        list.add(currentGroup);
-                    }
-
-                }
-                // If a IDataItem list then construct a new compound NxsDataItem
-                else {
-                    ArrayList<HdfDataItem> dataItems = new ArrayList<HdfDataItem>();
-                    for (IContainer item : tmp) {
-                        if (item.getModelType() == ModelType.DataItem) {
-                            dataItems.add((HdfDataItem) item);
-                        }
-                    }
-                    HdfDataItem[] array = new HdfDataItem[dataItems.size()];
-                    dataItems.toArray(array);
-                    List<IContainer> containers = findAllContainerByNxsPath(array[0].getName());
-                    if (containers.isEmpty()) {
-                        System.out.println("STOP");
-                    }
-                    if (containers != null && !containers.isEmpty()) {
-                        list.add(containers.get(0));
-                    }
-                    // list.add(new NxsDataItem(array, this, mDataset));
-                }
-            }
+            list = findAllContainerByNxsPath(path);
         }
+
         return list;
     }
 
@@ -901,15 +784,19 @@ public final class NxsGroup implements IGroup, Cloneable {
     }
 
     public List<IContainer> findAllContainerByNxsPath(final String path) throws NoResultException {
-        List<IContainer> result = null;
+        List<IContainer> result = new ArrayList<IContainer>();
         IGroup root = getRootGroup();
-        if (root.getParentGroup() != null) {
-            root = root.getParentGroup();
-        }
+//        if (root.getParentGroup() != null) {
+//            root = root.getParentGroup();
+//        }
 
         // Try to list all nodes matching the path
         // Transform path into a NexusNode array
         NxsNode[] nodes = NxsPath.splitStringToNode(path);
+        if (nodes != null && nodes.length == 0) {
+            result.add(root);
+            return result;
+        }
 
         // Call recursive method
         int level = 0;
@@ -951,8 +838,8 @@ public final class NxsGroup implements IGroup, Cloneable {
     // Specific methods
     // ****************************************************
     public NxsPath getNxsPath() {
-        NxsPath result = new NxsPath(mGroups[0].getHdfPath());
-        return result;
+        nxsPath = new NxsPath(this);
+        return nxsPath;
     }
 
     @Override
