@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
@@ -27,25 +27,21 @@
 // ****************************************************************************
 package org.cdma.dictionary;
 
-
 /**
  * @brief The LogicalGroup class is a purely <b>virtual</b> object that regroup several data.
  * 
- * <p>
- * Its existence is correlated to the ExtendedDictionary. A standard CDMA dictionary make
- * a link between a key and a path. Now let's imagine a dictionary with keys having a tree
- * structure. This structure hierarchically organized might now have a meaning regardless
- * their physical organization. So the keys are now simple notions that can have a human
- * friendly meaning.
- * <p>
- * The LogicalGroup permits to browse simply through those different levels
- * of key. More over the key used can be filtered according to some criteria.
- * The aim is to find a really specific node by doing a search that get narrower
- * while iterating over queries.
+ *        <p>
+ *        Its existence is correlated to the ExtendedDictionary. A standard CDMA dictionary make a link between a key
+ *        and a path. Now let's imagine a dictionary with keys having a tree structure. This structure hierarchically
+ *        organized might now have a meaning regardless their physical organization. So the keys are now simple notions
+ *        that can have a human friendly meaning.
+ *        <p>
+ *        The LogicalGroup permits to browse simply through those different levels of key. More over the key used can be
+ *        filtered according to some criteria. The aim is to find a really specific node by doing a search that get
+ *        narrower while iterating over queries.
  * 
  * @author rodriguez
  */
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,43 +65,41 @@ public class LogicalGroup implements IContainer, Cloneable {
     public static final String KEY_PATH_SEPARATOR = ":";
 
     // Physical structure
-    private final IDataset            mDataset;      // File handler
+    private final IDataset mDataset; // File handler
 
     // Logical structure
-    private IKey                mKey;          // IKey that populated this items (with filters eventually used)
-    private ExtendedDictionary  mDictionary;   // Dictionary that belongs to this current LogicalGroup
-    private LogicalGroup        mParent;       // Parent logical group if root then, it's null
-    private final IFactory            mFactory;      // Factory instantiating this group
-    private final boolean            mThrow;        // Display debug info trace when dictionary isn't valid
-    private List<IAttribute>    mAttributes;   // List of attributes
+    private IKey mKey; // IKey that populated this items (with filters eventually used)
+    private ExtendedDictionary mDictionary; // Dictionary that belongs to this current LogicalGroup
+    private LogicalGroup mParent; // Parent logical group if root then, it's null
+    private final IFactory mFactory; // Factory instantiating this group
+    private final boolean mThrow; // Display debug info trace when dictionary isn't valid
+    private List<IAttribute> mAttributes; // List of attributes
 
     public LogicalGroup(IKey key, IDataset dataset) {
         this(key, dataset, false);
     }
 
     public LogicalGroup(IKey key, IDataset dataset, boolean exception) {
-        this( null, key, dataset, exception);
+        this(null, key, dataset, exception);
     }
 
-    public LogicalGroup(LogicalGroup parent, IKey key, IDataset dataset ) {
-        this( parent, key, dataset, false);
+    public LogicalGroup(LogicalGroup parent, IKey key, IDataset dataset) {
+        this(parent, key, dataset, false);
     }
 
-    public LogicalGroup(LogicalGroup parent, IKey key, IDataset dataset,  boolean exception ) {
-        if( key != null ) {
+    public LogicalGroup(LogicalGroup parent, IKey key, IDataset dataset, boolean exception) {
+        if (key != null) {
             mKey = key.clone();
-        }
-        else {
+        } else {
             mKey = null;
         }
-        mParent  = parent;
+        mParent = parent;
         mDataset = dataset;
-        mFactory = Factory.getFactory( dataset.getFactoryName() );
-        mThrow   = exception;
-        if( parent != null && parent.getDictionary() != null ) {
+        mFactory = Factory.getFactory(dataset.getFactoryName());
+        mThrow = exception;
+        if (parent != null && parent.getDictionary() != null) {
             mDictionary = parent.getDictionary().getDictionary(key);
-        }
-        else {
+        } else {
             mDictionary = null;
         }
         mAttributes = new ArrayList<IAttribute>();
@@ -113,12 +107,7 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     @Override
     public LogicalGroup clone() {
-        LogicalGroup group = new LogicalGroup(
-                mParent,
-                mKey.clone(),
-                mDataset,
-                mThrow
-                );
+        LogicalGroup group = new LogicalGroup(mParent, mKey.clone(), mDataset, mThrow);
         ExtendedDictionary dictionary = null;
         try {
             dictionary = mDictionary.clone();
@@ -141,10 +130,9 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     @Override
     public LogicalGroup getRootGroup() {
-        if( getParentGroup() == null ) {
+        if (getParentGroup() == null) {
             return this;
-        }
-        else {
+        } else {
             return mParent.getRootGroup();
         }
     }
@@ -157,13 +145,12 @@ public class LogicalGroup implements IContainer, Cloneable {
     @Override
     public String getLocation() {
         String location;
-        if( mParent == null ) {
+        if (mParent == null) {
             location = "/";
-        }
-        else {
+        } else {
             location = mParent.getLocation();
-            if ( !location.endsWith("/") ) {
-                location+="/";
+            if (!location.endsWith("/")) {
+                location += "/";
             }
             location += getName();
         }
@@ -173,10 +160,9 @@ public class LogicalGroup implements IContainer, Cloneable {
 
     @Override
     public String getName() {
-        if( mParent == null || mKey == null ) {
+        if (mParent == null || mKey == null) {
             return "";
-        }
-        else {
+        } else {
             return mKey.getName();
         }
     }
@@ -187,7 +173,7 @@ public class LogicalGroup implements IContainer, Cloneable {
      * @return IDictionary the dictionary currently applied to this group
      */
     public ExtendedDictionary getDictionary() {
-        if( mDictionary == null ) {
+        if (mDictionary == null) {
             mDictionary = findAndReadDictionary();
         }
         return mDictionary;
@@ -222,8 +208,8 @@ public class LogicalGroup implements IContainer, Cloneable {
 
         List<IContainer> list = getItemByKey(key);
 
-        for( IContainer object : list ) {
-            if( object.getModelType().equals(ModelType.DataItem) ) {
+        for (IContainer object : list) {
+            if (object.getModelType().equals(ModelType.DataItem)) {
                 item = (IDataItem) object;
                 break;
             }
@@ -246,14 +232,14 @@ public class LogicalGroup implements IContainer, Cloneable {
         LogicalGroup grp = this;
         IDataItem result = null;
         String key;
-        if( keys.length >= 1 ) {
-            while( i < (keys.length - 1) ) {
+        if (keys.length >= 1) {
+            while (i < (keys.length - 1)) {
                 key = keys[i++];
-                if( key != null && !key.isEmpty() ) {
-                    grp = grp.getGroup( mFactory.createKey(key) );
+                if (key != null && !key.isEmpty()) {
+                    grp = grp.getGroup(mFactory.createKey(key));
                 }
             }
-            result = grp.getDataItem( mFactory.createKey(keys[i]) );
+            result = grp.getDataItem(mFactory.createKey(keys[i]));
         }
 
         return result;
@@ -269,9 +255,9 @@ public class LogicalGroup implements IContainer, Cloneable {
         List<IDataItem> result = new ArrayList<IDataItem>();
         List<IContainer> list = getItemByKey(key);
 
-        for( IContainer object : list ) {
-            if( object.getModelType().equals(ModelType.DataItem) ) {
-                result.add( (IDataItem) object);
+        for (IContainer object : list) {
+            if (object.getModelType().equals(ModelType.DataItem)) {
+                result.add((IDataItem) object);
             }
         }
 
@@ -291,12 +277,12 @@ public class LogicalGroup implements IContainer, Cloneable {
         int i = 0;
         LogicalGroup grp = this;
         List<IDataItem> result = null;
-        if( keys.length >= 1 ) {
-            while( i < (keys.length - 1) && grp != null) {
-                grp = grp.getGroup( mFactory.createKey(keys[i++]) );
+        if (keys.length >= 1) {
+            while (i < (keys.length - 1) && grp != null) {
+                grp = grp.getGroup(mFactory.createKey(keys[i++]));
             }
-            if( grp != null ) {
-                result = grp.getDataItemList( mFactory.createKey(keys[i]) );
+            if (grp != null) {
+                result = grp.getDataItemList(mFactory.createKey(keys[i]));
             }
         }
 
@@ -314,8 +300,8 @@ public class LogicalGroup implements IContainer, Cloneable {
         LogicalGroup group = null;
         List<IContainer> list = getItemByKey(key);
 
-        for( IContainer object : list ) {
-            if( object.getModelType().equals(ModelType.LogicalGroup) ) {
+        for (IContainer object : list) {
+            if (object.getModelType().equals(ModelType.LogicalGroup)) {
                 group = (LogicalGroup) object;
                 break;
             }
@@ -337,9 +323,9 @@ public class LogicalGroup implements IContainer, Cloneable {
         int i = 0;
         LogicalGroup grp = this;
         LogicalGroup result = null;
-        if( keys.length >= 1 ) {
-            while( i < keys.length && grp != null) {
-                grp = grp.getGroup( mFactory.createKey(keys[i++]) );
+        if (keys.length >= 1) {
+            while (i < keys.length && grp != null) {
+                grp = grp.getGroup(mFactory.createKey(keys[i++]));
             }
             result = grp;
         }
@@ -368,15 +354,15 @@ public class LogicalGroup implements IContainer, Cloneable {
 
         // List all keys
         ExtendedDictionary dictionary = getDictionary();
-        if( dictionary != null ) {
+        if (dictionary != null) {
             List<IKey> keys = dictionary.getAllKeys();
 
             // Check the ones that matches the model
             ItemSolver solver;
-            for( IKey key : keys ) {
+            for (IKey key : keys) {
                 solver = dictionary.getItemSolver(key);
-                if( solver != null && solver.getModelType() == model ) {
-                    result.add( key.getName() );
+                if (solver != null && solver.getModelType() == model) {
+                    result.add(key.getName());
                 }
             }
         }
@@ -449,8 +435,8 @@ public class LogicalGroup implements IContainer, Cloneable {
     public IAttribute getAttribute(String name) {
         IAttribute result = null;
 
-        for( IAttribute attribute : mAttributes ) {
-            if( attribute.getName().equals(name) ) {
+        for (IAttribute attribute : mAttributes) {
+            if (attribute.getName().equals(name)) {
                 result = attribute;
                 break;
             }
@@ -478,19 +464,19 @@ public class LogicalGroup implements IContainer, Cloneable {
     public ExtendedDictionary findAndReadDictionary() {
         // Detect the key dictionary file and mapping dictionary file
         String keyFile = Factory.getPathKeyDictionary();
-        String mapFile = Factory.getPathMappingDictionaryFolder( mFactory ) + mFactory.getName() + "_dictionary.xml";
-        mDictionary = new ExtendedDictionary( mFactory, keyFile, mapFile );
+        String mapFile = Factory.getPathMappingDictionaryFolder(mFactory) + mFactory.getName() + "_dictionary.xml";
+        mDictionary = new ExtendedDictionary(mFactory, keyFile, mapFile);
         try {
             mDictionary.readEntries();
         } catch (FileAccessException e) {
-            Factory.getLogger().log( Level.SEVERE, e.getMessage() );
+            Factory.getLogger().log(Level.SEVERE, e.getMessage());
         }
         return mDictionary;
     }
 
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
-    /// private methods
+    // / private methods
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
     private List<IContainer> getItemByKey(IKey key) {
@@ -499,29 +485,27 @@ public class LogicalGroup implements IContainer, Cloneable {
 
         // Get the working dictionary
         ExtendedDictionary dico = getDictionary();
-        if( dico != null ) {
+        if (dico != null) {
 
             // Create the context of resolution
             Context context = new Context(mDataset, this, key);
 
             // Update context with corresponding concept
-            context.setConcept( dico.getConcept(key) );
+            context.setConcept(dico.getConcept(key));
 
             // Get the corresponding item solver
             ItemSolver solver = dico.getItemSolver(key);
 
             // Execute the solver
-            if( solver != null ) {
+            if (solver != null) {
                 result = solver.solve(context);
             }
         }
         return result;
     }
 
-
     @Override
     public long getLastModificationDate() {
         return mDataset.getLastModificationDate();
     }
 }
-
