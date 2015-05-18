@@ -28,23 +28,23 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="exposureTime">
-    <path>/{NXinstrument}/Aviex{NXdetector}/Exposure</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Exposure/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="globalGain">
-    <path>/{NXinstrument}/Aviex{NXdetector}/Gain</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Gain/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="shutterCloseDelay">
-    <path>/{NXinstrument}/Aviex{NXdetector}/ShutterCloseDelay</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/ShutterCloseDelay/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="xBin">
-    <path>/{NXinstrument}/Aviex{NXdetector}/Xbin</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Xbin/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="zBin">
-    <path>/{NXinstrument}/Aviex{NXdetector}/Ybin</path>
+    <path>/{NXinstrument}/Aviex{NXdetector}/Ybin/data</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
     <item key="x0">
