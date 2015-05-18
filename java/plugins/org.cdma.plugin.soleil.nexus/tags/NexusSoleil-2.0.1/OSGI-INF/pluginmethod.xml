@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="org.cdma.soleil.pluginmethod" >
+  <implementation class="org.cdma.plugin.soleil.nexus.external.AttributeFilter" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.CreateVirtualItem" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.DataItemSlice1D" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.DataItemStacker" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.DataItemStackerByName" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.HarvestEquipmentAttributes" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.HarvestSignalAttributes" />
+  <implementation class="org.cdma.plugin.soleil.nexus.external.SelectNodeByRegionAttribute" />
+  <service>
+    <provide interface="org.cdma.dictionary.IPluginMethod" />
+  </service>
+</scr:component>
