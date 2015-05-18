@@ -11,7 +11,7 @@
     <call>HarvestEquipmentAttributes</call>
   </item>
   <item key="camera">
-    <path></path>
+    <path>/{NXinstrument}/</path>
     <call param="XIA">CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
     <attribute name="equipment" value="XIA" />
