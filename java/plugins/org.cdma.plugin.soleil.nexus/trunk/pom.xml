@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.cdma.engines</groupId>
 			<artifactId>hdf</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

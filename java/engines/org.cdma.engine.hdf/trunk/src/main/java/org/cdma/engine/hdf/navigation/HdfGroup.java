@@ -59,11 +59,10 @@ public class HdfGroup implements IGroup, Cloneable {
     private final Map<String, IGroup> groupMap = new HashMap<String, IGroup>();
     private final Map<String, IDataItem> itemMap = new HashMap<String, IDataItem>();
     private final Map<String, IAttribute> attributeMap = new HashMap<String, IAttribute>();
-    private String nameInFile;
+    private String originalName;
+    private String shortName;
     private String name;
-    private String fullName;
     private HdfDataset dataset;
-    private H5Group h5group;
 
     public HdfGroup(final String factoryName, final String name, final String path, final HdfGroup parent,
             final HdfDataset dataset) {
@@ -74,13 +73,12 @@ public class HdfGroup implements IGroup, Cloneable {
         this.factoryName = factoryName;
         this.dataset = (HdfDataset) dataset;
         this.parent = parent;
-        this.h5group = hdfGroup;
         init(hdfGroup);
     }
 
     private void init(final H5Group h5Group) {
-        name = h5Group.getName();
-        nameInFile = name;
+        shortName = h5Group.getName();
+        originalName = getName();
 
         List<HObject> members = h5Group.getMemberList();
         if (members != null) {
@@ -124,10 +122,6 @@ public class HdfGroup implements IGroup, Cloneable {
         return ModelType.Group;
     }
 
-    public Group getH5Group() {
-        return this.h5group;
-    }
-
     @Override
     public void addStringAttribute(final String name, final String value) {
         HdfAttribute attribute = new HdfAttribute(factoryName, name, value);
@@ -158,20 +152,20 @@ public class HdfGroup implements IGroup, Cloneable {
 
     @Override
     public String getName() {
-        if (fullName == null) {
+        if (name == null) {
             if (parent == null) {
-                fullName = HdfPath.PATH_SEPARATOR;
+                name = HdfPath.PATH_SEPARATOR;
             } else {
-                fullName = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + name : parent.getName()
-                        + HdfPath.PATH_SEPARATOR + name;
+                name = (parent.isRoot()) ? HdfPath.PATH_SEPARATOR + shortName : parent.getName()
+                        + HdfPath.PATH_SEPARATOR + shortName;
             }
         }
-        return fullName;
+        return name;
     }
 
     @Override
     public String getShortName() {
-        return this.name;
+        return this.shortName;
     }
 
     @Override
@@ -195,8 +189,8 @@ public class HdfGroup implements IGroup, Cloneable {
     @Override
     public void setShortName(final String name) {
         try {
-            this.name = name;
-            this.fullName = getParentGroup().getName() + HdfPath.PATH_SEPARATOR + name;
+            this.shortName = name;
+            this.name = getParentGroup().getName() + HdfPath.PATH_SEPARATOR + name;
             for (IDataItem item : itemMap.values()) {
                 item.setParent(this);
             }
@@ -616,17 +610,16 @@ public class HdfGroup implements IGroup, Cloneable {
         if (!isRoot) {
 
             // New file or new group
-            boolean isNew = fileToWrite.get(nameInFile) == null;
+            boolean isNew = fileToWrite.get(originalName) == null;
 
             if (isNew || copyToNewFile) {
                 theGroup = fileToWrite.createGroup(getShortName(), parent);
-                h5group = (H5Group) theGroup;
             }
             // Group has been renamed
-            else if (this.nameInFile != null && !this.nameInFile.equals(name)) {
-                theGroup = (Group) fileToWrite.get(nameInFile);
-                theGroup.setName(name);
-                this.nameInFile = this.name;
+            else if (this.originalName != null && !this.originalName.equals(name)) {
+                theGroup = (Group) fileToWrite.get(originalName);
+                theGroup.setName(shortName);
+                this.originalName = this.name;
             } else {
                 theGroup = (Group) fileToWrite.get(name);
             }
@@ -654,6 +647,5 @@ public class HdfGroup implements IGroup, Cloneable {
             HdfGroup hdfGroup = (HdfGroup) iGroup;
             hdfGroup.save(fileToWrite, theGroup);
         }
-        // isNew = false;
     }
 }

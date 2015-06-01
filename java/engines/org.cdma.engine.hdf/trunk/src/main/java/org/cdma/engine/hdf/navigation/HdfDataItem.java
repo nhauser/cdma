@@ -84,23 +84,6 @@ public class HdfDataItem implements IDataItem, Cloneable {
         this.shortName = name;
     }
 
-    public HdfDataItem(final String factoryName, final H5File file, final IGroup parent, final String name,
-            final int[] shape, final Class<?> type) {
-        this.factoryName = factoryName;
-        this.h5File = file;
-        this.parent = parent;
-        int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(type);
-        H5Datatype datatype = new H5Datatype(type_id);
-        try {
-            this.h5Item = (H5ScalarDS) file.createScalarDS(name, ((HdfGroup) parent).getH5Group(), datatype,
-                    HdfObjectUtils.convertIntToLong(shape), null, null, 0, null);
-            h5Item.init();
-        } catch (Exception e) {
-            Factory.getLogger().severe(e.getMessage());
-        }
-
-    }
-
     private HdfDataItem(final HdfDataItem dataItem) {
         this.parent = dataItem.parent;
         this.factoryName = dataItem.getFactoryName();
