@@ -89,7 +89,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         mGroups[0] = new HdfGroup(NxsFactory.NAME, name, path, parent, dataset.getHdfDataset());
         mParent = null;
         mDataset = dataset;
-        mChildren = null;
+        mChildren = new ArrayList<IContainer>();
         mDimensions = null;
         mIsChildUpdate = false;
         mNode = null;

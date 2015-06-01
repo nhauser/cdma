@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus;
 
@@ -42,8 +42,9 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WriteTests {
 
-    public static final File FIRST_FILE_TO_WRITE = new File("/home/viguier/testNxsWriteFromScratch.nxs");
-    public static final File SECOND_FILE_TO_WRITE = new File("/home/viguier/testNxsCopyIntoNewFile.nxs");
+    public static final File FIRST_FILE_TO_WRITE = new File("/tmp/testNxsWriteFromScratch.nxs");
+    public static final File SECOND_FILE_TO_WRITE = new File("/tmp/testNxsCopyIntoNewFile.nxs");
+    public static final File FOXTROT_FILE_TO_WRITE = new File("/tmp/testLikeFoxtrot.nxs");
     private static int test_index = 1;
 
     private static final String FACTORY_NAME = "Nxs";
@@ -66,8 +67,79 @@ public class WriteTests {
     }
 
     @Test
+    public void eWriteLikeFoxtrotDoes() throws InvalidArrayTypeException, WriterException, IOException,
+            NoResultException {
+        System.out.println("----------------------" + test_index++ + "----------------------------");
+        System.out.println("Test: Write into a new file");
+
+        if (FOXTROT_FILE_TO_WRITE.exists()) {
+            if (!FOXTROT_FILE_TO_WRITE.delete()) {
+                System.out.println("Cannot delete file: missing close() ??");
+            }
+        }
+        NxsDataset dataset = NxsDataset.instanciate(FOXTROT_FILE_TO_WRITE.toURI());
+
+        // Test Root Group
+        NxsGroup root = (NxsGroup) dataset.getRootGroup();
+        assertNotNull(root);
+        assertTrue(root.isRoot());
+
+        // Test Sub Group
+        IGroup group = new NxsGroup(dataset, "group1", "/", root);
+
+        root.addSubgroup(group);
+        group.addStringAttribute("attr1", "mon attribut");
+        group.addOneAttribute(new HdfAttribute(FACTORY_NAME, "attr2", 5));
+        assertEquals("Attribute List size", 2, group.getAttributeList().size());
+        assertEquals("group1", group.getShortName());
+        assertEquals("/group1", group.getName());
+        assertEquals(root, group.getRootGroup());
+        assertEquals(dataset, group.getDataset());
+        assertTrue(group.isEntry());
+        assertFalse(group.isRoot());
+
+        IGroup subGroup = new NxsGroup(dataset, "subGroup1", "/group1", (NxsGroup) group);
+        group.addSubgroup(subGroup);
+
+        // Test Data Item
+        NxsDataItem dataItem = new NxsDataItem("data1", dataset);
+        subGroup.addDataItem(dataItem);
+        NxsArray array = createRandom1DArray(10);
+        dataItem.setCachedData(array, false);
+        assertEquals(double.class, array.getElementType());
+        assertEquals(root, dataItem.getRootGroup());
+        assertEquals(subGroup, dataItem.getParentGroup());
+        assertEquals(dataset, dataItem.getDataset());
+        assertEquals("/group1/subGroup1/data1", dataItem.getName());
+        assertEquals("data1", dataItem.getShortName());
+
+        dataset.save();
+        group.removeGroup(subGroup);
+
+        IGroup subGroup2 = new NxsGroup(dataset, "subGroup2", "/group1", (NxsGroup) group);
+        group.addSubgroup(subGroup2);
+
+        NxsDataItem dataItem2 = new NxsDataItem("data2", dataset);
+        subGroup2.addDataItem(dataItem2);
+        NxsArray array2 = createRandom1DArray(10);
+        dataItem2.setCachedData(array2, false);
+        assertEquals(double.class, array2.getElementType());
+        assertEquals(root, dataItem2.getRootGroup());
+        assertEquals(subGroup2, dataItem2.getParentGroup());
+        assertEquals(dataset, dataItem2.getDataset());
+        assertEquals("/group1/subGroup2/data2", dataItem2.getName());
+        assertEquals("data2", dataItem2.getShortName());
+
+        dataset.save();
+        dataset.close();
+
+        System.out.println("End of test: Write into a new file");
+        System.out.println("--------------------------------------------------");
+    }
+
+    @Test
     public void dTestModifyInExistingFile() throws InvalidArrayTypeException, WriterException, IOException,
-    NoResultException {
+            NoResultException, InterruptedException {
         System.out.println("----------------------" + test_index++ + "----------------------------");
         System.out.println("Test: Modify existing file");
         System.out.println(" - Modify group1/data1 values to [0,1,2,3]");
@@ -106,13 +178,20 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
+        Thread.sleep(1000);
+
+        NxsDataset datasetAfterClose = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI(), true);
+        NxsGroup rootAfterClose = (NxsGroup) datasetAfterClose.getRootGroup();
+        assertNotNull(rootAfterClose);
+        assertEquals(2, rootAfterClose.getGroupList().size());
+
         System.out.println("End of test: Modify existing file");
         System.out.println("--------------------------------------------------");
     }
 
     @Test
     public void cTestWriteIntoNewFile() throws InvalidArrayTypeException, WriterException, IOException,
-    NoResultException {
+            NoResultException, InterruptedException {
         System.out.println("----------------------" + test_index++ + "----------------------------");
         System.out.println("Test: Copy existing dataset into new file and add new group & dataitem");
         if (SECOND_FILE_TO_WRITE.exists()) {
@@ -137,13 +216,15 @@ public class WriteTests {
         dataset.saveTo(SECOND_FILE_TO_WRITE.getAbsolutePath());
 
         dataset.close();
+        Thread.sleep(1000);
+
         System.out.println("End of test: Copy existing dataset into new file");
         System.out.println("--------------------------------------------------");
     }
 
     @Test
     public void bTestWriteIntoExistingFile() throws InvalidArrayTypeException, WriterException, IOException,
-    NoResultException {
+            NoResultException, InterruptedException {
         System.out.println("----------------------" + test_index++ + "----------------------------");
         System.out.println("Test: Write into a the previous file");
 
@@ -165,13 +246,15 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
+        Thread.sleep(1000);
+
         System.out.println("End of test: Write into the previous file");
         System.out.println("--------------------------------------------------");
     }
 
     @Test
     public void aTestWriteFromScratch() throws InvalidArrayTypeException, WriterException, IOException,
-    NoResultException {
+            NoResultException, InterruptedException {
         System.out.println("----------------------" + test_index++ + "----------------------------");
         System.out.println("Test: Write into a new file");
 
@@ -200,7 +283,6 @@ public class WriteTests {
         assertTrue(group.isEntry());
         assertFalse(group.isRoot());
 
-
         // Test Data Item
         NxsDataItem dataItem = new NxsDataItem("data1", dataset);
         group.addDataItem(dataItem);
@@ -215,6 +297,7 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
+        Thread.sleep(1000);
         System.out.println("End of test: Write into a new file");
         System.out.println("--------------------------------------------------");
     }
