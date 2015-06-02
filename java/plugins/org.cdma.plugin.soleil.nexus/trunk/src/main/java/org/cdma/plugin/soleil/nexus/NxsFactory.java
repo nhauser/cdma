@@ -45,6 +45,7 @@ import org.cdma.interfaces.IKey;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.dictionary.NxsLogicalGroup;
+import org.cdma.plugin.soleil.nexus.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
 import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 import org.cdma.plugin.soleil.nexus.utils.NxsArrayMath;
@@ -156,11 +157,14 @@ public final class NxsFactory implements IFactory {
     @Override
     public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array)
             throws InvalidArrayTypeException {
-        throw new NotImplementedException();
+        IDataItem result = new NxsDataItem(shortName, (NxsDataset) parent.getDataset());
+        result.setCachedData(array, false);
+        parent.addDataItem(result);
+        return result;
     }
 
     @Override
-    public IDataset createDatasetInstance(final URI uri) throws Exception {
+    public IDataset createDatasetInstance(final URI uri) throws NoResultException {
         return NxsDataset.instanciate(uri);
     }
 
@@ -197,7 +201,6 @@ public final class NxsFactory implements IFactory {
     @Override
     public IGroup createGroup(final IGroup parent, final String shortName) {
         String path_val = parent.getLocation();
-        // PathGroup path = new PathGroup(NxsPath.splitStringPath(path_val));
         NxsGroup group = new NxsGroup((NxsDataset) parent.getDataset(), shortName, path_val, (NxsGroup) parent);
         return group;
     }
