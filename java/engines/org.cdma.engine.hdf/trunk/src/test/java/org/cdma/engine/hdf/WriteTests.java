@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf;
 
@@ -38,8 +38,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WriteTests {
 
-    public static final File FIRST_FILE_TO_WRITE = new File("C:/temp/testWriteFromScratch.nxs");
-    public static final File SECOND_FILE_TO_WRITE = new File("C:/temp/testCopyIntoNewFile.nxs");
+    public static final File FIRST_FILE_TO_WRITE = new File("/tmp/testWriteFromScratch.nxs");
+    public static final File SECOND_FILE_TO_WRITE = new File("/tmp/testCopyIntoNewFile.nxs");
 
     private static final String FACTORY_NAME = "HDF";
 
@@ -83,7 +83,6 @@ public class WriteTests {
         return values;
     }
 
-
     @Test
     public void dTestModifyInExistingFile() throws Exception {
         System.out.println("--------------------------------------------------");
@@ -104,7 +103,7 @@ public class WriteTests {
         dataItem.setCachedData(newArray, false);
 
         assertEquals(int.class, newArray.getElementType());
-        //        assertArrayEquals(shape, newArray.getShape());
+        // assertArrayEquals(shape, newArray.getShape());
 
         // Modify group name
         HdfGroup group2 = (HdfGroup) root.getGroup("group2");
@@ -118,67 +117,67 @@ public class WriteTests {
     }
 
 //
-    //        @Test
-    //        public void eTestWriteMultiIntoNewFile() throws Exception {
-    //            System.out.println("--------------------------------------------------");
-    //            System.out.println("Test: Copy existing dataset into new file and add new group & dataitem");
-    //            if (FIRST_FILE_TO_WRITE.exists()) {
-    //                if (!FIRST_FILE_TO_WRITE.delete()) {
-    //                    System.out.println("Cannot delete file: missing close() ??");
-    //                    System.exit(0);
-    //                }
-    //            }
+    // @Test
+    // public void eTestWriteMultiIntoNewFile() throws Exception {
+    // System.out.println("--------------------------------------------------");
+    // System.out.println("Test: Copy existing dataset into new file and add new group & dataitem");
+    // if (FIRST_FILE_TO_WRITE.exists()) {
+    // if (!FIRST_FILE_TO_WRITE.delete()) {
+    // System.out.println("Cannot delete file: missing close() ??");
+    // System.exit(0);
+    // }
+    // }
     //
-    //            HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE);
+    // HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE);
     //
-    //            // Create group with name group3 under root node and save it
-    //            HdfGroup root = (HdfGroup) dataset.getRootGroup();
-    //            IGroup group3 = new HdfGroup(FACTORY_NAME, "group3", "/", root, dataset);
-    //            root.addSubgroup(group3);
-    //            dataset.save();
+    // // Create group with name group3 under root node and save it
+    // HdfGroup root = (HdfGroup) dataset.getRootGroup();
+    // IGroup group3 = new HdfGroup(FACTORY_NAME, "group3", "/", root, dataset);
+    // root.addSubgroup(group3);
+    // dataset.save();
     //
-    //            // Image are 20x10
-    //            int xLength = 20;
-    //            int yLength = 10;
+    // // Image are 20x10
+    // int xLength = 20;
+    // int yLength = 10;
     //
-    //            // We have 3 random images
-    //            double[] image1 = createImages(xLength, yLength, 0);
-    //            double[] image2 = createImages(xLength, yLength, 400);
-    //            double[] image3 = createImages(xLength, yLength, 800);
+    // // We have 3 random images
+    // double[] image1 = createImages(xLength, yLength, 0);
+    // double[] image2 = createImages(xLength, yLength, 400);
+    // double[] image3 = createImages(xLength, yLength, 800);
     //
-    //            // So shape is:
-    //            int[] shape = new int[] { 3, yLength, xLength };
+    // // So shape is:
+    // int[] shape = new int[] { 3, yLength, xLength };
     //
-    //            // We create a DataItem under group3
-    //            HdfDataItem dataItem = new HdfDataItem(FACTORY_NAME, dataset.getH5File(), group3, "imageStack", shape,
-    //                    double.class);
+    // // We create a DataItem under group3
+    // HdfDataItem dataItem = new HdfDataItem(FACTORY_NAME, dataset.getH5File(), group3, "imageStack", shape,
+    // double.class);
     //
-    //            // Now we have to tune the underlying HDF item
-    //            H5ScalarDS h5Item = dataItem.getH5DataItem();
-    //            long[] selectedDims = h5Item.getSelectedDims();
-    //            long[] startDims = h5Item.getStartDims();
+    // // Now we have to tune the underlying HDF item
+    // H5ScalarDS h5Item = dataItem.getH5DataItem();
+    // long[] selectedDims = h5Item.getSelectedDims();
+    // long[] startDims = h5Item.getStartDims();
     //
-    //            // We have to give to HDF the non-reduced shape of the slabs we are going to put in the dataitem
-    //            selectedDims[0] = 1;
-    //            selectedDims[1] = yLength;
-    //            selectedDims[2] = xLength;
+    // // We have to give to HDF the non-reduced shape of the slabs we are going to put in the dataitem
+    // selectedDims[0] = 1;
+    // selectedDims[1] = yLength;
+    // selectedDims[2] = xLength;
     //
-    //            // We have to modify the startDims because HDF cannot guess where to put the slab
-    //            // First image is at index 0 on the first dimension of our 3 dimension hyperslab
-    //            startDims[0] = 0; // optional, this is the default value
-    //            dataItem.getH5DataItem().write(image1);
+    // // We have to modify the startDims because HDF cannot guess where to put the slab
+    // // First image is at index 0 on the first dimension of our 3 dimension hyperslab
+    // startDims[0] = 0; // optional, this is the default value
+    // dataItem.getH5DataItem().write(image1);
     //
-    //            // For the next image, we want start at index 1 on the first dimension of the hyperslab
-    //            startDims[0] = 1;
-    //            dataItem.getH5DataItem().write(image2);
+    // // For the next image, we want start at index 1 on the first dimension of the hyperslab
+    // startDims[0] = 1;
+    // dataItem.getH5DataItem().write(image2);
     //
-    //            // For the next image, we want start at index 2 on the first dimension of the hyperslab
-    //            startDims[0] = 2;
-    //            dataItem.getH5DataItem().write(image3);
+    // // For the next image, we want start at index 2 on the first dimension of the hyperslab
+    // startDims[0] = 2;
+    // dataItem.getH5DataItem().write(image3);
     //
-    //            dataset.save();
-    //            dataset.close();
-    //        }
+    // dataset.save();
+    // dataset.close();
+    // }
     @Test
     public void cTestWriteIntoNewFile() throws Exception {
         System.out.println("--------------------------------------------------");
@@ -240,7 +239,6 @@ public class WriteTests {
         assertNotNull(data1);
         data1.addStringAttribute("attr100", "mon attribut sauvé ensuite");
 
-
         dataset.save();
         dataset.close();
         System.out.println("End of test: Write into the previous file");
@@ -277,9 +275,9 @@ public class WriteTests {
         assertTrue(group.isEntry());
         assertFalse(group.isRoot());
 
-
         // Test Data Item
         HdfDataItem dataItem = new HdfDataItem(FACTORY_NAME, "data1");
+        // XXX DEBUG
         group.addDataItem(dataItem);
         HdfArray array = createRandom1DArray(10);
         dataItem.setCachedData(array, false);
@@ -291,7 +289,13 @@ public class WriteTests {
         assertEquals("data1", dataItem.getShortName());
 
         dataset.save();
-        dataset.close();
+
+        HdfDataItem linkdataItem = new HdfDataItem(FACTORY_NAME, "testLink");
+        group.addDataItem(linkdataItem);
+        linkdataItem.linkTo(dataItem);
+
+        dataset.save();
+
         System.out.println("End of test: Write into a new file");
         System.out.println("--------------------------------------------------");
     }
