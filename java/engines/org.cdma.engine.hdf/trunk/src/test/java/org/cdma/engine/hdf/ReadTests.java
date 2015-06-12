@@ -71,6 +71,21 @@ public class ReadTests {
             assertEquals("/group1/data1", data1.getName());
             assertEquals("data1", data1.getShortName());
 
+            // Test IDataItem
+            IDataItem link = group1.getDataItem("testLink");
+            assertNotNull(link);
+            IArray linkiArray = link.getData();
+            Object linkStorage = linkiArray.getStorage();
+            int[] linkArray = (int[]) linkStorage;
+            int[] expectedInLink = { 0, 1, 2, 3 };
+            assertArrayEquals(expectedInLink, linkArray);
+            assertEquals(int.class, linkiArray.getElementType());
+            assertEquals(root, link.getRootGroup());
+            assertEquals(group1, link.getParentGroup());
+            assertEquals(dataSet, link.getDataset());
+            assertEquals("/group1/testLink", link.getName());
+            assertEquals("testLink", link.getShortName());
+
             // Test Navigation
             IContainer container = root.findContainerByPath("/group1/data1");
             assertNotNull(container);
@@ -85,5 +100,4 @@ public class ReadTests {
 
         }
     }
-
 }

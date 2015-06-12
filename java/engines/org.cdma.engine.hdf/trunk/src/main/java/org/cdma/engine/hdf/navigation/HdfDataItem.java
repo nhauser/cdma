@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.object.Attribute;
@@ -56,13 +57,14 @@ import org.cdma.utils.Utilities.ModelType;
 public class HdfDataItem implements IDataItem, Cloneable {
 
     private H5ScalarDS h5Item;
-    private H5File h5File;
-    private final String factoryName;
-    private IArray array;
-    private IGroup parent;
-    private String shortName;
-    private final List<IAttribute> attributeList = new ArrayList<IAttribute>();
-    private boolean dirty = false;
+    protected H5File h5File;
+    protected final String factoryName;
+    protected IArray array;
+    protected IGroup parent;
+    protected String shortName;
+    protected final List<IAttribute> attributeList = new ArrayList<IAttribute>();
+    protected boolean dirty = false;
+    private boolean isLink = false;
 
     public HdfDataItem(final String factoryName, final H5File file, final IGroup parent, final H5ScalarDS dataset) {
         this.factoryName = factoryName;
@@ -120,6 +122,15 @@ public class HdfDataItem implements IDataItem, Cloneable {
         return this.h5File;
     }
 
+    public void linkTo(HdfDataItem dataitem) {
+        if (dataitem != null) {
+            this.isLink = true;
+            this.h5Item = dataitem.getH5DataItem();
+        } else {
+            this.isLink = false;
+        }
+    }
+
     @Override
     public void addOneAttribute(final IAttribute attribute) {
         this.attributeList.add(attribute);
@@ -141,7 +152,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
         return result;
     }
 
-    private void loadAttributes() {
+    protected void loadAttributes() {
         List<?> attributes;
         try {
             if (h5Item != null) {
@@ -792,6 +803,12 @@ public class HdfDataItem implements IDataItem, Cloneable {
             doSave = saveInDifferentFile;
         }
         if (doSave) {
+
+            if (isLink) {
+                fileToWrite.createLink(parentInFile, getShortName(), h5Item, HDF5Constants.H5L_TYPE_SOFT);
+                return;
+            }
+
             try {
                 // Default Value
                 long[] shape = { 0, 0 };
