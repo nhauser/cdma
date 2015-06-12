@@ -31,7 +31,7 @@
       <item key="pixelSize" />
       <item key="delta" />
       <item key="deltaOffset" />
-      <item key="omegaOffset" />
+      <item key="gammaOffset" />
       <item key="detectorBasedUncertainty" />
     </group>
     <group key="monitor">
