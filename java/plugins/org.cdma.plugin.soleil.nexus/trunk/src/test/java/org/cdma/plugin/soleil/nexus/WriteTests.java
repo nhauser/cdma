@@ -296,6 +296,12 @@ public class WriteTests {
         assertEquals("data1", dataItem.getShortName());
 
         dataset.save();
+
+        NxsDataItem linkdataItem = new NxsDataItem("testLink", dataset);
+        group.addDataItem(linkdataItem);
+        linkdataItem.linkTo(dataItem);
+
+        dataset.save();
         dataset.close();
         Thread.sleep(1000);
         System.out.println("End of test: Write into a new file");

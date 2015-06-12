@@ -765,4 +765,8 @@ public final class NxsDataItem implements IDataItem, Cloneable {
     public void setNxsPath(final NxsPath path) {
         mPath = path;
     }
+
+    public void linkTo(NxsDataItem item) {
+        mDataItems[0].linkTo(item.getHdfDataItems()[0]);
+    }
 }
