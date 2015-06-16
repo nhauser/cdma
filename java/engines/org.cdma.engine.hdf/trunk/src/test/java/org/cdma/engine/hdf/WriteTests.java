@@ -188,7 +188,7 @@ public class WriteTests {
             }
         }
 
-        HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE);
+        HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE, true);
 
         HdfGroup root = (HdfGroup) dataset.getRootGroup();
         IGroup group3 = new HdfGroup(FACTORY_NAME, "group3", "/", root, dataset);
@@ -255,7 +255,7 @@ public class WriteTests {
                 System.out.println("Cannot delete file: missing close() ??");
             }
         }
-        HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE);
+        HdfDataset dataset = new HdfDataset(FACTORY_NAME, FIRST_FILE_TO_WRITE, true);
 
         // Test Root Group
         HdfGroup root = (HdfGroup) dataset.getRootGroup();

@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.nexus.navigation;
 
@@ -74,7 +74,7 @@ public final class NxsDataset implements IDataset {
         return instanciate(destination, false);
     }
 
-    public static NxsDataset instanciate(final URI destination, final boolean appendToExisting) throws NoResultException {
+    public static NxsDataset instanciate(final URI destination, final boolean withWriteAccess) throws NoResultException {
         NxsDataset dataset = null;
         if (datasets == null) {
             synchronized (NxsDataset.class) {
@@ -87,7 +87,7 @@ public final class NxsDataset implements IDataset {
 
         synchronized (datasets) {
             String uri = destination.toString();
-            String uriID = uri + appendToExisting;
+            String uriID = uri + withWriteAccess;
             SoftReference<NxsDataset> ref = datasets.get(uriID);
             if (ref != null) {
                 dataset = ref.get();
@@ -103,7 +103,7 @@ public final class NxsDataset implements IDataset {
                 String filePath = destination.getPath();
                 if (filePath != null) {
                     try {
-                        dataset = new NxsDataset(new File(filePath), appendToExisting);
+                        dataset = new NxsDataset(new File(filePath), withWriteAccess);
                         String fragment = destination.getFragment();
 
                         if (fragment != null && !fragment.isEmpty()) {
@@ -164,6 +164,8 @@ public final class NxsDataset implements IDataset {
             for (IDataset dataset : mDatasets) {
                 groups[i++] = (HdfGroup) dataset.getRootGroup();
             }
+            // XXX DEBUG
+            System.out.println("New ROOT");
             mRootPhysical = new NxsGroup(groups, null, this);
         }
         return mRootPhysical;
@@ -306,7 +308,7 @@ public final class NxsDataset implements IDataset {
     // ---------------------------------------------------------
     // / Private methods
     // ---------------------------------------------------------
-    private NxsDataset(final File destination, final boolean appendToExisting) throws Exception {
+    private NxsDataset(final File destination, final boolean withWriteAccess) throws Exception {
         mPath = destination.toURI();
         mDatasets = new ArrayList<HdfDataset>();
         HdfDataset datafile;
@@ -315,12 +317,12 @@ public final class NxsDataset implements IDataset {
             File[] files = destination.listFiles(filter);
             if (files != null && files.length > 0) {
                 for (File file : files) {
-                    datafile = new NexusDatasetImpl(file, appendToExisting);
+                    datafile = new NexusDatasetImpl(file, withWriteAccess);
                     mDatasets.add(datafile);
                 }
             }
         } else {
-            datafile = new NexusDatasetImpl(destination, appendToExisting);
+            datafile = new NexusDatasetImpl(destination, withWriteAccess);
             mDatasets.add(datafile);
         }
         mOpen = false;
