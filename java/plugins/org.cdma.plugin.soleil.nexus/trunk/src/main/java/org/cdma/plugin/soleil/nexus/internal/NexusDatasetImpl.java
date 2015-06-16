@@ -26,8 +26,8 @@ public class NexusDatasetImpl extends HdfDataset {
     // ---------------------------------------------------------
     // Internal class that concretes the abstract NexusDataset
     // ---------------------------------------------------------
-    public NexusDatasetImpl(final File nexusFile, final boolean appendToExisting) throws Exception {
-        super(NxsFactory.NAME, nexusFile, appendToExisting);
+    public NexusDatasetImpl(final File nexusFile, final boolean withWriteAccess) throws Exception {
+        super(NxsFactory.NAME, nexusFile, withWriteAccess);
     }
 
     @Override

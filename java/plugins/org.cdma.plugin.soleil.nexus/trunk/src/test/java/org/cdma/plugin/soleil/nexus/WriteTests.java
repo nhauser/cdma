@@ -77,7 +77,7 @@ public class WriteTests {
                 System.out.println("Cannot delete file: missing close() ??");
             }
         }
-        NxsDataset dataset = NxsDataset.instanciate(FOXTROT_FILE_TO_WRITE.toURI());
+        NxsDataset dataset = NxsDataset.instanciate(FOXTROT_FILE_TO_WRITE.toURI(), true);
 
         // Test Root Group
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
@@ -178,7 +178,6 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
-        Thread.sleep(1000);
 
         NxsDataset datasetAfterClose = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI(), true);
         NxsGroup rootAfterClose = (NxsGroup) datasetAfterClose.getRootGroup();
@@ -204,19 +203,18 @@ public class WriteTests {
 
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
         assertNotNull(root);
-        IGroup group3 = new NxsGroup(dataset, "group3", "/", root);
-        NxsDataItem dataItem = new NxsDataItem("data3", dataset);
-        NxsArray array = createRandom1DArray(10);
-        dataItem.setCachedData(array, false);
-        group3.addDataItem(dataItem);
-        root.addSubgroup(group3);
+//        IGroup group3 = new NxsGroup(dataset, "group3", "/", root);
+//        NxsDataItem dataItem = new NxsDataItem("data3", dataset);
+//        NxsArray array = createRandom1DArray(10);
+//        dataItem.setCachedData(array, false);
+//        group3.addDataItem(dataItem);
+//        root.addSubgroup(group3);
 
-        assertEquals(3, root.getGroupList().size());
+        assertEquals(2, root.getGroupList().size());
 
         dataset.saveTo(SECOND_FILE_TO_WRITE.getAbsolutePath());
 
         dataset.close();
-        Thread.sleep(1000);
 
         System.out.println("End of test: Copy existing dataset into new file");
         System.out.println("--------------------------------------------------");
@@ -246,7 +244,6 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
-        Thread.sleep(1000);
 
         System.out.println("End of test: Write into the previous file");
         System.out.println("--------------------------------------------------");
@@ -263,7 +260,7 @@ public class WriteTests {
                 System.out.println("Cannot delete file: missing close() ??");
             }
         }
-        NxsDataset dataset = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI());
+        NxsDataset dataset = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI(), true);
 
         // Test Root Group
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
@@ -303,7 +300,6 @@ public class WriteTests {
 
         dataset.save();
         dataset.close();
-        Thread.sleep(1000);
         System.out.println("End of test: Write into a new file");
         System.out.println("--------------------------------------------------");
     }

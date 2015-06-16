@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf.navigation;
 
@@ -46,19 +46,27 @@ public class HdfDataset implements IDataset, Cloneable {
         this(factoryName, hdfFile, false);
     }
 
-    public HdfDataset(final String factoryName, final File hdfFile, final boolean appendToFile) throws Exception {
+    public HdfDataset(final String factoryName, final File hdfFile, final boolean withWriteAccess) throws Exception {
         this.factoryName = factoryName;
         this.hdfFileName = hdfFile.getAbsolutePath();
         this.title = hdfFile.getName();
         try {
-            openFlag = H5File.CREATE;
-            if (hdfFile.exists()) {
-                if (appendToFile) {
+            openFlag = H5File.READ;
+            if (withWriteAccess) {
+                if (hdfFile.exists()) {
                     openFlag = H5File.WRITE;
                 } else {
-                    openFlag = H5File.READ;
+                    openFlag = H5File.CREATE;
                 }
             }
+
+//            if (hdfFile.exists()) {
+//                if (writeMode) {
+//                    openFlag = H5File.WRITE;
+//                } else {
+//                    openFlag = H5File.READ;
+//                }
+//            }
             initHdfFile();
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
@@ -77,7 +85,6 @@ public class HdfDataset implements IDataset, Cloneable {
     public String getFactoryName() {
         return factoryName;
     }
-
 
     @Override
     public IGroup getRootGroup() {
@@ -140,12 +147,12 @@ public class HdfDataset implements IDataset, Cloneable {
 
     @Override
     public void open() throws IOException {
-        try{
+        try {
             if (h5File != null) {
                 this.h5File.open();
             }
         } catch (Exception e) {
-            if (e instanceof IOException){
+            if (e instanceof IOException) {
                 IOException ioException = (IOException) e;
                 throw ioException;
             }

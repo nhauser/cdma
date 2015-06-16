@@ -93,6 +93,7 @@ public final class NxsGroup implements IGroup, Cloneable {
         mDimensions = null;
         mIsChildUpdate = false;
         mNode = null;
+        listChildren();
     }
 
     public NxsGroup(final HdfGroup[] groups, final IGroup parent, final NxsDataset dataset) {
@@ -669,6 +670,7 @@ public final class NxsGroup implements IGroup, Cloneable {
             }
             v.setParent(this);
         }
+        mChildren.add(v);
     }
 
     @Override
