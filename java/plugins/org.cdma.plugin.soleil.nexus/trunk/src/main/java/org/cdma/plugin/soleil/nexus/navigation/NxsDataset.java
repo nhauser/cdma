@@ -120,8 +120,8 @@ public final class NxsDataset implements IDataset {
                                 Factory.getLogger().log(Level.WARNING, e.getMessage());
                             }
                         }
-                        datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
-                        lastModifications.put(uriID, dataset.getLastModificationDate());
+                        // datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
+                        // lastModifications.put(uriID, dataset.getLastModificationDate());
                     } catch (Exception e) {
                         throw new NoResultException(e);
                     }
