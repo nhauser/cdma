@@ -23,7 +23,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -76,56 +75,28 @@ public final class NxsDataset implements IDataset {
 
     public static NxsDataset instanciate(final URI destination, final boolean withWriteAccess) throws NoResultException {
         NxsDataset dataset = null;
-        if (datasets == null) {
-            synchronized (NxsDataset.class) {
-                if (datasets == null) {
-                    datasets = new HashMap<String, SoftReference<NxsDataset>>();
-                    lastModifications = new HashMap<String, Long>();
-                }
-            }
-        }
+        String filePath = destination.getPath();
+        if (filePath != null) {
+            try {
+                dataset = new NxsDataset(new File(filePath), withWriteAccess);
+                String fragment = destination.getFragment();
 
-        synchronized (datasets) {
-            String uri = destination.toString();
-            String uriID = uri + withWriteAccess;
-            SoftReference<NxsDataset> ref = datasets.get(uriID);
-            if (ref != null) {
-                dataset = ref.get();
-                long last = lastModifications.get(uriID);
-                if (dataset != null) {
-                    if (last < dataset.getLastModificationDate()) {
-                        dataset = null;
-                    }
-                }
-            }
-
-            if (dataset == null) {
-                String filePath = destination.getPath();
-                if (filePath != null) {
+                if (fragment != null && !fragment.isEmpty()) {
+                    IGroup group = dataset.getRootGroup();
                     try {
-                        dataset = new NxsDataset(new File(filePath), withWriteAccess);
-                        String fragment = destination.getFragment();
-
-                        if (fragment != null && !fragment.isEmpty()) {
-                            IGroup group = dataset.getRootGroup();
-                            try {
-                                String path = URLDecoder.decode(fragment, "UTF-8");
-                                for (IContainer container : group.findAllContainerByPath(path)) {
-                                    if (container.getModelType().equals(ModelType.Group)) {
-                                        dataset.mRootPhysical = (IGroup) container;
-                                        break;
-                                    }
-                                }
-                            } catch (UnsupportedEncodingException e) {
-                                Factory.getLogger().log(Level.WARNING, e.getMessage());
+                        String path = URLDecoder.decode(fragment, "UTF-8");
+                        for (IContainer container : group.findAllContainerByPath(path)) {
+                            if (container.getModelType().equals(ModelType.Group)) {
+                                dataset.mRootPhysical = (IGroup) container;
+                                break;
                             }
                         }
-                        // datasets.put(uriID, new SoftReference<NxsDataset>(dataset));
-                        // lastModifications.put(uriID, dataset.getLastModificationDate());
-                    } catch (Exception e) {
-                        throw new NoResultException(e);
+                    } catch (UnsupportedEncodingException e) {
+                        Factory.getLogger().log(Level.WARNING, e.getMessage());
                     }
                 }
+            } catch (Exception e) {
+                throw new NoResultException(e);
             }
         }
         return dataset;
@@ -164,8 +135,6 @@ public final class NxsDataset implements IDataset {
             for (IDataset dataset : mDatasets) {
                 groups[i++] = (HdfGroup) dataset.getRootGroup();
             }
-            // XXX DEBUG
-            System.out.println("New ROOT");
             mRootPhysical = new NxsGroup(groups, null, this);
         }
         return mRootPhysical;
