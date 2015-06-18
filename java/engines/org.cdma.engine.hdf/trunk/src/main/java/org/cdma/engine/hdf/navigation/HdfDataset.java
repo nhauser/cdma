@@ -59,14 +59,6 @@ public class HdfDataset implements IDataset, Cloneable {
                     openFlag = H5File.CREATE;
                 }
             }
-
-//            if (hdfFile.exists()) {
-//                if (writeMode) {
-//                    openFlag = H5File.WRITE;
-//                } else {
-//                    openFlag = H5File.READ;
-//                }
-//            }
             initHdfFile();
         } catch (Exception e) {
             Factory.getLogger().severe(e.getMessage());
