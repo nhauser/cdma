@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.mambo;
 
@@ -22,8 +22,8 @@ import java.sql.Driver;
 import java.util.Enumeration;
 import java.util.logging.Level;
 
+import org.cdma.AbstractFactory;
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.arrays.DefaultArray;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
@@ -33,6 +33,7 @@ import org.cdma.engine.archiving.navigation.ArchivingDataItem;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDataset.ArchivingMode;
 import org.cdma.engine.archiving.navigation.ArchivingGroup;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NotImplementedException;
@@ -48,7 +49,7 @@ import org.cdma.plugin.mambo.navigation.SoleilMamboDataset;
 
 import fr.soleil.lib.project.SystemUtils;
 
-public class SoleilMamboFactory implements IFactory {
+public class SoleilMamboFactory extends AbstractFactory {
     public static final String DESC = "Manages a Mambo file to extract archived attributes.";
     public static final String NAME = "MamboSoleil";
     public static final String LABEL = "SOLEIL's Mambo plug-in";
@@ -60,13 +61,12 @@ public class SoleilMamboFactory implements IFactory {
     private static SoleilMamboFactory factory;
 
     static public SoleilMamboFactory getInstance() {
-        synchronized (SoleilMamboFactory.class ) {
-            if( ! isPluginValid() ) {
+        synchronized (SoleilMamboFactory.class) {
+            if (!isPluginValid()) {
                 Factory.getManager().unregisterFactory(NAME);
                 factory = null;
-            }
-            else if( factory == null ) {
-                factory  = new SoleilMamboFactory();
+            } else if (factory == null) {
+                factory = new SoleilMamboFactory();
             }
         }
         return factory;
@@ -77,10 +77,10 @@ public class SoleilMamboFactory implements IFactory {
         SoleilMamboDataset dataset = null;
         // Get file path
         String path = uri.getPath();
-        File file   = new File(path);
+        File file = new File(path);
 
         // Construct dataset
-        if( file.exists() ) {
+        if (file.exists()) {
             dataset = new SoleilMamboDataset(file);
             try {
                 // Open dataset
@@ -98,22 +98,21 @@ public class SoleilMamboFactory implements IFactory {
     }
 
     @Override
-    public IDictionary openDictionary(String filepath)
-    throws FileAccessException {
+    public IDictionary openDictionary(String filepath) throws FileAccessException {
         throw new NotImplementedException();
     }
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape) {
         Object storage = java.lang.reflect.Array.newInstance(clazz, shape);
-        return this.createArray( clazz, shape, storage );
+        return this.createArray(clazz, shape, storage);
     }
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
         IArray result;
         try {
-            result = DefaultArray.instantiateDefaultArray( SoleilMamboFactory.NAME, storage, shape);
+            result = DefaultArray.instantiateDefaultArray(SoleilMamboFactory.NAME, storage, shape);
         } catch (InvalidArrayTypeException e) {
             result = null;
             Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -125,7 +124,7 @@ public class SoleilMamboFactory implements IFactory {
     public IArray createArray(Object storage) {
         IArray result = null;
         try {
-            result = DefaultArray.instantiateDefaultArray( SoleilMamboFactory.NAME, storage );
+            result = DefaultArray.instantiateDefaultArray(SoleilMamboFactory.NAME, storage);
         } catch (InvalidArrayTypeException e) {
             result = null;
             Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -135,7 +134,7 @@ public class SoleilMamboFactory implements IFactory {
 
     @Override
     public IArray createStringArray(String value) {
-        return this.createArray( value );
+        return this.createArray(value);
     }
 
     @Override
@@ -161,20 +160,20 @@ public class SoleilMamboFactory implements IFactory {
 
     @Override
     public IGroup createGroup(String shortName) throws IOException {
-        return new ArchivingGroup(NAME, null, null, shortName );
+        return new ArchivingGroup(NAME, null, null, shortName);
     }
 
     @Override
     public IGroup createGroup(IGroup parent, String shortName) {
         ArchivingGroup group = null;
-        if( (shortName != null) && !shortName.isEmpty() ) {
-            if( parent != null ) {
-                if( parent instanceof ArchivingGroup ) {
-                    group = new ArchivingGroup(NAME, (ArchivingDataset) parent.getDataset(), (ArchivingGroup) parent, shortName);
+        if ((shortName != null) && !shortName.isEmpty()) {
+            if (parent != null) {
+                if (parent instanceof ArchivingGroup) {
+                    group = new ArchivingGroup(NAME, (ArchivingDataset) parent.getDataset(), (ArchivingGroup) parent,
+                            shortName);
                 }
-            }
-            else {
-                group = new ArchivingGroup(NAME, null, null, shortName );
+            } else {
+                group = new ArchivingGroup(NAME, null, null, shortName);
             }
         }
         return group;
@@ -192,17 +191,16 @@ public class SoleilMamboFactory implements IFactory {
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(URI uri) throws CDMAException {
         SoleilMamboDataset dataset = null;
         // Get file path
         String path = uri.getPath();
-        File file   = new File(path);
+        File file = new File(path);
 
         // Construct dataset
-        if( file.exists() ) {
+        if (file.exists()) {
             dataset = new SoleilMamboDataset(file);
-        }
-        else {
+        } else {
             // TODO create the empty Mambo file
         }
 
@@ -261,9 +259,9 @@ public class SoleilMamboFactory implements IFactory {
 
     @Override
     public void processPostRecording() {
-        synchronized (SoleilMamboFactory.class ) {
+        synchronized (SoleilMamboFactory.class) {
             boolean isValid = SoleilMamboFactory.isPluginValid();
-            if( ! isValid ) {
+            if (!isValid) {
                 Factory.getManager().unregisterFactory(SoleilMamboFactory.NAME);
             }
         }
@@ -284,15 +282,12 @@ public class SoleilMamboFactory implements IFactory {
 
         String hdbUsr = SystemUtils.getSystemProperty(hdbEnv);
         String tdbUsr = SystemUtils.getSystemProperty(tdbEnv);
-        if(
-                ( (hdbUsr != null) && !hdbUsr.isEmpty() ) ||
-                ( (tdbUsr != null) && !tdbUsr.isEmpty() )
-        ) {
+        if (((hdbUsr != null) && !hdbUsr.isEmpty()) || ((tdbUsr != null) && !tdbUsr.isEmpty())) {
             isValid = true;
         }
 
         Enumeration<Driver> drivers = java.sql.DriverManager.getDrivers();
-        if( (drivers != null) && !drivers.hasMoreElements() ) {
+        if ((drivers != null) && !drivers.hasMoreElements()) {
             isValid = false;
         }
 

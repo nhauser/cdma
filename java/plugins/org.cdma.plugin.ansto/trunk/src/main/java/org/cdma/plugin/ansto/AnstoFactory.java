@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import org.cdma.Factory;
-import org.cdma.IFactory;
+import org.cdma.AbstractFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
@@ -14,6 +13,7 @@ import org.cdma.engine.netcdf.navigation.NcAttribute;
 import org.cdma.engine.netcdf.navigation.NcDataItem;
 import org.cdma.engine.netcdf.navigation.NcDictionary;
 import org.cdma.engine.netcdf.navigation.NcGroup;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
@@ -25,13 +25,13 @@ import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 
-public class AnstoFactory implements IFactory {
-    public static final String NAME  = "AnstoNetCDF";
+public class AnstoFactory extends AbstractFactory {
+    public static final String NAME = "AnstoNetCDF";
     public static final String LABEL = "ANSTO's NetCDF plug-in";
     private static final String DESC = "Manages NetCDF data files (main extensions are: .nxs, .hdf, .h4, .hdf4, .he4, .h5, .hdf5, .he5)";
     private static final String CDMA_VERSION = "3.2.5";
     private static final String PLUG_VERSION = "1.0.4";
-    
+
     @Override
     public IDataset openDataset(URI uri) throws FileAccessException {
         return AnstoDataset.instantiate(uri);
@@ -93,8 +93,8 @@ public class AnstoFactory implements IFactory {
         int rank = 0;
         Class<?> componentType = javaArray.getClass();
         while (componentType.isArray()) {
-                rank++;
-                componentType = componentType.getComponentType();
+            rank++;
+            componentType = componentType.getComponentType();
         }
         /*
          * if( rank_ == 0) throw new
@@ -110,9 +110,9 @@ public class AnstoFactory implements IFactory {
         Object jArray = javaArray;
         Class<?> cType = jArray.getClass();
         while (cType.isArray()) {
-                shape[count++] = java.lang.reflect.Array.getLength(jArray);
-                jArray = java.lang.reflect.Array.get(jArray, 0);
-                cType = jArray.getClass();
+            shape[count++] = java.lang.reflect.Array.getLength(jArray);
+            jArray = java.lang.reflect.Array.get(jArray, 0);
+            cType = jArray.getClass();
         }
 
         // create the Array
@@ -122,7 +122,7 @@ public class AnstoFactory implements IFactory {
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
         NcDataItem item = null;
-        if( parent instanceof NcGroup ) {
+        if (parent instanceof NcGroup) {
             item = new NcDataItem((NcGroup) parent, shortName, array);
         }
         return item;
@@ -131,8 +131,8 @@ public class AnstoFactory implements IFactory {
     @Override
     public IGroup createGroup(IGroup parent, String shortName) {
         NcGroup group = null;
-        if( parent instanceof NcGroup ) {
-            group = new NcGroup((NcGroup) parent, shortName);
+        if (parent instanceof NcGroup) {
+            group = new NcGroup(parent, shortName);
         }
         return group;
     }
@@ -150,30 +150,30 @@ public class AnstoFactory implements IFactory {
     @Override
     public IAttribute createAttribute(String name, Object value) {
         IAttribute attribute = null;
-        
-        if( value instanceof Number ) {
+
+        if (value instanceof Number) {
             attribute = new NcAttribute(name, (Number) value, AnstoFactory.NAME);
-        }
-        else if( value instanceof String ) {
+        } else if (value instanceof String) {
             attribute = new NcAttribute(name, (String) value, AnstoFactory.NAME);
-        }
-        else if( value instanceof Boolean ) {
+        } else if (value instanceof Boolean) {
             attribute = new NcAttribute(name, (Boolean) value, AnstoFactory.NAME);
         }
-        
+
         return attribute;
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(URI uri) throws CDMAException {
         String path = uri.getPath();
         File file = new File(path);
-        
-        if( !file.exists() && !file.isDirectory() ) {
-            return new AnstoDataset( path );
-        }
-        else {
-            return AnstoDataset.instantiate(uri);
+        try {
+            if (!file.exists() && !file.isDirectory()) {
+                return new AnstoDataset(path);
+            } else {
+                return AnstoDataset.instantiate(uri);
+            }
+        } catch (IOException ioe) {
+            throw new CDMAException(ioe);
         }
     }
 
@@ -213,34 +213,34 @@ public class AnstoFactory implements IFactory {
         return new NcDictionary(AnstoFactory.NAME);
     }
 
-	@Override
-	public String getPluginVersion() {
-		return PLUG_VERSION;
-	}
+    @Override
+    public String getPluginVersion() {
+        return PLUG_VERSION;
+    }
 
-	@Override
-	public String getCDMAVersion() {
-		return CDMA_VERSION;
-	}
+    @Override
+    public String getCDMAVersion() {
+        return CDMA_VERSION;
+    }
 
-	@Override
-	public String getPluginDescription() {
-		return AnstoFactory.DESC;
-	}
+    @Override
+    public String getPluginDescription() {
+        return AnstoFactory.DESC;
+    }
 
-	@Override
-	public void processPostRecording() {
-		// Nothing to do!
-	}
+    @Override
+    public void processPostRecording() {
+        // Nothing to do!
+    }
 
-	@Override
+    @Override
     public boolean isLogicalModeAvailable() {
-		// TODO use this code when the mapping files would be availables
-		/*
+        // TODO use this code when the mapping files would be availables
+        /*
         String dictPath = Factory.getDictionariesFolder();
         return (dictPath != null && !dictPath.isEmpty());
         */
-		return false;
+        return false;
     }
 
 }

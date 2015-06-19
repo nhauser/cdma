@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
@@ -32,6 +32,7 @@ import java.net.URI;
 
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
@@ -165,6 +166,21 @@ public interface IFactory {
             throws InvalidArrayTypeException;
 
     /**
+     * Create a IDataItem with a given CDMA parent Group, name and value: array data.
+     * If the parent Group is null, it will generate a temporary Group as the
+     * parent group.
+     * 
+     * @param parent CDMA Group
+     * @param shortName in String type
+     * @param value Java array
+     * @return CDMA IDataItem
+     * @throws InvalidArrayTypeException
+     */
+
+    public IDataItem createDataItem(final IGroup parent, final String shortName, final Object value)
+            throws CDMAException;
+
+    /**
      * Create a CDMA Group with a given parent CDMA Group and a name.
      * 
      * @param parent CDMA Group
@@ -205,13 +221,23 @@ public interface IFactory {
 
     /**
      * Create a CDMA Dataset with a URI reference. If the file exists it will open
-     * it, else it will be created
+     * it. If it doesn't exists a CDMAException will be thrown.
      * 
      * @param uri URI object
      * @return CDMA Dataset
-     * @throws Exception
+     * @throws CDMAException
      */
-    public IDataset createDatasetInstance(final URI uri) throws Exception;
+    public IDataset createDatasetInstance(final URI uri) throws CDMAException;
+
+    /**
+     * Create a CDMA Dataset with a URI reference with the specified access mode: read or write
+     * 
+     * @param uri URI object
+     * @param withWriteAccess if true the dataset will be opened in write mode. If not: read only.
+     * @return CDMA Dataset
+     * @throws CDMAException
+     */
+    public IDataset createDatasetInstance(final URI uri, boolean withWriteAccess) throws CDMAException;
 
     /**
      * Create a CDMA Dataset in memory only. The dataset is not open yet. It is

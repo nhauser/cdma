@@ -6,8 +6,8 @@ import java.sql.Driver;
 import java.util.Enumeration;
 import java.util.logging.Level;
 
+import org.cdma.AbstractFactory;
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.arrays.DefaultArray;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
@@ -17,6 +17,7 @@ import org.cdma.engine.archiving.navigation.ArchivingDataItem;
 import org.cdma.engine.archiving.navigation.ArchivingDataset;
 import org.cdma.engine.archiving.navigation.ArchivingDataset.ArchivingMode;
 import org.cdma.engine.archiving.navigation.ArchivingGroup;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NotImplementedException;
@@ -29,13 +30,13 @@ import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 
-public class SoleilArcFactory implements IFactory {
+public class SoleilArcFactory extends AbstractFactory {
 
     private static final String DESC = "Attempts to access an archiving database to extract archived attributes.";
-    public static final  String NAME = "SoleilArchiving";
-    public static final  String LABEL = "SOLEIL's Archiving plug-in";
-    public static final  String API_VERS = "3.2.3";
-    public static final  String PLUG_VERS = "1.0.0";
+    public static final String NAME = "SoleilArchiving";
+    public static final String LABEL = "SOLEIL's Archiving plug-in";
+    public static final String API_VERS = "3.2.3";
+    public static final String PLUG_VERS = "1.0.0";
 
     @Override
     public IDataset openDataset(URI uri) {
@@ -57,22 +58,21 @@ public class SoleilArcFactory implements IFactory {
     }
 
     @Override
-    public IDictionary openDictionary(String filepath)
-    throws FileAccessException {
+    public IDictionary openDictionary(String filepath) throws FileAccessException {
         throw new NotImplementedException();
     }
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape) {
         Object storage = java.lang.reflect.Array.newInstance(clazz, shape);
-        return this.createArray( clazz, shape, storage );
+        return this.createArray(clazz, shape, storage);
     }
 
     @Override
     public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
         IArray result;
         try {
-            result = DefaultArray.instantiateDefaultArray( SoleilArcFactory.NAME, storage, shape);
+            result = DefaultArray.instantiateDefaultArray(SoleilArcFactory.NAME, storage, shape);
         } catch (InvalidArrayTypeException e) {
             result = null;
             Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -84,7 +84,7 @@ public class SoleilArcFactory implements IFactory {
     public IArray createArray(Object storage) {
         IArray result = null;
         try {
-            result = DefaultArray.instantiateDefaultArray( SoleilArcFactory.NAME, storage );
+            result = DefaultArray.instantiateDefaultArray(SoleilArcFactory.NAME, storage);
         } catch (InvalidArrayTypeException e) {
             result = null;
             Factory.getLogger().log(Level.SEVERE, "Unable to create array!", e);
@@ -94,7 +94,7 @@ public class SoleilArcFactory implements IFactory {
 
     @Override
     public IArray createStringArray(String value) {
-        return this.createArray( value );
+        return this.createArray(value);
     }
 
     @Override
@@ -120,20 +120,20 @@ public class SoleilArcFactory implements IFactory {
 
     @Override
     public IGroup createGroup(String shortName) throws IOException {
-        return new ArchivingGroup(NAME, null, null, shortName );
+        return new ArchivingGroup(NAME, null, null, shortName);
     }
 
     @Override
     public IGroup createGroup(IGroup parent, String shortName) {
         ArchivingGroup group = null;
-        if( (shortName != null) && !shortName.isEmpty() ) {
-            if( parent != null ) {
-                if( parent instanceof ArchivingGroup ) {
-                    group = new ArchivingGroup(NAME, (ArchivingDataset) parent.getDataset(), (ArchivingGroup) parent, shortName);
+        if ((shortName != null) && !shortName.isEmpty()) {
+            if (parent != null) {
+                if (parent instanceof ArchivingGroup) {
+                    group = new ArchivingGroup(NAME, (ArchivingDataset) parent.getDataset(), (ArchivingGroup) parent,
+                            shortName);
                 }
-            }
-            else {
-                group = new ArchivingGroup(NAME, null, null, shortName );
+            } else {
+                group = new ArchivingGroup(NAME, null, null, shortName);
             }
         }
         return group;
@@ -151,11 +151,11 @@ public class SoleilArcFactory implements IFactory {
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(URI uri) throws CDMAException {
 
         ArchivingDataset dataset = null;
         // URI format type jdbc:mysql://dbhost/dbname#hdb#user#passwd#rac#schema
-        if(uri != null) {
+        if (uri != null) {
             String uriString = uri.toString();
             String[] uriSplit = uriString.split("#");
             if ((uriSplit != null) && (uriSplit.length > 0)) {
@@ -209,8 +209,8 @@ public class SoleilArcFactory implements IFactory {
                     dbScheme = uriSplit[3];
                 }
 
-                dataset = new ArchivingDataset(NAME, dbMode, dbUser, dbPassword, rac, dbScheme, dbName,
-                        dbDriver, dbHost, true);
+                dataset = new ArchivingDataset(NAME, dbMode, dbUser, dbPassword, rac, dbScheme, dbName, dbDriver,
+                        dbHost, true);
             }
         }
 
@@ -270,7 +270,7 @@ public class SoleilArcFactory implements IFactory {
     @Override
     public void processPostRecording() {
         Enumeration<Driver> drivers = java.sql.DriverManager.getDrivers();
-        if( (drivers != null) && !drivers.hasMoreElements() ) {
+        if ((drivers != null) && !drivers.hasMoreElements()) {
             Factory.getManager().unregisterFactory(SoleilArcFactory.NAME);
         }
     }

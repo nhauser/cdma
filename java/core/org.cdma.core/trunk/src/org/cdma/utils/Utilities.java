@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
@@ -49,7 +49,7 @@ import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
 
 /**
- * @brief This class defines main type used by the CDMA and some conversion methods. 
+ * @brief This class defines main type used by the CDMA and some conversion methods.
  * 
  * 
  */
@@ -62,7 +62,7 @@ public final class Utilities {
     }
 
     // ---------------------------------------------------------
-    /// Public enumeration
+    // / Public enumeration
     // ---------------------------------------------------------
     /**
      * Data type names in GDM. The names are the same as the interfaces to
@@ -79,7 +79,7 @@ public final class Utilities {
      * Check the CDMA type of the object.
      * 
      * @param signal Object type
-     * @return CDMA DataType 
+     * @return CDMA DataType
      */
     public static ModelType checkModelType(final Object signal) {
         if (signal != null) {
@@ -118,8 +118,7 @@ public final class Utilities {
      * @throws FileAccessException
      *             file access error
      */
-    public static Object findObject(URI uri, String dictionaryPath)
-            throws FileAccessException {
+    public static Object findObject(URI uri, String dictionaryPath) throws FileAccessException {
         return findObject(uri, dictionaryPath, Factory.getFactory());
     }
 
@@ -133,16 +132,13 @@ public final class Utilities {
      * @throws FileAccessException
      *             file access error
      */
-    public static Object findObject(URI uri, String dictionaryPath,
-            IFactory factory) throws FileAccessException {
+    public static Object findObject(URI uri, String dictionaryPath, IFactory factory) throws FileAccessException {
         if (uri.getScheme().equals("file")) {
             IGroup rootGroup = null;
             IDataset dataset = null;
             try {
                 dataset = factory.createDatasetInstance(uri);
-                //        dataset.open();
-            } catch (IOException e1) {
-                throw new FileAccessException(e1);
+                // dataset.open();
             } catch (Exception e2) {
                 throw new FileAccessException(e2);
             }
@@ -165,7 +161,7 @@ public final class Utilities {
                     }
                 }
             } catch (Exception ex) {
-                Factory.getLogger().log( Level.WARNING, ex.getMessage());
+                Factory.getLogger().log(Level.WARNING, ex.getMessage());
                 return null;
             }
             return signal;
@@ -201,12 +197,11 @@ public final class Utilities {
 
             try {
                 container = rootGroup.findContainerByPath(path);
+            } catch (Exception e) {
             }
-            catch (Exception e) {}
-            if (rootGroup == null || !(container instanceof IGroup) ) {
+            if (rootGroup == null || !(container instanceof IGroup)) {
                 return null;
-            }
-            else {
+            } else {
                 rootGroup = (IGroup) container;
             }
             String fragment = uri.getFragment();
@@ -245,7 +240,7 @@ public final class Utilities {
      * format of 'path=pathValue'.
      * 
      * @param query in String type
-     * @return String object 
+     * @return String object
      */
     private static String findPath(final String query) {
         String[] pairs = query.split("&");
@@ -268,8 +263,7 @@ public final class Utilities {
      * @return CDMA IArray
      * @throws InvalidArrayTypeException
      */
-    public static IArray reshapeArray(final IArray array, final int[] shape)
-            throws InvalidArrayTypeException {
+    public static IArray reshapeArray(final IArray array, final int[] shape) throws InvalidArrayTypeException {
         int newLength = 1;
         for (int i = 0; i < shape.length; i++) {
             newLength *= shape[i];
@@ -277,19 +271,18 @@ public final class Utilities {
         if (newLength != array.getSize()) {
             throw new InvalidArrayTypeException("the shape is invalid");
         }
-        IFactory factory = Factory.getFactory( array.getFactoryName() );
-        return factory.createArray(array.getElementType(), shape, array
-                .getStorage());
+        IFactory factory = Factory.getFactory(array.getFactoryName());
+        return factory.createArray(array.getElementType(), shape, array.getStorage());
     }
 
     /**
      * Copy the array to a new array with double type storage.
      * 
      * @param array new IArray with new storage
-     * @return new IArray 
+     * @return new IArray
      */
     public static IArray copyToDoubleArray(final IArray array) {
-        IFactory factory = Factory.getFactory( array.getFactoryName() );
+        IFactory factory = Factory.getFactory(array.getFactoryName());
         IArray doubleArray = factory.createArray(Double.TYPE, array.getShape());
         IArrayIterator oldIterator = array.getIterator();
         IArrayIterator newIterator = doubleArray.getIterator();
@@ -300,15 +293,14 @@ public final class Utilities {
         return doubleArray;
     }
 
-    
     /**
      * Copy the array to a new array with double type storage.
      * 
      * @param array new IArray with new storage
-     * @return new IArray 
+     * @return new IArray
      */
     public static IArray copyToPositiveDoubleArray(final IArray array) {
-        IFactory factory = Factory.getFactory( array.getFactoryName() );
+        IFactory factory = Factory.getFactory(array.getFactoryName());
         IArray doubleArray = factory.createArray(Double.TYPE, array.getShape());
         IArrayIterator oldIterator = array.getIterator();
         IArrayIterator newIterator = doubleArray.getIterator();
@@ -320,15 +312,16 @@ public final class Utilities {
     }
 
     /**
-     * Helper method for copying the given number of items from one array to another. 
+     * Helper method for copying the given number of items from one array to another.
      * If the length is not given (length<0), as many items in array1 will be copied to
-     * array2 up to the smaller size of the two arrays.  
+     * array2 up to the smaller size of the two arrays.
+     * 
      * @param array1 IArray object
      * @param array2 IArray object
      * @param length an int value
      * @throws DimensionNotSupportedException
      */
-    public static void copyTo(final IArray array1, final IArray array2, int length) 
+    public static void copyTo(final IArray array1, final IArray array2, int length)
             throws DimensionNotSupportedException {
         IArrayIterator iterator1 = array1.getIterator();
         IArrayIterator iterator2 = array2.getIterator();
@@ -343,7 +336,7 @@ public final class Utilities {
                 if (id < length) {
                     iterator2.next();
                     iterator2.setObject(iterator1.getObjectNext());
-                    id ++;
+                    id++;
                 } else {
                     break;
                 }
@@ -353,22 +346,24 @@ public final class Utilities {
 
     // [ANSTO][Tony] Copied from the original GDMUtils, but not sure if the dictionary mechanism
     // has already supported this or not.
-    // [SOLEIL][clement] It should be working: it only concerns the 'normal dictionary' mechanism (due to the use of group.getRootGroup()...)
+    // [SOLEIL][clement] It should be working: it only concerns the 'normal dictionary' mechanism (due to the use of
+    // group.getRootGroup()...)
     /**
      * Reverse the dictionary. Return the key if given a value.
+     * 
      * @param group @param shortName @return
      */
-    public static String getKeyFromValue(IGroup group, String shortName){
+    public static String getKeyFromValue(IGroup group, String shortName) {
         // [ANSTO][Tony] Please check if the following logic works as same as before
         IDictionary dictionary = group.getRootGroup().findDictionary();
         for (IKey key : dictionary.getAllKeys()) {
             for (Path path : dictionary.getAllPaths(key)) {
                 String value = path.getValue();
-                if (value.contains("@")){
+                if (value.contains("@")) {
                     if (value.substring(value.lastIndexOf("@") + 1).equals(shortName)) {
                         return key.getName();
                     }
-                } else if (value.contains("/")){
+                } else if (value.contains("/")) {
                     if (value.substring(value.lastIndexOf("/") + 1).equals(shortName)) {
                         return key.getName();
                     }
@@ -380,21 +375,20 @@ public final class Utilities {
             }
         }
         return null;
-        //    for (Entry<String, String> entry : group.getRootGroup().getDictionary().entrySet()){
-        //      String path = entry.getValue();
-        //      if (path.contains("@")){
-        //        if (path.substring(path.lastIndexOf("@") + 1).equals(shortName))
-        //          return entry.getKey();
-        //      }else if (path.contains("/")){
-        //        if (path.substring(path.lastIndexOf("/") + 1).equals(shortName))
-        //          return entry.getKey();
-        //      }else
-        //        if (path.equals(shortName))
-        //          return entry.getKey();
-        //    }
-        //    return null;
+        // for (Entry<String, String> entry : group.getRootGroup().getDictionary().entrySet()){
+        // String path = entry.getValue();
+        // if (path.contains("@")){
+        // if (path.substring(path.lastIndexOf("@") + 1).equals(shortName))
+        // return entry.getKey();
+        // }else if (path.contains("/")){
+        // if (path.substring(path.lastIndexOf("/") + 1).equals(shortName))
+        // return entry.getKey();
+        // }else
+        // if (path.equals(shortName))
+        // return entry.getKey();
+        // }
+        // return null;
     }
-
 
 }
 
