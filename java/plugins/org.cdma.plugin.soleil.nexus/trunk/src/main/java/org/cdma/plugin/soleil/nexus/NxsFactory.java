@@ -22,14 +22,15 @@ import java.util.logging.Level;
 
 import ncsa.hdf.object.h5.H5ScalarDS;
 
+import org.cdma.AbstractFactory;
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
 import org.cdma.engine.hdf.navigation.HdfAttribute;
 import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.utils.HdfObjectUtils;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
@@ -50,7 +51,9 @@ import org.cdma.plugin.soleil.nexus.navigation.NxsDataset;
 import org.cdma.plugin.soleil.nexus.navigation.NxsGroup;
 import org.cdma.plugin.soleil.nexus.utils.NxsArrayMath;
 
-public final class NxsFactory implements IFactory {
+import fr.soleil.lib.project.math.ArrayUtils;
+
+public final class NxsFactory extends AbstractFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
     public static final String NAME = "SoleilNeXus2";
@@ -109,14 +112,23 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
-    public IArray createArray(final Object javaArray) {
+    public IArray createArray(final Object value) {
         IArray result = null;
-        // [ANSTO][Tony][2011-08-31] testing isArray may be slow
-        // [SOLEIL][clement][2012-04-18] as the supported array is a primitive type the "instanceof" won't be correct
-        if (javaArray != null && javaArray.getClass().isArray()) {
-            int size = Array.getLength(javaArray);
+
+        // Default value is for non array value.
+        int[] shape = { 1 };
+
+        Object inlineArray;
+        if (value != null) {
+            if (value.getClass().isArray()) {
+                shape = ArrayUtils.recoverShape(value);
+                inlineArray = ArrayUtils.convertArrayDimensionFromNTo1(value);
+            } else {
+                inlineArray = Array.newInstance(value.getClass(), 1);
+                Array.set(inlineArray, 0, value);
+            }
             try {
-                result = new NxsArray(javaArray, new int[] { size });
+                result = new NxsArray(inlineArray, shape);
             } catch (InvalidArrayTypeException e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
             }
@@ -164,8 +176,29 @@ public final class NxsFactory implements IFactory {
     }
 
     @Override
+    public IDataItem createDataItem(IGroup parent, String shortName, Object value) throws CDMAException {
+        NxsDataItem result = null;
+        if (value.getClass().isArray()) {
+            IArray array = createArray(value);
+            result = (NxsDataItem) createDataItem(parent, shortName, array);
+        } else if (value instanceof NxsDataItem) {
+            NxsDataItem itemToLinkTo = (NxsDataItem) value;
+            result = new NxsDataItem(shortName, (NxsDataset) parent.getDataset());
+            result.linkTo(itemToLinkTo);
+        } else {
+
+        }
+        return result;
+    }
+
+    @Override
     public IDataset createDatasetInstance(final URI uri) throws NoResultException {
         return NxsDataset.instanciate(uri);
+    }
+
+    @Override
+    public IDataset createDatasetInstance(URI uri, boolean withWriteAccess) throws CDMAException {
+        return NxsDataset.instanciate(uri, withWriteAccess);
     }
 
     @Override
