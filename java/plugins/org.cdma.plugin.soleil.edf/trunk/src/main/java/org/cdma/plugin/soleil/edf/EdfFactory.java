@@ -148,10 +148,13 @@ public class EdfFactory extends AbstractFactory {
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-        EdfDataItem dataitem = new EdfDataItem(shortName);
-        dataitem.setCachedData(array, false);
+        EdfDataItem dataitem = new EdfDataItem(shortName, array);
         dataitem.setParent(parent);
         return dataitem;
+//        EdfDataItem dataitem = new EdfDataItem(shortName);
+//        dataitem.setCachedData(array, false);
+//        dataitem.setParent(parent);
+//        return dataitem;
     }
 
     @Override
