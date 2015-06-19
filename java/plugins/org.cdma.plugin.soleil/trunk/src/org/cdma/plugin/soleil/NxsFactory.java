@@ -9,7 +9,7 @@
  * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
  * Tony Lam (nxi@Bragg Institute) - initial API and implementation
  * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- * Stï¿½phane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
  * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
  * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
@@ -20,15 +20,14 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.logging.Level;
 
+import org.cdma.AbstractFactory;
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
-import org.cdma.engine.nexus.array.NexusArray;
 import org.cdma.engine.nexus.navigation.NexusAttribute;
-import org.cdma.engine.nexus.navigation.NexusDataItem;
 import org.cdma.engine.nexus.navigation.NexusDataset;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
@@ -44,18 +43,16 @@ import org.cdma.interfaces.IKey;
 import org.cdma.math.IArrayMath;
 import org.cdma.plugin.soleil.array.NxsArray;
 import org.cdma.plugin.soleil.dictionary.NxsLogicalGroup;
-import org.cdma.plugin.soleil.navigation.NxsDataItem;
 import org.cdma.plugin.soleil.navigation.NxsDataset;
 import org.cdma.plugin.soleil.navigation.NxsGroup;
 import org.cdma.plugin.soleil.utils.NxsArrayMath;
 import org.nexusformat.NexusException;
 
 import fr.soleil.nexus.DataItem;
-import fr.soleil.nexus.PathData;
 import fr.soleil.nexus.PathGroup;
 import fr.soleil.nexus.PathNexus;
 
-public final class NxsFactory implements IFactory {
+public final class NxsFactory extends AbstractFactory {
     private static NxsFactory factory;
     private static NxsDatasource detector;
     public static final String NAME = "SoleilNeXus";
@@ -64,7 +61,7 @@ public final class NxsFactory implements IFactory {
     public static final String CONFIG_FILE = "cdma_nexussoleil_config.xml";
     private static final String CDMA_VERSION = "3.2.5";
     private static final String PLUG_VERSION = "1.4.13";
-    private static final String DESC = "Manages NeXus data files (with ï¿½nxsï¿½ extension)";
+    private static final String DESC = "Manages NeXus data files (with ‘nxs’ extension)";
 
     public NxsFactory() {
     }
@@ -164,57 +161,11 @@ public final class NxsFactory implements IFactory {
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-        NxsDataItem result = null;
-        if ((shortName == null) || shortName.trim().isEmpty()) {
-            throw new InvalidArrayTypeException("Invalid shortName");
-        } else if (array instanceof NxsArray) {
-            NxsArray nxsArray = (NxsArray) array;
-            IArray[] parts = nxsArray.getArrayParts();
-            if (parts == null) {
-                throw new InvalidArrayTypeException("Invalid array parts");
-            } else {
-                DataItem item = null;
-                for (IArray tmp : parts) {
-                    if (tmp instanceof NexusArray) {
-                        item = ((NexusArray) tmp).getDataItem();
-                        break;
-                    }
-                }
-                if (item == null) {
-                    item = new DataItem();
-                    try {
-                        item.initFromData(array.getStorage());
-                    } catch (NexusException e) {
-                        throw new InvalidArrayTypeException(e);
-                    }
-                }
-                if (parent instanceof NxsGroup) {
-                    NxsGroup group = (NxsGroup) parent;
-                    if ((item.getPath() == null) || !shortName.equals(item.getPath().getDataItemName())) {
-                        PathGroup pathGroup;
-                        PathNexus pathNexus = group.getPathNexus();
-                        if (pathNexus instanceof PathGroup) {
-                            pathGroup = (PathGroup) pathNexus;
-                        } else {
-                            pathGroup = new PathGroup(pathNexus);
-                        }
-                        item.setPath(new PathData(pathGroup, shortName));
-                    }
-                    NxsDataset dataset = (NxsDataset) group.getDataset();
-                    result = new NxsDataItem(new NexusDataItem(nxsArray.getFactoryName(), item, dataset == null ? null
-                            : dataset.getNexusDataset()), parent, dataset);
-                } else {
-                    throw new InvalidArrayTypeException("Invalid parent group");
-                }
-            }
-        } else {
-            throw new InvalidArrayTypeException("Invalid IArray class");
-        }
-        return result;
+        throw new NotImplementedException();
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(URI uri) throws CDMAException {
         return NxsDataset.instanciate(uri);
     }
 
