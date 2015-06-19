@@ -4,14 +4,14 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.edf;
 
@@ -20,12 +20,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 
+import org.cdma.AbstractFactory;
 import org.cdma.Factory;
-import org.cdma.IFactory;
 import org.cdma.arrays.DefaultArrayMatrix;
 import org.cdma.dictionary.Key;
 import org.cdma.dictionary.LogicalGroup;
 import org.cdma.dictionary.Path;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.FileAccessException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NotImplementedException;
@@ -41,7 +42,7 @@ import org.cdma.plugin.soleil.edf.navigation.EdfDataItem;
 import org.cdma.plugin.soleil.edf.navigation.EdfDataset;
 import org.cdma.plugin.soleil.edf.navigation.EdfGroup;
 
-public class EdfFactory implements IFactory {
+public class EdfFactory extends AbstractFactory {
 
     public static final String NAME = "SoleilEDF";
     public static final String LABEL = "SOLEIL's EDF plug-in";
@@ -147,7 +148,8 @@ public class EdfFactory implements IFactory {
 
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
-        EdfDataItem dataitem = new EdfDataItem(shortName, array);
+        EdfDataItem dataitem = new EdfDataItem(shortName);
+        dataitem.setCachedData(array, false);
         dataitem.setParent(parent);
         return dataitem;
     }
@@ -164,7 +166,7 @@ public class EdfFactory implements IFactory {
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws Exception {
+    public IDataset createDatasetInstance(URI uri) throws CDMAException {
         return new EdfDataset(uri.getPath());
     }
 
