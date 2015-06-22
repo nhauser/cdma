@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>hdf</artifactId>
-  <version>1.0.3-SNAPSHOT</version>
+  <version>1.0.3</version>
   <name>CDMA Engine HDF</name>
   <description>CDMA Engine: HDF based on JHDF5's API</description>
   <developers>
