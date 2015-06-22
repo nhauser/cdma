@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.plugins</groupId>
   <artifactId>MamboSoleil</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <name>CDMA Mambo Soleil Plug-in</name>
   <description>This project is Soleil's Mambo plugin for the CDMA.</description>
   <developers>
