@@ -181,6 +181,7 @@ public final class NxsFactory extends AbstractFactory {
         if (value instanceof NxsDataItem) {
             NxsDataItem itemToLinkTo = (NxsDataItem) value;
             result = new NxsDataItem(shortName, (NxsDataset) parent.getDataset());
+            result.addStringAttribute("target", ((NxsDataItem) value).getName());
             result.linkTo(itemToLinkTo);
         } else {
             IArray array = createArray(value);

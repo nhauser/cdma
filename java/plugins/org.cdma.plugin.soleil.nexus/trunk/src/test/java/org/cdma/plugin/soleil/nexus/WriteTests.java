@@ -288,7 +288,7 @@ public class WriteTests {
 
         // Test Data Item
         NxsArray array = createRandom1DArray(10);
-        IDataItem dataItem = factory.createDataItem(group, "data1", "1");
+        IDataItem dataItem = factory.createDataItem(group, "data1", "cedfz\\grege\\dez");
         group.addDataItem(dataItem);
         assertEquals(double.class, array.getElementType());
         assertEquals(root, dataItem.getRootGroup());
