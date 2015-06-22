@@ -32,7 +32,6 @@ import org.cdma.dictionary.IPluginMethod;
 import org.cdma.exception.CDMAException;
 import org.cdma.interfaces.IContainer;
 import org.cdma.plugin.soleil.edf.EdfFactory;
-import org.cdma.plugin.soleil.edf.navigation.EdfDataItem;
 import org.cdma.plugin.soleil.edf.navigation.EdfGroup;
 import org.cdma.utils.Utilities.ModelType;
 
@@ -93,13 +92,13 @@ public class HarvestEquipmentAttributes implements IPluginMethod {
 
     private void setEquipment(IContainer container) {
         String equipment = container.getName();
-        if (container instanceof EdfDataItem) {
-            if (container.getParentGroup() != null) {
-                // SOLEIL EDF convention:
-                // A dataitem wich is not directly under the ROOT is contextual data. Its parent is the equipment name.
-                equipment = container.getParentGroup().getName();
-            }
-        }
+//        if (container instanceof EdfDataItem) {
+//            if (container.getParentGroup() != null) {
+//                // SOLEIL EDF convention:
+//                // A dataitem wich is not directly under the ROOT is contextual data. Its parent is the equipment name.
+//                // equipment = container.getParentGroup().getName();
+//            }
+//        }
         container.addStringAttribute(EQUIPMENT, equipment);
     }
 
