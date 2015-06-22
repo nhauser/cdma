@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma</groupId>
   <artifactId>Core</artifactId>
-  <version>3.2.12</version>
+  <version>3.2.13-SNAPSHOT</version>
   <name>CDMA Core</name>
   <developers>
     <developer>
