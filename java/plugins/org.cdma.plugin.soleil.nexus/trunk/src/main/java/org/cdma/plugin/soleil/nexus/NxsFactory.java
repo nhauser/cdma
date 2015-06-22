@@ -178,16 +178,15 @@ public final class NxsFactory extends AbstractFactory {
     @Override
     public IDataItem createDataItem(IGroup parent, String shortName, Object value) throws CDMAException {
         NxsDataItem result = null;
-        if (value.getClass().isArray()) {
-            IArray array = createArray(value);
-            result = (NxsDataItem) createDataItem(parent, shortName, array);
-        } else if (value instanceof NxsDataItem) {
+        if (value instanceof NxsDataItem) {
             NxsDataItem itemToLinkTo = (NxsDataItem) value;
             result = new NxsDataItem(shortName, (NxsDataset) parent.getDataset());
             result.linkTo(itemToLinkTo);
         } else {
-
+            IArray array = createArray(value);
+            result = (NxsDataItem) createDataItem(parent, shortName, array);
         }
+        parent.addDataItem(result);
         return result;
     }
 
@@ -235,6 +234,7 @@ public final class NxsFactory extends AbstractFactory {
     public IGroup createGroup(final IGroup parent, final String shortName) {
         String path_val = parent.getLocation();
         NxsGroup group = new NxsGroup((NxsDataset) parent.getDataset(), shortName, path_val, (NxsGroup) parent);
+        parent.addSubgroup(group);
         return group;
     }
 

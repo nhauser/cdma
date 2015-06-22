@@ -24,12 +24,16 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
+import org.cdma.Factory;
+import org.cdma.IFactory;
 import org.cdma.engine.hdf.navigation.HdfAttribute;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IDataItem;
+import org.cdma.interfaces.IDataset;
 import org.cdma.interfaces.IGroup;
 import org.cdma.plugin.soleil.nexus.array.NxsArray;
 import org.cdma.plugin.soleil.nexus.navigation.NxsDataItem;
@@ -250,8 +254,7 @@ public class WriteTests {
     }
 
     @Test
-    public void aTestWriteFromScratch() throws InvalidArrayTypeException, WriterException, IOException,
-            NoResultException, InterruptedException {
+    public void aTestWriteFromScratch() throws IOException, InterruptedException, CDMAException {
         System.out.println("----------------------" + test_index++ + "----------------------------");
         System.out.println("Test: Write into a new file");
 
@@ -260,7 +263,10 @@ public class WriteTests {
                 System.out.println("Cannot delete file: missing close() ??");
             }
         }
-        NxsDataset dataset = NxsDataset.instanciate(FIRST_FILE_TO_WRITE.toURI(), true);
+
+        // FIRST_FILE_TO_WRITE.createNewFile();
+        IFactory factory = Factory.getFactory(FIRST_FILE_TO_WRITE.toURI());
+        IDataset dataset = factory.createDatasetInstance(FIRST_FILE_TO_WRITE.toURI(), true);
 
         // Test Root Group
         NxsGroup root = (NxsGroup) dataset.getRootGroup();
@@ -268,7 +274,7 @@ public class WriteTests {
         assertTrue(root.isRoot());
 
         // Test Sub Group
-        IGroup group = new NxsGroup(dataset, "group1", "/", root);
+        IGroup group = factory.createGroup(root, "group1");
         root.addSubgroup(group);
         group.addStringAttribute("attr1", "mon attribut");
         group.addOneAttribute(new HdfAttribute(FACTORY_NAME, "attr2", 5));
@@ -281,10 +287,9 @@ public class WriteTests {
         assertFalse(group.isRoot());
 
         // Test Data Item
-        NxsDataItem dataItem = new NxsDataItem("data1", dataset);
-        group.addDataItem(dataItem);
         NxsArray array = createRandom1DArray(10);
-        dataItem.setCachedData(array, false);
+        IDataItem dataItem = factory.createDataItem(group, "data1", "1");
+        group.addDataItem(dataItem);
         assertEquals(double.class, array.getElementType());
         assertEquals(root, dataItem.getRootGroup());
         assertEquals(group, dataItem.getParentGroup());
@@ -294,10 +299,9 @@ public class WriteTests {
 
         dataset.save();
 
-        NxsDataItem linkdataItem = new NxsDataItem("testLink", dataset);
+        // Test Link
+        IDataItem linkdataItem = factory.createDataItem(group, "testLink", dataItem);
         group.addDataItem(linkdataItem);
-        linkdataItem.linkTo(dataItem);
-
         dataset.save();
         dataset.close();
         System.out.println("End of test: Write into a new file");

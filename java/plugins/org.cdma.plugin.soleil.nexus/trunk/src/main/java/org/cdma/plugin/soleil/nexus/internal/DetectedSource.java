@@ -35,9 +35,9 @@ public class DetectedSource {
     private static final String EXTENSION[] = new String[] { "nxs", "hdf", "h4", "hdf4", "he4", "h5", "hdf5", "he5" };
     private static final String CREATOR = "Synchrotron SOLEIL";
     private static final String[] BEAMLINES = new String[] { "CONTACQ", "AILES", "ANTARES", "CASSIOPEE", "CRISTAL",
-        "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
-        "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO",
-        "SWING", "ROCK", "PUMA", "ANATOMIX", "HERMES" };
+            "DIFFABS", "DEIMOS", "DESIRS", "DISCO", "GALAXIES", "LUCIA", "MARS", "METROLOGIE", "NANOSCOPIUM", "ODE",
+            "PLEIADES", "PROXIMA1", "PROXIMA2", "PSICHE", "SAMBA", "SEXTANTS", "SIRIUS", "SIXS", "SMIS", "TEMPO",
+            "SWING", "ROCK", "PUMA", "ANATOMIX", "HERMES" };
 
     public static class NeXusFilter implements FilenameFilter {
         @Override
@@ -56,8 +56,8 @@ public class DetectedSource {
     private final URI mURI;
     private long mTimestamp;
 
-    public DetectedSource(final URI uri, final boolean browsable, final boolean readable, final boolean producer, final boolean experiment,
-            final boolean datasetFolder) {
+    public DetectedSource(final URI uri, final boolean browsable, final boolean readable, final boolean producer,
+            final boolean experiment, final boolean datasetFolder) {
         mIsReadable = readable;
         mIsProducer = producer;
         mIsBrowsable = browsable;
@@ -191,12 +191,11 @@ public class DetectedSource {
         File file = new File(uri.getPath());
         String name = file.getName();
 
-        if (file.exists()) {
-            // Check if the URI is a NeXus file
-            if (DetectedSource.accept(name)) {
-                result = true;
-            }
+        // Check if the URI is a NeXus file
+        if (DetectedSource.accept(name)) {
+            result = true;
         }
+
         return result;
     }
 
