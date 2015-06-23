@@ -30,6 +30,7 @@ import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
+import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5Datatype;
 import ncsa.hdf.object.h5.H5File;
 import ncsa.hdf.object.h5.H5ScalarDS;
@@ -805,7 +806,14 @@ public class HdfDataItem implements IDataItem, Cloneable {
         if (doSave) {
 
             if (isLink) {
-                fileToWrite.createLink(parentInFile, getShortName(), h5Item, HDF5Constants.H5L_TYPE_SOFT);
+                HObject link = fileToWrite
+                        .createLink(parentInFile, getShortName(), h5Item, HDF5Constants.H5L_TYPE_SOFT);
+                List<IAttribute> attribute = getAttributeList();
+                for (IAttribute iAttribute : attribute) {
+                    HdfAttribute attr = (HdfAttribute) iAttribute;
+                    attr.save(link);
+                }
+
                 return;
             }
 

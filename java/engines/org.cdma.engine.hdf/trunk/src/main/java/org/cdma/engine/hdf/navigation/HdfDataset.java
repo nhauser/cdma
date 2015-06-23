@@ -182,7 +182,7 @@ public class HdfDataset implements IDataset, Cloneable {
         try {
             root.save(this.h5File, null);
         } catch (Exception e) {
-            Factory.getLogger().severe(e.getMessage());
+            throw new WriterException(e);
         }
     }
 
