@@ -19,10 +19,6 @@
     <path>/{NXinstrument}/Aviex{NXdetector}/channelScale</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="dark">
-    <path>/{NXinstrument}/Aviex{NXdetector}/intensityBlack</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
   <item key="distance">
     <path>/{NXinstrument}/Aviex{NXdetector}/distance</path>
     <call>HarvestEquipmentAttributes</call>

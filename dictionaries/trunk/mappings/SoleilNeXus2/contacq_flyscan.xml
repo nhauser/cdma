@@ -15,11 +15,7 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="dark">
+   <item key="dark">
     <path>/{NXinstrument}/{NXdetector}/intensityBlack</path>
     <call>HarvestEquipmentAttributes</call>
   </item>

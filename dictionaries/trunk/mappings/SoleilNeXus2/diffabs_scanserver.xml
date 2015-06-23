@@ -10,12 +10,6 @@
     <call>CreateVirtualItem</call>
     <call>HarvestEquipmentAttributes</call>
   </item>
-  <item key="channelScale">
-    <path>/{NXinstrument}/{NXdetector}/channelScale</path>
-    <!-- set attributes as "acquisition_sequence", "region" and "instrument" works only with NXinstrument 
-      children -->
-    <call>HarvestEquipmentAttributes</call>
-  </item>
   <item key="liveTime">
     <path>/{NXinstrument}/{NXdetector}/liveTime*</path>
     <call>HarvestEquipmentAttributes</call>
@@ -55,61 +49,6 @@
   <item key="acquisitionMode">
     <path>/{NXinstrument}/{NXdetector}/mode</path>
     <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="lensMode">
-    <path>/{NXinstrument}/{NXdetector}/lensMode</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="passEnergy">
-    <path>/{NXinstrument}/{NXdetector}/passEnergy</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="lowEnergy">
-    <path>/{NXinstrument}/{NXdetector}/lowEnergy</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="highEnergy">
-    <path>/{NXinstrument}/{NXdetector}/highEnergy</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="energyStep">
-    <path>/{NXinstrument}/{NXdetector}/energyStep</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="stepTime">
-    <path>/{NXinstrument}/{NXdetector}/stepTime</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="firstXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstXChannel</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="lastXChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastXChannel</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="firstYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorFirstYChannel</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="lastYChannel">
-    <path>/{NXinstrument}/{NXdetector}/detectorLastYChannel</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="slices">
-    <path>/{NXinstrument}/{NXdetector}/slices</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="sliceScale">
-    <path>/{NXinstrument}/{NXdetector}/sliceScale</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="energyScale">
-    <path>/{NXinstrument}/{NXdetector}/energyScale</path>
-    <call>HarvestEquipmentAttributes</call>
-  </item>
-  <item key="dataChannelScale">
-    <path>/{NXdata}/*channelScale*</path>
   </item>
   <item key="mi">
     <path>/{NXinstrument}/{NXintensity_monitor}</path>
