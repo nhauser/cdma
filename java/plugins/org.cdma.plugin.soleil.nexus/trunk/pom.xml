@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.cdma.plugins</groupId>
 	<artifactId>NexusSoleil</artifactId>
-	<version>2.0.2-SNAPSHOT</version>
+	<version>2.0.4-SNAPSHOT</version>
 	<name>CDMA NeXus Soleil Plugin</name>
 	<description>This project is Soleil's NeXus plugin for the CDMA</description>
 	<developers>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.cdma.engines</groupId>
 			<artifactId>hdf</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
