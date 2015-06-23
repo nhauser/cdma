@@ -38,7 +38,7 @@ public class HdfAttribute implements IAttribute {
 
     public HdfAttribute(final String factoryName, final Attribute attribute) {
         this(factoryName, attribute.getName(), attribute.getValue());
-        //This constructor is used when data is read on from files
+        // This constructor is used when data is read on from files
         this.dirty = false;
     }
 
@@ -184,15 +184,17 @@ public class HdfAttribute implements IAttribute {
 
         H5Datatype dataType;
         if (dirty) {
-            if (getValue().getStorage() instanceof String[]) {
-                String[] value = (String[]) getValue().getStorage();
-                dataType = new H5Datatype(Datatype.CLASS_STRING, value[0].length() + 1, -1, -1);
+            Object valueObject = getValue().getStorage();
+            if (valueObject instanceof String[]) {
+                String[] strArray = (String[]) valueObject;
+                // valueObject = strArray[0];
+                dataType = new H5Datatype(Datatype.CLASS_STRING, strArray[0].length() + 1, -1, -1);
             } else {
                 int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(value.getElementType());
                 dataType = new H5Datatype(type_id);
             }
 
-            Attribute newAttribute = new Attribute(getName(), dataType, null, getValue().getStorage());
+            Attribute newAttribute = new Attribute(getName(), dataType, null, valueObject);
             parent.writeMetadata(newAttribute);
         }
         dirty = false;
