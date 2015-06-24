@@ -633,7 +633,7 @@ public class HdfGroup implements IGroup, Cloneable {
         List<IAttribute> attribute = getAttributeList();
         for (IAttribute iAttribute : attribute) {
             HdfAttribute attr = (HdfAttribute) iAttribute;
-            attr.save(theGroup);
+            attr.save(theGroup, copyToNewFile);
         }
 
         List<IDataItem> dataItems = getDataItemList();

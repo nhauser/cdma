@@ -180,10 +180,13 @@ public class HdfAttribute implements IAttribute {
         this.dirty = true;
     }
 
-    public void save(final HObject parent) throws Exception {
+    public void save(final HObject parent, boolean forceSave) throws Exception {
+        save(parent, false, forceSave);
+    }
 
-        H5Datatype dataType;
-        if (dirty) {
+    public void save(final HObject parent, boolean isLink, boolean forceSave) throws Exception {
+        if (dirty || forceSave) {
+            H5Datatype dataType;
             Object valueObject = getValue().getStorage();
             if (valueObject instanceof String[]) {
                 String[] strArray = (String[]) valueObject;
@@ -194,9 +197,44 @@ public class HdfAttribute implements IAttribute {
                 dataType = new H5Datatype(type_id);
             }
 
-            Attribute newAttribute = new Attribute(getName(), dataType, null, valueObject);
-            parent.writeMetadata(newAttribute);
+            Attribute attr = HdfObjectUtils.getAttribute(parent, getName());
+
+            if (isLink && attr != null) {
+                return;
+            }
+
+            if (attr == null) {
+                attr = new Attribute(getName(), dataType, null, valueObject);
+            } else {
+                attr.setValue(valueObject);
+            }
+
+            parent.writeMetadata(attr);
         }
-        dirty = false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        HdfAttribute other = (HdfAttribute) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        return true;
     }
 }

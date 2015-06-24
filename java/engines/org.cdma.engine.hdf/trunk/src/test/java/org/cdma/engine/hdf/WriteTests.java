@@ -29,6 +29,7 @@ import org.cdma.engine.hdf.navigation.HdfDataset;
 import org.cdma.engine.hdf.navigation.HdfGroup;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
+import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IDataItem;
 import org.cdma.interfaces.IGroup;
 import org.junit.FixMethodOrder;
@@ -105,12 +106,13 @@ public class WriteTests {
         assertEquals(int.class, newArray.getElementType());
         // assertArrayEquals(shape, newArray.getShape());
 
-        // Modify group name
+        // Modify attribute
         HdfGroup group2 = (HdfGroup) root.getGroup("group2");
-        group2.setShortName("group2Modified");
-        System.out.println(" - Rename group2 to group2Modified");
-
+        IDataItem item2 = group2.getDataItem("data2");
+        IAttribute attr1 = item2.getAttribute("attr1");
+        attr1.setStringValue("attr1modifié");
         dataset.save();
+
         dataset.close();
         System.out.println("End of test: Modify existing file");
         System.out.println("--------------------------------------------------");
@@ -277,6 +279,7 @@ public class WriteTests {
 
         // Test Data Item
         HdfDataItem dataItem = new HdfDataItem(FACTORY_NAME, "data1");
+        dataItem.addStringAttribute("itemAttr", "1");
         // XXX DEBUG
         group.addDataItem(dataItem);
         HdfArray array = createRandom1DArray(10);
@@ -291,6 +294,7 @@ public class WriteTests {
         dataset.save();
 
         HdfDataItem linkdataItem = new HdfDataItem(FACTORY_NAME, "testLink");
+        linkdataItem.addStringAttribute("linkAttr", "1");
         group.addDataItem(linkdataItem);
         linkdataItem.linkTo(dataItem);
 

@@ -26,7 +26,6 @@ import ncsa.hdf.hdf5lib.HDF5Constants;
 import ncsa.hdf.hdf5lib.exceptions.HDF5Exception;
 import ncsa.hdf.hdf5lib.exceptions.HDF5LibraryException;
 import ncsa.hdf.object.Attribute;
-import ncsa.hdf.object.Dataset;
 import ncsa.hdf.object.Datatype;
 import ncsa.hdf.object.FileFormat;
 import ncsa.hdf.object.Group;
@@ -811,9 +810,8 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 List<IAttribute> attribute = getAttributeList();
                 for (IAttribute iAttribute : attribute) {
                     HdfAttribute attr = (HdfAttribute) iAttribute;
-                    attr.save(link);
+                    attr.save(link, true);
                 }
-
                 return;
             }
 
@@ -851,11 +849,12 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     datatype = new H5Datatype(type_id);
                 }
 
-                Dataset ds = null;
+                H5ScalarDS ds = null;
 
                 if (!saveInDifferentFile) {
-                    ds = (Dataset) fileToWrite.get(getName());
+                    ds = (H5ScalarDS) H5File.findObject(fileToWrite, getName());
                     if (ds != null && h5Item != null) {
+                        ds.init();
                         if (!datatype.equals(ds.getDatatype())) {
                             try {
                                 // Ouch ! Datatype has changed.
@@ -869,7 +868,8 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     }
                 }
 
-                ds = fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0, null);
+                ds = (H5ScalarDS) fileToWrite.createScalarDS(getName(), parentInFile, datatype, shape, null, null, 0,
+                        null);
 
                 if (ds != null) {
                     if (array != null) {
@@ -880,16 +880,22 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 List<IAttribute> attribute = getAttributeList();
                 for (IAttribute iAttribute : attribute) {
                     HdfAttribute attr = (HdfAttribute) iAttribute;
-                    attr.save(ds);
+                    attr.save(ds, saveInDifferentFile);
                 }
 
                 if (!saveInDifferentFile) {
                     this.h5File = (H5File) fileToWrite;
-                    this.h5Item = (H5ScalarDS) ds;
+                    this.h5Item = ds;
                 }
                 this.dirty = false;
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        } else {
+            List<IAttribute> attribute = getAttributeList();
+            for (IAttribute iAttribute : attribute) {
+                HdfAttribute attr = (HdfAttribute) iAttribute;
+                attr.save(h5Item, saveInDifferentFile);
             }
         }
     }
