@@ -275,7 +275,6 @@ public class WriteTests {
 
         // Test Sub Group
         IGroup group = factory.createGroup(root, "group1");
-        root.addSubgroup(group);
         group.addStringAttribute("attr1", "mon attribut");
         group.addOneAttribute(new HdfAttribute(FACTORY_NAME, "attr2", 5));
         assertEquals("Attribute List size", 2, group.getAttributeList().size());
@@ -288,8 +287,7 @@ public class WriteTests {
 
         // Test Data Item
         NxsArray array = createRandom1DArray(10);
-        IDataItem dataItem = factory.createDataItem(group, "data1", "cedfz\\grege\\dez");
-        group.addDataItem(dataItem);
+        IDataItem dataItem = factory.createDataItem(group, "data1", array);
         assertEquals(double.class, array.getElementType());
         assertEquals(root, dataItem.getRootGroup());
         assertEquals(group, dataItem.getParentGroup());
@@ -301,9 +299,10 @@ public class WriteTests {
 
         // Test Link
         IDataItem linkdataItem = factory.createDataItem(group, "testLink", dataItem);
-        group.addDataItem(linkdataItem);
+
         dataset.save();
         dataset.close();
+
         System.out.println("End of test: Write into a new file");
         System.out.println("--------------------------------------------------");
     }
