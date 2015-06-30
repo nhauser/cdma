@@ -82,7 +82,11 @@
     <!-- that method will get the previous path from context, will split the attribute section from the 
       path to filter on that attribute name and value -->
     <call>AttributeFilter</call>
-    <call>HarvestEquipmentAttributes</call>
+    <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXinstrument}/{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+    </attribute>
   </item>
   <item key="comments">
     <path>/{NXsample}/comments/data</path>
