@@ -366,12 +366,8 @@ public class HdfDataItem implements IDataItem, Cloneable {
                     h5Item.clear();
                 }
                 tempResult = h5Item.getData();
-                // TODO Activate & Test Unsigned conversion
-                // if (h5Item.isUnsigned()) {
-                // Dataset.convertFromUnsignedC(tempResult, result);
-                // } else {
+                h5Item.clear();
                 result = tempResult;
-                // }
             }
         }
         return result;
@@ -533,7 +529,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 if (DataType.BOOLEAN.equals(datatype)) {
                     result = Boolean.TYPE;
                 } else if (Datatype.CLASS_CHAR == datatype) {
-                    result = Character.TYPE;
+                    result = Byte.TYPE;
                 } else if (Datatype.CLASS_FLOAT == datatype) {
                     switch (dType.getDatatypeSize()) {
                         case 4:
