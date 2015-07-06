@@ -848,7 +848,9 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 H5ScalarDS ds = null;
 
                 if (!saveInDifferentFile) {
-                    ds = (H5ScalarDS) H5File.findObject(fileToWrite, getName());
+                    ds = (H5ScalarDS) fileToWrite.get(getName());
+
+                    // ds = (H5ScalarDS) H5File.findObject(fileToWrite, getName());
                     if (ds != null && h5Item != null) {
                         ds.init();
                         if (!datatype.equals(ds.getDatatype())) {
