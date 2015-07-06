@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 // ****************************************************************************
 // Copyright (c) 2008 Australian Nuclear Science and Technology Organisation.
@@ -25,6 +25,7 @@
 // ****************************************************************************
 package org.cdma.arrays;
 
+import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 
 import org.cdma.Factory;
@@ -39,26 +40,33 @@ import org.cdma.interfaces.IIndex;
 import org.cdma.interfaces.ISliceIterator;
 
 public class DefaultArrayInline extends DefaultArray {
-    private Object mData;  // Memory storage (always a java inline array)
+    private Object mData; // Memory storage (always a java inline array)
 
     // Constructors
     protected DefaultArrayInline(String factoryName, Class<?> clazz, int[] iShape) throws InvalidArrayTypeException {
-        this( factoryName, clazz, null, iShape.clone() );
+        this(factoryName, clazz, null, iShape.clone());
     }
 
     protected DefaultArrayInline(String factoryName, Object inlineArray, int[] iShape) throws InvalidArrayTypeException {
-        this( factoryName, inlineArray.getClass().getComponentType(), inlineArray, iShape.clone() );
+        this(factoryName, inlineArray.getClass().getComponentType(), inlineArray, iShape.clone());
     }
 
-    protected DefaultArrayInline( DefaultArrayInline array ) throws InvalidArrayTypeException {
-        super( array );
+    protected DefaultArrayInline(String factoryName, WeakReference<Object> inlineArrayReference, int[] iShape)
+            throws InvalidArrayTypeException {
+        this(factoryName, inlineArrayReference.get().getClass().getComponentType(), inlineArrayReference, iShape
+                .clone());
+    }
+
+    protected DefaultArrayInline(DefaultArrayInline array) throws InvalidArrayTypeException {
+        super(array);
         mData = array.mData;
     }
 
-    protected DefaultArrayInline(String factoryName, Class<?> clazz, Object inlineArray, int[] iShape) throws InvalidArrayTypeException {
-        super( factoryName, clazz, iShape.clone() );
+    protected DefaultArrayInline(String factoryName, Class<?> clazz, Object inlineArray, int[] iShape)
+            throws InvalidArrayTypeException {
+        super(factoryName, clazz, iShape.clone());
 
-        if( clazz == null || clazz.isArray() ) {
+        if (clazz == null || clazz.isArray()) {
             throw new InvalidArrayTypeException("Only inline array is permitted!");
         }
 
@@ -66,12 +74,12 @@ public class DefaultArrayInline extends DefaultArray {
     }
 
     // ---------------------------------------------------------
-    /// public methods
+    // / public methods
     // ---------------------------------------------------------
     // / IArray underlying data access
     @Override
     public Object getStorage() {
-        if( ! isLocked() ) {
+        if (!isLocked()) {
             mData = loadData();
         }
         return getData();
@@ -79,7 +87,7 @@ public class DefaultArrayInline extends DefaultArray {
 
     @Override
     public void releaseStorage() throws BackupException {
-        Factory.getLogger().log( Level.WARNING, "Unable to release storage", new NotImplementedException() );
+        Factory.getLogger().log(Level.WARNING, "Unable to release storage", new NotImplementedException());
     }
 
     // IArray data getters and setters
@@ -87,7 +95,7 @@ public class DefaultArrayInline extends DefaultArray {
     public boolean getBoolean(IIndex index) {
         boolean result;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -108,7 +116,7 @@ public class DefaultArrayInline extends DefaultArray {
         byte result;
         IIndex idx;
         idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -129,7 +137,7 @@ public class DefaultArrayInline extends DefaultArray {
         char result;
         IIndex idx;
         idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -149,7 +157,7 @@ public class DefaultArrayInline extends DefaultArray {
     public double getDouble(IIndex index) {
         double result;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
         // If it's a scalar value then we return it
         if (!oData.getClass().isArray()) {
@@ -168,7 +176,7 @@ public class DefaultArrayInline extends DefaultArray {
     public float getFloat(IIndex index) {
         float result = 0;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -188,7 +196,7 @@ public class DefaultArrayInline extends DefaultArray {
     public int getInt(IIndex index) {
         int result = 0;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -208,7 +216,7 @@ public class DefaultArrayInline extends DefaultArray {
     public long getLong(IIndex index) {
         long result = 0;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -228,7 +236,7 @@ public class DefaultArrayInline extends DefaultArray {
     public Object getObject(IIndex index) {
         Object result = new Object();
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -248,7 +256,7 @@ public class DefaultArrayInline extends DefaultArray {
     public short getShort(IIndex index) {
         short result = 0;
         IIndex idx = getIndex().clone();
-        idx.set( index.getCurrentCounter() );
+        idx.set(index.getCurrentCounter());
         Object oData = getStorage();
 
         // If it's a scalar value then we return it
@@ -269,10 +277,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((boolean[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -283,10 +290,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((byte[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -297,10 +303,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((char[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -311,10 +316,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((double[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -325,10 +329,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((float[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -339,10 +342,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((int[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -353,10 +355,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((long[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -367,10 +368,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((Object[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -381,10 +381,9 @@ public class DefaultArrayInline extends DefaultArray {
         Object data = getStorage();
         IIndex idx = getIndex().clone();
         int pos = (int) idx.currentElement();
-        if( getElementType().equals( Boolean.TYPE ) ) {
+        if (getElementType().equals(Boolean.TYPE)) {
             ((short[]) data)[pos] = value;
-        }
-        else {
+        } else {
             java.lang.reflect.Array.set(data, pos, value);
         }
         setDirty(true);
@@ -394,11 +393,10 @@ public class DefaultArrayInline extends DefaultArray {
     public IArray setDouble(double value) {
         IIndex index = getIndex();
         Object data = getStorage();
-        if( getElementType().equals( Double.TYPE ) ) {
+        if (getElementType().equals(Double.TYPE)) {
             java.util.Arrays.fill((double[]) data, value);
-        }
-        else {
-            for( int i = 0; i < index.getSize(); i++ ) {
+        } else {
+            for (int i = 0; i < index.getSize(); i++) {
                 java.lang.reflect.Array.set(data, i, value);
             }
         }
@@ -410,21 +408,20 @@ public class DefaultArrayInline extends DefaultArray {
     public IArray copy(boolean data) {
         IArray result = null;
         IFactory factory = Factory.getFactory(getFactoryName());
-        if( factory != null ) {
-	        if (!data) {
-	            result = factory.createArray(getElementType(), getShape(), mData);
-	        }
-	        else {
-	            Object store = this.copyTo1DJavaArray();
-	            result = factory.createArray(getElementType(), getShape(), store);
-	        }
+        if (factory != null) {
+            if (!data) {
+                result = factory.createArray(getElementType(), getShape(), mData);
+            } else {
+                Object store = this.copyTo1DJavaArray();
+                result = factory.createArray(getElementType(), getShape(), store);
+            }
         }
 
         return result;
     }
 
     // ---------------------------------------------------------
-    /// Protected methods
+    // / Protected methods
     // ---------------------------------------------------------
     protected IArray sectionNoReduce(int[] origin, int[] shape, long[] stride) throws ShapeNotMatchException {
         DefaultArray array = (DefaultArray) copy(false);
@@ -446,12 +443,11 @@ public class DefaultArrayInline extends DefaultArray {
         // Calculate the starting point of the visible part of the array's storage
         IIndex index = getIndex().clone();
         int[] position = new int[index.getRank()];
-        index.set( position );
+        index.set(position);
         int start = ((Long) index.currentElement()).intValue();
 
-
         // Copy the visible part of the array
-        System.arraycopy( getStorage(), start, array, 0, length);
+        System.arraycopy(getStorage(), start, array, 0, length);
 
         return array;
     }
@@ -465,7 +461,7 @@ public class DefaultArrayInline extends DefaultArray {
         Object slab;
 
         // Create an empty array of the right shape
-        Object result = java.lang.reflect.Array.newInstance( getElementType(), shape );
+        Object result = java.lang.reflect.Array.newInstance(getElementType(), shape);
 
         ISliceIterator iter;
         try {
@@ -500,7 +496,6 @@ public class DefaultArrayInline extends DefaultArray {
         return result;
     }
 
-
     /**
      * Override this method in case of specific need (use of SoftReference for instance).
      * It is called each time the memory is accessed when (the array isn't locked).
@@ -519,7 +514,7 @@ public class DefaultArrayInline extends DefaultArray {
      * 
      * @param data to set in place of the current one
      * @note no index calculation or type detection is done, the given data should
-     * have the same properties as the current one.
+     *       have the same properties as the current one.
      */
     protected void setData(Object data) {
         mData = data;
