@@ -59,6 +59,10 @@
     <path>delta</path>
     <call>HarvestEquipmentAttributes</call>
   </item>
+  <item key="gammaOffset">
+    <path>gamma</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
   <item key="mi">
     <path>Intensity*</path>
     <call>CreateVirtualItem</call>
