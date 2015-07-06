@@ -15,6 +15,7 @@
  ******************************************************************************/
 package org.cdma.engine.hdf.navigation;
 
+import java.lang.reflect.Array;
 import java.util.logging.Level;
 
 import ncsa.hdf.object.Attribute;
@@ -28,13 +29,14 @@ import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 import org.cdma.interfaces.IAttribute;
+import org.cdma.utils.ArrayTools;
 
 public class HdfAttribute implements IAttribute {
 
     private final String factoryName; // factory name that attribute depends on
-    private IArray value; // Attribute's value
     private final String name;
     private boolean dirty;
+    private Object value;
 
     public HdfAttribute(final String factoryName, final Attribute attribute) {
         this(factoryName, attribute.getName(), attribute.getValue());
@@ -43,29 +45,22 @@ public class HdfAttribute implements IAttribute {
     }
 
     public HdfAttribute(final String factoryName, final String name, final Object value) {
+        // This constructor is used when data is supplied by the API user
         this.factoryName = factoryName;
         this.name = name;
-        int[] shape;
-        Object data = value;
+        this.value = value;
 
         if (value.getClass().isArray()) {
-            if (data instanceof char[]) {
-                data = new String[] { new String((char[]) value) };
+            if (value instanceof char[]) {
+                this.value = new String[] { new String((char[]) value) };
             }
-            shape = new int[] { java.lang.reflect.Array.getLength(data) };
         } else {
-            shape = new int[] {};
-            data = java.lang.reflect.Array.newInstance(value.getClass(), 1);
-            java.lang.reflect.Array.set(data, 0, value);
+            this.value = java.lang.reflect.Array.newInstance(value.getClass(), 1);
+            java.lang.reflect.Array.set(this.value, 0, value);
         }
 
-        try {
-            this.value = new HdfArray(factoryName, data, shape);
-            this.value.lock();
-            this.dirty = true;
-        } catch (InvalidArrayTypeException e) {
-            Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
-        }
+        this.dirty = true;
+
     }
 
     @Override
@@ -81,8 +76,8 @@ public class HdfAttribute implements IAttribute {
     @Override
     public Class<?> getType() {
         Class<?> result = null;
-        if (value != null) {
-            result = value.getElementType();
+        if (value != null && value.getClass().isArray()) {
+            result = value.getClass().getComponentType();
         }
         return result;
     }
@@ -90,8 +85,8 @@ public class HdfAttribute implements IAttribute {
     @Override
     public boolean isString() {
         boolean result = false;
-        if (value != null) {
-            Class<?> container = value.getElementType();
+        if (value != null && value.getClass().isArray()) {
+            Class<?> container = value.getClass().getComponentType();
             result = (container.equals(Character.TYPE) || container.equals(String.class));
         }
         return result;
@@ -99,18 +94,24 @@ public class HdfAttribute implements IAttribute {
 
     @Override
     public boolean isArray() {
-        return value.getSize() > 1;
+        return value.getClass().isArray();
     }
 
     @Override
     public int getLength() {
-        Long length = value.getSize();
-        return length.intValue();
+        int result = Array.getLength(value);
+        return result;
     }
 
     @Override
     public IArray getValue() {
-        return value;
+        IArray result = null;
+        try {
+            result = new HdfArray(getFactoryName(), value, ArrayTools.detectShape(value));
+        } catch (InvalidArrayTypeException e) {
+            Factory.getLogger().log(Level.SEVERE, "Unable to load attribute value", e);
+        }
+        return result;
     }
 
     @Override
@@ -118,7 +119,7 @@ public class HdfAttribute implements IAttribute {
         String result;
         if (isString()) {
             if (Character.TYPE.equals(getType())) {
-                result = new String((char[]) value.getStorage());
+                result = new String((char[]) value);
             } else {
                 result = getStringValue(0);
             }
@@ -131,9 +132,7 @@ public class HdfAttribute implements IAttribute {
     @Override
     public String getStringValue(final int index) {
         if (isString()) {
-            Object data = value.getStorage();
-            return ((String[]) data)[0];
-            // return ((String) java.lang.reflect.Array.get(value.getStorage(), index));
+            return ((String[]) value)[0];
         } else {
             return null;
         }
@@ -151,11 +150,7 @@ public class HdfAttribute implements IAttribute {
     @Override
     public Number getNumericValue(final int index) {
         Object localValue;
-        if (isArray()) {
-            localValue = java.lang.reflect.Array.get(value.getArrayUtils().copyTo1DJavaArray(), index);
-        } else {
-            localValue = java.lang.reflect.Array.get(value.getStorage(), index);
-        }
+        localValue = java.lang.reflect.Array.get(value, index);
 
         if (isString()) {
             localValue = Double.parseDouble((String) localValue);
@@ -166,17 +161,13 @@ public class HdfAttribute implements IAttribute {
 
     @Override
     public void setStringValue(final String val) {
-        try {
-            value = new HdfArray(factoryName, new String[] { val }, new int[] { 1 });
-            dirty = true;
-        } catch (InvalidArrayTypeException e) {
-            Factory.getLogger().log(Level.SEVERE, "Unable to initialize data!", e);
-        }
+        value = new String[] { val };
+        dirty = true;
     }
 
     @Override
     public void setValue(final IArray value) {
-        this.value = value;
+        this.value = value.getStorage();
         this.dirty = true;
     }
 
@@ -187,13 +178,13 @@ public class HdfAttribute implements IAttribute {
     public void save(final HObject parent, boolean isLink, boolean forceSave) throws Exception {
         if (dirty || forceSave) {
             H5Datatype dataType;
-            Object valueObject = getValue().getStorage();
-            if (valueObject instanceof String[]) {
-                String[] strArray = (String[]) valueObject;
-                // valueObject = strArray[0];
-                dataType = new H5Datatype(Datatype.CLASS_STRING, strArray[0].length() + 1, -1, -1);
+
+            if (value instanceof String[]) {
+                String[] strArray = (String[]) value;
+                String valueObject = strArray[0];
+                dataType = new H5Datatype(Datatype.CLASS_STRING, valueObject.length() + 1, -1, -1);
             } else {
-                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(value.getElementType());
+                int type_id = HdfObjectUtils.getNativeHdfDataTypeForClass(value.getClass().getComponentType());
                 dataType = new H5Datatype(type_id);
             }
 
@@ -204,9 +195,9 @@ public class HdfAttribute implements IAttribute {
             }
 
             if (attr == null) {
-                attr = new Attribute(getName(), dataType, null, valueObject);
+                attr = new Attribute(getName(), dataType, null, value);
             } else {
-                attr.setValue(valueObject);
+                attr.setValue(value);
             }
 
             parent.writeMetadata(attr);

@@ -6,15 +6,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.hdf.array;
 
+import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 
 import ncsa.hdf.object.h5.H5ScalarDS;
@@ -27,7 +28,6 @@ import org.cdma.engine.hdf.utils.HdfObjectUtils;
 import org.cdma.exception.InvalidArrayTypeException;
 import org.cdma.interfaces.IArray;
 
-
 public class HdfArray extends DefaultArrayInline {
 
     private HdfDataItem dataItem;
@@ -38,9 +38,8 @@ public class HdfArray extends DefaultArrayInline {
         this.dataItem = dataItem;
     }
 
-    public HdfArray(String factoryName, Object array, int[] iShape)
-            throws InvalidArrayTypeException {
-        super(factoryName, array, iShape);
+    public HdfArray(String factoryName, Object array, int[] iShape) throws InvalidArrayTypeException {
+        super(factoryName, new WeakReference<Object>(array), iShape);
         this.lock();
     }
 
@@ -61,16 +60,17 @@ public class HdfArray extends DefaultArrayInline {
 
     @Override
     protected Object loadData() {
-        Object result = null;
+        Object data = null;
+        WeakReference<Object> result = new WeakReference<Object>(data);
+
         if (dataItem != null) {
             DefaultIndex index = getIndex();
             try {
-                result = dataItem.load(index.getProjectionOrigin(), index.getProjectionShape());
-            }
-            catch (OutOfMemoryError e) {
+                data = dataItem.load(index.getProjectionOrigin(), index.getProjectionShape());
+                result = new WeakReference<Object>(data);
+            } catch (OutOfMemoryError e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to loadData()", e);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to loadData()", e);
             }
         }
@@ -82,8 +82,7 @@ public class HdfArray extends DefaultArrayInline {
         HdfArray result;
         try {
             result = new HdfArray(this);
-        }
-        catch (InvalidArrayTypeException e) {
+        } catch (InvalidArrayTypeException e) {
             result = null;
             Factory.getLogger().log(Level.SEVERE, "Unable to copy the HdfArray array: " + this, e);
         }
@@ -92,9 +91,19 @@ public class HdfArray extends DefaultArrayInline {
 
     @Override
     protected Object getData() {
-        Object result = super.getData();
-        if( result == null ) {
-            result = loadData();
+        WeakReference<Object> reference = (WeakReference<Object>) super.getData();
+
+        if (reference == null) {
+            reference = (WeakReference<Object>) loadData();
+        }
+        Object result = reference.get();
+
+        if (result == null) {
+            reference = (WeakReference<Object>) loadData();
+        }
+
+        if (reference != null) {
+            result = reference.get();
         }
         return result;
     }
