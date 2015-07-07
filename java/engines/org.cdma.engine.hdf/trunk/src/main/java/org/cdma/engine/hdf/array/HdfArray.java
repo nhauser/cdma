@@ -39,7 +39,7 @@ public class HdfArray extends DefaultArrayInline {
     }
 
     public HdfArray(String factoryName, Object array, int[] iShape) throws InvalidArrayTypeException {
-        super(factoryName, new WeakReference<Object>(array), iShape);
+        super(factoryName, array, iShape);
         this.lock();
     }
 
@@ -91,21 +91,26 @@ public class HdfArray extends DefaultArrayInline {
 
     @Override
     protected Object getData() {
-        WeakReference<Object> reference = (WeakReference<Object>) super.getData();
+        Object result = null;
+        Object data = super.getData();
+        if (isLocked()) {
+            result = data;
+        } else if (data == null || data instanceof WeakReference<?>) {
+            WeakReference<Object> reference = (WeakReference<Object>) data;
 
-        if (reference == null) {
-            reference = (WeakReference<Object>) loadData();
-        }
-        Object result = reference.get();
-
-        if (result == null) {
-            reference = (WeakReference<Object>) loadData();
-        }
-
-        if (reference != null) {
+            // If reference doesn't exists: WeakRef & its data has never been loaded
+            if (reference == null) {
+                reference = (WeakReference<Object>) loadData();
+            }
             result = reference.get();
+
+            // Reference exists but data is null: GC has cleaned data
+            // we have to reload it
+            if (result == null) {
+                reference = (WeakReference<Object>) loadData();
+                result = reference.get();
+            }
         }
         return result;
     }
-
 }
