@@ -94,7 +94,7 @@ public class HdfAttribute implements IAttribute {
 
     @Override
     public boolean isArray() {
-        return value.getClass().isArray();
+        return getLength() > 1;
     }
 
     @Override

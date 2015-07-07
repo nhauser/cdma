@@ -163,7 +163,7 @@ public class HdfDataItem implements IDataItem, Cloneable {
                 }
             }
         } catch (HDF5Exception e) {
-            Factory.getLogger().log(Level.SEVERE, "Unable to loadAttributes", e);
+            Factory.getLogger().log(Level.SEVERE, "Unable to loadAttributes for " + this.getName(), e);
         }
     }
 
