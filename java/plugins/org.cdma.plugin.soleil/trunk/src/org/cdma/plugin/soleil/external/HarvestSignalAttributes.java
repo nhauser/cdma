@@ -105,21 +105,19 @@ public class HarvestSignalAttributes implements IPluginMethod {
         // Scan attribute
         if (nodes.length > 1 && nodes[1].getClassName().equals("NXdata")) {
 
-            String[] containerNameParts = container.getShortName().split("_");
-            // By convention @SOLEIL, the equipment is before the '_'
-            if (containerNameParts.length > 0) {
-                container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, containerNameParts[0]);
-            }
-
-            NxsGroup root = (NxsGroup) container.getRootGroup();
-            NexusNode[] rootNodes = root.getPathNexus().getNodes();
-            if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
-                root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
-            }
-
-            String attrName = "region";
-            String attrValue = nodes[nodes.length - 1].getNodeName().replaceAll(".*([0-9]+)$", "$1");
-            container.addStringAttribute(attrName, attrValue);
+            // By convention @SOLEIL, the NXData child node name is the equipment name
+            container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, container.getShortName());
         }
+
+        NxsGroup root = (NxsGroup) container.getRootGroup();
+        NexusNode[] rootNodes = root.getPathNexus().getNodes();
+        if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
+            root = (NxsGroup) root.getGroup(nodes[0].getNodeName());
+        }
+
+        String attrName = "region";
+        String attrValue = nodes[nodes.length - 1].getNodeName().replaceAll(".*([0-9]+)$", "$1");
+        container.addStringAttribute(attrName, attrValue);
     }
+
 }
