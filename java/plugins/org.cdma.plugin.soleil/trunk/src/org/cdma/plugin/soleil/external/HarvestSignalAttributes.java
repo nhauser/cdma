@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.plugin.soleil.external;
 
@@ -104,6 +104,13 @@ public class HarvestSignalAttributes implements IPluginMethod {
     private void setAttributeEquipment(IContainer container, NexusNode[] nodes) {
         // Scan attribute
         if (nodes.length > 1 && nodes[1].getClassName().equals("NXdata")) {
+
+            String[] containerNameParts = container.getShortName().split("_");
+            // By convention @SOLEIL, the equipment is before the '_'
+            if (containerNameParts.length > 0) {
+                container.addStringAttribute(NxsConstant.ATTR_EQUIPMENT, containerNameParts[0]);
+            }
+
             NxsGroup root = (NxsGroup) container.getRootGroup();
             NexusNode[] rootNodes = root.getPathNexus().getNodes();
             if (rootNodes.length == 0 || !rootNodes[0].getClassName().equals("NXentry")) {
