@@ -161,9 +161,30 @@
     </plugin>
   </dataset-model>
 
+<!-- ============================================
+==  CONFIG 6: Nano 
+============================================= -->
+  <dataset-model name="nanoscopium_monitoring">
+    <criteria>
+      <if exist="true" target="/{NXentry}/NANOSCOPIUM"/>
+    </criteria>
+    
+    <parameters>
+      <parameter name="BEAMLINE" type="constant" constant="nanoscopium"/>
+      <parameter name="MODEL" type="constant" constant="passerelle"/>
+    </parameters>
+
+    <plugin>
+      <java>
+        <set name="log_debug" value="true"/>
+        <set name="N4T_buffer_size" value="300"/>
+      </java>
+    </plugin>
+  </dataset-model>
+
 
 <!-- ============================================
-==  CONFIG 6: BAD format (Always last one)     ==
+==  CONFIG 7: BAD format (Always last one)     ==
 ============================================= -->
   <dataset-model name="unknown_unknown">
 
