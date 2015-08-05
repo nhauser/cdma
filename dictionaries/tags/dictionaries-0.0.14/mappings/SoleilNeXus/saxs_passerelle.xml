@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE map-def SYSTEM "../../dtd/mapping_file.dtd">
+<map-def name="SAXS_PASSERELLE" version="1.0.0">
+  <item key="acquisition_sequence">
+    <path>/</path>
+    <call>CreateVirtualItem</call>
+  </item>
+  <item key="acquisition_origin">
+    <path>/{NXinstrument}</path>
+    <call>CreateVirtualItem</call>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="camera">
+    <path>/{NXinstrument}/{NXdetector}</path>
+    <call>HarvestEquipmentAttributes</call>
+    <attribute name="equipment" value="Pilatus300K" />
+    <attribute name="region" value="" />
+  </item>
+   <item key="distance">
+    <path>/{NXinstrument}/{NXdetector}/distance</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="exposureTime">
+    <path>/duration</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="x0">
+    <path>/{NXinstrument}/{NXdetector}/beam_center_x</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="z0">
+    <path>/{NXinstrument}/{NXdetector}/beam_center_z</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="lambda">
+    <path>/{NXinstrument}/{NXmonochromator}/wavelength</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="energy">
+    <path>/{NXinstrument}/{NXmonochromator}/energy</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+  <item key="images">
+    <path>/image*{NXdata}/data</path>
+    <call>DataItemStacker</call>
+    <call>HarvestSignalAttributes</call>
+    <attribute name="equipment">
+      <path>/{NXinstrument}/{NXdetector}</path>
+      <call>HarvestEquipmentAttributes</call>
+    </attribute>
+    <attribute name="interpretation" value="image"/>
+  </item>
+  <item key="comments">
+    <path>/{NXsample}/name</path>
+    <call>HarvestEquipmentAttributes</call>
+  </item>
+</map-def>

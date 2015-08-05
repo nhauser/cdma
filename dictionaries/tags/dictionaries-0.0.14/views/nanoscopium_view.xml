@@ -1,0 +1,4 @@
+<!DOCTYPE data-def SYSTEM "../dtd/view_file.dtd">
+<data-def name="NANOSCOPIUM" synonym="">
+	<item key ="machine_current"/>
+</data-def>
