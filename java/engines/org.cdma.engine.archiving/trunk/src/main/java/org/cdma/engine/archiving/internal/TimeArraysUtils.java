@@ -41,6 +41,9 @@ public class TimeArraysUtils implements IArrayUtils {
                 }
             }
         }
+        if (tab instanceof long[]) {
+            timeValue = (long[]) tab;
+        }
         return timeValue;
     }
 
