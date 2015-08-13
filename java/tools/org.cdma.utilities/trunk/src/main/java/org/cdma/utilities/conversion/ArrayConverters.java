@@ -161,8 +161,12 @@ public final class ArrayConverters {
 
             int cell = 0;
             for (String value : source) {
-                out[cell] = Double.valueOf(value).doubleValue();
-                cell++;
+                if (cell < out.length) {
+                    out[cell] = Double.valueOf(value).doubleValue();
+                    cell++;
+                } else {
+                    break;
+                }
             }
         }
 
