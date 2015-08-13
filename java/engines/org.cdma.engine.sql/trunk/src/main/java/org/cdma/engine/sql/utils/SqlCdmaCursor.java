@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -221,7 +222,6 @@ public class SqlCdmaCursor {
                     String queryString = "SELECT COUNT(*) FROM (" + mQuery + ")";
                     mStatCount = connection.prepareStatement(queryString);
                     Factory.getLogger().log(Level.FINEST, "select query : " + queryString);
-                    // System.out.println("mStatCount query=" + queryString);
                     mStatCount.setFetchSize(1000);
                 }
 
@@ -250,6 +250,8 @@ public class SqlCdmaCursor {
 
     private void setParams(PreparedStatement statement) {
         if ((mParams != null) && (mParams.length > 0)) {
+            Factory.getLogger().log(Level.FINEST, "Param = " + Arrays.toString(mParams));
+            // System.out.println();
             Object param = null;
             for (int i = 0; i < mParams.length; i++) {
                 param = mParams[i];
