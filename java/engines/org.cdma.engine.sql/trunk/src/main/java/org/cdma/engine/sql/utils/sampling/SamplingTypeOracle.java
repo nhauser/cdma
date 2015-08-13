@@ -105,7 +105,7 @@ public enum SamplingTypeOracle implements SamplingType {
     public String getFieldAsStringSelector(String field) {
         // return "to_char(" + field + ")";
         // TODO REPLACE WHEN JIRA DBA-1152 will be fixed in database see JAVAAPI-313
-        return "CONCAT(DBMS_LOB.SUBSTR(" + field + ",4000,1))";
+        return "DBMS_LOB.SUBSTR(" + field + ",4000,1)";
     }
 
     @Override
