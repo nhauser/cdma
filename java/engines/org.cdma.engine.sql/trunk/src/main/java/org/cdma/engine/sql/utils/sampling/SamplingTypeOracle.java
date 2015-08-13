@@ -23,7 +23,7 @@ import org.cdma.engine.sql.utils.SamplingType;
 
 public enum SamplingTypeOracle implements SamplingType {
     MONTH("YYYY-"), DAY("YYYY-MM-"), HOUR("YYYY-MM-DD "), MINUTE("YYYY-MM-DD HH24:"), SECOND("YYYY-MM-DD HH24:MI:"), FRACTIONAL(
-            "YYYY-MM-DD HH24:MI:SS."), NONE("YYYY-MM-DD HH24:MI:SS.FF");
+    "YYYY-MM-DD HH24:MI:SS."), NONE("YYYY-MM-DD HH24:MI:SS.FF");
 
     private String mSampling;
     static private LinkedHashMap<String, String> mCorrespondance;
@@ -103,7 +103,9 @@ public enum SamplingTypeOracle implements SamplingType {
 
     @Override
     public String getFieldAsStringSelector(String field) {
-        return "to_char(" + field + ")";
+        // return "to_char(" + field + ")";
+        // TODO REPLACE WHEN JIRA DBA-1152 will be fixed in database see JAVAAPI-313
+        return "DBMS_LOB.SUBSTR(" + field + ",4000,1)";
     }
 
     @Override
