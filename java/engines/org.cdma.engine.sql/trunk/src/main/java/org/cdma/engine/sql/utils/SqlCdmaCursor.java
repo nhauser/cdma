@@ -32,7 +32,9 @@ import org.cdma.engine.sql.array.SqlArray;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.navigation.SqlDataItem;
 import org.cdma.engine.sql.navigation.SqlGroup;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.InvalidArrayTypeException;
+import org.cdma.utilities.CDMAExceptionManager;
 import org.cdma.utilities.performance.PostTreatmentManager;
 
 public class SqlCdmaCursor {
@@ -85,6 +87,8 @@ public class SqlCdmaCursor {
                 next();
             } catch (SQLException e) {
                 Factory.getLogger().log(Level.WARNING, "Unable to initialize group's data items children", e);
+                CDMAExceptionManager.notifyHandler(this, new CDMAException(
+                        "Unable to initialize group's data items children " + e.getMessage()));
             }
         }
 
@@ -125,6 +129,8 @@ public class SqlCdmaCursor {
                 }
             } catch (SQLException e) {
                 Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
+                CDMAExceptionManager.notifyHandler(this,
+                        new CDMAException("Unable to initialize group's children " + e.getMessage()));
             }
         }
         return result;
@@ -229,6 +235,7 @@ public class SqlCdmaCursor {
                 mNbRows = -1;
                 Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
                 close();
+                CDMAExceptionManager.notifyHandler(this, new CDMAException(e.getMessage()));
             }
         }
 
@@ -259,6 +266,7 @@ public class SqlCdmaCursor {
                     statement.setObject(i + 1, param);
                 } catch (SQLException e) {
                     Factory.getLogger().log(Level.SEVERE, "Unable to prepare query!", e);
+                    CDMAExceptionManager.notifyHandler(this, new CDMAException(e.getMessage()));
                 }
             }
         }

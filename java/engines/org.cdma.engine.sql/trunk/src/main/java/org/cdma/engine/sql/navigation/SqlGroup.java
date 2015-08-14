@@ -6,12 +6,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	Norman Xiong (nxi@Bragg Institute) - initial API and implementation
- * 	Tony Lam (nxi@Bragg Institute) - initial API and implementation
- *        Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
- *        Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
- * 	Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
- * 	Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
+ * Norman Xiong (nxi@Bragg Institute) - initial API and implementation
+ * Tony Lam (nxi@Bragg Institute) - initial API and implementation
+ * Majid Ounsy (SOLEIL Synchrotron) - API v2 design and conception
+ * Stéphane Poirier (SOLEIL Synchrotron) - API v2 design and conception
+ * Clement Rodriguez (ALTEN for SOLEIL Synchrotron) - API evolution
+ * Gregory VIGUIER (SOLEIL Synchrotron) - API evolution
  ******************************************************************************/
 package org.cdma.engine.sql.navigation;
 
@@ -31,6 +31,7 @@ import org.cdma.dictionary.Path;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.utils.ISqlDataset;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.NoResultException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.SignalNotAvailableException;
@@ -42,6 +43,7 @@ import org.cdma.interfaces.IDictionary;
 import org.cdma.interfaces.IDimension;
 import org.cdma.interfaces.IGroup;
 import org.cdma.interfaces.IKey;
+import org.cdma.utilities.CDMAExceptionManager;
 import org.cdma.utils.Utilities.ModelType;
 
 public class SqlGroup implements IGroup, Cloneable {
@@ -305,6 +307,8 @@ public class SqlGroup implements IGroup, Cloneable {
 
             } catch (SQLException e) {
                 Factory.getLogger().log(Level.WARNING, "Unable to initialize group list", e);
+                CDMAExceptionManager.notifyHandler(this,
+                        new CDMAException("Unable to initialize group list " + e.getMessage()));
             }
 
         }
@@ -329,6 +333,8 @@ public class SqlGroup implements IGroup, Cloneable {
                 }
             } catch (SQLException e) {
                 Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
+                CDMAExceptionManager.notifyHandler(this,
+                        new CDMAException("Unable to initialize group's children " + e.getMessage()));
             }
         }
     }
@@ -400,7 +406,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
     @Override
     public boolean isEntry() {
-        return mParent != null && mParent.isRoot();
+        return (mParent != null) && mParent.isRoot();
     }
 
     @Override
@@ -423,7 +429,7 @@ public class SqlGroup implements IGroup, Cloneable {
         return new SqlGroup(this);
     }
 
-    public ResultSet executeQuery(String sqlQuery) throws SQLException {
+    public ResultSet executeQuery(String sqlQuery) {
         ResultSet result = null;
         SqlConnector sql_connector = mDataset.getSqlConnector();
         if (sql_connector != null) {
@@ -435,7 +441,13 @@ public class SqlGroup implements IGroup, Cloneable {
                 statement.close();
             } catch (IOException e) {
                 Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                CDMAExceptionManager.notifyHandler(this, new CDMAException("Cannot open connection " + e.getMessage()));
+            } catch (Exception e) {
+                Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                CDMAExceptionManager.notifyHandler(this,
+                        new CDMAException("Cannot execute query " + sqlQuery + " " + e.getMessage()));
             }
+
         }
 
         return result;
@@ -447,7 +459,7 @@ public class SqlGroup implements IGroup, Cloneable {
 
         if (selectors != null) {
             for (String add : selectors) {
-                if (add != null && !add.isEmpty()) {
+                if ((add != null) && !add.isEmpty()) {
                     addon += add + ", ";
                 }
             }
