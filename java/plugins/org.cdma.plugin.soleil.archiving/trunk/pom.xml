@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.plugins</groupId>
   <artifactId>ArchivingSoleil</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.5</version>
   <name>CDMA Archiving Soleil Plug-in</name>
   <description>This project is Soleil's Archiving plugin for the CDMA.</description>
   <developers>
