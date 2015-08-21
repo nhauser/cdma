@@ -22,31 +22,36 @@ import java.util.logging.Level;
 
 import org.cdma.Factory;
 import org.cdma.engine.sql.array.SqlArray;
+import org.cdma.exception.CDMAException;
 import org.cdma.utilities.performance.PostTreatment;
 
 public class SqlArrayLoader implements PostTreatment {
     private final SqlCdmaCursor cursor;
     private final SqlArray[] arrays;
 
-    public SqlArrayLoader(SqlCdmaCursor cursor) throws SQLException {
+    public SqlArrayLoader(SqlCdmaCursor cursor) throws CDMAException {
         this.cursor = cursor;
 
         // Get information from SQL cursor
         ResultSet set = cursor.getResultSet();
-        ResultSetMetaData meta = set.getMetaData();
-        int count = meta.getColumnCount();
-        int nbRow = cursor.getNumberOfResults();
-        String factory = cursor.getDataset().getFactoryName();
+        try {
+            ResultSetMetaData meta = set.getMetaData();
+            int count = meta.getColumnCount();
+            int nbRow = cursor.getNumberOfResults();
+            String factory = cursor.getDataset().getFactoryName();
 
-        // Get the SQL array post treatment
-        ISqlArrayAppender appender = cursor.getAppender();
+            // Get the SQL array post treatment
+            ISqlArrayAppender appender = cursor.getAppender();
 
-        // Prepare the internal array
-        arrays = new SqlArray[count];
-        for (int col = 1; col <= count; col++) {
-            arrays[col - 1] = SqlArray.instantiate(factory, set, col, nbRow, appender);
-            arrays[col - 1].appendData(set);
-            arrays[col - 1].lock();
+            // Prepare the internal array
+            arrays = new SqlArray[count];
+            for (int col = 1; col <= count; col++) {
+                arrays[col - 1] = SqlArray.instantiate(factory, set, col, nbRow, appender);
+                arrays[col - 1].appendData(set);
+                arrays[col - 1].lock();
+            }
+        } catch (SQLException e) {
+            throw new CDMAException(e);
         }
     }
 
@@ -57,7 +62,7 @@ public class SqlArrayLoader implements PostTreatment {
 
     @Override
     public void process() {
-        if (cursor != null && arrays != null) {
+        if ((cursor != null) && (arrays != null)) {
             // Load data from SQL cursor
             ResultSet set = null;
             try {
@@ -79,7 +84,7 @@ public class SqlArrayLoader implements PostTreatment {
                     }
                 }
                 set.close();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Factory.getLogger().log(Level.SEVERE, "Unable to load data from SQL cursor!", e);
             }
             for (SqlArray array : arrays) {

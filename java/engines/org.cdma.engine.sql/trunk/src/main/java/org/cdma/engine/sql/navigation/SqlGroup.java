@@ -305,10 +305,9 @@ public class SqlGroup implements IGroup, Cloneable {
                     }
                 }
 
-            } catch (SQLException e) {
+            } catch (CDMAException e) {
                 Factory.getLogger().log(Level.WARNING, "Unable to initialize group list", e);
-                CDMAExceptionManager.notifyHandler(this,
-                        new CDMAException("Unable to initialize group list " + e.getMessage()));
+                CDMAExceptionManager.notifyHandler(this, e);
             }
 
         }

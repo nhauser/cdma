@@ -25,11 +25,13 @@ import org.cdma.dictionary.LogicalGroup;
 import org.cdma.engine.sql.internal.SqlConnector;
 import org.cdma.engine.sql.utils.ISqlDataset;
 import org.cdma.engine.sql.utils.SqlCdmaCursor;
+import org.cdma.exception.CDMAException;
 import org.cdma.exception.NotImplementedException;
 import org.cdma.exception.WriterException;
 import org.cdma.interfaces.IAttribute;
 import org.cdma.interfaces.IContainer;
 import org.cdma.interfaces.IGroup;
+import org.cdma.utilities.CDMAExceptionManager;
 
 public final class SqlQueryDataset implements ISqlDataset {
     private final SqlConnector mConnector;
@@ -204,8 +206,10 @@ public final class SqlQueryDataset implements ISqlDataset {
         cursor = new SqlCdmaCursor(this, query, params);
         try {
             cursor.next();
-        } catch (SQLException e) {
+        } catch (CDMAException e) {
             Factory.getLogger().log(Level.WARNING, "Unable to get execute query: " + query, e);
+            CDMAExceptionManager.notifyHandler(this, new CDMAException("Unable to get execute query [" + query
+                    + "] : \n" + e.getMessage()));
         }
     }
 

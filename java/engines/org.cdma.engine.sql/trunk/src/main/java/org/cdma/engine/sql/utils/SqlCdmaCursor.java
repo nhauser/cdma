@@ -23,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -49,12 +48,13 @@ public class SqlCdmaCursor {
     private int mNbRows;
     private boolean mInitialized;
     private ISqlArrayAppender mTreatment;
+    private String queryString = "null";
 
-    public SqlCdmaCursor(ISqlDataset dataset, String query) {
+    public SqlCdmaCursor(final ISqlDataset dataset, final String query) {
         this(dataset, query, new Object[] {});
     }
 
-    public SqlCdmaCursor(ISqlDataset dataset, String query, Object[] params) {
+    public SqlCdmaCursor(final ISqlDataset dataset, final String query, final Object[] params) {
         mDataset = dataset;
         mCurRow = 0;
         mQuery = query;
@@ -65,7 +65,7 @@ public class SqlCdmaCursor {
         mInitialized = false;
     }
 
-    public SqlGroup getGroup() throws SQLException {
+    public SqlGroup getGroup() throws CDMAException {
         SqlGroup result = null;
 
         if (!mClose) {
@@ -80,20 +80,17 @@ public class SqlCdmaCursor {
         return result;
     }
 
-    public List<SqlDataItem> getDataItemList() {
+    public List<SqlDataItem> getDataItemList() throws CDMAException {
         List<SqlDataItem> result = new ArrayList<SqlDataItem>();
-        if ((mCurRow == 0) && !mClose) {
-            try {
-                next();
-            } catch (SQLException e) {
-                Factory.getLogger().log(Level.WARNING, "Unable to initialize group's data items children", e);
-                CDMAExceptionManager.notifyHandler(this, new CDMAException(
-                        "Unable to initialize group's data items children " + e.getMessage()));
-            }
-        }
+        try {
+            if ((mCurRow == 0) && !mClose) {
 
-        if ((mNbRows >= 0) && (mCurRow == 1)) {
-            try {
+                next();
+
+            }
+
+            if ((mNbRows >= 0) && (mCurRow == 1)) {
+
                 ResultSet set = getResultSet();
                 ResultSetMetaData meta = set.getMetaData();
                 int count = meta.getColumnCount();
@@ -127,94 +124,111 @@ public class SqlCdmaCursor {
                                 "Unable to initialize data for the data item: " + names[col - 1], e);
                     }
                 }
-            } catch (SQLException e) {
-                Factory.getLogger().log(Level.WARNING, "Unable to initialize group's children", e);
-                CDMAExceptionManager.notifyHandler(this,
-                        new CDMAException("Unable to initialize group's children " + e.getMessage()));
+
             }
+        } catch (SQLException e) {
+            throw new CDMAException(e);
         }
         return result;
     }
 
-    public boolean next() throws SQLException {
+    public boolean next() throws CDMAException {
         boolean result = false;
 
         if (!mClose) {
             // Get the result set from the query
             ResultSet sql_set = getResultSet();
-
-            // Forward the cursor
-            if (sql_set != null) {
-                result = sql_set.next();
-                if (result) {
-                    mCurRow++;
-                } else {
-                    // Close both statement and result set
-                    close();
+            try {
+                // Forward the cursor
+                if (sql_set != null) {
+                    result = sql_set.next();
+                    if (result) {
+                        mCurRow++;
+                    } else {
+                        // Close both statement and result set
+                        close();
+                    }
                 }
+            } catch (SQLException e) {
+                throw new CDMAException(e);
             }
         }
         return result;
     }
 
-    protected ResultSet getResultSet() throws SQLException {
+    protected ResultSet getResultSet() throws CDMAException {
         // Get the soft ref and check it is still available
         ResultSet sql_set = mResult.get();
-        if ((sql_set == null) || sql_set.isClosed()) {
-            // Get the result set of the query
-            sql_set = executeQuery();
+        try {
+            if ((sql_set == null) || sql_set.isClosed()) {
+                // Get the result set of the query
+                sql_set = executeQuery();
 
-            // Set the cursor to the right position
-            if (sql_set != null) {
-                initResultSet(sql_set);
+                // Set the cursor to the right position
+                if (sql_set != null) {
+                    initResultSet(sql_set);
+                }
             }
+        } catch (Exception e) {
+            throw new CDMAException("Cannot read result set :" + e.getMessage());
         }
 
         return sql_set;
     }
 
-    public void close() throws SQLException {
-        if ((mStatQuery != null) && !mStatQuery.isClosed()) {
-            mStatQuery.close();
+    public void close() throws CDMAException {
+        try {
+            if ((mStatQuery != null) && !mStatQuery.isClosed()) {
+                mStatQuery.close();
+            }
+            if ((mStatCount != null) && !mStatCount.isClosed()) {
+                mStatCount.close();
+            }
+            mClose = true;
         }
-        if ((mStatCount != null) && !mStatCount.isClosed()) {
-            mStatCount.close();
+        catch (SQLException e) {
+            throw new CDMAException("Cannot close connection " + e.getMessage());
         }
-        mClose = true;
     }
 
-    private ResultSet executeQuery() throws SQLException {
+    private ResultSet executeQuery() throws CDMAException {
         ResultSet result = null;
 
         if (!mInitialized) {
             prepareStatement();
         }
 
-        // Get the SQL connection
-        SqlConnector sql_connector = mDataset.getSqlConnector();
-        if (sql_connector != null) {
-            // Count number of result
-            if (mNbRows < 0) {
-                setParams(mStatCount);
-                ResultSet tmp = mStatCount.executeQuery();
-                if (tmp.next()) {
-                    mNbRows = tmp.getInt(1);
-                }
-            }
+        try {
+            // Get the SQL connection
 
-            // Execute the query
-            setParams(mStatQuery);
-            result = mStatQuery.executeQuery();
+            SqlConnector sql_connector = mDataset.getSqlConnector();
+            if (sql_connector != null) {
+                // Count number of result
+                if (mNbRows < 0) {
+                    setParams(mStatCount);
+                    ResultSet tmp = mStatCount.executeQuery();
+                    if (tmp.next()) {
+                        mNbRows = tmp.getInt(1);
+                    }
+                }
+
+                // Execute the query
+                setParams(mStatQuery);
+                result = mStatQuery.executeQuery();
+            }
+        } catch (SQLException e) {
+            throw new CDMAException("Cannot performed query [" + queryString + "] because \n" + e.getMessage());
         }
 
         return result;
     }
 
-    private void prepareStatement() throws SQLException {
+    private void prepareStatement() throws CDMAException {
 
         // Get the SQL connection
         SqlConnector sql_connector = mDataset.getSqlConnector();
         if (sql_connector != null) {
+            queryString = "null";
             try {
                 Connection connection = sql_connector.getConnection();
                 // Check statements are still valid
@@ -225,24 +239,28 @@ public class SqlCdmaCursor {
                 }
                 if ((mStatCount == null) || mStatCount.isClosed()) {
                     // Create the count statement
-                    String queryString = "SELECT COUNT(*) FROM (" + mQuery + ")";
+                    queryString = "SELECT COUNT(*) FROM (" + mQuery + ")";
                     mStatCount = connection.prepareStatement(queryString);
                     Factory.getLogger().log(Level.FINEST, "select query : " + queryString);
+                    // System.out.println("mStatCount query=" + queryString);
                     mStatCount.setFetchSize(1000);
                 }
 
+            } catch (SQLException e) {
+                throw new CDMAException("Cannot performed query [" + queryString + "] because \n" + e.getMessage());
             } catch (IOException e) {
                 mNbRows = -1;
-                Factory.getLogger().log(Level.SEVERE, e.getMessage(), e);
+                Factory.getLogger().log(Level.SEVERE, "Cannot get connection : " + e.getMessage(), e);
+                CDMAExceptionManager
+                .notifyHandler(this, new CDMAException("Cannot get connection : " + e.getMessage()));
                 close();
-                CDMAExceptionManager.notifyHandler(this, new CDMAException(e.getMessage()));
             }
         }
 
         mInitialized = true;
     }
 
-    private void initResultSet(ResultSet sql_set) throws SQLException {
+    private void initResultSet(final ResultSet sql_set) throws SQLException {
         // Set the cursor on the right position
         if (sql_set.getType() == ResultSet.TYPE_FORWARD_ONLY) {
             for (int i = 1; i < mCurRow; i++) {
@@ -255,19 +273,12 @@ public class SqlCdmaCursor {
         mResult = new SoftReference<ResultSet>(sql_set);
     }
 
-    private void setParams(PreparedStatement statement) {
+    private void setParams(final PreparedStatement statement) throws SQLException {
         if ((mParams != null) && (mParams.length > 0)) {
-            Factory.getLogger().log(Level.FINEST, "Param = " + Arrays.toString(mParams));
-            // System.out.println();
             Object param = null;
             for (int i = 0; i < mParams.length; i++) {
                 param = mParams[i];
-                try {
-                    statement.setObject(i + 1, param);
-                } catch (SQLException e) {
-                    Factory.getLogger().log(Level.SEVERE, "Unable to prepare query!", e);
-                    CDMAExceptionManager.notifyHandler(this, new CDMAException(e.getMessage()));
-                }
+                statement.setObject(i + 1, param);
             }
         }
     }
@@ -287,7 +298,7 @@ public class SqlCdmaCursor {
      * 
      * @param iSqlArrayAppender
      */
-    public void setAppender(ISqlArrayAppender iSqlArrayAppender) {
+    public void setAppender(final ISqlArrayAppender iSqlArrayAppender) {
         mTreatment = iSqlArrayAppender;
     }
 
