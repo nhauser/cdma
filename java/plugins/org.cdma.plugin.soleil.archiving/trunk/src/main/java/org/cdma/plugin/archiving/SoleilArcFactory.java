@@ -38,8 +38,10 @@ public class SoleilArcFactory extends AbstractFactory {
     public static final String API_VERS = "3.2.3";
     public static final String PLUG_VERS = "1.0.0";
 
+    
+
     @Override
-    public IDataset openDataset(URI uri) {
+    public IDataset openDataset(final URI uri) {
         IDataset dataset = null;
         try {
             dataset = createDatasetInstance(uri);
@@ -53,23 +55,23 @@ public class SoleilArcFactory extends AbstractFactory {
     }
 
     @Override
-    public IDictionary openDictionary(URI uri) throws FileAccessException {
+    public IDictionary openDictionary(final URI uri) throws FileAccessException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDictionary openDictionary(String filepath) throws FileAccessException {
+    public IDictionary openDictionary(final String filepath) throws FileAccessException {
         throw new NotImplementedException();
     }
 
     @Override
-    public IArray createArray(Class<?> clazz, int[] shape) {
+    public IArray createArray(final Class<?> clazz, final int[] shape) {
         Object storage = java.lang.reflect.Array.newInstance(clazz, shape);
         return this.createArray(clazz, shape, storage);
     }
 
     @Override
-    public IArray createArray(Class<?> clazz, int[] shape, Object storage) {
+    public IArray createArray(final Class<?> clazz, final int[] shape, final Object storage) {
         IArray result;
         try {
             result = DefaultArray.instantiateDefaultArray(SoleilArcFactory.NAME, storage, shape);
@@ -81,7 +83,7 @@ public class SoleilArcFactory extends AbstractFactory {
     }
 
     @Override
-    public IArray createArray(Object storage) {
+    public IArray createArray(final Object storage) {
         IArray result = null;
         try {
             result = DefaultArray.instantiateDefaultArray(SoleilArcFactory.NAME, storage);
@@ -93,38 +95,39 @@ public class SoleilArcFactory extends AbstractFactory {
     }
 
     @Override
-    public IArray createStringArray(String value) {
+    public IArray createStringArray(final String value) {
         return this.createArray(value);
     }
 
     @Override
-    public IArray createDoubleArray(double[] javaArray) {
+    public IArray createDoubleArray(final double[] javaArray) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IArray createDoubleArray(double[] javaArray, int[] shape) {
+    public IArray createDoubleArray(final double[] javaArray, final int[] shape) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IArray createArrayNoCopy(Object javaArray) {
+    public IArray createArrayNoCopy(final Object javaArray) {
         throw new NotImplementedException();
     }
 
     @Override
-    public IDataItem createDataItem(IGroup parent, String shortName, IArray array) throws InvalidArrayTypeException {
+    public IDataItem createDataItem(final IGroup parent, final String shortName, final IArray array)
+            throws InvalidArrayTypeException {
         IDataItem result = new ArchivingDataItem(NAME, shortName, parent, array);
         return result;
     }
 
     @Override
-    public IGroup createGroup(String shortName) throws IOException {
+    public IGroup createGroup(final String shortName) throws IOException {
         return new ArchivingGroup(NAME, null, null, shortName);
     }
 
     @Override
-    public IGroup createGroup(IGroup parent, String shortName) {
+    public IGroup createGroup(final IGroup parent, final String shortName) {
         ArchivingGroup group = null;
         if ((shortName != null) && !shortName.isEmpty()) {
             if (parent != null) {
@@ -140,21 +143,21 @@ public class SoleilArcFactory extends AbstractFactory {
     }
 
     @Override
-    public LogicalGroup createLogicalGroup(IDataset dataset, IKey key) {
+    public LogicalGroup createLogicalGroup(final IDataset dataset, final IKey key) {
         return new LogicalGroup(key, dataset);
     }
 
     @Override
-    public IAttribute createAttribute(String name, Object value) {
+    public IAttribute createAttribute(final String name, final Object value) {
         return new ArchivingAttribute(NAME, name, value);
 
     }
 
     @Override
-    public IDataset createDatasetInstance(URI uri) throws CDMAException {
+    public IDataset createDatasetInstance(final URI uri) throws CDMAException {
 
         ArchivingDataset dataset = null;
-        // URI format type jdbc:mysql://dbhost/dbname#hdb#user#passwd#rac#schema
+        // URI format type jdbc:mysql://dbhost/dbname#hdb;user;passwd;rac;schema
         if (uri != null) {
             String uriString = uri.toString();
             String[] uriSplit = uriString.split("#");
@@ -180,35 +183,38 @@ public class SoleilArcFactory extends AbstractFactory {
                     }
                 }
 
-                // Archiving mode
                 if (uriSplit.length > 1) {
-                    try {
-                        dbMode = ArchivingMode.valueOf(uriSplit[1]);
-                    } catch (Exception e) {
-                        dbMode = ArchivingMode.HDB;
+                    String[] uriSplitInfos = uriSplit[1].split(";");
+
+                    // Archiving mode
+                    if (uriSplitInfos.length > 0) {
+                        try {
+                            dbMode = ArchivingMode.valueOf(uriSplitInfos[0]);
+                        } catch (Exception e) {
+                            dbMode = ArchivingMode.HDB;
+                        }
+                    }
+
+                    // user
+                    if (uriSplitInfos.length > 1) {
+                        dbUser = uriSplitInfos[1];
+                    }
+
+                    // password
+                    if (uriSplitInfos.length > 2) {
+                        dbPassword = uriSplitInfos[2];
+                    }
+
+                    // rac
+                    if (uriSplitInfos.length > 3) {
+                        rac = Boolean.parseBoolean(uriSplitInfos[3]);
+                    }
+
+                    // scheme
+                    if (uriSplitInfos.length > 4) {
+                        dbScheme = uriSplitInfos[4];
                     }
                 }
-
-                // user
-                if (uriSplit.length > 2) {
-                    dbUser = uriSplit[2];
-                }
-
-                // password
-                if (uriSplit.length > 3) {
-                    dbPassword = uriSplit[3];
-                }
-
-                // rac
-                if (uriSplit.length > 4) {
-                    rac = Boolean.parseBoolean(uriSplit[4]);
-                }
-
-                // scheme
-                if (uriSplit.length > 5) {
-                    dbScheme = uriSplit[3];
-                }
-
                 dataset = new ArchivingDataset(NAME, dbMode, dbUser, dbPassword, rac, dbScheme, dbName, dbDriver,
                         dbHost, true);
             }
@@ -223,12 +229,12 @@ public class SoleilArcFactory extends AbstractFactory {
     }
 
     @Override
-    public IKey createKey(String name) {
+    public IKey createKey(final String name) {
         return new Key(this, name);
     }
 
     @Override
-    public Path createPath(String path) {
+    public Path createPath(final String path) {
         return new Path(this, path);
     }
 
