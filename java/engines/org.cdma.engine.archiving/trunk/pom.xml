@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.cdma.engines</groupId>
   <artifactId>archiving</artifactId>
-  <version>0.0.4</version>
+  <version>0.0.5-SNAPSHOT</version>
   <name>CDMA Archiving engine</name>
   <description>This project is an Attribute Archiving engine for the CDMA.</description>
   <developers>
