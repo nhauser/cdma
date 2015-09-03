@@ -1,0 +1,3 @@
+The core dictionary is designed to propose a common set of keywords suitable for all type of measurement. None of these keywords are mandatory in a given dataset, but should be used for all matching data items.
+
+This dictionary propose some precisely defined keywords for specific analysis applications but also some generic ones for general processing programs.

@@ -1,0 +1,76 @@
+# Introduction #
+
+This section is intended to help developers developing new data format engines.
+Separation between plug-ins and engines is very important because, it helps for:
+  * developing physical access to a particular data format (like NeXus) only once,
+  * quickly developing plug-ins which implement specific data organisation of institutes,
+  * keeping project modular.
+
+# Getting started #
+
+A engine must implements the navigation interfaces provided by the CDMA core library:
+  * `IDataset`
+  * `IGroup`
+  * `IDataItem`
+  * `IAttribute`
+
+Therefore plug-ins developers will use those implementations in order to access data without care about specific API (if it exists) related to the physical format. The physical data format is entirely handled by the engine library.
+
+**Note**: Engines libraries are only a concern for plug-ins. <b>Client applications will never directly use an engine.</b>
+
+Because an engine may needs access to the CDMA core as well as plug-ins and of course client applications, it must be a shared library (or Dynamic Link Library on Windows).
+
+## `IDataset` ##
+
+In most cases the engine implementation if this interface will match a handle to a physical data file.
+Note that plug-ins may use or override this engine implementation to matches some data organisation specificity.
+
+All the methods defined in the abstract interface `IDataset` makes sense in its the engine implementation.
+The only exception concern the method getLogicalRoot witch should returns a logical group based on the dictionary mechanism.
+Since a engine don't have to implements any class or method related to this mechanism, this method will throw a exception.
+Below is the NeXus engine implementation of this method:
+
+```
+
+namespace cdma
+{
+
+class NxsDataset: public IDataset
+{
+...
+};
+
+...
+
+cdma::LogicalGroupPtr NxsDataset::getLogicalRoot()
+{
+  THROW_NOT_IMPLEMENTED("NxsDataset::getLogicalRoot");
+}
+
+}
+```
+
+## `IDataItem`, `IGroup`, `IAttribute`, `IDimension` ##
+
+All the methods defined in these interfaces have to be implemented in the engine.
+
+...
+
+# Data management #
+
+## `IArrayStorage` ##
+
+CDMA array classes can be use use as it is by engines developers. But in case of specific needs (e.g. non contiguous memory or non-standard memory arrangement) they can implement their own array data management. This can be done through the `IArrayStorage` interface.
+
+Because the `Array` class manages a `View` object, it allows to focus on an region of interest (ROI) by defining a set of coordinates. But `Array` object do not directly access the memory.
+
+Actually the `Array` class, which is used by client applications, is a front end to an `IArrayStorage` implementation. Access to the underlying memory is done by the `IArrayStorage` implementation who does cells index computations.
+
+Indeed only the `IArrayStorage` implementation owns the data and knows how to access values.
+So calls to `getValue` and `setValue` methods are redirected to that interface. The memory offset computing is done according to the above `Array`'s `View` object.
+
+The CDMA core library provides a default implementation of `IArrayStorage`: `DefaultArrayStorage`. In this implementation, array data is made of a contiguous memory bloc. In most cases this default implementation will be sufficient and engines as well as plugins developers may don't have to care about.
+
+Below is an UML class diagram of `Array` related classes:
+
+![http://cdma.googlecode.com/svn/wiki/images/array_1.png](http://cdma.googlecode.com/svn/wiki/images/array_1.png)

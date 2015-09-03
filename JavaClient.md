@@ -1,0 +1,146 @@
+**Content**
+  * [Requirements](#Requirements.md)
+  * [Setting up The CDMA library](#Setting_up_The_CDMA_library.md)
+  * [Getting access to a dataset](#Getting_access_to_a_dataset.md)
+  * [Choosing the access mode](#Choosing_the_access_mode.md)
+  * [Reading data](#Reading_data.md)
+
+
+
+---
+
+# Requirements #
+
+## Mandatory ##
+To make the CDMA working the following is required:
+  * to have the CDMA core package in class path
+  * to have the OSGI bundle in class path (available from eclipse update site)
+  * to have the JDom bundle in class path (available from eclipse update site)
+
+## Optional Extended Dictionary mechanism ##
+
+To use the Extended Dictionary mechanism, two things are required:
+  * a system property <i>CDM_DICTIONARY_PATH</i> declaring where to find view dictionaries
+
+![http://cdma.googlecode.com/svn/wiki/images/java_sys_prop.png](http://cdma.googlecode.com/svn/wiki/images/java_sys_prop.png)
+
+  * having installed mapping dictionaries into sub-folder having the same name as the plug-in they belong to
+
+![http://cdma.googlecode.com/svn/wiki/images/java_deploy_folder.png](http://cdma.googlecode.com/svn/wiki/images/java_deploy_folder.png)
+
+
+
+---
+
+# Setting up The CDMA library #
+
+CDMA classes are accessible through the core packages. The main class a Java client uses is `org.gumtree.data.Factory`. This is the entry point for using the CDMA, it is a singleton static object. It will be used to instantiate a plug-in.
+
+
+# Getting access to a dataset #
+
+A CDMA dataset is a handle for all the data of an experiment.
+Getting access to a dataset is done through the CDMA factory. Those two samples show how to proceed:
+
+- auto-detect a plug-in and instantiate both plug-in's factory and dataset
+
+```
+// Auto detecting a plug-in for an URI
+URI uri = new URI( "/uri/to/reach/my/datasource" );
+IFactory factory = Factory.getFactory( uri );
+
+// Instantiate the dataset according that auto detected plug-in
+IDataset dataset = factory.createDatasetInstance( uri );
+
+```
+
+- auto-detect a plug-in and instantiate the correct dataset
+
+```
+// Auto detect a plug-in for an URI and
+// get the associated dataset
+URI uri = new URI( "/uri/to/reach/my/datasource" );
+IDataset dataset = Factory.openDataset( uri );
+
+```
+
+
+
+---
+
+# Choosing the access mode #
+
+The CDMA library offers two way of accessing data.
+
+## Standard parsing (physical) way ##
+The so called _standard_ way needs a perfect knowledge of the data organization, like for all others data access API. You would choose this way for a strictly local program and only if you are absolutely sure there is no need to share it or if you need to make a GUI data browser.
+
+```
+// Returns the physical root group
+// Thus, all subsequents calls to sub-groups and dataitems will be based on 
+// the physical data organization.
+IGroup root = dataset.getRootGroup();
+```
+
+We can now browse the dataset to get data items
+
+```
+// Get a specific sub-group
+IGroup a_group = root.getGroup("sub_group");
+
+// Get all sub-groups
+List<IGroup> list_groups = root.getGroupList();
+
+// Get a specific sub data item
+IDataItem a_item = a_group.getDataItem("dataitem_name");
+
+// Get all sub data item
+List<IDataItem> list_groups = root.getgetDataItemList();
+```
+
+## Using the standard dictionary mechanism ##
+
+## Using the extended dictionary mechanism ##
+
+The other way of accessing data uses the dictionary mechanism. It allows writing applications with no need to know something about the data organization. Thus applications using this mechanism can access data regardless the way they are stored without need to change their source code.
+
+In order to be able to use the dictionary mechanism, a data definition document have to be selected. This kind of XML document is called a _view_. All view documents must be suffixed by '`_view`' ('my\_app\_view.xml', 'my\_other\_app\_view.xml'). To select the view insert the following code:
+
+```
+// View (data definition document) selection
+Factory.setActiveView("my_app");
+```
+
+We now can get an handle to the logical root group, and get access to the data items
+
+```
+// Returns the logical root group
+// Thus, all subsequents calls to sub-groups and dataitems will be based on 
+// a logical data organization driven by a data definition document.
+ILogicalGroup root = dataset.getLogicalRoot();
+
+IDataItem a_item = root.getDataItem("a_key_name");
+```
+
+
+
+---
+
+# Reading data #
+
+Once you get a data item through a reference to a IDataItem object, you may want to read its value. Data is accessible through IArray objects. An array can handle all type of data, starting from scalar (single value) to multi-dimensional values.
+
+Using the generic method is applicable to all data kind:
+
+```
+IArray array = a_item.getData();
+```
+
+If the data is assumed to be a single value (scalar type), you can use a dedicated set of convenience methods like:
+
+```
+double double_value = double_type_item.readScalarDouble();
+int integer_value = integer_type_item.readScalarInt();
+```
+
+If the actual value does not match the requested type, it is converted.

@@ -1,0 +1,84 @@
+# Introduction #
+
+The view file is defined at runtime by the higher application. There is only one view active at a time.
+
+It aims to:
+  * list accessible data for a data source
+  * organize data into a structure (that is human friendly or according the needs of the software)
+
+Only keywords listed in the view will be available to the application. It restrict the number of keywords usable. Indeed the full list of keywords for a particular mapping, or all the ones defined in a concepts file would make a legion. Therefore method listing available data items of data source would be useless.
+
+Below an example of a view file structured in a tree:
+
+```
+<!DOCTYPE data-def SYSTEM "view_file.dtd">
+<data-def name="DATA_REDUCTION"> 
+    <group key="detectors"> 
+        <group key="detector"> 
+            <item key="camera"/> 
+            <item key="dark"/> 
+            <item key="distance"/> 
+            <item key="exposureTime"/> 
+            <item key="shutterCloseDelay"/> 
+            <item key="xBin"/> 
+            <item key="yBin"/> 
+        </group> 
+        <group key="monitor"> 
+            <item key="mi"/> 
+            <item key="gain"/> 
+            <item key="intensity_monitor"/>
+        </group> 
+        <group key="monochromator"> 
+            <item key="lambda"/> 
+            <item key="energy_mono"/> 
+        </group> 
+    </group> 
+    <group key="data"> 
+        <item key="images"/> 
+        <item key="spectrums"/> 
+        <item key="x_position"/> 
+        <item key="y_position"/> 
+    </group> 
+    <group key="info"> 
+        <item key="comments"/> 
+    </group> 
+</data-def>
+```
+
+It is also possible to have exactly the same list of available data items, but in a flat view:
+
+```
+<!DOCTYPE data-def SYSTEM "view_file.dtd">
+<data-def name="DATA_REDUCTION"> 
+    <item key="camera"/> 
+    <item key="dark"/> 
+    <item key="distance"/> 
+    <item key="exposureTime"/> 
+    <item key="shutterCloseDelay"/> 
+    <item key="xBin"/> 
+    <item key="yBin"/> 
+    <item key="mi"/> 
+    <item key="gain"/> 
+    <item key="intensity_monitor"/>
+    <item key="lambda"/> 
+    <item key="energy_mono"/> 
+    <item key="images"/> 
+    <item key="spectrums"/> 
+    <item key="x_position"/> 
+    <item key="y_position"/> 
+    <item key="comments"/> 
+</data-def>
+```
+
+In the first view the _distance_ item will be accessible using with the following calls in Java:
+
+```
+LogicalGroup group = dataset.getLogicalRoot();
+IDataItem lambda = group.getDataItem( "detectors:detector:distance" );
+```
+
+In the second one the _distance_ comes as following:
+```
+LogicalGroup group = dataset.getLogicalRoot();
+IDataItem lambda = group.getDataItem( "distance" );
+```

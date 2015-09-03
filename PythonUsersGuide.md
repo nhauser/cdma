@@ -1,0 +1,314 @@
+# Introduction #
+
+Welcome to the users documentation of the CDMA Python bindings. If you only want
+to use CDMA in your Python code you are at the right place. If you have already
+had a look on the C++ and Java API documentation you may find that the Python
+bindings look entirely different from what you have seen there. The reason for
+this is simple: the primary design goal for the Python binding was
+to keep the interface as simple and pythonic as possible. Consequently, I have
+stripped down the C++ API to a very simple Python API which treats most of
+the objects in CDMA as containers. If you find that some things look quite
+similar to h5py (a Python interface to HDf5) then you are entirely right: h5py
+was quite an inspiration for this binding. This manual is split into several
+parts. In the next section a short introduction to CDMA will be given.
+Section \ref udoc\_basics shows gives an overview over the different types
+provided by the CDMA Python bindings. Finally section \ref udoc\_examples
+shows some real world examples.
+
+# Installation #
+The installation procedure of the CDMA Python bindings follow the standard Python
+distutils procedure. After downloading and unpacking the tarball change to the
+source directory and install with
+```
+$> python setup.py install
+```
+This will install everything in your default Python package directory. To install to a custom location use the  `--prefix` option like this
+```
+$> python setup.py install --prefix=$HOME/myapps/
+```
+If you have compiled the CDMA C++ libraries with C++11 support you can use this with the Python bindings too using
+```
+$> python setup.py --with-cpp11 install 
+```
+It is important to note that setup.py fetches the installation directory of the header files and libraries for CDMA C++ from its `pkg-config` file. Thus you should have `pkg-config` installed and the environment variable `PKG_CONFIG_PATH` set to the directory where your `.pc` files are stored (if they are not in a default location).
+
+# CDMA at a glance #
+
+![http://code.google.com/p/cdma/w/images/tree.png](http://code.google.com/p/cdma/w/images/tree.png)
+
+Lets start with a quick introduction to CDMA. CDMA maps one or more files and
+the data stored in them on a tree consisting of `Groups`, `DataItems`,
+`Dimensions`, and `Attributes` as shown in the figure on the right.
+For users acquainted with HDF5 this picture fill look quite familiar.
+Indeed, except for `Dimensions`, CDMA provides you with a data organization
+quite similar to HDF5. Groups and DataItems can additionally hold attributes
+with additional meta-data. Access to data is provided in two different ways
+
+  * raw access - is just what you see in the figure above
+  * a dictionary based approach
+
+As the Python bindings do not yet support dictionary access a detailed
+description will be omitted. In the  raw mode, data is accessed directly by
+traversing through the data tree.
+To represent the data tree the Python bindings provide a couple of types
+(classes). Namely
+  * `Group`
+  * `DataItem`
+  * `Attribute`
+  * `Dimension`
+  * and `Dataset`
+
+where the later one acts only as an entry level type to the data-tree.
+
+# Baisc usage #
+
+To use CDMA from python the `cdma` module must be loaded with
+```python
+
+import cdma
+```
+CDMA organizes data in so called datasets. To open a dataset use
+```python
+
+dataset = cdma.open_dataset("file:/path/to/file")
+```
+`open_dataset` takes one argument which is the URL to the dataset (here a file).
+Datasets are the entry level objects for the data tree. To get access to the
+tree use the `root_group` attribute of the `Dataset` instance.
+```python
+
+dataset.root_group
+```
+
+
+## Group objects ##
+Groups are the fundamental container types in CDMA you can iterate over a
+group with
+```Python
+
+for o in dataset.root_group:
+print o
+```
+This code will iterate over all child objects of the root group. There exist
+some convenience functions to filter for a particular type of child objects
+```python
+
+
+#iterate over all children of type DataItem
+for o in cdma.get_dataitems(dataset.root_group):
+print o
+
+#iterate over all children of type Group
+for g in cdma.get_groups(dataset.root_group):
+print g
+
+#iterate over all children of type Dimension
+for d in cdma.get_dimensions(dataset.root_group):
+print d
+```
+To access a particular item below a group the `[]` operator can be used with
+```Python
+
+root = dataset.root_group
+group = root["groupname"]
+item  = root["dataitemname"]
+dim   = root["dimensionname"]
+```
+Unlike for instance `h5py` the Python bindings to CDMA do not support access
+via a path as the argument to `[]`. Only children linked directly below the
+group can be accessed using their name.
+A group object has several read only attributes that can be used to obtain some
+more detailed information about an object.
+```
+group = dataset.root_group["datagroup"]
+group.parent     #reference to the parent group (in this case the root group)
+group.root       #a reference to the root group of the data tree
+group.name       #the full name of the group
+group.location   #path to the group within the tree
+group.short_name #the key of the group (in this case "datagroup")
+```
+There is one more member attribute to `Group` which will be discussed in the
+\ref udoc\_attributes section of this manual.
+
+## DataItem objects ##
+Instances of `DataItem` are possible child nodes of groups. Unlike groups a
+data item cannot hold child objects (they are leaves in the terminology of
+trees) except attributes.
+Data items contain the data stored in the tree. This data can be either of a
+numerical or a string type. In addition data can be stored either as a scalar
+value or as a multidimensional array. An instance of `DataItem` possesses the
+same attributes as an instance of `Group` (see the previous section) along
+with some additional attributes
+```
+item = group["itemname"]
+
+item.rank        #number of dimensions
+item.shape       #tuple with the number of elements along each dimension
+item.size        #total number of elements stored in the item
+item.unit        #physical unit of the data stored in the item
+item.type        #data type as numpy type string
+item.description #description of the item as string
+```
+To obtain all data from an object use the `[...]` like in this example
+```
+item = group["itemname"]
+
+data = item[...]
+```
+In the case of a string item the returned value will be a string. Scalar numeric
+items return data as single instances of a native Python data type.
+Multidimensional data is returned as numpy array which makes it easy to use the
+data. For numerical multidimensional data more sophisticated slicing operations
+can be used. The following code for instance reads only a portion of the total
+data
+```
+item = group["itemname"]
+
+data = item[256:512,1]
+```
+All slicing operations that can be done with numpy arrays can be used.
+
+## Managing attributes ##
+
+Group and data item objects have an attribute `attrs` attribute. This is an
+instance to an `AttributeManager` object. It is used to retrieve attributes
+attached to a group or data-item.
+The usage of this attribute is fairly simple you can either iterate over all
+attributes
+```
+g = dataset.root_group("datagroup")
+
+for a in g.attrs:
+    print a
+```
+or access attributes directly by there name
+```
+g = dataset.root_group("datagroup")
+a = g.attrs["attrname"]
+```
+In either case attributes are returned as instances of type `Attribute`.
+Obtaining the data from such an object is like reading the data from a data item
+(see above). Each instance of `Attribute` provides some attributes which hold
+further information about the attribute
+```
+a = g.attrs["attrname"]
+
+a.size      #the total number of elements in the attribute
+a.shape     #number of dimensions along each dimension of the attribute
+a.type      #data type as numpy type string
+a.name      #name of the attribute           
+```
+
+## Dimensions ##
+TO DO
+
+# Examples #
+
+In this section we will discuss the examples shipped with the source
+distribution.
+
+## Simple dataset and group iteration ##
+
+This examples shows basic navigation and iteration over all entities in a CDMA
+tree.
+```python
+
+#!/usr/bin/env python
+#simple example for opening a dataset
+
+import cdma
+
+#open the dataset
+print "open dataset ..."
+ds = cdma.open_dataset("file:demo.nxs")
+
+print "loop over all groups ..."
+#iterate over all group below the root group
+for g in ds.root_group:
+
+#iterate over all groups
+for group in cdma.get_groups(g):
+print group
+
+#iterate over all items
+for item in cdma.get_dataitems(g):
+print item
+
+#iterate over all dimensions
+for dimension in cdma.get_dimensions(g):
+print dimension
+
+#get some basic information about the recorded data
+g = ds.root_group["D1A_016_D1A"]
+print g["experiment_identifier"][...]
+print g["duration"][...]
+print g["start_time"][...]
+print g["end_time"][...]
+```
+
+Line 4 imports the CDMA Python bindings. In Line 7 a handler to a dataset is
+opened using the \c open\_dataset function. The dataset has a read-only attribute
+referring to is root group.
+
+## Ploting with CDMA ##
+```python
+
+#!/usr/bin/env python
+#simple example for ploting multidimensional data
+
+import cdma
+from matplotlib import pyplot
+import numpy
+import sys
+
+
+#open the dataset
+ds = cdma.open_dataset("file:demo.nxs")
+dg = ds.root_group["D1A_016_D1A"]
+expid = dg["experiment_identifier"][...]
+
+ig = dg["image#13"]
+data = ig["data"][...]
+timestamp = ig["timestamp"].attrs["timestamp"][...]
+
+pyplot.figure()
+pyplot.imshow(numpy.log10(data))
+pyplot.title(expid + "@" +timestamp)
+pyplot.savefig("test.png",dpi=300)
+pyplot.show()
+```
+
+## Simple data analysis with CDMA ##
+```Python
+
+#!/usr/bin/env python
+#simple example for simple data reduction
+
+import cdma
+from matplotlib import pyplot
+import numpy
+
+#open the dataset
+ds = cdma.open_dataset("file:demo.nxs")
+dg = ds.root_group["D1A_016_D1A"]
+expid = dg["experiment_identifier"][...]
+
+itot = []
+time   = []
+t0 = 0
+
+for i in range(60):
+gn = "image#%i" %(i)
+print "processing image ",gn,"..."
+ig = dg[gn]
+itot.append(ig["data"][840:960,320:440].sum())
+if not i: t0 = ig["timestamp"][...]
+time.append(ig["timestamp"][...])
+
+
+pyplot.figure()
+pyplot.plot(numpy.array(time)-t0,numpy.array(itot))
+pyplot.title(expid + " total intensity")
+pyplot.xlabel("time in (%s)" %(ig["timestamp"].unit))
+pyplot.show()
+```

@@ -1,0 +1,293 @@
+# Introduction #
+
+The CDMA Utilities project aims to provide some tools to ease development of CDMA projects. It can use directly the API, give utilities for plug-in development, plug-in deployment or for the client side.
+
+It is compound of the following categories:
+  * [client API](#Client_API.md)
+  * [deployment](#Deployment.md)
+  * [configuration package](#Configuration.md)
+  * [performance package](#Performance.md)
+
+
+# Client API #
+
+---
+
+
+
+# Deployment dictionaries #
+
+---
+
+The deployment part is managed by a single class: _org.cdma.utilities.CDMATool_
+
+The main goal of this class is to help CDMA application developers to manage their dictionaries. For example, with this class, you can ensure always using the right dictionary folder, and copy your dictionary from project resources to dictionary folder.
+
+Here is a use case example:
+```
+// Setup dictionary folder
+cdmaTool = new CDMATool(myDictionaryFolderPath);
+// Set current dictionary to application dictionnary
+cdmaTool.switchDictioary(myDictionaryView);
+// Create dictionary if it does not already exist
+if (!CDMATool.hasDictionary()) {
+    try {
+        CDMATool.createDictionary(getClass().getResource(myPackageUsingSlashAsSeparator + myDictionaryView).openStream());
+    }
+    catch (IOException e) {
+        // It should not happen, but you can log this exception
+    }
+}
+// You can then use your dictionary as you wish
+```
+To avoid concurrent modifications of dictionary folder, or to avoid crashes of not thread safe plug-ins, you should use the shared Semaphore: _org.cdma.utilities.AccessController_
+
+In which case, your code should look like:
+```
+cdmaTool = new CDMATool(myDictionaryFolderPath);
+AccessController.takeAccess(); // grab Semaphore
+cdmaTool.switchDictionary(myDictionaryView);
+[...]
+IDataset reader = factory.createDatasetInstance(_myURI_);
+reader.open();
+ILogicalGroup logicalRoot = reader.getLogicalRoot();
+[...] // use your dictionary as you want
+reader.close();
+AccessController.releaseAccess(); // release Semaphore
+```
+
+# Configuration #
+
+---
+
+The _configuration_ package **should be used only when developing a plug-in**. It aims to provide a centralized and flexible mechanism of configuring a plug-in. It permits for a particular dataset to define some values. They can be constant or determined by the content of the dataset. A plug-in can have several different configurations according its datasets.
+
+For example two different datasets from a same institute can have different data models. It's the case at Soleil: data are not stored the same way according the beamline they come from. So the configuration mechanism is used to determine which mapping file is relevant for a particular data source file.
+
+The _ConfigDataset_ is used to resolve parameters according a data source. For example it can be getting a parameter called 'OptimalBufferSize' for a specific data source, or a parameter 'DataModelName' that should permits describing a particular mapping file to use. A parameter that is what ever the plug-in needs, at run-time, constantly defined or dynamically determined.
+
+The _ConfigManager_ retrieves which _ConfigDataset_ is associated to a particular dataset. It can manage several configurations at a same time.
+
+
+## Configuration file ##
+
+The configuration is stored in a **XML file** that must be deployed in the plug-in's dictionary mapping folder. That file must respect the DTD _[configuration\_file.dtd](http://cdma.googlecode.com/svn/dictionaries/trunk/dtd/configuration_file.dtd)_, that is provided in the [dictionary folder](http://cdma.googlecode.com/svn/dictionaries/trunk/).
+
+The XML file can store as many configurations as requested by the plug-in. Configurations are tested sequentially to determine which one should be applied. Each configuration (markup _dataset\_model_) can be cut in 3 sections:
+  * criteria that permits to determine if that configuration fits the dataset
+  * parameters that permits to resolve dynamically parameters by analyzing the data file
+  * plug-in that contains named constant
+
+## Usage ##
+
+**The configuration mechanism is for plug-in internal uses only**. It shouldn't be exposed to higher application. The CDMA API doesn't give such methods.
+
+In a first step the _ConfigManager_ must be initialized by the user with its plug-in and the name the of the config file to be loaded:
+
+```
+  // Let's define the configuration file name
+  String fileName = "plugin_conf_file.xml";
+
+  // Instantiate the plug-in factory
+  IFactory pluginFactory = new MyPluginFactory();
+
+  // Get the ConfigManager it is a singleton
+  ConfigManager manager = ConfigManager.getInstance( pluginFactory, fileName );
+```
+
+
+Therefore, all available configurations are loaded, it remains to associate the current _dataset_ (IDataset implementation) of the plug-in to the right configuration:
+
+```
+  // Get the configuration that matches the given dataset
+  ConfigDataset conf = manager.getConfig( dataset );
+```
+
+Now we can ask the configuration to deliver it's parameters. **The configuration isn't bind to a dataset** (i.e: a configuration can match several datasets that won't have similar dynamic parameters). So it's mandatory to remind a configuration the dataset it should use:
+
+```
+  // Ask for beamline and datamodel parameters
+  String beamline = conf.getParameter("BEAMLINE", dataset);
+  String model = conf.getParameter("MODEL", dataset);
+```
+
+Note: getParameter method returns String, so a boolean parameter should return "true" or "false".
+
+## Criteria section ##
+
+The _criteria_ section is a composition of some tests (_if_ markup) to succeed so it can be applied to the dataset: **each test must be validated**.
+
+```
+  <dataset_model name="sample_config">
+    <criteria>
+      <if exist="true" target="/{NXentry}/scan_data{NXdata}/time_1" />
+      <if equal="scanserver" target="/{NXentry}/acquisition_model" />
+    </criteria>
+    ...
+  </dataset_model>
+```
+
+The _target_ attribute corresponds to a path in the data source that **will be only interpreted by the plug-in**.
+
+Each test must have a target attribute so the mechanism can know what to test. Possible type of tests in the criteria section:
+  * _exist_ attribute having for value _true_ or _false_
+  * _equal_ attribute having a string value that the content of the target path must be equal to
+  * _not\_equal_ attribute having a string value that the content of the target path must not be equal to
+
+The above sample code shows a configuration that will be applied only if the dataset respect the following:
+  * a node exists in the path defined by "/{NXentry}/scan\_data{NXdata}/time\_1"
+  * the content of the path "/{NXentry}/acquisition\_model" is equal to "scanserver"
+
+
+## Parameters section ##
+
+The _parameters_ section is compound of several parameter (_parameter_ markup) that are resolved at run-tine by analyzing the data source.
+Each parameter is named and its value is whether the result of simple processing or a constant.
+Below is an example, of the dynamic parameters section (using a NeXus based plug-in):
+
+```
+  <dataset_model name="sample_config">
+    ...
+    <parameters>
+      <parameter name="BEAMLINE">
+        <value type="name" target="/{NXentry}/{NXinstrument}" />
+      </parameter>
+      <parameter name="IMAGES">
+        <value type="exist" target="/{NXentry}/images{NXdata}" test="false"/>
+      </parameter>
+      <parameter name="MODEL">
+        <value type="value" target="/{NXentry}/acquisition_model" />
+      </parameter>
+      <parameter name="MAPPING">
+        <value type="constant" constant="scanserver" />
+      </parameter>
+      <parameter name="VALID_ENERGY">
+        <value type="equal" target="/{NXentry}/{NXinstrument}/{NXmonochromator}/energy" constant="400" test="false" />
+      </parameter>
+    </parameters>
+    ...
+  </dataset_model>
+```
+
+
+The available types (_type_ attribute) of evaluation for a parameter are the following:
+  * exist returns true if the targeted path exists according the attribute _test_ value that is true or false
+  * name returns the name of the targeted item
+  * value returns the content of the targeted item
+  * constant returns the value of the _constant_ attribute's value
+  * equal returns true if the content of the target is equal to the attribute _constant_ attribute's value according the attribute _test_ value that is true or false
+
+The above example is compound of 5 dynamic parameters:
+  * _BEAMLINE_ returns the name of the node "/{NXentry}/{NXinstrument}" in the data source
+  * _IMAGES_ returns true if the node "/{NXentry}/images{NXdata}" does not exist
+  * _MODEL_ returns the value contained in the node "/{NXentry}/acquisition\_model"
+  * _MAPPING_ returns string that is "scanserver"
+  * _VALID\_ENERGY_ returns true if the node "/{NXentry}/{NXinstrument}/{NXmonochromator}/energy" do not have 400 for value
+
+
+## Global section ##
+
+The global section is applied to all configurations but it can be override if needed by a particular one. All parameters here are named constants.
+
+## Resources folder ##
+
+In the _resources_ folder of the project is provided:
+  * The DTD file a configuration should refer to and respect
+  * An empty XML configuration file the user should copy and edit
+
+
+# Performance #
+
+---
+
+
+The performance package is compound of objects that should be used while developing to reach good performances:
+  * _CubeData_ is an object that pre-fetch loading of portions of an array
+  * _Benchmarker_ is a object that gives simple runtime informations on an executed section code
+
+
+## CubeData class ##
+
+The CubeData class is a tool based on the CDMA API. It aims to slice a given IArray and to load data by packet. It facilitates the access to a particular slice of the array.
+
+Constructed with a IArray and an integer that correspond to the wanted slice's rank. It will use that rank to construct a new IArray that is a portion of the first one.
+
+The new IArray will correspond to latest dimension of the whole array (i.e. fastest varying dimensions) starting at the given position. As IArray should load data at the query, the CubeData will ask to have access to the underlying data according a buffer size.
+
+The aim is to load data with an optimized size whatever the requested array size is and to reduce number of access to the data source.
+
+Example: we have a data item that is a 2 scan of spectrums and we want to process each spectrum
+
+```
+  // Get the array: 2D scan of images (so a matrix of rank 4)
+  IArray spectrums = item.getData();
+
+  // define the length on X and Y of scan
+  int x = spectrums.getShape()[0];
+  int y = spectrums.getShape()[1];
+
+  // Initialize the cube with the IArray and the required slice rank (1 for spectrum)
+  CubeData cube = new CubeData(spectrums, 1);
+
+  IArray spectrum;
+
+  // Parse the entire 2D stack
+  for( int i = 0; i < x; i++ )
+  {
+    for( int j = 0; j < y; j++ )
+    {
+      // Get the image at position {i, j}
+      spectrum = cube.getData( i, j);
+
+      // process the spectrum
+      ...
+    }
+  }
+```
+
+
+## Benchmarker class ##
+
+The benchmarker class is a static singleton and a thread safe timer. Each section of code that is being watched is named and can be easily identified. It allows thread code reentrance and multiple calls.
+
+When printed it gives the following informations for each section:
+  * execution time for that section
+  * number of execution
+  * maximum number of reentrant thread at a same time or depth of recursion
+
+Usage:
+
+```
+  // Start a timer on a label
+  Benchmarker.start("Loading matrix");
+
+  // load the matrix
+  ...
+
+  // Stop the timer at the end of the process
+  Benchmarker.stop("Loading matrix");
+
+  // Display results:
+  Benchmarker.print();
+```
+
+Label timers are cumulative. When used in a threaded context, it doesn't manage context switch. It means that if a _start_ timer is done and the context switches it will continue running until the _stop_ more exactly until the context switches back. So times when used in multi-thread cases could not be the real spent time of the process duration.
+
+At the end of the process when asked, it displays the following:
+```
+Displaying structure: displaying nodes: 4.77 s               nb calls: 2254      max thread: 6      
+Displaying structure: listing nodes: 25.762 s                nb calls: 2254      max thread: 10     
+Displaying structure: method process: 30.062 s               nb calls: 1127      max thread: 37     
+File close: 0.195 s                                          nb calls: 15940     max thread: 10     
+File open: 12.135 s                                          nb calls: 15940     max thread: 10 
+```
+
+The first above example was executed using 15 simultaneous threads, below the same process executed sequentially (i.e only one thread):
+
+```
+Displaying structure: displaying nodes: 0.155 s              nb calls: 2254      max thread: 1      
+Displaying structure: listing nodes: 13.834 s                nb calls: 2254      max thread: 1      
+Displaying structure: method process: 14.028 s               nb calls: 1127      max thread: 5      
+File close: 0.23 s                                           nb calls: 15940     max thread: 14     
+File open: 6.691 s                                           nb calls: 15940     max thread: 1      
+```

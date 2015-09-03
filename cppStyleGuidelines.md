@@ -1,0 +1,162 @@
+Here are the main source code writing rules adopted for the CDMA project.
+
+# Naming conventions #
+
+---
+
+
+## Namespaces ##
+
+Never use the directive `using namespace`. It may the source of conflicts when using simultaneously objects of different libraries.
+
+The namespace of the CDMA core library is `cdma`.
+
+In order to avoid name conflicts and to guarantee an uniform way for class naming when developing engines and plugins, the CDMA project uses the following convention:
+
+  * The namespace for each engine is: `cdma::<engine_name>` (ex: `cdma::nexus`, `cdma::spec`)
+  * The namespace for each plugin is: `cdma::<institute_name>::<plugin_name>` (ex: `cdma::soleil::nexus`, `cdma::desy::spec`) or `cdma::<institute_name>` (ex: `cdma::soleil`, `cdma::desy`) if the access to data produced by an institute in managed through a single plug-in.
+
+## Class names ##
+
+The name of a CMDA interface implementation must be the same as the interface name without the prefix `I`:
+```
+class Dataset : public cdma::IDataset
+{
+...
+};
+```
+
+More generally, names representing types must be in mixed case starting with upper case.
+```
+LogicalGroup, BadArrayTypeException
+```
+
+## Variables names ##
+
+Variable names must be in lowercase using underscore to separate words.
+```
+rank, start_array
+```
+
+## Constants ##
+
+Named constants (including enumeration values) must be all uppercase using underscore to separate words.
+```
+MAX_RANK, BUFFER_MIN_SIZE
+```
+
+## Methods and function names ##
+
+Names representing methods or functions must be verbs and written in mixed case starting with lower case.
+```
+setLocation(), getTitle()
+```
+
+## Template types ##
+
+Names representing template types should be a single uppercase letter.
+```
+template<class T> ...
+template<class C, class D> ...
+```
+
+## Private class variables ##
+
+Private class variables should be prefixed by '`m_`'.
+```
+class MyClass
+{
+private:
+  int m_length;
+};
+```
+This remnant of the Hungarian notation helps to distinguish local from class variables. This is important because class variables are considered to have higher significance than method variables, and should be treated with special care by the programmer.
+
+## Class accessors ##
+
+Like in Java, the terms get/set must be used where an attribute is accessed directly.
+```
+dataset.getLocation();
+dataitem.getArray();
+```
+
+## Abbreviations in names ##
+
+Abbreviations in names should be avoided. Complete words are more readable.
+
+# Code formatting #
+
+---
+
+
+## File content must be kept within 100 columns ##
+
+In the dark ages, when printer can output only up to 80 columns width, the source code must be kept within 80 columns.
+Today, with large screens (and printer capabilities, but you shouldn't print your code on paper, at least because of ecology issues), the 80 columns limit constraint is no longer relevant.
+However, because very large lines of code is not comfortable to read, we recommend to not exceed 100 columns width.
+
+## Indentation ##
+
+For CDMA project indent is 2 blank spaces width.
+Tabulation character is forbidden because its rendering depends of the  editor.
+
+## Block layout ##
+
+Braces that delimit a block must be vertically aligned. It gives better redability
+
+```
+// BAD
+for( int i = 0; i < n; ++i ) {
+  ...do something...
+}
+
+// GOOD
+for( int i = 0; i < n; ++i )
+{
+  ...do something...
+}
+```
+
+## White spaces ##
+
+  * Operators must be surrounded by a space character
+  * Commas, colons and semicolons must be followed by a white space.
+  * Parenthesis must be preceded or followed by a space character.
+
+```
+a = (b + c) * d; // NOT: a=(b+c)*d
+
+while (true)   // NOT: while(true) 
+{
+  ...
+
+doSomething( a, b, c, d );  // NOT: doSomething(a,b,c,d);
+
+for (i = 0; i < 10; ++i) // NOT: for(i=0;i<10;++i){
+{  ...
+```
+
+## Methods separation ##
+
+Methods implementation must be preceded by a comment block containing its name and parent class name. A single blank line also separates two consecutive methods
+
+```
+//-----------------------------------------------------------------------------
+// ClassName::method
+//-----------------------------------------------------------------------------
+ClassName::method( ... )
+{
+...
+}
+```
+
+## Comments ##
+
+All comments should be written in English. It's a very good exercise for French developers ;-)
+
+## Class and method header comments ##
+
+Class and method header comments should follow the JavaDoc conventions.
+Regarding standardized class and method documentation the Java development community is more mature than the C/C++ one. This is due to the standard automatic Javadoc tool that is part of the development kit and that help producing high quality hypertext documentation from these comments.
+
+The CDMA project uses Doxygen to produce html code documentation.

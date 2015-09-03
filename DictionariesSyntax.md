@@ -1,0 +1,43 @@
+Welcome to the dictionaries general documentation. It describes how CDMA dictionaries works and their major interactions.
+
+The content of this section is applicable what ever the programming language is used and for all plug-in of the CDMA. It introduces the general and expected behaviour of the _dictionary mechanism_.
+
+# Introduction #
+
+The _dictionary mechanism_ is provided by the Core. It is a non-customizable service (i.e. interfaces to implement): the behavior is the same what ever the plug-in is. It permits to have a virtual view, that is independent and quite different, of the underlying data format.
+
+The dictionary describes how data should be presented, its main properties and how to get it.
+A CDMA dictionary is compound of 4 parts:
+  * the [concepts document](ConceptDefSyntax.md) which presents physical measurements and what to expect when getting it
+  * the [view documents](KeyDefSyntax.md) which organize the data tree that the application will use
+  * the [mapping documents](MapDefSyntax.md) which describes how a particular plug-in will access and construct its data
+  * the [synonyms documents](SynonymDefSyntax.md) which allows to link a plug-in's particular data to a physical measurement
+
+They all works with keywords:
+  * the concept defines a meaning for a keyword
+  * the view defines how keywords are organized together
+  * the mapping defines how to construct data for that keyword
+  * the synonym link a view keyword to a plug-in mapping keyword (that can be named differently)
+
+Those parts are used internally by the mechanism, they are visible for the application developer. Indeed he only sees the available keys of the dictionary presented as a tree of accessible CDMA items.
+
+# General informations #
+
+Both view and mapping documents are mandatory when using the dictionary. The former one informs on what is searchable from the application. The latter one defines where and how to find data in the underlying data source.
+
+The most often, the application developer will define its view of the data source according a particular data format. So he will use keywords from that plug-in. As the mapping document is dependent of that plug-in, there will be a direct association between view keywords and mapping ones.
+So its application will work fine with that specific plug-in. If he wants to make it '_public_' and available for other data formats he has no guarantee that same keywords are available with them.
+
+![http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction1.png](http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction1.png)
+
+The concept file will permit to avoid that difficulty. One of its main goal is to allow applications to switch plug-ins. The **concept file defines synonyms** for a keyword.
+When found that document becomes the mediator between view and mapping. Both **keywords from view and mapping are linked to the corresponding concept using the synonym**. Therefore, while searching a data using a keyword, the user gets the data translated in the corresponding plug-in.
+
+![http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction2.png](http://cdma.googlecode.com/svn/wiki/images/dictionary_interaction2.png)
+
+This mechanism consists in binding a key to a physical organization, usually a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
+That "service" is provided in “Core” (see package org.cdma.data.dictionary for Java developers).
+
+The association key/path is done by dictionaries object. The `LogicalGroup` will instantiate one and give it all necessary informations to reach key and mapping files.
+
+If no view is set as _active_ by the application, a flat representation of all the mapping content will be available. But there will be no guarantee of homogeneity (in keywords) between two different data sources.

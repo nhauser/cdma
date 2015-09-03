@@ -1,0 +1,194 @@
+**Content**
+  * [Introduction](#Introduction.md)
+  * [The data model](#The_data_model.md)
+  * [Accessing the data](#Accessing_the_data.md)
+    * [The engines mechanism](#The_engines_mechanism.md)
+    * [The plug-ins mechanism](#The_plug-in_mechanism.md)
+  * [The dictionary mechanism](#The_dictionary_mechanism.md)
+
+# Introduction #
+
+---
+
+
+The CDMA is made of:
+  * a client layer API for writing data reduction and analysis applications.
+  * a developer API to build data access engines and plug-ins (see [Accessing the data](#Accessing_the_data.md)).
+
+Using the client API, data reduction applications developer don't have to know anything about the file formats because it uses an abstract data access layer that hide data files specifications.
+The data files specifications are embedded through a plug-in mechanism. Therefore it's the institutes responsibility to develop their own data access plug-in in order to give the possibility to open datasets acquired in their institutes through the CDMA.
+
+Nevertheless, using the navigation API, the developer have to precisely know the way the data is organised in each data file his application will access. We think it's a useless waste of time.
+To solve this issue the CDMA introduce a new, innovative way, of accessing data. This is the dictionary mechanism.
+
+Using this mechanism, data reduction application developer no longer have to known about the way the data is organised. The data is now accessed using keywords. A keyword is a short characters string naming a scientific measurement or a generic technical data. Thus the data access part of data reduction applications source code is simpler and, this is the most important, more stable.
+Considering this mechanism, scientists have to agreed on key names, regardless the way the data is physically organised. Moreover, the data may have different units (wavelenght vs. energy for example) for the same measurement, the CDMA provide a mechanism to perform  conversions at run-time.
+Please not that the old-style navigation API is still available but we strongly recommend to consider the dictionary API.
+
+The schema below summarizes the principles of the CDMA:
+
+![http://cdma.googlecode.com/svn/wiki/images/cdma_schema1.png](http://cdma.googlecode.com/svn/wiki/images/cdma_schema1.png)
+
+# The data model #
+
+---
+
+
+Basically the CDMA consider a scientific data set as a hierarchical organization, containing groups and sub groups to data item which are leafs. Each level of of this tree organization can also contains metadata describing the data itself.
+
+![http://cdma.googlecode.com/svn/wiki/images/datamodel.png](http://cdma.googlecode.com/svn/wiki/images/datamodel.png)
+
+Many data container will fit well such an organization, for example:
+  * HDF files are naturally hierarchical with groups and data items
+  * CIF files fit this model with data blocks and data items
+  * A control system like Tango fit this model too if we consider a tango data base as a a CDMA dataset, a device as a CDMA group and an device attribute as a CDMA data item.
+
+# Accessing the data #
+
+---
+
+
+Using the CDMA library, the data analysis developers don't have to care about data file format. The data access is done by a dual mechanism involving data format engines and plug-ins.
+Actually, there are two things to consider when offering a generic data access mechanism:
+  * raw data access
+  * data organization
+
+The raw data access is only related to a data format. It allows to read (or write) data items stored in specific files for a particular format (spec, tif, NeXus/hdf, ...)
+
+The data organization depends of the way an institute had decided to store data. For example Soleil can decide, for one specific beamline, to split the experimental data from each acquisition into a set of NeXus files; this set of files represent a so called 'dataset', from the cdma point of view. Desy may also use NeXus/hdf as physical data format but (surely) choosing another way of organizing data.
+
+Client applications only have to deal with CDMA's interfaces from the core library. Those interfaces are implemented through a plug-ins mechanism.
+
+## The plug-ins mechanism ##
+When a data analysis developer uses the CDMA library, he don't has to care about data file format. The data is accessed through a plug-ins mechanism.
+The CDMA library is also able to automatically choose the correct plug-in according to the dataset that the user want to read.
+
+The institute who produces data, have to develop the plug-ins able of offering access to their data through the CDMA.
+Each plug-in should be based on one (or more) data format engines. The plug-ins developers should focus only on data organization and the dictionary methods (see [Keywords mapping](#Keywords_mapping.md) sub-section below) they must implement.
+
+Also this mechanism allows an user to open files acquired in different institutes, in the same session.
+
+## The engines mechanism ##
+A data format engine is a library giving a raw access to the data for a specific physical data format. It should only be able to browse physically a data format for instance a NeXus engine must be able to open a path, to read a node and to list its children: it doesn't have to know where data stored.
+
+The minimum service of an engine is done through the implementation of the CDMA's interfaces. This will permit to offer an unified way of accessing data regardless the format.
+
+Engines are not directly used by client applications. But plug-ins (see below) use engines in order to allowing client applications to access the data.
+
+## Whole working chain ##
+
+The schema below summarize the data access components:
+
+![http://cdma.googlecode.com/svn/wiki/images/cdma_schema2.png](http://cdma.googlecode.com/svn/wiki/images/cdma_schema2.png)
+
+In this schema we suppose the following things:
+  * the DESY institute produces TIFF as well as NeXus files, so the DESY plug-in should use both TIFF & NeXus format engines
+  * ANSTO produces NetCdf files only
+  * SOLEIL produces NeXus files only
+
+# The dictionary mechanism #
+
+---
+
+
+The point is: the way data are organized, into data files, is no longer an issue on the data analysis software side.
+
+Data analysis application programmers should never adapt their source code to a particular data file structure.
+Actually, data should be always accessed by their names, regardless the data file organization. This is possible through the CDMA Extended Dictionary Mechanism.
+
+This mechanism introduce tree notions:
+  * Concepts
+  * Keywords
+  * Keywords mapping
+
+## Concepts ##
+
+A concept in the CDMA describes a measure or a physical notion. _The concept **should** be defined by scientists_. It is a kind of agreement on what is expected when asking for it.
+
+Indeed the concept defines for a measure: its description, units, highly recommended attributes and the various synonyms that can be used to access it.
+
+For instance a concept for a monochromator energy concept could be compound of the following:
+  * description: "The value of the energy of the monochromator"
+  * units: "eV"
+  * attributes:
+    * equipment: name of the equipment it belongs too
+  * synonyms: mono\_energy, energy\_mono, monochromator\_energy
+...
+
+**Concepts do not determine the way data should be stored**, but only **what the plug-in should be able to return** for that data. Doing so will permit application programmers to only care about the data itself.
+
+The 'synonyms' entry contains the list all the keywords that a client application can use to get the data defined by the concept.
+
+## Keywords ##
+
+The keywords are names for measures and/or physical values. Client applications use only the keywords to access the data.
+Of course each keyword must have a unique definition (see concept). However, a definition may be named by more than an unique keyword: this is the synonyms mechanism introduced with the Extended Dictionary Mechanism.
+A keyword can be very specific: _sample\_chemical\_formula_ can be related to the studied sample.
+It can be also very generic: _images_ can designate the images contained in a dataset, regardless the detector used to produce them.
+
+Specific keywords can be approved by a committee, this could be a good thing indeed, but we think that waiting for a committee to agree for keywords before starting any development is not a good idea. So let's start with less specific keywords, even very generic.
+
+## Keywords mapping ##
+
+On the CDMA library's side, we must link keywords and physical data structures as far as possible.
+Each keyword should be linked with a data item inside the dataset. However institutes can record values with different physical units or with a specific data organization.
+
+Two simples examples:
+  * _energy_  and _wavelength_ can be related to the same physical value (the synchrotron beam) in a synchrotron facility and it is indeed very easy to convert them.
+  * the triplet values _h_, _k_, _l_ for positions in a diffractometer can be either three distinct data items or a matrix of dimension [1, 3].
+
+The CDMA dictionary mechanism handles such cases through dictionary methods: a keyword can be linked to a special _function_ if it can't be linked to a data item in the physical structure. This _function_ may convert a _energy_ to a _wavelength_ if the client application asks for a wavelength rather than the _energy_ which is the value stored in the dataset.
+
+In practical terms the dictionary mechanism relies on two types of documents:
+
+## Data definitions ##
+The first document is a set a keywords matching scientific or technical data items. For instance a key named _source\_current_ should refer to the effective current in a storage ring at acquisition time. These keywords may be just listed by this document or organized through a tree hierarchy. In this last case, this document describe a particular a view on the data, like a NeXus application definition.
+This document is intended to be independent of the way the data is physically organized.
+There are (at least) two ways of writing this document:
+  * it may be written for a specific data analysis software which is already existent and adapted to use the CDMA,
+  * or it may be written independently of any software like the NeXus application definitions.
+
+a data definition may looks like this (in XML form):
+
+```
+<data-def name="data_definition_name">
+  <item key = "user_name"/>
+  <item key = "facility_name"/>
+  <item key = "source_current"/>
+  <item key = "beamline_energy"/>
+  ...
+</data-def>
+```
+
+This is a list of keywords which should be the result of a consensus among the users community. keywords can also be grouped together, but
+However, a keywords synonyms mechanism allows data analysis application developers to can not wait until this kind of consensus exists.
+
+## Mapping document ##
+The second document is the mapping between keywords and physical data organization.
+It needs a strong knowledge of the physical data organisation to be written. This is therefore the responsibility of the institute producing data to write this document.
+
+a mapping definition may looks like this:
+
+```
+<map-def name="data_definition_name">
+  <item key = "user_name">
+    <path>/path/to/the/user/name</path>
+  </item>
+  <item key = "facility_name">
+    <path>/path/to/the/user/name</path>
+  </item>
+  <item key = "source_current">
+    <path>/path/to/the/current</path>
+  </item>
+  <item key = "beamline_energy">
+    <path>/path/to/the/wavelength</path>
+    <call>WavelengthToEnergy</call>
+  </item>
+  ...
+</data-def>
+```
+
+In most case (I guess) each keyword will be mapped to a data item through its path in the physical file structure. But in some cases it's not possible. In the example above, the _beamline\_energy_ keyword refer to a _wavelength_ data item following by a _call_ tag. The CDMA provide a mechanism, called _**dictionary methods**_, allowing on the fly data transformation if the stored data does not match keyword definition.
+
+## Responsibilities ##
+Given a keywords list, the institutes that produce experimental data have to write the mapping document corresponding to their data files.

@@ -1,0 +1,93 @@
+# Introduction #
+
+A similar experiment, performed by various institutes, will store, almost the same physical measurements, in really different data formats. The concept dictionary is the key to permit software applications to have interoperability between different data formats.
+
+The concept document aims to present each measurement's properties, whatever the data format is. For a particular physical measurement, it defines what is expected by the information system.
+
+When a data reduction application uses it (through the extended dictionary mechanism), it knows what to expect from various keywords it will.
+
+Each plug-in should apply its keywords and mapping in order to fit a concept document. The latter should be the referent for both plug-in developer (that right plug-ins' mapping) and application developer in order to have generic algorithm. Doing so will allow institutes to exchange and pool software applications.
+
+# Concept's elements #
+
+A concept is compound of the following things:
+  * a label that should be human friendly
+  * a description explaining the physical measurement behind it
+  * a unit that is expected
+  * an attribute list (name and description) so software applications can rely on
+  * a list of synonym keywords (that come from institutes mapping)
+
+Instead of thinking in therms of path in a data source, the user will be able to think in physic therms. Indeed the intellectual process while programing becomes something like:
+
+"I want the aperture size of the Scienta detector for my algorithm, with the following attributes and units"
+
+and not any more:
+
+"I need the data located here:
+
+'/NXentry/NXinstrument/Scienta{NXdetector}/aperture\_size{NXtechnical\_data}/data'
+
+and seek for attributes and properties somewhere else."
+
+
+
+
+# Concept documents #
+
+The concepts document is the list of all available concept. They are listed with no particular order.
+
+The fullest list of concept is compound of 2 concept files. One that manages general / generic physical measurements: [concepts.xml](http://code.google.com/p/cdma/source/browse/dictionaries/trunk/concepts/concepts.xml) .
+The other one that is linked to the view that the application has set ( Factory.setView(String) ), indeed the view can specify a particular concept file to complete the global one.
+
+A concepts document is a XML file as following:
+
+```
+
+<!DOCTYPE dictionary SYSTEM "concepts_file.dtd">
+<dictionary name="common" version="1.0.0">
+
+	<concept label="concept_label">
+		<definition>
+			<description>Description of the physical measurement.</description>
+			<unit>Unit used to describ the measurement</unit>
+		</definition>
+
+		<attributes>
+			<attribute name="attribute_1">Description of the attribute 1</attribute>
+			<attribute name="attribute_2">Description of the attribute 2</attribute>
+		</attributes>
+
+		<synonyms>
+			<key>key_word_from_plugin_1</key>
+			<key>key_word_from_plugin_2</key>
+			<key>key_word_from_plugin_3</key>
+			<key>key_word_from_plugin_4</key>
+		</synonyms>
+	</concept>
+
+	<concept>
+...
+	</concept>
+
+</dictionary>
+
+```
+
+# Main idea and usage #
+
+Concept documents are public and available in the [dictionaries part of the SVN repository](http://code.google.com/p/cdma/source/browse/#svn/dictionaries/trunk/concepts).
+
+If no concepts document is found, specified or the view only refers keywords not listed in concepts; then synonyms mechanism will be disabled. The extended dictionary mechanism will still work but in a degraded mode: only a direct matching between view and mapping will be considered.
+
+## Software developer ##
+
+While using the CDMA Extended Dictionary Mechanism, the developer should construct his view according a concept file. And consider items obtained using keywords as conform to the matching concept he choose.
+
+Such an approach will permits to abstract data format and have a functionality interoperability between various plug-ins.
+
+
+## Plug-in developer ##
+
+Attributes specified in a concept are not mandatory (no verification is done if plug-in respect it) but are highly recommended. Indeed application developer will rely on them to make selection on data relevance.
+
+This is the plug-in developer responsibility to fit the maximum he can to a defined concept when writing his mapping. Then, when he publishes his work, he should also pick keywords from his mapping file and submit them as synonyms of the right concept.

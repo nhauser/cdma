@@ -1,0 +1,83 @@
+This section is not intended to be a exhaustive guide of good C++ practices, but just a set of rules adopted for the CDMA project.
+
+# C++ programming language version #
+
+Because all needed compilers (mainly the Microsoft compiler) don't yet support C++11, developers of CDMA engines and plug-ins must use the C++03.
+
+We don't use the BOOST library, It's a very huge library, somewhat difficult to use. It offers many classes we consider useless for our project.
+On the other hand, for all generic functionality, we have developed a C++ toolkit named YAT (Yet Another Toolkit) which is a lightweight (and debugged!) library also used in the TANGO project.
+
+# Memory management #
+
+One very delicate thing in C++ is the memory management. In C language, developers massively use pointers and have to face memory issues.
+This issue is easily solved in C++ using smart pointers.
+
+## Shared pointers ##
+
+All objects that must be shared with another part of the project, the client application, or stored in a collection (list, vector, map,...) must be provided through the yat::SharedPtr shared pointer object.
+
+The `yat::SharedPtr` template class proposes the same behavior and the same methods as the `boost::shared_ptr` class (see http://www.boost.org/doc/libs/1_49_0/libs/smart_ptr/shared_ptr.htm)
+
+Note that the `yat::SharedPtr` class is thread safe (this does not imply the thread safety of referenced objects).
+
+## Collections ##
+
+Collections of objects (`std::map`, `std::list`, `std::vector`,...) must only manage `yat::SharedPtr<T>` objects.
+thus, once a object is instantiated, no copy is needed if we have to manage a collection of object of the same kind. when the collection is dropped, only pointers are deleted. The object himself will be deleted after the last pointer to this object is deleted.
+
+```
+class MyClass
+{
+...
+};
+
+typedef yat::SharedPtr<MyClass> MyClassPtr;
+
+aMethod()
+{
+  std::list<MyClassPtr> objects;
+
+  MyClassPtr obj_ptr(new MyClass);
+  objects.push_back(obj_ptr);
+  ...
+}
+```
+
+# Over recommendations #
+
+## The keyword `const` ##
+
+The keyword `const` should be used wherever possible. In particular, member functions that does not affect the state of an object is to be declared const. This is the case of getter methods.
+
+## Pass-by-value ##
+
+Pass-by-value should be avoided for objects.
+
+```
+myMethod (const SomeClass &object) // NOT: myMethod (SomeClass object)
+```
+
+## Methods using a object without altering it ##
+
+If a method need an object but will never alter it, this object should be passe as through `const &`.
+
+```
+// This method just uses const methods of SomeClass object
+myMethod (const SomeClass &object)
+```
+
+## Methods altering a object ##
+
+If a method may alter a object passed as a argument, this argument should be a C-style pointer.
+
+```
+ // this method may alter 'object'
+myMethod (SomeClass *object)
+
+// Not recommended
+myMethod (SomeClass &object)
+```
+
+It's just a convention. Actually, passing the object through a reference is possible but we promote this rule for readability.
+
+Note: A method that receives a object through a C-style pointer must never store this pointer (to keep it alive after method exit) nor trying to call delete on it!

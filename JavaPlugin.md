@@ -1,0 +1,565 @@
+# Content #
+
+  * [Introduction](#Introduction.md)
+    * [Getting started](#Getting_started.md)
+    * [Main elements](#Main_elements.md)
+  * [How to develop its own plug-in](#How_to_develop_its_own_plug-in.md)
+    * [Rely on a CDMA engine](#Rely_on_a_CDMA_engine.md)
+    * [Plug-ins structure](#Plug-ins_structure.md)
+    * [To have a plug-in factory](#To_have_a_plug-in_factory.md)
+    * [Make it dynamically loadable](#Make_it_dynamically_loadable.md)
+      * [Java Service Loader](#Java_Service_Loader.md)
+      * [OSGI Service Loader](#OSGI_Service_Loader.md)
+    * [Make it auto-detectable](#Make_it_auto-detectable.md)
+    * [Having mapping dictionaries](#Having_mapping_dictionaries.md)
+  * [Optional modules to customize](#Optional_modules_to_customize.md)
+    * [Customize navigation](#Customize_navigation.md)
+    * [Customize Extended Dictionary mechanism](#Customize_Extended_Dictionary_mechanism.md)
+    * [Customize runtime code execution](#Customize_runtime_code_execution.md)
+
+
+
+# Introduction #
+
+---
+
+## Getting started ##
+
+There are some evident principles behind a CDMA plug-in:
+
+  * observe behaviours described in each methods of a CDMA object,
+  * try to implement as much as possible requested methods (an incomplete plug-in would be unusable),
+  * to permit an access on data with the most possible efficiency,
+  * worry about the memory usage.
+
+Anyway, as you read / write data you know the best way to do it according to your file format constraints.
+
+The CDMA is just a convenience on how data should be accessed for reading or writing. It is used to permit to anyone to read/write your file format.
+
+[back to top](#Content.md)
+
+## Main elements ##
+
+Several modules or parts can be distinguished in the Common Data Model:
+  * plug-in identification and dynamic loading,
+  * loading dictionary corresponding the data source,
+  * browsing the data tree structure,
+  * loading data and depending informations,
+  * manipulating loaded data (reshape, slice, simple math operations...).
+
+Some of those elements are only implemented in the plug-in. Other are only relevant from the “Core”. But almost all behaviors are customizable in the plug-in implementation.
+
+[back to top](#Content.md)
+
+# How to develop its own plug-in #
+
+---
+
+## Rely on a CDMA engine ##
+
+A [CDMA engine](JavaEngine.md) manages data source handle, navigation, and access to data. All classes needed by the CDMA are available inside, but it cannot be instantiated as it is. The plug-in is here to drive it and allow it to be instantiated through the plug-in existence.
+
+Some engines already exist, maybe the one you might need for this future plug-in. Therefore, there is no need to recode everything and a plug-in can be very quickly developed.
+
+If the right engine is available, you almost only have to implement a plug-in factory: IFactory.
+
+<b>If no corresponding engine are available, you might need to <a href='JavaEngine.md'>develop one</a> in first.</b> Or maybe for different reason, you might want to integrate it directly in your plug-in.
+
+
+[back to top](#Content.md)
+
+## Plug-ins structure ##
+
+In order to make the plug-in usable there are a few rules to respect:
+
+  * to have a factory whom is an implementation of IFactory interface (using the pattern can be a good idea),
+  * to make it loadable using OSGI or using Java standard java.util.ServiceLoader,
+  * to have its own unique name,
+  * to make it auto-dectectable implementing the IDatasource interface.
+
+Below a screenshot of the Java CDMA soleil plug-in based on NeXus engine:
+
+![http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png](http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png)
+
+We can see there that our plug-in is organized as following:
+  * some packages that customize some behaviours due to our data format constraints (see: the [Customize section](#Optional_modules_to_customize.md)),
+  * the IFactory implementation is done by the NxsFactory class
+  * the IDatasource implementation is done by the NxsDatasource class
+  * the META-INF/services/org.gumtree.data.IFactory file used by the service loading provided by Java
+  * OSGI-INF/factory.xml used by the OSGI loading system
+  * a folder <i>resources</i> that contains our mapping dictionaries which must be deployed (see: [requirements section](#JavaClient.md)
+
+Lets imagine a very simple plug-in that is fully functional and which relays on an engine. It should have the following structure and nothing more is necessary:
+
+![http://cdma.googlecode.com/svn/wiki/images/java_std_plugin_struct.png](http://cdma.googlecode.com/svn/wiki/images/java_std_plugin_struct.png)
+
+
+[back to top](#Content.md)
+
+## To have a plug-in factory ##
+
+The CDMA core aims to detect the right plug-in and return its entry point: the plug-in's factory. Then the user can start working with the plug-in. That process is done using the main Factory which only contains static methods.
+
+Below a sample of the “Core” main Factory:
+
+```
+import org.gumtree.data.utils.FactoryManager;
+import org.gumtree.data.utils.IFactoryManager;
+
+/**
+ * The Factory class in CDMA is a tools to create CDMA objects corresponding to certain plug-in.
+*/
+public final class Factory {
+	public static IFactory getFactory(String name) {
+		return getManager().getFactory(name);
+	}
+	...
+	public static IFactory getFactory(URI uri) {...}
+	public static IDataset openDataset(URI uri) throws Exception {...}
+	...
+	public static void setActiveView(String view) {...}
+        public static void setDictionariesFolder(String path) {...}
+	...
+}
+```
+
+The entry point of a plug-in is the class implementing IFactory. It permits to instantiate any CDMA object that should be used by higher level application. The "pattern factory" is massively used here.
+
+Below a sample of SOLEIL's plug-in factory (`NxsFactory`):
+
+```
+import org.gumtree.data.interfaces.IGroup;
+import org.gumtree.data.interfaces.IArray;
+...
+public final class NxsFactory {
+        // internally use of the "Singleton pattern"
+	private static NxsFactory factory;
+
+        // factory name and plug-in name
+	public final static String NAME = "org.gumtree.data.soleil.NxsFactory"; 
+
+	public String IFactory getName() { return NAME;	}
+	...
+
+	public static IArray createArray(Class<?> clazz, int[] shape){
+		Object o = java.lang.reflect.Array.newInstance(clazz, shape);
+		return new NxsArray( o, shape);
+	}
+	public static IGroup createGroup(IGroup parent, String shortName, boolean updateParent){
+    		String path_val = parent.getLocation();
+	    	PathGroup path = new PathGroup(PathNexus.splitStringPath(path_val));
+		NxsGroup group = new NxsGroup(parent, path, parent.getDataset());
+		return group;
+	}
+	public static IDataset createDatasetInstance(URI uri) throws Exception {
+		return new NxsDataSet(new File(uri));
+	}
+	...
+}
+```
+
+The factory's job is just to permit an access to plug-in's objects that are conform to CDMA policy due to interface implementations. So as we are in the plug-in when factory is loaded it just calls constructors of known classes.
+
+The main idea behind that is to stay in a known environment when using the CDMA.
+
+The plug-in's factory must be able to return:
+- the IDatasource implementation to make the auto-detection mechanism available
+- the IDataset implementation for an URI that corresponds to its data format
+
+
+[back to top](#Content.md)
+
+## Make it dynamically loadable ##
+
+Plug-ins are loaded at runtime. The “Core” contains a module that manages it. Two ways are available:
+  * one using the ServiceLoading provided by JAVA,
+  * ne uses OSGI framework.
+
+Prerequisite is to store the JAR of the plug-in in the class path of the application project.
+
+The SOLEIL's plug-in project in Eclipse have the following form:
+
+![http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png](http://cdma.googlecode.com/svn/wiki/images/java_plugin_structure.png)
+
+The code is stored in “org.gumtree.data.soleil.**”. But the 2 main points here are :
+  * the Java Standard Service loading,
+  * the OSGI framework for dynamic loading.**
+
+
+[back to top](#Content.md)
+
+### Java Service Loader ###
+
+The file <i>META-INF/services/org.gumtree.data.IFactory</i> which is used by the `java.util.ServiceLoader`. It permits to tell the service which class implements the `org.gumtree.data.IFactory`.
+
+So the following is just the content of that file:
+```
+org.gumtree.data.soleil.NxsFactory
+```
+
+It describe in which package the IFactory implementation for this plug-in can be found. It is the plug-in's entry point during the run time. As we can see above, the description is made by defining a class, in a fully qualified namespace, that implements the interface having the file name in <i>services</i> folder.
+
+
+[back to top](#Content.md)
+
+### OSGI Service Loader ###
+
+The file <i>OSGI-INF/factory.xml</i> which is used by the OSGI framework to dynamically load the plug-in. It acts exactly the same as the preceding point but in a different syntax:
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0"
+ immediate="true" name="org.gumtree.data.soleil.factory">
+   <implementation class="org.gumtree.data.soleil.NxsFactory"/>
+   <service>
+      <provide interface="org.gumtree.data.IFactory"/>
+   </service>
+</scr:component>
+```
+
+Using such mechanism only one file can describe several different services. Whereas in the previous point there must be a different file for each different services.
+
+
+[back to top](#Content.md)
+
+## Its own unique name ##
+
+Each object implementing an interface of the CDMA is also inheriting from IModelObject whom objective is to permit retrieving the plug-in it belongs to. The aim is to not instantiate randomly object of different plug-ins, when we are using a specific one.
+
+```
+package org.gumtree.data.interfaces;
+public interface IModelObject {
+	public String getFactoryName();
+}
+```
+
+The factory is instantiated using its name in the plug-in. The name should contain the namespace, and is bind to the factory in the FactoryManager. That's is the reason why the factory name must be unique and should represent both it's institute and engine.
+
+[back to top](#Content.md)
+
+## Make it auto-detectable ##
+
+To determine if an URI is relevant of a plug-in, the `Core` detection mechanism need to have access to the plug-in IDatasource implementation. That class permits to answer compatibility questions between a plug-in and an URI.
+
+Indeed while trying to detect the right plug-in the `Core` ask to each one if it is compatible to that data format. When yes it asks if the plug-in is the producer of that data source.
+
+Below a sample of SOLEIL's plug-in IDatasource implementation:
+
+```
+public final class NxsDatasource implements IDatasource {
+    private static final String CREATOR = "Synchrotron SOLEIL";
+    ...
+
+    @Override
+    public boolean isReadable(URI target) {
+        File file      = new File(target);
+        String name    = file.getName();
+        int length     = name.length();
+        boolean result = false;
+
+        if( ! file.isDirectory() ) {
+            // Check if the URI is a NeXus file
+            if( length > EXTENSION && name.substring(length - EXTENSION).equals(".nxs") ) {
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    ...
+
+    @Override
+    public boolean isProducer(URI target) {
+        boolean result = false;
+        if( isReadable(target) ) {
+            File file = new File(target);
+            IDataset dataset = null;
+            try {
+                // instantiate
+                dataset = NxsDataset.instanciate( file );
+
+                // open file
+                dataset.open();
+
+                // seek at root for 'creator' attribute
+                IGroup group = dataset.getRootGroup();
+                if( group.hasAttribute("creator", CREATOR) ) {
+                    result = true;
+                }
+
+                // close file
+                dataset.close();
+
+            } catch (IOException e) {
+                // close file
+                if( dataset != null ) {
+                    try {
+                        dataset.close();
+                    } catch (IOException e1) {}
+                }
+            } catch (NoResultException e) {}
+        }
+        return result;
+    }
+    ...
+
+}
+```
+
+As we can see above, the file extension is check to determine if the plug-in can read the URI. In that case we use the plug-in dataset that is compatible to seek for a signature of the institute. In our case we were looking for an attribute called `<i>creator</i>` that has the string `<i>Synchrotron SOLEIL</i>` for value.
+
+
+[back to top](#Content.md)
+
+## Having mapping dictionaries ##
+
+Mapping dictionaries define when using the Extended Dictionary mechanism jointly the plug-in where to find data items in that data source. They are really specific to the institute that manages the plug-in. The loading dictionary (i.e view definition plus mapping file), is done directly by the ExtendendDictionary class (provided in the `Core`).
+
+Earlier in [structure section](#Plug-ins_structure.md) a <i>resources</i> folder were evoked. It should contains <b>XML files which are the mapping dictionaries</b>.
+
+Below an example of the mapping file:
+```
+<map-def name="SWING" version="1.0.0"> 
+    <item key="scienta"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/fixEnergy</path> 
+    </item> 
+    <item key="distance"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/distance</path> 
+    </item> 
+    <item key="dark"> 
+        <path>/{NXentry}/{nxinstrument}/{nxdetector}/intensityblack</path> 
+    </item> 
+    <item key="exposureTime"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Exposure</path> 
+    </item> 
+    <item key="closeDelay"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/ShutterCloseDelay</path> 
+    </item> 
+    <item key="xBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Xbin</path> 
+    </item> 
+    <item key="yBin"> 
+        <path>/{NXentry}/{NXinstrument}/{NXdetector}/Ybin</path> 
+    </item> 
+    <item key="energy_mono"> 
+        <path>/{NXentry}/{NXinstrument}/{NXmonochromator}/wavelength</path> 
+    </item> 
+    <item key="lambda"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/Gain</path> 
+    </item> 
+    <item key="intensity_monitor"> 
+        <path>/{NXentry}/{NXinstrument}/$(channel){NXintensity_monitor}/intensity</path> 
+    </item> 
+    <item key="x_position"> 
+        <path>/{NXentry}/{NXdata}/Tx</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="y_position"> 
+        <path>/{NXentry}/{NXdata}/Tz</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="spectrums"> 
+        <path>/{NXentry}/{NXdata}/channel$(channel)*</path> 
+        <call>org.gumtree.data.soleil.external.DataItemStacker.stackDataItems</call> 
+    </item> 
+    <item key="comments"> 
+        <path>/{NXentry}/{NXsample}/comments/data</path> 
+    </item> 
+</map-def>
+```
+
+The resource folder isn't necessary, but is highly recommended, because it will permit tools to set mapping dictionaries in the right folder when deploying plug-ins.
+
+Although an institute uses a single data format, it might have several different way of storing its data. For example in the case of different kind of experiments.
+
+If several available mappings a customization of <i>IExtendedDictionary.getMappingFilePath()</i> is required see [the customize section](#Customize_Extended_Dictionary_mechanism.md).
+
+
+
+[back to top](#Content.md)
+
+# Optional modules to customize #
+
+---
+
+
+## Customize navigation ##
+
+The navigation which is principally done by an engine can be customized partially. To do so you might inherit or encapsulate one or several classes from the underlying CDMA engine.
+
+The main point is as the entry point is the plug-in factory you are free to return an object of your own. So here you are able to override almost all behaviours of the engine.
+
+The only constraint is that you must ensure the object returned by the interfaces' calls are overridden objects.
+
+For example to change a behaviour on the IGroup from an engine:
+  * you will have to make the IDataset returning a modified IGroup implementation when calling IDataset.getRootGroup()
+  * you will have to override all methods returning object IGroup from the IGroup implementation of your plug-in (the overridden can essentially call the super method and construct a new object from what it has returned).
+
+It can be easily done this way:
+
+```
+public final class PluginGroup extends EngineGroup {
+    public PluginGroup( EngineGroup group ) { super(group); }
+
+    @Override
+    public IGroup getGroupList() {
+        List<IGroup> list = super.getGroupList();
+        List<IGroup> result = new ArrayList<IGroup>();
+        for( IGroup group : list ) {
+           result.add( new PluginGroup(group) );
+        }
+        return result;
+    }
+}
+
+```
+
+
+[back to top](#Content.md)
+
+## Customize Extended Dictionary mechanism ##
+
+This mechanism consists in binding a key to a path. Keys structure are defined by the higher level application and will “replace” the physical structure of the data source by a “logical view”. So this browsing mode is exclusive with the one that match the physical structure of the data source.
+A default implementation is provided in “Core” see package org.gumtree.data.dictionary.impl it can be customized totally or partially. The customization should impact only the instantiated plug-in. Indeed as it is accessed using the ILogicalGroup, instantiating a dedicated one (instead of org.gumtree.data.dictionary.impl.LogicalGroup) allow to manage own behaviours.
+
+The logical view is defined and activated with the two following lines:
+
+```
+Factory.setActiveView(String view);
+ILogicalGroup root = dataset.getLogicalRoot();
+```
+
+The association key/path is done by `IExtendedDictionary`. The `ILogicalGroup` will instantiate an `IExtendedDictionary` giving it path to reach key file and mapping file, through the method:
+
+```
+public IExtendedDictionary ILogicalGroup.findAndReadDictionary()
+```
+
+The loading of both files is done using:
+
+```
+public void IExtendedDictionary.readEntries();
+```
+
+That path will be managed by the ILogicalGroup to open the correct node using:
+```
+public List<IContainer> IGroup.findAllContainerByPath(String path);
+```
+
+As path are only interpreted by plug-in it can have any form when it can be translated into a String.
+
+Note: that mechanism requires to have some dictionary files installed somewhere, see following methods (from “Core”'s main Factory) to set / get expected paths (and structure) where to find them:
+```
+package org.gumtree.data;
+public final class Factory {
+	public static String getDictionariesFolder();
+	public static void setDictionariesFolder(String path);
+	public static String getKeyDictionaryPath();
+	public static String getMappingDictionaryFolder(IFactory factory);
+	...
+}
+```
+
+Below an example of the view file:
+```
+<data-def name="DATA_REDUCTION"> 
+    <group key="detectors"> 
+        <group key="detector"> 
+            <item key="camera"/> 
+            <item key="dark"/> 
+            <item key="distance"/> 
+            <item key="exposureTime"/> 
+            <item key="shutterCloseDelay"/> 
+            <item key="xBin"/> 
+            <item key="yBin"/> 
+        </group> 
+        <group key="monitor"> 
+            <item key="mi"/> 
+            <item key="gain"/> 
+            <item key="intensity_monitor"/>
+        </group> 
+        <group key="monochromator"> 
+            <item key="lambda"/> 
+            <item key="energy_mono"/> 
+        </group> 
+    </group> 
+    <group key="data"> 
+        <item key="images"/> 
+        <item key="spectrums"/> 
+        <item key="x_position"/> 
+        <item key="y_position"/> 
+    </group> 
+    <group key="info"> 
+        <item key="comments"/> 
+    </group> 
+</data-def>
+```
+
+To customize that mechanism you can inherit from ExtendedDictionary (default implementation) or LogicalGroup to change a specific behaviour by overriding.
+
+Mainly it will be to allow a specific path determination for mapping file.
+
+That's the case in Soleil's neXus plugin, which can have different mappings according the experiment the dataset matches. Below the whole NxsLogicalGroup class (only constructors have been removed) of Soleil's plug-in:
+
+```
+public class NxsLogicalGroup extends LogicalGroup {
+    // some constructors
+    ...
+
+    public IExtendedDictionary findAndReadDictionary() {
+        IFactory factory = NxsFactory.getInstance();
+        IExtendedDictionary dictionary = null;
+        
+        try {
+            // Detect the key dictionary file and mapping dictionary file
+            String keyFile = Factory.getKeyDictionaryPath();
+            String mapFile = Factory.getMappingDictionaryFolder( factory ) 
+                             + detectDictionaryFile( (NxsDataset) getDataset() );
+            dictionary = new ExtendedDictionary( factory, keyFile, mapFile );
+            dictionary.readEntries();
+        } catch (FileAccessException e) {
+            e.printStackTrace();
+            dictionary = null;
+        }
+
+        return dictionary;
+    }
+
+    public String detectDictionaryFile(NxsDataset dataset) throws FileAccessException {
+        // Get the configuration
+        ConfigDataset conf = dataset.getConfiguration();
+
+        // Ask for beamline and datamodel parameters
+        String beamline = conf.getParameter("BEAMLINE", dataset);
+        String model = conf.getParameter("MODEL", dataset);
+
+        // Construct the dictionary file name
+        if( beamline != null ) {
+            beamline = beamline.toLowerCase();
+        }
+        else {
+            beamline = "UNKNOWN";
+        }
+        if( model != null ) {
+            model = model.toLowerCase();
+        }
+        else {
+            model = "UNKNOWN";
+        }
+        return beamline + "_" + model + ".xml";
+    }
+
+}
+
+
+```
+
+As the entire Extended Dictionary mechanism is manipulated using interfaces (even when a plug-in uses the default implementation), it is possible to customize a part of the mechanism.
+
+Note: it is very important to not change the way view definition XML file are loaded. Particularly to respect the view file DTD.
+
+
+[back to top](#Content.md)
+
+## Customize runtime code execution ##
+
+[back to top](#Content.md)
